@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Linters
 .eslintcache
+
+# Env files
+.env.local

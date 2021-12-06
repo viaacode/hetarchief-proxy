@@ -17,7 +17,7 @@ module.exports = {
 		'plugin:import/typescript',
 		'plugin:prettier/recommended',
 	],
-	ignorePatterns: ['.eslintrc.js'],
+	ignorePatterns: ['.eslintrc.js', 'jest*.config.js'],
 	rules: {
 		'@typescript-eslint/interface-name-prefix': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
@@ -31,6 +31,13 @@ module.exports = {
 			{
 				alphabetize: { order: 'asc' },
 				'newlines-between': 'always',
+				pathGroups: [
+					{
+						pattern: '~*',
+						group: 'parent',
+						position: 'before',
+					}
+				]
 			},
 		],
 
@@ -41,5 +48,10 @@ module.exports = {
 				ignoreDeclarationSort: true,
 			},
 		],
+	},
+	settings: {
+		'import/resolver': {
+			typescript: {},
+		},
 	},
 };
