@@ -1,0 +1,17 @@
+version: "3"
+services:
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: hetarchief-proxy
+    env_file:
+      - ./.env/.env.local
+    ports:
+      - 3100:3100
+    volumes:
+      - .:/app:delegated
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - /app/node_modules
+      - /app/dist

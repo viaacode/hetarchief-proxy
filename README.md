@@ -61,9 +61,9 @@ Other available commands are:
 
 | command      | runs                                                                                                 |
 |--------------|------------------------------------------------------------------------------------------------------|
-| format       | Format all files with prettier.         .                                                            |
-| lint         | Lint all files with ESLint.             .                                                            |
-| lint:fix     | Lint all files and automatically fix most of the problems.             .                             |
+| format       | Format all files with prettier.                                                                      |
+| lint         | Lint all files with ESLint.                                                                          |
+| lint:fix     | Lint all files and automatically fix most of the problems.                                           |
 
 ## Deploy
 
