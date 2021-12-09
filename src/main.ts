@@ -9,6 +9,8 @@ async function bootstrap() {
 	const configService = app.get<ConfigService>(NestConfigService);
 	const port = configService.get('port');
 
+	app.enableCors();
+
 	await app.listen(port);
 }
 bootstrap();

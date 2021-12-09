@@ -61,9 +61,9 @@ Other available commands are:
 
 | command      | runs                                                                                                 |
 |--------------|------------------------------------------------------------------------------------------------------|
-| format       | Format all files with prettier.         .                                                            |
-| lint         | Lint all files with ESLint.             .                                                            |
-| lint:fix     | Lint all files and automatically fix most of the problems.             .                             |
+| format       | Format all files with prettier.                                                                      |
+| lint         | Lint all files with ESLint.                                                                          |
+| lint:fix     | Lint all files and automatically fix most of the problems.                                           |
 
 ## Deploy
 
@@ -74,7 +74,9 @@ TODO: Link to the Confluence page describing the entire flow of the project.
 This project uses environemnt variables. For local development, these can be found in the `.env/`
 folder in the root of the project.  
 There you can find a `.env.template` file which contains all the environment variables used in this
-project. Create your own `.env.local` file here with the correct values to get started.
+project.  
+Create your own `.env.local` file here with the correct values to get started. Contact one of the
+active developers listed below for access to these values.
 
 They are provided through the `env_file` property in the `docker-compose.yml` file.
 
