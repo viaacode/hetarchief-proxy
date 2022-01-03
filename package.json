@@ -33,7 +33,6 @@
     "@nestjs/core": "8.2.3",
     "@nestjs/platform-express": "8.2.3",
     "i18next": "21.6.3",
-    "i18next-http-middleware": "3.1.4",
     "joi": "17.5.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
