@@ -6,6 +6,8 @@ import config, { configValidationSchema } from '~config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { AuthModule } from '~modules/auth';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -13,6 +15,7 @@ import { AppService } from './app.service';
 			load: [config],
 			validationSchema: configValidationSchema,
 		}),
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
