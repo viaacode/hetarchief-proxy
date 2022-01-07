@@ -18,6 +18,7 @@
       "~shared": ["src/shared"],
       "~shared/*": ["src/shared/*"]
     },
+    "resolveJsonModule": true,
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
