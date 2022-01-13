@@ -16,13 +16,11 @@ import { DataPermissionsService } from './data-permissions.service';
 export class DataService {
 	private gotInstance: Got;
 	private logger: Logger = new Logger('DataService', { timestamp: true });
-	private whitelistEnabled: boolean;
 
 	constructor(
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
-		this.whitelistEnabled = this.configService.get('GRAPHQL_ENABLE_WHITELIST');
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('GRAPHQL_URL'),
 			headers: {
@@ -37,10 +35,14 @@ export class DataService {
 		queryDto: GraphQlQueryDto,
 		origin: QueryOrigin
 	): Promise<boolean> {
-		if (this.whitelistEnabled && !this.isQueryWhitelisted(queryDto, origin)) {
+		if (this.isWhitelistEnabled() && !this.isQueryWhitelisted(queryDto, origin)) {
 			return false;
 		}
 		return this.dataPermissionsService.verify(origin, queryDto);
+	}
+
+	public isWhitelistEnabled(): boolean {
+		return this.configService.get('GRAPHQL_ENABLE_WHITELIST');
 	}
 
 	private isQueryWhitelisted(queryDto: GraphQlQueryDto, origin: QueryOrigin): boolean {
