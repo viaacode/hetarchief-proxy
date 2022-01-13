@@ -6,5 +6,5 @@ export class GraphQlQueryDto {
 	query: string;
 
 	@IsOptional()
-	variables: any;
+	variables?: any;
 }
