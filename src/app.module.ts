@@ -6,6 +6,7 @@ import config, { configValidationSchema } from '~config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
 
 @Module({
@@ -14,8 +15,10 @@ import { DataModule } from '~modules/data';
 			envFilePath: '.env/.env.local',
 			load: [config],
 			validationSchema: configValidationSchema,
+			expandVariables: true,
 		}),
 		DataModule,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

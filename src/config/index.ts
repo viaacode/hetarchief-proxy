@@ -7,6 +7,10 @@ const config = (): Configuration => ({
 	graphQlUrl: process.env.GRAPHQL_URL,
 	graphQlSecret: process.env.GRAPHQL_URL,
 	graphQlEnableWhitelist: process.env.GRAPHQL_ENABLE_WHITELIST === 'true',
+	samlIdpMetaDataEndpoint: process.env.SAML_IDP_META_DATA_ENDPOINT,
+	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
+	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,
+	samlSpCertificate: process.env.SAML_SP_CERTIFICATE,
 });
 
 export default config;

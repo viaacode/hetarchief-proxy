@@ -6,6 +6,10 @@ export interface Configuration {
 	graphQlUrl: string;
 	graphQlSecret: string;
 	graphQlEnableWhitelist: boolean;
+	samlIdpMetaDataEndpoint: string;
+	samlSpEntityId: string;
+	samlSpPrivateKey: string;
+	samlSpCertificate: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
