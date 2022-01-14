@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SamlService } from './saml.service';
+
 @Injectable()
 export class HetArchiefService extends SamlService {
 	constructor(protected configService: ConfigService) {

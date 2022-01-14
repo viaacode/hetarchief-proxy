@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import got from 'got';
 import { get } from 'lodash';
 import saml2, { IdentityProvider, ServiceProvider } from 'saml2-js';
-import convert = require('xml-js');
+import convert from 'xml-js';
 
 import { DecodedSamlResponse, IdpMetaData, LdapUser, SamlCallbackBody, SamlConfig } from '../types';
 
