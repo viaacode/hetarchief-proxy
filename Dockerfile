@@ -30,7 +30,7 @@ USER node
 
 ## disable prepare no need for husky in docker
 RUN npm set-script prepare "" &&\
-   npm ci 
+   npm ci
 #--omit=dev
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
