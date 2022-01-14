@@ -33,4 +33,4 @@ RUN npm set-script prepare "" &&\
    npm ci
 #--omit=dev
 
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
