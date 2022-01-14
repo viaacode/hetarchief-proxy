@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { AuthModule } from '~modules/auth';
+import { DataModule } from '~modules/data';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from '~modules/auth';
 			validationSchema: configValidationSchema,
 			expandVariables: true,
 		}),
+		DataModule,
 		AuthModule,
 	],
 	controllers: [AppController],

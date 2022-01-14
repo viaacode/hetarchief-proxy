@@ -2,8 +2,11 @@ import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
 
 const config = (): Configuration => ({
-	port: parseInt(process.env.PORT, 10) || DEFAULT_CONFIG.port,
 	host: process.env.HOST,
+	port: parseInt(process.env.PORT, 10) || DEFAULT_CONFIG.port,
+	graphQlUrl: process.env.GRAPHQL_URL,
+	graphQlSecret: process.env.GRAPHQL_URL,
+	graphQlEnableWhitelist: process.env.GRAPHQL_ENABLE_WHITELIST === 'true',
 	samlIdpMetaDataEndpoint: process.env.SAML_IDP_META_DATA_ENDPOINT,
 	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
 	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,
