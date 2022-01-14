@@ -55,10 +55,10 @@ export class HetArchiefService {
 				throw new Error('Failed to find ssoLogoutUrl in idp metadata');
 			}
 			this.serviceProvider = new saml2.ServiceProvider({
-				entity_id: process.env.SAML_SP_ENTITY_ID as string,
-				private_key: process.env.SAML_PRIVATE_KEY as string,
-				certificate: process.env.SAML_SP_CERTIFICATE as string,
-				assert_endpoint: `${process.env.HOST}/auth/hetarchief/login-callback`,
+				entity_id: this.configService.get('samlSpEntityId'),
+				private_key: this.configService.get('samlSpPrivateKey'),
+				certificate: this.configService.get('samlSpCertificate'),
+				assert_endpoint: `${this.configService.get('host')}/auth/hetarchief/login-callback`,
 				// force_authn: true, // TODO enable certificates once the app runs on https on qas/prd
 				auth_context: {
 					comparison: 'exact',
