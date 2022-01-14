@@ -14,6 +14,7 @@ import { AuthModule } from '~modules/auth';
 			envFilePath: '.env/.env.local',
 			load: [config],
 			validationSchema: configValidationSchema,
+			expandVariables: true,
 		}),
 		AuthModule,
 	],
