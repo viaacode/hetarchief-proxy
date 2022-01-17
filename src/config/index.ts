@@ -11,6 +11,10 @@ const config = (): Configuration => ({
 	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
 	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,
 	samlSpCertificate: process.env.SAML_SP_CERTIFICATE,
+	samlMeemooIdpMetaDataEndpoint: process.env.SAML_MEEMOO_IDP_META_DATA_ENDPOINT,
+	samlMeemooSpEntityId: process.env.SAML_MEEMOO_SP_ENTITY_ID,
+	samlMeemooSpPrivateKey: process.env.SAML_MEEMOO_SP_PRIVATE_KEY,
+	samlMeemooSpCertificate: process.env.SAML_MEEMOO_SP_CERTIFICATE,
 });
 
 export default config;

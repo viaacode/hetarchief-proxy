@@ -106,3 +106,11 @@ export interface DecodedSamlResponse {
 	type: string;
 	user: LdapUser;
 }
+
+export interface SamlConfig {
+	url: string;
+	entityId: string;
+	privateKey: string;
+	certificate: string;
+	assertEndpoint: string;
+}

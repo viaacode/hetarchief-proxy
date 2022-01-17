@@ -10,6 +10,10 @@ export interface Configuration {
 	samlSpEntityId: string;
 	samlSpPrivateKey: string;
 	samlSpCertificate: string;
+	samlMeemooIdpMetaDataEndpoint: string;
+	samlMeemooSpEntityId: string;
+	samlMeemooSpPrivateKey: string;
+	samlMeemooSpCertificate: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
