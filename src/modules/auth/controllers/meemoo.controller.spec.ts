@@ -5,11 +5,26 @@ import { MeemooService } from '../services/meemoo.service';
 
 import { MeemooController } from './meemoo.controller';
 
+import { UsersService } from '~modules/users/services/users.service';
+
 const meemooLoginUrl = 'http://meemoo.be/login';
 
 const ldapUser = {
-	name_id: 'test@studiohyperdrive.be',
-	entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
+	attributes: {
+		givenName: ['Tom'],
+		sn: ['Testerom'],
+		mail: ['test@studiohyperdrive.be'],
+		name_id: 'test@studiohyperdrive.be',
+		entryUUID: ['6033dcab-bcc9-4fb5-aa59-d21dcd893150'],
+		apps: ['meemoo'],
+	},
+};
+
+const archiefUser = {
+	id: '2',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohyperdrive.be',
 };
 
 const samlResponse = {
@@ -22,6 +37,12 @@ const mockMeemooService = {
 	assertSamlResponse: jest.fn(),
 };
 
+const mockUsersService = {
+	getUserByIdentityId: jest.fn(),
+	createUserWithIdp: jest.fn(),
+	updateUser: jest.fn(),
+};
+
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
 	beforeEach(async () => {
@@ -31,6 +52,10 @@ describe('MeemooController', () => {
 				{
 					provide: MeemooService,
 					useValue: mockMeemooService,
+				},
+				{
+					provide: UsersService,
+					useValue: mockUsersService,
 				},
 			],
 		}).compile();
@@ -62,13 +87,53 @@ describe('MeemooController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('Returns ldap user info on succesful login', async () => {
+		it('should redirect after succesful login with a known user', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
 			const result = await meemooController.loginCallback({}, samlResponse);
+
 			expect(result).toEqual({
-				ldapUser,
-				info: meemooLoginUrl,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: meemooLoginUrl,
 			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+		});
+
+		it('should create an authorized user that is not yet in the database', async () => {
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
+			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
+
+			const result = await meemooController.loginCallback({}, samlResponse);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: meemooLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+			mockUsersService.createUserWithIdp.mockClear();
+		});
+
+		it('should update an authorized user that is was changed in ldap', async () => {
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
+				...archiefUser,
+				firstName: 'Tom2',
+			});
+			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
+
+			const result = await meemooController.loginCallback({}, samlResponse);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: meemooLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).toBeCalled();
+			mockUsersService.updateUser.mockClear();
 		});
 
 		it('should catch an exception when handling the saml response', async () => {
