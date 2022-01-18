@@ -20,7 +20,7 @@ import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
 export class HetArchiefController {
 	private logger: Logger = new Logger('HetArchiefController', { timestamp: true });
 
-	constructor(private hetArchiefService: HetArchiefService, private userService: UsersService) {}
+	constructor(private hetArchiefService: HetArchiefService, private usersService: UsersService) {}
 
 	@Get('login')
 	@Redirect()
@@ -66,7 +66,7 @@ export class HetArchiefController {
 			// TODO session
 			// IdpHelper.setIdpUserInfoOnSession(request, ldapUser, 'HETARCHIEF');
 
-			let archiefUser = await this.userService.getUserByIdentityId(
+			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
 			);
 
@@ -80,7 +80,7 @@ export class HetArchiefController {
 				this.logger.log(
 					`User ${ldapUser.attributes.mail[0]} not found in our DB for ${Idp.HETARCHIEF}`
 				);
-				archiefUser = await this.userService.createUserWithIdp(
+				archiefUser = await this.usersService.createUserWithIdp(
 					userDto,
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
@@ -89,7 +89,7 @@ export class HetArchiefController {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
-					archiefUser = await this.userService.updateUser(archiefUser.id, userDto);
+					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
 			}
 
