@@ -5,7 +5,7 @@ export const configValidationSchema = Joi.object({
 	HOST: Joi.string(),
 	PORT: Joi.number().default(3000),
 	GRAPHQL_URL: Joi.string().required(),
-	GRAPHQL_SECRET: Joi.string().required(),
+	GRAPHQL_SECRET: Joi.string().allow(''),
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
 	SAML_IDP_META_DATA_ENDPOINT: Joi.string(),
 	SAML_SP_ENTITY_ID: Joi.string(),

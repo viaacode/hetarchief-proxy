@@ -17,9 +17,9 @@ describe('AuthController', () => {
 		expect(authController).toBeDefined();
 	});
 
-	describe('logout', () => {
-		it('should return OK on logout', async () => {
-			expect(await authController.logout()).toBe('OK');
+	describe('checkLogin', () => {
+		it('should return a message on checkLogin', async () => {
+			expect(await authController.checkLogin()).toEqual({ message: 'LOGGED_OUT' });
 		});
 	});
 });

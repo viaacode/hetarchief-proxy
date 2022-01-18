@@ -1,3 +1,5 @@
+import { User } from '~modules/users/types';
+
 export interface IdpMetaData {
 	'md:EntityDescriptor': {
 		_attributes: {
@@ -114,3 +116,25 @@ export interface SamlConfig {
 	certificate: string;
 	assertEndpoint: string;
 }
+
+export interface ArchiefUser {
+	id: string;
+	first_name: string;
+	last_name: string;
+	mail: string;
+}
+
+export enum Idp {
+	HETARCHIEF = 'HETARCHIEF',
+}
+
+export type LoginResponse =
+	| {
+			message: 'LOGGED_IN';
+			userInfo: User;
+			acceptedConditions: boolean;
+			sessionExpiresAt: string;
+	  }
+	| {
+			message: 'LOGGED_OUT';
+	  };

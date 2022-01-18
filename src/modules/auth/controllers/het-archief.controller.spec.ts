@@ -5,11 +5,26 @@ import { HetArchiefService } from '../services/het-archief.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
+import { UsersService } from '~modules/users/services/users.service';
+
 const hetArchiefLoginUrl = 'http://hetarchief.be/login';
 
 const ldapUser = {
-	name_id: 'test@studiohyperdrive.be',
-	entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
+	attributes: {
+		givenName: ['Tom'],
+		sn: ['Testerom'],
+		mail: ['test@studiohyperdrive.be'],
+		name_id: 'test@studiohyperdrive.be',
+		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
+		apps: ['hetarchief'],
+	},
+};
+
+const archiefUser = {
+	id: '1',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohyperdrive.be',
 };
 
 const samlResponse = {
@@ -22,6 +37,12 @@ const mockArchiefService = {
 	assertSamlResponse: jest.fn(),
 };
 
+const mockUserService = {
+	getUserByIdentityId: jest.fn(),
+	createUserWithIdp: jest.fn(),
+	updateUser: jest.fn(),
+};
+
 describe('HetArchiefController', () => {
 	let hetArchiefController: HetArchiefController;
 	beforeEach(async () => {
@@ -31,6 +52,10 @@ describe('HetArchiefController', () => {
 				{
 					provide: HetArchiefService,
 					useValue: mockArchiefService,
+				},
+				{
+					provide: UsersService,
+					useValue: mockUserService,
 				},
 			],
 		}).compile();
@@ -62,13 +87,53 @@ describe('HetArchiefController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('Returns ldap user info on succesful login', async () => {
+		it('should redirect after succesful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUserService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
 			const result = await hetArchiefController.loginCallback({}, samlResponse);
+
 			expect(result).toEqual({
-				ldapUser,
-				info: hetArchiefLoginUrl,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
 			});
+			expect(mockUserService.createUserWithIdp).not.toBeCalled();
+			expect(mockUserService.updateUser).not.toBeCalled();
+		});
+
+		it('should create an authorized user that is not yet in the database', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUserService.getUserByIdentityId.mockReturnValueOnce(null);
+			mockUserService.createUserWithIdp.mockReturnValueOnce(archiefUser);
+
+			const result = await hetArchiefController.loginCallback({}, samlResponse);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUserService.createUserWithIdp).toBeCalled();
+			expect(mockUserService.updateUser).not.toBeCalled();
+			mockUserService.createUserWithIdp.mockClear();
+		});
+
+		it('should update an authorized user that is was changed in ldap', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUserService.getUserByIdentityId.mockReturnValueOnce({
+				...archiefUser,
+				firstName: 'Tom2',
+			});
+			mockUserService.updateUser.mockReturnValueOnce(archiefUser);
+
+			const result = await hetArchiefController.loginCallback({}, samlResponse);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUserService.createUserWithIdp).not.toBeCalled();
+			expect(mockUserService.updateUser).toBeCalled();
+			mockUserService.updateUser.mockClear();
 		});
 
 		it('should catch an exception when handling the saml response', async () => {

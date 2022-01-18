@@ -7,6 +7,9 @@ import { MeemooController } from './controllers/meemoo.controller';
 import { HetArchiefService } from './services/het-archief.service';
 import { MeemooService } from './services/meemoo.service';
 
+import { DataModule } from '~modules/data';
+import { UsersModule } from '~modules/users';
+
 export const archiefServiceFactory = {
 	provide: HetArchiefService,
 	useFactory: async (configService: ConfigService) => {
@@ -29,7 +32,7 @@ export const meemooServiceFactory = {
 
 @Module({
 	controllers: [AuthController, HetArchiefController, MeemooController],
-	imports: [ConfigModule],
+	imports: [ConfigModule, DataModule, UsersModule],
 	providers: [archiefServiceFactory, meemooServiceFactory],
 })
 export class AuthModule {}
