@@ -7,12 +7,13 @@ import {
 	Post,
 	Query,
 	Redirect,
-	Req,
+	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
 import { get, isEqual, omit } from 'lodash';
 
 import { MeemooService } from '../services/meemoo.service';
+import { SessionHelper } from '../session-helper';
 import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
 
 import { UsersService } from '~modules/users/services/users.service';
@@ -25,9 +26,17 @@ export class MeemooController {
 
 	@Get('login')
 	@Redirect()
-	public async getAuth(@Query('returnToUrl') returnToUrl: string) {
+	public async getAuth(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string
+	) {
 		try {
-			// TODO if already logged in, directly redirect to the returnToUrl
+			if (SessionHelper.isLoggedIn(session)) {
+				return {
+					url: returnToUrl,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
 			const url = await this.meemooService.createLoginRequestUrl(returnToUrl);
 			return {
 				url,
@@ -46,7 +55,7 @@ export class MeemooController {
 	@Post('login-callback')
 	@Redirect()
 	async loginCallback(
-		@Req() request: Express.Request,
+		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
 		try {
@@ -69,8 +78,7 @@ export class MeemooController {
 				throw new UnauthorizedException();
 			}
 
-			// TODO session
-			// IdpHelper.setIdpUserInfoOnSession(request, ldapUser, 'MEEMOO');
+			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, ldapUser);
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
@@ -99,7 +107,8 @@ export class MeemooController {
 				}
 			}
 
-			// TODO SET archief user on session
+			SessionHelper.setArchiefUserInfo(session, archiefUser);
+
 			return {
 				url: info.returnToUrl,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,

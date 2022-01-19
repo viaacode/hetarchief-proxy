@@ -7,6 +7,9 @@ export const configValidationSchema = Joi.object({
 	GRAPHQL_URL: Joi.string().required(),
 	GRAPHQL_SECRET: Joi.string().allow(''),
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
+	COOKIE_SECRET: Joi.string(),
+	COOKIE_MAX_AGE: Joi.number().default(86400000),
+	REDIS_CONNECTION_STRING: Joi.string().allow(''),
 	SAML_IDP_META_DATA_ENDPOINT: Joi.string(),
 	SAML_SP_ENTITY_ID: Joi.string(),
 	SAML_SP_PRIVATE_KEY: Joi.string().allow(''),
@@ -19,4 +22,5 @@ export const configValidationSchema = Joi.object({
 
 export const DEFAULT_CONFIG = {
 	port: 3000,
+	environment: 'local',
 };

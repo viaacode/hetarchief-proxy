@@ -70,7 +70,7 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.getAuth('http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
@@ -81,7 +81,7 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.getAuth('http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toBeUndefined();
 		});
 	});

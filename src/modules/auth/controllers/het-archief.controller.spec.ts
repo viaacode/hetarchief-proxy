@@ -70,7 +70,7 @@ describe('HetArchiefController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
-			const result = await hetArchiefController.getAuth('http://hetarchief.be/start');
+			const result = await hetArchiefController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: hetArchiefLoginUrl,
@@ -81,7 +81,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.getAuth('http://hetarchief.be/start');
+			const result = await hetArchiefController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toBeUndefined();
 		});
 	});
