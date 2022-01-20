@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { HetArchiefService } from '../services/het-archief.service';
+import { Idp } from '../types';
 
 import { HetArchiefController } from './het-archief.controller';
 
@@ -43,6 +44,14 @@ const mockUsersService = {
 	updateUser: jest.fn(),
 };
 
+const mockSession = {
+	idp: Idp.HETARCHIEF,
+	idpUserInfo: {
+		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
+	},
+	archiefUserInfo: {},
+};
+
 describe('HetArchiefController', () => {
 	let hetArchiefController: HetArchiefController;
 	beforeEach(async () => {
@@ -74,6 +83,17 @@ describe('HetArchiefController', () => {
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: hetArchiefLoginUrl,
+			});
+		});
+
+		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+			const result = await hetArchiefController.getAuth(
+				mockSession,
+				'http://hetarchief.be/start'
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'http://hetarchief.be/start',
 			});
 		});
 
@@ -140,6 +160,18 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
+			const result = await hetArchiefController.loginCallback({}, samlResponse);
+			expect(result).toBeUndefined();
+		});
+
+		it('should handle an exception if the user has no access to the archief app', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
 			const result = await hetArchiefController.loginCallback({}, samlResponse);
 			expect(result).toBeUndefined();
 		});
