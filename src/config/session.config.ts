@@ -65,9 +65,8 @@ export class SessionConfig {
 				}
 			};
 
-			// schedule cron to flush sessions
-			// cron.schedule('0 0 05 * * *', clearRedis, {
-			cron.schedule('* * * * *', clearRedis, {
+			// schedule cron to flush sessions every day at 05:00
+			cron.schedule('0 0 05 * * *', clearRedis, {
 				scheduled: true,
 				timezone: 'Europe/Brussels',
 			}).start();
