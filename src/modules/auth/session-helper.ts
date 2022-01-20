@@ -78,6 +78,13 @@ export class SessionHelper {
 		return session[IDP_USER_INFO_PATH];
 	}
 
+	public static getIdp(session: Record<string, any>): Idp | null {
+		if (!session) {
+			return null;
+		}
+		return session[IDP];
+	}
+
 	/**
 	 * Logout by removing all user info from the session
 	 * @param session
