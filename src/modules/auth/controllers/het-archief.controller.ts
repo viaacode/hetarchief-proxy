@@ -112,4 +112,80 @@ export class HetArchiefController {
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}
+
+	@Get('logout')
+	@Redirect()
+	async logout(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string
+	) {
+		try {
+			if (SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)) {
+				const idpUser = SessionHelper.getIdpUserInfo(session);
+				const idpLogoutUrl = await this.hetArchiefService.createLogoutRequestUrl(
+					idpUser.name_id,
+					returnToUrl
+				);
+				SessionHelper.logout(session);
+				return {
+					url: idpLogoutUrl,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
+
+			return {
+				url: returnToUrl,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		} catch (err) {
+			Logger.error('Failed during hetarchief auth logout route', err);
+		}
+		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+	}
+
+	/**
+	 * Called by the identity provider service when a user logs out of another platform and the idp wants all platforms to logout
+	 * This call should redirect to the idp logout response url
+	 */
+	@Post('logout-callback')
+	@Redirect()
+	async logoutCallbackPost(
+		@Session() session: Record<string, any>,
+		@Body() response: SamlCallbackBody
+	): Promise<any> {
+		try {
+			SessionHelper.logout(session);
+
+			if (response.SAMLResponse) {
+				// response => user was requesting a logout starting in the archief2 client
+				let returnToUrl: string;
+				try {
+					const relayState: any = JSON.parse(response.RelayState);
+					returnToUrl = get(relayState, 'returnToUrl');
+				} catch (err) {
+					this.logger.error(
+						'Received logout response from dp with invald relayState',
+						err
+					);
+				}
+
+				return {
+					url: returnToUrl,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
+
+			// request => user requested logout starting in another app and the idp is requesting archief2 to log the user out
+			const responseUrl = await this.hetArchiefService.createLogoutResponseUrl(
+				response.RelayState
+			);
+			return {
+				url: responseUrl,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		} catch (err) {
+			this.logger.error('Failed during hetarchief auth POST logout-callback route', err);
+			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+		}
+	}
 }
