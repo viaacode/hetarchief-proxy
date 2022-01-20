@@ -20,8 +20,7 @@ export class SessionConfig {
 			redisConnectionString,
 		});
 
-		// const isProduction = environment !== 'local' && environment !== 'test';
-		const isProduction = environment === 'local';
+		const isProduction = environment !== 'local' && environment !== 'test';
 
 		const sessionConfig: session.SessionOptions = {
 			resave: false, // Postgres session provider doesn't need to resave the session every time
