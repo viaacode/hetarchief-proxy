@@ -110,7 +110,7 @@ export class MeemooController {
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			return {
-				url: info.returnToUrl,
+				url: info.returnToUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
