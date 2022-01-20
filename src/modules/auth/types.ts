@@ -126,6 +126,7 @@ export interface ArchiefUser {
 
 export enum Idp {
 	HETARCHIEF = 'HETARCHIEF',
+	MEEMOO = 'MEEMOO',
 }
 
 export type LoginResponse =
