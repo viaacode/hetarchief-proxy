@@ -1,9 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 
+import { LoginResponse } from '../types';
+
 @Controller('auth')
 export class AuthController {
-	@Get()
-	public logout(): string {
-		return 'OK';
+	@Get('check-login')
+	public checkLogin(): LoginResponse {
+		return { message: 'LOGGED_OUT' };
 	}
 }

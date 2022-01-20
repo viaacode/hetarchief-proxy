@@ -71,7 +71,7 @@ export class DataService {
 	/**
 	 * execute a (GraphQl) query
 	 */
-	private async execute(
+	public async execute(
 		query: string,
 		variables: { [varName: string]: any } = {}
 	): Promise<GraphQlResponse> {

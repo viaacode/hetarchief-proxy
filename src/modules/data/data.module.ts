@@ -9,5 +9,6 @@ import { DataService } from './services/data.service';
 	controllers: [DataController],
 	imports: [ConfigModule],
 	providers: [DataService, DataPermissionsService],
+	exports: [DataService, DataPermissionsService],
 })
 export class DataModule {}
