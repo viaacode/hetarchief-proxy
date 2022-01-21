@@ -32,11 +32,14 @@ export class SessionHelper {
 		if (!session) {
 			return false;
 		}
-		return (
-			Idp[session[IDP]] && // IDP is set and known
-			session[IDP_USER_INFO_PATH] && // IDP user is set
-			SessionHelper.isIdpUserSessionValid(session) && // IDP session is valid
-			session[ARCHIEF_USER_INFO_PATH] // Archief user is set
+
+		return !!(
+			(
+				Idp[session[IDP]] && // IDP is set and known
+				session[IDP_USER_INFO_PATH] && // IDP user is set
+				SessionHelper.isIdpUserSessionValid(session) && // IDP session is valid
+				session[ARCHIEF_USER_INFO_PATH]
+			) // Archief user is set
 		);
 	}
 

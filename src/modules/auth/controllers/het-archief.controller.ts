@@ -60,7 +60,7 @@ export class HetArchiefController {
 		try {
 			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
-			const info: RelayState = JSON.parse(response.RelayState);
+			const info: RelayState = response.RelayState ? JSON.parse(response.RelayState) : {};
 			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 
 			// permissions check
@@ -104,7 +104,7 @@ export class HetArchiefController {
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			return {
-				url: info.returnToUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
+				url: info.returnToUrl, // TODO add fallback if undefined
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
@@ -164,7 +164,7 @@ export class HetArchiefController {
 					returnToUrl = get(relayState, 'returnToUrl');
 				} catch (err) {
 					this.logger.error(
-						'Received logout response from dp with invald relayState',
+						'Received logout response from idp with invalid relayState',
 						err
 					);
 				}
@@ -180,7 +180,7 @@ export class HetArchiefController {
 				response.RelayState
 			);
 			return {
-				url: responseUrl,
+				url: responseUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {

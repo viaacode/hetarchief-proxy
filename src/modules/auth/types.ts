@@ -67,22 +67,22 @@ export interface SamlCallbackBody {
 
 interface LdapAttributes {
 	mail: string[];
-	displayName: string[]; // username or nickname
+	displayName?: string[]; // username or nickname
 	givenName: string[]; // firstname
 	sn: string[]; // lastname
 	cn: string[]; // fullname
 	o: string[]; // organization id
 	entryUUID: string[];
-	entryDN: string[]; // eg: mail=bert.verhelst@studiohyperdrive.be,ou=people,dc=hetarchief,dc=be
+	entryDN?: string[]; // eg: mail=bert.verhelst@studiohyperdrive.be,ou=people,dc=hetarchief,dc=be
 	apps: string[]; // avo
 	oNickname: string[]; // name organization
-	employeeNumber: string[]; // stamboek number
-	'x-be-viaa-eduTypeName': string[];
-	'x-be-viaa-eduLevelName': string[];
-	organizationalStatus: string[]; // usergroup
-	'x-be-viaa-eduExceptionAccount': string[]; // is_exception account
-	role: string[];
-	sector: string[];
+	employeeNumber?: string[]; // stamboek number
+	'x-be-viaa-eduTypeName'?: string[];
+	'x-be-viaa-eduLevelName'?: string[];
+	organizationalStatus?: string[]; // usergroup
+	'x-be-viaa-eduExceptionAccount'?: string[]; // is_exception account
+	role?: string[];
+	sector?: string[];
 }
 
 export interface LdapUser {
