@@ -1,24 +1,28 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import connectRedis from 'connect-redis';
+import { CronJob } from 'cron';
 import session from 'express-session';
-import cron from 'node-cron';
 import { createClient } from 'redis';
 
-export class SessionConfig {
-	private logger: Logger = new Logger('SessionConfig', { timestamp: true });
+@Injectable()
+export class SessionService {
+	private readonly logger = new Logger(SessionService.name);
 
-	public async get(
-		environment: string,
-		cookieSecret: string,
-		cookieMaxAge: number,
-		redisConnectionString: string = null
-	): Promise<session.SessionOptions> {
-		this.logger.log('SESSION config input: ', {
-			environment,
-			cookieSecret,
-			cookieMaxAge,
-			redisConnectionString,
-		});
+	constructor(
+		private configService: ConfigService,
+		private schedulerRegistry: SchedulerRegistry
+	) {}
+
+	/**
+	 * Returns the session config for the express session middleware
+	 */
+	public async getSessionConfig(): Promise<session.SessionOptions> {
+		const environment = this.configService.get('environment');
+		const cookieSecret = this.configService.get('cookieSecret');
+		const cookieMaxAge = this.configService.get('cookieMaxAge');
+		const redisConnectionString = this.configService.get('redisConnectionString');
 
 		const isProduction = environment !== 'local' && environment !== 'test';
 
@@ -64,11 +68,10 @@ export class SessionConfig {
 				}
 			};
 
-			// schedule cron to flush sessions every day at 05:00
-			cron.schedule('0 0 05 * * *', clearRedis, {
-				scheduled: true,
-				timezone: 'Europe/Brussels',
-			}).start();
+			const job = new CronJob(`0 0 05 * * *`, clearRedis);
+
+			this.schedulerRegistry.addCronJob('FlushRedis', job);
+			job.start();
 
 			sessionConfig.store = new redisStore({ client: redisClient });
 		}
