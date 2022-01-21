@@ -2,11 +2,15 @@ import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
 
 const config = (): Configuration => ({
+	environment: process.env.NODE_ENV || DEFAULT_CONFIG.environment,
 	host: process.env.HOST,
 	port: parseInt(process.env.PORT, 10) || DEFAULT_CONFIG.port,
 	graphQlUrl: process.env.GRAPHQL_URL,
 	graphQlSecret: process.env.GRAPHQL_URL,
 	graphQlEnableWhitelist: process.env.GRAPHQL_ENABLE_WHITELIST === 'true',
+	cookieSecret: process.env.COOKIE_SECRET,
+	cookieMaxAge: parseInt(process.env.COOKIE_MAX_AGE, 10),
+	redisConnectionString: process.env.REDIS_CONNECTION_STRING,
 	samlIdpMetaDataEndpoint: process.env.SAML_IDP_META_DATA_ENDPOINT,
 	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
 	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,

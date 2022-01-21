@@ -1,11 +1,15 @@
 import { ConfigService as NestConfigService } from '@nestjs/config';
 
 export interface Configuration {
+	environment: string;
 	host: string;
 	port: number;
 	graphQlUrl: string;
 	graphQlSecret: string;
 	graphQlEnableWhitelist: boolean;
+	cookieSecret: string;
+	cookieMaxAge: number;
+	redisConnectionString: string;
 	samlIdpMetaDataEndpoint: string;
 	samlSpEntityId: string;
 	samlSpPrivateKey: string;

@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from '../services/meemoo.service';
+import { Idp } from '../types';
 
 import { MeemooController } from './meemoo.controller';
 
@@ -43,6 +44,14 @@ const mockUsersService = {
 	updateUser: jest.fn(),
 };
 
+const mockSession = {
+	idp: Idp.MEEMOO,
+	idpUserInfo: {
+		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
+	},
+	archiefUserInfo: {},
+};
+
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
 	beforeEach(async () => {
@@ -70,10 +79,21 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.getAuth('http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
+			});
+		});
+
+		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+			const result = await meemooController.getAuth(
+				mockSession,
+				'http://hetarchief.be/start'
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'http://hetarchief.be/start',
 			});
 		});
 
@@ -81,7 +101,7 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.getAuth('http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
 			expect(result).toBeUndefined();
 		});
 	});
@@ -140,6 +160,18 @@ describe('MeemooController', () => {
 			mockMeemooService.assertSamlResponse.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
+			const result = await meemooController.loginCallback({}, samlResponse);
+			expect(result).toBeUndefined();
+		});
+
+		it('should handle an exception if the user has no access to the archief app', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
 			const result = await meemooController.loginCallback({}, samlResponse);
 			expect(result).toBeUndefined();
 		});
