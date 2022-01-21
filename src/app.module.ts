@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
@@ -8,6 +9,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
+import { SessionService } from '~shared/services/session.service';
 
 @Module({
 	imports: [
@@ -17,10 +19,11 @@ import { DataModule } from '~modules/data';
 			validationSchema: configValidationSchema,
 			expandVariables: true,
 		}),
+		ScheduleModule.forRoot(),
 		DataModule,
 		AuthModule,
 	],
 	controllers: [AppController],
-	providers: [AppService],
+	providers: [AppService, SessionService],
 })
 export class AppModule {}

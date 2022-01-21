@@ -7,7 +7,7 @@ import { ConfigService } from '~config';
 
 import { AppModule } from './app.module';
 
-import { SessionConfig } from '~config/session.config';
+import { SessionService } from '~shared/services/session.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -17,15 +17,12 @@ async function bootstrap() {
 	app.enableCors();
 	app.useGlobalPipes(new ValidationPipe());
 
-	/** Init sessions middleware */
-	const sessionConfig = await new SessionConfig().get(
-		configService.get('environment'),
-		configService.get('cookieSecret'),
-		configService.get('cookieMaxAge'),
-		configService.get('redisConnectionString')
-	);
+	/** Session middleware */
+	const sessionService = app.get<SessionService>(SessionService);
+	const sessionConfig = await sessionService.getSessionConfig();
 	app.use(session(sessionConfig));
 
+	/** All good, start listening */
 	await app.listen(port);
 }
 bootstrap();
