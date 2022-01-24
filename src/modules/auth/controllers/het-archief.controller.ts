@@ -19,7 +19,7 @@ import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
 
 @Controller('auth/hetarchief')
 export class HetArchiefController {
-	private logger: Logger = new Logger('HetArchiefController', { timestamp: true });
+	private logger: Logger = new Logger(HetArchiefController.name, { timestamp: true });
 
 	constructor(private hetArchiefService: HetArchiefService, private usersService: UsersService) {}
 
