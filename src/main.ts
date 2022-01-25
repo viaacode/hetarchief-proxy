@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import session from 'express-session';
+import helmet from 'helmet';
 
 import { ConfigService } from '~config';
 
@@ -14,7 +15,11 @@ async function bootstrap() {
 	const configService = app.get<ConfigService>(NestConfigService);
 	const port = configService.get('port');
 
-	app.enableCors();
+	/** Security */
+	app.enableCors(configService.get('corsOptions'));
+	app.use(helmet());
+
+	/** Validation */
 	app.useGlobalPipes(new ValidationPipe());
 
 	/** Session middleware */
