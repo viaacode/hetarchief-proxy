@@ -9,6 +9,7 @@ import { MeemooController } from './meemoo.controller';
 import { UsersService } from '~modules/users/services/users.service';
 
 const meemooLoginUrl = 'http://meemoo.be/login';
+const meemooLogoutUrl = 'http://meemoo.be/logout';
 
 const ldapUser = {
 	attributes: {
@@ -33,9 +34,16 @@ const samlResponse = {
 	SAMLResponse: 'dummy',
 };
 
+const samlLogoutResponse = {
+	RelayState: `{ "returnToUrl": "${meemooLogoutUrl}" }`,
+	SAMLResponse: 'dummy',
+};
+
 const mockMeemooService = {
 	createLoginRequestUrl: jest.fn(),
 	assertSamlResponse: jest.fn(),
+	createLogoutRequestUrl: jest.fn(),
+	createLogoutResponseUrl: jest.fn(),
 };
 
 const mockUsersService = {
@@ -44,13 +52,13 @@ const mockUsersService = {
 	updateUser: jest.fn(),
 };
 
-const mockSession = {
+const getNewMockSession = () => ({
 	idp: Idp.MEEMOO,
 	idpUserInfo: {
 		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
 	},
 	archiefUserInfo: {},
-};
+});
 
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
@@ -88,7 +96,7 @@ describe('MeemooController', () => {
 
 		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
 			const result = await meemooController.getAuth(
-				mockSession,
+				getNewMockSession(),
 				'http://hetarchief.be/start'
 			);
 			expect(result).toEqual({
@@ -173,6 +181,101 @@ describe('MeemooController', () => {
 			ldapNoAccess.attributes.apps = [];
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
 			const result = await meemooController.loginCallback({}, samlResponse);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('logout', () => {
+		it('should logout and redirect to the IDP logout url', async () => {
+			mockMeemooService.createLogoutRequestUrl.mockReturnValueOnce(meemooLogoutUrl);
+			const mockSession = getNewMockSession();
+			const result = await meemooController.logout(mockSession, 'http://hetarchief.be/start');
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: meemooLogoutUrl,
+			});
+			expect(mockSession.idp).toBeNull();
+		});
+
+		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+			const mockSession = getNewMockSession();
+			mockSession.idp = null;
+			const result = await meemooController.logout(mockSession, 'http://hetarchief.be/start');
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'http://hetarchief.be/start',
+			});
+		});
+
+		it('should catch an exception when generating the logout url', async () => {
+			mockMeemooService.createLogoutRequestUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await meemooController.logout(
+				getNewMockSession(),
+				'http://hetarchief.be/start'
+			);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('logout-callback', () => {
+		it('should redirect after succesful logout callback', async () => {
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
+			const result = await meemooController.logoutCallbackPost(
+				getNewMockSession(),
+				samlLogoutResponse
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: meemooLogoutUrl,
+			});
+			expect(mockMeemooService.createLogoutResponseUrl).not.toBeCalled();
+		});
+
+		it('should catch an exception when handling the saml response', async () => {
+			const result = await meemooController.logoutCallbackPost(
+				{},
+				{
+					RelayState: 'invalidjson',
+					SAMLResponse: 'dummy',
+				}
+			);
+			expect(result).toEqual({
+				url: undefined,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			});
+		});
+
+		it('should redirect to the generated logout response url', async () => {
+			mockMeemooService.createLogoutResponseUrl.mockResolvedValueOnce('logout-response-url');
+			const result = await meemooController.logoutCallbackPost(
+				{},
+				{
+					RelayState: `{ "returnToUrl": "${meemooLogoutUrl}" }`,
+					SAMLResponse: null,
+				}
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'logout-response-url',
+			});
+		});
+
+		it('should catch an exception when generationg the logout response url', async () => {
+			mockMeemooService.createLogoutResponseUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await meemooController.logoutCallbackPost(
+				{},
+				{
+					RelayState: null,
+					SAMLResponse: null,
+				}
+			);
 			expect(result).toBeUndefined();
 		});
 	});

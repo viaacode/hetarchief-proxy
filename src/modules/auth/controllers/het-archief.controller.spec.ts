@@ -9,6 +9,7 @@ import { HetArchiefController } from './het-archief.controller';
 import { UsersService } from '~modules/users/services/users.service';
 
 const hetArchiefLoginUrl = 'http://hetarchief.be/login';
+const hetArchiefLogoutUrl = 'http://hetarchief.be/logout';
 
 const ldapUser = {
 	attributes: {
@@ -33,9 +34,16 @@ const samlResponse = {
 	SAMLResponse: 'dummy',
 };
 
+const samlLogoutResponse = {
+	RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
+	SAMLResponse: 'dummy',
+};
+
 const mockArchiefService = {
 	createLoginRequestUrl: jest.fn(),
 	assertSamlResponse: jest.fn(),
+	createLogoutRequestUrl: jest.fn(),
+	createLogoutResponseUrl: jest.fn(),
 };
 
 const mockUsersService = {
@@ -44,13 +52,13 @@ const mockUsersService = {
 	updateUser: jest.fn(),
 };
 
-const mockSession = {
+const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,
 	idpUserInfo: {
 		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
 	},
 	archiefUserInfo: {},
-};
+});
 
 describe('HetArchiefController', () => {
 	let hetArchiefController: HetArchiefController;
@@ -88,7 +96,7 @@ describe('HetArchiefController', () => {
 
 		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
 			const result = await hetArchiefController.getAuth(
-				mockSession,
+				getNewMockSession(),
 				'http://hetarchief.be/start'
 			);
 			expect(result).toEqual({
@@ -173,6 +181,107 @@ describe('HetArchiefController', () => {
 			ldapNoAccess.attributes.apps = [];
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
 			const result = await hetArchiefController.loginCallback({}, samlResponse);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('logout', () => {
+		it('should logout and redirect to the IDP logout url', async () => {
+			mockArchiefService.createLogoutRequestUrl.mockReturnValueOnce(hetArchiefLogoutUrl);
+			const mockSession = getNewMockSession();
+			const result = await hetArchiefController.logout(
+				mockSession,
+				'http://hetarchief.be/start'
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLogoutUrl,
+			});
+			expect(mockSession.idp).toBeNull();
+		});
+
+		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+			const mockSession = getNewMockSession();
+			mockSession.idp = null;
+			const result = await hetArchiefController.logout(
+				mockSession,
+				'http://hetarchief.be/start'
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'http://hetarchief.be/start',
+			});
+		});
+
+		it('should catch an exception when generating the logout url', async () => {
+			mockArchiefService.createLogoutRequestUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.logout(
+				getNewMockSession(),
+				'http://hetarchief.be/start'
+			);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('logout-callback', () => {
+		it('should redirect after succesful logout callback', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
+			const result = await hetArchiefController.logoutCallbackPost(
+				getNewMockSession(),
+				samlLogoutResponse
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLogoutUrl,
+			});
+			expect(mockArchiefService.createLogoutResponseUrl).not.toBeCalled();
+		});
+
+		it('should catch an exception when handling the saml response', async () => {
+			const result = await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: 'invalidjson',
+					SAMLResponse: 'dummy',
+				}
+			);
+			expect(result).toEqual({
+				url: undefined,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			});
+		});
+
+		it('should redirect to the generated logout response url', async () => {
+			mockArchiefService.createLogoutResponseUrl.mockResolvedValueOnce('logout-response-url');
+			const result = await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
+					SAMLResponse: null,
+				}
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: 'logout-response-url',
+			});
+		});
+
+		it('should catch an exception when generationg the logout response url', async () => {
+			mockArchiefService.createLogoutResponseUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: null,
+					SAMLResponse: null,
+				}
+			);
 			expect(result).toBeUndefined();
 		});
 	});

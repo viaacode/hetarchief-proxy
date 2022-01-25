@@ -18,6 +18,8 @@ export interface Configuration {
 	samlMeemooSpEntityId: string;
 	samlMeemooSpPrivateKey: string;
 	samlMeemooSpCertificate: string;
+	corsEnableWhitelist: boolean;
+	corsOptions: any;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

@@ -102,6 +102,41 @@ export abstract class SamlService {
 		});
 	}
 
+	public createLogoutRequestUrl(nameId: string, returnToUrl: string) {
+		return new Promise<string>((resolve, reject) => {
+			this.serviceProvider.create_logout_request_url(
+				this.identityProvider,
+				{
+					relay_state: JSON.stringify({ returnToUrl }),
+					name_id: nameId,
+				},
+				(error: any, logoutUrl: string) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(logoutUrl);
+					}
+				}
+			);
+		});
+	}
+
+	public createLogoutResponseUrl(relayState: any) {
+		return new Promise<string>((resolve, reject) => {
+			this.serviceProvider.create_logout_response_url(
+				this.identityProvider,
+				{ relay_state: relayState },
+				(error: any, responseUrl: string) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(responseUrl);
+					}
+				}
+			);
+		});
+	}
+
 	public assertSamlResponse(requestBody: SamlCallbackBody): Promise<LdapUser> {
 		return new Promise((resolve, reject) => {
 			this.serviceProvider.post_assert(
