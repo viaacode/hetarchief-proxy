@@ -1,5 +1,9 @@
+import { UnauthorizedException } from '@nestjs/common';
+
 import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
+
+const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 
 const config = (): Configuration => ({
 	environment: process.env.NODE_ENV || DEFAULT_CONFIG.environment,
@@ -19,6 +23,24 @@ const config = (): Configuration => ({
 	samlMeemooSpEntityId: process.env.SAML_MEEMOO_SP_ENTITY_ID,
 	samlMeemooSpPrivateKey: process.env.SAML_MEEMOO_SP_PRIVATE_KEY,
 	samlMeemooSpCertificate: process.env.SAML_MEEMOO_SP_CERTIFICATE,
+	corsEnableWhitelist: process.env.CORS_ENABLE_WHITELIST === 'true',
+	corsOptions: {
+		origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {
+			if (process.env.CORS_ENABLE_WHITELIST !== 'true') {
+				// whitelist not enabled
+				callback(null, true);
+			} else if (WHITE_LIST_DOMAINS.indexOf(origin) !== -1 || !origin) {
+				// whitelist enabled but not permitted
+				callback(null, true);
+			} else {
+				callback(new UnauthorizedException('Request ot allowed by CORS'), false);
+			}
+		},
+		credentials: true,
+		allowedHeaders:
+			'X-Requested-With, Content-Type, authorization, Origin, Accept, cache-control',
+		methods: 'GET, POST, OPTIONS, PUT, DELETE',
+	},
 });
 
 export default config;
