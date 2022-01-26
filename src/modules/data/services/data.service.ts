@@ -21,6 +21,7 @@ export class DataService {
 	private logger: Logger = new Logger(DataService.name, { timestamp: true });
 	private gotInstance: Got;
 
+	private whitelistEnabled: boolean;
 	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
 
 	constructor(
@@ -28,18 +29,22 @@ export class DataService {
 		private dataPermissionsService: DataPermissionsService
 	) {
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('GRAPHQL_URL'),
+			prefixUrl: this.configService.get('graphQlUrl'),
 			headers: {
-				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET'),
+				'x-hasura-admin-secret': this.configService.get('graphQlSecret'),
 			},
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
+
+		this.whitelistEnabled = this.configService.get('graphQlEnableWhitelist');
+
 		const proxyWhitelistPath = path.join(__dirname, '../../../../scripts/proxy-whitelist.json');
 		const clientWhitelistPath = path.join(
 			__dirname,
 			'../../../../scripts/client-whitelist.json'
 		);
+
 		this.whitelist = {
 			[QueryOrigin.PROXY]: fse.existsSync(proxyWhitelistPath)
 				? JSON.parse(fse.readFileSync(proxyWhitelistPath, { encoding: 'utf8' }))
@@ -50,6 +55,9 @@ export class DataService {
 		};
 	}
 
+	/**
+	 * @returns if a query is allowed, by checking both whitlisting and query permissions
+	 */
 	public async isAllowedToExecuteQuery(
 		queryDto: GraphQlQueryDto,
 		origin: QueryOrigin
@@ -61,7 +69,11 @@ export class DataService {
 	}
 
 	public isWhitelistEnabled(): boolean {
-		return this.configService.get('graphQlEnableWhitelist');
+		return this.whitelistEnabled;
+	}
+
+	public setWhitelistEnabled(enabled: boolean): void {
+		this.whitelistEnabled = enabled;
 	}
 
 	public getWhitelistedQueryName(query: string, origin: QueryOrigin): string {
@@ -71,6 +83,9 @@ export class DataService {
 		);
 	}
 
+	/**
+	 * @returns boolean if the query is whitelisted
+	 */
 	public isQueryWhitelisted(queryDto: GraphQlQueryDto, origin: QueryOrigin): boolean {
 		// Find query in whitelist by looking for the first part. eg: "query getUserGroups"
 		const queryName = this.getWhitelistedQueryName(queryDto.query, origin);
@@ -78,6 +93,9 @@ export class DataService {
 		return !!queryName;
 	}
 
+	/**
+	 * @returns the whitelisted query for the given query
+	 */
 	public getWhitelistedQuery(query: string, origin: QueryOrigin): string {
 		if (this.isWhitelistEnabled()) {
 			const queryName = this.getWhitelistedQueryName(query, origin);
