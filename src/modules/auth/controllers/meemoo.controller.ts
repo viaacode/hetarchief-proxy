@@ -66,17 +66,18 @@ export class MeemooController {
 
 			/**
 			 * permissions check
-			 * TODO opm Ineke: - nu een dummy implementatie
+			 * TODO opm Ineke: - nu een dummy implementatie. Op dit moment is er nog geen apps property.
+			 * Als dit uitgeklaard is wat in 'apps' gespecifieerd moet zijn, ook test hiervoor toevoegen (analoog aan het-archief controller)
 			 * Enkel CP medewerkers met een specifieke setting in de meemoo idp mogen toegang krijgen als admin tot de leeszaal.
 			 * Dit zal een vinkje zijn dat manueel wordt aangezet wordt door een meemoo medewerker van team TAM.
 			 */
-			if (!get(ldapUser, 'attributes.apps', []).includes('meemoo')) {
-				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
-				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'meemoo'`
-				);
-				throw new UnauthorizedException();
-			}
+			// if (!get(ldapUser, 'attributes.apps', []).includes('meemoo')) {
+			// 	// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+			// 	this.logger.error(
+			// 		`User ${ldapUser.attributes.mail[0]} has no access to app 'meemoo'`
+			// 	);
+			// 	throw new UnauthorizedException();
+			// }
 
 			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, ldapUser);
 
@@ -115,6 +116,7 @@ export class MeemooController {
 			};
 		} catch (err) {
 			Logger.error('Failed during meemoo auth login-callback route', err);
+			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}

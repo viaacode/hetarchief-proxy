@@ -16,8 +16,6 @@ export interface Configuration {
 	samlSpCertificate: string;
 	samlMeemooIdpMetaDataEndpoint: string;
 	samlMeemooSpEntityId: string;
-	samlMeemooSpPrivateKey: string;
-	samlMeemooSpCertificate: string;
 	corsEnableWhitelist: boolean;
 	corsOptions: any;
 }

@@ -164,15 +164,20 @@ describe('HetArchiefController', () => {
 			mockUsersService.updateUser.mockClear();
 		});
 
-		it('should catch an exception when handling the saml response', async () => {
+		it('should throw an exception on invalid saml response', async () => {
 			mockArchiefService.assertSamlResponse.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.loginCallback({}, samlResponse);
-			expect(result).toBeUndefined();
+			let error;
+			try {
+				await hetArchiefController.loginCallback({}, samlResponse);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Test error handling');
 		});
 
-		it('should handle an exception if the user has no access to the archief app', async () => {
+		it('should throw an unauthorized exception if the user has no access to the archief app', async () => {
 			const ldapNoAccess = {
 				attributes: {
 					...ldapUser.attributes,
@@ -180,8 +185,16 @@ describe('HetArchiefController', () => {
 			};
 			ldapNoAccess.attributes.apps = [];
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
-			const result = await hetArchiefController.loginCallback({}, samlResponse);
-			expect(result).toBeUndefined();
+			let error;
+			try {
+				await hetArchiefController.loginCallback({}, samlResponse);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				statusCode: HttpStatus.UNAUTHORIZED,
+				message: 'Unauthorized',
+			});
 		});
 	});
 
