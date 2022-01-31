@@ -70,7 +70,7 @@ export class MeemooController {
 			if (!get(ldapUser, 'attributes.apps', []).includes('bezoekertool')) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'meemoo'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
 				);
 				throw new UnauthorizedException();
 			}
