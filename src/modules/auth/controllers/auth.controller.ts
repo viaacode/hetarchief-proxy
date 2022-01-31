@@ -15,7 +15,7 @@ import { LoginResponse } from '../types';
 
 @Controller('auth')
 export class AuthController {
-	private logger: Logger = new Logger('AuthController', { timestamp: true });
+	private logger: Logger = new Logger(AuthController.name, { timestamp: true });
 
 	constructor(private idpService: IdpService) {}
 

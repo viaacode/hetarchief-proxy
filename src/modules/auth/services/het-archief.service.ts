@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SamlService } from './saml.service';
@@ -7,6 +7,7 @@ import { SamlService } from './saml.service';
 export class HetArchiefService extends SamlService {
 	constructor(protected configService: ConfigService) {
 		super(configService);
+		this.logger = new Logger(HetArchiefService.name, { timestamp: true });
 	}
 
 	public async initialize() {
