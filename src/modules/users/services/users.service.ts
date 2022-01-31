@@ -16,7 +16,7 @@ import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export class UsersService {
-	private logger: Logger = new Logger('UsersService', { timestamp: true });
+	private logger: Logger = new Logger(UsersService.name, { timestamp: true });
 
 	constructor(protected dataService: DataService) {}
 

@@ -20,7 +20,7 @@ import { UsersService } from '~modules/users/services/users.service';
 
 @Controller('auth/meemoo')
 export class MeemooController {
-	private logger: Logger = new Logger('MeemooController', { timestamp: true });
+	private logger: Logger = new Logger(MeemooController.name, { timestamp: true });
 
 	constructor(private meemooService: MeemooService, private usersService: UsersService) {}
 
