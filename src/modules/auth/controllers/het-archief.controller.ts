@@ -109,6 +109,7 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
+			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}

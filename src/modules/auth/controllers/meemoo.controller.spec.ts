@@ -168,20 +168,13 @@ describe('MeemooController', () => {
 			mockMeemooService.assertSamlResponse.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.loginCallback({}, samlResponse);
-			expect(result).toBeUndefined();
-		});
-
-		it('should handle an exception if the user has no access to the archief app', async () => {
-			const ldapNoAccess = {
-				attributes: {
-					...ldapUser.attributes,
-				},
-			};
-			ldapNoAccess.attributes.apps = [];
-			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
-			const result = await meemooController.loginCallback({}, samlResponse);
-			expect(result).toBeUndefined();
+			let error;
+			try {
+				await meemooController.loginCallback({}, samlResponse);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Test error handling');
 		});
 	});
 

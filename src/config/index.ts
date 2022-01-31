@@ -21,8 +21,6 @@ const config = (): Configuration => ({
 	samlSpCertificate: process.env.SAML_SP_CERTIFICATE,
 	samlMeemooIdpMetaDataEndpoint: process.env.SAML_MEEMOO_IDP_META_DATA_ENDPOINT,
 	samlMeemooSpEntityId: process.env.SAML_MEEMOO_SP_ENTITY_ID,
-	samlMeemooSpPrivateKey: process.env.SAML_MEEMOO_SP_PRIVATE_KEY,
-	samlMeemooSpCertificate: process.env.SAML_MEEMOO_SP_CERTIFICATE,
 	corsEnableWhitelist: process.env.CORS_ENABLE_WHITELIST === 'true',
 	corsOptions: {
 		origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {

@@ -59,21 +59,21 @@ export abstract class SamlService {
 				private_key: privateKey,
 				certificate,
 				assert_endpoint: assertEndpoint,
-				// force_authn: true, // TODO enable certificates once the app runs on https on qas/prd
+				force_authn: !!certificate, // this is required when a certificate is set (not for local development)
 				auth_context: {
 					comparison: 'exact',
 					class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'],
 				},
 				nameid_format: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
-				sign_get_request: false,
+				sign_get_request: !!certificate, // this is required when a certificate is set (not for local development)
 				allow_unencrypted_assertion: true,
 			});
 			this.identityProvider = new saml2.IdentityProvider({
 				sso_login_url: this.ssoLoginUrl,
 				sso_logout_url: this.ssoLogoutUrl,
 				certificates: signingIdpCertificates,
-				// force_authn: true, // TODO enable certificates once the app runs on https on qas/prd
-				sign_get_request: false,
+				force_authn: !!certificate, // this is required when a certificate is set (not for local development)
+				sign_get_request: !!certificate, // this is required when a certificate is set (not for local development)
 				allow_unencrypted_assertion: true,
 			});
 		} catch (err) {
