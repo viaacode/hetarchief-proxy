@@ -1,11 +1,14 @@
-import { Controller, Get, Logger, Session } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Logger, Query, Redirect, Session } from '@nestjs/common';
 
+import { IdpService } from '../services/idp.service';
 import { SessionHelper } from '../session-helper';
 import { LoginMessage, LoginResponse } from '../types';
 
 @Controller('auth')
 export class AuthController {
 	private logger: Logger = new Logger(AuthController.name, { timestamp: true });
+
+	constructor(private idpService: IdpService) {}
 
 	@Get('check-login')
 	public async checkLogin(@Session() session: Record<string, any>): Promise<LoginResponse> {
@@ -26,5 +29,28 @@ export class AuthController {
 		}
 
 		return { message: LoginMessage.LOGGED_OUT };
+	}
+
+	@Get('global-logout')
+	@Redirect()
+	public async globalLogout(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string
+	) {
+		this.logger.log('Global-logout called');
+		const idp = SessionHelper.getIdp(session);
+		if (this.idpService.hasSpecificLogoutPage(idp)) {
+			this.logger.log('-> Specific logout');
+			return {
+				url: this.idpService.getSpecificLogoutUrl(idp, returnToUrl),
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		}
+		this.logger.log('Global but no specific logout, clearing session...');
+		SessionHelper.logout(session);
+		return {
+			url: returnToUrl,
+			statusCode: HttpStatus.TEMPORARY_REDIRECT,
+		};
 	}
 }

@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
 	Injectable,
 	InternalServerErrorException,
@@ -5,7 +7,9 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import fse from 'fs-extra';
 import got, { Got } from 'got';
+import { keys } from 'lodash';
 
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
@@ -14,23 +18,46 @@ import { DataPermissionsService } from './data-permissions.service';
 
 @Injectable()
 export class DataService {
+	private logger: Logger = new Logger(DataService.name, { timestamp: true });
 	private gotInstance: Got;
-	private logger: Logger = new Logger('DataService', { timestamp: true });
+
+	private whitelistEnabled: boolean;
+	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
 
 	constructor(
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('GRAPHQL_URL'),
+			prefixUrl: this.configService.get('graphQlUrl'),
 			headers: {
-				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET'),
+				'x-hasura-admin-secret': this.configService.get('graphQlSecret'),
 			},
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
+
+		this.whitelistEnabled = this.configService.get('graphQlEnableWhitelist');
+
+		const proxyWhitelistPath = path.join(__dirname, '../../../../scripts/proxy-whitelist.json');
+		const clientWhitelistPath = path.join(
+			__dirname,
+			'../../../../scripts/client-whitelist.json'
+		);
+
+		this.whitelist = {
+			[QueryOrigin.PROXY]: fse.existsSync(proxyWhitelistPath)
+				? JSON.parse(fse.readFileSync(proxyWhitelistPath, { encoding: 'utf8' }))
+				: {},
+			[QueryOrigin.CLIENT]: fse.existsSync(clientWhitelistPath)
+				? JSON.parse(fse.readFileSync(clientWhitelistPath, { encoding: 'utf8' }))
+				: {},
+		};
 	}
 
+	/**
+	 * @returns if a query is allowed, by checking both whitlisting and query permissions
+	 */
 	public async isAllowedToExecuteQuery(
 		queryDto: GraphQlQueryDto,
 		origin: QueryOrigin
@@ -42,16 +69,38 @@ export class DataService {
 	}
 
 	public isWhitelistEnabled(): boolean {
-		return this.configService.get('GRAPHQL_ENABLE_WHITELIST');
+		return this.whitelistEnabled;
 	}
 
-	private isQueryWhitelisted(queryDto: GraphQlQueryDto, origin: QueryOrigin): boolean {
-		// TODO will be further implemented in ARC-255
-		return true;
+	public setWhitelistEnabled(enabled: boolean): void {
+		this.whitelistEnabled = enabled;
 	}
 
-	private getWhitelistedQuery(query: string): string {
-		// TODO will be further implemented in ARC-255
+	public getWhitelistedQueryName(query: string, origin: QueryOrigin): string {
+		const queryStart = query.replace(/[\s]+/gm, ' ').split(/[{(]/)[0].trim();
+		return keys(this.whitelist[origin]).find(
+			(key) => this.whitelist[origin][key].split(/[{(]/)[0].trim() === queryStart
+		);
+	}
+
+	/**
+	 * @returns boolean if the query is whitelisted
+	 */
+	public isQueryWhitelisted(queryDto: GraphQlQueryDto, origin: QueryOrigin): boolean {
+		// Find query in whitelist by looking for the first part. eg: "query getUserGroups"
+		const queryName = this.getWhitelistedQueryName(queryDto.query, origin);
+		// if we found the name, the query is whitelisted
+		return !!queryName;
+	}
+
+	/**
+	 * @returns the whitelisted query for the given query
+	 */
+	public getWhitelistedQuery(query: string, origin: QueryOrigin): string {
+		if (this.isWhitelistEnabled()) {
+			const queryName = this.getWhitelistedQueryName(query, origin);
+			return this.whitelist[origin][queryName];
+		}
 		return query;
 	}
 
@@ -65,7 +114,10 @@ export class DataService {
 		if (!(await this.isAllowedToExecuteQuery(queryDto, QueryOrigin.CLIENT))) {
 			throw new UnauthorizedException('You are not authorized to execute this query');
 		}
-		return this.execute(this.getWhitelistedQuery(queryDto.query), queryDto.variables);
+		return this.execute(
+			this.getWhitelistedQuery(queryDto.query, QueryOrigin.CLIENT),
+			queryDto.variables
+		);
 	}
 
 	/**

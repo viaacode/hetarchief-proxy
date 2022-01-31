@@ -25,7 +25,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
-    "i18n:extract": "ts-node --transpile-only --require dotenv/config scripts/extract-and-replace-translations.ts dotenv_config_path=.env/.env.local && npm run format"
+    "i18n:extract": "ts-node --transpile-only --require dotenv/config scripts/extract-and-replace-translations.ts dotenv_config_path=.env/.env.local && npm run format",
+    "gql:extract": "ts-node --transpile-only --require dotenv/config scripts/whitelist-gql-queries.ts dotenv_config_path=.env/.env.local"
   },
   "dependencies": {
     "@nestjs/common": "8.2.3",
@@ -38,10 +39,13 @@
     "connect-redis": "6.0.0",
     "date-fns": "2.28.0",
     "express-session": "1.17.2",
+    "fs-extra": "10.0.0",
     "got": "11.8.3",
+    "helmet": "5.0.2",
     "i18next": "21.6.3",
     "joi": "17.5.0",
     "lodash": "4.17.21",
+    "query-string": "7.1.0",
     "redis": "3.1.2",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
@@ -59,6 +63,8 @@
     "@types/cron": "1.7.3",
     "@types/express": "4.17.13",
     "@types/express-session": "1.17.4",
+    "@types/fs-extra": "9.0.13",
+    "@types/helmet": "4.0.0",
     "@types/jest": "27.0.3",
     "@types/lodash": "4.14.178",
     "@types/node": "16.11.10",
