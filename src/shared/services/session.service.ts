@@ -26,6 +26,8 @@ export class SessionService {
 
 		const isProduction = environment !== 'local' && environment !== 'test';
 
+		this.logger.log('Session config: ', { environment, redisConnectionString, isProduction });
+
 		const sessionConfig: session.SessionOptions = {
 			resave: false, // Postgres session provider doesn't need to resave the session every time
 			saveUninitialized: false, // Do not create a session for users that are not logged in, neither for health checks
@@ -39,6 +41,7 @@ export class SessionService {
 		};
 
 		if (isProduction) {
+			this.logger.log('isProduction: initializing Redis Store...');
 			// Enable cross-site usage: set sameSite to 'none'
 			// if samesite is set to 'none', secure must be true. This is not required for local development.
 			sessionConfig.cookie = {
@@ -74,6 +77,8 @@ export class SessionService {
 			job.start();
 
 			sessionConfig.store = new redisStore({ client: redisClient });
+
+			this.logger.log('isProduction: Redis Store ready');
 		}
 
 		return sessionConfig;
