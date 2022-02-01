@@ -18,7 +18,7 @@ const ldapUser = {
 		mail: ['test@studiohyperdrive.be'],
 		name_id: 'test@studiohyperdrive.be',
 		entryUUID: ['6033dcab-bcc9-4fb5-aa59-d21dcd893150'],
-		apps: ['meemoo'],
+		apps: ['bezoekertool'],
 	},
 };
 
@@ -164,7 +164,7 @@ describe('MeemooController', () => {
 			mockUsersService.updateUser.mockClear();
 		});
 
-		it('should catch an exception when handling the saml response', async () => {
+		it('should throw an exception on invalid saml response', async () => {
 			mockMeemooService.assertSamlResponse.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
@@ -175,6 +175,26 @@ describe('MeemooController', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('Test error handling');
+		});
+
+		it('should throw an unauthorized exception if the user has no access to the archief app', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
+			let error;
+			try {
+				await meemooController.loginCallback({}, samlResponse);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				statusCode: HttpStatus.UNAUTHORIZED,
+				message: 'Unauthorized',
+			});
 		});
 	});
 
