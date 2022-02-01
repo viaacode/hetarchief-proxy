@@ -156,11 +156,11 @@ describe('DataService - no whitelist', () => {
 			nock('http://localhost/')
 				.post('/v1/graphql/')
 				.reply(201, {
-					data: {
-						errors: {
+					errors: [
+						{
 							message: 'unknown graphql error',
 						},
-					},
+					],
 				});
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
 			let error;

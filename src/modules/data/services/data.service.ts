@@ -28,6 +28,13 @@ export class DataService {
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
+		if (process.env.NODE_ENV !== 'production') {
+			this.logger.log('GraphQl config: ', {
+				url: this.configService.get('graphQlUrl'),
+				secret: this.configService.get('graphQlSecret'),
+				whitelistEnabled: this.configService.get('graphQlEnableWhitelist'),
+			});
+		}
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('graphQlUrl'),
 			headers: {
@@ -132,7 +139,7 @@ export class DataService {
 				query,
 				variables,
 			};
-			const { data } = await this.gotInstance.post<GraphQlResponse>({
+			const data = await this.gotInstance.post<GraphQlResponse>({
 				json: queryData,
 				resolveBodyOnly: true, // this is duplicate but fixes a typing error
 			});
@@ -140,9 +147,7 @@ export class DataService {
 				this.logger.error(`GraphQl query failed: ${JSON.stringify(data.errors)}`);
 				throw new InternalServerErrorException();
 			}
-			return {
-				data: data,
-			};
+			return data;
 		} catch (err) {
 			this.logger.error('Failed to get data from database', err.stack);
 			throw new InternalServerErrorException();
