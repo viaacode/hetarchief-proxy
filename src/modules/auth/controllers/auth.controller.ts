@@ -1,4 +1,13 @@
-import { Controller, Get, HttpStatus, Logger, Query, Redirect, Session } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	HttpStatus,
+	Logger,
+	Post,
+	Query,
+	Redirect,
+	Session,
+} from '@nestjs/common';
 
 import { IdpService } from '../services/idp.service';
 import { SessionHelper } from '../session-helper';
@@ -52,5 +61,22 @@ export class AuthController {
 			url: returnToUrl,
 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
 		};
+	}
+
+	/**
+	 * Debug calls for local / int / tst environments
+	 */
+	@Get('session')
+	public getSession(@Session() session: Record<string, any>) {
+		if (process.env.NODE_ENV !== 'production') {
+			return session;
+		}
+	}
+
+	@Post('session')
+	public postSession(@Session() session: Record<string, any>) {
+		if (process.env.NODE_ENV !== 'production') {
+			return session;
+		}
 	}
 }

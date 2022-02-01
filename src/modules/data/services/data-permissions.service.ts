@@ -7,7 +7,7 @@ type IsAllowed = (query: string, variables: any) => Promise<boolean>;
 
 @Injectable()
 export class DataPermissionsService {
-	private logger = new Logger('DataPermissionsService', { timestamp: true });
+	private logger = new Logger(DataPermissionsService.name, { timestamp: true });
 	private static QUERY_PERMISSIONS: {
 		CLIENT: { [queryName: string]: IsAllowed };
 		PROXY: { [queryName: string]: IsAllowed };

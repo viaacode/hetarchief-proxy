@@ -1,5 +1,6 @@
 export interface GraphQlResponse {
-	data: any;
+	data?: any;
+	errors?: any;
 }
 
 export enum QueryOrigin {

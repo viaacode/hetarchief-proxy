@@ -8,6 +8,8 @@ import convert from 'xml-js';
 import { DecodedSamlResponse, IdpMetaData, LdapUser, SamlCallbackBody, SamlConfig } from '../types';
 
 export abstract class SamlService {
+	protected logger: Logger;
+
 	private serviceProvider: ServiceProvider;
 	private identityProvider: IdentityProvider;
 	private ssoLoginUrl: string | undefined;
@@ -17,7 +19,15 @@ export abstract class SamlService {
 
 	public async init(samlConfig: SamlConfig) {
 		const { url, entityId, privateKey, certificate, assertEndpoint } = samlConfig;
-
+		if (process.env.NODE_ENV !== 'production') {
+			this.logger.log('SAML config ', {
+				url,
+				entityId,
+				privateKey,
+				certificate,
+				assertEndpoint,
+			});
+		}
 		try {
 			const response = await got.post(url, {
 				resolveBodyOnly: true,
@@ -77,7 +87,7 @@ export abstract class SamlService {
 				allow_unencrypted_assertion: true,
 			});
 		} catch (err) {
-			Logger.error('Failed to get meta data from idp server', { err, endpoint: url });
+			this.logger.error('Failed to get meta data from idp server', { err, endpoint: url });
 		}
 	}
 
