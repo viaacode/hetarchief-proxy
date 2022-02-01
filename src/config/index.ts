@@ -10,7 +10,7 @@ const config = (): Configuration => ({
 	host: process.env.HOST,
 	port: parseInt(process.env.PORT, 10) || DEFAULT_CONFIG.port,
 	graphQlUrl: process.env.GRAPHQL_URL,
-	graphQlSecret: process.env.GRAPHQL_URL,
+	graphQlSecret: process.env.GRAPHQL_SECRET,
 	graphQlEnableWhitelist: process.env.GRAPHQL_ENABLE_WHITELIST === 'true',
 	cookieSecret: process.env.COOKIE_SECRET,
 	cookieMaxAge: parseInt(process.env.COOKIE_MAX_AGE, 10),
