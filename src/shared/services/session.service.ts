@@ -42,13 +42,11 @@ export class SessionService {
 
 		if (isProduction) {
 			this.logger.log('isProduction: initializing Redis Store...');
-			// Enable cross-site usage: set sameSite to 'none'
-			// if samesite is set to 'none', secure must be true. This is not required for local development.
-			sessionConfig.cookie = {
-				...sessionConfig.cookie,
-				sameSite: 'none',
-				secure: true,
-			};
+			// We only set a session cookie
+			// For cross-site usage: sameSite should be set to 'none' and secure must be true
+			// In this case, session cookie, cross-site usage seems irrelevant
+			// We also can't set secure cookies for some reason
+			// (probably the express server runs on http and https is terminated elsewhere)
 
 			const redisStore = connectRedis(session);
 			const redisClient = createClient({
