@@ -129,13 +129,14 @@ export enum Idp {
 	MEEMOO = 'MEEMOO',
 }
 
-export type LoginResponse =
-	| {
-			message: 'LOGGED_IN';
-			userInfo: User;
-			acceptedConditions: boolean;
-			sessionExpiresAt: string;
-	  }
-	| {
-			message: 'LOGGED_OUT';
-	  };
+export enum LoginMessage {
+	LOGGED_IN = 'LOGGED_IN',
+	LOGGED_OUT = 'LOGGED_OUT',
+}
+
+export type LoginResponse = {
+	message: LoginMessage;
+	userInfo?: User;
+	acceptedConditions?: boolean;
+	sessionExpiresAt?: string;
+};

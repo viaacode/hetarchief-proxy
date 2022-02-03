@@ -1,5 +1,7 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
+import flow from 'lodash/fp/flow';
 
 import { Idp, LdapUser } from './types';
 
@@ -72,6 +74,28 @@ export class SessionHelper {
 	public static setArchiefUserInfo(session: Record<string, any>, user: User): void {
 		SessionHelper.ensureValidSession(session);
 		session[ARCHIEF_USER_INFO_PATH] = user;
+	}
+
+	public static getArchiefUserInfo(session: Record<string, any>): User | null {
+		if (!session) {
+			return null;
+		}
+		return session[ARCHIEF_USER_INFO_PATH];
+	}
+
+	/**
+	 * Returns when the session expires based on the input date (usually 'now')
+	 */
+	public static getExpiresAt(now: Date): string {
+		const expiresAt = flow(
+			getHours(now) > 5 ? addDays(1) : addDays(0), // after 5am session expires at 5am the next day
+			setHours(5),
+			setMinutes(0),
+			setSeconds(0),
+			setMilliseconds(0)
+		)(now);
+
+		return expiresAt.toISOString();
 	}
 
 	public static getIdpUserInfo(session: Record<string, any>): LdapUser | null {
