@@ -24,15 +24,23 @@ describe('DataPermissionsService', () => {
 	// Test need to be updated as current permissions implementation is a dummy
 	describe('isAllowedToExecuteQuery', () => {
 		it('should verify a query', async () => {
-			const verified = await dataPermissionsService.verify(QueryOrigin.CLIENT, mockQuery);
+			const verified = await dataPermissionsService.verify(
+				'TEST_QUERY',
+				QueryOrigin.CLIENT,
+				mockQuery
+			);
 			expect(verified).toEqual(true);
 		});
 
-		it('should not verify an invalid query', async () => {
-			const verified = await dataPermissionsService.verify(QueryOrigin.CLIENT, {
-				query: 'mutation testUpdate',
-			});
-			expect(verified).toEqual(false);
+		it('should allow a query without specific permissions configured', async () => {
+			const verified = await dataPermissionsService.verify(
+				'UNKNOWN_QUERY',
+				QueryOrigin.CLIENT,
+				{
+					query: 'mutation testUpdate',
+				}
+			);
+			expect(verified).toEqual(true);
 		});
 	});
 });

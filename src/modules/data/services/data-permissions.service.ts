@@ -8,6 +8,7 @@ type IsAllowed = (query: string, variables: any) => Promise<boolean>;
 @Injectable()
 export class DataPermissionsService {
 	private logger = new Logger(DataPermissionsService.name, { timestamp: true });
+
 	private static QUERY_PERMISSIONS: {
 		CLIENT: { [queryName: string]: IsAllowed };
 		PROXY: { [queryName: string]: IsAllowed };
@@ -20,12 +21,21 @@ export class DataPermissionsService {
 		PROXY: {},
 	};
 
-	public async verify(origin: QueryOrigin, queryDto: GraphQlQueryDto): Promise<boolean> {
-		const queryStart = queryDto.query.replace(/[\s]+/gm, ' ').split(/[{(]/)[0].trim();
-		this.logger.log(`Veryfing... ${queryStart}`);
-		return DataPermissionsService.QUERY_PERMISSIONS[origin]['TEST_QUERY'](
-			queryDto.query,
-			queryDto.variables
-		);
+	public async verify(
+		queryName: string,
+		origin: QueryOrigin,
+		queryDto: GraphQlQueryDto
+	): Promise<boolean> {
+		this.logger.log(`Veryfing... ${queryName}`);
+		if (DataPermissionsService.QUERY_PERMISSIONS[origin][queryName]) {
+			this.logger.log(`Permissions set for query ${queryName}`);
+			return DataPermissionsService.QUERY_PERMISSIONS[origin]['TEST_QUERY'](
+				queryDto.query,
+				queryDto.variables
+			);
+		}
+
+		// no specific permissions specified, allow query
+		return true;
 	}
 }
