@@ -6,7 +6,7 @@ import { UsersService } from './services/users.service';
 import { DataModule } from '~modules/data';
 
 @Module({
-	imports: [ConfigModule, DataModule],
+	imports: [ConfigModule, DataModule], // TODO configModule required?
 	providers: [UsersService],
 	exports: [UsersService],
 })
