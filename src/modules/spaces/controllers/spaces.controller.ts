@@ -1,6 +1,9 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { IPagination } from '@studiohyperdrive/pagination';
 
+import { SpacesQueryDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
+import { Space } from '../types';
 
 @Controller('spaces')
 export class SpacesController {
@@ -9,9 +12,8 @@ export class SpacesController {
 	constructor(private spacesService: SpacesService) {}
 
 	@Get()
-	public async getSpaces(): Promise<any> {
-		// TODO type
-		// TODO real implementation
-		return this.spacesService.findAll();
+	public async getSpaces(@Query() query: SpacesQueryDto): Promise<IPagination<Space>> {
+		const spaces = await this.spacesService.findAll(query);
+		return spaces;
 	}
 }
