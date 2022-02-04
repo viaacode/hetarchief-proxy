@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { Space } from '../types';
 
-import { GET_SPACES } from './queries.gql';
+import { FIND_SPACE_BY_ID, FIND_SPACES } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -75,7 +75,11 @@ export class SpacesService {
 	public async findAll(inputQuery: SpacesQueryDto): Promise<IPagination<Space>> {
 		const { query, page, size } = inputQuery;
 		const { offset, limit } = this.convertPagination(page, size);
-		const spacesResponse = await this.dataService.execute(GET_SPACES, { query, offset, limit });
+		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
+			query,
+			offset,
+			limit,
+		});
 
 		return Pagination<Space>({
 			items: spacesResponse.data.cp_space.map((space: any) => this.adapt(space)),
@@ -83,5 +87,13 @@ export class SpacesService {
 			size,
 			total: spacesResponse.data.cp_space_aggregate.aggregate.count,
 		});
+	}
+
+	public async findById(id: string): Promise<Space> {
+		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_ID, { id });
+		if (!spaceResponse.data.cp_space[0]) {
+			throw new NotFoundException();
+		}
+		return this.adapt(spaceResponse.data.cp_space[0]);
 	}
 }
