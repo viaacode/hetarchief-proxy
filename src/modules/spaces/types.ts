@@ -7,6 +7,7 @@ export interface Address {
 	street: string;
 	postalCode: string;
 	locality: string;
+	postOfficeBoxNumber: string;
 }
 export interface ContactInfo {
 	email: string;
