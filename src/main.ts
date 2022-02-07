@@ -20,7 +20,7 @@ async function bootstrap() {
 	app.use(helmet());
 
 	/** Validation */
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
 	/** Session middleware */
 	const sessionService = app.get<SessionService>(SessionService);

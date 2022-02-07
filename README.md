@@ -82,9 +82,21 @@ They are provided through the `env_file` property in the `docker-compose.yml` fi
 To run Hasura (Database / GraphQl) locally, follow the instructions as described in https://github.com/viaacode/hetarchief-hasura
 #### Usage
 Simply run ```docker-compose up``` to start all necessary services. The hasura console will be available on http://localhost:9000
+Frequently pull this repo and update hasura to stay in sync.
 
-Run the seeds (requires the hasura-cli): ```hasura seed apply```
+#### Metadata, Migrations and Seeds
+In the `hetarchief-hasura` folder, run the following commands (requires the hasura-cli): 
+```
+hasura metadata apply
+hasura migrate apply
+hasura metadata reload
+hasura seed apply //Select database 'hetarchief'. If all went fine, you'll see the message `INFO Seeds planted` as confirmation.
+```
 
+##### Update on server
+```
+hasura seed apply --endpoint https://hasura-graphql-tst-hetarchief.private.cloud.meemoo.be --admin-secret <secret>
+```
 ## Deploy
 
 TODO: Link to the Confluence page describing the entire flow of the project.

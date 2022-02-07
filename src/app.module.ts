@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
+import { SpacesModule } from '~modules/spaces';
 import { SessionService } from '~shared/services/session.service';
 
 @Module({
@@ -22,6 +23,7 @@ import { SessionService } from '~shared/services/session.service';
 		ScheduleModule.forRoot(),
 		DataModule,
 		AuthModule,
+		SpacesModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

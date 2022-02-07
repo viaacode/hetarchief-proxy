@@ -72,7 +72,11 @@ export class DataService {
 		if (this.isWhitelistEnabled() && !this.isQueryWhitelisted(queryDto, origin)) {
 			return false;
 		}
-		return this.dataPermissionsService.verify(origin, queryDto);
+		return this.dataPermissionsService.verify(
+			this.getWhitelistedQueryName(queryDto.query, origin),
+			origin,
+			queryDto
+		);
 	}
 
 	public isWhitelistEnabled(): boolean {
