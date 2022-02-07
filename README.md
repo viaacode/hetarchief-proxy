@@ -90,7 +90,7 @@ In the `hetarchief-hasura` folder, run the following commands (requires the hasu
 hasura metadata apply
 hasura migrate apply
 hasura metadata reload
-hasura seed apply //Select database 'hetarchief'. If all went find, you'll see the message `INFO Seeds planted` as confirmation.
+hasura seed apply //Select database 'hetarchief'. If all went fine, you'll see the message `INFO Seeds planted` as confirmation.
 ```
 
 ##### Update on server
