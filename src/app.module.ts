@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
+import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
 import { SessionService } from '~shared/services/session.service';
 
@@ -24,6 +25,7 @@ import { SessionService } from '~shared/services/session.service';
 		DataModule,
 		AuthModule,
 		SpacesModule,
+		MediaModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

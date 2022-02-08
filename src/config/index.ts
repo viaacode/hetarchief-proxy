@@ -15,6 +15,7 @@ const config = (): Configuration => ({
 	cookieSecret: process.env.COOKIE_SECRET,
 	cookieMaxAge: parseInt(process.env.COOKIE_MAX_AGE, 10),
 	redisConnectionString: process.env.REDIS_CONNECTION_STRING,
+	elasticSearchUrl: process.env.ELASTICSEARCH_URL,
 	samlIdpMetaDataEndpoint: process.env.SAML_IDP_META_DATA_ENDPOINT,
 	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
 	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,
