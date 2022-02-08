@@ -1,7 +1,6 @@
 import { Controller, Get, Logger, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { SpacesQueryDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
@@ -12,8 +11,16 @@ export class SpacesController {
 	constructor(private spacesService: SpacesService) {}
 
 	@Get()
-	public async getSpaces(@Query() query: SpacesQueryDto): Promise<IPagination<Space>> {
-		const spaces = await this.spacesService.findAll(query);
+	public async getSpaces(
+		@Query('query') query: string,
+		@Query('size') size: string,
+		@Query('page') page: string
+	): Promise<IPagination<Space>> {
+		const spaces = await this.spacesService.findAll({
+			query: query,
+			size: size ? parseInt(size) : undefined,
+			page: page ? parseInt(page) : undefined,
+		});
 		return spaces;
 	}
 

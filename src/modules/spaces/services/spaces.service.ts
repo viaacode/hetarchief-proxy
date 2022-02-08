@@ -76,9 +76,9 @@ export class SpacesService {
 		const { query, page, size } = inputQuery;
 		const { offset, limit } = this.convertPagination(page, size);
 		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
-			query,
-			offset,
-			limit,
+			query: query || '%%',
+			offset: offset || 0,
+			limit: limit || 20,
 		});
 
 		return Pagination<Space>({
