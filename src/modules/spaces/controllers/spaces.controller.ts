@@ -1,5 +1,5 @@
 import { Controller, Get, Logger, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
@@ -14,7 +14,6 @@ export class SpacesController {
 	constructor(private spacesService: SpacesService) {}
 
 	@Get()
-	@ApiBody({ type: SpacesQueryDto, required: false })
 	public async getSpaces(@Query() query: SpacesQueryDto): Promise<IPagination<Space>> {
 		const spaces = await this.spacesService.findAll(query);
 		return spaces;
