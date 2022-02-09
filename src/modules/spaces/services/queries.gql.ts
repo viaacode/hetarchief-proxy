@@ -16,15 +16,11 @@ export const FIND_SPACES = `
 				schema_name
 				schema_identifier
 				information {
-					homepage
-					label
-					description
 					logo {
 						iri
 					}
 					primary_site {
 						address {
-							contact_type
 							email
 							locality
 							postal_code
@@ -62,15 +58,11 @@ export const FIND_SPACE_BY_ID = `
 				schema_name
 				schema_identifier
 				information {
-					homepage
-					label
-					description
 					logo {
 						iri
 					}
 					primary_site {
 						address {
-							contact_type
 							email
 							locality
 							postal_code
