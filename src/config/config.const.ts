@@ -10,6 +10,7 @@ export const configValidationSchema = Joi.object({
 	COOKIE_SECRET: Joi.string(),
 	COOKIE_MAX_AGE: Joi.number().default(86400000),
 	REDIS_CONNECTION_STRING: Joi.string().allow(''),
+	ELASTICSEARCH_URL: Joi.string().required(),
 	SAML_IDP_META_DATA_ENDPOINT: Joi.string(),
 	SAML_SP_ENTITY_ID: Joi.string(),
 	SAML_SP_PRIVATE_KEY: Joi.string().allow(''),
