@@ -10,6 +10,7 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
 import { UsersService } from '../../users/services/users.service';
@@ -17,6 +18,7 @@ import { HetArchiefService } from '../services/het-archief.service';
 import { SessionHelper } from '../session-helper';
 import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
 
+@ApiTags('Auth')
 @Controller('auth/hetarchief')
 export class HetArchiefController {
 	private logger: Logger = new Logger(HetArchiefController.name, { timestamp: true });

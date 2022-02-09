@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import session from 'express-session';
 import helmet from 'helmet';
 
@@ -27,7 +28,19 @@ async function bootstrap() {
 	const sessionConfig = await sessionService.getSessionConfig();
 	app.use(session(sessionConfig));
 
+	/** Swagger docs **/
+	if (process.env.NODE_ENV !== 'production') {
+		const config = new DocumentBuilder()
+			.setTitle('HetArchief2.0 Leeszalen tool API docs')
+			.setDescription('Documentatie voor de leeszalen tool api calls')
+			.setVersion('0.1.0')
+			.build();
+		const document = SwaggerModule.createDocument(app, config);
+		SwaggerModule.setup('docs', app, document);
+	}
+
 	/** All good, start listening */
 	await app.listen(port);
 }
+
 bootstrap();
