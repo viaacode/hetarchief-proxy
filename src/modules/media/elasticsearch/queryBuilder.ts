@@ -77,6 +77,6 @@ export class QueryBuilder {
 			}
 		}
 
-		return filterObject;
+		return { match_all: {} };
 	}
 }

@@ -4,22 +4,22 @@ import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 export class SearchFilters {
 	@IsString()
 	@IsOptional()
-	query: string;
+	query?: string;
 }
 
 export class MediaQueryDto {
 	@Type(() => SearchFilters)
 	@IsOptional()
 	@ValidateNested()
-	filters: SearchFilters;
+	filters?: SearchFilters;
 
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()
-	size = 10;
+	size? = 10;
 
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()
-	from = 0;
+	from? = 0;
 }

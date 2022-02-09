@@ -1,9 +1,7 @@
-import { Body, Controller, Get, Logger, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
-import { Media } from '../types';
 
 @Controller('media')
 export class MediaController {
@@ -12,13 +10,13 @@ export class MediaController {
 	constructor(private mediaService: MediaService) {}
 
 	@Post()
-	public async getMedia(@Body() query: MediaQueryDto): Promise<IPagination<Media>> {
+	public async getMedia(@Body() query: MediaQueryDto): Promise<any> {
 		const media = await this.mediaService.findAll(query);
 		return media;
 	}
 
 	@Get(':id')
-	public async getMediaById(@Param('id') id: string): Promise<Media> {
+	public async getMediaById(@Param('id') id: string): Promise<any> {
 		return this.mediaService.findById(id);
 	}
 
@@ -26,16 +24,16 @@ export class MediaController {
 	public async getMediaOnIndex(
 		@Body() query: MediaQueryDto,
 		@Param('esIndex') esIndex: string
-	): Promise<IPagination<Media>> {
+	): Promise<any> {
 		const media = await this.mediaService.findAll(query, esIndex);
 		return media;
 	}
 
 	@Get(':esIndex/:id')
 	public async getMediaOnIndexById(
-		@Param('esIndex') esIndex: string,
-		@Param('id') id: string
-	): Promise<IPagination<Media>> {
+		@Param('id') id: string,
+		@Param('esIndex') esIndex: string
+	): Promise<any> {
 		const media = await this.mediaService.findById(id, esIndex);
 		return media;
 	}
