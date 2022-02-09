@@ -10,8 +10,8 @@ export class MediaController {
 	constructor(private mediaService: MediaService) {}
 
 	@Post()
-	public async getMedia(@Body() query: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(query);
+	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
+		const media = await this.mediaService.findAll(queryDto);
 		return media;
 	}
 
@@ -22,10 +22,10 @@ export class MediaController {
 
 	@Post(':esIndex')
 	public async getMediaOnIndex(
-		@Body() query: MediaQueryDto,
+		@Body() queryDto: MediaQueryDto,
 		@Param('esIndex') esIndex: string
 	): Promise<any> {
-		const media = await this.mediaService.findAll(query, esIndex);
+		const media = await this.mediaService.findAll(queryDto, esIndex);
 		return media;
 	}
 
