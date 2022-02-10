@@ -116,7 +116,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			if (err?.message === 'SAML Response is no longer valid') {
+			if (err.message === 'SAML Response is no longer valid') {
 				return {
 					url: `${process.env.HOST}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,

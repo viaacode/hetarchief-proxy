@@ -70,12 +70,17 @@ export class MeemooController {
 			/**
 			 * permissions check
 			 */
-			if (!get(ldapUser, 'attributes.apps', []).includes('bezoekertool')) {
+			const apps = get(ldapUser, 'attributes.apps', []);
+			if (
+				!apps.includes('hetarchief') &&
+				!apps.includes('bezoekertool') &&
+				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
+			) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief/bezoekertool'`
 				);
-				throw new UnauthorizedException();
+				throw new UnauthorizedException('User has no access to hetarchief/bezoekertool');
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, ldapUser);
@@ -114,7 +119,7 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			if (err?.message === 'SAML Response is no longer valid') {
+			if (err.message === 'SAML Response is no longer valid') {
 				return {
 					url: `${process.env.HOST}/auth/meemoo/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
