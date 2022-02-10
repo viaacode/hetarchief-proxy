@@ -1,10 +1,12 @@
 import { Controller, Get, Logger, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
+@ApiTags('Spaces')
 @Controller('spaces')
 export class SpacesController {
 	private logger: Logger = new Logger(SpacesController.name, { timestamp: true });

@@ -10,6 +10,7 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
 import { MeemooService } from '../services/meemoo.service';
@@ -18,6 +19,7 @@ import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
 
 import { UsersService } from '~modules/users/services/users.service';
 
+@ApiTags('Auth')
 @Controller('auth/meemoo')
 export class MeemooController {
 	private logger: Logger = new Logger(MeemooController.name, { timestamp: true });

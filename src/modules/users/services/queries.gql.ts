@@ -13,7 +13,7 @@ export const INSERT_USER = `
 	mutation insertUser($newUser: users_profile_insert_input!) {
 		insert_users_profile_one(object: $newUser) {
 			id
-			fistName: first_name
+			firstName: first_name
 			lastName: last_name
 			email: mail
 		}

@@ -8,11 +8,13 @@ import {
 	Redirect,
 	Session,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { IdpService } from '../services/idp.service';
 import { SessionHelper } from '../session-helper';
 import { LoginMessage, LoginResponse } from '../types';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 	private logger: Logger = new Logger(AuthController.name, { timestamp: true });

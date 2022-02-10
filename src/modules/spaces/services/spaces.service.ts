@@ -63,6 +63,10 @@ export class SpacesService {
 						graphQlSpace,
 						'schema_maintainer.information[0].primary_site.address.locality'
 					),
+					postOfficeBoxNumber: get(
+						graphQlSpace,
+						'schema_maintainer.information[0].primary_site.address.post_office_box_number'
+					),
 				},
 			},
 			isPublished: get(graphQlSpace, 'is_published'),
