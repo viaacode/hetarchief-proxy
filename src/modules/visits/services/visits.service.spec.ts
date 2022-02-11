@@ -4,6 +4,7 @@ import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { VisitStatus } from '~modules/visits/types';
 
 const mockDataService = {
 	execute: jest.fn(),
@@ -57,7 +58,12 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.findAll({ query: '%', page: 1, size: 10 });
+			const response = await visitsService.findAll({
+				query: '%',
+				status: undefined,
+				page: 1,
+				size: 10,
+			});
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -70,6 +76,7 @@ describe('VisitsService', () => {
 					cp_visit: [
 						{
 							id: '1',
+							status: 'APPROVED',
 							user_profile: {
 								first_name: 'Marie',
 								last_name: 'Odhiambo',
@@ -83,9 +90,15 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.findAll({ query: '%Marie%', page: 1, size: 10 });
+			const response = await visitsService.findAll({
+				query: '%Marie%',
+				status: [VisitStatus.APPROVED],
+				page: 1,
+				size: 10,
+			});
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.visitorName).toContain('Marie');
+			expect(response.items[0]?.status).toEqual(VisitStatus.APPROVED);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
