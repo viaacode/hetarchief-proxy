@@ -57,8 +57,35 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.findAll({ page: 1, size: 10 });
+			const response = await visitsService.findAll({ query: '%', page: 1, size: 10 });
 			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('returns a paginated response with visits containing maria', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [
+						{
+							id: '1',
+							user_profile: {
+								first_name: 'Marie',
+								last_name: 'Odhiambo',
+							},
+						},
+					],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await visitsService.findAll({ query: '%Marie%', page: 1, size: 10 });
+			expect(response.items.length).toBe(1);
+			expect(response.items[0]?.visitorName).toContain('Marie');
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);

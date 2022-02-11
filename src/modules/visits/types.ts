@@ -12,4 +12,7 @@ export interface Visit {
 	endAt: string;
 	createdAt: string;
 	updatedAt: string;
+	visitorName: string;
+	visitorMail: string;
+	visitorId: string;
 }

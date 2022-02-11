@@ -43,6 +43,17 @@ export class CreateVisitDto {
 }
 
 export class VisitsQueryDto {
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
+		default: '%',
+	})
+	query = '%';
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()

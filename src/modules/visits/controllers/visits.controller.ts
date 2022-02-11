@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
 import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
@@ -13,7 +14,7 @@ export class VisitsController {
 	constructor(private visitsService: VisitsService) {}
 
 	@Get()
-	public async getVisits(@Query() queryDto: VisitsQueryDto): Promise<any> {
+	public async getVisits(@Query() queryDto: VisitsQueryDto): Promise<IPagination<Visit>> {
 		const visits = this.visitsService.findAll(queryDto);
 		return visits;
 	}
