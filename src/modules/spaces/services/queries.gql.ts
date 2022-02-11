@@ -36,7 +36,7 @@ export const FIND_SPACES = `
 			aggregate {
 			  count
 			}
-		  }
+		}
 	}
 `;
 

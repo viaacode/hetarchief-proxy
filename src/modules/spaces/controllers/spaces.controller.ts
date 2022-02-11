@@ -14,13 +14,14 @@ export class SpacesController {
 	constructor(private spacesService: SpacesService) {}
 
 	@Get()
-	public async getSpaces(@Query() query: SpacesQueryDto): Promise<IPagination<Space>> {
-		const spaces = await this.spacesService.findAll(query);
+	public async getSpaces(@Query() queryDto: SpacesQueryDto): Promise<IPagination<Space>> {
+		const spaces = await this.spacesService.findAll(queryDto);
 		return spaces;
 	}
 
 	@Get(':id')
 	public async getSpaceById(@Param('id', ParseUUIDPipe) id: string): Promise<Space> {
-		return this.spacesService.findById(id);
+		const space = await this.spacesService.findById(id);
+		return space;
 	}
 }

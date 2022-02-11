@@ -8,23 +8,13 @@ import { Space } from '../types';
 import { FIND_SPACE_BY_ID, FIND_SPACES } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
+import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
 export class SpacesService {
 	private logger: Logger = new Logger(SpacesService.name, { timestamp: true });
 
 	constructor(protected dataService: DataService) {}
-
-	/**
-	 * Convert page and size to offset and limit
-	 */
-	public convertPagination(page: number, size: number): { offset: number; limit: number } {
-		const offset = page > 0 ? (page - 1) * size : 0;
-		return {
-			offset,
-			limit: size,
-		};
-	}
 
 	/**
 	 * Adapt a space as returned by a typical graphQl response to our internal space data model
@@ -78,7 +68,7 @@ export class SpacesService {
 
 	public async findAll(inputQuery: SpacesQueryDto): Promise<IPagination<Space>> {
 		const { query, page, size } = inputQuery;
-		const { offset, limit } = this.convertPagination(page, size);
+		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
 			query,
 			offset,

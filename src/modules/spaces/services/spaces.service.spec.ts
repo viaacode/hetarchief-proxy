@@ -30,20 +30,6 @@ describe('SpacesService', () => {
 		expect(spacesService).toBeDefined();
 	});
 
-	describe('convertPagination', () => {
-		it('handles page 0 as page 1', () => {
-			const converted = spacesService.convertPagination(0, 10);
-			expect(converted.offset).toBe(0);
-			expect(converted.limit).toBe(10);
-		});
-
-		it('converts pagination', () => {
-			const converted = spacesService.convertPagination(2, 10);
-			expect(converted.offset).toBe(10);
-			expect(converted.limit).toBe(10);
-		});
-	});
-
 	describe('adapt', () => {
 		it('can adapt a hasura response to our space interface', () => {
 			const adapted = spacesService.adapt(cpSpace);
