@@ -1,4 +1,4 @@
-type VisitStatus = 'PENDING';
+export type VisitStatus = 'PENDING' | 'APPROVED' | 'DENIED';
 
 export interface Visit {
 	id: string;

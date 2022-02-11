@@ -54,6 +54,17 @@ export class VisitsQueryDto {
 	})
 	query = '%';
 
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Array,
+		description: 'Status of the visit request. Options are: PENDING, APPROVED, DENIED',
+		default: ['PENDING', 'APPROVED', 'DENIED'],
+		enum: ['PENDING', 'APPROVED', 'DENIED'],
+	})
+	status = ['PENDING', 'APPROVED', 'DENIED'];
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()

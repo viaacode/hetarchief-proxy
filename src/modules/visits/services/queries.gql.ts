@@ -17,31 +17,32 @@ export const INSERT_VISIT = `
 `;
 
 export const FIND_VISITS = `
-	query visit($query: String!, $offset: Int!, $limit: Int!) {
-		cp_visit(offset: $offset, limit: $limit, where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}]}) {
-			id
-			cp_space_id
-			user_profile_id
-			user_reason
-			user_timeframe
-			status
-			start_date
-			end_date
-			created_at
-			updated_at
-			user_profile {
-				first_name
-				last_name
-				mail
-				id
-			}
-		}
-		cp_visit_aggregate(where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}]}) {
-			aggregate {
-			  count
-			}
-		}
-	}
+query visit($query: String!, $offset: Int!, $limit: Int!, $statuses: [String!] = []) {
+  cp_visit(offset: $offset, limit: $limit, where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}) {
+    id
+    cp_space_id
+    user_profile_id
+    user_reason
+    user_timeframe
+    status
+    start_date
+    end_date
+    created_at
+    updated_at
+    user_profile {
+      first_name
+      last_name
+      mail
+      id
+    }
+  }
+  cp_visit_aggregate(where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}) {
+    aggregate {
+      count
+    }
+  }
+}
+
 `;
 
 export const FIND_VISIT_BY_ID = `
