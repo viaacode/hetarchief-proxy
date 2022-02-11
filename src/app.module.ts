@@ -11,6 +11,7 @@ import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
+import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
 
 @Module({
@@ -26,6 +27,7 @@ import { SessionService } from '~shared/services/session.service';
 		AuthModule,
 		SpacesModule,
 		MediaModule,
+		VisitsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

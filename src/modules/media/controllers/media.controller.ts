@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
 
+@ApiTags('Media')
 @Controller('media')
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
