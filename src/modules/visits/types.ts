@@ -1,4 +1,8 @@
-export type VisitStatus = 'PENDING' | 'APPROVED' | 'DENIED';
+export enum VisitStatus {
+	PENDING = 'PENDING',
+	APPROVED = 'APPROVED',
+	DENIED = 'DENIED',
+}
 
 export interface Visit {
 	id: string;
