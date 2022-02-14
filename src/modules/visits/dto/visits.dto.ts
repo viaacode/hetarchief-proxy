@@ -102,4 +102,41 @@ export class VisitsQueryDto {
 		default: 10,
 	})
 	size? = 10;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'property to sort the results by',
+		default: 'created_at',
+		enum: [
+			'id',
+			'cp_space_id',
+			'user_profile_id',
+			'user_reason',
+			'user_timeframe',
+			'status',
+			'start_date',
+			'end_date',
+			'created_at',
+			'updated_at',
+			'user_profile.first_name',
+			'user_profile.last_name',
+			'user_profile.mail',
+			'user_profile.id',
+		],
+	})
+	orderProp? = 'created_at';
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Direction to sort in. either desc or asc',
+		default: 'desc',
+		enum: ['asc', 'desc'],
+	})
+	orderDirection? = 'desc';
 }
