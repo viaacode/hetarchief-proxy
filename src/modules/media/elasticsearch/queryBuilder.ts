@@ -6,6 +6,8 @@ import { MAX_COUNT_SEARCH_RESULTS, MAX_NUMBER_SEARCH_RESULTS } from '../services
 
 import searchQueryTemplate from './templates/search-query.json';
 
+import { PaginationHelper } from '~shared/helpers/pagination';
+
 const searchQueryObjectTemplate = _.values(searchQueryTemplate);
 
 export class QueryBuilder {
@@ -16,13 +18,17 @@ export class QueryBuilder {
 	 */
 	public static build(searchRequest: MediaQueryDto): any {
 		try {
+			const { offset, limit } = PaginationHelper.convertPagination(
+				searchRequest.page,
+				searchRequest.size
+			);
 			const queryObject: any = {};
 			delete queryObject.default; // Side effect of importing a json file as a module
 
 			// Avoid huge queries
 			queryObject.size = Math.min(searchRequest.size, MAX_NUMBER_SEARCH_RESULTS);
-			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - queryObject.size);
-			queryObject.from = _.clamp(searchRequest.from, 0, max);
+			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - limit);
+			queryObject.from = _.clamp(offset, 0, max);
 
 			// Add the filters and search terms to the query object
 			_.set(queryObject, 'query', this.buildFilterObject(searchRequest.filters));
