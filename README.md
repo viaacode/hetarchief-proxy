@@ -65,10 +65,6 @@ Other available commands are:
 | lint         | Lint all files with ESLint.                                                                          |
 | lint:fix     | Lint all files and automatically fix most of the problems.                                           |
 
-## Deploy
-
-TODO: Link to the Confluence page describing the entire flow of the project.
-
 ## Environment variables
 
 This project uses environemnt variables. For local development, these can be found in the `.env/`
@@ -80,6 +76,30 @@ active developers listed below for access to these values.
 
 They are provided through the `env_file` property in the `docker-compose.yml` file.
 
+## External services
+### Hasura
+#### Installation
+To run Hasura (Database / GraphQl) locally, follow the instructions as described in https://github.com/viaacode/hetarchief-hasura
+#### Usage
+Simply run ```docker-compose up``` to start all necessary services. The hasura console will be available on http://localhost:9000
+Frequently pull this repo and update hasura to stay in sync.
+
+#### Metadata, Migrations and Seeds
+In the `hetarchief-hasura` folder, run the following commands (requires the hasura-cli): 
+```
+hasura metadata apply
+hasura migrate apply
+hasura metadata reload
+hasura seed apply //Select database 'hetarchief'. If all went fine, you'll see the message `INFO Seeds planted` as confirmation.
+```
+
+##### Update on server
+```
+hasura seed apply --endpoint https://hasura-graphql-tst-hetarchief.private.cloud.meemoo.be --admin-secret <secret>
+```
+## Deploy
+
+TODO: Link to the Confluence page describing the entire flow of the project.
 ## Team
 
 This project has been created by:
