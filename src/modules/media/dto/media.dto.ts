@@ -32,7 +32,7 @@ export class MediaQueryDto {
 		description: 'Which page of results to fetch. Counting starts at 1',
 		default: 1,
 	})
-	page = 1;
+	page? = 1;
 
 	@IsNumber()
 	@Type(() => Number)

@@ -63,7 +63,7 @@ export class VisitsQueryDto {
 			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
 		default: '%',
 	})
-	query = '%';
+	query? = '%';
 
 	@ApiProperty({
 		isArray: true,
@@ -81,7 +81,7 @@ export class VisitsQueryDto {
 		}
 		return params.value;
 	})
-	status = ['PENDING', 'APPROVED', 'DENIED'];
+	status? = ['PENDING', 'APPROVED', 'DENIED'];
 
 	@IsNumber()
 	@Type(() => Number)
@@ -91,7 +91,7 @@ export class VisitsQueryDto {
 		description: 'Which page of results to fetch. Counting starts at 1',
 		default: 1,
 	})
-	page = 1;
+	page? = 1;
 
 	@IsNumber()
 	@Type(() => Number)
@@ -101,5 +101,5 @@ export class VisitsQueryDto {
 		description: 'The max. number of results to return',
 		default: 10,
 	})
-	size = 10;
+	size? = 10;
 }
