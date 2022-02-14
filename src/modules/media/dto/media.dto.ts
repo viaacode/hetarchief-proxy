@@ -29,18 +29,18 @@ export class MediaQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'The max. number of results to return',
-		default: 10,
+		description: 'Which page of results to fetch. Counting starts at 1',
+		default: 1,
 	})
-	size? = 10;
+	page = 1;
 
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Number,
-		description: 'How many items to skip',
-		default: 0,
+		description: 'The max. number of results to return',
+		default: 10,
 	})
-	from? = 0;
+	size? = 10;
 }
