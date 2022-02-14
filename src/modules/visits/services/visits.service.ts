@@ -8,6 +8,7 @@ import { Visit } from '../types';
 import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
+import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -63,7 +64,7 @@ export class VisitsService {
 			statuses: isArray(status) ? status : [status],
 			offset,
 			limit,
-			orderBy: set({}, orderProp, orderDirection),
+			orderBy: set({}, ORDER_PROP_TO_DB_PROP[orderProp], orderDirection),
 		});
 
 		return Pagination<Visit>({

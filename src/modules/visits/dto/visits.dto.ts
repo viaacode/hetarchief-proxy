@@ -109,25 +109,25 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'created_at',
+		default: 'startAt',
 		enum: [
 			'id',
-			'cp_space_id',
-			'user_profile_id',
-			'user_reason',
-			'user_timeframe',
+			'spaceId',
+			'userProfileId',
+			'timeframe',
+			'reason',
+			'acceptedTos',
 			'status',
-			'start_date',
-			'end_date',
-			'created_at',
-			'updated_at',
-			'user_profile.first_name',
-			'user_profile.last_name',
-			'user_profile.mail',
-			'user_profile.id',
+			'startAt',
+			'endAt',
+			'createdAt',
+			'updatedAt',
+			'visitorName',
+			'visitorMail',
+			'visitorId',
 		],
 	})
-	orderProp? = 'created_at';
+	orderProp? = 'startAt';
 
 	@IsString()
 	@Type(() => String)
