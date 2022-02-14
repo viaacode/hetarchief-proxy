@@ -1,7 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsBoolean,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+	IsUUID,
+} from 'class-validator';
 import { string } from 'joi';
+
+import { VisitStatus } from '~modules/visits/types';
 
 export class CreateVisitDto {
 	@IsUUID()
@@ -43,6 +54,35 @@ export class CreateVisitDto {
 }
 
 export class VisitsQueryDto {
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
+		default: '%',
+	})
+	query = '%';
+
+	@ApiProperty({
+		isArray: true,
+		required: false,
+		enum: VisitStatus,
+		description: 'Status of the visit request. Options are: PENDING, APPROVED, DENIED',
+		default: ['PENDING', 'APPROVED', 'DENIED'],
+	})
+	@IsOptional()
+	@IsEnum(VisitStatus, { each: true })
+	@IsArray()
+	@Transform((params) => {
+		if (typeof params.value == 'string') {
+			return params.value.split(',');
+		}
+		return params.value;
+	})
+	status = ['PENDING', 'APPROVED', 'DENIED'];
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()

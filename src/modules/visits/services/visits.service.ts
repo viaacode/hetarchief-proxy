@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get } from 'lodash';
+import { get, isArray } from 'lodash';
 
 import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Visit } from '../types';
@@ -29,6 +29,13 @@ export class VisitsService {
 			acceptedTos: get(graphQlVisit, 'user_accepted_tos'),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
+			visitorName: (
+				get(graphQlVisit, 'user_profile.first_name', '') +
+				' ' +
+				get(graphQlVisit, 'user_profile.last_name', '')
+			).trim(),
+			visitorMail: get(graphQlVisit, 'user_profile.mail'),
+			visitorId: get(graphQlVisit, 'user_profile.id'),
 		};
 	}
 
@@ -49,9 +56,11 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { page, size } = inputQuery;
+		const { query, status, page, size } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
+			query,
+			statuses: isArray(status) ? status : [status],
 			offset,
 			limit,
 		});

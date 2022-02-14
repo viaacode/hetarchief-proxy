@@ -1,4 +1,8 @@
-type VisitStatus = 'PENDING';
+export enum VisitStatus {
+	PENDING = 'PENDING',
+	APPROVED = 'APPROVED',
+	DENIED = 'DENIED',
+}
 
 export interface Visit {
 	id: string;
@@ -12,4 +16,7 @@ export interface Visit {
 	endAt: string;
 	createdAt: string;
 	updatedAt: string;
+	visitorName: string;
+	visitorMail: string;
+	visitorId: string;
 }
