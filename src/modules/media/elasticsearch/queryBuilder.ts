@@ -65,6 +65,28 @@ export class QueryBuilder {
 	}
 
 	/**
+	 * AND filter: https://stackoverflow.com/a/52206289/373207
+	 * @param elasticKey
+	 * @param readableKey
+	 * @param values
+	 */
+	private static generateAndFilter(
+		elasticKey: string,
+		readableKey: keyof SearchFilters,
+		value: string
+	): any {
+		return {
+			bool: {
+				should: {
+					term: {
+						[elasticKey + this.suffix(readableKey)]: value,
+					},
+				},
+			},
+		};
+	}
+
+	/**
 	 * Creates the filter portion of the elsaticsearch query object
 	 * Containing the search terms and the checked filters
 	 * @param filters
@@ -93,7 +115,28 @@ export class QueryBuilder {
 			}
 		}
 
-		return { match_all: {} };
+		// Add additional filters to the query object
+		const filterArray: any[] = [];
+		_.set(filterObject, 'bool.filter', filterArray);
+		_.forEach(filters, (value: any, readableKey: keyof SearchFilters) => {
+			if (readableKey === 'query') {
+				return; // Query filter has already been handled, skip this foreach iteration
+			}
+
+			// // Map frontend filter names to elasticsearch names
+			const elasticKey = READABLE_TO_ELASTIC_FILTER_NAMES[readableKey];
+			if (!elasticKey) {
+				throw new InternalServerErrorException(
+					`Failed to resolve agg property: ${readableKey}`
+				);
+			}
+			if (!_.isArray(value)) {
+				// TODO @Bert in Avo is alles van values een array, weet niet hoe je dat hier ziet?
+				filterArray.push(this.generateAndFilter(elasticKey, readableKey, value));
+			}
+		});
+
+		return filterObject;
 	}
 
 	/**
