@@ -95,7 +95,7 @@ export class QueryBuilder {
 	): any {
 		return {
 			bool: {
-				should: {
+				must: {
 					term: {
 						[elasticKey + this.suffix(readableKey)]: value,
 					},
@@ -125,7 +125,7 @@ export class QueryBuilder {
 				_.set(matchObj, 'multi_match.query', escapedQueryString);
 			});
 
-			_.set(filterObject, 'bool.should', textQueryObjectArray);
+			_.set(filterObject, 'bool.must', textQueryObjectArray);
 
 			if (_.keys(filters).length === 1) {
 				// Only a string query is passed, no need to add further filters

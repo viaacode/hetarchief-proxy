@@ -52,7 +52,7 @@ describe('QueryBuilder', () => {
 				size: 10,
 				page: 1,
 			});
-			expect(esQuery.query.bool.should.length).toBeGreaterThanOrEqual(3);
+			expect(esQuery.query.bool.must.length).toBeGreaterThanOrEqual(3);
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
@@ -72,7 +72,7 @@ describe('QueryBuilder', () => {
 			});
 
 			expect(esQuery.query).toEqual({
-				bool: { filter: [{ bool: { should: { term: { dcterms_format: 'video' } } } }] },
+				bool: { filter: [{ bool: { must: { term: { dcterms_format: 'video' } } } }] },
 			});
 		});
 
