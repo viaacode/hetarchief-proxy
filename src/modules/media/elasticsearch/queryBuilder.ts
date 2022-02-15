@@ -2,7 +2,14 @@ import { InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilters } from '../dto/media.dto';
-import { MAX_COUNT_SEARCH_RESULTS, MAX_NUMBER_SEARCH_RESULTS } from '../services/consts';
+import {
+	AGGS_PROPERTIES,
+	MAX_COUNT_SEARCH_RESULTS,
+	MAX_NUMBER_SEARCH_RESULTS,
+	NEEDS_FILTER_SUFFIX,
+	NUMBER_OF_FILTER_OPTIONS,
+	READABLE_TO_ELASTIC_FILTER_NAMES,
+} from '../services/consts';
 
 import searchQueryTemplate from './templates/search-query.json';
 
@@ -32,6 +39,9 @@ export class QueryBuilder {
 
 			// Add the filters and search terms to the query object
 			_.set(queryObject, 'query', this.buildFilterObject(searchRequest.filters));
+
+			// Specify the aggs objects with optional search terms
+			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
 
 			return queryObject;
 		} catch (err) {
@@ -84,5 +94,56 @@ export class QueryBuilder {
 		}
 
 		return { match_all: {} };
+	}
+
+	/**
+	 * Builds up an object containing the elasticsearch  aggregation objects
+	 * The result of these aggregations will be used to show in the multi select options lists in the search page
+	 * The results will show:
+	 * {
+	 *   "key": "video",
+	 *   "doc_count": 10
+	 * },
+	 * {
+	 *   "key": "audio",
+	 *   "doc_count": 2
+	 * }
+	 * @param searchRequest
+	 */
+	private static buildAggsObject(searchRequest: MediaQueryDto): any {
+		const aggs: any = {};
+		_.forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
+			const elasticProperty =
+				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as keyof SearchFilters];
+			if (!elasticProperty) {
+				throw new InternalServerErrorException(
+					`Failed to resolve agg property: ${aggProperty}`
+				);
+			}
+
+			aggs[elasticProperty] = {
+				terms: {
+					field: elasticProperty + this.suffix(aggProperty),
+					size: (searchRequest as any).aggsSize || NUMBER_OF_FILTER_OPTIONS,
+				},
+			};
+			// }
+		});
+		return aggs;
+	}
+
+	/**
+	 * Some properties in elasticsearch need a ".filter" suffix to work correctly
+	 * This helper function makes it easier to get a suffix if one is required
+	 * eg:
+	 * "dc_titles_serie.filter": {
+	 *   "terms": {
+	 *     "field": "dc_titles_serie.filter"
+	 *   }
+	 * },
+	 * @param prop
+	 */
+	private static suffix(prop: keyof SearchFilters): string {
+		return NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
 	}
 }

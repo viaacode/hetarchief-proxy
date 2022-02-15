@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class SearchFilters {
 	@IsString()
@@ -12,6 +12,15 @@ export class SearchFilters {
 		default: '',
 	})
 	query?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter the results on format: Video / Audio / Image / News', // TODO add enum when real values are known and available in ES
+		default: '',
+	})
+	format?: string;
 }
 
 export class MediaQueryDto {
@@ -43,4 +52,13 @@ export class MediaQueryDto {
 		default: 10,
 	})
 	size? = 10;
+
+	@IsArray()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Array,
+		description: 'The aggregates to include in the result',
+		default: [],
+	})
+	requestedAggs?: Array<keyof SearchFilters>;
 }
