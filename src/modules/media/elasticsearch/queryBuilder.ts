@@ -2,6 +2,8 @@ import { InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilters } from '../dto/media.dto';
+import { QueryBuilderConfig } from '../types';
+
 import {
 	AGGS_PROPERTIES,
 	MAX_COUNT_SEARCH_RESULTS,
@@ -9,8 +11,7 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
-} from '../services/consts';
-
+} from './consts';
 import searchQueryTemplate from './templates/search-query.json';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -18,6 +19,23 @@ import { PaginationHelper } from '~shared/helpers/pagination';
 const searchQueryObjectTemplate = _.values(searchQueryTemplate);
 
 export class QueryBuilder {
+	private static config = {
+		AGGS_PROPERTIES,
+		MAX_COUNT_SEARCH_RESULTS,
+		MAX_NUMBER_SEARCH_RESULTS,
+		NEEDS_FILTER_SUFFIX,
+		NUMBER_OF_FILTER_OPTIONS,
+		READABLE_TO_ELASTIC_FILTER_NAMES,
+	};
+
+	public static getConfig(): QueryBuilderConfig {
+		return this.config;
+	}
+
+	public static setConfig(config: QueryBuilderConfig) {
+		this.config = config;
+	}
+
 	/**
 	 * Convert filters, order, aggs properties (created by the ui) to elasticsearch query object
 	 * @param searchRequest the search query parameters
@@ -33,8 +51,8 @@ export class QueryBuilder {
 			delete queryObject.default; // Side effect of importing a json file as a module
 
 			// Avoid huge queries
-			queryObject.size = Math.min(searchRequest.size, MAX_NUMBER_SEARCH_RESULTS);
-			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - limit);
+			queryObject.size = Math.min(searchRequest.size, this.config.MAX_NUMBER_SEARCH_RESULTS);
+			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = _.clamp(offset, 0, max);
 
 			// Add the filters and search terms to the query object
@@ -124,7 +142,7 @@ export class QueryBuilder {
 			}
 
 			// // Map frontend filter names to elasticsearch names
-			const elasticKey = READABLE_TO_ELASTIC_FILTER_NAMES[readableKey];
+			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[readableKey];
 			if (!elasticKey) {
 				throw new InternalServerErrorException(
 					`Failed to resolve agg property: ${readableKey}`
@@ -155,9 +173,9 @@ export class QueryBuilder {
 	 */
 	private static buildAggsObject(searchRequest: MediaQueryDto): any {
 		const aggs: any = {};
-		_.forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
+		_.forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
-				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as keyof SearchFilters];
+				this.config.READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as keyof SearchFilters];
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(
 					`Failed to resolve agg property: ${aggProperty}`
@@ -167,7 +185,7 @@ export class QueryBuilder {
 			aggs[elasticProperty] = {
 				terms: {
 					field: elasticProperty + this.suffix(aggProperty),
-					size: (searchRequest as any).aggsSize || NUMBER_OF_FILTER_OPTIONS,
+					size: (searchRequest as any).aggsSize || this.config.NUMBER_OF_FILTER_OPTIONS,
 				},
 			};
 			// }
@@ -187,6 +205,6 @@ export class QueryBuilder {
 	 * @param prop
 	 */
 	private static suffix(prop: keyof SearchFilters): string {
-		return NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
+		return this.config.NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
 	}
 }
