@@ -33,6 +33,16 @@ export class QueryBuilder {
 			// Add the filters and search terms to the query object
 			_.set(queryObject, 'query', this.buildFilterObject(searchRequest.filters));
 
+			// Add sorting
+			queryObject.sort = [
+				'_score',
+				{
+					[searchRequest.orderProp]: {
+						order: searchRequest.orderDirection,
+					},
+				},
+			];
+
 			return queryObject;
 		} catch (err) {
 			throw new InternalServerErrorException('Failed to build query object', err);
