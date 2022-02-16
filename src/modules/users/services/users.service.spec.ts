@@ -9,6 +9,22 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
+const graphQlUserResponse = {
+	id: '123',
+	first_name: 'Tom',
+	last_name: 'Testerom',
+	mail: 'test@studiohypderdrive.be',
+	accepted_tos: true,
+};
+
+const archiefUser = {
+	id: '123',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohypderdrive.be',
+	acceptedTos: true,
+};
+
 describe('UsersService', () => {
 	let usersService: UsersService;
 
@@ -34,11 +50,29 @@ describe('UsersService', () => {
 		it('should get a user by identity id', async () => {
 			//data.users_profile[0]
 			mockDataService.execute.mockReturnValueOnce({
-				data: { users_profile: [{ id: '123' }] },
+				data: { users_profile: [graphQlUserResponse] },
 			});
 
 			const result = await usersService.getUserByIdentityId('123');
-			expect(result).toEqual({ id: '123' });
+			expect(result).toEqual(archiefUser);
+		});
+
+		it('throws a notfoundexception if the user was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					users_profile: [],
+				},
+			});
+			let error;
+			try {
+				await usersService.getUserByIdentityId('unknown-id');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				message: 'Not Found',
+				statusCode: 404,
+			});
 		});
 	});
 
@@ -47,7 +81,7 @@ describe('UsersService', () => {
 			// Mock insert user
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: { insert_users_profile_one: { id: '123' } },
+					data: { insert_users_profile_one: graphQlUserResponse },
 				})
 				.mockReturnValueOnce({}); // insert idp
 
@@ -56,15 +90,15 @@ describe('UsersService', () => {
 				Idp.HETARCHIEF,
 				'idp-1'
 			);
-			expect(result).toEqual({ id: '123' });
+			expect(result).toEqual(archiefUser);
 		});
 	});
 
-	describe('udpateUser', () => {
+	describe('updateUser', () => {
 		it('should update a user', async () => {
 			// Mock insert user
 			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: { id: '123' } },
+				data: { update_users_profile_by_pk: graphQlUserResponse },
 			});
 
 			const result = await usersService.updateUser('123', {
@@ -72,7 +106,7 @@ describe('UsersService', () => {
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
 			});
-			expect(result).toEqual({ id: '123' });
+			expect(result).toEqual(archiefUser);
 		});
 	});
 });
