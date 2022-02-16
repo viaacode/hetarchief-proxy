@@ -7,6 +7,11 @@ export interface Media {
 	description: string;
 }
 
+export enum MediaFormat {
+	VIDEO = 'video',
+	AUDIO = 'audio',
+}
+
 export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<keyof SearchFilters>;
 	MAX_COUNT_SEARCH_RESULTS: number;
