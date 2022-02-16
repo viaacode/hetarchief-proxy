@@ -1,4 +1,4 @@
-import { QueryBuilderConfig } from '../types';
+import { MediaFormat, QueryBuilderConfig } from '../types';
 
 import { QueryBuilder } from './queryBuilder';
 
@@ -66,7 +66,7 @@ describe('QueryBuilder', () => {
 
 		it('should filter on format', () => {
 			const esQuery = QueryBuilder.build({
-				filters: { format: 'video' },
+				filters: { format: MediaFormat.VIDEO },
 				size: 10,
 				page: 1,
 			});
@@ -83,7 +83,7 @@ describe('QueryBuilder', () => {
 			let error;
 			try {
 				QueryBuilder.build({
-					filters: { query: '', format: '' },
+					filters: { query: '', format: null },
 					size: 10,
 					page: 1,
 				});
