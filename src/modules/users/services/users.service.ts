@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { get } from 'lodash';
 
-import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
+import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
 import { User } from '../types';
 
 import {
@@ -74,6 +74,21 @@ export class UsersService {
 			first_name: updateUserDto.firstName,
 			last_name: updateUserDto.lastName,
 			mail: updateUserDto.email,
+		};
+
+		const {
+			data: { update_users_profile_by_pk: updatedUser },
+		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
+
+		return this.adapt(updatedUser);
+	}
+
+	public async updateAcceptedTos(
+		id: string,
+		updateAcceptedTos: UpdateAcceptedTosDto
+	): Promise<User> {
+		const updateUser = {
+			accepted_tos: updateAcceptedTos.acceptedTos,
 		};
 
 		const {

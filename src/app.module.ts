@@ -11,6 +11,7 @@ import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
+import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
 
@@ -25,8 +26,9 @@ import { SessionService } from '~shared/services/session.service';
 		ScheduleModule.forRoot(),
 		DataModule,
 		AuthModule,
-		SpacesModule,
 		MediaModule,
+		SpacesModule,
+		UsersModule,
 		VisitsModule,
 	],
 	controllers: [AppController],

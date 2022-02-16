@@ -109,4 +109,17 @@ describe('UsersService', () => {
 			expect(result).toEqual(archiefUser);
 		});
 	});
+
+	describe('updateAcceptedTos', () => {
+		it('should update if a user accepted the terms of service', async () => {
+			mockDataService.execute.mockReturnValueOnce({
+				data: { update_users_profile_by_pk: graphQlUserResponse },
+			});
+
+			const result = await usersService.updateAcceptedTos('123', {
+				acceptedTos: true,
+			});
+			expect(result).toEqual(archiefUser);
+		});
+	});
 });
