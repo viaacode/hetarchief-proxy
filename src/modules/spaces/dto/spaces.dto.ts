@@ -2,6 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { SortDirection } from '~shared/types/sorting';
+
 export class UpdateSpaceDto {
 	@IsString()
 	description: string;
@@ -68,8 +70,8 @@ export class SpacesQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Direction to sort in. either desc or asc',
-		default: 'asc',
-		enum: ['asc', 'desc'],
+		default: SortDirection.asc,
+		enum: SortDirection,
 	})
-	orderDirection? = 'asc';
+	orderDirection? = SortDirection.asc;
 }
