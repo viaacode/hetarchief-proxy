@@ -60,7 +60,7 @@ describe('VisitsController', () => {
 	});
 
 	describe('createVisit', () => {
-		it('should create a visit by id', async () => {
+		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisitsResponse.items[0]);
 			const visit = await visitsController.createVisit({
 				spaceId: 'space-1',

@@ -15,7 +15,7 @@ export class VisitsController {
 
 	@Get()
 	public async getVisits(@Query() queryDto: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const visits = this.visitsService.findAll(queryDto);
+		const visits = await this.visitsService.findAll(queryDto);
 		return visits;
 	}
 

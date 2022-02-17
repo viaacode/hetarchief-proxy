@@ -7,6 +7,7 @@ import config, { configValidationSchema } from '~config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { NavigationsModule } from '~modules/admin/navigations';
 import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
@@ -27,6 +28,7 @@ import { SessionService } from '~shared/services/session.service';
 		AuthModule,
 		SpacesModule,
 		MediaModule,
+		NavigationsModule,
 		VisitsModule,
 	],
 	controllers: [AppController],
