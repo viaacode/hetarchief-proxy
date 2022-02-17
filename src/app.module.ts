@@ -11,6 +11,7 @@ import { AuthModule } from '~modules/auth';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
+import { TosModule } from '~modules/tos';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
@@ -24,10 +25,11 @@ import { SessionService } from '~shared/services/session.service';
 			expandVariables: true,
 		}),
 		ScheduleModule.forRoot(),
-		DataModule,
 		AuthModule,
+		DataModule,
 		MediaModule,
 		SpacesModule,
+		TosModule,
 		UsersModule,
 		VisitsModule,
 	],
