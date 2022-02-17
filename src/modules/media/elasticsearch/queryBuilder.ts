@@ -60,6 +60,15 @@ export class QueryBuilder {
 
 			// Specify the aggs objects with optional search terms
 			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
+			// Add sorting
+			queryObject.sort = [
+				'_score',
+				{
+					[searchRequest.orderProp]: {
+						order: searchRequest.orderDirection,
+					},
+				},
+			];
 
 			return queryObject;
 		} catch (err) {
