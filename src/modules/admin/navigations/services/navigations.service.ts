@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import _ from 'lodash';
 
 import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto';
 import { Navigation } from '../types';
@@ -9,13 +10,15 @@ import {
 	FIND_NAVIGATION_BY_ID,
 	FIND_NAVIGATION_BY_PLACEMENT,
 	FIND_NAVIGATIONS,
+	GET_ALL_NAVIGATION_ITEMS,
 	INSERT_NAVIGATION,
 	UPDATE_NAVIGATION_BY_ID,
 } from './queries.gql';
 
+import { SessionHelper } from '~modules/auth/session-helper';
 import { DataService } from '~modules/data/services/data.service';
 import { GraphQlResponse } from '~modules/data/types';
-import { DeleteResponse } from '~shared/types/types';
+import { DeleteResponse, SpecialPermissionGroups } from '~shared/types/types';
 
 @Injectable()
 export class NavigationsService {
@@ -80,5 +83,31 @@ export class NavigationsService {
 			throw new NotFoundException();
 		}
 		return navigationResponse.data.cms_navigation_element[0];
+	}
+
+	public async getNavigationItems(
+		session: Record<string, any>
+	): Promise<Record<string, Navigation[]>> {
+		const {
+			data: { cms_navigation_element: navigations },
+		} = await this.dataService.execute(GET_ALL_NAVIGATION_ITEMS);
+
+		// filter based on logged in / logged out
+		const allowedUserGroups = SessionHelper.isLoggedIn(session)
+			? [SpecialPermissionGroups.loggedInUsers]
+			: [SpecialPermissionGroups.loggedOutUsers];
+
+		const visibleItems = [];
+		navigations.forEach((navigation: Navigation) => {
+			if (navigation.user_group_ids && navigation.user_group_ids.length) {
+				// If the page doesn't have any groups specified, it isn't visible for anyone
+				if (_.intersection(allowedUserGroups, navigation.user_group_ids).length) {
+					// The logged in user has at least one user group that is required to view the nav item
+					visibleItems.push(navigation);
+				}
+			}
+		});
+
+		return _.groupBy(visibleItems, 'placement');
 	}
 }

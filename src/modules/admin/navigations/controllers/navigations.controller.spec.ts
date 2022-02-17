@@ -18,6 +18,7 @@ const mockNavigationsResponse = {
 const mockNavigationsService = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	getNavigationItems: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	delete: jest.fn(),
@@ -49,6 +50,16 @@ describe('NavigationsController', () => {
 		it('should return all navigations', async () => {
 			mockNavigationsService.findAll.mockResolvedValueOnce(mockNavigationsResponse);
 			const navigations = await navigationsController.getNavigations({});
+			expect(navigations).toEqual(mockNavigationsResponse);
+		});
+	});
+
+	describe('getNavigationItems', () => {
+		it('should return all navigation items for the user (session)', async () => {
+			mockNavigationsService.getNavigationItems.mockResolvedValueOnce(
+				mockNavigationsResponse
+			);
+			const navigations = await navigationsController.getNavigationItems({});
 			expect(navigations).toEqual(mockNavigationsResponse);
 		});
 	});

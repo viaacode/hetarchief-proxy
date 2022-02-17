@@ -2,11 +2,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { NavigationsService } from './navigations.service';
 
+import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService = {
 	execute: jest.fn(),
 };
+
+const getNewMockSession = () => ({
+	idp: Idp.HETARCHIEF,
+	idpUserInfo: {
+		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
+	},
+	archiefUserInfo: {
+		email: 'test@studiohypderdrive.be',
+	},
+});
 
 describe('NavigationsService', () => {
 	let navigationsService: NavigationsService;
@@ -160,6 +171,64 @@ describe('NavigationsService', () => {
 			});
 			const response = await navigationsService.delete('1');
 			expect(response.affectedRows).toBe('1');
+		});
+	});
+
+	describe('getNavigationItems', () => {
+		it('returns navigation items for a not-logged in user', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cms_navigation_element: [
+						{
+							id: '1',
+							placement: 'footer-links',
+							user_group_ids: [-1, -2],
+						},
+						{
+							id: '2',
+							placement: 'footer-links',
+							user_group_ids: [-2],
+						},
+					],
+					cms_navigation_element_aggregate: {
+						aggregate: {
+							count: 2,
+						},
+					},
+				},
+			});
+			const response = await navigationsService.getNavigationItems({});
+			// response is grouped by placement
+			expect(response['footer-links'].length).toEqual(1);
+			expect(response['footer-links'][0].id).toEqual('1');
+		});
+
+		it('returns other navigation items for a logged in user', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cms_navigation_element: [
+						{
+							id: '1',
+							placement: 'footer-links',
+							user_group_ids: [-1, -2],
+						},
+						{
+							id: '2',
+							placement: 'footer-links',
+							user_group_ids: [-2],
+						},
+					],
+					cms_navigation_element_aggregate: {
+						aggregate: {
+							count: 2,
+						},
+					},
+				},
+			});
+			const response = await navigationsService.getNavigationItems(getNewMockSession());
+			// response is grouped by placement
+			expect(response['footer-links'].length).toEqual(2);
+			expect(response['footer-links'][1].id).toEqual('2');
 		});
 	});
 });

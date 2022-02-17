@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Put, Query } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Logger,
+	Param,
+	Post,
+	Put,
+	Query,
+	Session,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
@@ -20,6 +31,18 @@ export class NavigationsController {
 		@Query() navigationsQueryDto: NavigationsQueryDto
 	): Promise<IPagination<Navigation>> {
 		const navigations = await this.navigationsService.findAll(navigationsQueryDto);
+		return navigations;
+	}
+
+	/**
+	 * Get navigation items for the current user (logged in or not logged in)
+	 * currently there are not yet special permission groups
+	 */
+	@Get('items')
+	async getNavigationItems(
+		@Session() session: Record<string, any>
+	): Promise<Record<string, Navigation[]>> {
+		const navigations = await this.navigationsService.getNavigationItems(session);
 		return navigations;
 	}
 

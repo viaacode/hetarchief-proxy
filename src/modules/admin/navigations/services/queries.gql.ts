@@ -62,6 +62,27 @@ export const FIND_NAVIGATION_BY_ID = `
 	}
 `;
 
+export const GET_ALL_NAVIGATION_ITEMS = `
+	query getNavigationItems {
+		cms_navigation_element {
+			content_path
+			content_type
+			link_target
+			placement
+			position
+			id
+			icon_name
+			user_group_ids
+			label
+			updated_at
+			description
+			created_at
+			content_id
+			tooltip
+		}
+	}
+`;
+
 export const UPDATE_NAVIGATION_BY_ID = `
 	mutation updateMenuItemById($id: uuid!, $navigationItem: cms_navigation_element_set_input!) {
 		update_cms_navigation_element_by_pk(pk_columns: { id: $id }, _set: $navigationItem) {
