@@ -70,7 +70,8 @@ describe('UsersService', () => {
 				error = e;
 			}
 			expect(error.response).toEqual({
-				message: 'Not Found',
+				error: 'Not Found',
+				message: "User with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
