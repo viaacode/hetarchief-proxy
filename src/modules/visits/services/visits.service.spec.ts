@@ -128,7 +128,7 @@ describe('VisitsService', () => {
 		it('can filter on spaceId', async () => {
 			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
 			const response = await visitsService.findAll({
-				userProfileId: 'user-1',
+				spaceId: 'space-1',
 				page: 1,
 				size: 10,
 			});
