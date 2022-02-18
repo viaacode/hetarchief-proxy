@@ -63,7 +63,15 @@ export class VisitsQueryDto {
 			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
 		default: '%',
 	})
-	query? = '%';
+	query?: string;
+
+	@IsUUID()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Get all visits for this user',
+	})
+	userProfileId?: string;
 
 	@ApiProperty({
 		isArray: true,
@@ -81,7 +89,7 @@ export class VisitsQueryDto {
 		}
 		return params.value;
 	})
-	status? = ['PENDING', 'APPROVED', 'DENIED'];
+	status?: VisitStatus | VisitStatus[];
 
 	@IsNumber()
 	@Type(() => Number)

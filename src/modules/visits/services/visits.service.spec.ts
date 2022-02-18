@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import cpVisit from './__mocks__/cp_visit';
+import { FIND_VISITS } from './queries.gql';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -92,13 +93,62 @@ describe('VisitsService', () => {
 			});
 			const response = await visitsService.findAll({
 				query: '%Marie%',
-				status: [VisitStatus.APPROVED],
+				status: VisitStatus.APPROVED,
 				page: 1,
 				size: 10,
 			});
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.visitorName).toContain('Marie');
 			expect(response.items[0]?.status).toEqual(VisitStatus.APPROVED);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on an array of statuses', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [
+						{
+							id: '1',
+						},
+					],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await visitsService.findAll({
+				status: [VisitStatus.APPROVED, VisitStatus.DENIED],
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+		});
+
+		it('can filter on userProfileId', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [
+						{
+							id: '1',
+						},
+					],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await visitsService.findAll({
+				userProfileId: 'user-1',
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);

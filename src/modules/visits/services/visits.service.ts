@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get, isArray, set } from 'lodash';
+import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Visit } from '../types';
@@ -57,11 +57,33 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, status, userProfileId, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
+		/** Dynamically build the where object  */
+		const where: any = {};
+		if (!isEmpty(query)) {
+			where._or = [
+				{ user_profile: { first_name: { _ilike: query } } },
+				{ user_profile: { last_name: { _ilike: query } } },
+				{ user_profile: { mail: { _ilike: query } } },
+			];
+		}
+
+		if (!isEmpty(status)) {
+			where.status = {
+				_in: isArray(status) ? status : [status],
+			};
+		}
+
+		if (!isEmpty(userProfileId)) {
+			where.user_profile_id = {
+				_eq: userProfileId,
+			};
+		}
+
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
-			query,
-			statuses: isArray(status) ? status : [status],
+			where,
 			offset,
 			limit,
 			orderBy: set({}, ORDER_PROP_TO_DB_PROP[orderProp], orderDirection),
