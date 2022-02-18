@@ -20,6 +20,7 @@ const mockVisitsService = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),
+	update: jest.fn(),
 	updateStatus: jest.fn(),
 };
 
@@ -70,6 +71,14 @@ describe('VisitsController', () => {
 				timeframe: 'asap',
 				acceptedTos: true,
 			});
+			expect(visit).toEqual(mockVisitsResponse.items[0]);
+		});
+	});
+
+	describe('update', () => {
+		it('should update a visit', async () => {
+			mockVisitsService.update.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			const visit = await visitsController.update('visit-id', {});
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});
 	});

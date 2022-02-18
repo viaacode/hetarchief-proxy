@@ -184,6 +184,36 @@ describe('VisitsService', () => {
 		});
 	});
 
+	describe('update', () => {
+		it('can update a visit with startAt', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_visit_by_pk: {
+						id: '1',
+					},
+				},
+			});
+			const response = await visitsService.update('1', {
+				startAt: new Date().toISOString(),
+			});
+			expect(response.id).toBe('1');
+		});
+
+		it('can update a visit with endAt', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_visit_by_pk: {
+						id: '1',
+					},
+				},
+			});
+			const response = await visitsService.update('1', {
+				endAt: new Date().toISOString(),
+			});
+			expect(response.id).toBe('1');
+		});
+	});
+
 	describe('updateStatus', () => {
 		it('can update the status for a visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());

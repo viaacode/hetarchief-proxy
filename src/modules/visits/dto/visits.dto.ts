@@ -3,6 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
 	IsBoolean,
+	IsDateString,
 	IsEnum,
 	IsNotEmpty,
 	IsNumber,
@@ -62,6 +63,26 @@ export class UpdateVisitStatusDto {
 	})
 	@IsEnum(VisitStatus)
 	status: VisitStatus;
+}
+
+export class UpdateVisitDto {
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: 'The start date & time of the visit, ISO8601 format',
+	})
+	startAt?: string;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: 'The end date & time of the visit, ISO8601 format',
+	})
+	endAt?: string;
+
+	// TODO remarks if available in DB
 }
 
 export class VisitsQueryDto {

@@ -2,7 +2,12 @@ import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@n
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import { CreateVisitDto, UpdateVisitStatusDto, VisitsQueryDto } from '../dto/visits.dto';
+import {
+	CreateVisitDto,
+	UpdateVisitDto,
+	UpdateVisitStatusDto,
+	VisitsQueryDto,
+} from '../dto/visits.dto';
 import { Visit, VisitStatus } from '../types';
 
 import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT } from './queries.gql';
@@ -69,6 +74,21 @@ export class VisitsService {
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
 		return this.adapt(createdVisit);
+	}
+
+	public async update(id: string, updateVisitDto: UpdateVisitDto): Promise<Visit> {
+		const { startAt, endAt } = updateVisitDto;
+		const updateVisit = {
+			...(startAt ? { start_date: startAt } : {}),
+			...(endAt ? { end_date: endAt } : {}),
+		};
+		const {
+			data: { update_cp_visit_by_pk: updatedVisit },
+		} = await this.dataService.execute(UPDATE_VISIT, {
+			id,
+			updateVisit,
+		});
+		return this.adapt(updatedVisit);
 	}
 
 	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {

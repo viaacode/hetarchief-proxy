@@ -2,7 +2,12 @@ import { Body, Controller, Get, Logger, Param, Post, Put, Query } from '@nestjs/
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
-import { CreateVisitDto, UpdateVisitStatusDto, VisitsQueryDto } from '../dto/visits.dto';
+import {
+	CreateVisitDto,
+	UpdateVisitDto,
+	UpdateVisitStatusDto,
+	VisitsQueryDto,
+} from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
 import { Visit } from '../types';
 
@@ -28,6 +33,15 @@ export class VisitsController {
 	@Post()
 	public async createVisit(@Body() createVisitDto: CreateVisitDto): Promise<Visit> {
 		const visit = await this.visitsService.create(createVisitDto);
+		return visit;
+	}
+
+	@Put(':id')
+	public async update(
+		@Param('id') id: string,
+		@Body() updateVisitDto: UpdateVisitDto
+	): Promise<Visit> {
+		const visit = await this.visitsService.update(id, updateVisitDto);
 		return visit;
 	}
 
