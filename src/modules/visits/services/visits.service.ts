@@ -1,11 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Visit } from '../types';
+import { CreateVisitDto, UpdateVisitStatusDto, VisitsQueryDto } from '../dto/visits.dto';
+import { Visit, VisitStatus } from '../types';
 
-import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT } from './queries.gql';
+import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
@@ -15,7 +15,22 @@ import { PaginationHelper } from '~shared/helpers/pagination';
 export class VisitsService {
 	private logger: Logger = new Logger(VisitsService.name, { timestamp: true });
 
+	private statusTransitions = {
+		[VisitStatus.PENDING]: [
+			VisitStatus.CANCELLED_BY_VISITOR,
+			VisitStatus.APPROVED,
+			VisitStatus.DENIED,
+		],
+		[VisitStatus.CANCELLED_BY_VISITOR]: [],
+		[VisitStatus.APPROVED]: [VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [],
+	};
+
 	constructor(private dataService: DataService) {}
+
+	public statusTransitionAllowed(from: VisitStatus, to: VisitStatus): boolean {
+		return this.statusTransitions[from].includes(to);
+	}
 
 	public adapt(graphQlVisit: any): Visit {
 		return {
@@ -54,6 +69,23 @@ export class VisitsService {
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
 		return this.adapt(createdVisit);
+	}
+
+	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {
+		// Get current visit status
+		const currentVisit = await this.findById(id);
+		if (!this.statusTransitionAllowed(currentVisit.status, updateStatusDto.status)) {
+			throw new UnauthorizedException(
+				`Status transition '${currentVisit.status}' -> '${updateStatusDto.status}' is not allowed`
+			);
+		}
+		const {
+			data: { update_cp_visit_by_pk: updatedVisit },
+		} = await this.dataService.execute(UPDATE_VISIT, {
+			id,
+			updateVisit: { status: updateStatusDto.status },
+		});
+		return this.adapt(updatedVisit);
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {

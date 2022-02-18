@@ -10,7 +10,7 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
-const defaultVisitsResponse = {
+const getDefaultVisitsResponse = () => ({
 	data: {
 		cp_visit: [cpVisit],
 		cp_visit_aggregate: {
@@ -19,7 +19,7 @@ const defaultVisitsResponse = {
 			},
 		},
 	},
-};
+});
 
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
@@ -55,7 +55,7 @@ describe('VisitsService', () => {
 
 	describe('findAll', () => {
 		it('returns a paginated response with all visits', async () => {
-			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
 				query: '%',
 				status: undefined,
@@ -103,7 +103,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can filter on an array of statuses', async () => {
-			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
 				status: [VisitStatus.APPROVED, VisitStatus.DENIED],
 				page: 1,
@@ -113,7 +113,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can filter on userProfileId', async () => {
-			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
 				userProfileId: 'user-1',
 				page: 1,
@@ -126,7 +126,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can filter on spaceId', async () => {
-			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
 				spaceId: 'space-1',
 				page: 1,
@@ -141,7 +141,7 @@ describe('VisitsService', () => {
 
 	describe('findById', () => {
 		it('returns a single visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findById('1');
 			expect(response.id).toBe(cpVisit.id);
 		});
@@ -181,6 +181,38 @@ describe('VisitsService', () => {
 				acceptedTos: true,
 			});
 			expect(response.id).toBe('1');
+		});
+	});
+
+	describe('updateStatus', () => {
+		it('can update the status for a visit', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_visit_by_pk: {
+						id: '1',
+					},
+				},
+			});
+			const response = await visitsService.updateStatus('1', {
+				status: VisitStatus.APPROVED,
+			});
+			expect(response.id).toBe('1');
+		});
+
+		it('throws an exception for an in valid status transition', async () => {
+			const initialVisit = getDefaultVisitsResponse();
+			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			let error;
+			try {
+				await visitsService.updateStatus('1', {
+					status: VisitStatus.PENDING,
+				});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
 		});
 	});
 });

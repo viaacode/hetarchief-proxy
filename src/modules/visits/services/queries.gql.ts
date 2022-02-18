@@ -16,6 +16,29 @@ export const INSERT_VISIT = `
 	}
 `;
 
+export const UPDATE_VISIT = `
+	mutation updateVisit($id: uuid!, $updateVisit: cp_visit_set_input!) {
+		update_cp_visit_by_pk(pk_columns: { id: $id}, _set: $updateVisit) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			created_at
+			updated_at
+			user_profile {
+				first_name
+				last_name
+				mail
+				id
+			}
+		}
+	}
+`;
+
 export const FIND_VISITS = `
 	query visit($where: cp_visit_bool_exp, $offset: Int!, $limit: Int!, $orderBy: cp_visit_order_by! = {}) {
 		cp_visit(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {

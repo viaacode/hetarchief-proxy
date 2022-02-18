@@ -53,6 +53,17 @@ export class CreateVisitDto {
 	acceptedTos: boolean;
 }
 
+export class UpdateVisitStatusDto {
+	@ApiProperty({
+		required: true,
+		enum: VisitStatus,
+		description:
+			'Transition the visit to any of these states: APPROVED, DENIED, CANCELLED_BY_VISITOR',
+	})
+	@IsEnum(VisitStatus)
+	status: VisitStatus;
+}
+
 export class VisitsQueryDto {
 	@IsString()
 	@Type(() => String)
@@ -85,8 +96,9 @@ export class VisitsQueryDto {
 		isArray: true,
 		required: false,
 		enum: VisitStatus,
-		description: 'Status of the visit request. Options are: PENDING, APPROVED, DENIED',
-		default: ['PENDING', 'APPROVED', 'DENIED'],
+		description: `Status of the visit request. Options are: ${Object.values(VisitStatus).join(
+			', '
+		)}`,
 	})
 	@IsOptional()
 	@IsEnum(VisitStatus, { each: true })
