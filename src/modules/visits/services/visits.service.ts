@@ -57,7 +57,8 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, userProfileId, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, status, userProfileId, spaceId, page, size, orderProp, orderDirection } =
+			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -79,6 +80,12 @@ export class VisitsService {
 		if (!isEmpty(userProfileId)) {
 			where.user_profile_id = {
 				_eq: userProfileId,
+			};
+		}
+
+		if (!isEmpty(spaceId)) {
+			where.cp_space_id = {
+				_eq: spaceId,
 			};
 		}
 

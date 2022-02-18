@@ -73,6 +73,14 @@ export class VisitsQueryDto {
 	})
 	userProfileId?: string;
 
+	@IsUUID()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Get all visits for this space',
+	})
+	spaceId?: string;
+
 	@ApiProperty({
 		isArray: true,
 		required: false,

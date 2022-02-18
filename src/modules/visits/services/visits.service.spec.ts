@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import cpVisit from './__mocks__/cp_visit';
-import { FIND_VISITS } from './queries.gql';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -9,6 +8,17 @@ import { VisitStatus } from '~modules/visits/types';
 
 const mockDataService = {
 	execute: jest.fn(),
+};
+
+const defaultVisitsResponse = {
+	data: {
+		cp_visit: [cpVisit],
+		cp_visit_aggregate: {
+			aggregate: {
+				count: 100,
+			},
+		},
+	},
 };
 
 describe('VisitsService', () => {
@@ -45,20 +55,7 @@ describe('VisitsService', () => {
 
 	describe('findAll', () => {
 		it('returns a paginated response with all visits', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
 			const response = await visitsService.findAll({
 				query: '%',
 				status: undefined,
@@ -106,20 +103,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can filter on an array of statuses', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
 			const response = await visitsService.findAll({
 				status: [VisitStatus.APPROVED, VisitStatus.DENIED],
 				page: 1,
@@ -129,20 +113,20 @@ describe('VisitsService', () => {
 		});
 
 		it('can filter on userProfileId', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
+			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
+			const response = await visitsService.findAll({
+				userProfileId: 'user-1',
+				page: 1,
+				size: 10,
 			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on spaceId', async () => {
+			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
 			const response = await visitsService.findAll({
 				userProfileId: 'user-1',
 				page: 1,
@@ -157,17 +141,9 @@ describe('VisitsService', () => {
 
 	describe('findById', () => {
 		it('returns a single visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-						},
-					],
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce(defaultVisitsResponse);
 			const response = await visitsService.findById('1');
-			expect(response.id).toBe('1');
+			expect(response.id).toBe(cpVisit.id);
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
