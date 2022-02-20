@@ -27,11 +27,11 @@ export class UpdateUserDto {
 }
 
 export class UpdateAcceptedTosDto {
-	@IsBoolean()
-	@Type(() => Boolean)
+	@IsString()
+	@Type(() => String)
 	@ApiProperty({
-		type: Boolean,
-		description: 'If the user accepted the Terms of Service',
+		type: String,
+		description: 'When the user accepted the Terms of Service',
 	})
-	acceptedTos: boolean;
+	acceptedTosAt: string;
 }

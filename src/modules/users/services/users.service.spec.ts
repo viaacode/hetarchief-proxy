@@ -14,7 +14,7 @@ const graphQlUserResponse = {
 	first_name: 'Tom',
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',
-	accepted_tos: true,
+	accepted_tos_at: '2022-02-18T12:13:22.726Z',
 };
 
 const archiefUser = {
@@ -22,7 +22,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohypderdrive.be',
-	acceptedTos: true,
+	acceptedTosAt: '2022-02-18T12:13:22.726Z',
 };
 
 describe('UsersService', () => {
@@ -117,7 +117,7 @@ describe('UsersService', () => {
 			});
 
 			const result = await usersService.updateAcceptedTos('123', {
-				acceptedTos: true,
+				acceptedTosAt: new Date().toISOString(),
 			});
 			expect(result).toEqual(archiefUser);
 		});

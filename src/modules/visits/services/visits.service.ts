@@ -26,7 +26,7 @@ export class VisitsService {
 			status: get(graphQlVisit, 'status'),
 			startAt: get(graphQlVisit, 'start_date'),
 			endAt: get(graphQlVisit, 'end_date'),
-			acceptedTos: get(graphQlVisit, 'user_accepted_tos'),
+			acceptedTosAt: get(graphQlVisit, 'user_accepted_tos_at'),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			visitorName: (
@@ -45,7 +45,7 @@ export class VisitsService {
 			user_profile_id: createVisitDto.userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
-			user_accepted_tos: createVisitDto.acceptedTos,
+			user_accepted_tos_at: createVisitDto.acceptedTosAt,
 		};
 		const {
 			data: { insert_cp_visit_one: createdVisit },

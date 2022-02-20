@@ -9,6 +9,7 @@ import {
 	INSERT_USER,
 	INSERT_USER_IDENTITY,
 	UPDATE_USER,
+	UPDATE_USER_TOS,
 } from './queries.gql';
 
 import { Idp } from '~modules/auth/types';
@@ -26,7 +27,7 @@ export class UsersService {
 			firstName: get(graphQlUser, 'first_name'),
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),
-			acceptedTos: !!get(graphQlUser, 'accepted_tos'),
+			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
 		};
 	}
 
@@ -88,12 +89,12 @@ export class UsersService {
 		updateAcceptedTos: UpdateAcceptedTosDto
 	): Promise<User> {
 		const updateUser = {
-			accepted_tos: updateAcceptedTos.acceptedTos,
+			accepted_tos_at: updateAcceptedTos.acceptedTosAt,
 		};
 
 		const {
 			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
+		} = await this.dataService.execute(UPDATE_USER_TOS, { id, updateUser });
 
 		return this.adapt(updatedUser);
 	}
