@@ -1,6 +1,7 @@
-import { Body, Controller, Logger, Param, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Post, Session } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { SessionHelper } from '../../../modules/auth/session-helper';
 import { UpdateAcceptedTosDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from '../types';
@@ -14,10 +15,12 @@ export class UsersController {
 
 	@Post(':id/accepted-tos')
 	public async updateTos(
+		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto,
 		@Param('id') id: string,
-		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto
+		@Session() session: Record<string, any>
 	): Promise<User> {
 		const user = await this.usersService.updateAcceptedTos(id, updateAcceptedTosDto);
+		SessionHelper.setArchiefUserInfo(session, user);
 		return user;
 	}
 }
