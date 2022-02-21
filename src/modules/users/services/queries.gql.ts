@@ -5,7 +5,7 @@ export const GET_USER_BY_IDENTITY_ID = `
 			first_name
 			last_name
 			mail
-			accepted_tos
+			accepted_tos_at
 		}
 	}
 `;
@@ -17,7 +17,7 @@ export const INSERT_USER = `
 			first_name
 			last_name
 			mail
-			accepted_tos
+			accepted_tos_at
 		}
 	}
 `;
@@ -37,7 +37,7 @@ export const UPDATE_USER = `
 			first_name
 			last_name
 			mail
-			accepted_tos
+			accepted_tos_at
 		}
 	}
 `;

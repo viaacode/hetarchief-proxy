@@ -29,7 +29,7 @@ const mockArchiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
-	acceptedTos: true,
+	acceptedTosAt: '2022-02-21T14:00:00',
 };
 
 describe('SessionHelper', () => {

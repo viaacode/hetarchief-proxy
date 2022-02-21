@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Param, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { UpdateAcceptedTosDto } from '../dto/users.dto';
@@ -12,7 +12,7 @@ export class UsersController {
 
 	constructor(private usersService: UsersService) {}
 
-	@Post(':id/accepted-tos')
+	@Put(':id/accepted-tos')
 	public async updateTos(
 		@Param('id') id: string,
 		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto

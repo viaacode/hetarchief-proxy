@@ -9,7 +9,7 @@ const mockUserResponse = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohypderdrive.be',
-	acceptedTos: true,
+	acceptedTosAt: '2022-02-21T14:00:00',
 };
 
 const mockUsersService = {
@@ -41,7 +41,9 @@ describe('UsersController', () => {
 	describe('updateTos', () => {
 		it('should update if the user accepted the terms of service', async () => {
 			mockUsersService.updateAcceptedTos.mockResolvedValueOnce(mockUserResponse);
-			const user = await usersController.updateTos('1', { acceptedTos: true });
+			const user = await usersController.updateTos('1', {
+				acceptedTosAt: '2022-02-21T14:00:00',
+			});
 			expect(user).toEqual(mockUserResponse);
 		});
 	});
