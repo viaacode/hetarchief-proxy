@@ -193,7 +193,25 @@ describe('MeemooController', () => {
 			}
 			expect(error.response).toEqual({
 				statusCode: HttpStatus.UNAUTHORIZED,
-				message: 'Unauthorized',
+				error: 'Unauthorized',
+				message: 'User has no access to hetarchief/bezoekertool',
+			});
+		});
+
+		it('should redirect to the login route if the idp response is no longer valid', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockMeemooService.assertSamlResponse.mockRejectedValueOnce({
+				message: 'SAML Response is no longer valid',
+			});
+			const response = await meemooController.loginCallback({}, samlResponse);
+			expect(response).toEqual({
+				url: `${process.env.HOST}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
 	});

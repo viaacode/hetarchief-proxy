@@ -94,7 +94,7 @@ describe('HetArchiefController', () => {
 			});
 		});
 
-		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await hetArchiefController.getAuth(
 				getNewMockSession(),
 				'http://hetarchief.be/start'
@@ -115,7 +115,7 @@ describe('HetArchiefController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('should redirect after succesful login with a known user', async () => {
+		it('should redirect after successful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 
@@ -193,7 +193,25 @@ describe('HetArchiefController', () => {
 			}
 			expect(error.response).toEqual({
 				statusCode: HttpStatus.UNAUTHORIZED,
-				message: 'Unauthorized',
+				error: 'Unauthorized',
+				message: 'User has no access to hetarchief/bezoekertool',
+			});
+		});
+
+		it('should redirect to the login route if the idp response is no longer valid', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockArchiefService.assertSamlResponse.mockRejectedValueOnce({
+				message: 'SAML Response is no longer valid',
+			});
+			const response = await hetArchiefController.loginCallback({}, samlResponse);
+			expect(response).toEqual({
+				url: `${process.env.HOST}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
 	});
@@ -213,7 +231,7 @@ describe('HetArchiefController', () => {
 			expect(mockSession.idp).toBeNull();
 		});
 
-		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+		it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
 			const mockSession = getNewMockSession();
 			mockSession.idp = null;
 			const result = await hetArchiefController.logout(
@@ -239,7 +257,7 @@ describe('HetArchiefController', () => {
 	});
 
 	describe('logout-callback', () => {
-		it('should redirect after succesful logout callback', async () => {
+		it('should redirect after successful logout callback', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 
