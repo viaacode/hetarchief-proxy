@@ -13,7 +13,7 @@ import {
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
-import { SortDirection } from '~shared/types/sorting';
+import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
 	@IsUUID()

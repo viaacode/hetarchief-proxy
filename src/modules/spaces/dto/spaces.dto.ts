@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { SortDirection } from '~shared/types/sorting';
+import { SortDirection } from '~shared/types';
 
 export class UpdateSpaceDto {
 	@IsString()

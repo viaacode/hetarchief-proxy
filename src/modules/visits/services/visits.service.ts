@@ -10,7 +10,7 @@ import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT } from './queries.gql';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { SortDirection } from '~shared/types/sorting';
+import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class VisitsService {
