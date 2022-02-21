@@ -13,6 +13,7 @@ import {
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
+import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
 	@IsUUID()
@@ -102,4 +103,41 @@ export class VisitsQueryDto {
 		default: 10,
 	})
 	size? = 10;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'property to sort the results by',
+		default: 'startAt',
+		enum: [
+			'id',
+			'spaceId',
+			'userProfileId',
+			'timeframe',
+			'reason',
+			'acceptedTos',
+			'status',
+			'startAt',
+			'endAt',
+			'createdAt',
+			'updatedAt',
+			'visitorName',
+			'visitorMail',
+			'visitorId',
+		],
+	})
+	orderProp? = 'startAt';
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Direction to sort in. either desc or asc',
+		default: SortDirection.desc,
+		enum: [SortDirection.asc, SortDirection.desc],
+	})
+	orderDirection? = SortDirection.desc;
 }
