@@ -1,3 +1,5 @@
+import { SearchFilters } from '../dto/media.dto';
+
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 // Max count to return to the client to avoid error:
@@ -6,3 +8,16 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 // -  This limit can be set by changing the [index.max_result_window] index level setting. // TODO Still relevant?
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
+
+export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string } = {
+	query: 'query',
+	format: 'dcterms_format',
+};
+
+// By default add the 'format' aggregation
+export const AGGS_PROPERTIES: Array<keyof SearchFilters> = ['format'];
+
+export const NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean } = {
+	query: false,
+	format: false,
+};
