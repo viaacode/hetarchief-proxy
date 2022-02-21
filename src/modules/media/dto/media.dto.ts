@@ -4,6 +4,8 @@ import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 
 
 import { MediaFormat } from '../types';
 
+import { SortDirection } from '~shared/types';
+
 export class SearchFilters {
 	@IsString()
 	@IsOptional()
@@ -103,8 +105,8 @@ export class MediaQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Direction to sort in. either desc or asc',
-		default: 'asc',
-		enum: ['asc', 'desc'],
+		default: SortDirection.asc,
+		enum: SortDirection,
 	})
-	orderDirection? = 'asc';
+	orderDirection? = SortDirection.asc;
 }
