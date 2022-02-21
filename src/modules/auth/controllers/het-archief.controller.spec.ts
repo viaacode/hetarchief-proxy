@@ -198,7 +198,7 @@ describe('HetArchiefController', () => {
 			});
 		});
 
-		it('should redirect to the login route if the idp response is ', async () => {
+		it('should redirect to the login route if the idp response is no longer valid', async () => {
 			const ldapNoAccess = {
 				attributes: {
 					...ldapUser.attributes,
