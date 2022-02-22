@@ -36,7 +36,7 @@ export class UsersService {
 			identityId,
 		});
 		if (!userResponse.data.users_profile[0]) {
-			throw new NotFoundException();
+			return null;
 		}
 		return this.adapt(userResponse.data.users_profile[0]);
 	}
