@@ -2,9 +2,10 @@ export const GET_USER_BY_IDENTITY_ID = `
 	query getUserByIdentityId($identityId: uuid!) {
 		users_profile(where: { identities: { id: { _eq: $identityId } } }) {
 			id
-			firstName: first_name
-			lastName: last_name
-			email: mail
+			first_name
+			last_name
+			mail
+			accepted_tos_at
 		}
 	}
 `;
@@ -13,9 +14,10 @@ export const INSERT_USER = `
 	mutation insertUser($newUser: users_profile_insert_input!) {
 		insert_users_profile_one(object: $newUser) {
 			id
-			firstName: first_name
-			lastName: last_name
-			email: mail
+			first_name
+			last_name
+			mail
+			accepted_tos_at
 		}
 	}
 `;
@@ -35,6 +37,7 @@ export const UPDATE_USER = `
 			first_name
 			last_name
 			mail
+			accepted_tos_at
 		}
 	}
 `;
