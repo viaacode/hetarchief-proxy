@@ -72,6 +72,7 @@ export class UpdateVisitDto {
 	@ApiProperty({
 		type: string,
 		description: 'The start date & time of the visit, ISO8601 format',
+		example: addDays(new Date(), 2).toISOString(),
 	})
 	startAt?: string;
 
@@ -80,6 +81,7 @@ export class UpdateVisitDto {
 	@ApiProperty({
 		type: string,
 		description: 'The end date & time of the visit, ISO8601 format',
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
 	})
 	endAt?: string;
 
