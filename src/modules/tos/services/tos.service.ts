@@ -1,15 +1,12 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { gqlTos, Tos } from '../types';
 
-import mockData from './__mocks__/tos';
-
 import { DataService } from '~modules/data/services/data.service';
+import { GET_TOS_LAST_UPDATED_AT } from '~modules/tos/services/queries.gql';
 
 @Injectable()
 export class TosService {
-	private logger: Logger = new Logger(TosService.name, { timestamp: true });
-
 	constructor(protected dataService: DataService) {}
 
 	/**
@@ -21,15 +18,14 @@ export class TosService {
 		};
 	}
 
-	public async findFirst(): Promise<Tos> {
-		const tosResponse = await Promise.resolve({
-			data: { tos: [mockData] },
-		});
+	public async getTosLastUpdatedAt(): Promise<Tos> {
+		const tosResponse = await this.dataService.execute(GET_TOS_LAST_UPDATED_AT);
 
-		if (!tosResponse.data.tos[0]) {
-			throw new NotFoundException();
+		const gqlTosValue: gqlTos = tosResponse?.data?.cms_site_variables?.[0]?.value;
+		if (!gqlTosValue?.updated_at) {
+			throw new NotFoundException('No tos date was found in the database');
 		}
 
-		return this.adapt(tosResponse.data.tos[0]);
+		return this.adapt(gqlTosValue);
 	}
 }
