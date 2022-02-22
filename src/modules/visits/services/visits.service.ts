@@ -15,6 +15,7 @@ import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT } from './que
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class VisitsService {
@@ -145,7 +146,11 @@ export class VisitsService {
 			where,
 			offset,
 			limit,
-			orderBy: set({}, ORDER_PROP_TO_DB_PROP[orderProp], orderDirection),
+			orderBy: set(
+				{},
+				ORDER_PROP_TO_DB_PROP[orderProp || 'startAt'],
+				orderDirection || SortDirection.desc
+			),
 		});
 
 		return Pagination<Visit>({

@@ -14,6 +14,7 @@ import {
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
+import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
 	@IsUUID()
@@ -184,8 +185,8 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Direction to sort in. either desc or asc',
-		default: 'desc',
-		enum: ['asc', 'desc'],
+		default: SortDirection.desc,
+		enum: [SortDirection.asc, SortDirection.desc],
 	})
-	orderDirection? = 'desc';
+	orderDirection? = SortDirection.desc;
 }
