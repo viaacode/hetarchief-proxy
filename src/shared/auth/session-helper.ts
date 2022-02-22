@@ -3,9 +3,8 @@ import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } 
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
-import { Idp, LdapUser } from './types';
-
 import { User } from '~modules/users/types';
+import { Idp, LdapUser } from '~shared/auth/auth.types';
 
 const IDP = 'idp';
 const IDP_USER_INFO_PATH = 'idpUserInfo';

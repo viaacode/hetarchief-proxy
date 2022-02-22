@@ -15,8 +15,10 @@ import { get, isEqual, omit } from 'lodash';
 
 import { UsersService } from '../../users/services/users.service';
 import { HetArchiefService } from '../services/het-archief.service';
-import { SessionHelper } from '../session-helper';
-import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
+import { RelayState, SamlCallbackBody } from '../types';
+
+import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')

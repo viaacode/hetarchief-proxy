@@ -4,7 +4,24 @@ export interface Collection {
 	created_at: string;
 	updated_at: string;
 	is_default: boolean;
+	user_profile_id: string;
 	ies?: CollectionObject[];
+}
+
+export interface GqlCreateCollection {
+	name: string;
+	is_default: boolean;
+	user_profile_id: string;
+	created_at?: string;
+	updated_at?: string;
+	id?: string;
+}
+
+export interface GqlUpdateCollection {
+	name?: string;
+	is_default?: boolean;
+	created_at?: string;
+	updated_at?: string;
 }
 
 export interface CollectionObject {

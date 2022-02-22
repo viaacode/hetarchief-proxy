@@ -14,10 +14,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
 import { MeemooService } from '../services/meemoo.service';
-import { SessionHelper } from '../session-helper';
-import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
+import { RelayState, SamlCallbackBody } from '../types';
 
 import { UsersService } from '~modules/users/services/users.service';
+import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
@@ -74,7 +75,9 @@ export class MeemooController {
 				this.logger.error(
 					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
 				);
-				throw new UnauthorizedException();
+				throw new UnauthorizedException(
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
+				);
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, ldapUser);

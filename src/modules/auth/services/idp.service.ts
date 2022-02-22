@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import queryString from 'query-string';
 
-import { Idp } from '../types';
+import { Idp } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {

@@ -11,8 +11,8 @@ import {
 	UPDATE_USER,
 } from './queries.gql';
 
-import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
+import { Idp } from '~shared/auth/auth.types';
 
 @Injectable()
 export class UsersService {

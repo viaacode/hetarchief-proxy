@@ -11,8 +11,9 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 import { IdpService } from '../services/idp.service';
-import { SessionHelper } from '../session-helper';
 import { LoginMessage, LoginResponse } from '../types';
+
+import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Auth')
 @Controller('auth')

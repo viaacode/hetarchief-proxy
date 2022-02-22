@@ -2,11 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { HetArchiefService } from '../services/het-archief.service';
-import { Idp } from '../types';
 
 import { HetArchiefController } from './het-archief.controller';
 
 import { UsersService } from '~modules/users/services/users.service';
+import { Idp } from '~shared/auth/auth.types';
 
 const hetArchiefLoginUrl = 'http://hetarchief.be/login';
 const hetArchiefLogoutUrl = 'http://hetarchief.be/logout';

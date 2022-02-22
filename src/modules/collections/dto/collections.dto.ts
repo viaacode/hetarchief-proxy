@@ -1,9 +1,16 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { string } from 'joi';
 
-export class UpdateCollectionDto {
+export class CreateOrUpdateCollectionDto {
 	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		type: string,
+		description: 'The name of the collection',
+		example: 'Favorites',
+	})
 	name: string;
 }
 

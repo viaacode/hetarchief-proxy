@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { AuthModule } from '~modules/auth';
+import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
@@ -28,6 +29,7 @@ import { SessionService } from '~shared/services/session.service';
 		SpacesModule,
 		MediaModule,
 		VisitsModule,
+		CollectionsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

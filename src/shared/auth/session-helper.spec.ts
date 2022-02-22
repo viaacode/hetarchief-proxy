@@ -1,5 +1,5 @@
-import { SessionHelper } from './session-helper';
-import { Idp } from './types';
+import { Idp } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',

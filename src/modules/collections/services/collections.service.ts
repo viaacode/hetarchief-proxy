@@ -1,9 +1,15 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
-import { Collection } from '../types';
+import { Collection, GqlCreateCollection, GqlUpdateCollection } from '../types';
 
-import { FIND_COLLECTION_BY_ID, FIND_COLLECTIONS_BY_USER } from './queries.gql';
+import {
+	DELETE_COLLECTION,
+	FIND_COLLECTION_BY_ID,
+	FIND_COLLECTIONS_BY_USER,
+	INSERT_COLLECTION,
+	UPDATE_COLLECTION,
+} from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -34,12 +40,12 @@ export class CollectionsService {
 		});
 
 		return Pagination<Collection>({
-			items: collectionsResponse.data.cp_collection.map((collection: any) =>
+			items: collectionsResponse.data.users_collection.map((collection: any) =>
 				this.adapt(collection)
 			),
 			page,
 			size,
-			total: collectionsResponse.data.cp_collection_aggregate.aggregate.count,
+			total: collectionsResponse.data.users_collection_aggregate.aggregate.count,
 		});
 	}
 
@@ -47,9 +53,43 @@ export class CollectionsService {
 		const collectionResponse = await this.dataService.execute(FIND_COLLECTION_BY_ID, {
 			collectionId,
 		});
-		if (!collectionResponse.data.cp_collection[0]) {
+		if (!collectionResponse.data.users_collection[0]) {
 			throw new NotFoundException();
 		}
-		return this.adapt(collectionResponse.data.cp_collection[0]);
+		return this.adapt(collectionResponse.data.users_collection[0]);
+	}
+
+	public async create(collection: GqlCreateCollection): Promise<Collection> {
+		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
+		const createdCollection = response?.data?.insert_users_collection?.returning?.[0];
+		this.logger.debug(`Collection ${createdCollection?.id} created`);
+
+		return this.adapt(createdCollection);
+	}
+
+	public async update(
+		collectionId: string,
+		userProfileId: string,
+		collection: GqlUpdateCollection
+	): Promise<Collection> {
+		const response = await this.dataService.execute(UPDATE_COLLECTION, {
+			collectionId,
+			userProfileId,
+			collection,
+		});
+		const updatedCollection = response?.data?.update_users_collection?.returning?.[0];
+		this.logger.debug(`Collection ${updatedCollection.id} updated`);
+
+		return this.adapt(updatedCollection);
+	}
+
+	public async delete(collectionId: string, userProfileId: string): Promise<number> {
+		const response = await this.dataService.execute(DELETE_COLLECTION, {
+			collectionId,
+			userProfileId,
+		});
+		this.logger.debug(`Collection ${collectionId} deleted`);
+
+		return response?.data?.delete_users_collection?.affected_rows || 0;
 	}
 }

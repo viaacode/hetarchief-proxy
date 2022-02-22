@@ -2,11 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from '../services/meemoo.service';
-import { Idp } from '../types';
 
 import { MeemooController } from './meemoo.controller';
 
 import { UsersService } from '~modules/users/services/users.service';
+import { Idp } from '~shared/auth/auth.types';
 
 const meemooLoginUrl = 'http://meemoo.be/login';
 const meemooLogoutUrl = 'http://meemoo.be/logout';

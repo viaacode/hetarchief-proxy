@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
-import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
+import { Idp } from '~shared/auth/auth.types';
 
 const mockDataService = {
 	execute: jest.fn(),
