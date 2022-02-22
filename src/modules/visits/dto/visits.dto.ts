@@ -11,6 +11,7 @@ import {
 	IsString,
 	IsUUID,
 } from 'class-validator';
+import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
