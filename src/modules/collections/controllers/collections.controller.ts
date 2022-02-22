@@ -39,14 +39,14 @@ export class CollectionsController {
 		return collections;
 	}
 
-	@Get(':id')
+	@Get(':collectionId')
 	public async getCollectionById(
-		@Param('id', ParseUUIDPipe) id: string,
+		@Param('collectionId', ParseUUIDPipe) collectionId: string,
 		@Session() session: Record<string, any>
 	): Promise<Collection> {
-		const collection = await this.collectionsService.findById(id);
+		const collection = await this.collectionsService.findById(collectionId);
 		const userInfo = SessionHelper.getArchiefUserInfo(session);
-		if (!userInfo || userInfo.id !== collection.user_profile_id) {
+		if (!userInfo || userInfo.id !== collection.userProfileId) {
 			throw new UnauthorizedException(
 				'This collection does not exist or you do not have access to it.'
 			);

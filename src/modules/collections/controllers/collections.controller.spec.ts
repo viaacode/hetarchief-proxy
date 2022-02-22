@@ -1,29 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { IPagination } from '@studiohyperdrive/pagination';
 
 import { CollectionsService } from '../services/collections.service';
 
 import { CollectionsController } from './collections.controller';
 
-import SpyInstance = jest.SpyInstance;
+import { Collection } from '~modules/collections/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
-const mockCollectionsResponse = {
+const mockCollectionsResponse: IPagination<Collection> = {
 	items: [
 		{
 			id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 			name: 'Favorieten',
-			user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
-			is_default: true,
-			created_at: '2022-02-18T09:19:09.487977',
-			updated_at: '2022-02-18T09:19:09.487977',
+			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+			isDefault: true,
+			createdAt: '2022-02-18T09:19:09.487977',
+			updatedAt: '2022-02-18T09:19:09.487977',
 		},
 		{
 			id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
 			name: 'my favorite movies',
-			user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
-			is_default: false,
-			created_at: '2022-02-22T13:51:01.995293',
-			updated_at: '2022-02-22T13:51:01.995293',
+			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+			isDefault: false,
+			createdAt: '2022-02-22T13:51:01.995293',
+			updatedAt: '2022-02-22T13:51:01.995293',
 		},
 	],
 	total: 2,
@@ -49,7 +50,7 @@ const mockCollectionsService = {
 
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
-	let sessionHelperSpy: SpyInstance;
+	let sessionHelperSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({

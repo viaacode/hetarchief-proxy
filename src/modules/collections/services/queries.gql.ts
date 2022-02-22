@@ -16,6 +16,7 @@ export const FIND_COLLECTIONS_BY_USER = `
 	}
 `;
 
+// TODO add maintainer once ARC-524 has been resolved
 export const FIND_COLLECTION_BY_ID = `
 	query getCollectionsById($collectionId: uuid) {
 		users_collection(where: {id: {_eq: $collectionId}}) {
@@ -34,9 +35,6 @@ export const FIND_COLLECTION_BY_ID = `
 					schema_thumbnail_url
 					dcterms_format
 					schema_number_of_pages
-					schema_maintainer {
-						label
-					}
 				}
 			}
 		}

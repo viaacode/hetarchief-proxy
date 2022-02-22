@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
-import { Collection, GqlCreateCollection, GqlUpdateCollection } from '../types';
+import { Collection, GqlCollection, GqlCreateCollection, GqlUpdateCollection } from '../types';
 
 import {
 	DELETE_COLLECTION,
@@ -23,13 +23,35 @@ export class CollectionsService {
 	/**
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
-	public adapt(collection: any): Collection {
-		return collection;
+	public adapt(gqlCollection: GqlCollection | undefined): Collection | undefined {
+		if (!gqlCollection) {
+			return undefined;
+		}
+		const { ies: gslLinkObjects, ...collection } = gqlCollection;
+		return {
+			id: collection.id,
+			name: collection.name,
+			userProfileId: collection.user_profile_id,
+			createdAt: collection.created_at,
+			updatedAt: collection.updated_at,
+			isDefault: collection.is_default,
+			objects: gslLinkObjects?.map((gqlLinkObject) => ({
+				// TODO add maintainer once ARC-524 has been resolved
+				// maintainer: gqlLinkObject?.intellectual_entity?.schema_maintainer,
+				name: gqlLinkObject?.intellectual_entity?.schema_name,
+				termsAvailable: gqlLinkObject?.intellectual_entity?.dcterms_available,
+				creator: gqlLinkObject?.intellectual_entity?.schema_creator,
+				format: gqlLinkObject?.intellectual_entity?.dcterms_format,
+				numberOfPages: gqlLinkObject?.intellectual_entity?.schema_number_of_pages,
+				thumbnailUrl: gqlLinkObject?.intellectual_entity?.schema_thumbnail_url,
+				collectionEntryCreatedAt: gqlLinkObject?.created_at,
+			})),
+		};
 	}
 
 	public async findByUser(
 		userProfileId: string,
-		page = 0,
+		page = 1,
 		size = 1000
 	): Promise<IPagination<Collection>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -61,7 +83,7 @@ export class CollectionsService {
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
 		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
-		const createdCollection = response?.data?.insert_users_collection?.returning?.[0];
+		const createdCollection = response?.data?.insert_users_collection;
 		this.logger.debug(`Collection ${createdCollection?.id} created`);
 
 		return this.adapt(createdCollection);
@@ -77,7 +99,7 @@ export class CollectionsService {
 			userProfileId,
 			collection,
 		});
-		const updatedCollection = response?.data?.update_users_collection?.returning?.[0];
+		const updatedCollection = response?.data?.update_users_collection;
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
 		return this.adapt(updatedCollection);
