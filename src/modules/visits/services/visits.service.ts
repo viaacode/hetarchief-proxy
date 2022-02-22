@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get, isArray } from 'lodash';
+import { get, isArray, set } from 'lodash';
 
 import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Visit } from '../types';
@@ -8,7 +8,9 @@ import { Visit } from '../types';
 import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
+import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
 
 @Injectable()
 export class VisitsService {
@@ -56,13 +58,18 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, page, size } = inputQuery;
+		const { query, status, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
 			query,
 			statuses: isArray(status) ? status : [status],
 			offset,
 			limit,
+			orderBy: set(
+				{},
+				ORDER_PROP_TO_DB_PROP[orderProp || 'startAt'],
+				orderDirection || SortDirection.desc
+			),
 		});
 
 		return Pagination<Visit>({

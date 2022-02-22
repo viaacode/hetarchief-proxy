@@ -17,8 +17,8 @@ export const INSERT_VISIT = `
 `;
 
 export const FIND_VISITS = `
-	query visit($query: String!, $offset: Int!, $limit: Int!, $statuses: [String!] = []) {
-		cp_visit(offset: $offset, limit: $limit, where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}) {
+	query visit($query: String!, $offset: Int!, $limit: Int!, $statuses: [String!] = [], $orderBy: cp_visit_order_by! = {}) {
+		cp_visit(offset: $offset, limit: $limit, where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}, order_by: [$orderBy]) {
 			id
 			cp_space_id
 			user_profile_id
