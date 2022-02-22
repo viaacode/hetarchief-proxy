@@ -18,6 +18,7 @@ export const mockGqlCollection: GqlCollection = {
 				dcterms_format: 'video',
 				schema_number_of_pages: null,
 				schema_creator: null,
+				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],

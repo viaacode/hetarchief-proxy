@@ -12,9 +12,10 @@ jest.mock('fs-extra');
 
 const mockedFse = fse as any;
 
-const mockDataPermissionsService = {
-	verify: jest.fn(),
-};
+const mockDataPermissionsService: Partial<Record<keyof DataPermissionsService, jest.SpyInstance>> =
+	{
+		verify: jest.fn(),
+	};
 
 const mockConfigService = {
 	get: jest.fn((key: string): string | boolean => {

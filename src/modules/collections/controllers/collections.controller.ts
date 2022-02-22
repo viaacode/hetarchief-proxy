@@ -8,6 +8,7 @@ import {
 	ParseUUIDPipe,
 	Post,
 	Put,
+	Query,
 	Session,
 	UnauthorizedException,
 	UseGuards,
@@ -15,10 +16,13 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { CollectionsService } from '../services/collections.service';
-import { Collection } from '../types';
+import { Collection, IeObject } from '../types';
 
-import { CreateOrUpdateCollectionDto } from '~modules/collections/dto/collections.dto';
+import {
+	CollectionObjectsQueryDto,
+	CreateOrUpdateCollectionDto,
+} from '~modules/collections/dto/collections.dto';
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
@@ -35,23 +39,27 @@ export class CollectionsController {
 		@Session() session: Record<string, any>
 	): Promise<IPagination<Collection>> {
 		const userInfo = SessionHelper.getArchiefUserInfo(session);
-		const collections = await this.collectionsService.findByUser(userInfo.id);
+		const collections = await this.collectionsService.findCollectionsByUser(
+			userInfo.id,
+			1,
+			1000
+		);
 		return collections;
 	}
 
 	@Get(':collectionId')
-	public async getCollectionById(
+	public async getCollectionObjects(
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
+		@Query() queryDto: CollectionObjectsQueryDto,
 		@Session() session: Record<string, any>
-	): Promise<Collection> {
-		const collection = await this.collectionsService.findById(collectionId);
+	): Promise<IPagination<IeObject>> {
 		const userInfo = SessionHelper.getArchiefUserInfo(session);
-		if (!userInfo || userInfo.id !== collection.userProfileId) {
-			throw new UnauthorizedException(
-				'This collection does not exist or you do not have access to it.'
-			);
-		}
-		return collection;
+		const collectionObjects = await this.collectionsService.findObjectsByCollectionId(
+			collectionId,
+			userInfo.id,
+			queryDto
+		);
+		return collectionObjects;
 	}
 
 	@Post()
@@ -94,6 +102,48 @@ export class CollectionsController {
 			return { status: 'collection has been deleted' };
 		} else {
 			return { status: 'no collections found with that id' };
+		}
+	}
+
+	@Post('/:collectionId/objects/:objectId')
+	public async addObjectToCollection(
+		@Param('collectionId') collectionId: string,
+		@Param('objectId') objectId: string,
+		@Session() session: Record<string, any>
+	): Promise<IeObject> {
+		const collection = await this.collectionsService.findCollectionById(collectionId);
+		const user = SessionHelper.getArchiefUserInfo(session);
+		if (collection.userProfileId !== user.id) {
+			throw new UnauthorizedException('You can only add objects to your own collections');
+		}
+		const collectionObject = await this.collectionsService.addObjectToCollection(
+			collectionId,
+			objectId
+		);
+		return collectionObject;
+	}
+
+	@Delete('/:collectionId/objects/:objectId')
+	public async removeObjectFromCollection(
+		@Param('collectionId') collectionId: string,
+		@Param('objectId') objectId: string,
+		@Session() session: Record<string, any>
+	): Promise<{ status: string }> {
+		const collection = await this.collectionsService.findCollectionById(collectionId);
+		const user = SessionHelper.getArchiefUserInfo(session);
+		if (collection.userProfileId !== user.id) {
+			throw new UnauthorizedException(
+				'You can only delete objects from your own collections'
+			);
+		}
+		const affectedRows = await this.collectionsService.removeObjectFromCollection(
+			collectionId,
+			objectId
+		);
+		if (affectedRows > 0) {
+			return { status: 'object has been deleted' };
+		} else {
+			return { status: 'no object found with that id in that collection' };
 		}
 	}
 }

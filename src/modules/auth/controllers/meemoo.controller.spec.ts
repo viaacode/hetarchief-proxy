@@ -39,14 +39,14 @@ const samlLogoutResponse = {
 	SAMLResponse: 'dummy',
 };
 
-const mockMeemooService = {
+const mockMeemooService: Partial<Record<keyof MeemooService, jest.SpyInstance>> = {
 	createLoginRequestUrl: jest.fn(),
 	assertSamlResponse: jest.fn(),
 	createLogoutRequestUrl: jest.fn(),
 	createLogoutResponseUrl: jest.fn(),
 };
 
-const mockUsersService = {
+const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
 	getUserByIdentityId: jest.fn(),
 	createUserWithIdp: jest.fn(),
 	updateUser: jest.fn(),

@@ -46,6 +46,7 @@ export interface GqlObject {
 	schema_thumbnail_url: string;
 	dcterms_format: string;
 	schema_number_of_pages: any;
+	schema_identifier: string;
 	// TODO add maintainer once ARC-524 has been resolved
 	// schema_maintainer: {
 	// 	label: string;
@@ -53,6 +54,7 @@ export interface GqlObject {
 }
 
 export interface IeObject {
+	id: string;
 	name: string;
 	creator: any;
 	termsAvailable: string;

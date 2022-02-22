@@ -22,7 +22,7 @@ const getMockMediaResponse = () => ({
 	},
 });
 
-const mockMediaService = {
+const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 };

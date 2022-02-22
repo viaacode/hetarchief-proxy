@@ -33,6 +33,25 @@ const mockCollectionsResponse: IPagination<Collection> = {
 	size: 1000,
 };
 
+const mockCollectionObjectsResponse = {
+	items: [
+		{
+			name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+			termsAvailable: '2015-09-19T12:08:24',
+			creator: null,
+			format: 'video',
+			numberOfPages: null,
+			thumbnailUrl:
+				'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+			collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
+		},
+	],
+	page: 1,
+	size: 10,
+	total: 1,
+	pages: 1,
+};
+
 const mockUser = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
@@ -40,12 +59,15 @@ const mockUser = {
 	email: 'test.testers@meemoo.be',
 };
 
-const mockCollectionsService = {
-	findByUser: jest.fn(),
-	findById: jest.fn(),
+const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
+	findCollectionsByUser: jest.fn(),
+	findCollectionById: jest.fn(),
+	findObjectsByCollectionId: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	delete: jest.fn(),
+	addObjectToCollection: jest.fn(),
+	removeObjectFromCollection: jest.fn(),
 };
 
 describe('CollectionsController', () => {
@@ -81,20 +103,27 @@ describe('CollectionsController', () => {
 
 	describe('getCollections', () => {
 		it('should return all collections of a specific user', async () => {
-			mockCollectionsService.findByUser.mockResolvedValueOnce(mockCollectionsResponse);
+			mockCollectionsService.findCollectionsByUser.mockResolvedValueOnce(
+				mockCollectionsResponse
+			);
 			const collections = await collectionsController.getCollections({});
 			expect(collections.items.length).toEqual(2);
 		});
 	});
 
-	describe('getCollectionById', () => {
-		it('should return a collection by id', async () => {
-			mockCollectionsService.findById.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
-			const collection = await collectionsController.getCollectionById(
+	describe('getCollectionObjectsById', () => {
+		it('should return the objects in the collection', async () => {
+			mockCollectionsService.findObjectsByCollectionId.mockResolvedValueOnce(
+				mockCollectionObjectsResponse
+			);
+			const collectionObjects = await collectionsController.getCollectionObjects(
 				mockCollectionsResponse.items[0].id,
+				{},
 				{}
 			);
-			expect(collection.id).toEqual(mockCollectionsResponse.items[0].id);
+			expect(collectionObjects.items[0].name).toEqual(
+				mockCollectionObjectsResponse.items[0].name
+			);
 		});
 	});
 
@@ -144,6 +173,95 @@ describe('CollectionsController', () => {
 				{}
 			);
 			expect(response).toEqual({ status: 'no collections found with that id' });
+		});
+	});
+
+	describe('createCollectionObject', () => {
+		it('should add an object to a collection', async () => {
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce(
+				mockCollectionObjectsResponse.items[0]
+			);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			const collectionObject = await collectionsController.addObjectToCollection(
+				mockCollectionsResponse.items[0].id,
+				'8s4jm2514q',
+				{}
+			);
+			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
+		});
+
+		it('should not add an object to a collection that is not owned', async () => {
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce(
+				mockCollectionObjectsResponse.items[0]
+			);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce({
+				...mockCollectionsResponse.items[0],
+				userProfileId: 'other-profile-id',
+			});
+
+			let error;
+			try {
+				await collectionsController.addObjectToCollection(
+					mockCollectionsResponse.items[0].id,
+					'8s4jm2514q',
+					{}
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('You can only add objects to your own collections');
+		});
+	});
+
+	describe('deleteCollectionObject', () => {
+		it('should remove an object from a collection', async () => {
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(1);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			const collectionObject = await collectionsController.removeObjectFromCollection(
+				mockCollectionsResponse.items[0].id,
+				'8s4jm2514q',
+				{}
+			);
+			expect(collectionObject).toEqual({ status: 'object has been deleted' });
+		});
+
+		it('should not complain about removing non existing objects from a collection', async () => {
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(0);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			const collectionObject = await collectionsController.removeObjectFromCollection(
+				mockCollectionsResponse.items[0].id,
+				'non-existing-object-id',
+				{}
+			);
+			expect(collectionObject).toEqual({
+				status: 'no object found with that id in that collection',
+			});
+		});
+
+		it('should not remove an object from a collection that are not owned', async () => {
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(1);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce({
+				...mockCollectionsResponse.items[0],
+				userProfileId: 'other-profile-id',
+			});
+
+			let error;
+			try {
+				await collectionsController.removeObjectFromCollection(
+					mockCollectionsResponse.items[0].id,
+					'8s4jm2514q',
+					{}
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('You can only delete objects from your own collections');
 		});
 	});
 });

@@ -39,14 +39,14 @@ const samlLogoutResponse = {
 	SAMLResponse: 'dummy',
 };
 
-const mockArchiefService = {
+const mockArchiefService: Partial<Record<keyof HetArchiefService, jest.SpyInstance>> = {
 	createLoginRequestUrl: jest.fn(),
 	assertSamlResponse: jest.fn(),
 	createLogoutRequestUrl: jest.fn(),
 	createLogoutResponseUrl: jest.fn(),
 };
 
-const mockUsersService = {
+const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
 	getUserByIdentityId: jest.fn(),
 	createUserWithIdp: jest.fn(),
 	updateUser: jest.fn(),

@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { DataService } from '~modules/data/services/data.service';
 import { Idp } from '~shared/auth/auth.types';
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
