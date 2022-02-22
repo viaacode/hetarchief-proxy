@@ -13,7 +13,7 @@ export class TosController {
 
 	@Get()
 	public async getTos(): Promise<Tos> {
-		const tos = await this.tosService.findFirst();
+		const tos = await this.tosService.getTosLastUpdatedAt();
 		return tos;
 	}
 }

@@ -28,7 +28,6 @@ export class VisitsService {
 			status: get(graphQlVisit, 'status'),
 			startAt: get(graphQlVisit, 'start_date'),
 			endAt: get(graphQlVisit, 'end_date'),
-			acceptedTosAt: get(graphQlVisit, 'user_accepted_tos_at'),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			visitorName: (

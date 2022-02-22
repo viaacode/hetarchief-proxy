@@ -38,16 +38,15 @@ describe('TosService', () => {
 		});
 	});
 
-	describe('findFirst', () => {
+	describe('Find last updated date for TOS', () => {
 		it('returns a single tos', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					tos: [tos],
 				},
 			});
-			const response = await tosService.findFirst();
-			expect(response).toBeDefined;
-			expect(response).toBeDefined;
+			const response = await tosService.getTosLastUpdatedAt();
+			expect(response).toBeDefined();
 		});
 	});
 });

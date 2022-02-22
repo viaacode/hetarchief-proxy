@@ -41,9 +41,13 @@ describe('UsersController', () => {
 	describe('updateTos', () => {
 		it('should update if the user accepted the terms of service', async () => {
 			mockUsersService.updateAcceptedTos.mockResolvedValueOnce(mockUserResponse);
-			const user = await usersController.updateTos('1', {
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
-			});
+			const user = await usersController.updateTos(
+				{
+					acceptedTosAt: '2022-02-18T12:13:22.726Z',
+				},
+				'1',
+				{}
+			);
 			expect(user).toEqual(mockUserResponse);
 		});
 	});
