@@ -25,8 +25,8 @@ export class SpacesService {
 			maintainerId: get(graphQlSpace, 'schema_maintainer.schema_identifier'),
 			name: get(graphQlSpace, 'schema_maintainer.schema_name'),
 			description: isEmpty(graphQlSpace.schema_description)
-				? graphQlSpace.schema_maintainer?.information?.[0]?.description,
-				: graphQlSpace.schema_description
+				? graphQlSpace.schema_maintainer?.information?.[0]?.description
+				: graphQlSpace.schema_description,
 			serviceDescription: get(graphQlSpace, 'schema_service_description'),
 			image: get(graphQlSpace, 'schema_image'),
 			color: get(graphQlSpace, 'schema_color'),

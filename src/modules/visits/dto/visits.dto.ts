@@ -3,6 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
 	IsBoolean,
+	IsDateString,
 	IsEnum,
 	IsNotEmpty,
 	IsNumber,
@@ -10,6 +11,7 @@ import {
 	IsString,
 	IsUUID,
 } from 'class-validator';
+import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
@@ -54,6 +56,39 @@ export class CreateVisitDto {
 	acceptedTos: boolean;
 }
 
+export class UpdateVisitStatusDto {
+	@ApiProperty({
+		required: true,
+		enum: VisitStatus,
+		description:
+			'Transition the visit to any of these states: APPROVED, DENIED, CANCELLED_BY_VISITOR',
+	})
+	@IsEnum(VisitStatus)
+	status: VisitStatus;
+}
+
+export class UpdateVisitDto {
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: 'The start date & time of the visit, ISO8601 format',
+		example: addDays(new Date(), 2).toISOString(),
+	})
+	startAt?: string;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: 'The end date & time of the visit, ISO8601 format',
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
+	})
+	endAt?: string;
+
+	// TODO remarks if available in DB
+}
+
 export class VisitsQueryDto {
 	@IsString()
 	@Type(() => String)
@@ -64,14 +99,31 @@ export class VisitsQueryDto {
 			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
 		default: '%',
 	})
-	query? = '%';
+	query?: string;
+
+	@IsUUID()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Get all visits for this user',
+	})
+	userProfileId?: string;
+
+	@IsUUID()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Get all visits for this space',
+	})
+	spaceId?: string;
 
 	@ApiProperty({
 		isArray: true,
 		required: false,
 		enum: VisitStatus,
-		description: 'Status of the visit request. Options are: PENDING, APPROVED, DENIED',
-		default: ['PENDING', 'APPROVED', 'DENIED'],
+		description: `Status of the visit request. Options are: ${Object.values(VisitStatus).join(
+			', '
+		)}`,
 	})
 	@IsOptional()
 	@IsEnum(VisitStatus, { each: true })
@@ -82,7 +134,7 @@ export class VisitsQueryDto {
 		}
 		return params.value;
 	})
-	status? = ['PENDING', 'APPROVED', 'DENIED'];
+	status?: VisitStatus | VisitStatus[];
 
 	@IsNumber()
 	@Type(() => Number)
