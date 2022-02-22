@@ -2,10 +2,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isArray, set } from 'lodash';
 
-import { CreateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { CreateVisitDto, PatchVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Visit } from '../types';
 
-import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT } from './queries.gql';
+import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
@@ -49,9 +49,11 @@ export class VisitsService {
 			user_timeframe: createVisitDto.timeframe,
 			user_accepted_tos: createVisitDto.acceptedTos,
 		};
+
 		const {
 			data: { insert_cp_visit_one: createdVisit },
 		} = await this.dataService.execute(INSERT_VISIT, { newVisit });
+
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
 		return this.adapt(createdVisit);
@@ -60,6 +62,7 @@ export class VisitsService {
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
 		const { query, status, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
 			query,
 			statuses: isArray(status) ? status : [status],
@@ -82,9 +85,24 @@ export class VisitsService {
 
 	public async findById(id: string): Promise<Visit> {
 		const visitResponse = await this.dataService.execute(FIND_VISIT_BY_ID, { id });
+
 		if (!visitResponse.data.cp_visit[0]) {
 			throw new NotFoundException();
 		}
+
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async patchById(id: string, updateVisit: PatchVisitDto): Promise<Visit> {
+		const visitResponse = await this.dataService.execute(UPDATE_VISIT_BY_ID, {
+			id,
+			updateVisit: { ...updateVisit, updated_at: new Date().toISOString() },
+		});
+
+		if (!visitResponse.data.update_cp_visit_by_pk) {
+			throw new NotFoundException();
+		}
+
+		return this.adapt(visitResponse.data.update_cp_visit_by_pk);
 	}
 }

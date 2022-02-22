@@ -66,3 +66,19 @@ export const FIND_VISIT_BY_ID = `
 		}
 	}
 `;
+
+export const UPDATE_VISIT_BY_ID = `
+	mutation updateVisit($id: uuid!, $updateVisit: cp_visit_set_input!) {
+		update_cp_visit_by_pk(pk_columns: {id: $id}, _set: $updateVisit) {
+			cp_space_id
+			created_at
+			end_date
+			id
+			start_date
+			status
+			updated_at
+			user_reason
+			user_timeframe
+		}
+	}
+`;

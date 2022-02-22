@@ -3,6 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
 	IsBoolean,
+	IsDateString,
 	IsEnum,
 	IsNotEmpty,
 	IsNumber,
@@ -15,7 +16,49 @@ import { string } from 'joi';
 import { VisitStatus } from '~modules/visits/types';
 import { SortDirection } from '~shared/types';
 
-export class CreateVisitDto {
+export class PatchVisitDto {
+	@IsEnum(VisitStatus)
+	@IsNotEmpty()
+	@ApiProperty({
+		enum: VisitStatus,
+		description: 'Status of the visit request. Options are: PENDING, APPROVED, DENIED',
+	})
+	status: VisitStatus;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "The start of this user's visit",
+	})
+	start_date?: string;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "The start of this user's visit",
+	})
+	end_date?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "Remarks from the content partner approving the user's visit",
+	})
+	remark?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "Reason of denial from the content partner denying the user's visit",
+	})
+	denial?: string;
+}
+
+export class CreateVisitDto extends PatchVisitDto {
 	@IsUUID()
 	@ApiProperty({
 		type: string,
