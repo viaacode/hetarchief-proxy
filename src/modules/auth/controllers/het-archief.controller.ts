@@ -20,6 +20,7 @@ import { CollectionsService } from '~modules/collections/services/collections.se
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
@@ -105,7 +106,7 @@ export class HetArchiefController {
 				await this.collectionsService.create({
 					is_default: true,
 					user_profile_id: archiefUser.id,
-					name: 'Favorieten',
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
 				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {

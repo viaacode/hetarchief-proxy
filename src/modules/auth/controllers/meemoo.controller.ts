@@ -16,16 +16,22 @@ import { get, isEqual, omit } from 'lodash';
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
 export class MeemooController {
 	private logger: Logger = new Logger(MeemooController.name, { timestamp: true });
 
-	constructor(private meemooService: MeemooService, private usersService: UsersService) {}
+	constructor(
+		private meemooService: MeemooService,
+		private usersService: UsersService,
+		private collectionsService: CollectionsService
+	) {}
 
 	@Get('login')
 	@Redirect()
@@ -101,6 +107,11 @@ export class MeemooController {
 					Idp.MEEMOO,
 					ldapUser.attributes.entryUUID[0]
 				);
+				await this.collectionsService.create({
+					is_default: true,
+					user_profile_id: archiefUser.id,
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
+				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user

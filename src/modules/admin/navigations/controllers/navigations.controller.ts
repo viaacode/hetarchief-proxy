@@ -17,7 +17,7 @@ import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto
 import { NavigationsService } from '../services/navigations.service';
 import { Navigation } from '../types';
 
-import { SessionHelper } from '~modules/auth/session-helper';
+import { SessionHelper } from '~shared/auth/session-helper';
 import { DeleteResponse } from '~shared/types/types';
 
 @ApiTags('Navigations')
