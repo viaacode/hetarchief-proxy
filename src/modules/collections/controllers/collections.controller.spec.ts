@@ -339,7 +339,7 @@ describe('CollectionsController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('You can only move objects from your own collections');
+			expect(error.message).toEqual('You can only move objects to your own collections');
 		});
 	});
 });
