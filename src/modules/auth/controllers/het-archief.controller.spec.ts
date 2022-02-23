@@ -94,7 +94,7 @@ describe('HetArchiefController', () => {
 			});
 		});
 
-		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await hetArchiefController.getAuth(
 				getNewMockSession(),
 				'http://hetarchief.be/start'
@@ -191,10 +191,8 @@ describe('HetArchiefController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.response).toEqual({
-				statusCode: HttpStatus.UNAUTHORIZED,
-				message: 'Unauthorized',
-			});
+			expect(error.response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
+			expect(error.response.message).toEqual('Unauthorized');
 		});
 	});
 
@@ -213,7 +211,7 @@ describe('HetArchiefController', () => {
 			expect(mockSession.idp).toBeNull();
 		});
 
-		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+		it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
 			const mockSession = getNewMockSession();
 			mockSession.idp = null;
 			const result = await hetArchiefController.logout(
