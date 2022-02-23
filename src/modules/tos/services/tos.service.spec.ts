@@ -5,7 +5,7 @@ import { TosService } from './tos.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
@@ -34,7 +34,7 @@ describe('TosService', () => {
 		it('can adapt a hasura response to our tos interface', () => {
 			const adapted = tosService.adapt(tos);
 			// test some sample keys
-			expect(adapted.updatedAt).toEqual('1997-01-01T00:00:00.000Z');
+			expect(adapted.updatedAt).toEqual(tos.updated_at);
 		});
 	});
 
@@ -42,11 +42,18 @@ describe('TosService', () => {
 		it('returns a single tos', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					tos: [tos],
+					cms_site_variables: [
+						{
+							value: {
+								updated_at: tos.updated_at,
+							},
+						},
+					],
 				},
 			});
+
 			const response = await tosService.getTosLastUpdatedAt();
-			expect(response).toBeDefined();
+			expect(response?.updatedAt).toEqual(tos.updated_at);
 		});
 	});
 });

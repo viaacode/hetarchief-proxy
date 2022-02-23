@@ -68,9 +68,11 @@ export class VisitsService {
 			user_timeframe: createVisitDto.timeframe,
 			user_accepted_tos_at: createVisitDto.acceptedTosAt,
 		};
+
 		const {
 			data: { insert_cp_visit_one: createdVisit },
 		} = await this.dataService.execute(INSERT_VISIT, { newVisit });
+
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
 		return this.adapt(createdVisit);
@@ -82,29 +84,36 @@ export class VisitsService {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 		};
+
+		updateVisitDto.status &&
+			(await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto));
+
 		const {
 			data: { update_cp_visit_by_pk: updatedVisit },
 		} = await this.dataService.execute(UPDATE_VISIT, {
 			id,
 			updateVisit,
 		});
+
 		return this.adapt(updatedVisit);
 	}
 
 	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {
-		// Get current visit status
-		const currentVisit = await this.findById(id);
+		const currentVisit = await this.findById(id); // Get current visit status
+
 		if (!this.statusTransitionAllowed(currentVisit.status, updateStatusDto.status)) {
 			throw new UnauthorizedException(
 				`Status transition '${currentVisit.status}' -> '${updateStatusDto.status}' is not allowed`
 			);
 		}
+
 		const {
 			data: { update_cp_visit_by_pk: updatedVisit },
 		} = await this.dataService.execute(UPDATE_VISIT, {
 			id,
 			updateVisit: { status: updateStatusDto.status },
 		});
+
 		return this.adapt(updatedVisit);
 	}
 
@@ -115,6 +124,7 @@ export class VisitsService {
 
 		/** Dynamically build the where object  */
 		const where: any = {};
+
 		if (!isEmpty(query)) {
 			where._or = [
 				{ user_profile: { first_name: { _ilike: query } } },
@@ -162,9 +172,11 @@ export class VisitsService {
 
 	public async findById(id: string): Promise<Visit> {
 		const visitResponse = await this.dataService.execute(FIND_VISIT_BY_ID, { id });
+
 		if (!visitResponse.data.cp_visit[0]) {
 			throw new NotFoundException();
 		}
+
 		return this.adapt(visitResponse.data.cp_visit[0]);
 	}
 }
