@@ -11,6 +11,8 @@ const mockTosResponse: Tos = {
 
 const mockTosService = {
 	findFirst: jest.fn(),
+	getTos: jest.fn(),
+	getTosLastUpdatedAt: jest.fn(),
 };
 
 describe('TosController', () => {
@@ -37,8 +39,11 @@ describe('TosController', () => {
 
 	describe('getTos', () => {
 		it('should return the first tos', async () => {
-			mockTosService.findFirst.mockResolvedValueOnce(mockTosResponse);
+			mockTosService.getTos.mockResolvedValueOnce(mockTosResponse);
+			mockTosService.getTosLastUpdatedAt.mockResolvedValueOnce(mockTosResponse);
+
 			const tos = await tosController.getTos();
+
 			expect(tos.updatedAt).toBeDefined();
 		});
 	});

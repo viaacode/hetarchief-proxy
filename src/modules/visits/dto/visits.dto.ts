@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
@@ -67,7 +67,7 @@ export class UpdateVisitStatusDto {
 	status: VisitStatus;
 }
 
-export class UpdateVisitDto extends UpdateVisitStatusDto {
+export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisitStatusDto) {
 	@IsDateString()
 	@IsOptional()
 	@ApiProperty({
