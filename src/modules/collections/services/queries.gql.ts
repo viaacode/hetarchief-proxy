@@ -90,6 +90,23 @@ export const DELETE_COLLECTION = `
 	}
 `;
 
+export const FIND_OBJECT_IN_COLLECTION = `
+	query findObjectInCollection($collectionId: uuid, $objectId: String) {
+		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_schema_identifier: {_eq: $objectId}}) {
+			intellectual_entity {
+				schema_name
+				schema_creator
+				dcterms_available
+				schema_thumbnail_url
+				dcterms_format
+				schema_number_of_pages
+				schema_identifier
+			}
+			created_at
+		}
+	}
+`;
+
 export const INSERT_OBJECT_INTO_COLLECTION = `
 	mutation insertObjectIntoCollection($collectionId: uuid, $objectId: String) {
 		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_schema_identifier: $objectId}) {

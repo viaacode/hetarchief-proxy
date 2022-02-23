@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
 import {
@@ -15,6 +15,7 @@ import {
 	FIND_COLLECTION_BY_ID,
 	FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
 	FIND_COLLECTIONS_BY_USER,
+	FIND_OBJECT_IN_COLLECTION,
 	INSERT_COLLECTION,
 	INSERT_OBJECT_INTO_COLLECTION,
 	REMOVE_OBJECT_FROM_COLLECTION,
@@ -147,7 +148,7 @@ export class CollectionsService {
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
 		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
-		const createdCollection = response?.data?.insert_users_collection;
+		const createdCollection = response?.data?.insert_users_collection?.returning?.[0];
 		this.logger.debug(`Collection ${createdCollection?.id} created`);
 
 		return this.adaptCollection(createdCollection);
@@ -179,21 +180,48 @@ export class CollectionsService {
 		return response?.data?.delete_users_collection?.affected_rows || 0;
 	}
 
+	public async findObjectInCollection(
+		collectionId: string,
+		objectId: string
+	): Promise<IeObject | null> {
+		const response = await this.dataService.execute(FIND_OBJECT_IN_COLLECTION, {
+			collectionId,
+			objectId,
+		});
+		const foundObject = response?.data?.users_collection_ie?.[0];
+		this.logger.debug(`Found object ${objectId} in ${collectionId}`);
+
+		return this.adaptCollectionObjectLink(foundObject);
+	}
+
 	public async addObjectToCollection(collectionId: string, objectId: string): Promise<IeObject> {
+		const collectionObject = await this.findObjectInCollection(collectionId, objectId);
+		if (collectionObject) {
+			throw new BadRequestException({
+				code: 'OBJECT_ALREADY_EXISTS',
+				message: 'Object already exists in collection',
+			});
+		}
+
 		const response = await this.dataService.execute(INSERT_OBJECT_INTO_COLLECTION, {
 			collectionId,
 			objectId,
 		});
-		const createdObject = response?.data?.insert_users_collection_ie;
+		const createdObject = response?.data?.insert_users_collection_ie?.returning?.[0];
 		this.logger.debug(`Collection object ${objectId} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
 	}
 
-	async removeObjectFromCollection(collectionId: string, objectId: string) {
+	async removeObjectFromCollection(
+		collectionId: string,
+		objectId: string,
+		userProfileId: string
+	) {
 		const response = await this.dataService.execute(REMOVE_OBJECT_FROM_COLLECTION, {
 			collectionId,
 			objectId,
+			userProfileId,
 		});
 		this.logger.debug(`Collection object ${objectId} deleted`);
 
