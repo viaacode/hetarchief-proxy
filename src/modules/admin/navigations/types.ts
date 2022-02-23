@@ -1,6 +1,5 @@
 export type ContentPickerType =
 	| 'CONTENT_PAGE'
-	| 'COLLECTION'
 	| 'ITEM'
 	| 'BUNDLE'
 	| 'DROPDOWN'
