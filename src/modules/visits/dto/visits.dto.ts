@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
 	IsArray,
@@ -48,12 +48,12 @@ export class CreateVisitDto {
 	})
 	reason?: string;
 
-	@IsBoolean()
+	@IsString()
 	@ApiProperty({
-		type: Boolean,
-		description: 'If the user accepted the Terms of Service',
+		type: String,
+		description: 'When the user accepted the Terms of Service',
 	})
-	acceptedTos: boolean;
+	acceptedTosAt: string;
 }
 
 export class UpdateVisitStatusDto {
@@ -67,13 +67,12 @@ export class UpdateVisitStatusDto {
 	status: VisitStatus;
 }
 
-export class UpdateVisitDto {
+export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisitStatusDto) {
 	@IsDateString()
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: 'The start date & time of the visit, ISO8601 format',
-		example: addDays(new Date(), 2).toISOString(),
+		description: "The start of this user's visit",
 	})
 	startAt?: string;
 
@@ -81,12 +80,25 @@ export class UpdateVisitDto {
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: 'The end date & time of the visit, ISO8601 format',
-		example: addHours(addDays(new Date(), 2), 2).toISOString(),
+		description: "The start of this user's visit",
 	})
 	endAt?: string;
 
-	// TODO remarks if available in DB
+	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "Remarks from the content partner approving the user's visit",
+	})
+	remark?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiProperty({
+		type: string,
+		description: "Reason of denial from the content partner denying the user's visit",
+	})
+	denial?: string;
 }
 
 export class VisitsQueryDto {

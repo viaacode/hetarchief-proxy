@@ -65,13 +65,13 @@ describe('VisitsController', () => {
 	});
 
 	describe('createVisit', () => {
-		it('should create a visit by id', async () => {
+		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisitsResponse.items[0]);
 			const visit = await visitsController.createVisit({
 				spaceId: 'space-1',
 				userProfileId: 'user-1',
 				timeframe: 'asap',
-				acceptedTos: true,
+				acceptedTosAt: '2022-02-18T12:13:22.726Z',
 			});
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});

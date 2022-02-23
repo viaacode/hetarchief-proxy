@@ -38,7 +38,7 @@ const config = (): Configuration => ({
 		credentials: true,
 		allowedHeaders:
 			'X-Requested-With, Content-Type, authorization, Origin, Accept, cache-control',
-		methods: 'GET, POST, OPTIONS, PUT, DELETE',
+		methods: 'GET, POST, OPTIONS, PATCH, PUT, DELETE',
 	},
 });
 

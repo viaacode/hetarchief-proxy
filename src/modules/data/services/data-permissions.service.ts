@@ -14,7 +14,7 @@ export class DataPermissionsService {
 		PROXY: { [queryName: string]: IsAllowed };
 	} = {
 		CLIENT: {
-			TEST_QUERY: async (query: string, variables: any) => {
+			TEST_QUERY: async (query: string) => {
 				return query.includes('query test');
 			},
 		},

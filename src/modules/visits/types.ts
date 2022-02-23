@@ -11,7 +11,6 @@ export interface Visit {
 	userProfileId: string;
 	timeframe: string;
 	reason: string;
-	acceptedTos: boolean;
 	status: VisitStatus;
 	startAt: string;
 	endAt: string;
