@@ -7,11 +7,13 @@ import config, { configValidationSchema } from '~config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { NavigationsModule } from '~modules/admin/navigations';
 import { AuthModule } from '~modules/auth';
 import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
+import { TosModule } from '~modules/tos';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
@@ -25,10 +27,13 @@ import { SessionService } from '~shared/services/session.service';
 			expandVariables: true,
 		}),
 		ScheduleModule.forRoot(),
-		DataModule,
 		AuthModule,
+		DataModule,
 		MediaModule,
 		SpacesModule,
+		MediaModule,
+		NavigationsModule,
+		TosModule,
 		UsersModule,
 		VisitsModule,
 		CollectionsModule,
