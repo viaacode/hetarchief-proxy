@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { VisitsService } from '../services/visits.service';
+import { VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
@@ -19,6 +20,8 @@ const mockVisitsService = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),
+	update: jest.fn(),
+	updateStatus: jest.fn(),
 };
 
 describe('VisitsController', () => {
@@ -67,6 +70,24 @@ describe('VisitsController', () => {
 				userProfileId: 'user-1',
 				timeframe: 'asap',
 				acceptedTosAt: '2022-02-18T12:13:22.726Z',
+			});
+			expect(visit).toEqual(mockVisitsResponse.items[0]);
+		});
+	});
+
+	describe('update', () => {
+		it('should update a visit', async () => {
+			mockVisitsService.update.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			const visit = await visitsController.update('visit-id', {});
+			expect(visit).toEqual(mockVisitsResponse.items[0]);
+		});
+	});
+
+	describe('updateStatus', () => {
+		it('should update a visit status', async () => {
+			mockVisitsService.updateStatus.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			const visit = await visitsController.updateStatus('visit-id', {
+				status: VisitStatus.APPROVED,
 			});
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});

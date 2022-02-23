@@ -14,7 +14,7 @@ const graphQlUserResponse = {
 	first_name: 'Tom',
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',
-	accepted_tos_at: '2022-02-18T12:13:22.726Z',
+	accepted_tos_at: '2022-02-21T14:00:00',
 };
 
 const archiefUser = {
@@ -22,7 +22,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohypderdrive.be',
-	acceptedTosAt: '2022-02-18T12:13:22.726Z',
+	acceptedTosAt: '2022-02-21T14:00:00',
 };
 
 describe('UsersService', () => {
@@ -70,7 +70,8 @@ describe('UsersService', () => {
 				error = e;
 			}
 			expect(error.response).toEqual({
-				message: 'Not Found',
+				error: 'Not Found',
+				message: "User with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
@@ -117,7 +118,7 @@ describe('UsersService', () => {
 			});
 
 			const result = await usersService.updateAcceptedTos('123', {
-				acceptedTosAt: new Date().toISOString(),
+				acceptedTosAt: '2022-02-21T18:00:00',
 			});
 			expect(result).toEqual(archiefUser);
 		});

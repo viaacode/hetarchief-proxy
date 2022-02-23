@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
@@ -27,11 +26,10 @@ export class UpdateUserDto {
 }
 
 export class UpdateAcceptedTosDto {
-	@IsString()
-	@Type(() => String)
+	@IsDateString()
 	@ApiProperty({
 		type: String,
-		description: 'When the user accepted the Terms of Service',
+		description: 'The date and time the user accepted the Terms of Service',
 	})
 	acceptedTosAt: string;
 }

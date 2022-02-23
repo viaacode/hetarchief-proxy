@@ -1,0 +1,456 @@
+{
+	"info": {
+		"_postman_id": "797ac32a-0bf2-4627-8e3a-7a5feb95da11",
+		"name": "HetArchief 2.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin / Navigations",
+			"item": [
+				{
+					"name": "Admin Navigations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations?placement=footer-links",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations"
+							],
+							"query": [
+								{
+									"key": "placement",
+									"value": "footer-links"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Navigation by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations/c90c4bdf-546d-4e8a-b1b0-1ace8f9584dc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations",
+								"c90c4bdf-546d-4e8a-b1b0-1ace8f9584dc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Navigation items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations/items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Create Navigation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\": \"Werkruimte\",\n    \"icon_name\": \"briefcase\",\n    \"description\": \"de hoofd navigatiebalk van de site\",\n    \"user_group_ids\": [-2],\n    \"content_type\": \"INTERNAL_LINK\",\n    \"content_path\": \"/werkruimte\",\n    \"link_target\": \"\",\n    \"position\": 1,\n    \"placement\": \"hoofdnavigatie-links\",\n    \"tooltip\": \"aan het werk\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Update Navigation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\": \"Bart-test\",\n    \"icon_name\": \"\",\n    \"description\": \"testing create call\",\n    \"user_group_ids\": [1],\n    \"content_type\": \"CONTENT_PAGE\",\n    \"content_path\": \"/test\",\n    \"link_target\": \"\",\n    \"position\": 1,\n    \"placement\": \"footer-links\",\n    \"tooltip\": \"testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations/859372f6-29a8-4eaa-84d8-48df730f2f09",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations",
+								"859372f6-29a8-4eaa-84d8-48df730f2f09"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Delete Navigation by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/navigations/859372f6-29a8-4eaa-84d8-48df730f2f09",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"navigations",
+								"859372f6-29a8-4eaa-84d8-48df730f2f09"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Elastic",
+			"item": [
+				{
+					"name": "Elastic INT - simple filter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"size\": 10,\n    \"from\": 0,\n    \"query\": {\n        \"bool\": {\n            \"filter\": {\n                \"term\": {\n                    \"dcterms_format\": \"VIDEO\"\n                }\n            }\n        }\n    },\n    \"aggs\": {\n        \"dcterms_format\": {\n            \"terms\": {\n                \"field\": \"dcterms_format\",\n                \"size\": 40\n            }\n        },\n        \"schema_genre\": {\n            \"terms\": {\n                \"field\": \"schema_genre.filter\",\n                \"size\": 40\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://es-int-hetarchief.private.cloud.meemoo.be/_search/",
+							"protocol": "http",
+							"host": [
+								"es-int-hetarchief",
+								"private",
+								"cloud",
+								"meemoo",
+								"be"
+							],
+							"path": [
+								"_search",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Media",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"from\": 0,\n    \"size\": 20,\n    \"filters\": {\n        \"query\": \"boerderij\",\n        \"format\": \"video\"\n    },\n    \"requestedAggs\": [\"format\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/media",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Media by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filters\": {\n        \"query\": \"durf\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/media/8s4jm2514q",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"media",
+								"8s4jm2514q"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Spaces",
+			"item": [
+				{
+					"name": "Spaces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/spaces?page=1&query=%alijn%&size=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"spaces"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "query",
+									"value": "%alijn%"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Space by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/spaces/65790f8f-6365-4891-8ce2-4563f360db89",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"spaces",
+								"65790f8f-6365-4891-8ce2-4563f360db89"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Update user acceptedTos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"acceptedTos\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/users/ea843f9f-e389-48c1-8e7f-558fa964321c/accepted-tos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"users",
+								"ea843f9f-e389-48c1-8e7f-558fa964321c",
+								"accepted-tos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Visits",
+			"item": [
+				{
+					"name": "Visits",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/visits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"visits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Visit by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/visits/bd7a1f01-20c7-4c2d-9664-54795655d72a",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"visits",
+								"bd7a1f01-20c7-4c2d-9664-54795655d72a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create visit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"spaceId\": \"65790f8f-6365-4891-8ce2-4563f360db89\",\n    \"userProfileId\": \"8faf3da3-bb6b-4c4e-99e0-e3189740796c\",\n    \"timeframe\": \"Elke zaterdagnamiddag in mei\",\n    \"acceptedTos\": true,\n    \"reason\": \"Onderzoek rond archivering\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/visits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"visits"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "port",
+			"value": "3100",
+			"type": "string"
+		}
+	]
+}

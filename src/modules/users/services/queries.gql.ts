@@ -41,12 +41,3 @@ export const UPDATE_USER = `
 		}
 	}
 `;
-
-export const UPDATE_USER_TOS = `
-	mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
-		update_users_profile_by_pk(pk_columns: {id: $id}, _set: $updateUser) {
-			id
-			accepted_tos_at
-		}
-	}
-`;

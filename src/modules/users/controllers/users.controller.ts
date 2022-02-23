@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Param, Post, Session } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Put, Session } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { SessionHelper } from '../../../modules/auth/session-helper';
@@ -13,7 +13,7 @@ export class UsersController {
 
 	constructor(private usersService: UsersService) {}
 
-	@Post(':id/accepted-tos')
+	@Put(':id/accepted-tos')
 	public async updateTos(
 		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto,
 		@Param('id') id: string,

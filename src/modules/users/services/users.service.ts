@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { get } from 'lodash';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
@@ -36,7 +36,7 @@ export class UsersService {
 			identityId,
 		});
 		if (!userResponse.data.users_profile[0]) {
-			return null;
+			throw new NotFoundException(`User with id '${identityId}' not found`);
 		}
 		return this.adapt(userResponse.data.users_profile[0]);
 	}
