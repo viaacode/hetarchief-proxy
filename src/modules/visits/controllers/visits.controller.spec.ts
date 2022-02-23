@@ -69,7 +69,7 @@ describe('VisitsController', () => {
 				spaceId: 'space-1',
 				userProfileId: 'user-1',
 				timeframe: 'asap',
-				acceptedTos: true,
+				acceptedTosAt: '2022-02-18T12:13:22.726Z',
 			});
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});

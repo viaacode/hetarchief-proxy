@@ -48,12 +48,12 @@ export class CreateVisitDto {
 	})
 	reason?: string;
 
-	@IsBoolean()
+	@IsString()
 	@ApiProperty({
-		type: Boolean,
-		description: 'If the user accepted the Terms of Service',
+		type: String,
+		description: 'When the user accepted the Terms of Service',
 	})
-	acceptedTos: boolean;
+	acceptedTosAt: string;
 }
 
 export class UpdateVisitStatusDto {
