@@ -35,25 +35,26 @@ describe('TosService', () => {
 		it('can adapt a hasura response to our tos interface', () => {
 			const adapted = tosService.adapt(tos);
 			// test some sample keys
-			expect(adapted.updatedAt).toEqual('1997-01-01T00:00:00.000Z');
+			expect(adapted.updatedAt).toEqual(tos.updated_at);
 		});
 	});
 
 	describe('Find last updated date for TOS', () => {
 		it('returns a single tos', async () => {
-			mockDataService.getTosLastUpdatedAt.mockResolvedValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					tos: [tos],
+					cms_site_variables: [
+						{
+							value: {
+								updated_at: tos.updated_at,
+							},
+						},
+					],
 				},
 			});
 
-			// TODO: fix test
-			try {
-				const response = await tosService.getTosLastUpdatedAt();
-				expect(response).toBeDefined();
-			} catch (error) {
-				console.warn(error);
-			}
+			const response = await tosService.getTosLastUpdatedAt();
+			expect(response?.updatedAt).toEqual(tos.updated_at);
 		});
 	});
 });
