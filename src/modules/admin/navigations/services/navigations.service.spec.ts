@@ -56,7 +56,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.findAll({});
+			const response = await navigationsService.findAllNavigationBars({});
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(100);
@@ -79,7 +79,9 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.findAll({ placement: 'footer-links' });
+			const response = await navigationsService.findAllNavigationBars({
+				placement: 'footer-links',
+			});
 			expect(response.items.length).toBe(1);
 			expect(response.items[0].placement).toEqual('footer-links');
 			expect(response.page).toBe(1);
@@ -99,7 +101,7 @@ describe('NavigationsService', () => {
 					],
 				},
 			});
-			const response = await navigationsService.findById('1');
+			const response = await navigationsService.findElementById('1');
 			expect(response.id).toBe('1');
 		});
 
@@ -111,7 +113,7 @@ describe('NavigationsService', () => {
 			});
 			let error;
 			try {
-				await navigationsService.findById('unknown-id');
+				await navigationsService.findElementById('unknown-id');
 			} catch (e) {
 				error = e;
 			}
@@ -131,7 +133,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.create({
+			const response = await navigationsService.createElement({
 				label: 'test-create-nav',
 				icon_name: '',
 				placement: 'footer-links',
@@ -150,7 +152,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.update('1', {
+			const response = await navigationsService.updateElement('1', {
 				label: 'test-create-nav',
 				icon_name: '',
 				placement: 'footer-links',
@@ -169,7 +171,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.delete('1');
+			const response = await navigationsService.deleteElement('1');
 			expect(response.affectedRows).toBe('1');
 		});
 	});
@@ -197,7 +199,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.getNavigationItems({});
+			const response = await navigationsService.getNavigationElementsForUser({});
 			// response is grouped by placement
 			expect(response['footer-links'].length).toEqual(1);
 			expect(response['footer-links'][0].id).toEqual('1');
@@ -225,7 +227,9 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.getNavigationItems(getNewMockSession());
+			const response = await navigationsService.getNavigationElementsForUser(
+				getNewMockSession()
+			);
 			// response is grouped by placement
 			expect(response['footer-links'].length).toEqual(2);
 			expect(response['footer-links'][1].id).toEqual('2');

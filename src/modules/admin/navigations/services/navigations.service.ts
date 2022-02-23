@@ -15,9 +15,9 @@ import {
 	UPDATE_NAVIGATION_BY_ID,
 } from './queries.gql';
 
-import { SessionHelper } from '~modules/auth/session-helper';
 import { DataService } from '~modules/data/services/data.service';
 import { GraphQlResponse } from '~modules/data/types';
+import { User } from '~modules/users/types';
 import { DeleteResponse, SpecialPermissionGroups } from '~shared/types/types';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class NavigationsService {
 
 	constructor(private dataService: DataService) {}
 
-	public async create(navigationItem: CreateNavigationDto): Promise<Navigation> {
+	public async createElement(navigationItem: CreateNavigationDto): Promise<Navigation> {
 		const {
 			data: { insert_cms_navigation_element_one: createdNavigation },
 		} = await this.dataService.execute(INSERT_NAVIGATION, { navigationItem });
@@ -35,7 +35,10 @@ export class NavigationsService {
 		return createdNavigation;
 	}
 
-	public async update(id: string, navigationItem: CreateNavigationDto): Promise<Navigation> {
+	public async updateElement(
+		id: string,
+		navigationItem: CreateNavigationDto
+	): Promise<Navigation> {
 		const {
 			data: { update_cms_navigation_element_by_pk: updatedNavigation },
 		} = await this.dataService.execute(UPDATE_NAVIGATION_BY_ID, { id, navigationItem });
@@ -44,7 +47,7 @@ export class NavigationsService {
 		return updatedNavigation;
 	}
 
-	public async delete(id: string): Promise<DeleteResponse> {
+	public async deleteElement(id: string): Promise<DeleteResponse> {
 		const {
 			data: {
 				delete_cms_navigation_element: { affected_rows: affectedRows },
@@ -56,7 +59,7 @@ export class NavigationsService {
 		};
 	}
 
-	public async findAll(
+	public async findAllNavigationBars(
 		navigationsQueryDto: NavigationsQueryDto
 	): Promise<IPagination<Navigation>> {
 		const { placement } = navigationsQueryDto;
@@ -77,7 +80,7 @@ export class NavigationsService {
 		});
 	}
 
-	public async findById(id: string): Promise<Navigation> {
+	public async findElementById(id: string): Promise<Navigation> {
 		const navigationResponse = await this.dataService.execute(FIND_NAVIGATION_BY_ID, { id });
 		if (!navigationResponse.data.cms_navigation_element[0]) {
 			throw new NotFoundException();
@@ -85,15 +88,13 @@ export class NavigationsService {
 		return navigationResponse.data.cms_navigation_element[0];
 	}
 
-	public async getNavigationItems(
-		session: Record<string, any>
-	): Promise<Record<string, Navigation[]>> {
+	public async getNavigationElementsForUser(user: User): Promise<Record<string, Navigation[]>> {
 		const {
 			data: { cms_navigation_element: navigations },
 		} = await this.dataService.execute(GET_ALL_NAVIGATION_ITEMS);
 
 		// filter based on logged in / logged out
-		const allowedUserGroups = SessionHelper.isLoggedIn(session)
+		const allowedUserGroups = user
 			? [SpecialPermissionGroups.loggedInUsers]
 			: [SpecialPermissionGroups.loggedOutUsers];
 

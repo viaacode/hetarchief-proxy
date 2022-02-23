@@ -64,7 +64,7 @@ export const FIND_NAVIGATION_BY_ID = `
 
 export const GET_ALL_NAVIGATION_ITEMS = `
 	query getNavigationItems {
-		cms_navigation_element {
+		cms_navigation_element(order_by: {placement: asc, position: asc}) {
 			content_path
 			content_type
 			link_target

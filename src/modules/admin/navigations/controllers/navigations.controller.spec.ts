@@ -49,7 +49,7 @@ describe('NavigationsController', () => {
 	describe('getNavigations', () => {
 		it('should return all navigations', async () => {
 			mockNavigationsService.findAll.mockResolvedValueOnce(mockNavigationsResponse);
-			const navigations = await navigationsController.getNavigations({});
+			const navigations = await navigationsController.getNavigationBars({});
 			expect(navigations).toEqual(mockNavigationsResponse);
 		});
 	});
@@ -59,7 +59,7 @@ describe('NavigationsController', () => {
 			mockNavigationsService.getNavigationItems.mockResolvedValueOnce(
 				mockNavigationsResponse
 			);
-			const navigations = await navigationsController.getNavigationItems({});
+			const navigations = await navigationsController.getNavigationElementsForUser({});
 			expect(navigations).toEqual(mockNavigationsResponse);
 		});
 	});
@@ -67,7 +67,7 @@ describe('NavigationsController', () => {
 	describe('getNavigation', () => {
 		it('should return a navigation by id', async () => {
 			mockNavigationsService.findById.mockResolvedValueOnce(mockNavigationsResponse.items[0]);
-			const navigations = await navigationsController.getNavigation('navigation-1');
+			const navigations = await navigationsController.getNavigationElement('navigation-1');
 			expect(navigations).toEqual(mockNavigationsResponse.items[0]);
 		});
 	});
@@ -75,7 +75,7 @@ describe('NavigationsController', () => {
 	describe('createNavigation', () => {
 		it('should create a new navigation', async () => {
 			mockNavigationsService.create.mockResolvedValueOnce(mockNavigationsResponse.items[0]);
-			const navigation = await navigationsController.createNavigation({
+			const navigation = await navigationsController.createNavigationElement({
 				label: 'test-create-nav',
 				icon_name: '',
 				placement: 'footer-links',
@@ -88,7 +88,7 @@ describe('NavigationsController', () => {
 	describe('updateNavigation', () => {
 		it('should update a navigation', async () => {
 			mockNavigationsService.update.mockResolvedValueOnce(mockNavigationsResponse.items[0]);
-			const navigation = await navigationsController.updateNavigation('navigation-1', {
+			const navigation = await navigationsController.updateNavigationElement('navigation-1', {
 				label: 'test-create-nav',
 				icon_name: '',
 				placement: 'footer-links',

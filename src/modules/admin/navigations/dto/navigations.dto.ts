@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { ContentPickerType, ContentPickerTypeSchema } from '../types';
+import { ContentPickerType } from '../types';
 
 export class NavigationsQueryDto {
 	@IsString()
@@ -50,16 +50,14 @@ export class CreateNavigationDto {
 
 	@ApiProperty({
 		required: false,
-		enum: ContentPickerTypeSchema,
+		enum: ContentPickerType,
 		description: `The content_type for this item. Options are: ${Object.values(
-			ContentPickerTypeSchema
+			ContentPickerType
 		).join(', ')}`,
 	})
 	@IsOptional()
-	@IsEnum(ContentPickerTypeSchema, {
-		message: `content_type must be one of: ${Object.values(ContentPickerTypeSchema).join(
-			', '
-		)}`,
+	@IsEnum(ContentPickerType, {
+		message: `content_type must be one of: ${Object.values(ContentPickerType).join(', ')}`,
 	})
 	content_type?: ContentPickerType;
 
