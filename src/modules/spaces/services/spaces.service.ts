@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get } from 'lodash';
+import { get, isEmpty, set } from 'lodash';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { Space } from '../types';
@@ -24,7 +24,9 @@ export class SpacesService {
 			id: get(graphQlSpace, 'id'),
 			maintainerId: get(graphQlSpace, 'schema_maintainer.schema_identifier'),
 			name: get(graphQlSpace, 'schema_maintainer.schema_name'),
-			description: get(graphQlSpace, 'schema_description'),
+			description: isEmpty(graphQlSpace.schema_description)
+				? graphQlSpace.schema_maintainer?.information?.[0]?.description
+				: graphQlSpace.schema_description,
 			serviceDescription: get(graphQlSpace, 'schema_service_description'),
 			image: get(graphQlSpace, 'schema_image'),
 			color: get(graphQlSpace, 'schema_color'),
@@ -67,12 +69,13 @@ export class SpacesService {
 	}
 
 	public async findAll(inputQuery: SpacesQueryDto): Promise<IPagination<Space>> {
-		const { query, page, size } = inputQuery;
+		const { query, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
 			query,
 			offset,
 			limit,
+			orderBy: set({}, orderProp, orderDirection),
 		});
 
 		return Pagination<Space>({
