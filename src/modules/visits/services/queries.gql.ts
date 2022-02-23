@@ -16,9 +16,9 @@ export const INSERT_VISIT = `
 	}
 `;
 
-export const FIND_VISITS = `
-	query visit($query: String!, $offset: Int!, $limit: Int!, $statuses: [String!] = [], $orderBy: cp_visit_order_by! = {}) {
-		cp_visit(offset: $offset, limit: $limit, where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}, order_by: [$orderBy]) {
+export const UPDATE_VISIT = `
+	mutation updateVisit($id: uuid!, $updateVisit: cp_visit_set_input!) {
+		update_cp_visit_by_pk(pk_columns: { id: $id}, _set: $updateVisit) {
 			id
 			cp_space_id
 			user_profile_id
@@ -36,7 +36,30 @@ export const FIND_VISITS = `
 				id
 			}
 		}
-		cp_visit_aggregate(where: {_or: [{user_profile: {first_name: {_ilike: $query}}}, {user_profile: {last_name: {_ilike: $query}}}, {user_profile: {mail: {_ilike: $query}}}], status: {_in: $statuses}}) {
+	}
+`;
+
+export const FIND_VISITS = `
+	query visit($where: cp_visit_bool_exp, $offset: Int!, $limit: Int!, $orderBy: cp_visit_order_by! = {}) {
+		cp_visit(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			created_at
+			updated_at
+			user_profile {
+				first_name
+				last_name
+				mail
+				id
+			}
+		}
+		cp_visit_aggregate(where: $where) {
 			aggregate {
 				count
 			}
