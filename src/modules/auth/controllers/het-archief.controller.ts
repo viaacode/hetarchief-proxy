@@ -84,9 +84,15 @@ export class HetArchiefController {
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
-			let archiefUser = await this.usersService.getUserByIdentityId(
-				ldapUser.attributes.entryUUID[0]
-			);
+			let archiefUser;
+
+			try {
+				archiefUser = await this.usersService.getUserByIdentityId(
+					ldapUser.attributes.entryUUID[0]
+				);
+			} catch (error) {
+				this.logger.log(error);
+			}
 
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
@@ -98,6 +104,7 @@ export class HetArchiefController {
 				this.logger.log(
 					`User ${ldapUser.attributes.mail[0]} not found in our DB for ${Idp.HETARCHIEF}`
 				);
+
 				archiefUser = await this.usersService.createUserWithIdp(
 					userDto,
 					Idp.HETARCHIEF,

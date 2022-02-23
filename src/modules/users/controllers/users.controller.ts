@@ -1,11 +1,10 @@
 import { Body, Controller, Logger, Param, Put, Session } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { SessionHelper } from '../../../shared/auth/session-helper';
 import { UpdateAcceptedTosDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from '../types';
-
-import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Users')
 @Controller('users')

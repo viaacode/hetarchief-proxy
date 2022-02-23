@@ -13,11 +13,11 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
+import { SessionHelper } from '../../../../shared/auth/session-helper';
 import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto';
 import { NavigationsService } from '../services/navigations.service';
 import { Navigation } from '../types';
 
-import { SessionHelper } from '~shared/auth/session-helper';
 import { DeleteResponse } from '~shared/types/types';
 
 @ApiTags('Navigations')
