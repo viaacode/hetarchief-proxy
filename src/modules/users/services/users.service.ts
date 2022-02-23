@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { get } from 'lodash';
 
-import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
+import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
 import { User } from '../types';
 
 import {
@@ -20,11 +20,24 @@ export class UsersService {
 
 	constructor(protected dataService: DataService) {}
 
+	public adapt(graphQlUser: any): User {
+		return {
+			id: get(graphQlUser, 'id'),
+			firstName: get(graphQlUser, 'first_name'),
+			lastName: get(graphQlUser, 'last_name'),
+			email: get(graphQlUser, 'mail'),
+			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
+		};
+	}
+
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
 		const userResponse = await this.dataService.execute(GET_USER_BY_IDENTITY_ID, {
 			identityId,
 		});
-		return get(userResponse, 'data.users_profile[0]', null);
+		if (!userResponse.data.users_profile[0]) {
+			throw new NotFoundException(`User with id '${identityId}' not found`);
+		}
+		return this.adapt(userResponse.data.users_profile[0]);
 	}
 
 	public async createUserWithIdp(
@@ -53,7 +66,7 @@ export class UsersService {
 		await this.dataService.execute(INSERT_USER_IDENTITY, { newUserIdentity });
 		this.logger.debug(`user ${createdUser.id} linked with idp '${idp}'`);
 
-		return createdUser;
+		return this.adapt(createdUser);
 	}
 
 	public async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
@@ -67,6 +80,21 @@ export class UsersService {
 			data: { update_users_profile_by_pk: updatedUser },
 		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
 
-		return updatedUser;
+		return this.adapt(updatedUser);
+	}
+
+	public async updateAcceptedTos(
+		id: string,
+		updateAcceptedTos: UpdateAcceptedTosDto
+	): Promise<User> {
+		const updateUser = {
+			accepted_tos_at: updateAcceptedTos.acceptedTosAt,
+		};
+
+		const {
+			data: { update_users_profile_by_pk: updatedUser },
+		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
+
+		return this.adapt(updatedUser);
 	}
 }

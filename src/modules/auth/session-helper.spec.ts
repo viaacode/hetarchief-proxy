@@ -1,3 +1,6 @@
+import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
+import flow from 'lodash/fp/flow';
+
 import { SessionHelper } from './session-helper';
 import { Idp } from './types';
 
@@ -26,6 +29,7 @@ const mockArchiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
+	acceptedTosAt: '2022-02-21T14:00:00',
 };
 
 describe('SessionHelper', () => {
@@ -190,6 +194,47 @@ describe('SessionHelper', () => {
 				message: 'Internal Server Error',
 				statusCode: 500,
 			});
+		});
+	});
+
+	describe('getArchiefUserInfo', () => {
+		it('should return null if no valid session was given', () => {
+			const result = SessionHelper.getArchiefUserInfo(null);
+			expect(result).toBeNull();
+		});
+
+		it('should return the archief user info', () => {
+			const result = SessionHelper.getArchiefUserInfo({
+				archiefUserInfo: { email: 'test@studiohyperdrive.be' },
+			});
+			expect(result).toEqual({ email: 'test@studiohyperdrive.be' });
+		});
+	});
+
+	describe('getExpiresAt', () => {
+		it('should return tomorrow at 5am when now is already passed 5am', () => {
+			const inputDate = setHours(11)(new Date());
+			const expectedDate = flow(
+				addDays(1),
+				setHours(5),
+				setMinutes(0),
+				setSeconds(0),
+				setMilliseconds(0)
+			)(new Date());
+			const result = SessionHelper.getExpiresAt(inputDate);
+			expect(result).toEqual(expectedDate.toISOString());
+		});
+
+		it('should return 5am if its passed midnight but still before 5am', () => {
+			const inputDate = setHours(4)(new Date());
+			const expectedDate = flow(
+				setHours(5),
+				setMinutes(0),
+				setSeconds(0),
+				setMilliseconds(0)
+			)(new Date());
+			const result = SessionHelper.getExpiresAt(inputDate);
+			expect(result).toEqual(expectedDate.toISOString());
 		});
 	});
 

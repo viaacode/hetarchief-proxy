@@ -6,7 +6,6 @@ export const ORDER_PROP_TO_DB_PROP: Record<keyof Visit, string> = {
 	userProfileId: 'user_profile_id',
 	timeframe: 'user_timeframe',
 	reason: 'user_reason',
-	acceptedTos: 'user_accepted_tos',
 	status: 'status',
 	startAt: 'start_date',
 	endAt: 'end_date',
