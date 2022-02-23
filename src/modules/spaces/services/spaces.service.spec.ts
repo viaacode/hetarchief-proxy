@@ -39,6 +39,14 @@ describe('SpacesService', () => {
 			expect(adapted.logo).toEqual('https://assets.viaa.be/images/OR-rf5kf25');
 			expect(adapted.contactInfo.address.postalCode).toEqual('1043');
 		});
+
+		it('if the space description is empty it falls back to the maintainer description', () => {
+			cpSpace.schema_description = 'Space specific description';
+			const adapted = spacesService.adapt(cpSpace);
+			cpSpace.schema_description = null; // reset
+			// test some sample keys
+			expect(adapted.description).toEqual('Space specific description');
+		});
 	});
 
 	describe('findAll', () => {

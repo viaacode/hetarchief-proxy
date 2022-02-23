@@ -16,6 +16,7 @@ export const FIND_SPACES = `
 				schema_name
 				schema_identifier
 				information {
+					description
 					logo {
 						iri
 					}
@@ -58,6 +59,7 @@ export const FIND_SPACE_BY_ID = `
 				schema_name
 				schema_identifier
 				information {
+					description
 					logo {
 						iri
 					}
