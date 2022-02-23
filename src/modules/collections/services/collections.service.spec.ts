@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CollectionsService } from './collections.service';
 
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { CollectionObjectLink } from '~modules/collections/types';
+import { CollectionObjectLink, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -78,6 +78,18 @@ const mockGqlCollectionObjectsResult = {
 			},
 		},
 	},
+};
+
+const mockCollectionObject: IeObject = {
+	id: '8s4jm2514q',
+	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	termsAvailable: '2015-09-19T12:08:24',
+	creator: null,
+	format: 'video',
+	numberOfPages: null,
+	thumbnailUrl:
+		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+	collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
 };
 
 const mockUser = {
@@ -192,7 +204,9 @@ describe('CollectionsService', () => {
 		it('can create a new collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					insert_users_collection: mockGqlCollection1,
+					insert_users_collection: {
+						returning: [mockGqlCollection1],
+					},
 				},
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -246,12 +260,15 @@ describe('CollectionsService', () => {
 	});
 
 	describe('add object to collection', () => {
-		it('can create a new collection', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
+		it('can add object to a collection', async () => {
+			mockDataService.execute.mockResolvedValueOnce(null).mockResolvedValueOnce({
 				data: {
-					insert_users_collection_ie: mockGqlCollectionObjectLink,
+					insert_users_collection_ie: {
+						returning: [mockGqlCollectionObjectLink],
+					},
 				},
 			});
+
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
 				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
@@ -259,6 +276,35 @@ describe('CollectionsService', () => {
 			expect(response.id).toBe(
 				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
 			);
+		});
+
+		it('can not add object to a collection if it already exists', async () => {
+			mockDataService.execute.mockResolvedValue({
+				data: {
+					insert_users_collection_ie: {
+						returning: [mockGqlCollectionObjectLink],
+					},
+				},
+			});
+			const findObjectInCollectionSpy = jest
+				.spyOn(collectionsService, 'findObjectInCollection')
+				.mockResolvedValue(mockCollectionObject);
+
+			let error;
+			try {
+				await collectionsService.addObjectToCollection(
+					mockGqlCollection1.id,
+					mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				code: 'OBJECT_ALREADY_EXISTS',
+				message: 'Object already exists in collection',
+			});
+
+			findObjectInCollectionSpy.mockRestore();
 		});
 	});
 
@@ -273,7 +319,8 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier,
+				mockUser.id
 			);
 			expect(affectedRows).toBe(1);
 		});
@@ -288,7 +335,8 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				'unknown-id'
+				'unknown-id',
+				mockUser.id
 			);
 			expect(affectedRows).toBe(0);
 		});
