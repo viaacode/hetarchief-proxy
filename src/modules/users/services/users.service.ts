@@ -9,7 +9,6 @@ import {
 	INSERT_USER,
 	INSERT_USER_IDENTITY,
 	UPDATE_USER,
-	UPDATE_USER_TOS,
 } from './queries.gql';
 
 import { Idp } from '~modules/auth/types';
@@ -94,7 +93,7 @@ export class UsersService {
 
 		const {
 			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute(UPDATE_USER_TOS, { id, updateUser });
+		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
 
 		return this.adapt(updatedUser);
 	}
