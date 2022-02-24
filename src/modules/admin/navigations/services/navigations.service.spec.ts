@@ -2,22 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { NavigationsService } from './navigations.service';
 
-import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
+import { User } from '~modules/users/types';
 
 const mockDataService = {
 	execute: jest.fn(),
 };
 
-const getNewMockSession = () => ({
-	idp: Idp.HETARCHIEF,
-	idpUserInfo: {
-		session_not_on_or_after: new Date(new Date().getTime() + 3600 * 1000).toISOString(), // one hour from now
-	},
-	archiefUserInfo: {
-		email: 'test@studiohypderdrive.be',
-	},
-});
+const mockUser: User = {
+	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohyperdrive.be',
+	acceptedTosAt: '2022-02-21T14:00:00',
+};
 
 describe('NavigationsService', () => {
 	let navigationsService: NavigationsService;
@@ -199,7 +197,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.getNavigationElementsForUser({});
+			const response = await navigationsService.getNavigationElementsForUser(null);
 			// response is grouped by placement
 			expect(response['footer-links'].length).toEqual(1);
 			expect(response['footer-links'][0].id).toEqual('1');
@@ -227,9 +225,7 @@ describe('NavigationsService', () => {
 					},
 				},
 			});
-			const response = await navigationsService.getNavigationElementsForUser(
-				getNewMockSession()
-			);
+			const response = await navigationsService.getNavigationElementsForUser(mockUser);
 			// response is grouped by placement
 			expect(response['footer-links'].length).toEqual(2);
 			expect(response['footer-links'][1].id).toEqual('2');
