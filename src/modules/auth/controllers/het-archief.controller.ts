@@ -13,19 +13,25 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
-import { UsersService } from '../../users/services/users.service';
 import { HetArchiefService } from '../services/het-archief.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
+import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
 export class HetArchiefController {
 	private logger: Logger = new Logger(HetArchiefController.name, { timestamp: true });
 
-	constructor(private hetArchiefService: HetArchiefService, private usersService: UsersService) {}
+	constructor(
+		private hetArchiefService: HetArchiefService,
+		private usersService: UsersService,
+		private collectionsService: CollectionsService
+	) {}
 
 	@Get('login')
 	@Redirect()
@@ -104,6 +110,11 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
+				await this.collectionsService.create({
+					is_default: true,
+					user_profile_id: archiefUser.id,
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
+				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user

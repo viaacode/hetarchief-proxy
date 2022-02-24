@@ -1,3 +1,4 @@
 {
-  "app___hello-world": "Hello World!"
+  "app___hello-world": "Hello World!",
+  "modules/collections/controllers___default-collection-name": "Favorieten"
 }

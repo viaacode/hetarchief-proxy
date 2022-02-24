@@ -6,6 +6,7 @@ import { CollectionsService } from '../services/collections.service';
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
+import { User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockCollectionsResponse: IPagination<Collection> = {
@@ -52,11 +53,12 @@ const mockCollectionObjectsResponse = {
 	pages: 1,
 };
 
-const mockUser = {
+const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
