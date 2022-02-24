@@ -2,6 +2,7 @@ export enum VisitStatus {
 	PENDING = 'PENDING',
 	APPROVED = 'APPROVED',
 	DENIED = 'DENIED',
+	CANCELLED_BY_VISITOR = 'CANCELLED_BY_VISITOR',
 }
 
 export interface Visit {
@@ -10,7 +11,6 @@ export interface Visit {
 	userProfileId: string;
 	timeframe: string;
 	reason: string;
-	acceptedTos: boolean;
 	status: VisitStatus;
 	startAt: string;
 	endAt: string;

@@ -1,6 +1,6 @@
 export const FIND_SPACES = `
-	query spaces($query: String!, $offset: Int!, $limit: Int!) {
-		cp_space(where: {_or: [{schema_description: {_ilike: $query}}, {schema_maintainer: {schema_name: {_ilike: $query}}}]}, offset: $offset, limit: $limit) {
+	query spaces($query: String!, $offset: Int!, $limit: Int!, $orderBy: cp_space_order_by!) {
+		cp_space(where: {_or: [{schema_description: {_ilike: $query}}, {schema_maintainer: {schema_name: {_ilike: $query}}}]}, offset: $offset, limit: $limit, order_by: [$orderBy]) {
 			id
 			schema_image
 			schema_color
@@ -16,6 +16,7 @@ export const FIND_SPACES = `
 				schema_name
 				schema_identifier
 				information {
+					description
 					logo {
 						iri
 					}
@@ -34,7 +35,7 @@ export const FIND_SPACES = `
 		}
 		cp_space_aggregate(where: {_or: [{schema_description: {_ilike: $query}}, {schema_maintainer: {schema_name: {_ilike: $query}}}]}) {
 			aggregate {
-			  count
+				count
 			}
 		}
 	}
@@ -58,6 +59,7 @@ export const FIND_SPACE_BY_ID = `
 				schema_name
 				schema_identifier
 				information {
+					description
 					logo {
 						iri
 					}

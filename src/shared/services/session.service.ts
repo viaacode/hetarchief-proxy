@@ -54,7 +54,7 @@ export class SessionService {
 			});
 
 			redisClient.on('error', (err) => this.logger.error('Redis Client Error', err.stack));
-			redisClient.on('connect', (err) => this.logger.log('Connected to redis successfully'));
+			redisClient.on('connect', () => this.logger.log('Connected to redis successfully'));
 
 			const clearRedis = async () => {
 				try {

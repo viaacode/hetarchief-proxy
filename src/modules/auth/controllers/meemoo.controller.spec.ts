@@ -94,7 +94,7 @@ describe('MeemooController', () => {
 			});
 		});
 
-		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await meemooController.getAuth(
 				getNewMockSession(),
 				'http://hetarchief.be/start'
@@ -228,7 +228,7 @@ describe('MeemooController', () => {
 			expect(mockSession.idp).toBeNull();
 		});
 
-		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+		it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
 			const mockSession = getNewMockSession();
 			mockSession.idp = null;
 			const result = await meemooController.logout(mockSession, 'http://hetarchief.be/start');
