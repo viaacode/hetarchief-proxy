@@ -77,21 +77,6 @@ export class QueryBuilder {
 	}
 
 	/**
-	 * Build a query to get a media item by id
-	 * @param id the id to query
-	 * @returns elastic search query
-	 */
-	public static queryById(id: string): any {
-		return {
-			query: {
-				term: {
-					_id: id,
-				},
-			},
-		};
-	}
-
-	/**
 	 * AND filter: https://stackoverflow.com/a/52206289/373207
 	 * @param elasticKey
 	 * @param readableKey
