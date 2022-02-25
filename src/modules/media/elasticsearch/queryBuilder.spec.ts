@@ -136,7 +136,7 @@ describe('QueryBuilder', () => {
 				requestedAggs: ['format'],
 			});
 			expect(esQuery.aggs).toEqual({
-				dcterms_format: { terms: { field: 'dcterms_format.filter', size: 40 } },
+				dcterms_format: { terms: { field: 'dcterms_format.keyword', size: 40 } },
 			});
 
 			// reset

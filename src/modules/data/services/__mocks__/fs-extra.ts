@@ -1,3 +1,4 @@
+export {}; // https://stackoverflow.com/questions/35758584/cannot-redeclare-block-scoped-variable-typescript
 const fse: any = jest.createMockFromModule('fs-extra');
 
 // This is a custom function that our tests can use during setup to specify
