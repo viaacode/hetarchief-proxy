@@ -22,9 +22,10 @@ const getMockMediaResponse = () => ({
 	},
 });
 
-const mockMediaService = {
+const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	getPlayableUrl: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -55,6 +56,14 @@ describe('MediaController', () => {
 			const media = await mediaController.getMedia(null);
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
+		});
+	});
+
+	describe('getPlayableUrl', () => {
+		it('should return a playable url', async () => {
+			mockMediaService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+			const url = await mediaController.getPlayableUrl('referer', { id: '1' });
+			expect(url).toEqual('http://playme');
 		});
 	});
 

@@ -4,13 +4,25 @@ import nock from 'nock';
 
 import { MediaService } from './media.service';
 
+import { DataService } from '~modules/data/services/data.service';
+
 const mockConfigService = {
 	get: jest.fn((key: string): string | boolean => {
 		if (key === 'elasticSearchUrl') {
 			return 'http://elasticsearch'; // should be a syntactically valid url
 		}
+		if (key === 'ticketServiceUrl') {
+			return 'http://ticketservice';
+		}
+		if (key === 'mediaServiceUrl') {
+			return 'http://mediaservice';
+		}
 		return key;
 	}),
+};
+
+const mockDataService = {
+	execute: jest.fn(),
 };
 
 const getMockMediaResponse = () => ({
@@ -41,6 +53,10 @@ describe('MediaService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: DataService,
+					useValue: mockDataService,
 				},
 			],
 		}).compile();
@@ -118,6 +134,66 @@ describe('MediaService', () => {
 				error = e.response;
 			}
 			expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+		});
+	});
+
+	describe('getPlayableUrl', () => {
+		it('returns a playable url', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+			});
+			nock('http://ticketservice/')
+				.get('/vrt/item-1')
+				.query(true)
+				.reply(200, { jwt: 'secret-jwt-token' });
+			const url = await mediaService.getPlayableUrl('vrt-id', 'referer');
+			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
+		});
+
+		it('uses the fallback referer if none was set', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+			});
+			nock('http://ticketservice/')
+				.get('/vrt/item-1')
+				.query({
+					app: 'OR-avo2',
+					client: '',
+					referer: 'host',
+					maxage: 'ticketServiceMaxAge',
+				})
+				.reply(200, { jwt: 'secret-jwt-token' });
+			const url = await mediaService.getPlayableUrl('vrt-id', undefined);
+			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
+		});
+	});
+
+	describe('getEmbedUrl', () => {
+		it('returns the embedUrl for an item', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+			});
+			const url = await mediaService.getEmbedUrl('vrt-id');
+			expect(url).toEqual('/vrt/item-1');
+		});
+
+		it('throws a notfoundexception if the item was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					object_ie_by_pk: null,
+				},
+			});
+			let error;
+			try {
+				await mediaService.getEmbedUrl('unknown-id');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message: "Object IE with id 'unknown-id' not found",
+				statusCode: 404,
+			});
 		});
 	});
 });

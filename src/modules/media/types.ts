@@ -20,3 +20,18 @@ export interface QueryBuilderConfig {
 	NUMBER_OF_FILTER_OPTIONS: number;
 	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string };
 }
+
+export interface PlayerTicket {
+	jwt: string;
+	context: {
+		aud: string;
+		exp: number;
+		sub: string;
+		ip: string;
+		referer: string;
+		fragment: {
+			start: string;
+			end: string;
+		};
+	};
+}

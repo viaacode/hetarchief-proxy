@@ -19,6 +19,12 @@ export interface Configuration {
 	samlMeemooSpEntityId: string;
 	corsEnableWhitelist: boolean;
 	corsOptions: any;
+	ticketServiceUrl: string;
+	ticketServiceCertificate: string;
+	ticketServiceKey: string;
+	ticketServicePassphrase: string;
+	ticketServiceMaxAge: number;
+	mediaServiceUrl: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

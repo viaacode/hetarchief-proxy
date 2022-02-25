@@ -17,6 +17,12 @@ export const configValidationSchema = Joi.object({
 	SAML_SP_CERTIFICATE: Joi.string().allow(''),
 	SAML_MEEMOO_IDP_META_DATA_ENDPOINT: Joi.string(),
 	SAML_MEEMOO_SP_ENTITY_ID: Joi.string(),
+	TICKET_SERVICE_URL: Joi.string(),
+	TICKET_SERVICE_CERT: Joi.string(),
+	TICKET_SERVICE_KEY: Joi.string(),
+	TICKET_SERVICE_PASSPHRASE: Joi.string(),
+	TICKET_SERVICE_MAXAGE: Joi.number().default(14401),
+	MEDIA_SERVICE_URL: Joi.string(),
 });
 
 export const DEFAULT_CONFIG = {

@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
@@ -109,4 +109,13 @@ export class MediaQueryDto {
 		enum: SortDirection,
 	})
 	orderDirection? = SortDirection.asc;
+}
+
+export class PlayerTicketsQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Get the playable url for the object with this id',
+	})
+	id: string;
 }
