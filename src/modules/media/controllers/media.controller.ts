@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Logger, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { MediaQueryDto } from '../dto/media.dto';
+import { MediaQueryDto, PlayerTicketsQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
 
 @ApiTags('Media')
@@ -15,6 +15,15 @@ export class MediaController {
 	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
 		const media = await this.mediaService.findAll(queryDto);
 		return media;
+	}
+
+	@Get('player-ticket')
+	public async getPlayableUrl(
+		@Headers('referer') referer: string,
+		@Query() playerTicketsQuery: PlayerTicketsQueryDto
+	): Promise<string> {
+		const url = await this.mediaService.getPlayableUrl(playerTicketsQuery.id, referer);
+		return url;
 	}
 
 	@Get(':id')

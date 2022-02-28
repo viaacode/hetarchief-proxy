@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { HetArchiefService } from '../services/het-archief.service';
@@ -39,17 +40,26 @@ const samlLogoutResponse = {
 	SAMLResponse: 'dummy',
 };
 
-const mockArchiefService = {
+const mockArchiefService: Partial<Record<keyof HetArchiefService, jest.SpyInstance>> = {
 	createLoginRequestUrl: jest.fn(),
 	assertSamlResponse: jest.fn(),
 	createLogoutRequestUrl: jest.fn(),
 	createLogoutResponseUrl: jest.fn(),
 };
 
-const mockUsersService = {
+const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
 	getUserByIdentityId: jest.fn(),
 	createUserWithIdp: jest.fn(),
 	updateUser: jest.fn(),
+};
+
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: string): string | boolean => {
+		if (key === 'clientHost') {
+			return 'http://localhost:3200';
+		}
+		return key;
+	}),
 };
 
 const getNewMockSession = () => ({
@@ -62,6 +72,8 @@ const getNewMockSession = () => ({
 
 describe('HetArchiefController', () => {
 	let hetArchiefController: HetArchiefController;
+	let configService: ConfigService;
+
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [HetArchiefController],
@@ -74,10 +86,15 @@ describe('HetArchiefController', () => {
 					provide: UsersService,
 					useValue: mockUsersService,
 				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		}).compile();
 
 		hetArchiefController = module.get<HetArchiefController>(HetArchiefController);
+		configService = module.get<ConfigService>(ConfigService);
 	});
 
 	it('should be defined', () => {
@@ -87,7 +104,7 @@ describe('HetArchiefController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
-			const result = await hetArchiefController.getAuth({}, 'http://hetarchief.be/start');
+			const result = await hetArchiefController.getAuth({}, configService.get('clientHost'));
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: hetArchiefLoginUrl,
@@ -97,11 +114,11 @@ describe('HetArchiefController', () => {
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await hetArchiefController.getAuth(
 				getNewMockSession(),
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: 'http://hetarchief.be/start',
+				url: configService.get('clientHost'),
 			});
 		});
 
@@ -109,7 +126,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.getAuth({}, 'http://hetarchief.be/start');
+			const result = await hetArchiefController.getAuth({}, configService.get('clientHost'));
 			expect(result).toBeUndefined();
 		});
 	});
@@ -210,7 +227,9 @@ describe('HetArchiefController', () => {
 			});
 			const response = await hetArchiefController.loginCallback({}, samlResponse);
 			expect(response).toEqual({
-				url: `${process.env.HOST}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
+				url: `${configService.get(
+					'host'
+				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
@@ -222,7 +241,7 @@ describe('HetArchiefController', () => {
 			const mockSession = getNewMockSession();
 			const result = await hetArchiefController.logout(
 				mockSession,
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -236,11 +255,11 @@ describe('HetArchiefController', () => {
 			mockSession.idp = null;
 			const result = await hetArchiefController.logout(
 				mockSession,
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: 'http://hetarchief.be/start',
+				url: configService.get('clientHost'),
 			});
 		});
 
@@ -250,7 +269,7 @@ describe('HetArchiefController', () => {
 			});
 			const result = await hetArchiefController.logout(
 				getNewMockSession(),
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toBeUndefined();
 		});

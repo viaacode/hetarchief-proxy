@@ -28,7 +28,7 @@ export class DataService {
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
-		if (process.env.NODE_ENV !== 'production') {
+		if (configService.get('environment') !== 'production') {
 			this.logger.log('GraphQl config: ', {
 				url: this.configService.get('graphQlUrl'),
 				secret: this.configService.get('graphQlSecret'),
