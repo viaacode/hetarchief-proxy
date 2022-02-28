@@ -5,6 +5,9 @@ import connectRedis from 'connect-redis';
 import { CronJob } from 'cron';
 import session from 'express-session';
 import { createClient } from 'redis';
+import SessionFileStore from 'session-file-store';
+
+const FileStore = SessionFileStore(session);
 
 @Injectable()
 export class SessionService {
@@ -77,6 +80,9 @@ export class SessionService {
 			sessionConfig.store = new redisStore({ client: redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
+		} else {
+			sessionConfig.store = new FileStore({});
+			this.logger.log('isDevelopment: File Store ready');
 		}
 
 		return sessionConfig;

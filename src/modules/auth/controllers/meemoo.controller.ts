@@ -15,10 +15,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
 import { MeemooService } from '../services/meemoo.service';
-import { SessionHelper } from '../session-helper';
-import { Idp, LdapUser, RelayState, SamlCallbackBody } from '../types';
+import { RelayState, SamlCallbackBody } from '../types';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
@@ -28,6 +31,7 @@ export class MeemooController {
 	constructor(
 		private meemooService: MeemooService,
 		private usersService: UsersService,
+		private collectionsService: CollectionsService,
 		private configService: ConfigService
 	) {}
 
@@ -76,16 +80,14 @@ export class MeemooController {
 			 * permissions check
 			 */
 			const apps = get(ldapUser, 'attributes.apps', []);
-			if (
-				!apps.includes('hetarchief') &&
-				!apps.includes('bezoekertool') &&
-				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
-			) {
+			if (!apps.includes('hetarchief') && !apps.includes('admins')) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief/bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
-				throw new UnauthorizedException('User has no access to hetarchief/bezoekertool');
+				throw new UnauthorizedException(
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
+				);
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, ldapUser);
@@ -109,6 +111,11 @@ export class MeemooController {
 					Idp.MEEMOO,
 					ldapUser.attributes.entryUUID[0]
 				);
+				await this.collectionsService.create({
+					is_default: true,
+					user_profile_id: archiefUser.id,
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
+				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user
@@ -205,7 +212,7 @@ export class MeemooController {
 				response.RelayState
 			);
 			return {
-				url: responseUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
+				url: responseUrl, // TODO add fallback if undefined (possible scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {

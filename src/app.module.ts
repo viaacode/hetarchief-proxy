@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 
 import { NavigationsModule } from '~modules/admin/navigations';
 import { AuthModule } from '~modules/auth';
+import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
 import { SpacesModule } from '~modules/spaces';
@@ -35,6 +36,7 @@ import { SessionService } from '~shared/services/session.service';
 		TosModule,
 		UsersModule,
 		VisitsModule,
+		CollectionsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

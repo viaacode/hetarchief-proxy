@@ -5,6 +5,8 @@ import { VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
+import { DataService } from '~modules/data/services/data.service';
+
 const mockVisitsResponse = {
 	items: [
 		{
@@ -16,7 +18,7 @@ const mockVisitsResponse = {
 	],
 };
 
-const mockVisitsService = {
+const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),

@@ -6,7 +6,7 @@ import { VisitsService } from './visits.service';
 import { DataService } from '~modules/data/services/data.service';
 import { VisitStatus } from '~modules/visits/types';
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
