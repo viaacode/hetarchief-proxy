@@ -163,7 +163,8 @@ export class CollectionsService {
 			userProfileId,
 			collection,
 		});
-		const updatedCollection = response?.data?.update_users_collection;
+
+		const updatedCollection = response?.data?.update_users_collection?.returning?.[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
 		return this.adaptCollection(updatedCollection);
@@ -184,7 +185,8 @@ export class CollectionsService {
 			collectionId,
 			objectId,
 		});
-		const createdObject = response?.data?.insert_users_collection_ie;
+
+		const createdObject = response?.data?.insert_users_collection_ie?.returning?.[0];
 		this.logger.debug(`Collection object ${objectId} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
