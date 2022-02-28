@@ -29,13 +29,13 @@ async function bootstrap() {
 	app.use(session(sessionConfig));
 
 	/** Swagger docs **/
-	if (process.env.NODE_ENV !== 'production') {
-		const config = new DocumentBuilder()
+	if (configService.get('environment') !== 'production') {
+		const swaggerConfig = new DocumentBuilder()
 			.setTitle('HetArchief2.0 Leeszalen tool API docs')
 			.setDescription('Documentatie voor de leeszalen tool api calls')
 			.setVersion('0.1.0')
 			.build();
-		const document = SwaggerModule.createDocument(app, config);
+		const document = SwaggerModule.createDocument(app, swaggerConfig);
 		SwaggerModule.setup('docs', app, document);
 	}
 

@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from '../services/meemoo.service';
@@ -62,6 +63,8 @@ const getNewMockSession = () => ({
 
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
+	let configService: ConfigService;
+
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [MeemooController],
@@ -74,10 +77,15 @@ describe('MeemooController', () => {
 					provide: UsersService,
 					useValue: mockUsersService,
 				},
+				{
+					provide: ConfigService,
+					useValue: new ConfigService(),
+				},
 			],
 		}).compile();
 
 		meemooController = module.get<MeemooController>(MeemooController);
+		configService = module.get<ConfigService>(ConfigService);
 	});
 
 	it('should be defined', () => {
@@ -210,7 +218,7 @@ describe('MeemooController', () => {
 			});
 			const response = await meemooController.loginCallback({}, samlResponse);
 			expect(response).toEqual({
-				url: `${process.env.HOST}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
+				url: `${configService.get('host')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
