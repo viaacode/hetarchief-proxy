@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { gqlTos, Tos } from '../types';
+import { Tos } from '../types';
 
 import { DataService } from '~modules/data/services/data.service';
 import { GET_TOS_LAST_UPDATED_AT } from '~modules/tos/services/queries.gql';
@@ -12,18 +12,20 @@ export class TosService {
 	/**
 	 * Adapt a tos as returned by a typical graphQl response to our internal tos data model
 	 */
-	public adapt(gql: gqlTos): Tos {
+	public adapt(gqlTosValue: string): Tos {
 		return {
-			updatedAt: gql.updated_at,
+			updatedAt: gqlTosValue,
 		};
 	}
 
 	public async getTosLastUpdatedAt(): Promise<Tos> {
-		const tosResponse = await this.dataService.execute(GET_TOS_LAST_UPDATED_AT);
+		const {
+			data: { cms_site_variables_by_pk: cmsSiteVariable },
+		} = await this.dataService.execute(GET_TOS_LAST_UPDATED_AT);
 
-		const gqlTosValue: gqlTos = tosResponse?.data?.cms_site_variables?.[0]?.value;
-		if (!gqlTosValue?.updated_at) {
-			throw new NotFoundException('No tos date was found in the database');
+		const gqlTosValue = cmsSiteVariable?.value;
+		if (!gqlTosValue) {
+			throw new NotFoundException('No TOS date was found in the database');
 		}
 
 		return this.adapt(gqlTosValue);

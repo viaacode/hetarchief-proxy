@@ -146,6 +146,16 @@ describe('MeemooController', () => {
 			expect(mockUsersService.updateUser).not.toBeCalled();
 		});
 
+		it('should use fallback relaystate', async () => {
+			const originalRelayState = samlResponse.RelayState;
+			samlResponse.RelayState = null;
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			const result = await meemooController.loginCallback({}, samlResponse);
+			expect(result.url).toBeUndefined();
+			// reset
+			samlResponse.RelayState = originalRelayState;
+		});
+
 		it('should create an authorized user that is not yet in the database', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
