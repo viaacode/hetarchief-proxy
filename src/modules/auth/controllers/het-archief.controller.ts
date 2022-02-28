@@ -80,14 +80,15 @@ export class HetArchiefController {
 			const apps = get(ldapUser, 'attributes.apps', []);
 			if (
 				!apps.includes('hetarchief') &&
-				!apps.includes('bezoekertool') &&
 				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
 			) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief/bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
-				throw new UnauthorizedException('User has no access to hetarchief/bezoekertool');
+				throw new UnauthorizedException(
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
+				);
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);

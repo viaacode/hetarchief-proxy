@@ -151,7 +151,7 @@ export class CollectionsService {
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
 		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
-		const createdCollection = response?.data?.insert_users_collection;
+		const createdCollection = response?.data?.insert_users_collection?.returning[0];
 		this.logger.debug(`Collection ${createdCollection?.id} created`);
 
 		return this.adaptCollection(createdCollection);

@@ -192,7 +192,9 @@ describe('CollectionsService', () => {
 		it('can create a new collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					insert_users_collection: mockGqlCollection1,
+					insert_users_collection: {
+						returning: [mockGqlCollection1],
+					},
 				},
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,7 +208,9 @@ describe('CollectionsService', () => {
 		it('can update a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_users_collection: mockGqlCollection1,
+					update_users_collection: {
+						returning: [mockGqlCollection1],
+					},
 				},
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -246,10 +250,12 @@ describe('CollectionsService', () => {
 	});
 
 	describe('add object to collection', () => {
-		it('can create a new collection', async () => {
+		it('can add object to a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					insert_users_collection_ie: mockGqlCollectionObjectLink,
+					insert_users_collection_ie: {
+						returning: [mockGqlCollectionObjectLink],
+					},
 				},
 			});
 			const response = await collectionsService.addObjectToCollection(

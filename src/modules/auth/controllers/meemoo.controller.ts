@@ -80,17 +80,13 @@ export class MeemooController {
 			 * permissions check
 			 */
 			const apps = get(ldapUser, 'attributes.apps', []);
-			if (
-				!apps.includes('hetarchief') &&
-				!apps.includes('bezoekertool') &&
-				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
-			) {
+			if (!apps.includes('hetarchief') && !apps.includes('admins')) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief/bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
 				throw new UnauthorizedException(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
 			}
 
@@ -216,7 +212,7 @@ export class MeemooController {
 				response.RelayState
 			);
 			return {
-				url: responseUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
+				url: responseUrl, // TODO add fallback if undefined (possible scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {

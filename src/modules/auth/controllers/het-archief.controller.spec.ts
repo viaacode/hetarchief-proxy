@@ -6,11 +6,12 @@ import { HetArchiefService } from '../services/het-archief.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp } from '~shared/auth/auth.types';
 
-const hetArchiefLoginUrl = 'http://hetarchief.be/login';
-const hetArchiefLogoutUrl = 'http://hetarchief.be/logout';
+const hetArchiefLoginUrl = 'http://localhost:3200';
+const hetArchiefLogoutUrl = 'http://localhost:3200';
 
 const ldapUser = {
 	attributes: {
@@ -53,10 +54,17 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	updateUser: jest.fn(),
 };
 
+const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
+	create: jest.fn(),
+};
+
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: string): string | boolean => {
 		if (key === 'clientHost') {
-			return 'http://localhost:3200';
+			return hetArchiefLoginUrl;
+		}
+		if (key === 'host') {
+			return 'http://localhost:3100';
 		}
 		return key;
 	}),
@@ -85,6 +93,10 @@ describe('HetArchiefController', () => {
 				{
 					provide: UsersService,
 					useValue: mockUsersService,
+				},
+				{
+					provide: CollectionsService,
+					useValue: mockCollectionsService,
 				},
 				{
 					provide: ConfigService,
@@ -147,13 +159,17 @@ describe('HetArchiefController', () => {
 		});
 
 		it('should use fallback relaystate', async () => {
-			const originalRelayState = samlResponse.RelayState;
-			samlResponse.RelayState = null;
+			const samlResponseWithNullRelayState = {
+				...samlResponse,
+				RelayState: null,
+			};
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-			const result = await hetArchiefController.loginCallback({}, samlResponse);
+			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
+			const result = await hetArchiefController.loginCallback(
+				{},
+				samlResponseWithNullRelayState
+			);
 			expect(result.url).toBeUndefined();
-			// reset
-			samlResponse.RelayState = originalRelayState;
 		});
 
 		it('should create an authorized user that is not yet in the database', async () => {
@@ -221,7 +237,7 @@ describe('HetArchiefController', () => {
 			expect(error.response).toEqual({
 				statusCode: HttpStatus.UNAUTHORIZED,
 				error: 'Unauthorized',
-				message: 'User has no access to hetarchief/bezoekertool',
+				message: `User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`,
 			});
 		});
 
