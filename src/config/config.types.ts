@@ -3,6 +3,7 @@ import { ConfigService as NestConfigService } from '@nestjs/config';
 export interface Configuration {
 	environment: string;
 	host: string;
+	clientHost: string;
 	port: number;
 	graphQlUrl: string;
 	graphQlSecret: string;

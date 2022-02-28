@@ -19,7 +19,7 @@ export abstract class SamlService {
 
 	public async init(samlConfig: SamlConfig) {
 		const { url, entityId, privateKey, certificate, assertEndpoint } = samlConfig;
-		if (process.env.NODE_ENV !== 'production') {
+		if (this.configService.get('environment') !== 'production') {
 			this.logger.log('SAML config ', {
 				url,
 				entityId,
