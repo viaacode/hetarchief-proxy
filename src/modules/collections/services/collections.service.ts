@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { get } from 'lodash';
 
 import {
 	Collection,
@@ -49,14 +50,14 @@ export class CollectionsService {
 			objects: gslLinkObjects?.map((gqlLinkObject) => ({
 				// TODO add maintainer once ARC-524 has been resolved
 				// maintainer: gqlLinkObject?.intellectual_entity?.schema_maintainer,
-				id: gqlLinkObject?.intellectual_entity?.schema_identifier,
-				name: gqlLinkObject?.intellectual_entity?.schema_name,
-				termsAvailable: gqlLinkObject?.intellectual_entity?.dcterms_available,
-				creator: gqlLinkObject?.intellectual_entity?.schema_creator,
-				format: gqlLinkObject?.intellectual_entity?.dcterms_format,
-				numberOfPages: gqlLinkObject?.intellectual_entity?.schema_number_of_pages,
-				thumbnailUrl: gqlLinkObject?.intellectual_entity?.schema_thumbnail_url,
-				collectionEntryCreatedAt: gqlLinkObject?.created_at,
+				id: get(gqlLinkObject, 'intellectual_entity.schema_identifier'),
+				name: get(gqlLinkObject, 'intellectual_entity.schema_name'),
+				termsAvailable: get(gqlLinkObject, 'intellectual_entity.dcterms_available'),
+				creator: get(gqlLinkObject, 'intellectual_entity.schema_creator'),
+				format: get(gqlLinkObject, 'intellectual_entity.dcterms_format'),
+				numberOfPages: get(gqlLinkObject, 'intellectual_entity.schema_number_of_pages'),
+				thumbnailUrl: get(gqlLinkObject, 'intellectual_entity.schema_thumbnail_url'),
+				collectionEntryCreatedAt: get(gqlLinkObject, 'created_at'),
 			})),
 		};
 	}
@@ -69,15 +70,18 @@ export class CollectionsService {
 		}
 		return {
 			// TODO add maintainer once ARC-524 has been resolved
-			// maintainer: gqlCollectionObjectLink?.intellectual_entity?.schema_maintainer,
-			id: gqlCollectionObjectLink?.intellectual_entity?.schema_identifier,
-			name: gqlCollectionObjectLink?.intellectual_entity?.schema_name,
-			termsAvailable: gqlCollectionObjectLink?.intellectual_entity?.dcterms_available,
-			creator: gqlCollectionObjectLink?.intellectual_entity?.schema_creator,
-			format: gqlCollectionObjectLink?.intellectual_entity?.dcterms_format,
-			numberOfPages: gqlCollectionObjectLink?.intellectual_entity?.schema_number_of_pages,
-			thumbnailUrl: gqlCollectionObjectLink?.intellectual_entity?.schema_thumbnail_url,
-			collectionEntryCreatedAt: gqlCollectionObjectLink?.created_at,
+			// maintainer: get(gqlCollectionObjectLink, 'intellectual_entity.schema_maintainer'),
+			id: get(gqlCollectionObjectLink, 'intellectual_entity.schema_identifier'),
+			name: get(gqlCollectionObjectLink, 'intellectual_entity.schema_name'),
+			termsAvailable: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_available'),
+			creator: get(gqlCollectionObjectLink, 'intellectual_entity.schema_creator'),
+			format: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_format'),
+			numberOfPages: get(
+				gqlCollectionObjectLink,
+				'intellectual_entity.schema_number_of_pages'
+			),
+			thumbnailUrl: get(gqlCollectionObjectLink, 'intellectual_entity.schema_thumbnail_url'),
+			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
 		};
 	}
 

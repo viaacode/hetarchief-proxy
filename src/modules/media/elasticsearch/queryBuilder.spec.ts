@@ -96,7 +96,7 @@ describe('QueryBuilder', () => {
 			QueryBuilder.setConfig(originalConfig);
 		});
 
-		it('throws an internal server exception when an unkown aggregate value is passed', () => {
+		it('throws an internal server exception when an unknown aggregate value is passed', () => {
 			// Set incomplete config
 			const originalConfig = QueryBuilder.getConfig();
 			QueryBuilder.setConfig(incompleteConfig as QueryBuilderConfig);
