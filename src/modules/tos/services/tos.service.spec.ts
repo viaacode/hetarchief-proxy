@@ -8,6 +8,8 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
+const updatedAtIsoDate = '1997-01-01T00:00:00.000Z';
+
 describe('TosService', () => {
 	let tosService: TosService;
 
@@ -31,10 +33,10 @@ describe('TosService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our tos interface', () => {
-			const adapted = tosService.adapt('1997-01-01T00:00:00.000Z');
+			const adapted = tosService.adapt(updatedAtIsoDate);
 			// test some sample keys
 			expect(adapted).toEqual({
-				updatedAt: '1997-01-01T00:00:00.000Z',
+				updatedAt: updatedAtIsoDate,
 			});
 		});
 	});
@@ -44,13 +46,13 @@ describe('TosService', () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cms_site_variables_by_pk: {
-						value: '1997-01-01T00:00:00.000Z',
+						value: updatedAtIsoDate,
 					},
 				},
 			});
 
 			const response = await tosService.getTosLastUpdatedAt();
-			expect(response.updatedAt).toEqual('1997-01-01T00:00:00.000Z');
+			expect(response.updatedAt).toEqual(updatedAtIsoDate);
 		});
 
 		it('throws a notfoundexception if no data was found', async () => {
