@@ -75,7 +75,7 @@ export class CollectionsController {
 		return collection;
 	}
 
-	@Put('/:collectionId')
+	@Put(':collectionId')
 	public async updateCollection(
 		@Param('collectionId') collectionId: string,
 		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
@@ -89,7 +89,7 @@ export class CollectionsController {
 		return collection;
 	}
 
-	@Delete('/:collectionId')
+	@Delete(':collectionId')
 	public async deleteCollection(
 		@Param('collectionId') collectionId: string,
 		@Session() session: Record<string, any>
@@ -105,7 +105,7 @@ export class CollectionsController {
 		}
 	}
 
-	@Post('/:collectionId/objects/:objectId')
+	@Post(':collectionId/objects/:objectId')
 	public async addObjectToCollection(
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectId: string,
@@ -123,7 +123,7 @@ export class CollectionsController {
 		return collectionObject;
 	}
 
-	@Delete('/:collectionId/objects/:objectId')
+	@Delete(':collectionId/objects/:objectId')
 	public async removeObjectFromCollection(
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectId: string,
