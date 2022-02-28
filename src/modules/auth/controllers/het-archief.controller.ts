@@ -10,6 +10,7 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
@@ -30,7 +31,8 @@ export class HetArchiefController {
 	constructor(
 		private hetArchiefService: HetArchiefService,
 		private usersService: UsersService,
-		private collectionsService: CollectionsService
+		private collectionsService: CollectionsService,
+		private configService: ConfigService
 	) {}
 
 	@Get('login')
@@ -138,7 +140,9 @@ export class HetArchiefController {
 		} catch (err) {
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${process.env.HOST}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
+					url: `${this.configService.get('host')}/auth/hetarchief/login&returnToUrl=${
+						info.returnToUrl
+					}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}

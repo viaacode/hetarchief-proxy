@@ -10,6 +10,7 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
@@ -30,7 +31,8 @@ export class MeemooController {
 	constructor(
 		private meemooService: MeemooService,
 		private usersService: UsersService,
-		private collectionsService: CollectionsService
+		private collectionsService: CollectionsService,
+		private configService: ConfigService
 	) {}
 
 	@Get('login')
@@ -135,7 +137,9 @@ export class MeemooController {
 		} catch (err) {
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${process.env.HOST}/auth/meemoo/login&returnToUrl=${info.returnToUrl}`,
+					url: `${this.configService.get('host')}/auth/meemoo/login&returnToUrl=${
+						info.returnToUrl
+					}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
