@@ -212,6 +212,23 @@ describe('VisitsService', () => {
 			});
 			expect(response.id).toBe('1');
 		});
+
+		it('can update a visit with endAt and status combined', async () => {
+			mockDataService.execute
+				.mockResolvedValue({
+					data: {
+						update_cp_visit_by_pk: {
+							id: '1',
+						},
+					},
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.update('1', {
+				endAt: new Date().toISOString(),
+				status: VisitStatus.APPROVED,
+			});
+			expect(response.id).toBe('1');
+		});
 	});
 
 	describe('updateStatus', () => {

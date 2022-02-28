@@ -130,7 +130,7 @@ describe('QueryBuilder', () => {
 				},
 			});
 			const esQuery = QueryBuilder.build({
-				filters: { query: '' },
+				filters: { query: '', format: MediaFormat.VIDEO },
 				size: 10,
 				page: 1,
 				requestedAggs: ['format'],

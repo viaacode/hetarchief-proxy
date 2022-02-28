@@ -85,8 +85,9 @@ export class VisitsService {
 			...(endAt ? { end_date: endAt } : {}),
 		};
 
-		updateVisitDto.status &&
-			(await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto));
+		if (updateVisitDto.status) {
+			await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto);
+		}
 
 		const {
 			data: { update_cp_visit_by_pk: updatedVisit },
