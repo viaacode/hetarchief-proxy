@@ -1,13 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { trimStart } from 'lodash';
+import { get, trimStart } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { PlayerTicket } from '../types';
+import { Media, PlayerTicket } from '../types';
 
-import { GET_OBJECT_IE_PLAY_INFO_BY_ID } from './queries.gql';
+import { GET_OBJECT_IE_BY_ID, GET_OBJECT_IE_PLAY_INFO_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -43,6 +43,70 @@ export class MediaService {
 		this.host = this.configService.get('host');
 	}
 
+	public adapt(graphQlObject: any): Media {
+		return {
+			id: get(graphQlObject, 'schema_identifier'),
+			premisIdentifier: get(graphQlObject, 'premis_identifier'),
+			premisRelationship: get(graphQlObject, 'premis_relationship'),
+			isPartOf: get(graphQlObject, 'schema_is_part_of'),
+			partOfArchive: get(graphQlObject, 'schema_part_of_archive'),
+			partOfEpisode: get(graphQlObject, 'schema_part_of_episode'),
+			partOfSeason: get(graphQlObject, 'schema_part_of_season'),
+			partOfSeries: get(graphQlObject, 'schema_part_of_series'),
+			maintainerId: get(graphQlObject, 'schema_maintainer[0].id'),
+			contactInfo: {
+				email: get(graphQlObject, 'schema_maintainer[0].primary_site.address.email'),
+				telephone: get(
+					graphQlObject,
+					'schema_maintainer[0].primary_site.address.telephone'
+				),
+				address: {
+					street: get(graphQlObject, 'schema_maintainer[0].primary_site.address.street'),
+					postalCode: get(
+						graphQlObject,
+						'schema_maintainer[0].primary_site.address.postal_code'
+					),
+					locality: get(
+						graphQlObject,
+						'schema_maintainer[0].primary_site.address.locality'
+					),
+					postOfficeBoxNumber: get(
+						graphQlObject,
+						'schema_maintainer[0].primary_site.address.post_office_box_number'
+					),
+				},
+			},
+			copyrightHolder: get(graphQlObject, 'schema_copyright_holder'),
+			copyrightNotice: get(graphQlObject, 'schema_copyright_notice'),
+			durationInSeconds: get(graphQlObject, 'schema_duration_in_seconds'),
+			numberOfPages: get(graphQlObject, 'schema_number_of_pages'),
+			datePublished: get(graphQlObject, 'schema_date_published'),
+			dctermsAvailable: get(graphQlObject, 'dcterms_available'),
+			name: get(graphQlObject, 'schema_name'),
+			description: get(graphQlObject, 'schema_description'),
+			abstract: get(graphQlObject, 'schema_abstract'),
+			creator: get(graphQlObject, 'schema_creator'),
+			actor: get(graphQlObject, 'schema_actor'),
+			contributor: get(graphQlObject, 'schema_contributor'),
+			publisher: get(graphQlObject, 'schema_publisher'),
+			spatial: get(graphQlObject, 'schema_spatial'),
+			temporal: get(graphQlObject, 'schema_temporal'),
+			keywords: get(graphQlObject, 'schema_keywords'),
+			genre: get(graphQlObject, 'schema_genre'),
+			dctermsFormat: get(graphQlObject, 'dcterms_format'),
+			inLanguage: get(graphQlObject, 'schema_in_language'),
+			thumbnailUrl: get(graphQlObject, 'schema_thumbnail_url'),
+			embedUrl: get(graphQlObject, 'schema_embed_url'),
+			alternateName: get(graphQlObject, 'schema_alternate_name'),
+			duration: get(graphQlObject, 'schema_duration'),
+			license: get(graphQlObject, 'schema_license'),
+			meemooFragmentId: get(graphQlObject, 'meemoo_fragment_id'),
+			meemooMediaObjectId: get(graphQlObject, 'meemoo_media_object_id'),
+			dateCreated: get(graphQlObject, 'schema_date_created'),
+			dateCreatedLowerBound: get(graphQlObject, 'schema_date_created_lower_bound'),
+		};
+	}
+
 	public getSearchEndpoint(esIndex: string): string {
 		if (!esIndex) {
 			return '_search';
@@ -73,11 +137,19 @@ export class MediaService {
 		return mediaResponse;
 	}
 
-	public async findById(id: string, esIndex: string = null): Promise<any> {
-		const esQuery = QueryBuilder.queryById(id);
-		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+	/**
+	 * Find by id returns all details as stored in DB
+	 * (not all details are in ES)
+	 */
+	public async findById(id: string): Promise<Media> {
+		const {
+			data: { object_ie_by_pk: objectIe },
+		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { id });
+		if (!objectIe) {
+			throw new NotFoundException(`Object IE with id '${id}' not found`);
+		}
 
-		return mediaResponse;
+		return this.adapt(objectIe);
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {

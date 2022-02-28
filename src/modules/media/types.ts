@@ -1,11 +1,6 @@
 import { SearchFilters } from './dto/media.dto';
 
-export interface Media {
-	id: string;
-	maintainerId: string;
-	name: string;
-	description: string;
-}
+import { ContactInfo } from '~shared/types/types';
 
 export enum MediaFormat {
 	VIDEO = 'video',
@@ -34,4 +29,45 @@ export interface PlayerTicket {
 			end: string;
 		};
 	};
+}
+
+export interface Media {
+	id: string;
+	premisIdentifier: any;
+	premisRelationship: string;
+	isPartOf: string;
+	partOfArchive: string;
+	partOfEpisode: string;
+	partOfSeason: string;
+	partOfSeries: string;
+	maintainerId: string;
+	contactInfo: ContactInfo;
+	copyrightHolder: string;
+	copyrightNotice: string;
+	durationInSeconds: number;
+	numberOfPages: number;
+	datePublished: string;
+	dctermsAvailable: string;
+	name: string;
+	description: string;
+	abstract: string;
+	creator: any;
+	actor: any;
+	contributor: any;
+	publisher: any;
+	spatial: string;
+	temporal: string;
+	keywords: string;
+	genre: string;
+	dctermsFormat: string;
+	inLanguage: string;
+	thumbnailUrl: string;
+	embedUrl: string;
+	alternateName: string;
+	duration: string;
+	license: any;
+	meemooFragmentId: string;
+	meemooMediaObjectId: string;
+	dateCreated: string;
+	dateCreatedLowerBound: string;
 }

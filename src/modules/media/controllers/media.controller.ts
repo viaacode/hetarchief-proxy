@@ -39,13 +39,4 @@ export class MediaController {
 		const media = await this.mediaService.findAll(queryDto, esIndex);
 		return media;
 	}
-
-	@Get(':esIndex/:id')
-	public async getMediaOnIndexById(
-		@Param('id') id: string,
-		@Param('esIndex') esIndex: string
-	): Promise<any> {
-		const media = await this.mediaService.findById(id, esIndex);
-		return media;
-	}
 }

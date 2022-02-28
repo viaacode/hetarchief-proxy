@@ -87,16 +87,4 @@ describe('MediaController', () => {
 			expect(media.hits.hits.length).toEqual(2);
 		});
 	});
-
-	describe('getMediaOnIndexById', () => {
-		it('should return a media item in a specific index by id', async () => {
-			const mockResponse = getMockMediaResponse();
-			mockResponse.hits.total.value = 1;
-			mockResponse.hits.hits.shift();
-			mockMediaService.findById.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getMediaOnIndexById('1', 'test-index');
-			expect(media.hits.total.value).toEqual(1);
-			expect(media.hits.hits.length).toEqual(1);
-		});
-	});
 });

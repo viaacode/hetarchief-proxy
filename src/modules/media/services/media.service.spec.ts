@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 
+import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -24,6 +25,8 @@ const mockConfigService = {
 const mockDataService = {
 	execute: jest.fn(),
 };
+
+const mockObjectId = objectIe.data.object_ie_by_pk.schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -109,31 +112,34 @@ describe('MediaService', () => {
 	});
 
 	describe('findById', () => {
-		it('returns the es response from the main _search endpoint if no index is specified', async () => {
-			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findById('123');
-			expect(response.hits.total.value).toBe(2);
-			expect(response.hits.hits.length).toBe(2);
+		it('returns the full object details as retrieved from the DB', async () => {
+			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const response = await mediaService.findById(mockObjectId);
+			expect(response.id).toEqual(mockObjectId);
+			expect(response.partOfSeries.length).toBe(1);
+			expect(response.maintainerId).toEqual('OR-rf5kf25');
+			expect(response.contactInfo.address.postalCode).toBe('1043');
+			expect(response.copyrightHolder).toEqual('vrt');
+			expect(response.keywords.length).toBeGreaterThan(10);
 		});
 
-		it('returns the es response from the specific index _search endpoint if the index is specified', async () => {
-			nock('http://elasticsearch/')
-				.post('/my-index/_search')
-				.reply(201, getMockMediaResponse());
-			const response = await mediaService.findById('123', 'my-index');
-			expect(response.hits.total.value).toBe(2);
-			expect(response.hits.hits.length).toBe(2);
-		});
-
-		it('returns a 404 not found if the index is unknown', async () => {
-			nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
+		it('throws a notfoundexception if the object was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					object_ie_by_pk: null,
+				},
+			});
 			let error;
 			try {
-				await mediaService.findById('123', 'my-index');
+				await mediaService.findById(mockObjectId);
 			} catch (e) {
-				error = e.response;
+				error = e;
 			}
-			expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message: `Object IE with id '${mockObjectId}' not found`,
+				statusCode: 404,
+			});
 		});
 	});
 
