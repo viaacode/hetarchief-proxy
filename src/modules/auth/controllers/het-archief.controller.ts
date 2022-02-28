@@ -67,19 +67,25 @@ export class HetArchiefController {
 		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
+		let info: RelayState;
 		try {
+			info = response.RelayState ? JSON.parse(response.RelayState) : {};
+			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
-			const info: RelayState = response.RelayState ? JSON.parse(response.RelayState) : {};
-			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 
 			// permissions check
-			if (!get(ldapUser, 'attributes.apps', []).includes('hetarchief')) {
+			const apps = get(ldapUser, 'attributes.apps', []);
+			if (
+				!apps.includes('hetarchief') &&
+				!apps.includes('bezoekertool') &&
+				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
+			) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief/bezoekertool'`
 				);
-				throw new UnauthorizedException();
+				throw new UnauthorizedException('User has no access to hetarchief/bezoekertool');
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
@@ -130,6 +136,12 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
+			if (err.message === 'SAML Response is no longer valid') {
+				return {
+					url: `${process.env.HOST}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
 			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
