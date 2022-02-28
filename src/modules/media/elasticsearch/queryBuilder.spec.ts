@@ -96,7 +96,7 @@ describe('QueryBuilder', () => {
 			QueryBuilder.setConfig(originalConfig);
 		});
 
-		it('throws an internal server exception when an unkown aggregate value is passed', () => {
+		it('throws an internal server exception when an unknown aggregate value is passed', () => {
 			// Set incomplete config
 			const originalConfig = QueryBuilder.getConfig();
 			QueryBuilder.setConfig(incompleteConfig as QueryBuilderConfig);
@@ -130,13 +130,13 @@ describe('QueryBuilder', () => {
 				},
 			});
 			const esQuery = QueryBuilder.build({
-				filters: { query: '' },
+				filters: { query: '', format: MediaFormat.VIDEO },
 				size: 10,
 				page: 1,
 				requestedAggs: ['format'],
 			});
 			expect(esQuery.aggs).toEqual({
-				dcterms_format: { terms: { field: 'dcterms_format.filter', size: 40 } },
+				dcterms_format: { terms: { field: 'dcterms_format.keyword', size: 40 } },
 			});
 
 			// reset

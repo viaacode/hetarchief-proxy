@@ -77,21 +77,6 @@ export class QueryBuilder {
 	}
 
 	/**
-	 * Build a query to get a media item by id
-	 * @param id the id to query
-	 * @returns elastic search query
-	 */
-	public static queryById(id: string): any {
-		return {
-			query: {
-				term: {
-					_id: id,
-				},
-			},
-		};
-	}
-
-	/**
 	 * AND filter: https://stackoverflow.com/a/52206289/373207
 	 * @param elasticKey
 	 * @param readableKey
@@ -193,7 +178,7 @@ export class QueryBuilder {
 
 			aggs[elasticProperty] = {
 				terms: {
-					field: elasticProperty + this.suffix(aggProperty),
+					field: elasticProperty + '.keyword',
 					size: (searchRequest as any).aggsSize || this.config.NUMBER_OF_FILTER_OPTIONS,
 				},
 			};

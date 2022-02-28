@@ -1,46 +1,81 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
 
 import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 
-const config = (): Configuration => ({
-	environment: process.env.NODE_ENV || DEFAULT_CONFIG.environment,
-	host: process.env.HOST,
-	port: parseInt(process.env.PORT, 10) || DEFAULT_CONFIG.port,
-	graphQlUrl: process.env.GRAPHQL_URL,
-	graphQlSecret: process.env.GRAPHQL_SECRET,
-	graphQlEnableWhitelist: process.env.GRAPHQL_ENABLE_WHITELIST === 'true',
-	cookieSecret: process.env.COOKIE_SECRET,
-	cookieMaxAge: parseInt(process.env.COOKIE_MAX_AGE, 10),
-	redisConnectionString: process.env.REDIS_CONNECTION_STRING,
-	elasticSearchUrl: process.env.ELASTICSEARCH_URL,
-	samlIdpMetaDataEndpoint: process.env.SAML_IDP_META_DATA_ENDPOINT,
-	samlSpEntityId: process.env.SAML_SP_ENTITY_ID,
-	samlSpPrivateKey: process.env.SAML_SP_PRIVATE_KEY,
-	samlSpCertificate: process.env.SAML_SP_CERTIFICATE,
-	samlMeemooIdpMetaDataEndpoint: process.env.SAML_MEEMOO_IDP_META_DATA_ENDPOINT,
-	samlMeemooSpEntityId: process.env.SAML_MEEMOO_SP_ENTITY_ID,
-	corsEnableWhitelist: process.env.CORS_ENABLE_WHITELIST === 'true',
-	corsOptions: {
-		origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {
-			if (process.env.CORS_ENABLE_WHITELIST !== 'true') {
-				// whitelist not enabled
-				callback(null, true);
-			} else if (WHITE_LIST_DOMAINS.indexOf(origin) !== -1 || !origin) {
-				// whitelist enabled but not permitted
-				callback(null, true);
-			} else {
-				callback(new UnauthorizedException('Request ot allowed by CORS'), false);
-			}
+/**
+ * Environment variables are loaded differently locally and on IBM cloud
+ * dotenv handles the newlines in the certificates/keys differently
+ * and are cleaned here
+ * @param envVar the variable (value) to clean
+ * @returns the cleaned value
+ */
+const cleanMultilineEnv = (envVar: string) => {
+	if (!envVar) {
+		return envVar; // Do not crash on empty env vars
+	}
+	return getEnvValue('NODE_ENV', false) === 'local' ? envVar.replace(/\\n/g, '\n') : envVar;
+};
+
+const getEnvValue = (name: string, required = true): string => {
+	const value = process.env[name];
+	if (!value && required && process.env.NODE_ENV !== 'test') {
+		throw new NotImplementedException(
+			`The environment variable ${name} is not set, but is required to run the service.`
+		);
+	}
+	return value;
+};
+
+const config = (): Configuration => {
+	const env = getEnvValue('NODE_ENV', false) || DEFAULT_CONFIG.environment;
+	return {
+		environment: env,
+		host: getEnvValue('HOST', true),
+		clientHost: getEnvValue('CLIENT_HOST', true),
+		port: parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
+		graphQlUrl: getEnvValue('GRAPHQL_URL', true),
+		graphQlSecret: getEnvValue('GRAPHQL_SECRET', env !== 'local'), // Not required on localhost
+		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
+		cookieSecret: getEnvValue('COOKIE_SECRET', true),
+		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
+		redisConnectionString: getEnvValue('REDIS_CONNECTION_STRING', false),
+		elasticSearchUrl: getEnvValue('ELASTICSEARCH_URL', true),
+		samlIdpMetaDataEndpoint: getEnvValue('SAML_IDP_META_DATA_ENDPOINT', true),
+		samlSpEntityId: getEnvValue('SAML_SP_ENTITY_ID', true),
+		samlSpPrivateKey: cleanMultilineEnv(getEnvValue('SAML_SP_PRIVATE_KEY', false)),
+		samlSpCertificate: cleanMultilineEnv(getEnvValue('SAML_SP_CERTIFICATE', false)),
+		samlMeemooIdpMetaDataEndpoint: getEnvValue('SAML_MEEMOO_IDP_META_DATA_ENDPOINT', true),
+		samlMeemooSpEntityId: getEnvValue('SAML_MEEMOO_SP_ENTITY_ID', true),
+		corsEnableWhitelist: getEnvValue('CORS_ENABLE_WHITELIST', false) === 'true',
+		corsOptions: {
+			origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {
+				if (getEnvValue('CORS_ENABLE_WHITELIST', false) !== 'true') {
+					// whitelist not enabled
+					callback(null, true);
+				} else if (WHITE_LIST_DOMAINS.indexOf(origin) !== -1 || !origin) {
+					// whitelist enabled but not permitted
+					callback(null, true);
+				} else {
+					callback(new UnauthorizedException('Request not allowed by CORS'), false);
+				}
+			},
+			credentials: true,
+			allowedHeaders:
+				'X-Requested-With, Content-Type, authorization, Origin, Accept, cache-control',
+			methods: 'GET, POST, OPTIONS, PATCH, PUT, DELETE',
 		},
-		credentials: true,
-		allowedHeaders:
-			'X-Requested-With, Content-Type, authorization, Origin, Accept, cache-control',
-		methods: 'GET, POST, OPTIONS, PATCH, PUT, DELETE',
-	},
-});
+		ticketServiceUrl: getEnvValue('TICKET_SERVICE_URL', true),
+		ticketServiceCertificate: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_CERT', true)),
+		ticketServiceKey: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_KEY', true)),
+		ticketServicePassphrase: getEnvValue('TICKET_SERVICE_PASSPHRASE', true),
+		ticketServiceMaxAge: parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
+		mediaServiceUrl: getEnvValue('MEDIA_SERVICE_URL', true),
+	};
+};
 
 export default config;
 

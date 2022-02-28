@@ -1,18 +1,8 @@
+import { ContactInfo } from '~shared/types/types';
+
 export enum AudienceType {
 	PUBLIC = 'PUBLIC',
 	PRIVATE = 'PRIVATE',
-}
-
-export interface Address {
-	street: string;
-	postalCode: string;
-	locality: string;
-	postOfficeBoxNumber: string;
-}
-export interface ContactInfo {
-	email: string;
-	telephone: string;
-	address: Address;
 }
 
 export interface Space {

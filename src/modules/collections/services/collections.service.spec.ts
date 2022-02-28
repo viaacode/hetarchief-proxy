@@ -220,7 +220,9 @@ describe('CollectionsService', () => {
 		it('can update a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_users_collection: mockGqlCollection1,
+					update_users_collection: {
+						returning: [mockGqlCollection1],
+					},
 				},
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars

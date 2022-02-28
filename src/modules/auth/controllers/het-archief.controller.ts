@@ -10,22 +10,30 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
-import { UsersService } from '../../users/services/users.service';
 import { HetArchiefService } from '../services/het-archief.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
+import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
 export class HetArchiefController {
 	private logger: Logger = new Logger(HetArchiefController.name, { timestamp: true });
 
-	constructor(private hetArchiefService: HetArchiefService, private usersService: UsersService) {}
+	constructor(
+		private hetArchiefService: HetArchiefService,
+		private usersService: UsersService,
+		private collectionsService: CollectionsService,
+		private configService: ConfigService
+	) {}
 
 	@Get('login')
 	@Redirect()
@@ -61,19 +69,26 @@ export class HetArchiefController {
 		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
+		let info: RelayState;
 		try {
+			info = response.RelayState ? JSON.parse(response.RelayState) : {};
+			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
-			const info: RelayState = response.RelayState ? JSON.parse(response.RelayState) : {};
-			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 
 			// permissions check
-			if (!get(ldapUser, 'attributes.apps', []).includes('hetarchief')) {
+			const apps = get(ldapUser, 'attributes.apps', []);
+			if (
+				!apps.includes('hetarchief') &&
+				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
+			) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
 					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
-				throw new UnauthorizedException();
+				throw new UnauthorizedException(
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
+				);
 			}
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
@@ -104,6 +119,11 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
+				await this.collectionsService.create({
+					is_default: true,
+					user_profile_id: archiefUser.id,
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
+				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user
@@ -119,6 +139,14 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
+			if (err.message === 'SAML Response is no longer valid') {
+				return {
+					url: `${this.configService.get('host')}/auth/hetarchief/login&returnToUrl=${
+						info.returnToUrl
+					}`,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
 			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)

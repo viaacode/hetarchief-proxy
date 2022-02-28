@@ -1,15 +1,17 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from '../services/meemoo.service';
 
 import { MeemooController } from './meemoo.controller';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp } from '~shared/auth/auth.types';
 
-const meemooLoginUrl = 'http://meemoo.be/login';
-const meemooLogoutUrl = 'http://meemoo.be/logout';
+const meemooLoginUrl = 'http://localhost:3200';
+const meemooLogoutUrl = 'http://localhost:3200';
 
 const ldapUser = {
 	attributes: {
@@ -18,7 +20,7 @@ const ldapUser = {
 		mail: ['test@studiohyperdrive.be'],
 		name_id: 'test@studiohyperdrive.be',
 		entryUUID: ['6033dcab-bcc9-4fb5-aa59-d21dcd893150'],
-		apps: ['bezoekertool'],
+		apps: ['hetarchief'],
 	},
 };
 
@@ -52,6 +54,22 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	updateUser: jest.fn(),
 };
 
+const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
+	create: jest.fn(),
+};
+
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: string): string | boolean => {
+		if (key === 'clientHost') {
+			return meemooLoginUrl;
+		}
+		if (key === 'host') {
+			return 'http://localhost:3100';
+		}
+		return key;
+	}),
+};
+
 const getNewMockSession = () => ({
 	idp: Idp.MEEMOO,
 	idpUserInfo: {
@@ -62,6 +80,8 @@ const getNewMockSession = () => ({
 
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
+	let configService: ConfigService;
+
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [MeemooController],
@@ -74,10 +94,19 @@ describe('MeemooController', () => {
 					provide: UsersService,
 					useValue: mockUsersService,
 				},
+				{
+					provide: CollectionsService,
+					useValue: mockCollectionsService,
+				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		}).compile();
 
 		meemooController = module.get<MeemooController>(MeemooController);
+		configService = module.get<ConfigService>(ConfigService);
 	});
 
 	it('should be defined', () => {
@@ -87,21 +116,21 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, configService.get('clientHost'));
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
 			});
 		});
 
-		it('should immediatly redirect to the returnUrl if there is a valid session', async () => {
+		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await meemooController.getAuth(
 				getNewMockSession(),
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: 'http://hetarchief.be/start',
+				url: configService.get('clientHost'),
 			});
 		});
 
@@ -109,13 +138,13 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.getAuth({}, 'http://hetarchief.be/start');
+			const result = await meemooController.getAuth({}, configService.get('clientHost'));
 			expect(result).toBeUndefined();
 		});
 	});
 
 	describe('login-callback', () => {
-		it('should redirect after succesful login with a known user', async () => {
+		it('should redirect after successful login with a known user', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 
@@ -127,6 +156,18 @@ describe('MeemooController', () => {
 			});
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).not.toBeCalled();
+		});
+
+		it('should use fallback relaystate', async () => {
+			const samlResponseWithNullRelayState = {
+				...samlResponse,
+				RelayState: null,
+			};
+			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
+			const result = await meemooController.loginCallback({}, samlResponseWithNullRelayState);
+			expect(result.url).toBeUndefined();
 		});
 
 		it('should create an authorized user that is not yet in the database', async () => {
@@ -193,7 +234,25 @@ describe('MeemooController', () => {
 			}
 			expect(error.response).toEqual({
 				statusCode: HttpStatus.UNAUTHORIZED,
-				message: 'Unauthorized',
+				error: 'Unauthorized',
+				message: `User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`,
+			});
+		});
+
+		it('should redirect to the login route if the idp response is no longer valid', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockMeemooService.assertSamlResponse.mockRejectedValueOnce({
+				message: 'SAML Response is no longer valid',
+			});
+			const response = await meemooController.loginCallback({}, samlResponse);
+			expect(response).toEqual({
+				url: `${configService.get('host')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
 	});
@@ -202,7 +261,10 @@ describe('MeemooController', () => {
 		it('should logout and redirect to the IDP logout url', async () => {
 			mockMeemooService.createLogoutRequestUrl.mockReturnValueOnce(meemooLogoutUrl);
 			const mockSession = getNewMockSession();
-			const result = await meemooController.logout(mockSession, 'http://hetarchief.be/start');
+			const result = await meemooController.logout(
+				mockSession,
+				configService.get('clientHost')
+			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLogoutUrl,
@@ -210,13 +272,16 @@ describe('MeemooController', () => {
 			expect(mockSession.idp).toBeNull();
 		});
 
-		it('should immediatly redirect to the returnUrl if the IDP is invalid', async () => {
+		it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
 			const mockSession = getNewMockSession();
 			mockSession.idp = null;
-			const result = await meemooController.logout(mockSession, 'http://hetarchief.be/start');
+			const result = await meemooController.logout(
+				mockSession,
+				configService.get('clientHost')
+			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: 'http://hetarchief.be/start',
+				url: configService.get('clientHost'),
 			});
 		});
 
@@ -226,7 +291,7 @@ describe('MeemooController', () => {
 			});
 			const result = await meemooController.logout(
 				getNewMockSession(),
-				'http://hetarchief.be/start'
+				configService.get('clientHost')
 			);
 			expect(result).toBeUndefined();
 		});
@@ -278,7 +343,7 @@ describe('MeemooController', () => {
 			});
 		});
 
-		it('should catch an exception when generationg the logout response url', async () => {
+		it('should catch an exception when generating the logout response url', async () => {
 			mockMeemooService.createLogoutResponseUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});

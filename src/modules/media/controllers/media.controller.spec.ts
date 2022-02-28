@@ -25,6 +25,7 @@ const getMockMediaResponse = () => ({
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	getPlayableUrl: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -58,6 +59,14 @@ describe('MediaController', () => {
 		});
 	});
 
+	describe('getPlayableUrl', () => {
+		it('should return a playable url', async () => {
+			mockMediaService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+			const url = await mediaController.getPlayableUrl('referer', { id: '1' });
+			expect(url).toEqual('http://playme');
+		});
+	});
+
 	describe('getMediaById', () => {
 		it('should return a media item by id', async () => {
 			const mockResponse = getMockMediaResponse();
@@ -76,18 +85,6 @@ describe('MediaController', () => {
 			const media = await mediaController.getMediaOnIndex(null, 'test-index');
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
-		});
-	});
-
-	describe('getMediaOnIndexById', () => {
-		it('should return a media item in a specific index by id', async () => {
-			const mockResponse = getMockMediaResponse();
-			mockResponse.hits.total.value = 1;
-			mockResponse.hits.hits.shift();
-			mockMediaService.findById.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getMediaOnIndexById('1', 'test-index');
-			expect(media.hits.total.value).toEqual(1);
-			expect(media.hits.hits.length).toEqual(1);
 		});
 	});
 });

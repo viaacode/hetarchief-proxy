@@ -10,22 +10,30 @@ import {
 	Session,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, omit } from 'lodash';
 
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
 export class MeemooController {
 	private logger: Logger = new Logger(MeemooController.name, { timestamp: true });
 
-	constructor(private meemooService: MeemooService, private usersService: UsersService) {}
+	constructor(
+		private meemooService: MeemooService,
+		private usersService: UsersService,
+		private collectionsService: CollectionsService,
+		private configService: ConfigService
+	) {}
 
 	@Get('login')
 	@Redirect()
@@ -61,22 +69,24 @@ export class MeemooController {
 		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
+		let info: RelayState;
 		try {
+			info = response.RelayState ? JSON.parse(response.RelayState) : {};
+			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 			const ldapUser: LdapUser = await this.meemooService.assertSamlResponse(response);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
-			const info: RelayState = response.RelayState ? JSON.parse(response.RelayState) : {};
-			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
 
 			/**
 			 * permissions check
 			 */
-			if (!get(ldapUser, 'attributes.apps', []).includes('bezoekertool')) {
+			const apps = get(ldapUser, 'attributes.apps', []);
+			if (!apps.includes('hetarchief') && !apps.includes('admins')) {
 				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
 				throw new UnauthorizedException(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'bezoekertool'`
+					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
 				);
 			}
 
@@ -101,6 +111,11 @@ export class MeemooController {
 					Idp.MEEMOO,
 					ldapUser.attributes.entryUUID[0]
 				);
+				await this.collectionsService.create({
+					is_default: true,
+					user_profile_id: archiefUser.id,
+					name: i18n.t('modules/collections/controllers___default-collection-name'),
+				});
 			} else {
 				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
 					// update user
@@ -116,6 +131,14 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
+			if (err.message === 'SAML Response is no longer valid') {
+				return {
+					url: `${this.configService.get('host')}/auth/meemoo/login&returnToUrl=${
+						info.returnToUrl
+					}`,
+					statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				};
+			}
 			Logger.error('Failed during meemoo auth login-callback route', err);
 			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
@@ -189,7 +212,7 @@ export class MeemooController {
 				response.RelayState
 			);
 			return {
-				url: responseUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
+				url: responseUrl, // TODO add fallback if undefined (possible scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {

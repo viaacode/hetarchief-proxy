@@ -9,5 +9,6 @@ import { DataModule } from '~modules/data';
 	controllers: [CollectionsController],
 	imports: [DataModule],
 	providers: [CollectionsService],
+	exports: [CollectionsService],
 })
 export class CollectionsModule {}
