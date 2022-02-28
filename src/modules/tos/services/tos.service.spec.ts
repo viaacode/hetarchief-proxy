@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import tos from './__mocks__/tos';
 import { TosService } from './tos.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -32,9 +31,11 @@ describe('TosService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our tos interface', () => {
-			const adapted = tosService.adapt(tos);
+			const adapted = tosService.adapt('1997-01-01T00:00:00.000Z');
 			// test some sample keys
-			expect(adapted.updatedAt).toEqual(tos.updated_at);
+			expect(adapted).toEqual({
+				updatedAt: '1997-01-01T00:00:00.000Z',
+			});
 		});
 	});
 
@@ -42,18 +43,33 @@ describe('TosService', () => {
 		it('returns a single tos', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					cms_site_variables: [
-						{
-							value: {
-								updated_at: tos.updated_at,
-							},
-						},
-					],
+					cms_site_variables_by_pk: {
+						value: '1997-01-01T00:00:00.000Z',
+					},
 				},
 			});
 
 			const response = await tosService.getTosLastUpdatedAt();
-			expect(response?.updatedAt).toEqual(tos.updated_at);
+			expect(response.updatedAt).toEqual('1997-01-01T00:00:00.000Z');
+		});
+
+		it('throws a notfoundexception if no data was found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cms_site_variables_by_pk: null,
+				},
+			});
+			let error;
+			try {
+				await tosService.getTosLastUpdatedAt();
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message: 'No TOS date was found in the database',
+				statusCode: 404,
+			});
 		});
 	});
 });
