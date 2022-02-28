@@ -26,6 +26,8 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
+const mockObjectId = objectIe.data.object_ie_by_pk.schema_identifier;
+
 const getMockMediaResponse = () => ({
 	hits: {
 		total: {
@@ -112,8 +114,8 @@ describe('MediaService', () => {
 	describe('findById', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
-			const response = await mediaService.findById('8911p09j1g');
-			expect(response.id).toEqual('8911p09j1g');
+			const response = await mediaService.findById(mockObjectId);
+			expect(response.id).toEqual(mockObjectId);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
@@ -129,13 +131,13 @@ describe('MediaService', () => {
 			});
 			let error;
 			try {
-				await mediaService.findById('8911p09j1g');
+				await mediaService.findById(mockObjectId);
 			} catch (e) {
 				error = e;
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: "Object IE with id '8911p09j1g' not found",
+				message: `Object IE with id '${mockObjectId}' not found`,
 				statusCode: 404,
 			});
 		});
