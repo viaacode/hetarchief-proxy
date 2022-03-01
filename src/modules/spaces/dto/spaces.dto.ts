@@ -4,11 +4,6 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { SortDirection } from '~shared/types';
 
-export class UpdateSpaceDto {
-	@IsString()
-	description: string;
-}
-
 export class SpacesQueryDto {
 	@IsString()
 	@IsOptional()
