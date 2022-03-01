@@ -80,7 +80,7 @@ export class VisitsController {
 						name: user.firstName + ' ' + user.lastName,
 					}),
 					visit_id: visit.id,
-					notification_type: NotificationType.NEW_VISIT_REQUEST,
+					type: NotificationType.NEW_VISIT_REQUEST,
 					status: NotificationStatus.UNREAD,
 				},
 				recipientIds

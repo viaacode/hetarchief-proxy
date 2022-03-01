@@ -17,7 +17,7 @@ const mockGqlNotification1 = {
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
-	notification_type: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	show_at: '2022-02-28T17:29:53.478639',
 };
 
@@ -31,7 +31,7 @@ const mockGqlNotification2 = {
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-25T17:21:58.937169+00:00',
 	updated_at: '2022-02-25T17:21:58.937169',
-	notification_type: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	show_at: '2022-02-25T17:29:53.478639',
 };
 
@@ -84,7 +84,8 @@ describe('NotificationsService', () => {
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlNotification.id);
 			expect(adapted.showAt).toEqual(mockGqlNotification.show_at);
-			expect(adapted.notificationType).toEqual(mockGqlNotification.notification_type);
+			expect(adapted.type).toEqual(mockGqlNotification.type);
+			expect(adapted.visitId).toEqual(mockGqlNotification.visit_id);
 		});
 	});
 
