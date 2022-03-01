@@ -156,8 +156,10 @@ export class CollectionsController {
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
 		// Check user is owner of both collections
-		const oldCollection = await this.collectionsService.findCollectionById(oldCollectionId);
-		const newCollection = await this.collectionsService.findCollectionById(newCollectionId);
+		const [oldCollection, newCollection] = await Promise.all([
+			this.collectionsService.findCollectionById(oldCollectionId),
+			this.collectionsService.findCollectionById(newCollectionId),
+		]);
 		const user = SessionHelper.getArchiefUserInfo(session);
 		if (oldCollection.userProfileId !== user.id) {
 			throw new UnauthorizedException('You can only move objects from your own collections');
