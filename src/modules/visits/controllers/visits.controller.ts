@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
@@ -36,7 +36,7 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Put(':id')
+	@Patch(':id')
 	public async update(
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto
@@ -45,7 +45,7 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Put(':id/status')
+	@Patch(':id/status')
 	public async updateStatus(
 		@Param('id') id: string,
 		@Body() updateStatusDto: UpdateVisitStatusDto

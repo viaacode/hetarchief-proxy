@@ -178,7 +178,7 @@ describe('VisitsService', () => {
 				spaceId: 'space-1',
 				userProfileId: 'user-1',
 				timeframe: 'tomorrow',
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
+				acceptedTos: true,
 			});
 			expect(response.id).toBe('1');
 		});
@@ -226,6 +226,14 @@ describe('VisitsService', () => {
 			const response = await visitsService.update('1', {
 				endAt: new Date().toISOString(),
 				status: VisitStatus.APPROVED,
+			});
+			expect(response.id).toBe('1');
+		});
+
+		it('can add a note to a visit', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.update('1', {
+				note: 'Test note',
 			});
 			expect(response.id).toBe('1');
 		});

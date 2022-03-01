@@ -8,9 +8,15 @@ import {
 	UpdateVisitStatusDto,
 	VisitsQueryDto,
 } from '../dto/visits.dto';
-import { Visit, VisitStatus } from '../types';
+import { Note, Visit, VisitStatus } from '../types';
 
-import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT } from './queries.gql';
+import {
+	FIND_VISIT_BY_ID,
+	FIND_VISITS,
+	INSERT_NOTE,
+	INSERT_VISIT,
+	UPDATE_VISIT,
+} from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
@@ -48,6 +54,7 @@ export class VisitsService {
 			status: get(graphQlVisit, 'status'),
 			startAt: get(graphQlVisit, 'start_date'),
 			endAt: get(graphQlVisit, 'end_date'),
+			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			visitorName: (
@@ -60,13 +67,26 @@ export class VisitsService {
 		};
 	}
 
+	public adaptNotes(graphQlNotes: any): Note {
+		if (isEmpty(graphQlNotes)) {
+			return null;
+		}
+		return {
+			id: graphQlNotes[0].id,
+			authorName: get(graphQlNotes[0], 'profile.full_name', null),
+			note: graphQlNotes[0].note,
+			createdAt: graphQlNotes[0].created_at,
+			updatedAt: graphQlNotes[0].updated_at,
+		};
+	}
+
 	public async create(createVisitDto: CreateVisitDto): Promise<Visit> {
 		const newVisit = {
 			cp_space_id: createVisitDto.spaceId,
 			user_profile_id: createVisitDto.userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
-			user_accepted_tos_at: createVisitDto.acceptedTosAt,
+			user_accepted_tos: createVisitDto.acceptedTos,
 		};
 
 		const {
@@ -87,6 +107,10 @@ export class VisitsService {
 
 		if (updateVisitDto.status) {
 			await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto);
+		}
+
+		if (updateVisitDto.note) {
+			await this.insertNote(id, updateVisitDto.note);
 		}
 
 		const {
@@ -116,6 +140,17 @@ export class VisitsService {
 		});
 
 		return this.adapt(updatedVisit);
+	}
+
+	public async insertNote(visitId: string, note: string): Promise<boolean> {
+		const {
+			data: { insert_cp_visit_note_one: insertNote },
+		} = await this.dataService.execute(INSERT_NOTE, {
+			visitId,
+			note,
+		});
+
+		return !!insertNote;
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {

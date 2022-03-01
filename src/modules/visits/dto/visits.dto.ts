@@ -11,7 +11,6 @@ import {
 	IsString,
 	IsUUID,
 } from 'class-validator';
-import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
@@ -48,12 +47,12 @@ export class CreateVisitDto {
 	})
 	reason?: string;
 
-	@IsString()
+	@IsBoolean()
 	@ApiProperty({
-		type: String,
-		description: 'When the user accepted the Terms of Service',
+		type: Boolean,
+		description: 'If the user accepted the Terms of Service',
 	})
-	acceptedTosAt: string;
+	acceptedTos: boolean;
 }
 
 export class UpdateVisitStatusDto {
@@ -88,17 +87,9 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: "Remarks from the content partner approving the user's visit",
+		description: "An optional note from the content partner about the user's visit",
 	})
-	remark?: string;
-
-	@IsString()
-	@IsOptional()
-	@ApiProperty({
-		type: string,
-		description: "Reason of denial from the content partner denying the user's visit",
-	})
-	denial?: string;
+	note?: string;
 }
 
 export class VisitsQueryDto {
