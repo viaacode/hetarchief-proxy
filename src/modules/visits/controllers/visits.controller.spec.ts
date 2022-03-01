@@ -5,7 +5,10 @@ import { VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import { DataService } from '~modules/data/services/data.service';
+import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { User } from '~modules/users/types';
+import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockVisitsResponse = {
 	items: [
@@ -18,12 +21,29 @@ const mockVisitsResponse = {
 	],
 };
 
+const mockUser: User = {
+	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	firstName: 'Test',
+	lastName: 'Testers',
+	email: 'test.testers@meemoo.be',
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+};
+
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	updateStatus: jest.fn(),
+};
+
+const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
+	create: jest.fn(),
+	createForMultipleRecipients: jest.fn(),
+};
+
+const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
+	getMaintainerProfileIds: jest.fn(),
 };
 
 describe('VisitsController', () => {
@@ -37,6 +57,14 @@ describe('VisitsController', () => {
 				{
 					provide: VisitsService,
 					useValue: mockVisitsService,
+				},
+				{
+					provide: NotificationsService,
+					useValue: mockNotificationsService,
+				},
+				{
+					provide: SpacesService,
+					useValue: mockSpacesService,
 				},
 			],
 		}).compile();
@@ -67,13 +95,24 @@ describe('VisitsController', () => {
 	describe('createVisit', () => {
 		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisitsResponse.items[0]);
-			const visit = await visitsController.createVisit({
-				spaceId: 'space-1',
-				userProfileId: 'user-1',
-				timeframe: 'asap',
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
-			});
+			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
+			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+			const visit = await visitsController.createVisit(
+				{
+					spaceId: 'space-1',
+					userProfileId: 'user-1',
+					timeframe: 'asap',
+					acceptedTos: true,
+				},
+				{}
+			);
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
+			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(1);
+			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(1);
+			sessionHelperSpy.mockRestore();
 		});
 	});
 

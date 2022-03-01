@@ -66,7 +66,7 @@ export class VisitsService {
 			user_profile_id: createVisitDto.userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
-			user_accepted_tos_at: createVisitDto.acceptedTosAt,
+			user_accepted_tos: createVisitDto.acceptedTos,
 		};
 
 		const {

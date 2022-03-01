@@ -9,5 +9,6 @@ import { DataModule } from '~modules/data';
 	controllers: [SpacesController],
 	imports: [DataModule],
 	providers: [SpacesService],
+	exports: [SpacesService],
 })
 export class SpacesModule {}

@@ -178,7 +178,7 @@ describe('VisitsService', () => {
 				spaceId: 'space-1',
 				userProfileId: 'user-1',
 				timeframe: 'tomorrow',
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
+				acceptedTos: true,
 			});
 			expect(response.id).toBe('1');
 		});

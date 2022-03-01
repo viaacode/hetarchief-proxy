@@ -2,7 +2,12 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
-import { GqlCreateOrUpdateNotification, GqlNotification, Notification } from '../types';
+import {
+	GqlCreateNotificationsForReadingRoom,
+	GqlCreateOrUpdateNotification,
+	GqlNotification,
+	Notification,
+} from '../types';
 
 import {
 	FIND_NOTIFICATIONS_BY_USER,
@@ -75,6 +80,25 @@ export class NotificationsService {
 		this.logger.debug(`Notification ${createdNotification?.id} created`);
 
 		return this.adaptNotification(createdNotification);
+	}
+
+	/**
+	 * Create a notification for each recipient
+	 * @param notification the notification that should be sent
+	 * @param recipients user profile ids to whom the notification should be sent
+	 */
+	public async createForMultipleRecipients(
+		notification: Partial<GqlCreateNotificationsForReadingRoom>,
+		recipients: string[]
+	): Promise<Notification[]> {
+		return await Promise.all(
+			recipients.map((recipient) =>
+				this.create({
+					...notification,
+					recipient,
+				})
+			)
+		);
 	}
 
 	public async update(

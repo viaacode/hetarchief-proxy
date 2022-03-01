@@ -47,3 +47,14 @@ export interface GqlCreateOrUpdateNotification {
 	notification_type: string;
 	show_at: string;
 }
+
+export interface GqlCreateNotificationsForReadingRoom {
+	description: string;
+	title: string;
+	status: NotificationStatus;
+	visit_id: string;
+	created_at: string;
+	updated_at: string;
+	notification_type: string;
+	show_at: string;
+}
