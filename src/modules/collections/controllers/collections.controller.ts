@@ -148,7 +148,7 @@ export class CollectionsController {
 		}
 	}
 
-	@Put('/:oldCollectionId/objects/:objectId/move')
+	@Put(':oldCollectionId/objects/:objectId/move')
 	public async moveObjectToAnotherCollection(
 		@Param('oldCollectionId') oldCollectionId: string,
 		@Param('objectId') objectId: string,
