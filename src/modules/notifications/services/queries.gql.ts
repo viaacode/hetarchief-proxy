@@ -5,7 +5,7 @@ export const FIND_NOTIFICATIONS_BY_USER = `
 			description
 			title
 			status
-			notification_type
+			type
 			recipient
 			visit_id
 			show_at
@@ -28,7 +28,7 @@ export const INSERT_NOTIFICATION = `
 				description
 				title
 				status
-				notification_type
+				type
 				recipient
 				visit_id
 				show_at
@@ -47,7 +47,7 @@ export const UPDATE_NOTIFICATION = `
 				description
 				title
 				status
-				notification_type
+				type
 				recipient
 				visit_id
 				show_at

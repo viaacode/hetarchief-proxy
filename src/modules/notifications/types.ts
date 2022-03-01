@@ -19,7 +19,7 @@ export interface Notification {
 	visitId: string;
 	createdAt: string;
 	updatedAt: string;
-	notificationType: string;
+	type: string;
 	showAt: string;
 }
 
@@ -32,7 +32,7 @@ export interface GqlNotification {
 	visit_id: string;
 	created_at: string;
 	updated_at: string;
-	notification_type: string;
+	type: string;
 	show_at: string;
 }
 
@@ -44,7 +44,7 @@ export interface GqlCreateOrUpdateNotification {
 	visit_id: string;
 	created_at: string;
 	updated_at: string;
-	notification_type: string;
+	type: string;
 	show_at: string;
 }
 
@@ -55,6 +55,6 @@ export interface GqlCreateNotificationsForReadingRoom {
 	visit_id: string;
 	created_at: string;
 	updated_at: string;
-	notification_type: string;
+	type: string;
 	show_at: string;
 }

@@ -41,7 +41,7 @@ export class NotificationsService {
 			visitId: get(gqlNotification, 'visit_id'),
 			createdAt: get(gqlNotification, 'created_at'),
 			updatedAt: get(gqlNotification, 'updated_at'),
-			notificationType: get(gqlNotification, 'notification_type'),
+			type: get(gqlNotification, 'type'),
 			showAt: get(gqlNotification, 'show_at'),
 		};
 	}
@@ -112,7 +112,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const updatedNotification = response?.data?.update_app_notification?.returning?.[0];
+		const updatedNotification = response.data.update_app_notification.returning?.[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
