@@ -11,8 +11,8 @@ import {
 	UPDATE_USER,
 } from './queries.gql';
 
-import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
+import { Idp } from '~shared/auth/auth.types';
 
 @Injectable()
 export class UsersService {
@@ -35,7 +35,7 @@ export class UsersService {
 			identityId,
 		});
 		if (!userResponse.data.users_profile[0]) {
-			throw new NotFoundException(`User with id '${identityId}' not found`);
+			return null;
 		}
 		return this.adapt(userResponse.data.users_profile[0]);
 	}

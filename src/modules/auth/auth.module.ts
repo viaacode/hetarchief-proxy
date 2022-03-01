@@ -8,6 +8,7 @@ import { HetArchiefService } from './services/het-archief.service';
 import { IdpService } from './services/idp.service';
 import { MeemooService } from './services/meemoo.service';
 
+import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { UsersModule } from '~modules/users';
 
@@ -33,7 +34,7 @@ export const meemooServiceFactory = {
 
 @Module({
 	controllers: [AuthController, HetArchiefController, MeemooController],
-	imports: [ConfigModule, DataModule, UsersModule],
+	imports: [ConfigModule, DataModule, UsersModule, CollectionsModule],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService],
 })
 export class AuthModule {}

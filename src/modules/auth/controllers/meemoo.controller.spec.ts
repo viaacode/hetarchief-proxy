@@ -3,14 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from '../services/meemoo.service';
-import { Idp } from '../types';
 
 import { MeemooController } from './meemoo.controller';
 
+import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Idp } from '~shared/auth/auth.types';
 
-const meemooLoginUrl = 'http://meemoo.be/login';
-const meemooLogoutUrl = 'http://meemoo.be/logout';
+const meemooLoginUrl = 'http://localhost:3200';
+const meemooLogoutUrl = 'http://localhost:3200';
 
 const ldapUser = {
 	attributes: {
@@ -19,7 +20,7 @@ const ldapUser = {
 		mail: ['test@studiohyperdrive.be'],
 		name_id: 'test@studiohyperdrive.be',
 		entryUUID: ['6033dcab-bcc9-4fb5-aa59-d21dcd893150'],
-		apps: ['bezoekertool'],
+		apps: ['hetarchief'],
 	},
 };
 
@@ -53,10 +54,17 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	updateUser: jest.fn(),
 };
 
+const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
+	create: jest.fn(),
+};
+
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: string): string | boolean => {
 		if (key === 'clientHost') {
-			return 'http://localhost:3200';
+			return meemooLoginUrl;
+		}
+		if (key === 'host') {
+			return 'http://localhost:3100';
 		}
 		return key;
 	}),
@@ -85,6 +93,10 @@ describe('MeemooController', () => {
 				{
 					provide: UsersService,
 					useValue: mockUsersService,
+				},
+				{
+					provide: CollectionsService,
+					useValue: mockCollectionsService,
 				},
 				{
 					provide: ConfigService,
@@ -132,7 +144,7 @@ describe('MeemooController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('should redirect after succesful login with a known user', async () => {
+		it('should redirect after successful login with a known user', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 
@@ -147,13 +159,15 @@ describe('MeemooController', () => {
 		});
 
 		it('should use fallback relaystate', async () => {
-			const originalRelayState = samlResponse.RelayState;
-			samlResponse.RelayState = null;
+			const samlResponseWithNullRelayState = {
+				...samlResponse,
+				RelayState: null,
+			};
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-			const result = await meemooController.loginCallback({}, samlResponse);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
+			const result = await meemooController.loginCallback({}, samlResponseWithNullRelayState);
 			expect(result.url).toBeUndefined();
-			// reset
-			samlResponse.RelayState = originalRelayState;
 		});
 
 		it('should create an authorized user that is not yet in the database', async () => {
@@ -221,7 +235,7 @@ describe('MeemooController', () => {
 			expect(error.response).toEqual({
 				statusCode: HttpStatus.UNAUTHORIZED,
 				error: 'Unauthorized',
-				message: 'User has no access to hetarchief/bezoekertool',
+				message: `User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`,
 			});
 		});
 
@@ -329,7 +343,7 @@ describe('MeemooController', () => {
 			});
 		});
 
-		it('should catch an exception when generationg the logout response url', async () => {
+		it('should catch an exception when generating the logout response url', async () => {
 			mockMeemooService.createLogoutResponseUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});

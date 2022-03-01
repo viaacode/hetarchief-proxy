@@ -1,8 +1,8 @@
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
-import { SessionHelper } from './session-helper';
-import { Idp } from './types';
+import { Idp } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',

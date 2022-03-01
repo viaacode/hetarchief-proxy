@@ -42,3 +42,6 @@ lerna-debug.log*
 
 # Intellij IDE
 .idea
+
+# Ignore sessions that are stored as files for the local development environment
+/sessions

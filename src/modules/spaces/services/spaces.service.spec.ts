@@ -5,7 +5,7 @@ import { SpacesService } from './spaces.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 

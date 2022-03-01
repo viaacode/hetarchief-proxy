@@ -17,7 +17,7 @@ const mockSpacesResponse = {
 	],
 };
 
-const mockSpacesService = {
+const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 };
