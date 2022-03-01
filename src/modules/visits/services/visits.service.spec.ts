@@ -21,6 +21,8 @@ const getDefaultVisitsResponse = () => ({
 	},
 });
 
+const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
+
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
 
@@ -174,12 +176,14 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.create({
-				spaceId: 'space-1',
-				userProfileId: 'user-1',
-				timeframe: 'tomorrow',
-				acceptedTos: true,
-			});
+			const response = await visitsService.create(
+				{
+					spaceId: 'space-1',
+					timeframe: 'tomorrow',
+					acceptedTos: true,
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 	});
@@ -193,9 +197,13 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.update('1', {
-				startAt: new Date().toISOString(),
-			});
+			const response = await visitsService.update(
+				'1',
+				{
+					startAt: new Date().toISOString(),
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 
@@ -207,9 +215,13 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.update('1', {
-				endAt: new Date().toISOString(),
-			});
+			const response = await visitsService.update(
+				'1',
+				{
+					endAt: new Date().toISOString(),
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 
@@ -223,18 +235,26 @@ describe('VisitsService', () => {
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.update('1', {
-				endAt: new Date().toISOString(),
-				status: VisitStatus.APPROVED,
-			});
+			const response = await visitsService.update(
+				'1',
+				{
+					endAt: new Date().toISOString(),
+					status: VisitStatus.APPROVED,
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 
 		it('can add a note to a visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.update('1', {
-				note: 'Test note',
-			});
+			const response = await visitsService.update(
+				'1',
+				{
+					note: 'Test note',
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 	});

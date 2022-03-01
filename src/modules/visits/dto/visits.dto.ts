@@ -24,13 +24,6 @@ export class CreateVisitDto {
 	})
 	spaceId: string;
 
-	@IsUUID()
-	@ApiProperty({
-		type: string,
-		description: 'The uuid of the user making the request',
-	})
-	userProfileId: string;
-
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({

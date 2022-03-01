@@ -80,10 +80,10 @@ export class VisitsService {
 		};
 	}
 
-	public async create(createVisitDto: CreateVisitDto): Promise<Visit> {
+	public async create(createVisitDto: CreateVisitDto, userProfileId: string): Promise<Visit> {
 		const newVisit = {
 			cp_space_id: createVisitDto.spaceId,
-			user_profile_id: createVisitDto.userProfileId,
+			user_profile_id: userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
 			user_accepted_tos: createVisitDto.acceptedTos,
@@ -98,7 +98,11 @@ export class VisitsService {
 		return this.adapt(createdVisit);
 	}
 
-	public async update(id: string, updateVisitDto: UpdateVisitDto): Promise<Visit> {
+	public async update(
+		id: string,
+		updateVisitDto: UpdateVisitDto,
+		userProfileId: string
+	): Promise<Visit> {
 		const { startAt, endAt } = updateVisitDto;
 		const updateVisit = {
 			...(startAt ? { start_date: startAt } : {}),
@@ -110,7 +114,7 @@ export class VisitsService {
 		}
 
 		if (updateVisitDto.note) {
-			await this.insertNote(id, updateVisitDto.note);
+			await this.insertNote(id, updateVisitDto.note, userProfileId);
 		}
 
 		const {
@@ -142,12 +146,17 @@ export class VisitsService {
 		return this.adapt(updatedVisit);
 	}
 
-	public async insertNote(visitId: string, note: string): Promise<boolean> {
+	public async insertNote(
+		visitId: string,
+		note: string,
+		userProfileId: string
+	): Promise<boolean> {
 		const {
 			data: { insert_cp_visit_note_one: insertNote },
 		} = await this.dataService.execute(INSERT_NOTE, {
 			visitId,
 			note,
+			userProfileId,
 		});
 
 		return !!insertNote;

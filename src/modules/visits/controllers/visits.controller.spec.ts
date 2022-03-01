@@ -5,7 +5,7 @@ import { VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import { DataService } from '~modules/data/services/data.service';
+import { Idp } from '~shared/auth/auth.types';
 
 const mockVisitsResponse = {
 	items: [
@@ -17,6 +17,14 @@ const mockVisitsResponse = {
 		},
 	],
 };
+
+const getNewMockSession = () => ({
+	idp: Idp.HETARCHIEF,
+	archiefUserInfo: {
+		id: 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a',
+		email: 'test@studiohypderdrive.be',
+	},
+});
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
@@ -67,12 +75,14 @@ describe('VisitsController', () => {
 	describe('createVisit', () => {
 		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisitsResponse.items[0]);
-			const visit = await visitsController.createVisit({
-				spaceId: 'space-1',
-				userProfileId: 'user-1',
-				timeframe: 'asap',
-				acceptedTos: true,
-			});
+			const visit = await visitsController.createVisit(
+				{
+					spaceId: 'space-1',
+					timeframe: 'asap',
+					acceptedTos: true,
+				},
+				getNewMockSession()
+			);
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});
 	});
@@ -80,7 +90,7 @@ describe('VisitsController', () => {
 	describe('update', () => {
 		it('should update a visit', async () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisitsResponse.items[0]);
-			const visit = await visitsController.update('visit-id', {});
+			const visit = await visitsController.update('visit-id', {}, getNewMockSession());
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});
 	});
