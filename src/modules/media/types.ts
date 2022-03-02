@@ -1,4 +1,5 @@
 import { SearchFilters } from './dto/media.dto';
+import { QueryType } from './elasticsearch/consts';
 
 import { ContactInfo } from '~shared/types/types';
 
@@ -14,6 +15,7 @@ export interface QueryBuilderConfig {
 	NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean };
 	NUMBER_OF_FILTER_OPTIONS: number;
 	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string };
+	DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType };
 }
 
 export interface PlayerTicket {

@@ -6,6 +6,7 @@ import { QueryBuilderConfig } from '../types';
 
 import {
 	AGGS_PROPERTIES,
+	DEFAULT_QUERY_TYPE,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
 	NEEDS_FILTER_SUFFIX,
@@ -26,6 +27,7 @@ export class QueryBuilder {
 		NEEDS_FILTER_SUFFIX,
 		NUMBER_OF_FILTER_OPTIONS,
 		READABLE_TO_ELASTIC_FILTER_NAMES,
+		DEFAULT_QUERY_TYPE,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -88,12 +90,8 @@ export class QueryBuilder {
 		value: string
 	): any {
 		return {
-			bool: {
-				must: {
-					term: {
-						[elasticKey + this.suffix(readableKey)]: value,
-					},
-				},
+			[this.config.DEFAULT_QUERY_TYPE[readableKey]]: {
+				[elasticKey + this.suffix(readableKey)]: value,
 			},
 		};
 	}
@@ -178,7 +176,7 @@ export class QueryBuilder {
 
 			aggs[elasticProperty] = {
 				terms: {
-					field: elasticProperty + '.keyword',
+					field: elasticProperty + this.suffix(aggProperty),
 					size: (searchRequest as any).aggsSize || this.config.NUMBER_OF_FILTER_OPTIONS,
 				},
 			};

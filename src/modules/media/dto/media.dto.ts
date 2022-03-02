@@ -6,6 +6,25 @@ import { MediaFormat } from '../types';
 
 import { SortDirection } from '~shared/types';
 
+export class RangeQueryDuration {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The minimum duration of the media items',
+		example: '00:15:00',
+	})
+	gte?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The maximum duration of the media items',
+		example: '00:50:00',
+	})
+	lte?: string;
+}
 export class SearchFilters {
 	@IsString()
 	@IsOptional()
@@ -27,6 +46,19 @@ export class SearchFilters {
 		enum: MediaFormat,
 	})
 	format?: MediaFormat;
+
+	@Type(() => RangeQueryDuration)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDuration,
+		description: 'Specify upper and/or lower bounds for the duration of the media item',
+		example: {
+			gte: '00:15:00',
+			lte: '00:50:00',
+		},
+	})
+	duration?: RangeQueryDuration;
 }
 
 export class MediaQueryDto {

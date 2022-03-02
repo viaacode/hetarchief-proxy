@@ -12,6 +12,17 @@ export const NUMBER_OF_FILTER_OPTIONS = 40;
 export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string } = {
 	query: 'query',
 	format: 'dcterms_format',
+	duration: 'schema_duration',
+};
+
+export enum QueryType {
+	TERM = 'term',
+	RANGE = 'range',
+}
+
+export const DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType } = {
+	format: QueryType.TERM,
+	duration: QueryType.RANGE,
 };
 
 // By default add the 'format' aggregation

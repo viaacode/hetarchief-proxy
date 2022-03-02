@@ -1,5 +1,6 @@
 import { MediaFormat, QueryBuilderConfig } from '../types';
 
+import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';
 
 const incompleteConfig = {
@@ -18,6 +19,10 @@ const incompleteConfig = {
 	NEEDS_FILTER_SUFFIX: {
 		query: false,
 		// no format property
+	},
+	DEFAULT_QUERY_TYPE: {
+		format: QueryType.TERM,
+		duration: QueryType.RANGE,
 	},
 };
 
@@ -72,7 +77,20 @@ describe('QueryBuilder', () => {
 			});
 
 			expect(esQuery.query).toEqual({
-				bool: { filter: [{ bool: { must: { term: { dcterms_format: 'video' } } } }] },
+				bool: { filter: [{ term: { dcterms_format: 'video' } }] },
+			});
+		});
+
+		it('should use a range filter to filter on duration', () => {
+			const rangeQuery = { gte: '01:00:00' };
+			const esQuery = QueryBuilder.build({
+				filters: { duration: rangeQuery },
+				size: 10,
+				page: 1,
+			});
+
+			expect(esQuery.query).toEqual({
+				bool: { filter: [{ range: { schema_duration: rangeQuery } }] },
 			});
 		});
 
@@ -136,7 +154,7 @@ describe('QueryBuilder', () => {
 				requestedAggs: ['format'],
 			});
 			expect(esQuery.aggs).toEqual({
-				dcterms_format: { terms: { field: 'dcterms_format.keyword', size: 40 } },
+				dcterms_format: { terms: { field: 'dcterms_format.filter', size: 40 } },
 			});
 
 			// reset
