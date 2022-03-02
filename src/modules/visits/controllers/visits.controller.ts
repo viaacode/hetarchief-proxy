@@ -27,6 +27,7 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 @ApiTags('Visits')
 @Controller('visits')
+@UseGuards(LoggedInGuard)
 export class VisitsController {
 	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
 
@@ -45,7 +46,6 @@ export class VisitsController {
 	}
 
 	@Post()
-	@UseGuards(LoggedInGuard)
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
 		@Session() session: Record<string, any>
@@ -58,7 +58,6 @@ export class VisitsController {
 	}
 
 	@Patch(':id')
-	@UseGuards(LoggedInGuard)
 	public async update(
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,

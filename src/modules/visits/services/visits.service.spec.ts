@@ -191,7 +191,7 @@ describe('VisitsService', () => {
 	});
 
 	describe('update', () => {
-		it('throws an exception if the visit wat not found', async () => {
+		it('throws an exception if the visit request was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					update_cp_visit_by_pk: null,
