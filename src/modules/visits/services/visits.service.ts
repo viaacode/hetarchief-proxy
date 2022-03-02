@@ -1,5 +1,12 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import {
@@ -42,6 +49,19 @@ export class VisitsService {
 
 	public statusTransitionAllowed(from: VisitStatus, to: VisitStatus): boolean {
 		return this.statusTransitions[from].includes(to);
+	}
+
+	public validateDates(startAt: string, endAt: string): boolean {
+		if ((!startAt && endAt) || (startAt && !endAt)) {
+			throw new InternalServerErrorException(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		}
+		if (startAt && endAt && !isBefore(parseISO(startAt), parseISO(endAt))) {
+			throw new InternalServerErrorException('startAt must precede endAt');
+		}
+		// both empty -- ok
+		return true;
 	}
 
 	public adapt(graphQlVisit: any): Visit {
@@ -104,10 +124,24 @@ export class VisitsService {
 		userProfileId: string
 	): Promise<Visit> {
 		const { startAt, endAt } = updateVisitDto;
+		// if any of these is set, both must be set (db constraint)
+		this.validateDates(startAt, endAt);
+
 		const updateVisit = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 		};
+
+		const {
+			data: { update_cp_visit_by_pk: updatedVisit },
+		} = await this.dataService.execute(UPDATE_VISIT, {
+			id,
+			updateVisit,
+		});
+
+		if (!updatedVisit) {
+			throw new NotFoundException(`Visit with id '${id}' not found`);
+		}
 
 		if (updateVisitDto.status) {
 			await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto);
@@ -117,14 +151,7 @@ export class VisitsService {
 			await this.insertNote(id, updateVisitDto.note, userProfileId);
 		}
 
-		const {
-			data: { update_cp_visit_by_pk: updatedVisit },
-		} = await this.dataService.execute(UPDATE_VISIT, {
-			id,
-			updateVisit,
-		});
-
-		return this.adapt(updatedVisit);
+		return this.findById(id);
 	}
 
 	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {
@@ -219,7 +246,7 @@ export class VisitsService {
 		const visitResponse = await this.dataService.execute(FIND_VISIT_BY_ID, { id });
 
 		if (!visitResponse.data.cp_visit[0]) {
-			throw new NotFoundException();
+			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
 		return this.adapt(visitResponse.data.cp_visit[0]);

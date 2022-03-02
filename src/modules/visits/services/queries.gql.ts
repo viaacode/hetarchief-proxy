@@ -159,9 +159,9 @@ export const UPDATE_VISIT_BY_ID = `
 `;
 
 export const INSERT_NOTE = `
-	mutation insertnote($visitId: uuid!, $note: String, $userProfileId: uuid) {
+	mutation insertNote($visitId: uuid!, $note: String, $userProfileId: uuid) {
 		insert_cp_visit_note_one(object: { visit_id: $visitId, note: $note, profile_id: $userProfileId }) {
-	  		id
+			id
 		}
-  	}
+	}
 `;

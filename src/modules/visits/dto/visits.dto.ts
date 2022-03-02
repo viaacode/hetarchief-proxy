@@ -11,6 +11,7 @@ import {
 	IsString,
 	IsUUID,
 } from 'class-validator';
+import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
@@ -65,6 +66,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addDays(new Date(), 2).toISOString(),
 	})
 	startAt?: string;
 
@@ -73,6 +75,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
 	})
 	endAt?: string;
 
@@ -81,6 +84,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "An optional note from the content partner about the user's visit",
+		example: 'A visit is limited to max. 2h',
 	})
 	note?: string;
 }
