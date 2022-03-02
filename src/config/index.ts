@@ -74,6 +74,17 @@ const config = (): Configuration => {
 		ticketServicePassphrase: getEnvValue('TICKET_SERVICE_PASSPHRASE', true),
 		ticketServiceMaxAge: parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
 		mediaServiceUrl: getEnvValue('MEDIA_SERVICE_URL', true),
+		enableSendEmail: getEnvValue('ENABLE_SEND_EMAIL', true) === 'true',
+		campaignMonitorApiEndpoint: getEnvValue('CAMPAIGN_MONITOR_API_ENDPOINT', false),
+		campaignMonitorApiKey: getEnvValue('CAMPAIGN_MONITOR_API_KEY', false),
+		campaignMonitorTemplateVisitApproved: getEnvValue(
+			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED',
+			false
+		),
+		campaignMonitorTemplateVisitDenied: getEnvValue(
+			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED',
+			false
+		),
 	};
 };
 
