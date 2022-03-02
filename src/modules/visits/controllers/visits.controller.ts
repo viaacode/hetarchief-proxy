@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Logger, Param, Post, Put, Query } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Logger,
+	Param,
+	Patch,
+	Post,
+	Query,
+	Session,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
@@ -11,8 +22,12 @@ import {
 import { VisitsService } from '../services/visits.service';
 import { Visit } from '../types';
 
+import { SessionHelper } from '~shared/auth/session-helper';
+import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+
 @ApiTags('Visits')
 @Controller('visits')
+@UseGuards(LoggedInGuard)
 export class VisitsController {
 	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
 
@@ -31,21 +46,32 @@ export class VisitsController {
 	}
 
 	@Post()
-	public async createVisit(@Body() createVisitDto: CreateVisitDto): Promise<Visit> {
-		const visit = await this.visitsService.create(createVisitDto);
+	public async createVisit(
+		@Body() createVisitDto: CreateVisitDto,
+		@Session() session: Record<string, any>
+	): Promise<Visit> {
+		const visit = await this.visitsService.create(
+			createVisitDto,
+			SessionHelper.getArchiefUserInfo(session).id
+		);
 		return visit;
 	}
 
-	@Put(':id')
+	@Patch(':id')
 	public async update(
 		@Param('id') id: string,
-		@Body() updateVisitDto: UpdateVisitDto
+		@Body() updateVisitDto: UpdateVisitDto,
+		@Session() session: Record<string, any>
 	): Promise<Visit> {
-		const visit = await this.visitsService.update(id, updateVisitDto);
+		const visit = await this.visitsService.update(
+			id,
+			updateVisitDto,
+			SessionHelper.getArchiefUserInfo(session).id
+		);
 		return visit;
 	}
 
-	@Put(':id/status')
+	@Patch(':id/status')
 	public async updateStatus(
 		@Param('id') id: string,
 		@Body() updateStatusDto: UpdateVisitStatusDto
