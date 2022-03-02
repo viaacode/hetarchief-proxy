@@ -30,6 +30,13 @@ const mockVisit: Visit = {
 	startAt: '2022-07-01T10:00:00',
 	endAt: '2022-07-31T18:00:00',
 	status: VisitStatus.APPROVED,
+	note: {
+		id: '7c672f64-287e-4598-befb-0cd0190124f7',
+		note: 'Visit is limited to max. 2h',
+		authorName: 'Ad Ministrator',
+		createdAt: '2022-03-01T16:00:00',
+		updatedAt: '2022-03-01T16:00:00',
+	},
 	createdAt: '2022-02-01T10:00:00',
 	updatedAt: '2022-02-01T10:00:00',
 	visitorId: 'user-1',
