@@ -54,6 +54,7 @@ export class CollectionsService {
 				name: get(gqlLinkObject, 'intellectual_entity.schema_name'),
 				termsAvailable: get(gqlLinkObject, 'intellectual_entity.dcterms_available'),
 				creator: get(gqlLinkObject, 'intellectual_entity.schema_creator'),
+				description: get(gqlLinkObject, 'intellectual_entity.schema_description'),
 				format: get(gqlLinkObject, 'intellectual_entity.dcterms_format'),
 				numberOfPages: get(gqlLinkObject, 'intellectual_entity.schema_number_of_pages'),
 				thumbnailUrl: get(gqlLinkObject, 'intellectual_entity.schema_thumbnail_url'),
@@ -71,17 +72,18 @@ export class CollectionsService {
 		return {
 			// TODO add maintainer once ARC-524 has been resolved
 			// maintainer: get(gqlCollectionObjectLink, 'intellectual_entity.schema_maintainer'),
+			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
+			creator: get(gqlCollectionObjectLink, 'intellectual_entity.schema_creator'),
+			description: get(gqlCollectionObjectLink, 'intellectual_entity.schema_description'),
+			format: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_format'),
 			id: get(gqlCollectionObjectLink, 'intellectual_entity.schema_identifier'),
 			name: get(gqlCollectionObjectLink, 'intellectual_entity.schema_name'),
-			termsAvailable: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_available'),
-			creator: get(gqlCollectionObjectLink, 'intellectual_entity.schema_creator'),
-			format: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_format'),
 			numberOfPages: get(
 				gqlCollectionObjectLink,
 				'intellectual_entity.schema_number_of_pages'
 			),
+			termsAvailable: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_available'),
 			thumbnailUrl: get(gqlCollectionObjectLink, 'intellectual_entity.schema_thumbnail_url'),
-			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
 		};
 	}
 

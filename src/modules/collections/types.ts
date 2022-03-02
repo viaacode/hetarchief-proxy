@@ -54,14 +54,15 @@ export interface GqlObject {
 }
 
 export interface IeObject {
+	collectionEntryCreatedAt: string;
+	creator: any;
+	description: string;
+	format: string;
 	id: string;
 	name: string;
-	creator: any;
+	numberOfPages: any;
 	termsAvailable: string;
 	thumbnailUrl: string;
-	format: string;
-	numberOfPages: any;
-	collectionEntryCreatedAt: string;
 	// TODO add maintainer once ARC-524 has been resolved
 	// maintainer: {
 	// 	label: string;
