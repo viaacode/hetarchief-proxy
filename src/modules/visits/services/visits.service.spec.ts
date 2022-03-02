@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { addHours } from 'date-fns';
 
 import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
@@ -20,6 +21,8 @@ const getDefaultVisitsResponse = () => ({
 		},
 	},
 });
+
+const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
@@ -159,7 +162,8 @@ describe('VisitsService', () => {
 				error = e;
 			}
 			expect(error.response).toEqual({
-				message: 'Not Found',
+				error: 'Not Found',
+				message: "Visit with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
@@ -174,60 +178,114 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.create({
-				spaceId: 'space-1',
-				userProfileId: 'user-1',
-				timeframe: 'tomorrow',
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
-			});
+			const response = await visitsService.create(
+				{
+					spaceId: 'space-1',
+					timeframe: 'tomorrow',
+					acceptedTos: true,
+				},
+				mockUserProfileId
+			);
 			expect(response.id).toBe('1');
 		});
 	});
 
 	describe('update', () => {
-		it('can update a visit with startAt', async () => {
+		it('throws an exception if the visit request was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
-					},
+					update_cp_visit_by_pk: null,
 				},
 			});
-			const response = await visitsService.update('1', {
-				startAt: new Date().toISOString(),
-			});
-			expect(response.id).toBe('1');
-		});
-
-		it('can update a visit with endAt', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
+			let error;
+			try {
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.PENDING,
 					},
-				},
-			});
-			const response = await visitsService.update('1', {
-				endAt: new Date().toISOString(),
-			});
-			expect(response.id).toBe('1');
+					mockUserProfileId
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toBe(`Visit with id '1' not found`);
 		});
 
-		it('can update a visit with endAt and status combined', async () => {
+		it('can update a visit with startAt and endAt', async () => {
 			mockDataService.execute
-				.mockResolvedValue({
+				.mockResolvedValue(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: '1',
+							id: cpVisit.id,
+						},
+					},
+				});
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					startAt: new Date().toISOString(),
+					endAt: addHours(new Date(), 2).toISOString(),
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(cpVisit.id);
+		});
+
+		it('can update a visit with a status', async () => {
+			mockDataService.execute
+				.mockResolvedValue(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
 						},
 					},
 				})
-				.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.update('1', {
-				endAt: new Date().toISOString(),
-				status: VisitStatus.APPROVED,
-			});
-			expect(response.id).toBe('1');
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				});
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					status: VisitStatus.APPROVED,
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(cpVisit.id);
+		});
+
+		it('can add a note to a visit', async () => {
+			mockDataService.execute
+				.mockResolvedValue(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				})
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				});
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					note: 'Test note',
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(cpVisit.id);
 		});
 	});
 
@@ -260,6 +318,45 @@ describe('VisitsService', () => {
 				error = e;
 			}
 			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
+		});
+	});
+
+	describe('validateDates', () => {
+		it('throws an exception if only startAt is set', async () => {
+			let error;
+			try {
+				visitsService.validateDates(new Date().toISOString(), null);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		});
+
+		it('throws an exception if only endAt is set', async () => {
+			let error;
+			try {
+				visitsService.validateDates(null, new Date().toISOString());
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		});
+
+		it('throws an exception if startAt does not precede endAt', async () => {
+			let error;
+			try {
+				visitsService.validateDates(
+					addHours(new Date(), 2).toISOString(),
+					new Date().toISOString()
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('startAt must precede endAt');
 		});
 	});
 });
