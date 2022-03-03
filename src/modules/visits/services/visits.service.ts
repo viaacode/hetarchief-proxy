@@ -130,7 +130,22 @@ export class VisitsService {
 		const updateVisit = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
+			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
 		};
+
+		const currentVisit = await this.findById(id); // Get current visit status
+		if (!currentVisit) {
+			throw new NotFoundException(`Visit with id '${id}' not found`);
+		}
+
+		// Check status transition is valid
+		if (updateVisit.status) {
+			if (!this.statusTransitionAllowed(currentVisit.status, updateVisit.status)) {
+				throw new UnauthorizedException(
+					`Status transition '${currentVisit.status}' -> '${updateVisit.status}' is not allowed`
+				);
+			}
+		}
 
 		const {
 			data: { update_cp_visit_by_pk: updatedVisit },
@@ -143,34 +158,11 @@ export class VisitsService {
 			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
-		if (updateVisitDto.status) {
-			await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto);
-		}
-
 		if (updateVisitDto.note) {
 			await this.insertNote(id, updateVisitDto.note, userProfileId);
 		}
 
 		return this.findById(id);
-	}
-
-	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {
-		const currentVisit = await this.findById(id); // Get current visit status
-
-		if (!this.statusTransitionAllowed(currentVisit.status, updateStatusDto.status)) {
-			throw new UnauthorizedException(
-				`Status transition '${currentVisit.status}' -> '${updateStatusDto.status}' is not allowed`
-			);
-		}
-
-		const {
-			data: { update_cp_visit_by_pk: updatedVisit },
-		} = await this.dataService.execute(UPDATE_VISIT, {
-			id,
-			updateVisit: { status: updateStatusDto.status },
-		});
-
-		return this.adapt(updatedVisit);
 	}
 
 	public async insertNote(

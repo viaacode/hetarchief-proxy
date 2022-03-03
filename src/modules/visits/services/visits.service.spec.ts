@@ -194,7 +194,7 @@ describe('VisitsService', () => {
 		it('throws an exception if the visit request was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_cp_visit_by_pk: null,
+					cp_visit: [],
 				},
 			});
 			let error;
@@ -212,21 +212,23 @@ describe('VisitsService', () => {
 			expect(error.message).toBe(`Visit with id '1' not found`);
 		});
 
-		it('can update a visit with startAt and endAt', async () => {
+		it('can update a visit with startAt, endAt and status', async () => {
 			mockDataService.execute
-				.mockResolvedValue(getDefaultVisitsResponse())
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
 							id: cpVisit.id,
 						},
 					},
-				});
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
 				cpVisit.id,
 				{
 					startAt: new Date().toISOString(),
 					endAt: addHours(new Date(), 2).toISOString(),
+					status: VisitStatus.APPROVED,
 				},
 				mockUserProfileId
 			);
@@ -235,14 +237,6 @@ describe('VisitsService', () => {
 
 		it('can update a visit with a status', async () => {
 			mockDataService.execute
-				.mockResolvedValue(getDefaultVisitsResponse())
-				.mockResolvedValueOnce({
-					data: {
-						update_cp_visit_by_pk: {
-							id: cpVisit.id,
-						},
-					},
-				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
 					data: {
@@ -250,7 +244,8 @@ describe('VisitsService', () => {
 							id: cpVisit.id,
 						},
 					},
-				});
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
 				cpVisit.id,
 				{
@@ -261,9 +256,29 @@ describe('VisitsService', () => {
 			expect(response.id).toBe(cpVisit.id);
 		});
 
+		it('throws an error when you update to an invalid status', async () => {
+			const initialVisit = getDefaultVisitsResponse();
+			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			mockDataService.execute.mockResolvedValueOnce(initialVisit);
+
+			let error;
+			try {
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.PENDING,
+					},
+					mockUserProfileId
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
+		});
+
 		it('can add a note to a visit', async () => {
 			mockDataService.execute
-				.mockResolvedValue(getDefaultVisitsResponse())
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
@@ -273,11 +288,12 @@ describe('VisitsService', () => {
 				})
 				.mockResolvedValueOnce({
 					data: {
-						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+						insert_cp_visit_note_one: {
+							id: 'note-id',
 						},
 					},
-				});
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
 				cpVisit.id,
 				{
@@ -286,38 +302,6 @@ describe('VisitsService', () => {
 				mockUserProfileId
 			);
 			expect(response.id).toBe(cpVisit.id);
-		});
-	});
-
-	describe('updateStatus', () => {
-		it('can update the status for a visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
-					},
-				},
-			});
-			const response = await visitsService.updateStatus('1', {
-				status: VisitStatus.APPROVED,
-			});
-			expect(response.id).toBe('1');
-		});
-
-		it('throws an exception for an in valid status transition', async () => {
-			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			let error;
-			try {
-				await visitsService.updateStatus('1', {
-					status: VisitStatus.PENDING,
-				});
-			} catch (e) {
-				error = e;
-			}
-			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
 		});
 	});
 

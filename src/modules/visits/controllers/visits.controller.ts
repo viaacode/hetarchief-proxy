@@ -104,13 +104,4 @@ export class VisitsController {
 		);
 		return visit;
 	}
-
-	@Patch(':id/status')
-	public async updateStatus(
-		@Param('id') id: string,
-		@Body() updateStatusDto: UpdateVisitStatusDto
-	): Promise<Visit> {
-		const visit = await this.visitsService.updateStatus(id, updateStatusDto);
-		return visit;
-	}
 }

@@ -34,7 +34,6 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
-	updateStatus: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -133,21 +132,7 @@ describe('VisitsController', () => {
 			);
 
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
-		});
-	});
-
-	describe('updateStatus', () => {
-		it('should update a visit status', async () => {
-			mockVisitsService.updateStatus.mockResolvedValueOnce(mockVisitsResponse.items[0]);
-			const sessionHelperSpy = jest
-				.spyOn(SessionHelper, 'getArchiefUserInfo')
-				.mockReturnValue(mockUser);
-
-			const visit = await visitsController.updateStatus('visit-id', {
-				status: VisitStatus.APPROVED,
-			});
-
-			expect(visit).toEqual(mockVisitsResponse.items[0]);
+			sessionHelperSpy.mockRestore();
 		});
 	});
 });
