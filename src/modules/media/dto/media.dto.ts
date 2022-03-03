@@ -1,6 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsDateString,
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 
 import { MediaFormat } from '../types';
 
@@ -25,6 +33,26 @@ export class RangeQueryDuration {
 	})
 	lte?: string;
 }
+export class RangeQueryDate {
+	@IsDateString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The minimum date',
+		example: '2020-09-01',
+	})
+	gte?: string;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The maximum date',
+		example: '2020-12-31',
+	})
+	lte?: string;
+}
+
 export class SearchFilters {
 	@IsString()
 	@IsOptional()
@@ -59,6 +87,66 @@ export class SearchFilters {
 		},
 	})
 	duration?: RangeQueryDuration;
+
+	@Type(() => RangeQueryDate)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDate,
+		description: 'Specify upper and/or lower bounds for the creation date of the media item',
+		example: {
+			gte: '2020-09-01',
+			lte: '2020-12-31',
+		},
+	})
+	created?: RangeQueryDate;
+
+	@Type(() => RangeQueryDate)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDate,
+		description: 'Specify upper and/or lower bounds for the publish date of the media item',
+		example: {
+			gte: '2020-09-01',
+			lte: '2020-12-31',
+		},
+	})
+	published?: RangeQueryDate;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+		required: false,
+	})
+	// TODO update filter for creator? -- currently requires an exact match (incl. case sensitivity)
+	creator?: string;
+
+	@IsString()
+	@IsOptional()
+	@Transform((genre) => genre.value.toLowerCase())
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+		required: false,
+	})
+	// TODO update filter for genre? -- currently requires an exact match and input should be lowercased
+	genre?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+		required: false,
+	})
+	// TODO update filter for keyword: multiple keywords? -- currently requires an exact match and input should be lowercased
+	keyword?: string;
 }
 
 export class MediaQueryDto {

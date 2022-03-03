@@ -13,6 +13,11 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: 
 	query: 'query',
 	format: 'dcterms_format',
 	duration: 'schema_duration',
+	created: 'schema_date_created',
+	published: 'schema_date_published',
+	creator: 'schema_creator',
+	genre: 'schema_genre',
+	keyword: 'schema_keywords',
 };
 
 export enum QueryType {
@@ -23,6 +28,11 @@ export enum QueryType {
 export const DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType } = {
 	format: QueryType.TERM,
 	duration: QueryType.RANGE,
+	created: QueryType.RANGE,
+	published: QueryType.RANGE,
+	creator: QueryType.TERM,
+	genre: QueryType.TERM,
+	keyword: QueryType.TERM,
 };
 
 // By default add the 'format' aggregation
