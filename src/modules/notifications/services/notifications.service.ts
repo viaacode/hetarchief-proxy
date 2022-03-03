@@ -88,7 +88,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const updatedNotification = response?.data?.update_app_notification?.returning?.[0];
+		const updatedNotification = response.data.update_app_notification?.returning?.[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
