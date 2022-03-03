@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
-import { MediaQueryDto, SearchFilters } from '../dto/media.dto';
+import { AdvancedQuery, MediaQueryDto, SearchFilters } from '../dto/media.dto';
 import { QueryBuilderConfig } from '../types';
 
 import {
@@ -11,6 +11,8 @@ import {
 	MAX_NUMBER_SEARCH_RESULTS,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
+	OCCURRENCE_TYPE,
+	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 } from './consts';
 import searchQueryTemplate from './templates/search-query.json';
@@ -28,6 +30,7 @@ export class QueryBuilder {
 		NUMBER_OF_FILTER_OPTIONS,
 		READABLE_TO_ELASTIC_FILTER_NAMES,
 		DEFAULT_QUERY_TYPE,
+		OCCURRENCE_TYPE,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -87,13 +90,37 @@ export class QueryBuilder {
 	private static generateAndFilter(
 		elasticKey: string,
 		readableKey: keyof SearchFilters,
-		value: string
+		value: string | AdvancedQuery
 	): any {
 		return {
 			[this.config.DEFAULT_QUERY_TYPE[readableKey]]: {
 				[elasticKey + this.suffix(readableKey)]: value,
 			},
 		};
+	}
+
+	/**
+	 * AND filter: https://stackoverflow.com/a/52206289/373207
+	 * @param elasticKey
+	 * @param readableKey
+	 * @param values
+	 */
+	private static generateAdvancedFilter(
+		elasticKey: string,
+		readableKey: keyof SearchFilters,
+		advancedQuery: AdvancedQuery
+	): any {
+		const keys = Object.keys(advancedQuery);
+		const result = keys.map((key) => ({
+			occurrenceType: this.config.OCCURRENCE_TYPE[key],
+			query: {
+				[this.config.DEFAULT_QUERY_TYPE[readableKey]]: {
+					[elasticKey + this.suffix(readableKey)]: advancedQuery[key],
+				},
+			},
+		}));
+
+		return result;
 	}
 
 	/**
@@ -140,8 +167,11 @@ export class QueryBuilder {
 					`Failed to resolve agg property: ${readableKey}`
 				);
 			}
-			if (!_.isArray(value)) {
-				// TODO @Bert in Avo is alles van values een array, weet niet hoe je dat hier ziet?
+
+			if (value instanceof AdvancedQuery) {
+				const advancedFilter = this.generateAdvancedFilter(elasticKey, readableKey, value);
+				this.applyAdvancedFilter(filterObject, advancedFilter);
+			} else {
 				filterArray.push(this.generateAndFilter(elasticKey, readableKey, value));
 			}
 		});
@@ -149,6 +179,15 @@ export class QueryBuilder {
 		return filterObject;
 	}
 
+	protected static applyAdvancedFilter(filterObject: any, advancedFilter: any): void {
+		advancedFilter.forEach((filter) => {
+			if (!filterObject.bool[filter.occurrenceType]) {
+				filterObject.bool[filter.occurrenceType] = [];
+			}
+
+			filterObject.bool[filter.occurrenceType].push(filter.query);
+		});
+	}
 	/**
 	 * Builds up an object containing the elasticsearch  aggregation objects
 	 * The result of these aggregations will be used to show in the multi select options lists in the search page

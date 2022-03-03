@@ -1,3 +1,4 @@
+import { AdvancedQuery } from '../dto/media.dto';
 import { MediaFormat, QueryBuilderConfig } from '../types';
 
 import { QueryType } from './consts';
@@ -159,6 +160,15 @@ describe('QueryBuilder', () => {
 
 			// reset
 			QueryBuilder.setConfig(originalConfig);
+		});
+
+		it('should build an advanced query', () => {
+			const advancedQuery = new AdvancedQuery();
+			advancedQuery.contains = 'test';
+			const esQuery = QueryBuilder.build({ filters: { name: advancedQuery } });
+			expect(esQuery.query.bool.filter.length).toBe(0);
+			expect(esQuery.query.bool.must.length).toBe(1);
+			expect(esQuery.query.bool.must[0].match.schema_name).toEqual('test');
 		});
 	});
 });

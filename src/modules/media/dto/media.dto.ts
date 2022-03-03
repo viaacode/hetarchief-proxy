@@ -53,6 +53,40 @@ export class RangeQueryDate {
 	lte?: string;
 }
 
+export class AdvancedQuery {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that contain this string',
+	})
+	contains?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that do not contain this string',
+	})
+	containsNot?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that equal this string',
+	})
+	is?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that do not equal this string',
+	})
+	isNot?: string;
+}
+
 export class SearchFilters {
 	@IsString()
 	@IsOptional()
@@ -139,14 +173,27 @@ export class SearchFilters {
 
 	@IsString()
 	@IsOptional()
+	@Transform((genre) => genre.value.toLowerCase())
 	@ApiPropertyOptional({
 		type: String,
 		description:
 			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
 		required: false,
 	})
-	// TODO update filter for keyword: multiple keywords? -- currently requires an exact match and input should be lowercased
+	// TODO update filter for keyword: multiple keywords? -- case sensitive but works only if lowercased
 	keyword?: string;
+
+	@Type(() => AdvancedQuery)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: AdvancedQuery,
+		description:
+			'An advanced filter on media item name (title). Filter on items contain or equal the given string (or opposite)',
+		required: false,
+		example: { contains: 'tv', containsNot: 'radio' },
+	})
+	name?: AdvancedQuery;
 }
 
 export class MediaQueryDto {
