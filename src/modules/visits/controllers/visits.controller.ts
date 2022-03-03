@@ -5,8 +5,8 @@ import {
 	Get,
 	Logger,
 	Param,
+	Patch,
 	Post,
-	Put,
 	Query,
 	Session,
 	UseGuards,
@@ -30,9 +30,9 @@ import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('Visits')
 @Controller('visits')
+@UseGuards(LoggedInGuard)
 export class VisitsController {
 	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
 
@@ -66,11 +66,12 @@ export class VisitsController {
 				)
 			);
 		}
+		const user = SessionHelper.getArchiefUserInfo(session);
+
 		// Create visit request
-		const visit = await this.visitsService.create(createVisitDto);
+		const visit = await this.visitsService.create(createVisitDto, user.id);
 
 		// Send notifications
-		const user = SessionHelper.getArchiefUserInfo(session);
 		const recipientIds = await this.spacesService.getMaintainerProfileIds(visit.spaceId);
 		if (recipientIds.length) {
 			await this.notificationsService.createForMultipleRecipients(
@@ -90,16 +91,21 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Put(':id')
+	@Patch(':id')
 	public async update(
 		@Param('id') id: string,
-		@Body() updateVisitDto: UpdateVisitDto
+		@Body() updateVisitDto: UpdateVisitDto,
+		@Session() session: Record<string, any>
 	): Promise<Visit> {
-		const visit = await this.visitsService.update(id, updateVisitDto);
+		const visit = await this.visitsService.update(
+			id,
+			updateVisitDto,
+			SessionHelper.getArchiefUserInfo(session).id
+		);
 		return visit;
 	}
 
-	@Put(':id/status')
+	@Patch(':id/status')
 	public async updateStatus(
 		@Param('id') id: string,
 		@Body() updateStatusDto: UpdateVisitStatusDto

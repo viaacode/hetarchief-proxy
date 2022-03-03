@@ -100,15 +100,16 @@ describe('VisitsController', () => {
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
+
 			const visit = await visitsController.createVisit(
 				{
 					spaceId: 'space-1',
-					userProfileId: 'user-1',
 					timeframe: 'asap',
 					acceptedTos: true,
 				},
 				{}
 			);
+
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(1);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(1);
@@ -119,7 +120,18 @@ describe('VisitsController', () => {
 	describe('update', () => {
 		it('should update a visit', async () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisitsResponse.items[0]);
-			const visit = await visitsController.update('visit-id', {});
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
+			const visit = await visitsController.update(
+				'visit-id',
+				{
+					status: VisitStatus.APPROVED,
+				},
+				{}
+			);
+
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});
 	});
@@ -127,9 +139,14 @@ describe('VisitsController', () => {
 	describe('updateStatus', () => {
 		it('should update a visit status', async () => {
 			mockVisitsService.updateStatus.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
 			const visit = await visitsController.updateStatus('visit-id', {
 				status: VisitStatus.APPROVED,
 			});
+
 			expect(visit).toEqual(mockVisitsResponse.items[0]);
 		});
 	});
