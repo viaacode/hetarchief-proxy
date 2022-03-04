@@ -125,7 +125,7 @@ export class MediaService {
 				this.logger.error(e.response.body);
 				throw new NotFoundException();
 			}
-			this.logger.error(e);
+			this.logger.error(e.response.body);
 			throw e;
 		}
 	}
