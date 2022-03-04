@@ -1,13 +1,18 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import got from 'got';
 
 import { HetArchiefService } from './het-archief.service';
+
+import { IDP_XML_RESPONSE } from '~modules/collections/services/__mocks__/idpXmlResponse';
 
 describe('HetArchiefService', () => {
 	let hetArchiefService: HetArchiefService;
 	let configService: ConfigService;
 
 	beforeEach(async () => {
+		jest.spyOn(got, 'post').mockResolvedValue(IDP_XML_RESPONSE);
+
 		const archiefServiceFactory = {
 			provide: HetArchiefService,
 			useFactory: async (configService: ConfigService) => {
