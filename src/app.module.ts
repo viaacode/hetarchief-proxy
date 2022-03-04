@@ -12,6 +12,7 @@ import { AuthModule } from '~modules/auth';
 import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
+import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
 import { TosModule } from '~modules/tos';
 import { UsersModule } from '~modules/users';
@@ -37,6 +38,7 @@ import { SessionService } from '~shared/services/session.service';
 		UsersModule,
 		VisitsModule,
 		CollectionsModule,
+		NotificationsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService],

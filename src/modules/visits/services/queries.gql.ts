@@ -127,37 +127,6 @@ export const FIND_VISIT_BY_ID = `
 	}
 `;
 
-export const UPDATE_VISIT_BY_ID = `
-	mutation updateVisit($id: uuid!, $updateVisit: cp_visit_set_input!) {
-		update_cp_visit_by_pk(pk_columns: {id: $id}, _set: $updateVisit) {
-			id
-			cp_space_id
-			user_profile_id
-			user_reason
-			user_timeframe
-			status
-			start_date
-			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
-				id
-				note
-				profile {
-					full_name
-				}
-				created_at
-			}
-			created_at
-			updated_at
-			user_profile {
-				first_name
-				last_name
-				mail
-				id
-			}
-		}
-	}
-`;
-
 export const INSERT_NOTE = `
 	mutation insertNote($visitId: uuid!, $note: String, $userProfileId: uuid) {
 		insert_cp_visit_note_one(object: { visit_id: $visitId, note: $note, profile_id: $userProfileId }) {
