@@ -17,7 +17,7 @@ const mockDataPermissionsService: Partial<Record<keyof DataPermissionsService, j
 		verify: jest.fn(),
 	};
 
-const mockConfigService = {
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: string): string | boolean => {
 		if (key === 'graphQlUrl') {
 			return 'http://localhost/v1/graphql/';

@@ -7,7 +7,7 @@ import { MediaService } from './media.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
-const mockConfigService = {
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: string): string | boolean => {
 		if (key === 'elasticSearchUrl') {
 			return 'http://elasticsearch'; // should be a syntactically valid url
