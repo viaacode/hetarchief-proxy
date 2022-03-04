@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Query, Session, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Put, Query, Session, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
@@ -31,7 +31,7 @@ export class NotificationsController {
 		return notifications;
 	}
 
-	@Put(':notificationId')
+	@Patch(':notificationId')
 	public async markAsRead(
 		@Param('notificationId') notificationId: string,
 		@Session() session: Record<string, any>

@@ -2,7 +2,12 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
-import { GqlCreateOrUpdateNotification, GqlNotification, Notification } from '../types';
+import {
+	GqlCreateNotificationsForReadingRoom,
+	GqlCreateOrUpdateNotification,
+	GqlNotification,
+	Notification,
+} from '../types';
 
 import {
 	FIND_NOTIFICATIONS_BY_USER,
@@ -36,7 +41,7 @@ export class NotificationsService {
 			visitId: get(gqlNotification, 'visit_id'),
 			createdAt: get(gqlNotification, 'created_at'),
 			updatedAt: get(gqlNotification, 'updated_at'),
-			notificationType: get(gqlNotification, 'notification_type'),
+			type: get(gqlNotification, 'type'),
 			showAt: get(gqlNotification, 'show_at'),
 		};
 	}
@@ -77,6 +82,25 @@ export class NotificationsService {
 		return this.adaptNotification(createdNotification);
 	}
 
+	/**
+	 * Create a notification for each recipient
+	 * @param notification the notification that should be sent
+	 * @param recipients user profile ids to whom the notification should be sent
+	 */
+	public async createForMultipleRecipients(
+		notification: Partial<GqlCreateNotificationsForReadingRoom>,
+		recipients: string[]
+	): Promise<Notification[]> {
+		return await Promise.all(
+			recipients.map((recipient) =>
+				this.create({
+					...notification,
+					recipient,
+				})
+			)
+		);
+	}
+
 	public async update(
 		notificationId: string,
 		userProfileId: string,
@@ -88,7 +112,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const updatedNotification = response.data.update_app_notification?.returning?.[0];
+		const updatedNotification = response.data.update_app_notification.returning?.[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
