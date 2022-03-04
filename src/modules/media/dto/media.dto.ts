@@ -161,17 +161,23 @@ export class SearchFilters {
 	// TODO update filter for creator? -- currently requires an exact match (incl. case sensitivity)
 	creator?: string;
 
-	@IsString()
+	@IsArray()
 	@IsOptional()
-	@Transform((genre) => genre.value.toLowerCase())
+	@Transform((genre) => {
+		if (!isArray(genre.value)) {
+			throw new InternalServerErrorException('Genre should be an array');
+		}
+		return genre.value.map((g) => g.trim().toLowerCase());
+	})
 	@ApiPropertyOptional({
 		type: String,
 		description:
 			'Filter the results on the genre of the media item - TODO currently this requires an exact match',
 		required: false,
+		example: ['magazine'],
 	})
 	// TODO update filter for genre? -- currently requires an exact match and input should be lowercased
-	genre?: string;
+	genre?: Array<string>;
 
 	@IsArray()
 	@IsOptional()
