@@ -23,6 +23,11 @@ export const configValidationSchema = Joi.object({
 	TICKET_SERVICE_PASSPHRASE: Joi.string(),
 	TICKET_SERVICE_MAXAGE: Joi.number().default(14401),
 	MEDIA_SERVICE_URL: Joi.string(),
+	ENABLE_SEND_EMAIL: Joi.boolean().default(false),
+	CAMPAIGN_MONITOR_API_ENDPOINT: Joi.string().allow(''),
+	CAMPAIGN_MONITOR_API_KEY: Joi.string().allow(''),
+	CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED: Joi.string().allow(''),
+	CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED: Joi.string().allow(''),
 });
 
 export const DEFAULT_CONFIG = {
