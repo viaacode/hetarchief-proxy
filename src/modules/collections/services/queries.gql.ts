@@ -7,6 +7,11 @@ export const FIND_COLLECTIONS_BY_USER = `
 			is_default
 			created_at
 			updated_at
+			ies {
+				intellectual_entity {
+					schema_identifier
+				}
+			}
 		}
 		users_collection_aggregate(where: {user_profile_id: {_eq: $userProfileId}}) {
 			aggregate {
