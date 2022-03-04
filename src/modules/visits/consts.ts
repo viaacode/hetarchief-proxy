@@ -1,6 +1,6 @@
 import { Visit } from '~modules/visits/types';
 
-export const ORDER_PROP_TO_DB_PROP: Record<keyof Visit, string> = {
+export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof Visit, string>> = {
 	id: 'id',
 	spaceId: 'cp_space_id',
 	userProfileId: 'user_profile_id',

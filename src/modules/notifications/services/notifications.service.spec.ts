@@ -123,7 +123,7 @@ describe('NotificationsService', () => {
 
 	describe('createForMultipleRecipients', () => {
 		it('can create multiple notifications for multiple recipients', async () => {
-			mockDataService.execute.mockResolvedValue({
+			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					insert_app_notification: {
 						returning: [mockGqlNotification1],

@@ -11,6 +11,7 @@ import {
 	IsString,
 	IsUUID,
 } from 'class-validator';
+import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus } from '~modules/visits/types';
@@ -23,13 +24,6 @@ export class CreateVisitDto {
 		description: "The space's uuid",
 	})
 	spaceId: string;
-
-	@IsUUID()
-	@ApiProperty({
-		type: string,
-		description: 'The uuid of the user making the request',
-	})
-	userProfileId: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -72,6 +66,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addDays(new Date(), 2).toISOString(),
 	})
 	startAt?: string;
 
@@ -80,6 +75,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
 	})
 	endAt?: string;
 
@@ -87,17 +83,10 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: "Remarks from the content partner approving the user's visit",
+		description: "An optional note from the content partner about the user's visit",
+		example: 'A visit is limited to max. 2h',
 	})
-	remark?: string;
-
-	@IsString()
-	@IsOptional()
-	@ApiProperty({
-		type: string,
-		description: "Reason of denial from the content partner denying the user's visit",
-	})
-	denial?: string;
+	note?: string;
 }
 
 export class VisitsQueryDto {
