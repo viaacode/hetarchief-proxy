@@ -113,7 +113,7 @@ export class CollectionsService {
 			collectionId,
 		});
 
-		return this.adaptCollection(collectionResponse.data?.users_collection?.[0]);
+		return this.adaptCollection(collectionResponse.data.users_collection[0]);
 	}
 
 	public async findObjectsByCollectionId(
@@ -134,13 +134,12 @@ export class CollectionsService {
 				limit,
 			}
 		);
-		if (!collectionObjectsResponse.data?.users_collection_ie) {
+		if (!collectionObjectsResponse.data.users_collection_ie) {
 			throw new NotFoundException();
 		}
-		const total =
-			collectionObjectsResponse.data?.users_collection_ie_aggregate?.aggregate?.count || 0;
+		const total = collectionObjectsResponse.data.users_collection_ie_aggregate.aggregate.count;
 		return {
-			items: collectionObjectsResponse.data?.users_collection_ie.map(
+			items: collectionObjectsResponse.data.users_collection_ie.map(
 				this.adaptCollectionObjectLink
 			),
 			page,
@@ -152,8 +151,8 @@ export class CollectionsService {
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
 		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
-		const createdCollection = get(response, 'data.insert_users_collection.returning.[0]');
-		this.logger.debug(`Collection ${createdCollection?.id} created`);
+		const createdCollection = response.data.insert_users_collection.returning[0];
+		this.logger.debug(`Collection ${createdCollection.id} created`);
 
 		return this.adaptCollection(createdCollection);
 	}
@@ -169,7 +168,7 @@ export class CollectionsService {
 			collection,
 		});
 
-		const updatedCollection = response?.data?.update_users_collection?.returning?.[0];
+		const updatedCollection = response.data.update_users_collection.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
 		return this.adaptCollection(updatedCollection);
@@ -182,7 +181,7 @@ export class CollectionsService {
 		});
 		this.logger.debug(`Collection ${collectionId} deleted`);
 
-		return response?.data?.delete_users_collection?.affected_rows || 0;
+		return response.data.delete_users_collection.affected_rows;
 	}
 
 	public async findObjectInCollection(
@@ -193,7 +192,7 @@ export class CollectionsService {
 			collectionId,
 			objectId,
 		});
-		const foundObject = response?.data?.users_collection_ie?.[0];
+		const foundObject = response.data.users_collection_ie[0];
 		this.logger.debug(`Found object ${objectId} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject);
@@ -212,7 +211,7 @@ export class CollectionsService {
 			collectionId,
 			objectId,
 		});
-		const createdObject = response?.data?.insert_users_collection_ie?.returning?.[0];
+		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectId} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
@@ -230,6 +229,6 @@ export class CollectionsService {
 		});
 		this.logger.debug(`Collection object ${objectId} deleted`);
 
-		return response?.data?.delete_users_collection_ie?.affected_rows;
+		return response.data.delete_users_collection_ie.affected_rows || 0;
 	}
 }
