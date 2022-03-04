@@ -13,15 +13,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { format } from 'date-fns';
 
-import {
-	CreateVisitDto,
-	UpdateVisitDto,
-	UpdateVisitStatusDto,
-	VisitsQueryDto,
-} from '../dto/visits.dto';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { Visit } from '../types';
+import { Visit, VisitStatus } from '../types';
 
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationStatus, NotificationType } from '~modules/notifications/types';
@@ -97,11 +93,48 @@ export class VisitsController {
 		@Body() updateVisitDto: UpdateVisitDto,
 		@Session() session: Record<string, any>
 	): Promise<Visit> {
-		const visit = await this.visitsService.update(
-			id,
-			updateVisitDto,
-			SessionHelper.getArchiefUserInfo(session).id
-		);
+		const user = SessionHelper.getArchiefUserInfo(session);
+		const visit = await this.visitsService.update(id, updateVisitDto, user.id);
+
+		if (updateVisitDto.status) {
+			// Status was updated
+
+			// Send notifications
+			const space = await this.spacesService.findById(visit.spaceId);
+			if (updateVisitDto.status === VisitStatus.APPROVED) {
+				await this.notificationsService.create({
+					title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
+						name: space.name,
+					}),
+					description: i18n.t(
+						'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
+						{
+							name: space.name,
+							startDate: format(new Date(visit.startAt), 'dd/MM/yyyy HH:mm'),
+							endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
+						}
+					),
+					visit_id: visit.id,
+					type: NotificationType.VISIT_REQUEST_APPROVED,
+					status: NotificationStatus.UNREAD,
+					recipient: user.id,
+				});
+			} else if (updateVisitDto.status === VisitStatus.DENIED) {
+				await this.notificationsService.create({
+					title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
+						name: space.name,
+					}),
+					description: i18n.t('Reden: {{reason}}', {
+						reason: updateVisitDto.note || i18n.t('Er werd geen reden opgegeven'),
+					}),
+					visit_id: visit.id,
+					type: NotificationType.VISIT_REQUEST_DENIED,
+					status: NotificationStatus.UNREAD,
+					recipient: user.id,
+				});
+			}
+		}
+
 		return visit;
 	}
 }
