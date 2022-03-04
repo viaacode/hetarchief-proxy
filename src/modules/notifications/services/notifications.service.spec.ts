@@ -210,8 +210,8 @@ describe('NotificationsService', () => {
 		});
 	});
 
-	describe('createVisit', () => {
-		it('can send a notification about a visit request creation', async () => {
+	describe('onCreateVisit', () => {
+		it('should send a notification about a visit request creation', async () => {
 			const createForMultipleRecipientsSpy = jest
 				.spyOn(notificationsService, 'createForMultipleRecipients')
 				.mockResolvedValueOnce([mockNotification]);
@@ -228,8 +228,8 @@ describe('NotificationsService', () => {
 		});
 	});
 
-	describe('approveVisitRequest', () => {
-		it('can send a notification about a visit request approval', async () => {
+	describe('onApproveVisitRequest', () => {
+		it('should send a notification about a visit request approval', async () => {
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce(mockNotification);
@@ -245,8 +245,8 @@ describe('NotificationsService', () => {
 		});
 	});
 
-	describe('denyVisitRequest', () => {
-		it('can send a notification about a visit request denial', async () => {
+	describe('onDenyVisitRequest', () => {
+		it('should send a notification about a visit request denial', async () => {
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce(mockNotification);
@@ -263,7 +263,7 @@ describe('NotificationsService', () => {
 	});
 
 	describe('update', () => {
-		it('can update a notification', async () => {
+		it('should update a notification', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					update_app_notification: {
