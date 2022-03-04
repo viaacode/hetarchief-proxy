@@ -1,9 +1,9 @@
 module.exports = {
 	moduleFileExtensions: ['js', 'json', 'ts'],
 	moduleNameMapper: {
-		'^~config\/?(.*)$': ['<rootDir>/config/$1'],
-		'^~modules\/?(.*)$': ['<rootDir>/modules/$1'],
-		'^~shared\/?(.*)$': ['<rootDir>/shared/$1'],
+		'^~config/?(.*)$': ['<rootDir>/config/$1'],
+		'^~modules/?(.*)$': ['<rootDir>/modules/$1'],
+		'^~shared/?(.*)$': ['<rootDir>/shared/$1'],
 	},
 	rootDir: 'src',
 	testEnvironment: 'node',
@@ -21,4 +21,5 @@ module.exports = {
 			statements: 80,
 		},
 	},
+	setupFilesAfterEnv: ['../jest.setup.redis-mock.ts'],
 };
