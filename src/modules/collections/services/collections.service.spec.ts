@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CollectionsService } from './collections.service';
 
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { CollectionObjectLink } from '~modules/collections/types';
+import { CollectionObjectLink, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -55,6 +55,18 @@ const mockGqlCollectionsResult = {
 	},
 };
 
+const mockGqlCollectionResult = {
+	data: {
+		users_collection: [mockGqlCollection1],
+	},
+};
+
+const mockGqlCollectionResultEmpty = {
+	data: {
+		users_collection: [],
+	},
+};
+
 const mockGqlCollectionObjectsResult = {
 	data: {
 		users_collection_ie: [
@@ -78,6 +90,38 @@ const mockGqlCollectionObjectsResult = {
 			},
 		},
 	},
+};
+
+const mockGqlCollectionObjectResult = {
+	data: {
+		users_collection_ie: [
+			{
+				created_at: '2022-02-02T10:55:16.542503',
+				intellectual_entity: {
+					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+					schema_creator: null,
+					dcterms_available: '2015-09-19T12:08:24',
+					schema_thumbnail_url:
+						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+					dcterms_format: 'video',
+					schema_number_of_pages: null,
+					schema_identifier: '8s4jm2514q',
+				},
+			},
+		],
+	},
+};
+
+const mockCollectionObject: IeObject = {
+	id: '8s4jm2514q',
+	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	termsAvailable: '2015-09-19T12:08:24',
+	creator: null,
+	format: 'video',
+	numberOfPages: null,
+	thumbnailUrl:
+		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+	collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
 };
 
 const mockUser = {
@@ -104,6 +148,10 @@ describe('CollectionsService', () => {
 		collectionsService = module.get<CollectionsService>(CollectionsService);
 	});
 
+	afterEach(async () => {
+		mockDataService.execute.mockRestore();
+	});
+
 	it('services should be defined', () => {
 		expect(collectionsService).toBeDefined();
 	});
@@ -122,6 +170,12 @@ describe('CollectionsService', () => {
 				mockGqlCollection.ies[0].created_at
 			);
 		});
+
+		it('can adapt an undefined collection object', () => {
+			const adapted = collectionsService.adaptCollection(undefined);
+			expect(adapted).toBeUndefined();
+		});
+
 		it('can adapt a graphql collection object response to our object interface', () => {
 			const adapted = collectionsService.adaptCollectionObjectLink(
 				mockGqlCollectionObjectLink
@@ -140,9 +194,14 @@ describe('CollectionsService', () => {
 				mockGqlCollectionObjectLink.created_at
 			);
 		});
+
+		it('can adapt an undefined collection object link', () => {
+			const adapted = collectionsService.adaptCollectionObjectLink(undefined);
+			expect(adapted).toBeUndefined();
+		});
 	});
 
-	describe('findByUser', () => {
+	describe('findCollectionsByUser', () => {
 		it('returns a paginated response with all collections for a user', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionsResult);
 			const response = await collectionsService.findCollectionsByUser(
@@ -152,6 +211,24 @@ describe('CollectionsService', () => {
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(1000);
 			expect(response.total).toBe(2);
+		});
+	});
+
+	describe('findCollectionById', () => {
+		it('should return once collection', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResult);
+			const response = await collectionsService.findCollectionById(
+				mockGqlCollectionResult.data.users_collection[0].id
+			);
+			expect(response.id).toBe(mockGqlCollectionResult.data.users_collection[0].id);
+		});
+
+		it('should return undefined if collection does not exist', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResultEmpty);
+			const response = await collectionsService.findCollectionById(
+				mockGqlCollectionResult.data.users_collection[0].id
+			);
+			expect(response).toBeUndefined();
 		});
 	});
 
@@ -185,6 +262,17 @@ describe('CollectionsService', () => {
 				message: 'Not Found',
 				statusCode: 404,
 			});
+		});
+	});
+
+	describe('findObjectInCollection', () => {
+		it('returns one objects in a collection', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
+			const response = await collectionsService.findObjectInCollection(
+				mockGqlCollection1.id,
+				mockCollectionObject.id
+			);
+			expect(response.id).toBe(mockCollectionObject.id);
 		});
 	});
 
@@ -249,8 +337,11 @@ describe('CollectionsService', () => {
 		});
 	});
 
-	describe('add object to collection', () => {
+	describe('addObjectToCollection', () => {
 		it('can add object to a collection', async () => {
+			const findObjectInCollectionSpy = jest
+				.spyOn(collectionsService, 'findObjectInCollection')
+				.mockResolvedValueOnce(null);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					insert_users_collection_ie: {
@@ -258,6 +349,7 @@ describe('CollectionsService', () => {
 					},
 				},
 			});
+
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
 				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
@@ -265,6 +357,29 @@ describe('CollectionsService', () => {
 			expect(response.id).toBe(
 				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
 			);
+			findObjectInCollectionSpy.mockRestore();
+		});
+
+		it('can not add object to a collection if it already exists', async () => {
+			const findObjectInCollectionSpy = jest
+				.spyOn(collectionsService, 'findObjectInCollection')
+				.mockResolvedValueOnce(mockCollectionObject);
+
+			let error;
+			try {
+				await collectionsService.addObjectToCollection(
+					mockGqlCollection1.id,
+					mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				code: 'OBJECT_ALREADY_EXISTS',
+				message: 'Object already exists in collection',
+			});
+
+			findObjectInCollectionSpy.mockRestore();
 		});
 	});
 
@@ -279,7 +394,8 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier,
+				mockUser.id
 			);
 			expect(affectedRows).toBe(1);
 		});
@@ -294,7 +410,8 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				'unknown-id'
+				'unknown-id',
+				mockUser.id
 			);
 			expect(affectedRows).toBe(0);
 		});

@@ -64,6 +64,7 @@ const mockUser: User = {
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
 	findCollectionsByUser: jest.fn(),
 	findCollectionById: jest.fn(),
+	findObjectInCollection: jest.fn(),
 	findObjectsByCollectionId: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
@@ -264,6 +265,81 @@ describe('CollectionsController', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('You can only delete objects from your own collections');
+		});
+	});
+
+	describe('moveObjectToAnotherCollection', () => {
+		it('should move object to another collection', async () => {
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce(
+				mockCollectionObjectsResponse.items[0]
+			);
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(1);
+			mockCollectionsService.findCollectionById.mockResolvedValue(
+				mockCollectionsResponse.items[0]
+			);
+			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+
+			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
+				mockCollectionsResponse.items[0].id,
+				'8s4jm2514q',
+				mockCollectionsResponse.items[1].id,
+				{}
+			);
+			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
+		});
+
+		it('should not move object if requester does not own "from" collection', async () => {
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce(
+				mockCollectionObjectsResponse.items[0]
+			);
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(1);
+			mockCollectionsService.findCollectionById
+				.mockResolvedValueOnce({
+					...mockCollectionsResponse.items[0],
+					userProfileId: 'not-the-owner-id',
+				})
+				.mockResolvedValue(mockCollectionsResponse.items[0]);
+			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+
+			let error;
+			try {
+				await collectionsController.moveObjectToAnotherCollection(
+					mockCollectionsResponse.items[0].id,
+					'8s4jm2514q',
+					mockCollectionsResponse.items[1].id,
+					{}
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('You can only move objects from your own collections');
+		});
+
+		it('should not move object if requester does not own "to" collection', async () => {
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce(
+				mockCollectionObjectsResponse.items[0]
+			);
+			mockCollectionsService.removeObjectFromCollection.mockResolvedValueOnce(1);
+			mockCollectionsService.findCollectionById
+				.mockResolvedValueOnce(mockCollectionsResponse.items[0])
+				.mockResolvedValue({
+					...mockCollectionsResponse.items[0],
+					userProfileId: 'not-the-owner-id',
+				});
+			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+
+			let error;
+			try {
+				await collectionsController.moveObjectToAnotherCollection(
+					mockCollectionsResponse.items[0].id,
+					'8s4jm2514q',
+					mockCollectionsResponse.items[1].id,
+					{}
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('You can only move objects to your own collections');
 		});
 	});
 });
