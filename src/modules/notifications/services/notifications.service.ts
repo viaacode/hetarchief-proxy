@@ -12,6 +12,7 @@ import {
 import {
 	FIND_NOTIFICATIONS_BY_USER,
 	INSERT_NOTIFICATION,
+	UPDATE_ALL_NOTIFICATION_FOR_USER,
 	UPDATE_NOTIFICATION,
 } from './queries.gql';
 
@@ -43,14 +44,15 @@ export class NotificationsService {
 			updatedAt: get(gqlNotification, 'updated_at'),
 			type: get(gqlNotification, 'type'),
 			showAt: get(gqlNotification, 'show_at'),
+			readingRoomId: get(gqlNotification, 'visit.cp_space_id'),
 		};
 	}
 
 	public async findNotificationsByUser(
 		userProfileId: string,
 		moreRecentThan: string,
-		page = 1,
-		size = 20
+		page,
+		size
 	): Promise<IPagination<Notification>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const notificationsResponse = await this.dataService.execute(FIND_NOTIFICATIONS_BY_USER, {
@@ -112,7 +114,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const updatedNotification = response.data.update_app_notification.returning?.[0];
+		const updatedNotification = response.data.update_app_notification.returning[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
@@ -121,5 +123,20 @@ export class NotificationsService {
 		this.logger.debug(`Notification ${updatedNotification.id} updated`);
 
 		return this.adaptNotification(updatedNotification);
+	}
+
+	public async updateAll(
+		userProfileId: string,
+		notification: Partial<GqlCreateOrUpdateNotification>
+	): Promise<number> {
+		const response = await this.dataService.execute(UPDATE_ALL_NOTIFICATION_FOR_USER, {
+			userProfileId,
+			notification,
+		});
+
+		const affectedRows = response.data.update_app_notification.affectedRows;
+		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
+
+		return affectedRows;
 	}
 }
