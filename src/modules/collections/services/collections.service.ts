@@ -198,10 +198,15 @@ export class CollectionsService {
 		return this.adaptCollectionObjectLink(createdObject);
 	}
 
-	async removeObjectFromCollection(collectionId: string, objectId: string) {
+	async removeObjectFromCollection(
+		collectionId: string,
+		objectId: string,
+		userProfileId: string
+	) {
 		const response = await this.dataService.execute(REMOVE_OBJECT_FROM_COLLECTION, {
 			collectionId,
 			objectId,
+			userProfileId,
 		});
 		this.logger.debug(`Collection object ${objectId} deleted`);
 

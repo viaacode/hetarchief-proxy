@@ -138,7 +138,8 @@ export class CollectionsController {
 		}
 		const affectedRows = await this.collectionsService.removeObjectFromCollection(
 			collectionId,
-			objectId
+			objectId,
+			user.id
 		);
 		if (affectedRows > 0) {
 			return { status: 'object has been deleted' };
