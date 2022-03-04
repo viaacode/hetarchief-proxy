@@ -170,5 +170,11 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query.bool.must.length).toBe(1);
 			expect(esQuery.query.bool.must[0].match.schema_name).toEqual('test');
 		});
+
+		it('should handle multiple values for a property', () => {
+			const esQuery = QueryBuilder.build({ filters: { keyword: ['key1', 'key2'] } });
+			expect(esQuery.query.bool.filter.length).toBe(2);
+			expect(esQuery.query.bool.filter[0].term.schema_keywords).toEqual('key1');
+		});
 	});
 });

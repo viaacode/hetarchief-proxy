@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
@@ -9,6 +10,7 @@ import {
 	IsString,
 	ValidateNested,
 } from 'class-validator';
+import { isArray } from 'lodash';
 
 import { MediaFormat } from '../types';
 
@@ -165,23 +167,29 @@ export class SearchFilters {
 	@ApiPropertyOptional({
 		type: String,
 		description:
-			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+			'Filter the results on the genre of the media item - TODO currently this requires an exact match',
 		required: false,
 	})
 	// TODO update filter for genre? -- currently requires an exact match and input should be lowercased
 	genre?: string;
 
-	@IsString()
+	@IsArray()
 	@IsOptional()
-	@Transform((genre) => genre.value.toLowerCase())
+	@Transform((keyword) => {
+		if (!isArray(keyword.value)) {
+			throw new InternalServerErrorException('Keywords should be an array');
+		}
+		return keyword.value.map((kw) => kw.trim().toLowerCase());
+	})
 	@ApiPropertyOptional({
 		type: String,
 		description:
-			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+			'Filter the results on the keywords of the media item - TODO currently this requires an exact match',
 		required: false,
+		example: ['belgium'],
 	})
-	// TODO update filter for keyword: multiple keywords? -- case sensitive but works only if lowercased
-	keyword?: string;
+	// TODO case sensitive, works only if lowercased
+	keyword?: Array<string>;
 
 	@Type(() => AdvancedQuery)
 	@IsOptional()

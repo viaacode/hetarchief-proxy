@@ -12,7 +12,6 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
-	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 } from './consts';
 import searchQueryTemplate from './templates/search-query.json';
@@ -171,6 +170,10 @@ export class QueryBuilder {
 			if (value instanceof AdvancedQuery) {
 				const advancedFilter = this.generateAdvancedFilter(elasticKey, readableKey, value);
 				this.applyAdvancedFilter(filterObject, advancedFilter);
+			} else if (_.isArray(value)) {
+				value.forEach((option) => {
+					filterArray.push(this.generateAndFilter(elasticKey, readableKey, option));
+				});
 			} else {
 				filterArray.push(this.generateAndFilter(elasticKey, readableKey, value));
 			}
