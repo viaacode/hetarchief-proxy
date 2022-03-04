@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
 import { VisitsService } from '../services/visits.service';
-import { VisitStatus } from '../types';
+import { Visit, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
@@ -11,14 +11,15 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 
-const mockVisit1 = {
+const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
-	status: 'APPROVED',
+	status: VisitStatus.APPROVED,
 	startAt: '2022-03-03T16:00:00',
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
@@ -26,15 +27,22 @@ const mockVisit1 = {
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	note: {
+		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
+		note: 'test note',
+		createdAt: '2022-01-24T17:21:58.937169+00:00',
+		updatedAt: '2022-01-24T17:21:58.937169+00:00',
+		authorName: 'Test Testers',
+	},
 };
 
-const mockVisit2 = {
+const mockVisit2: Visit = {
 	id: '40f3f893-ba4f-4bc8-a871-0d492172134d',
 	spaceId: '24ddc913-3e03-42ea-9bd1-ba486401bc30',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 2',
-	status: 'PENDING',
+	status: VisitStatus.PENDING,
 	startAt: '2022-03-03T16:00:00',
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
@@ -94,6 +102,9 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
 	create: jest.fn(),
 	createForMultipleRecipients: jest.fn(),
+	onCreateVisit: jest.fn(),
+	onApproveVisitRequest: jest.fn(),
+	onDenyVisitRequest: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -127,6 +138,12 @@ describe('VisitsController', () => {
 		visitsController = module.get<VisitsController>(VisitsController);
 	});
 
+	afterEach(() => {
+		mockNotificationsService.onCreateVisit.mockClear();
+		mockNotificationsService.onApproveVisitRequest.mockClear();
+		mockNotificationsService.onDenyVisitRequest.mockClear();
+	});
+
 	it('should be defined', () => {
 		expect(visitsController).toBeDefined();
 	});
@@ -141,15 +158,15 @@ describe('VisitsController', () => {
 
 	describe('getVisitById', () => {
 		it('should return a visit by id', async () => {
-			mockVisitsService.findById.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.getVisitById('1');
-			expect(visit).toEqual(mockVisitsResponse.items[0]);
+			expect(visit).toEqual(mockVisit1);
 		});
 	});
 
 	describe('createVisit', () => {
 		it('should create a new visit', async () => {
-			mockVisitsService.create.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			mockVisitsService.create.mockResolvedValueOnce(mockVisit1);
 			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
 			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
 			const sessionHelperSpy = jest
@@ -165,9 +182,44 @@ describe('VisitsController', () => {
 				{}
 			);
 
-			expect(visit).toEqual(mockVisitsResponse.items[0]);
+			expect(visit).toEqual(mockVisit1);
 			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(1);
-			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(1);
+			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
+			sessionHelperSpy.mockRestore();
+			mockSpacesService.getMaintainerProfileIds.mockClear();
+		});
+
+		it('should throw an error if you try to create a new visit without accepting tos', async () => {
+			mockVisitsService.create.mockResolvedValueOnce({
+				mockVisit1,
+			});
+			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
+			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
+			let error: any;
+			try {
+				await visitsController.createVisit(
+					{
+						spaceId: 'space-1',
+						timeframe: 'asap',
+						acceptedTos: false,
+					},
+					{}
+				);
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response.message).toEqual(
+				i18n.t(
+					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
+				)
+			);
+			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(0);
+			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
 			sessionHelperSpy.mockRestore();
 			mockSpacesService.getMaintainerProfileIds.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
@@ -176,7 +228,7 @@ describe('VisitsController', () => {
 
 	describe('update', () => {
 		it('should update a visit', async () => {
-			mockVisitsService.update.mockResolvedValueOnce(mockVisitsResponse.items[0]);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
@@ -192,7 +244,7 @@ describe('VisitsController', () => {
 				{}
 			);
 
-			expect(visit).toEqual(mockVisitsResponse.items[0]);
+			expect(visit).toEqual(mockVisit1);
 			sessionHelperSpy.mockRestore();
 			mockNotificationsService.create.mockClear();
 		});
@@ -212,9 +264,9 @@ describe('VisitsController', () => {
 				{}
 			);
 			expect(visit).toEqual(mockVisit1);
-			expect(mockNotificationsService.create).toHaveBeenCalledTimes(1);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(1);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
 			sessionHelperSpy.mockRestore();
-			mockNotificationsService.create.mockClear();
 		});
 
 		it('should update a visit status: denied', async () => {
@@ -232,9 +284,9 @@ describe('VisitsController', () => {
 				{}
 			);
 			expect(visit).toEqual(mockVisit1);
-			expect(mockNotificationsService.create).toHaveBeenCalledTimes(1);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
-			mockNotificationsService.create.mockClear();
 		});
 
 		it('should update a visit status: cancelled', async () => {
@@ -253,9 +305,9 @@ describe('VisitsController', () => {
 			);
 
 			expect(visit).toEqual(mockVisit1);
-			expect(mockNotificationsService.create).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
 			sessionHelperSpy.mockRestore();
-			mockNotificationsService.create.mockClear();
 		});
 	});
 });

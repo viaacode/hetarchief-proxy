@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { format } from 'date-fns';
 import { get } from 'lodash';
 
 import {
@@ -7,6 +8,8 @@ import {
 	GqlCreateOrUpdateNotification,
 	GqlNotification,
 	Notification,
+	NotificationStatus,
+	NotificationType,
 } from '../types';
 
 import {
@@ -16,7 +19,11 @@ import {
 } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
+import { Space } from '~modules/spaces/types';
+import { User } from '~modules/users/types';
+import { Visit } from '~modules/visits/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import i18n from '~shared/i18n';
 
 @Injectable()
 export class NotificationsService {
@@ -49,8 +56,8 @@ export class NotificationsService {
 	public async findNotificationsByUser(
 		userProfileId: string,
 		moreRecentThan: string,
-		page = 1,
-		size = 20
+		page,
+		size
 	): Promise<IPagination<Notification>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const notificationsResponse = await this.dataService.execute(FIND_NOTIFICATIONS_BY_USER, {
@@ -112,7 +119,7 @@ export class NotificationsService {
 			notification,
 		});
 
-		const updatedNotification = response.data.update_app_notification.returning?.[0];
+		const updatedNotification = response.data.update_app_notification.returning[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
@@ -121,5 +128,68 @@ export class NotificationsService {
 		this.logger.debug(`Notification ${updatedNotification.id} updated`);
 
 		return this.adaptNotification(updatedNotification);
+	}
+
+	public async onCreateVisit(
+		visit: Visit,
+		recipientIds: string[],
+		user: User
+	): Promise<Notification[]> {
+		return await this.createForMultipleRecipients(
+			{
+				title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
+				description: i18n.t('{{name}} wil je leeszaal bezoeken', {
+					name: user.firstName + ' ' + user.lastName,
+				}),
+				visit_id: visit.id,
+				type: NotificationType.NEW_VISIT_REQUEST,
+				status: NotificationStatus.UNREAD,
+			},
+			recipientIds
+		);
+	}
+
+	public async onApproveVisitRequest(
+		visit: Visit,
+		space: Space,
+		user: User
+	): Promise<Notification> {
+		return await this.create({
+			title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
+				name: space.name,
+			}),
+			description: i18n.t(
+				'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
+				{
+					name: space.name,
+					startDate: format(new Date(visit.startAt), 'dd/MM/yyyy HH:mm'),
+					endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
+				}
+			),
+			visit_id: visit.id,
+			type: NotificationType.VISIT_REQUEST_APPROVED,
+			status: NotificationStatus.UNREAD,
+			recipient: user.id,
+		});
+	}
+
+	public async onDenyVisitRequest(
+		visit: Visit,
+		space: Space,
+		user: User,
+		reason?: string
+	): Promise<Notification> {
+		return await this.create({
+			title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
+				name: space.name,
+			}),
+			description: i18n.t('Reden: {{reason}}', {
+				reason: reason || i18n.t('Er werd geen reden opgegeven'),
+			}),
+			visit_id: visit.id,
+			type: NotificationType.VISIT_REQUEST_DENIED,
+			status: NotificationStatus.UNREAD,
+			recipient: user.id,
+		});
 	}
 }
