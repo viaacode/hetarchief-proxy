@@ -37,6 +37,7 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 			intellectual_entity {
 				schema_name
 				schema_creator
+				schema_description
 				dcterms_available
 				schema_thumbnail_url
 				dcterms_format
@@ -116,6 +117,7 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 					dcterms_format
 					dcterms_available
 					schema_creator
+					schema_description
 					schema_name
 					schema_maintainer_id
 					schema_number_of_pages
