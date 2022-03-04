@@ -25,13 +25,6 @@ export class CreateVisitDto {
 	})
 	spaceId: string;
 
-	@IsUUID()
-	@ApiProperty({
-		type: string,
-		description: 'The uuid of the user making the request',
-	})
-	userProfileId: string;
-
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -48,12 +41,12 @@ export class CreateVisitDto {
 	})
 	reason?: string;
 
-	@IsString()
+	@IsBoolean()
 	@ApiProperty({
-		type: String,
-		description: 'When the user accepted the Terms of Service',
+		type: Boolean,
+		description: 'If the user accepted the Terms of Service for this reading room',
 	})
-	acceptedTosAt: string;
+	acceptedTos: boolean;
 }
 
 export class UpdateVisitStatusDto {
@@ -73,6 +66,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addDays(new Date(), 2).toISOString(),
 	})
 	startAt?: string;
 
@@ -81,6 +75,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
 	})
 	endAt?: string;
 
@@ -88,17 +83,10 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: "Remarks from the content partner approving the user's visit",
+		description: "An optional note from the content partner about the user's visit",
+		example: 'A visit is limited to max. 2h',
 	})
-	remark?: string;
-
-	@IsString()
-	@IsOptional()
-	@ApiProperty({
-		type: string,
-		description: "Reason of denial from the content partner denying the user's visit",
-	})
-	denial?: string;
+	note?: string;
 }
 
 export class VisitsQueryDto {

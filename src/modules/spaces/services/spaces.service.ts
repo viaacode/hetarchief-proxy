@@ -5,7 +5,7 @@ import { get, isEmpty, set } from 'lodash';
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { Space } from '../types';
 
-import { FIND_SPACE_BY_ID, FIND_SPACES } from './queries.gql';
+import { FIND_SPACE_BY_ID, FIND_SPACES, GET_SPACE_MAINTAINER_PROFILE_IDS } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -92,5 +92,14 @@ export class SpacesService {
 			throw new NotFoundException();
 		}
 		return this.adapt(spaceResponse.data.cp_space[0]);
+	}
+
+	public async getMaintainerProfileIds(spaceId: string): Promise<string[]> {
+		const profiles = await this.dataService.execute(GET_SPACE_MAINTAINER_PROFILE_IDS, {
+			spaceId,
+		});
+		return get(profiles, 'data.cp_maintainer_users_profile', []).map(
+			(item) => item.users_profile_id
+		);
 	}
 }

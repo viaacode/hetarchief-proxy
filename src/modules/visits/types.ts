@@ -14,9 +14,18 @@ export interface Visit {
 	status: VisitStatus;
 	startAt: string;
 	endAt: string;
+	note: Note;
 	createdAt: string;
 	updatedAt: string;
 	visitorName: string;
 	visitorMail: string;
 	visitorId: string;
+}
+
+export interface Note {
+	id: string;
+	authorName?: string;
+	note: string;
+	createdAt: string;
+	updatedAt: string;
 }
