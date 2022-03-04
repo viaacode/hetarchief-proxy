@@ -44,7 +44,7 @@ export class CreateVisitDto {
 	@IsBoolean()
 	@ApiProperty({
 		type: Boolean,
-		description: 'If the user accepted the Terms of Service',
+		description: 'If the user accepted the Terms of Service for this reading room',
 	})
 	acceptedTos: boolean;
 }

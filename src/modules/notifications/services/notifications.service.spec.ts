@@ -7,10 +7,6 @@ import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import { NotificationStatus, NotificationType } from '~modules/notifications/types';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
-};
-
 const mockGqlNotification1 = {
 	description:
 		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
@@ -21,7 +17,7 @@ const mockGqlNotification1 = {
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
-	notification_type: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	show_at: '2022-02-28T17:29:53.478639',
 };
 
@@ -35,13 +31,18 @@ const mockGqlNotification2 = {
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-25T17:21:58.937169+00:00',
 	updated_at: '2022-02-25T17:21:58.937169',
-	notification_type: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	show_at: '2022-02-25T17:29:53.478639',
 };
 
 const mockGqlNotificationsResult = {
 	data: {
 		app_notification: [mockGqlNotification1, mockGqlNotification2],
+		app_notification_aggregate: {
+			aggregate: {
+				count: 2,
+			},
+		},
 	},
 };
 
@@ -50,6 +51,10 @@ const mockUser = {
 	firstName: 'Test',
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
+};
+
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
+	execute: jest.fn(),
 };
 
 describe('NotificationsService', () => {
@@ -79,7 +84,8 @@ describe('NotificationsService', () => {
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlNotification.id);
 			expect(adapted.showAt).toEqual(mockGqlNotification.show_at);
-			expect(adapted.notificationType).toEqual(mockGqlNotification.notification_type);
+			expect(adapted.type).toEqual(mockGqlNotification.type);
+			expect(adapted.visitId).toEqual(mockGqlNotification.visit_id);
 		});
 	});
 
@@ -112,6 +118,26 @@ describe('NotificationsService', () => {
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const response = await notificationsService.create(mockNotification);
 			expect(response.id).toBe(mockGqlNotification1.id);
+		});
+	});
+
+	describe('createForMultipleRecipients', () => {
+		it('can create multiple notifications for multiple recipients', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					insert_app_notification: {
+						returning: [mockGqlNotification1],
+					},
+				},
+			});
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { id, created_at, updated_at, recipient, ...mockNotification } =
+				mockGqlNotification1;
+			const response = await notificationsService.createForMultipleRecipients(
+				mockNotification,
+				[recipient, recipient]
+			);
+			expect(response).toHaveLength(2);
 		});
 	});
 

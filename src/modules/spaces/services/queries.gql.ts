@@ -78,3 +78,11 @@ export const FIND_SPACE_BY_ID = `
 		}
 	}
 `;
+
+export const GET_SPACE_MAINTAINER_PROFILE_IDS = `
+	query getNotificationsForUser($spaceId: uuid) {
+		cp_maintainer_users_profile(where: {maintainer: {space: {id: {_eq: $spaceId}}}}) {
+			users_profile_id
+		}
+	}
+`;

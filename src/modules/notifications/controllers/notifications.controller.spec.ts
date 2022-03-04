@@ -9,7 +9,7 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
-const mockNotification1 = {
+const mockNotification1: Notification = {
 	description:
 		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd',
@@ -18,11 +18,11 @@ const mockNotification1 = {
 	visitId: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	createdAt: '2022-02-28T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:21:58.937169',
-	notificationType: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	showAt: '2022-02-28T17:29:53.478639',
 };
 
-const mockNotification2 = {
+const mockNotification2: Notification = {
 	description:
 		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd',
@@ -31,7 +31,7 @@ const mockNotification2 = {
 	visitId: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-25T17:21:58.937169',
-	notificationType: NotificationType.VISIT_REQUEST_APPROVED,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	showAt: '2022-02-25T17:29:53.478639',
 };
 
