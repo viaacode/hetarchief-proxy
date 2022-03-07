@@ -22,4 +22,5 @@ module.exports = {
 		},
 	},
 	setupFilesAfterEnv: ['../jest.setup.redis-mock.ts'],
+	coveragePathIgnorePatterns: ['node_modules', '.module.ts', '.dto.ts', 'index.ts'],
 };

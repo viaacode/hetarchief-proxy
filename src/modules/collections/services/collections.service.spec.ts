@@ -122,7 +122,7 @@ const mockCollectionObject: IeObject = {
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
-	description: '',
+	description: 'A description for this collection',
 };
 
 const mockUser = {
