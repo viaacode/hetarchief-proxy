@@ -15,6 +15,7 @@ import {
 import {
 	FIND_NOTIFICATIONS_BY_USER,
 	INSERT_NOTIFICATION,
+	UPDATE_ALL_NOTIFICATION_FOR_USER,
 	UPDATE_NOTIFICATION,
 } from './queries.gql';
 
@@ -50,6 +51,7 @@ export class NotificationsService {
 			updatedAt: get(gqlNotification, 'updated_at'),
 			type: get(gqlNotification, 'type'),
 			showAt: get(gqlNotification, 'show_at'),
+			readingRoomId: get(gqlNotification, 'visit.cp_space_id'),
 		};
 	}
 
@@ -128,6 +130,21 @@ export class NotificationsService {
 		this.logger.debug(`Notification ${updatedNotification.id} updated`);
 
 		return this.adaptNotification(updatedNotification);
+	}
+
+	public async updateAll(
+		userProfileId: string,
+		notification: Partial<GqlCreateOrUpdateNotification>
+	): Promise<number> {
+		const response = await this.dataService.execute(UPDATE_ALL_NOTIFICATION_FOR_USER, {
+			userProfileId,
+			notification,
+		});
+
+		const affectedRows = response.data.update_app_notification.affectedRows;
+		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
+
+		return affectedRows;
 	}
 
 	public async onCreateVisit(
