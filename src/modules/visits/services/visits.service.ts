@@ -5,19 +5,18 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { isBefore, parseISO } from 'date-fns';
+import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import {
-	CreateVisitDto,
-	UpdateVisitDto,
-	UpdateVisitStatusDto,
-	VisitsQueryDto,
-} from '../dto/visits.dto';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Note, Visit, VisitStatus } from '../types';
 
 import {
+	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_VISIT_BY_ID,
 	FIND_VISITS,
 	INSERT_NOTE,
@@ -84,6 +83,7 @@ export class VisitsService {
 			).trim(),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 		};
 	}
 
@@ -236,5 +236,32 @@ export class VisitsService {
 		}
 
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{
+				now: new Date().toISOString(),
+				warningDate: addMinutes(new Date(), 15).toISOString(),
+			}
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 }

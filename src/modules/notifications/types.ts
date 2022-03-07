@@ -8,7 +8,9 @@ export enum NotificationType {
 	VISIT_REQUEST_DENIED = 'VISIT_REQUEST_DENIED',
 	NEW_VISIT_REQUEST = 'NEW_VISIT_REQUEST',
 	VISIT_REQUEST_CANCELLED = 'VISIT_REQUEST_CANCELLED',
-	START_ACCESS_PERIOD_READING_ROOM = 'START_ACCESS_PERIOD_READING_ROOM',
+	ACCESS_PERIOD_READING_ROOM_STARTED = 'ACCESS_PERIOD_READING_ROOM_STARTED',
+	ACCESS_PERIOD_READING_ROOM_END_WARNING = 'ACCESS_PERIOD_READING_ROOM_END_WARNING',
+	ACCESS_PERIOD_READING_ROOM_ENDED = 'ACCESS_PERIOD_READING_ROOM_ENDED',
 }
 
 export interface Notification {
@@ -20,7 +22,6 @@ export interface Notification {
 	createdAt: string;
 	updatedAt: string;
 	type: string;
-	showAt: string;
 }
 
 export interface GqlNotification {
@@ -33,7 +34,6 @@ export interface GqlNotification {
 	created_at: string;
 	updated_at: string;
 	type: string;
-	show_at: string;
 }
 
 export interface GqlCreateOrUpdateNotification {
@@ -42,10 +42,9 @@ export interface GqlCreateOrUpdateNotification {
 	status: NotificationStatus;
 	recipient?: string;
 	visit_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at?: string;
+	updated_at?: string;
 	type: string;
-	show_at: string;
 }
 
 export interface GqlCreateNotificationsForReadingRoom {
@@ -53,8 +52,7 @@ export interface GqlCreateNotificationsForReadingRoom {
 	title: string;
 	status: NotificationStatus;
 	visit_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at?: string;
+	updated_at?: string;
 	type: string;
-	show_at: string;
 }

@@ -14,7 +14,7 @@ import {
 
 import {
 	FIND_NOTIFICATIONS_BY_USER,
-	INSERT_NOTIFICATION,
+	INSERT_NOTIFICATIONS,
 	UPDATE_NOTIFICATION,
 } from './queries.gql';
 
@@ -49,7 +49,6 @@ export class NotificationsService {
 			createdAt: get(gqlNotification, 'created_at'),
 			updatedAt: get(gqlNotification, 'updated_at'),
 			type: get(gqlNotification, 'type'),
-			showAt: get(gqlNotification, 'show_at'),
 		};
 	}
 
@@ -78,15 +77,15 @@ export class NotificationsService {
 	}
 
 	public async create(
-		notification: Partial<GqlCreateOrUpdateNotification>
-	): Promise<Notification> {
-		const response = await this.dataService.execute(INSERT_NOTIFICATION, {
-			object: notification,
+		notifications: Partial<GqlCreateOrUpdateNotification>[]
+	): Promise<Notification[]> {
+		const response = await this.dataService.execute(INSERT_NOTIFICATIONS, {
+			objects: notifications,
 		});
-		const createdNotification = response?.data?.insert_app_notification?.returning[0];
-		this.logger.debug(`Notification ${createdNotification?.id} created`);
+		const createdNotifications = response?.data?.insert_app_notification?.returning;
+		this.logger.debug(`${createdNotifications.length} notifications created`);
 
-		return this.adaptNotification(createdNotification);
+		return createdNotifications.map(this.adaptNotification);
 	}
 
 	/**
@@ -98,13 +97,11 @@ export class NotificationsService {
 		notification: Partial<GqlCreateNotificationsForReadingRoom>,
 		recipients: string[]
 	): Promise<Notification[]> {
-		return await Promise.all(
-			recipients.map((recipient) =>
-				this.create({
-					...notification,
-					recipient,
-				})
-			)
+		return this.create(
+			recipients.map((recipient) => ({
+				...notification,
+				recipient,
+			}))
 		);
 	}
 
@@ -154,23 +151,27 @@ export class NotificationsService {
 		space: Space,
 		user: User
 	): Promise<Notification> {
-		return await this.create({
-			title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
-				name: space.name,
-			}),
-			description: i18n.t(
-				'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
+		return (
+			await this.create([
 				{
-					name: space.name,
-					startDate: format(new Date(visit.startAt), 'dd/MM/yyyy HH:mm'),
-					endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
-				}
-			),
-			visit_id: visit.id,
-			type: NotificationType.VISIT_REQUEST_APPROVED,
-			status: NotificationStatus.UNREAD,
-			recipient: user.id,
-		});
+					title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
+						name: space.name,
+					}),
+					description: i18n.t(
+						'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
+						{
+							name: space.name,
+							startDate: format(new Date(visit.startAt), 'dd/MM/yyyy HH:mm'),
+							endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
+						}
+					),
+					visit_id: visit.id,
+					type: NotificationType.VISIT_REQUEST_APPROVED,
+					status: NotificationStatus.UNREAD,
+					recipient: user.id,
+				},
+			])
+		)[0];
 	}
 
 	public async onDenyVisitRequest(
@@ -179,17 +180,21 @@ export class NotificationsService {
 		user: User,
 		reason?: string
 	): Promise<Notification> {
-		return await this.create({
-			title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
-				name: space.name,
-			}),
-			description: i18n.t('Reden: {{reason}}', {
-				reason: reason || i18n.t('Er werd geen reden opgegeven'),
-			}),
-			visit_id: visit.id,
-			type: NotificationType.VISIT_REQUEST_DENIED,
-			status: NotificationStatus.UNREAD,
-			recipient: user.id,
-		});
+		return (
+			await this.create([
+				{
+					title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
+						name: space.name,
+					}),
+					description: i18n.t('Reden: {{reason}}', {
+						reason: reason || i18n.t('Er werd geen reden opgegeven'),
+					}),
+					visit_id: visit.id,
+					type: NotificationType.VISIT_REQUEST_DENIED,
+					status: NotificationStatus.UNREAD,
+					recipient: user.id,
+				},
+			])
+		)[0];
 	}
 }

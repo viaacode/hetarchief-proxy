@@ -8,6 +8,7 @@ export enum VisitStatus {
 export interface Visit {
 	id: string;
 	spaceId: string;
+	spaceName?: string;
 	userProfileId: string;
 	timeframe: string;
 	reason: string;

@@ -1,5 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
+import i18n from 'i18next';
 
 import { NotificationsService } from '../services/notifications.service';
 
@@ -7,6 +9,8 @@ import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
 import { User } from '~modules/users/types';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import { Visit, VisitStatus } from '~modules/visits/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockNotification1: Notification = {
@@ -19,7 +23,6 @@ const mockNotification1: Notification = {
 	createdAt: '2022-02-28T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-28T17:29:53.478639',
 };
 
 const mockNotification2: Notification = {
@@ -32,7 +35,6 @@ const mockNotification2: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-25T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-25T17:29:53.478639',
 };
 
 const mockNotificationsResponse: IPagination<Notification> = {
@@ -41,6 +43,29 @@ const mockNotificationsResponse: IPagination<Notification> = {
 	pages: 1,
 	page: 1,
 	size: 20,
+};
+
+const mockVisit: Visit = {
+	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
+	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
+	reason: 'Ik wil graag deze zaal bezoeken 7',
+	status: VisitStatus.APPROVED,
+	startAt: '2022-03-03T16:00:00',
+	endAt: '2022-03-03T17:00:00',
+	createdAt: '2022-02-11T15:28:40.676',
+	updatedAt: '2022-02-11T15:28:40.676',
+	visitorName: 'Marie Odhiambo',
+	visitorMail: 'marie.odhiambo@example.com',
+	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	note: {
+		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
+		note: 'test note',
+		createdAt: '2022-01-24T17:21:58.937169+00:00',
+		updatedAt: '2022-01-24T17:21:58.937169+00:00',
+		authorName: 'Test Testers',
+	},
 };
 
 const mockUser: User = {
@@ -57,6 +82,23 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	update: jest.fn(),
 };
 
+const mockApiKey = 'MySecretApiKey';
+
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: string): string | boolean => {
+		if (key === 'apiKey') {
+			return mockApiKey;
+		}
+		return key;
+	}),
+};
+
+const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
+	getApprovedAndStartedVisitsWithoutNotification: jest.fn(),
+	getApprovedAndAlmostEndedVisitsWithoutNotification: jest.fn(),
+	getApprovedAndEndedVisitsWithoutNotification: jest.fn(),
+};
+
 describe('NotificationsController', () => {
 	let notificationsController: NotificationsController;
 	let sessionHelperSpy: jest.SpyInstance;
@@ -70,6 +112,14 @@ describe('NotificationsController', () => {
 					provide: NotificationsService,
 					useValue: mockNotificationsService,
 				},
+				{
+					provide: VisitsService,
+					useValue: mockVisitsService,
+				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		}).compile();
 
@@ -80,7 +130,7 @@ describe('NotificationsController', () => {
 			.mockReturnValue(mockUser);
 	});
 
-	afterEach(async () => {
+	afterAll(async () => {
 		sessionHelperSpy.mockRestore();
 	});
 
@@ -93,10 +143,12 @@ describe('NotificationsController', () => {
 			mockNotificationsService.findNotificationsByUser.mockResolvedValueOnce(
 				mockNotificationsResponse
 			);
+
 			const notifications = await notificationsController.getNotifications(
 				{ page: 1, size: 20 },
 				{}
 			);
+
 			expect(notifications.items.length).toEqual(2);
 		});
 	});
@@ -107,9 +159,72 @@ describe('NotificationsController', () => {
 				...mockNotification1,
 				status: NotificationStatus.READ,
 			});
+
 			const notification = await notificationsController.markAsRead(mockNotification1.id, {});
+
 			expect(notification.id).toEqual(mockNotification1.id);
 			expect(notification.status).toEqual(NotificationStatus.READ);
+		});
+	});
+
+	describe('checkNewNotifications', () => {
+		it('should create notifications for all visits access period events', async () => {
+			mockNotificationsService.update.mockResolvedValueOnce({
+				...mockNotification1,
+				status: NotificationStatus.READ,
+			});
+			mockVisitsService.getApprovedAndStartedVisitsWithoutNotification.mockResolvedValueOnce([
+				mockVisit,
+				mockVisit,
+			]);
+			mockVisitsService.getApprovedAndAlmostEndedVisitsWithoutNotification.mockResolvedValueOnce(
+				[mockVisit]
+			);
+			mockVisitsService.getApprovedAndEndedVisitsWithoutNotification.mockResolvedValueOnce([
+				mockVisit,
+				mockVisit,
+				mockVisit,
+			]);
+			mockNotificationsService.create
+				.mockResolvedValueOnce([mockVisit, mockVisit])
+				.mockResolvedValueOnce([mockVisit])
+				.mockResolvedValueOnce([mockVisit, mockVisit, mockVisit]);
+
+			const response = await notificationsController.checkNewNotifications(mockApiKey);
+
+			expect(response.status).toEqual(i18n.t('Notificaties verzonden'));
+			expect(response.notifications).toEqual({
+				ACCESS_PERIOD_READING_ROOM_STARTED: 2,
+				ACCESS_PERIOD_READING_ROOM_END_WARNING: 1,
+				ACCESS_PERIOD_READING_ROOM_ENDED: 3,
+			});
+			expect(response.total).toEqual(2 + 1 + 3);
+		});
+
+		it('should not create any notifications if all visits already have one', async () => {
+			mockNotificationsService.update.mockResolvedValueOnce({
+				...mockNotification1,
+				status: NotificationStatus.READ,
+			});
+			mockVisitsService.getApprovedAndStartedVisitsWithoutNotification.mockResolvedValueOnce(
+				[]
+			);
+			mockVisitsService.getApprovedAndAlmostEndedVisitsWithoutNotification.mockResolvedValueOnce(
+				[]
+			);
+			mockVisitsService.getApprovedAndEndedVisitsWithoutNotification.mockResolvedValueOnce(
+				[]
+			);
+			mockNotificationsService.create
+				.mockResolvedValueOnce([])
+				.mockResolvedValueOnce([])
+				.mockResolvedValueOnce([]);
+
+			const response = await notificationsController.checkNewNotifications(mockApiKey);
+
+			expect(response.status).toEqual(i18n.t('No notifications had to be sent'));
+			expect(response.notifications).toBeUndefined();
+			expect(response.total).toEqual(0);
 		});
 	});
 });

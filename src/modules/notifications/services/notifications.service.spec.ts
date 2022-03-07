@@ -9,7 +9,6 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
-import i18n from '~shared/i18n';
 
 const mockGqlNotification1 = {
 	description:
@@ -22,7 +21,6 @@ const mockGqlNotification1 = {
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	show_at: '2022-02-28T17:29:53.478639',
 };
 
 const mockGqlNotification2 = {
@@ -36,7 +34,6 @@ const mockGqlNotification2 = {
 	created_at: '2022-02-25T17:21:58.937169+00:00',
 	updated_at: '2022-02-25T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	show_at: '2022-02-25T17:29:53.478639',
 };
 
 const mockGqlNotificationsResult = {
@@ -60,7 +57,6 @@ const mockNotification: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:54:59.894586',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-25T17:21:58.937169',
 };
 
 const mockUser: User = {
@@ -148,13 +144,16 @@ describe('NotificationsService', () => {
 	});
 
 	describe('adapt', () => {
-		it('can adapt a graphql notification response to our notification interface', () => {
+		it('should adapt a graphql notification response to our notification interface', () => {
 			const adapted = notificationsService.adaptNotification(mockGqlNotification);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlNotification.id);
-			expect(adapted.showAt).toEqual(mockGqlNotification.show_at);
 			expect(adapted.type).toEqual(mockGqlNotification.type);
 			expect(adapted.visitId).toEqual(mockGqlNotification.visit_id);
+		});
+		it('should return undefined in the gql notification is undefined', () => {
+			const adapted = notificationsService.adaptNotification(undefined);
+			expect(adapted).toBeUndefined();
 		});
 	});
 
@@ -185,28 +184,26 @@ describe('NotificationsService', () => {
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
-			const response = await notificationsService.create(mockNotification);
-			expect(response.id).toBe(mockGqlNotification1.id);
+			const response = await notificationsService.create([mockNotification]);
+			expect(response[0].id).toBe(mockGqlNotification1.id);
 		});
 	});
 
 	describe('createForMultipleRecipients', () => {
 		it('can create multiple notifications for multiple recipients', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					insert_app_notification: {
-						returning: [mockGqlNotification1],
-					},
-				},
-			});
+			const createNotificationsSpy = jest
+				.spyOn(notificationsService, 'create')
+				.mockResolvedValueOnce([mockNotification, mockNotification]);
+
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, recipient, ...mockNotification } =
+			const { id, created_at, updated_at, recipient, ...createNotification } =
 				mockGqlNotification1;
 			const response = await notificationsService.createForMultipleRecipients(
-				mockNotification,
+				createNotification,
 				[recipient, recipient]
 			);
 			expect(response).toHaveLength(2);
+			createNotificationsSpy.mockRestore();
 		});
 	});
 
@@ -232,7 +229,7 @@ describe('NotificationsService', () => {
 		it('should send a notification about a visit request approval', async () => {
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
-				.mockResolvedValueOnce(mockNotification);
+				.mockResolvedValueOnce([mockNotification]);
 
 			const response = await notificationsService.onApproveVisitRequest(
 				mockVisit,
@@ -249,7 +246,7 @@ describe('NotificationsService', () => {
 		it('should send a notification about a visit request denial', async () => {
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
-				.mockResolvedValueOnce(mockNotification);
+				.mockResolvedValueOnce([mockNotification]);
 
 			const response = await notificationsService.onDenyVisitRequest(
 				mockVisit,
