@@ -1,6 +1,6 @@
 export const FIND_NOTIFICATIONS_BY_USER = `
 	query getNotificationsForUser($userProfileId: uuid, $moreRecentThan: timestamp, $offset: Int, $limit: Int) {
-		app_notification(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}, order_by: {created_at: desc, status: asc}, limit: $limit, offset: $offset) {
+		app_notification(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}, order_by: {created_at: desc, status: asc, title: asc}, limit: $limit, offset: $offset) {
 			id
 			description
 			title
@@ -10,6 +10,9 @@ export const FIND_NOTIFICATIONS_BY_USER = `
 			visit_id
 			created_at
 			updated_at
+			visit {
+				cp_space_id
+			}
 		}
 		app_notification_aggregate(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}) {
 			aggregate {
@@ -32,6 +35,9 @@ export const INSERT_NOTIFICATIONS = `
 				visit_id
 				created_at
 				updated_at
+				visit {
+					cp_space_id
+				}
 			}
 		}
 	}
@@ -50,7 +56,18 @@ export const UPDATE_NOTIFICATION = `
 				visit_id
 				created_at
 				updated_at
+				visit {
+					cp_space_id
+				}
 			}
+		}
+	}
+`;
+
+export const UPDATE_ALL_NOTIFICATION_FOR_USER = `
+	mutation updateNotification($userProfileId: uuid, $notification: app_notification_set_input) {
+		update_app_notification(where: {recipient: {_eq: $userProfileId}}, _set: $notification) {
+			affected_rows
 		}
 	}
 `;

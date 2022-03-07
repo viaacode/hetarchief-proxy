@@ -56,7 +56,7 @@ export class NotificationsController {
 		return notifications;
 	}
 
-	@Patch(':notificationId')
+	@Patch(':notificationId/mark-as-read')
 	public async markAsRead(
 		@Param('notificationId') notificationId: string,
 		@Session() session: Record<string, any>
@@ -67,6 +67,17 @@ export class NotificationsController {
 			{ status: NotificationStatus.READ }
 		);
 		return notification;
+	}
+
+	@Patch('mark-as-read')
+	public async markAllAsRead(
+		@Session() session: Record<string, any>
+	): Promise<{ status: string; total: number }> {
+		const amountUpdated = await this.notificationsService.updateAll(
+			SessionHelper.getArchiefUserInfo(session).id,
+			{ status: NotificationStatus.READ }
+		);
+		return { status: `updated ${amountUpdated} notifications`, total: amountUpdated };
 	}
 
 	@UseGuards(ApiKeyGuard)

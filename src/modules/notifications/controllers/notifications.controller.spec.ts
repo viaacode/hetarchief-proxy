@@ -23,6 +23,7 @@ const mockNotification1: Notification = {
 	createdAt: '2022-02-28T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
+	readingRoomId: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 };
 
 const mockNotification2: Notification = {
@@ -35,6 +36,7 @@ const mockNotification2: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-25T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
+	readingRoomId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 };
 
 const mockNotificationsResponse: IPagination<Notification> = {
@@ -80,6 +82,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	findNotificationsByUser: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
+	updateAll: jest.fn(),
 };
 
 const mockApiKey = 'MySecretApiKey';
@@ -164,6 +167,14 @@ describe('NotificationsController', () => {
 
 			expect(notification.id).toEqual(mockNotification1.id);
 			expect(notification.status).toEqual(NotificationStatus.READ);
+		});
+	});
+
+	describe('markAllAsRead', () => {
+		it('should mark all notification of a specific user as read', async () => {
+			mockNotificationsService.updateAll.mockResolvedValueOnce(5);
+			const response = await notificationsController.markAllAsRead({});
+			expect(response).toEqual({ status: `updated 5 notifications`, total: 5 });
 		});
 	});
 

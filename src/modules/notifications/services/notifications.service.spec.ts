@@ -297,4 +297,23 @@ describe('NotificationsService', () => {
 			});
 		});
 	});
+
+	describe('updateAll', () => {
+		it('can update all notifications of a specific user', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_app_notification: {
+						affectedRows: 5,
+					},
+				},
+			});
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
+			const affectedRows = await notificationsService.updateAll(
+				mockUser.id,
+				mockNotification
+			);
+			expect(affectedRows).toBe(5);
+		});
+	});
 });
