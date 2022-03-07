@@ -50,7 +50,6 @@ export class NotificationsService {
 			createdAt: get(gqlNotification, 'created_at'),
 			updatedAt: get(gqlNotification, 'updated_at'),
 			type: get(gqlNotification, 'type'),
-			showAt: get(gqlNotification, 'show_at'),
 			readingRoomId: get(gqlNotification, 'visit.cp_space_id'),
 		};
 	}

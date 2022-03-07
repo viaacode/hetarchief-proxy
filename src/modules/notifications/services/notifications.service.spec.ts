@@ -9,7 +9,6 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
-import i18n from '~shared/i18n';
 
 const mockGqlNotification1 = {
 	description:
@@ -60,7 +59,7 @@ const mockNotification: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:54:59.894586',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-25T17:21:58.937169',
+	readingRoomId: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 };
 
 const mockUser: User = {
@@ -152,7 +151,6 @@ describe('NotificationsService', () => {
 			const adapted = notificationsService.adaptNotification(mockGqlNotification);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlNotification.id);
-			expect(adapted.showAt).toEqual(mockGqlNotification.show_at);
 			expect(adapted.type).toEqual(mockGqlNotification.type);
 			expect(adapted.visitId).toEqual(mockGqlNotification.visit_id);
 		});
