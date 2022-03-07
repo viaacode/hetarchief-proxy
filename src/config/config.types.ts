@@ -26,6 +26,11 @@ export interface Configuration {
 	ticketServicePassphrase: string;
 	ticketServiceMaxAge: number;
 	mediaServiceUrl: string;
+	enableSendEmail: boolean;
+	campaignMonitorApiEndpoint: string;
+	campaignMonitorApiKey: string;
+	campaignMonitorTemplateVisitApproved: string;
+	campaignMonitorTemplateVisitDenied: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

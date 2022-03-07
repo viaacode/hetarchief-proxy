@@ -147,4 +147,36 @@ export class CollectionsController {
 			return { status: 'no object found with that id in that collection' };
 		}
 	}
+
+	@Put(':oldCollectionId/objects/:objectId/move')
+	public async moveObjectToAnotherCollection(
+		@Param('oldCollectionId') oldCollectionId: string,
+		@Param('objectId') objectId: string,
+		@Query('newCollectionId') newCollectionId: string,
+		@Session() session: Record<string, any>
+	): Promise<IeObject> {
+		// Check user is owner of both collections
+		const [oldCollection, newCollection] = await Promise.all([
+			this.collectionsService.findCollectionById(oldCollectionId),
+			this.collectionsService.findCollectionById(newCollectionId),
+		]);
+		const user = SessionHelper.getArchiefUserInfo(session);
+		if (oldCollection.userProfileId !== user.id) {
+			throw new UnauthorizedException('You can only move objects from your own collections');
+		}
+		if (newCollection.userProfileId !== user.id) {
+			throw new UnauthorizedException('You can only move objects to your own collections');
+		}
+
+		const collectionObject = await this.collectionsService.addObjectToCollection(
+			newCollectionId,
+			objectId
+		);
+		await this.collectionsService.removeObjectFromCollection(
+			oldCollectionId,
+			objectId,
+			user.id
+		);
+		return collectionObject;
+	}
 }
