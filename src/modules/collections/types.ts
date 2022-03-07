@@ -36,7 +36,7 @@ export interface GqlUpdateCollection {
 
 export interface CollectionObjectLink {
 	created_at: string;
-	intellectual_entity: GqlObject;
+	ie: GqlObject;
 }
 
 export interface GqlObject {
@@ -47,10 +47,13 @@ export interface GqlObject {
 	dcterms_format: string;
 	schema_number_of_pages: any;
 	schema_identifier: string;
-	// TODO add maintainer once ARC-524 has been resolved
-	// schema_maintainer: {
-	// 	label: string;
-	// }[];
+	maintainer: {
+		schema_identifier: string;
+		schema_name: string;
+		space: {
+			id: string;
+		};
+	};
 }
 
 export interface IeObject {
@@ -63,8 +66,7 @@ export interface IeObject {
 	numberOfPages: any;
 	termsAvailable: string;
 	thumbnailUrl: string;
-	// TODO add maintainer once ARC-524 has been resolved
-	// maintainer: {
-	// 	label: string;
-	// }[];
+	maintainerId: string;
+	maintainerName: string;
+	readingRoomId: string;
 }
