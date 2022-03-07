@@ -5,7 +5,7 @@ export interface Configuration {
 	host: string;
 	clientHost: string;
 	port: number;
-	apiKey: string;
+	proxyApiKey: string;
 	graphQlUrl: string;
 	graphQlSecret: string;
 	graphQlEnableWhitelist: boolean;

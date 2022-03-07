@@ -1,13 +1,15 @@
 import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { Configuration } from '~config';
+
 import { API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: ConfigService = {
-	get: jest.fn((key: string): string | boolean => {
-		if (key === 'apiKey') {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'proxyApiKey') {
 			return mockApiKey;
 		}
 		return key;

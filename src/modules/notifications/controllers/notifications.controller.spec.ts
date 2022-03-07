@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
 import i18n from 'i18next';
 
+import { Configuration } from '~config';
+
 import { NotificationsService } from '../services/notifications.service';
 
 import { NotificationsController } from './notifications.controller';
@@ -88,8 +90,8 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: string): string | boolean => {
-		if (key === 'apiKey') {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'proxyApiKey') {
 			return mockApiKey;
 		}
 		return key;

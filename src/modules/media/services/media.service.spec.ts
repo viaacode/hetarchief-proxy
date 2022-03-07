@@ -2,13 +2,15 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 
+import { Configuration } from '~config';
+
 import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: string): string | boolean => {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'elasticSearchUrl') {
 			return 'http://elasticsearch'; // should be a syntactically valid url
 		}

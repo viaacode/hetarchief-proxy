@@ -4,7 +4,7 @@ export const configValidationSchema = Joi.object({
 	NODE_ENV: Joi.string().valid('local', 'test', 'development', 'production').default('local'),
 	HOST: Joi.string(),
 	PORT: Joi.number().default(3000),
-	API_KEY: Joi.string().required(),
+	PROXY_API_KEY: Joi.string().required(),
 	GRAPHQL_URL: Joi.string().required(),
 	GRAPHQL_SECRET: Joi.string().allow(''),
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
