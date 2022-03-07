@@ -20,7 +20,6 @@ export interface Notification {
 	createdAt: string;
 	updatedAt: string;
 	type: NotificationType;
-	showAt: string;
 	readingRoomId: string;
 }
 

@@ -147,16 +147,10 @@ export class VisitsService {
 			}
 		}
 
-		const {
-			data: { update_cp_visit_by_pk: updatedVisit },
-		} = await this.dataService.execute(UPDATE_VISIT, {
+		await this.dataService.execute(UPDATE_VISIT, {
 			id,
 			updateVisit,
 		});
-
-		if (!updatedVisit) {
-			throw new NotFoundException(`Visit with id '${id}' not found`);
-		}
 
 		if (updateVisitDto.note) {
 			await this.insertNote(id, updateVisitDto.note, userProfileId);
