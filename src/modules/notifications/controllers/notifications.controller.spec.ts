@@ -19,7 +19,6 @@ const mockNotification1: Notification = {
 	createdAt: '2022-02-28T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-28T17:29:53.478639',
 	readingRoomId: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 };
 
@@ -33,7 +32,6 @@ const mockNotification2: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-25T17:21:58.937169',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	showAt: '2022-02-25T17:29:53.478639',
 	readingRoomId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 };
 

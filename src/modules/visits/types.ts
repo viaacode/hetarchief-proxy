@@ -14,7 +14,7 @@ export interface Visit {
 	status: VisitStatus;
 	startAt: string;
 	endAt: string;
-	note: Note;
+	note?: Note;
 	createdAt: string;
 	updatedAt: string;
 	visitorName: string;

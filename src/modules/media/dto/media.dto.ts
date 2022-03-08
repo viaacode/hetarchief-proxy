@@ -1,10 +1,93 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsDateString,
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
+import { isArray } from 'lodash';
 
 import { MediaFormat } from '../types';
 
 import { SortDirection } from '~shared/types';
+
+export class RangeQueryDuration {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The minimum duration of the media items',
+		example: '00:15:00',
+	})
+	gte?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The maximum duration of the media items',
+		example: '00:50:00',
+	})
+	lte?: string;
+}
+export class RangeQueryDate {
+	@IsDateString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The minimum date',
+		example: '2020-09-01',
+	})
+	gte?: string;
+
+	@IsDateString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The maximum date',
+		example: '2020-12-31',
+	})
+	lte?: string;
+}
+
+export class AdvancedQuery {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that contain this string',
+	})
+	contains?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that do not contain this string',
+	})
+	containsNot?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that equal this string',
+	})
+	is?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Filter on items that do not equal this string',
+	})
+	isNot?: string;
+}
 
 export class SearchFilters {
 	@IsString()
@@ -27,6 +110,104 @@ export class SearchFilters {
 		enum: MediaFormat,
 	})
 	format?: MediaFormat;
+
+	@Type(() => RangeQueryDuration)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDuration,
+		description: 'Specify upper and/or lower bounds for the duration of the media item',
+		example: {
+			gte: '00:15:00',
+			lte: '00:50:00',
+		},
+	})
+	duration?: RangeQueryDuration;
+
+	@Type(() => RangeQueryDate)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDate,
+		description: 'Specify upper and/or lower bounds for the creation date of the media item',
+		example: {
+			gte: '2020-09-01',
+			lte: '2020-12-31',
+		},
+	})
+	created?: RangeQueryDate;
+
+	@Type(() => RangeQueryDate)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: RangeQueryDate,
+		description: 'Specify upper and/or lower bounds for the publish date of the media item',
+		example: {
+			gte: '2020-09-01',
+			lte: '2020-12-31',
+		},
+	})
+	published?: RangeQueryDate;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the creator of the media item - TODO currently this requires an exact match',
+		required: false,
+	})
+	// TODO update filter for creator? -- currently requires an exact match (incl. case sensitivity)
+	creator?: string;
+
+	@IsArray()
+	@IsOptional()
+	@Transform((genre) => {
+		if (!isArray(genre.value)) {
+			throw new InternalServerErrorException('Genre should be an array');
+		}
+		return genre.value.map((g) => g.trim().toLowerCase());
+	})
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the genre of the media item - TODO currently this requires an exact match',
+		required: false,
+		example: ['magazine'],
+	})
+	// TODO update filter for genre? -- currently requires an exact match and input should be lowercased
+	genre?: Array<string>;
+
+	@IsArray()
+	@IsOptional()
+	@Transform((keyword) => {
+		if (!isArray(keyword.value)) {
+			throw new InternalServerErrorException('Keywords should be an array');
+		}
+		return keyword.value.map((kw) => kw.trim().toLowerCase());
+	})
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'Filter the results on the keywords of the media item - TODO currently this requires an exact match',
+		required: false,
+		example: ['belgium'],
+	})
+	// TODO case sensitive, works only if lowercased
+	keyword?: Array<string>;
+
+	@Type(() => AdvancedQuery)
+	@IsOptional()
+	@ValidateNested()
+	@ApiPropertyOptional({
+		type: AdvancedQuery,
+		description:
+			'An advanced filter on media item name (title). Filter on items contain or equal the given string (or opposite)',
+		required: false,
+		example: { contains: 'tv', containsNot: 'radio' },
+	})
+	name?: AdvancedQuery;
 }
 
 export class MediaQueryDto {

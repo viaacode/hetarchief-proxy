@@ -1,4 +1,4 @@
-import { SearchFilters } from '../dto/media.dto';
+import { AdvancedQuery, SearchFilters } from '../dto/media.dto';
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -12,6 +12,37 @@ export const NUMBER_OF_FILTER_OPTIONS = 40;
 export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string } = {
 	query: 'query',
 	format: 'dcterms_format',
+	duration: 'schema_duration',
+	created: 'schema_date_created',
+	published: 'schema_date_published',
+	creator: 'schema_creator',
+	genre: 'schema_genre',
+	keyword: 'schema_keywords',
+	name: 'schema_name',
+};
+
+export enum QueryType {
+	TERM = 'term',
+	RANGE = 'range',
+	MATCH = 'match',
+}
+
+export const DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType } = {
+	format: QueryType.TERM, // es keyword
+	duration: QueryType.RANGE,
+	created: QueryType.RANGE,
+	published: QueryType.RANGE,
+	creator: QueryType.TERM, // es flattened
+	genre: QueryType.TERM, // TODO es text -> ook match query? error onder filter
+	keyword: QueryType.TERM, // TODO es text -> ook match query? error onder filter
+	name: QueryType.MATCH, // es text
+};
+
+export const OCCURRENCE_TYPE: { [prop in keyof AdvancedQuery]: string } = {
+	contains: 'must',
+	containsNot: 'must_not',
+	is: 'must',
+	isNot: 'must_not',
 };
 
 // By default add the 'format' aggregation
