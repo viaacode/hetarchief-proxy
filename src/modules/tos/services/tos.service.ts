@@ -23,7 +23,7 @@ export class TosService {
 			data: { cms_site_variables_by_pk: cmsSiteVariable },
 		} = await this.dataService.execute(GET_TOS_LAST_UPDATED_AT);
 
-		const gqlTosValue = cmsSiteVariable?.value.updated_at;
+		const gqlTosValue = cmsSiteVariable?.value;
 		if (!gqlTosValue) {
 			throw new NotFoundException('No TOS date was found in the database');
 		}
