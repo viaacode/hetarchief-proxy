@@ -23,6 +23,7 @@ import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
 import { Visit } from '~modules/visits/types';
+import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import i18n from '~shared/i18n';
 
@@ -84,7 +85,7 @@ export class NotificationsService {
 		const response = await this.dataService.execute(INSERT_NOTIFICATIONS, {
 			objects: notifications,
 		});
-		const createdNotifications = response?.data?.insert_app_notification?.returning;
+		const createdNotifications = response.data.insert_app_notification.returning;
 		this.logger.debug(`${createdNotifications.length} notifications created`);
 
 		return createdNotifications.map(this.adaptNotification);
@@ -178,8 +179,8 @@ export class NotificationsService {
 						'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
 						{
 							name: space.name,
-							startDate: format(new Date(visit.startAt), 'dd/MM/yyyy HH:mm'),
-							endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
+							startDate: formatAsBelgianDate(visit.startAt),
+							endDate: formatAsBelgianDate(visit.endAt),
 						}
 					),
 					visit_id: visit.id,

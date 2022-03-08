@@ -1,9 +1,7 @@
 import {
 	Controller,
-	forwardRef,
 	Get,
 	Headers,
-	Inject,
 	Param,
 	Patch,
 	Post,
@@ -11,10 +9,10 @@ import {
 	Session,
 	UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths, format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import i18n from 'i18next';
 
 import {
@@ -31,6 +29,7 @@ import { Visit } from '~modules/visits/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Notifications')
@@ -81,7 +80,7 @@ export class NotificationsController {
 	}
 
 	@UseGuards(ApiKeyGuard)
-	@Post('check-new-notifications')
+	@Post('check-new')
 	public async checkNewNotifications(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers('apiKey') apiKey: string
@@ -132,7 +131,7 @@ export class NotificationsController {
 					name: visit.spaceName,
 				}),
 				description: i18n.t('Je toegang vervalt terug op {{endDate}}', {
-					endDate: format(new Date(visit.endAt), 'dd/MM/yyyy HH:mm'),
+					endDate: formatAsBelgianDate(visit.endAt),
 				}),
 				visit_id: visit.id,
 				type: NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,

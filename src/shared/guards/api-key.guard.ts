@@ -13,7 +13,7 @@ export class ApiKeyGuard implements CanActivate {
 	private readonly apiKey: string;
 
 	constructor(private readonly configService: ConfigService) {
-		this.apiKey = configService.get('apiKey');
+		this.apiKey = configService.get('proxyApiKey');
 	}
 
 	private static getRequest(ctxOrReq: ExecutionContext | Request): Request {
