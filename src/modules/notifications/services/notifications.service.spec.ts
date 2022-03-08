@@ -57,7 +57,7 @@ const mockNotification: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:54:59.894586',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	readingRoomId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	readingRoomId: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 };
 
 const mockUser: User = {

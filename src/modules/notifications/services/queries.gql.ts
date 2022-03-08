@@ -1,5 +1,5 @@
 export const FIND_NOTIFICATIONS_BY_USER = `
-	query getNotificationsForUser($userProfileId: uuid, $moreRecentThan: timestamp, $offset: Int, $limit: Int) {
+	query getNotificationsForUser($userProfileId: uuid, $moreRecentThan: timestamptz, $offset: Int, $limit: Int) {
 		app_notification(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}, order_by: {created_at: desc, status: asc, title: asc}, limit: $limit, offset: $offset) {
 			id
 			description
