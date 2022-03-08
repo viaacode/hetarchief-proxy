@@ -25,6 +25,7 @@ const getDefaultVisitsResponse = () => ({
 const mockVisit: Visit = {
 	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceName: 'VRT',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
