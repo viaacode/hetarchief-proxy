@@ -36,13 +36,14 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
+			VisitStatus.PENDING,
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.CANCELLED_BY_VISITOR]: [],
-		[VisitStatus.APPROVED]: [VisitStatus.DENIED],
-		[VisitStatus.DENIED]: [],
+		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
+		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
 	constructor(private dataService: DataService) {}
@@ -176,8 +177,17 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, userProfileId, spaceId, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			status,
+			userProfileId,
+			spaceId,
+			started,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -206,6 +216,12 @@ export class VisitsService {
 		if (!isEmpty(spaceId)) {
 			where.cp_space_id = {
 				_eq: spaceId,
+			};
+		}
+
+		if (started) {
+			where.start_date = {
+				_lte: new Date().toISOString(),
 			};
 		}
 

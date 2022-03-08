@@ -160,6 +160,19 @@ describe('VisitsService', () => {
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
 		});
+
+		it('can filter on started visits', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				started: true,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
 	});
 
 	describe('findById', () => {

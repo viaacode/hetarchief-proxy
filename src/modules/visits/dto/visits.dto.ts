@@ -117,7 +117,7 @@ export class VisitsQueryDto {
 	})
 	spaceId?: string;
 
-	@ApiProperty({
+	@ApiPropertyOptional({
 		isArray: true,
 		required: false,
 		enum: VisitStatus,
@@ -135,6 +135,16 @@ export class VisitsQueryDto {
 		return params.value;
 	})
 	status?: VisitStatus | VisitStatus[];
+
+	@ApiPropertyOptional({
+		type: Boolean,
+		required: false,
+		description: 'Filters on visits where startAt <= now()',
+	})
+	@IsOptional()
+	@IsBoolean()
+	@Type(() => Boolean)
+	started?: boolean;
 
 	@IsNumber()
 	@Type(() => Number)
