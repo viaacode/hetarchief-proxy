@@ -15,6 +15,15 @@ const graphQlUserResponse = {
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',
 	accepted_tos_at: '2022-02-21T14:00:00',
+	group: {
+		permissions: [
+			{
+				permission: {
+					name: 'CREATE_COLLECTION',
+				},
+			},
+		],
+	},
 };
 
 const archiefUser = {
@@ -23,6 +32,7 @@ const archiefUser = {
 	lastName: 'Testerom',
 	email: 'test@studiohypderdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	permissions: ['CREATE_COLLECTION'],
 };
 
 describe('UsersService', () => {

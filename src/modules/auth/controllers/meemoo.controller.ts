@@ -117,7 +117,7 @@ export class MeemooController {
 					name: i18n.t('modules/collections/controllers___default-collection-name'),
 				});
 			} else {
-				if (!isEqual(omit(archiefUser, ['id']), userDto)) {
+				if (!isEqual(omit(archiefUser, ['id', 'permissions']), userDto)) {
 					// update user
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
