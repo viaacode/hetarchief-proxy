@@ -21,7 +21,9 @@ async function bootstrap() {
 	app.use(helmet());
 
 	/** Validation */
-	app.useGlobalPipes(new ValidationPipe({ transform: true }));
+	app.useGlobalPipes(
+		new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })
+	);
 
 	/** Session middleware */
 	const sessionService = app.get<SessionService>(SessionService);
