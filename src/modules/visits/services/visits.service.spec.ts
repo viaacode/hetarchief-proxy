@@ -5,7 +5,7 @@ import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { VisitStatus } from '~modules/visits/types';
+import { Visit, VisitStatus } from '~modules/visits/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -21,6 +21,22 @@ const getDefaultVisitsResponse = () => ({
 		},
 	},
 });
+
+const mockVisit: Visit = {
+	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
+	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
+	reason: 'Ik wil graag deze zaal bezoeken 7',
+	status: VisitStatus.PENDING,
+	startAt: '2022-03-03T16:00:00',
+	endAt: '2022-03-03T17:00:00',
+	createdAt: '2022-02-11T15:28:40.676',
+	updatedAt: '2022-02-11T15:28:40.676',
+	visitorName: 'Marie Odhiambo',
+	visitorMail: 'marie.odhiambo@example.com',
+	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+};
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
@@ -39,6 +55,10 @@ describe('VisitsService', () => {
 		}).compile();
 
 		visitsService = module.get<VisitsService>(VisitsService);
+	});
+
+	afterEach(() => {
+		mockDataService.execute.mockRestore();
 	});
 
 	it('services should be defined', () => {
@@ -192,27 +212,32 @@ describe('VisitsService', () => {
 
 	describe('update', () => {
 		it('throws an exception if the visit request was not found', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cp_visit: [],
 				},
 			});
+
 			let error;
 			try {
 				await visitsService.update(
 					'1',
 					{
-						status: VisitStatus.PENDING,
+						status: VisitStatus.APPROVED,
 					},
 					mockUserProfileId
 				);
 			} catch (e) {
 				error = e;
 			}
+
 			expect(error.message).toBe(`Visit with id '1' not found`);
+			findVisitSpy.mockRestore();
 		});
 
 		it('can update a visit with startAt, endAt and status', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
@@ -233,6 +258,7 @@ describe('VisitsService', () => {
 				mockUserProfileId
 			);
 			expect(response.id).toBe(cpVisit.id);
+			findVisitSpy.mockRestore();
 		});
 
 		it('can update a visit with a status', async () => {
@@ -276,6 +302,25 @@ describe('VisitsService', () => {
 			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
 		});
 
+		it('throws an error when you update a visit that does not exist', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.PENDING,
+					},
+					mockUserProfileId
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toBe(`Visit with id '1' not found`);
+			findVisitSpy.mockRestore();
+		});
+
 		it('can add a note to a visit', async () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
@@ -294,6 +339,8 @@ describe('VisitsService', () => {
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+
 			const response = await visitsService.update(
 				cpVisit.id,
 				{
@@ -301,7 +348,9 @@ describe('VisitsService', () => {
 				},
 				mockUserProfileId
 			);
+
 			expect(response.id).toBe(cpVisit.id);
+			findVisitSpy.mockRestore();
 		});
 	});
 
