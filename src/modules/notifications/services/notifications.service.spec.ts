@@ -68,6 +68,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
+	permissions: ['CREATE_COLLECTION'],
 };
 
 const mockVisit: Visit = {
