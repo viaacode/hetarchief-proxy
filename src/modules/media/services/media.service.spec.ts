@@ -125,6 +125,28 @@ describe('MediaService', () => {
 			expect(response.keywords.length).toBeGreaterThan(10);
 		});
 
+		it('returns an empty array if no representations were found', async () => {
+			const originalReps = objectIe.data.object_ie[0].premis_is_represented_by;
+			objectIe.data.object_ie[0].premis_is_represented_by = null;
+			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const response = await mediaService.findById(mockObjectId);
+			expect(response.id).toEqual(mockObjectId);
+			expect(response.representations).toEqual([]);
+			//reset
+			objectIe.data.object_ie[0].premis_is_represented_by = originalReps;
+		});
+
+		it('returns an empty array if no files were found', async () => {
+			const originalFiles =
+				objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes;
+			objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
+			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const response = await mediaService.findById(mockObjectId);
+			expect(response.id).toEqual(mockObjectId);
+			expect(response.representations[0].files).toEqual([]);
+			//reset
+			objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes = originalFiles;
+		});
 		it('throws a notfoundexception if the object was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
@@ -148,7 +170,7 @@ describe('MediaService', () => {
 	describe('getPlayableUrl', () => {
 		it('returns a playable url', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
 			});
 			nock('http://ticketservice/')
 				.get('/vrt/item-1')
@@ -160,12 +182,12 @@ describe('MediaService', () => {
 
 		it('uses the fallback referer if none was set', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
 			});
 			nock('http://ticketservice/')
 				.get('/vrt/item-1')
 				.query({
-					app: 'OR-avo2',
+					app: 'OR-*',
 					client: '',
 					referer: 'host',
 					maxage: 'ticketServiceMaxAge',
@@ -179,16 +201,16 @@ describe('MediaService', () => {
 	describe('getEmbedUrl', () => {
 		it('returns the embedUrl for an item', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie_by_pk: { schema_embed_url: '/vrt/item-1' } },
+				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
 			});
 			const url = await mediaService.getEmbedUrl('vrt-id');
-			expect(url).toEqual('/vrt/item-1');
+			expect(url).toEqual('vrt/item-1');
 		});
 
 		it('throws a notfoundexception if the item was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					object_ie_by_pk: null,
+					object_file: [],
 				},
 			});
 			let error;

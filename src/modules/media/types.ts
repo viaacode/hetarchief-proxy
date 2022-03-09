@@ -34,6 +34,49 @@ export interface PlayerTicket {
 	};
 }
 
+/**
+ * premis_is_represented_by {
+      schema_name
+      schema_alternate_name
+      schema_description
+      ie_meemoo_fragment_id
+      dcterms_format
+      schema_transcript
+      schema_date_created
+      id
+      premis_includes {
+        id
+        schema_name
+        schema_alternate_name
+        schema_description
+        representation_id
+        ebucore_media_type
+        ebucore_is_media_fragment_of
+        schema_embed_url
+      }
+ */
+export interface File {
+	id: string;
+	name: string;
+	alternateName: string;
+	description: string;
+	representationId: string;
+	ebucoreMediaType: string;
+	ebucoreIsMediaFragmentOf: string;
+	embedUrl: string;
+}
+export interface Representation {
+	name: string;
+	alternateName: string;
+	description: string;
+	meemooFragmentId: string;
+	dctermsFormat: string;
+	transcript: string;
+	dateCreated: string;
+	id: string;
+	files: File[];
+}
+
 export interface Media {
 	id: string;
 	premisIdentifier: any;
@@ -74,4 +117,5 @@ export interface Media {
 	dateCreated: string;
 	dateCreatedLowerBound: string;
 	ebucoreObjectType: string;
+	representations: Representation[];
 }

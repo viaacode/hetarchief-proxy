@@ -1,8 +1,14 @@
-export const GET_OBJECT_IE_PLAY_INFO_BY_ID = `
-	query playableUrl($id: String!) {
-		object_ie_by_pk(schema_identifier: $id) {
-		schema_identifier
-		schema_embed_url
+export const GET_FILE_BY_REPRESENTATION_ID = `
+	query getFileByRepresentationId($id: String) {
+		object_file(where: {representation_id: {_eq: $id } }) {
+			id
+			schema_name
+			schema_alternate_name
+			schema_description
+			representation_id
+			ebucore_media_type
+			ebucore_is_media_fragment_of
+			schema_embed_url
 		}
 	}
 `;
@@ -60,6 +66,26 @@ export const GET_OBJECT_IE_BY_ID = `
 			schema_date_created_lower_bound
 			ebucore_object_type
 			schema_genre
+			premis_is_represented_by {
+				schema_name
+				schema_alternate_name
+				schema_description
+				ie_meemoo_fragment_id
+				dcterms_format
+				schema_transcript
+				schema_date_created
+				id
+				premis_includes {
+					id
+					schema_name
+					schema_alternate_name
+					schema_description
+					representation_id
+					ebucore_media_type
+					ebucore_is_media_fragment_of
+					schema_embed_url
+				}
+			}
 		}
   	}
 `;

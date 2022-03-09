@@ -1,13 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, trimStart } from 'lodash';
+import { get, isEmpty, trimStart } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, PlayerTicket } from '../types';
+import { Media, PlayerTicket, Representation } from '../types';
 
-import { GET_OBJECT_IE_BY_ID, GET_OBJECT_IE_PLAY_INFO_BY_ID } from './queries.gql';
+import { GET_FILE_BY_REPRESENTATION_ID, GET_OBJECT_IE_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -105,7 +105,41 @@ export class MediaService {
 			dateCreatedLowerBound: get(graphQlObject, 'schema_date_created_lower_bound'),
 			genre: get(graphQlObject, 'schema_genre'),
 			ebucoreObjectType: get(graphQlObject, 'ebucore_object_type'),
+			representations: this.adaptRepresentations(graphQlObject.premis_is_represented_by),
 		};
+	}
+
+	public adaptRepresentations(graphQlRepresentations: any): Representation[] {
+		if (isEmpty(graphQlRepresentations)) {
+			return [];
+		}
+		return graphQlRepresentations.map((representation) => ({
+			name: get(representation, 'schema_name'),
+			alternateName: get(representation, 'schema_alternate_name'),
+			description: get(representation, 'schema_description'),
+			meemooFragmentId: get(representation, 'ie_meemoo_fragment_id'),
+			dctermsFormat: get(representation, 'dcterms_format'),
+			transcript: get(representation, 'schema_transcript'),
+			dateCreated: get(representation, 'schema_date_created'),
+			id: get(representation, 'id'),
+			files: this.adaptFiles(representation.premis_includes),
+		}));
+	}
+
+	public adaptFiles(graphQlFiles: any): File[] {
+		if (isEmpty(graphQlFiles)) {
+			return [];
+		}
+		return graphQlFiles.map((file) => ({
+			id: get(file, 'id'),
+			name: get(file, 'schema_name'),
+			alternateName: get(file, 'schema_alternate_name'),
+			description: get(file, 'schema_description'),
+			representationId: get(file, 'representation_id'),
+			ebucoreMediaType: get(file, 'ebucore_media_type'),
+			ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
+			embedUrl: get(file, 'schema_embed_url'),
+		}));
 	}
 
 	public getSearchEndpoint(esIndex: string): string {
@@ -155,11 +189,11 @@ export class MediaService {
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
-		const embedUrl = trimStart(await this.getEmbedUrl(id), '/');
+		const embedUrl = await this.getEmbedUrl(id);
 
 		const data = {
-			app: 'OR-avo2',
-			client: '', // TODO Required? -- SEE ARC-536
+			app: 'OR-*',
+			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
 			referer: referer || this.host,
 			maxage: this.ticketServiceMaxAge,
 		};
@@ -177,12 +211,12 @@ export class MediaService {
 
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
-			data: { object_ie_by_pk: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_PLAY_INFO_BY_ID, { id });
-		if (!objectIe) {
+			data: { object_file: objectFile },
+		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_ID, { id });
+		if (!objectFile[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}
 
-		return objectIe.schema_embed_url;
+		return objectFile[0].schema_embed_url;
 	}
 }
