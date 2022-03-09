@@ -123,7 +123,7 @@ export class QueryBuilder {
 	}
 
 	/**
-	 * Creates the filter portion of the elsaticsearch query object
+	 * Creates the filter portion of the elasticsearch query object
 	 * Containing the search terms and the checked filters
 	 * @param filters
 	 */
