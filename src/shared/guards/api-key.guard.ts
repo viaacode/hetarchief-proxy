@@ -1,6 +1,6 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { get } from 'lodash';
+import { Request } from 'express';
 
 import i18n from '~shared/i18n';
 
@@ -26,7 +26,7 @@ export class ApiKeyGuard implements CanActivate {
 
 	private static getApiKey(ctxOrReq: ExecutionContext | Request): string | undefined {
 		const request = ApiKeyGuard.getRequest(ctxOrReq);
-		return get(request, 'headers.apiKey');
+		return request.header('apikey');
 	}
 
 	canActivate(ctx: ExecutionContext): boolean {
