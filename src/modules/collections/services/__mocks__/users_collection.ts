@@ -10,7 +10,7 @@ export const mockGqlCollection: GqlCollection = {
 	ies: [
 		{
 			created_at: '2022-02-02T10:55:16.542503',
-			intellectual_entity: {
+			ie: {
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 				dcterms_available: '2015-09-19T12:08:24',
 				schema_thumbnail_url:
@@ -19,6 +19,13 @@ export const mockGqlCollection: GqlCollection = {
 				schema_number_of_pages: null,
 				schema_creator: null,
 				schema_identifier: '8s4jm2514q',
+				maintainer: {
+					schema_identifier: 'OR-1v5bc86',
+					schema_name: 'Huis van Alijn',
+					space: {
+						id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+					},
+				},
 			},
 		},
 	],

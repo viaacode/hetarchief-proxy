@@ -6,18 +6,16 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { isBefore, parseISO } from 'date-fns';
+import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import {
-	CreateVisitDto,
-	UpdateVisitDto,
-	UpdateVisitStatusDto,
-	VisitsQueryDto,
-} from '../dto/visits.dto';
-import { Note, Visit, VisitStatus } from '../types';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
+	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_VISIT_BY_ID,
 	FIND_VISITS,
 	INSERT_NOTE,
@@ -36,13 +34,14 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
+			VisitStatus.PENDING,
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.CANCELLED_BY_VISITOR]: [],
-		[VisitStatus.APPROVED]: [VisitStatus.DENIED],
-		[VisitStatus.DENIED]: [],
+		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
+		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
 	constructor(private dataService: DataService) {}
@@ -68,6 +67,7 @@ export class VisitsService {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
@@ -176,8 +176,17 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, userProfileId, spaceId, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			status,
+			userProfileId,
+			spaceId,
+			timeframe,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -209,6 +218,31 @@ export class VisitsService {
 			};
 		}
 
+		if (!isEmpty(timeframe)) {
+			switch (timeframe) {
+				case VisitTimeframe.FUTURE:
+					where.start_date = {
+						_gt: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.ACTIVE:
+					where.start_date = {
+						_lte: new Date().toISOString(),
+					};
+					where.end_date = {
+						_gte: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.PAST:
+					where.end_date = {
+						_lt: new Date().toISOString(),
+					};
+					break;
+			}
+		}
+
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
 			where,
 			offset,
@@ -236,5 +270,32 @@ export class VisitsService {
 		}
 
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{
+				now: new Date().toISOString(),
+				warningDate: addMinutes(new Date(), 15).toISOString(),
+			}
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 }

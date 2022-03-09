@@ -5,7 +5,7 @@ import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -25,6 +25,7 @@ const getDefaultVisitsResponse = () => ({
 const mockVisit: Visit = {
 	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceName: 'VRT',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -152,6 +153,45 @@ describe('VisitsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
 				spaceId: 'space-1',
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe ACTIVE', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.ACTIVE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe FUTURE', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.FUTURE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe PAST', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.PAST,
 				page: 1,
 				size: 10,
 			});
@@ -390,6 +430,39 @@ describe('VisitsService', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('startAt must precede endAt');
+		});
+	});
+
+	describe('getApprovedAndStartedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndAlmostEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
 		});
 	});
 });

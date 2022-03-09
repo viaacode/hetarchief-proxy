@@ -6,6 +6,13 @@ export const GET_USER_BY_IDENTITY_ID = `
 			last_name
 			mail
 			accepted_tos_at
+			group {
+				permissions {
+					permission {
+						name
+					}
+				}
+			}
 		}
 	}
 `;
@@ -18,6 +25,13 @@ export const INSERT_USER = `
 			last_name
 			mail
 			accepted_tos_at
+			group {
+				permissions {
+					permission {
+						name
+					}
+				}
+			}
 		}
 	}
 `;
@@ -38,6 +52,13 @@ export const UPDATE_USER = `
 			last_name
 			mail
 			accepted_tos_at
+			group {
+				permissions {
+					permission {
+						name
+					}
+				}
+			}
 		}
 	}
 `;

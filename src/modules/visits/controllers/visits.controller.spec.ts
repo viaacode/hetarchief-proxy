@@ -16,6 +16,7 @@ import i18n from '~shared/i18n';
 const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceName: 'VRT',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -39,6 +40,7 @@ const mockVisit1: Visit = {
 const mockVisit2: Visit = {
 	id: '40f3f893-ba4f-4bc8-a871-0d492172134d',
 	spaceId: '24ddc913-3e03-42ea-9bd1-ba486401bc30',
+	spaceName: 'Huis van Alijn',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 2',
@@ -62,6 +64,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	permissions: ['CREATE_COLLECTION'],
 };
 
 const mockSpace: Space = {

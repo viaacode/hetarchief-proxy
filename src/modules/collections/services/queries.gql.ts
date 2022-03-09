@@ -34,12 +34,11 @@ export const FIND_COLLECTION_BY_ID = `
 	}
 `;
 
-// TODO add maintainer once ARC-524 has been resolved
 export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 	query getCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid, $where: users_collection_ie_bool_exp!, $offset: Int, $limit: Int) {
 		users_collection_ie(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where], collection: {user_profile_id: {_eq: $userProfileId}}}, offset: $offset, limit: $limit) {
 			created_at
-			intellectual_entity {
+			ie {
 				schema_name
 				schema_creator
 				schema_description
@@ -48,6 +47,13 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 				dcterms_format
 				schema_number_of_pages
 				schema_identifier
+				maintainer {
+					schema_identifier
+					schema_name
+					space {
+						id
+					}
+				}
 			}
 		}
 		users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
@@ -99,7 +105,7 @@ export const DELETE_COLLECTION = `
 export const FIND_OBJECT_IN_COLLECTION = `
 	query findObjectInCollection($collectionId: uuid, $objectId: String) {
 		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_schema_identifier: {_eq: $objectId}}) {
-			intellectual_entity {
+			ie {
 				schema_name
 				schema_creator
 				dcterms_available
@@ -118,7 +124,7 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_schema_identifier: $objectId}) {
 			returning {
 				created_at
-				intellectual_entity {
+				ie {
 					dcterms_format
 					dcterms_available
 					schema_creator

@@ -25,6 +25,11 @@ export const INSERT_VISIT = `
 				mail
 				id
 			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;
@@ -56,6 +61,11 @@ export const UPDATE_VISIT = `
 				mail
 				id
 			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;
@@ -86,6 +96,11 @@ export const FIND_VISITS = `
 				last_name
 				mail
 				id
+			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
 			}
 		}
 		cp_visit_aggregate(where: $where) {
@@ -123,6 +138,11 @@ export const FIND_VISIT_BY_ID = `
 				mail
 				id
 			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;
@@ -131,6 +151,72 @@ export const INSERT_NOTE = `
 	mutation insertNote($visitId: uuid!, $note: String, $userProfileId: uuid) {
 		insert_cp_visit_note_one(object: { visit_id: $visitId, note: $note, profile_id: $userProfileId }) {
 			id
+		}
+	}
+`;
+
+export const FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION = `
+	query getApprovedAndStartedVisitsWithoutNotification($now: timestamp) {
+		cp_visit(where: {status: {_eq: "APPROVED"}, start_date: {_lt: $now}, end_date: {_gt: $now}, _not: {notifications: {type: {_eq: "ACCESS_PERIOD_READING_ROOM_STARTED"}}}}) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			created_at
+			updated_at
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
+		}
+	}
+`;
+
+export const FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION = `
+	query getApprovedAndEndedVisitsWithoutNotification($warningDate: timestamp, $now: timestamp) {
+		cp_visit(where: {status: {_eq: "APPROVED"}, end_date: {_lt: $warningDate, _gt: $now}, _not: {notifications: {type: {_eq: "ACCESS_PERIOD_READING_ROOM_END_WARNING"}}}}) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			created_at
+			updated_at
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
+		}
+	}
+`;
+
+export const FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION = `
+	query getApprovedAndEndedVisitsWithoutNotification($now: timestamp) {
+		cp_visit(where: {status: {_eq: "APPROVED"}, end_date: {_lt: $now}, _not: {notifications: {type: {_eq: "ACCESS_PERIOD_READING_ROOM_ENDED"}}}}) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			created_at
+			updated_at
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;

@@ -49,17 +49,18 @@ export class CollectionsService {
 			updatedAt: collection.updated_at,
 			isDefault: collection.is_default,
 			objects: gslLinkObjects?.map((gqlLinkObject) => ({
-				// TODO add maintainer once ARC-524 has been resolved
-				// maintainer: gqlLinkObject?.intellectual_entity?.schema_maintainer,
-				id: get(gqlLinkObject, 'intellectual_entity.schema_identifier'),
-				name: get(gqlLinkObject, 'intellectual_entity.schema_name'),
-				termsAvailable: get(gqlLinkObject, 'intellectual_entity.dcterms_available'),
-				creator: get(gqlLinkObject, 'intellectual_entity.schema_creator'),
-				description: get(gqlLinkObject, 'intellectual_entity.schema_description'),
-				format: get(gqlLinkObject, 'intellectual_entity.dcterms_format'),
-				numberOfPages: get(gqlLinkObject, 'intellectual_entity.schema_number_of_pages'),
-				thumbnailUrl: get(gqlLinkObject, 'intellectual_entity.schema_thumbnail_url'),
+				id: get(gqlLinkObject, 'ie.schema_identifier'),
+				name: get(gqlLinkObject, 'ie.schema_name'),
+				termsAvailable: get(gqlLinkObject, 'ie.dcterms_available'),
+				creator: get(gqlLinkObject, 'ie.schema_creator'),
+				description: get(gqlLinkObject, 'ie.schema_description'),
+				format: get(gqlLinkObject, 'ie.dcterms_format'),
+				numberOfPages: get(gqlLinkObject, 'ie.schema_number_of_pages'),
+				thumbnailUrl: get(gqlLinkObject, 'ie.schema_thumbnail_url'),
 				collectionEntryCreatedAt: get(gqlLinkObject, 'created_at'),
+				maintainerId: get(gqlLinkObject, 'ie.maintainer.schema_identifier'),
+				maintainerName: get(gqlLinkObject, 'ie.maintainer.schema_name'),
+				readingRoomId: get(gqlLinkObject, 'ie.maintainer.space.id'),
 			})),
 		};
 	}
@@ -71,20 +72,18 @@ export class CollectionsService {
 			return undefined;
 		}
 		return {
-			// TODO add maintainer once ARC-524 has been resolved
-			// maintainer: get(gqlCollectionObjectLink, 'intellectual_entity.schema_maintainer'),
+			maintainerId: get(gqlCollectionObjectLink, 'ie.maintainer.schema_identifier'),
+			maintainerName: get(gqlCollectionObjectLink, 'ie.maintainer.schema_name'),
+			readingRoomId: get(gqlCollectionObjectLink, 'ie.maintainer.space.id'),
 			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
-			creator: get(gqlCollectionObjectLink, 'intellectual_entity.schema_creator'),
-			description: get(gqlCollectionObjectLink, 'intellectual_entity.schema_description'),
-			format: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_format'),
-			id: get(gqlCollectionObjectLink, 'intellectual_entity.schema_identifier'),
-			name: get(gqlCollectionObjectLink, 'intellectual_entity.schema_name'),
-			numberOfPages: get(
-				gqlCollectionObjectLink,
-				'intellectual_entity.schema_number_of_pages'
-			),
-			termsAvailable: get(gqlCollectionObjectLink, 'intellectual_entity.dcterms_available'),
-			thumbnailUrl: get(gqlCollectionObjectLink, 'intellectual_entity.schema_thumbnail_url'),
+			creator: get(gqlCollectionObjectLink, 'ie.schema_creator'),
+			description: get(gqlCollectionObjectLink, 'ie.schema_description'),
+			format: get(gqlCollectionObjectLink, 'ie.dcterms_format'),
+			id: get(gqlCollectionObjectLink, 'ie.schema_identifier'),
+			name: get(gqlCollectionObjectLink, 'ie.schema_name'),
+			numberOfPages: get(gqlCollectionObjectLink, 'ie.schema_number_of_pages'),
+			termsAvailable: get(gqlCollectionObjectLink, 'ie.dcterms_available'),
+			thumbnailUrl: get(gqlCollectionObjectLink, 'ie.schema_thumbnail_url'),
 		};
 	}
 
@@ -125,7 +124,7 @@ export class CollectionsService {
 	): Promise<IPagination<IeObject>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const where = { intellectual_entity: { schema_name: { _ilike: query } } };
+		const where = { ie: { schema_name: { _ilike: query } } };
 		const collectionObjectsResponse = await this.dataService.execute(
 			FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
 			{
