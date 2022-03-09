@@ -92,7 +92,6 @@ export class MediaService {
 			spatial: get(graphQlObject, 'schema_spatial'),
 			temporal: get(graphQlObject, 'schema_temporal'),
 			keywords: get(graphQlObject, 'schema_keywords'),
-			genre: get(graphQlObject, 'schema_genre'),
 			dctermsFormat: get(graphQlObject, 'dcterms_format'),
 			inLanguage: get(graphQlObject, 'schema_in_language'),
 			thumbnailUrl: get(graphQlObject, 'schema_thumbnail_url'),
@@ -104,6 +103,8 @@ export class MediaService {
 			meemooMediaObjectId: get(graphQlObject, 'meemoo_media_object_id'),
 			dateCreated: get(graphQlObject, 'schema_date_created'),
 			dateCreatedLowerBound: get(graphQlObject, 'schema_date_created_lower_bound'),
+			genre: get(graphQlObject, 'schema_genre'),
+			ebucoreObjectType: get(graphQlObject, 'ebucore_object_type'),
 		};
 	}
 
@@ -125,7 +126,7 @@ export class MediaService {
 				this.logger.error(e.response.body);
 				throw new NotFoundException();
 			}
-			this.logger.error(e);
+			this.logger.error(e.response.body);
 			throw e;
 		}
 	}
@@ -143,13 +144,14 @@ export class MediaService {
 	 */
 	public async findById(id: string): Promise<Media> {
 		const {
-			data: { object_ie_by_pk: objectIe },
+			data: { object_ie: objectIe },
 		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { id });
-		if (!objectIe) {
+
+		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}
 
-		return this.adapt(objectIe);
+		return this.adapt(objectIe[0]);
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
