@@ -4,9 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { isFuture } from 'date-fns';
 
 import { IdpService } from '../services/idp.service';
-import { Idp, LoginMessage, LoginResponse } from '../types';
+import { LoginMessage, LoginResponse } from '../types';
 
 import { AuthController } from './auth.controller';
+
+import { Idp } from '~shared/auth/auth.types';
 
 const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,

@@ -8,18 +8,20 @@ import {
 	Redirect,
 	Session,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 
 import { IdpService } from '../services/idp.service';
-import { SessionHelper } from '../session-helper';
 import { LoginMessage, LoginResponse } from '../types';
+
+import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 	private logger: Logger = new Logger(AuthController.name, { timestamp: true });
 
-	constructor(private idpService: IdpService) {}
+	constructor(private idpService: IdpService, private configService: ConfigService) {}
 
 	@Get('check-login')
 	public async checkLogin(@Session() session: Record<string, any>): Promise<LoginResponse> {
@@ -70,14 +72,14 @@ export class AuthController {
 	 */
 	@Get('session')
 	public getSession(@Session() session: Record<string, any>) {
-		if (process.env.NODE_ENV !== 'production') {
+		if (this.configService.get('environment') !== 'production') {
 			return session;
 		}
 	}
 
 	@Post('session')
 	public postSession(@Session() session: Record<string, any>) {
-		if (process.env.NODE_ENV !== 'production') {
+		if (this.configService.get('environment') !== 'production') {
 			return session;
 		}
 	}

@@ -3,7 +3,9 @@ import { ConfigService as NestConfigService } from '@nestjs/config';
 export interface Configuration {
 	environment: string;
 	host: string;
+	clientHost: string;
 	port: number;
+	proxyApiKey: string;
 	graphQlUrl: string;
 	graphQlSecret: string;
 	graphQlEnableWhitelist: boolean;
@@ -19,6 +21,17 @@ export interface Configuration {
 	samlMeemooSpEntityId: string;
 	corsEnableWhitelist: boolean;
 	corsOptions: any;
+	ticketServiceUrl: string;
+	ticketServiceCertificate: string;
+	ticketServiceKey: string;
+	ticketServicePassphrase: string;
+	ticketServiceMaxAge: number;
+	mediaServiceUrl: string;
+	enableSendEmail: boolean;
+	campaignMonitorApiEndpoint: string;
+	campaignMonitorApiKey: string;
+	campaignMonitorTemplateVisitApproved: string;
+	campaignMonitorTemplateVisitDenied: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

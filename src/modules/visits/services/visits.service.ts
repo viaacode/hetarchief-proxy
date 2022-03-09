@@ -1,16 +1,27 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import {
-	CreateVisitDto,
-	UpdateVisitDto,
-	UpdateVisitStatusDto,
-	VisitsQueryDto,
-} from '../dto/visits.dto';
-import { Visit, VisitStatus } from '../types';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
-import { FIND_VISIT_BY_ID, FIND_VISITS, INSERT_VISIT, UPDATE_VISIT } from './queries.gql';
+import {
+	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
+	FIND_VISIT_BY_ID,
+	FIND_VISITS,
+	INSERT_NOTE,
+	INSERT_VISIT,
+	UPDATE_VISIT,
+} from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
@@ -23,13 +34,14 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
+			VisitStatus.PENDING,
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.CANCELLED_BY_VISITOR]: [],
-		[VisitStatus.APPROVED]: [VisitStatus.DENIED],
-		[VisitStatus.DENIED]: [],
+		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
+		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
 	constructor(private dataService: DataService) {}
@@ -38,16 +50,31 @@ export class VisitsService {
 		return this.statusTransitions[from].includes(to);
 	}
 
+	public validateDates(startAt: string, endAt: string): boolean {
+		if ((!startAt && endAt) || (startAt && !endAt)) {
+			throw new InternalServerErrorException(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		}
+		if (startAt && endAt && !isBefore(parseISO(startAt), parseISO(endAt))) {
+			throw new InternalServerErrorException('startAt must precede endAt');
+		}
+		// both empty -- ok
+		return true;
+	}
+
 	public adapt(graphQlVisit: any): Visit {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
 			status: get(graphQlVisit, 'status'),
 			startAt: get(graphQlVisit, 'start_date'),
 			endAt: get(graphQlVisit, 'end_date'),
+			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			visitorName: (
@@ -60,13 +87,26 @@ export class VisitsService {
 		};
 	}
 
-	public async create(createVisitDto: CreateVisitDto): Promise<Visit> {
+	public adaptNotes(graphQlNotes: any): Note {
+		if (isEmpty(graphQlNotes)) {
+			return null;
+		}
+		return {
+			id: graphQlNotes[0].id,
+			authorName: get(graphQlNotes[0], 'profile.full_name', null),
+			note: graphQlNotes[0].note,
+			createdAt: graphQlNotes[0].created_at,
+			updatedAt: graphQlNotes[0].updated_at,
+		};
+	}
+
+	public async create(createVisitDto: CreateVisitDto, userProfileId: string): Promise<Visit> {
 		const newVisit = {
 			cp_space_id: createVisitDto.spaceId,
-			user_profile_id: createVisitDto.userProfileId,
+			user_profile_id: userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
-			user_accepted_tos_at: createVisitDto.acceptedTosAt,
+			user_accepted_tos: createVisitDto.acceptedTos,
 		};
 
 		const {
@@ -78,48 +118,75 @@ export class VisitsService {
 		return this.adapt(createdVisit);
 	}
 
-	public async update(id: string, updateVisitDto: UpdateVisitDto): Promise<Visit> {
+	public async update(
+		id: string,
+		updateVisitDto: UpdateVisitDto,
+		userProfileId: string
+	): Promise<Visit> {
 		const { startAt, endAt } = updateVisitDto;
+		// if any of these is set, both must be set (db constraint)
+		this.validateDates(startAt, endAt);
+
 		const updateVisit = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
+			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
 		};
 
-		updateVisitDto.status &&
-			(await this.updateStatus(id, updateVisitDto as UpdateVisitStatusDto));
+		const currentVisit = await this.findById(id); // Get current visit status
+		if (!currentVisit) {
+			throw new NotFoundException(`Visit with id '${id}' not found`);
+		}
 
-		const {
-			data: { update_cp_visit_by_pk: updatedVisit },
-		} = await this.dataService.execute(UPDATE_VISIT, {
+		// Check status transition is valid
+		if (updateVisit.status) {
+			if (!this.statusTransitionAllowed(currentVisit.status, updateVisit.status)) {
+				throw new UnauthorizedException(
+					`Status transition '${currentVisit.status}' -> '${updateVisit.status}' is not allowed`
+				);
+			}
+		}
+
+		await this.dataService.execute(UPDATE_VISIT, {
 			id,
 			updateVisit,
 		});
 
-		return this.adapt(updatedVisit);
-	}
-
-	public async updateStatus(id: string, updateStatusDto: UpdateVisitStatusDto): Promise<Visit> {
-		const currentVisit = await this.findById(id); // Get current visit status
-
-		if (!this.statusTransitionAllowed(currentVisit.status, updateStatusDto.status)) {
-			throw new UnauthorizedException(
-				`Status transition '${currentVisit.status}' -> '${updateStatusDto.status}' is not allowed`
-			);
+		if (updateVisitDto.note) {
+			await this.insertNote(id, updateVisitDto.note, userProfileId);
 		}
 
+		return this.findById(id);
+	}
+
+	public async insertNote(
+		visitId: string,
+		note: string,
+		userProfileId: string
+	): Promise<boolean> {
 		const {
-			data: { update_cp_visit_by_pk: updatedVisit },
-		} = await this.dataService.execute(UPDATE_VISIT, {
-			id,
-			updateVisit: { status: updateStatusDto.status },
+			data: { insert_cp_visit_note_one: insertNote },
+		} = await this.dataService.execute(INSERT_NOTE, {
+			visitId,
+			note,
+			userProfileId,
 		});
 
-		return this.adapt(updatedVisit);
+		return !!insertNote;
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, userProfileId, spaceId, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			status,
+			userProfileId,
+			spaceId,
+			timeframe,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -151,6 +218,31 @@ export class VisitsService {
 			};
 		}
 
+		if (!isEmpty(timeframe)) {
+			switch (timeframe) {
+				case VisitTimeframe.FUTURE:
+					where.start_date = {
+						_gt: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.ACTIVE:
+					where.start_date = {
+						_lte: new Date().toISOString(),
+					};
+					where.end_date = {
+						_gte: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.PAST:
+					where.end_date = {
+						_lt: new Date().toISOString(),
+					};
+					break;
+			}
+		}
+
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
 			where,
 			offset,
@@ -174,9 +266,36 @@ export class VisitsService {
 		const visitResponse = await this.dataService.execute(FIND_VISIT_BY_ID, { id });
 
 		if (!visitResponse.data.cp_visit[0]) {
-			throw new NotFoundException();
+			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{
+				now: new Date().toISOString(),
+				warningDate: addMinutes(new Date(), 15).toISOString(),
+			}
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+	}
+
+	async getApprovedAndEndedVisitsWithoutNotification() {
+		const visitsResponse = await this.dataService.execute(
+			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
+			{ now: new Date().toISOString() }
+		);
+		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 }

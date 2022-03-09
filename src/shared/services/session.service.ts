@@ -4,7 +4,10 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import connectRedis from 'connect-redis';
 import { CronJob } from 'cron';
 import session from 'express-session';
-import { createClient } from 'redis';
+import { createClient, RedisClient } from 'redis';
+import SessionFileStore from 'session-file-store';
+
+const FileStore = SessionFileStore(session);
 
 @Injectable()
 export class SessionService {
@@ -14,6 +17,19 @@ export class SessionService {
 		private configService: ConfigService,
 		private schedulerRegistry: SchedulerRegistry
 	) {}
+
+	public async clearRedis(redisClient: RedisClient) {
+		try {
+			redisClient.flushdb((err: Error | null, response?: 'OK') => {
+				if (err) {
+					this.logger.error('Failed to clear redis session cache', err.stack);
+				}
+				this.logger.log(`Redis clear session cache response: ${response}`);
+			});
+		} catch (e) {
+			this.logger.error('Redis session cache could not be cleared', e.stack);
+		}
+	}
 
 	/**
 	 * Returns the session config for the express session middleware
@@ -56,20 +72,7 @@ export class SessionService {
 			redisClient.on('error', (err) => this.logger.error('Redis Client Error', err.stack));
 			redisClient.on('connect', () => this.logger.log('Connected to redis successfully'));
 
-			const clearRedis = async () => {
-				try {
-					redisClient.flushdb((err: Error | null, response?: 'OK') => {
-						if (err) {
-							this.logger.error('Failed to clear redis session cache', err.stack);
-						}
-						this.logger.log(`Redis clear session cache response: ${response}`);
-					});
-				} catch (e) {
-					this.logger.error('Redis session cache could not be cleared', e.stack);
-				}
-			};
-
-			const job = new CronJob(`0 0 05 * * *`, clearRedis);
+			const job = new CronJob(`0 0 05 * * *`, () => this.clearRedis(redisClient));
 
 			this.schedulerRegistry.addCronJob('FlushRedis', job);
 			job.start();
@@ -77,6 +80,9 @@ export class SessionService {
 			sessionConfig.store = new redisStore({ client: redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
+		} else {
+			sessionConfig.store = new FileStore({});
+			this.logger.log('isDevelopment: File Store ready');
 		}
 
 		return sessionConfig;

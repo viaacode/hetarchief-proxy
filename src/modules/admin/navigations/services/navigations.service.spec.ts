@@ -15,6 +15,7 @@ const mockUser: User = {
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	permissions: ['CREATE_COLLECTION'],
 };
 
 describe('NavigationsService', () => {

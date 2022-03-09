@@ -1,8 +1,8 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { get } from 'lodash';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
-import { User } from '../types';
+import { GqlPermissionData, User } from '../types';
 
 import {
 	GET_USER_BY_IDENTITY_ID,
@@ -11,8 +11,8 @@ import {
 	UPDATE_USER,
 } from './queries.gql';
 
-import { Idp } from '~modules/auth/types';
 import { DataService } from '~modules/data/services/data.service';
+import { Idp } from '~shared/auth/auth.types';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +27,9 @@ export class UsersService {
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),
 			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
+			permissions: get(graphQlUser, 'group.permissions', []).map(
+				(permData: GqlPermissionData) => permData.permission.name
+			),
 		};
 	}
 
@@ -35,7 +38,7 @@ export class UsersService {
 			identityId,
 		});
 		if (!userResponse.data.users_profile[0]) {
-			throw new NotFoundException(`User with id '${identityId}' not found`);
+			return null;
 		}
 		return this.adapt(userResponse.data.users_profile[0]);
 	}

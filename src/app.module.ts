@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
@@ -9,8 +9,10 @@ import { AppService } from './app.service';
 
 import { NavigationsModule } from '~modules/admin/navigations';
 import { AuthModule } from '~modules/auth';
+import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
+import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
 import { TosModule } from '~modules/tos';
 import { UsersModule } from '~modules/users';
@@ -35,8 +37,11 @@ import { SessionService } from '~shared/services/session.service';
 		TosModule,
 		UsersModule,
 		VisitsModule,
+		CollectionsModule,
+		NotificationsModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, SessionService],
+	providers: [AppService, SessionService, ConfigService],
+	exports: [ConfigService],
 })
 export class AppModule {}

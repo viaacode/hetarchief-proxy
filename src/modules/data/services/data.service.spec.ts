@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import fse from 'fs-extra';
 import nock from 'nock';
 
+import { Configuration } from '~config';
+
 import { QueryOrigin } from '../types';
 
 import { DataPermissionsService } from './data-permissions.service';
@@ -12,12 +14,13 @@ jest.mock('fs-extra');
 
 const mockedFse = fse as any;
 
-const mockDataPermissionsService = {
-	verify: jest.fn(),
-};
+const mockDataPermissionsService: Partial<Record<keyof DataPermissionsService, jest.SpyInstance>> =
+	{
+		verify: jest.fn(),
+	};
 
-const mockConfigService = {
-	get: jest.fn((key: string): string | boolean => {
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'graphQlUrl') {
 			return 'http://localhost/v1/graphql/';
 		}

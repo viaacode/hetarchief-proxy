@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { addHours } from 'date-fns';
 
 import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { VisitStatus } from '~modules/visits/types';
+import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
@@ -20,6 +21,25 @@ const getDefaultVisitsResponse = () => ({
 		},
 	},
 });
+
+const mockVisit: Visit = {
+	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
+	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceName: 'VRT',
+	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
+	reason: 'Ik wil graag deze zaal bezoeken 7',
+	status: VisitStatus.PENDING,
+	startAt: '2022-03-03T16:00:00',
+	endAt: '2022-03-03T17:00:00',
+	createdAt: '2022-02-11T15:28:40.676',
+	updatedAt: '2022-02-11T15:28:40.676',
+	visitorName: 'Marie Odhiambo',
+	visitorMail: 'marie.odhiambo@example.com',
+	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+};
+
+const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
@@ -36,6 +56,10 @@ describe('VisitsService', () => {
 		}).compile();
 
 		visitsService = module.get<VisitsService>(VisitsService);
+	});
+
+	afterEach(() => {
+		mockDataService.execute.mockRestore();
 	});
 
 	it('services should be defined', () => {
@@ -137,6 +161,45 @@ describe('VisitsService', () => {
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
 		});
+
+		it('can filter on timeframe ACTIVE', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.ACTIVE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe FUTURE', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.FUTURE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe PAST', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.PAST,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
 	});
 
 	describe('findById', () => {
@@ -159,7 +222,8 @@ describe('VisitsService', () => {
 				error = e;
 			}
 			expect(error.response).toEqual({
-				message: 'Not Found',
+				error: 'Not Found',
+				message: "Visit with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
@@ -174,75 +238,231 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.create({
-				spaceId: 'space-1',
-				userProfileId: 'user-1',
-				timeframe: 'tomorrow',
-				acceptedTosAt: '2022-02-18T12:13:22.726Z',
-			});
+			const response = await visitsService.create(
+				{
+					spaceId: 'space-1',
+					timeframe: 'tomorrow',
+					acceptedTos: true,
+				},
+				'user-1'
+			);
 			expect(response.id).toBe('1');
 		});
 	});
 
 	describe('update', () => {
-		it('can update a visit with startAt', async () => {
+		it('throws an exception if the visit request was not found', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
-					},
+					cp_visit: [],
 				},
 			});
-			const response = await visitsService.update('1', {
-				startAt: new Date().toISOString(),
-			});
-			expect(response.id).toBe('1');
-		});
 
-		it('can update a visit with endAt', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
-					},
-				},
-			});
-			const response = await visitsService.update('1', {
-				endAt: new Date().toISOString(),
-			});
-			expect(response.id).toBe('1');
-		});
-	});
-
-	describe('updateStatus', () => {
-		it('can update the status for a visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_visit_by_pk: {
-						id: '1',
-					},
-				},
-			});
-			const response = await visitsService.updateStatus('1', {
-				status: VisitStatus.APPROVED,
-			});
-			expect(response.id).toBe('1');
-		});
-
-		it('throws an exception for an in valid status transition', async () => {
-			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			let error;
 			try {
-				await visitsService.updateStatus('1', {
-					status: VisitStatus.PENDING,
-				});
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.APPROVED,
+					},
+					mockUserProfileId
+				);
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toBe(`Visit with id '1' not found`);
+			findVisitSpy.mockRestore();
+		});
+
+		it('can update a visit with startAt, endAt and status', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+			mockDataService.execute
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					startAt: new Date().toISOString(),
+					endAt: addHours(new Date(), 2).toISOString(),
+					status: VisitStatus.APPROVED,
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(cpVisit.id);
+			findVisitSpy.mockRestore();
+		});
+
+		it('can update a visit with a status', async () => {
+			mockDataService.execute
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					status: VisitStatus.APPROVED,
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(cpVisit.id);
+		});
+
+		it('throws an error when you update to an invalid status', async () => {
+			const initialVisit = getDefaultVisitsResponse();
+			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			mockDataService.execute.mockResolvedValueOnce(initialVisit);
+
+			let error;
+			try {
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.PENDING,
+					},
+					mockUserProfileId
+				);
 			} catch (e) {
 				error = e;
 			}
 			expect(error.message).toBe("Status transition 'DENIED' -> 'PENDING' is not allowed");
+		});
+
+		it('throws an error when you update a visit that does not exist', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await visitsService.update(
+					'1',
+					{
+						status: VisitStatus.PENDING,
+					},
+					mockUserProfileId
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toBe(`Visit with id '1' not found`);
+			findVisitSpy.mockRestore();
+		});
+
+		it('can add a note to a visit', async () => {
+			mockDataService.execute
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					data: {
+						update_cp_visit_by_pk: {
+							id: cpVisit.id,
+						},
+					},
+				})
+				.mockResolvedValueOnce({
+					data: {
+						insert_cp_visit_note_one: {
+							id: 'note-id',
+						},
+					},
+				})
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
+
+			const response = await visitsService.update(
+				cpVisit.id,
+				{
+					note: 'Test note',
+				},
+				mockUserProfileId
+			);
+
+			expect(response.id).toBe(cpVisit.id);
+			findVisitSpy.mockRestore();
+		});
+	});
+
+	describe('validateDates', () => {
+		it('throws an exception if only startAt is set', async () => {
+			let error;
+			try {
+				visitsService.validateDates(new Date().toISOString(), null);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		});
+
+		it('throws an exception if only endAt is set', async () => {
+			let error;
+			try {
+				visitsService.validateDates(null, new Date().toISOString());
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'Both startAt end endAt must be specified when updating any of these'
+			);
+		});
+
+		it('throws an exception if startAt does not precede endAt', async () => {
+			let error;
+			try {
+				visitsService.validateDates(
+					addHours(new Date(), 2).toISOString(),
+					new Date().toISOString()
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('startAt must precede endAt');
+		});
+	});
+
+	describe('getApprovedAndStartedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndAlmostEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
 		});
 	});
 });

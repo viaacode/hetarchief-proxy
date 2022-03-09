@@ -1,10 +1,11 @@
-import { Body, Controller, Logger, Param, Put, Session } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Patch, Session } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { SessionHelper } from '../../../modules/auth/session-helper';
 import { UpdateAcceptedTosDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from '../types';
+
+import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Users')
 @Controller('users')
@@ -13,7 +14,7 @@ export class UsersController {
 
 	constructor(private usersService: UsersService) {}
 
-	@Put(':id/accepted-tos')
+	@Patch(':id/accepted-tos')
 	public async updateTos(
 		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto,
 		@Param('id') id: string,

@@ -14,7 +14,7 @@ import {
 import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
-import { VisitStatus } from '~modules/visits/types';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
@@ -24,13 +24,6 @@ export class CreateVisitDto {
 		description: "The space's uuid",
 	})
 	spaceId: string;
-
-	@IsUUID()
-	@ApiProperty({
-		type: string,
-		description: 'The uuid of the user making the request',
-	})
-	userProfileId: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -48,12 +41,12 @@ export class CreateVisitDto {
 	})
 	reason?: string;
 
-	@IsString()
+	@IsBoolean()
 	@ApiProperty({
-		type: String,
-		description: 'When the user accepted the Terms of Service',
+		type: Boolean,
+		description: 'If the user accepted the Terms of Service for this reading room',
 	})
-	acceptedTosAt: string;
+	acceptedTos: boolean;
 }
 
 export class UpdateVisitStatusDto {
@@ -73,6 +66,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addDays(new Date(), 2).toISOString(),
 	})
 	startAt?: string;
 
@@ -81,6 +75,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiProperty({
 		type: string,
 		description: "The start of this user's visit",
+		example: addHours(addDays(new Date(), 2), 2).toISOString(),
 	})
 	endAt?: string;
 
@@ -88,17 +83,10 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@IsOptional()
 	@ApiProperty({
 		type: string,
-		description: "Remarks from the content partner approving the user's visit",
+		description: "An optional note from the content partner about the user's visit",
+		example: 'A visit is limited to max. 2h',
 	})
-	remark?: string;
-
-	@IsString()
-	@IsOptional()
-	@ApiProperty({
-		type: string,
-		description: "Reason of denial from the content partner denying the user's visit",
-	})
-	denial?: string;
+	note?: string;
 }
 
 export class VisitsQueryDto {
@@ -109,7 +97,7 @@ export class VisitsQueryDto {
 		type: String,
 		description:
 			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
-		default: '%',
+		default: undefined,
 	})
 	query?: string;
 
@@ -118,6 +106,7 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Get all visits for this user',
+		default: undefined,
 	})
 	userProfileId?: string;
 
@@ -126,16 +115,18 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Get all visits for this space',
+		default: undefined,
 	})
 	spaceId?: string;
 
-	@ApiProperty({
+	@ApiPropertyOptional({
 		isArray: true,
 		required: false,
 		enum: VisitStatus,
 		description: `Status of the visit request. Options are: ${Object.values(VisitStatus).join(
 			', '
 		)}`,
+		default: undefined,
 	})
 	@IsOptional()
 	@IsEnum(VisitStatus, { each: true })
@@ -147,6 +138,18 @@ export class VisitsQueryDto {
 		return params.value;
 	})
 	status?: VisitStatus | VisitStatus[];
+
+	@ApiPropertyOptional({
+		required: false,
+		enum: VisitTimeframe,
+		description: `Filters visits based on startAt and endAt times. Active means current time is between the startAt and endAt.  Options are: ${Object.values(
+			VisitTimeframe
+		).join(', ')}`,
+		default: undefined,
+	})
+	@IsOptional()
+	@IsEnum(VisitTimeframe, { each: true })
+	timeframe?: VisitTimeframe;
 
 	@IsNumber()
 	@Type(() => Number)
@@ -178,6 +181,7 @@ export class VisitsQueryDto {
 		enum: [
 			'id',
 			'spaceId',
+			'spaceName',
 			'userProfileId',
 			'timeframe',
 			'reason',
