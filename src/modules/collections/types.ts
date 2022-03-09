@@ -47,6 +47,7 @@ export interface GqlObject {
 	dcterms_format: string;
 	schema_number_of_pages: any;
 	schema_identifier: string;
+	meemoo_fragment_id: string;
 	maintainer: {
 		schema_identifier: string;
 		schema_name: string;
@@ -57,11 +58,12 @@ export interface GqlObject {
 }
 
 export interface IeObject {
-	collectionEntryCreatedAt: string;
+	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
 	format: string;
 	id: string;
+	meemooFragmentId: string;
 	name: string;
 	numberOfPages: any;
 	termsAvailable: string;

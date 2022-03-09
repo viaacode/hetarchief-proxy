@@ -16,6 +16,7 @@ export const GET_FILE_BY_REPRESENTATION_ID = `
 export const GET_OBJECT_IE_BY_ID = `
 	query objectDetail($id: String!) {
 		object_ie(where: { schema_identifier: { _eq: $id } }) {
+			meemoo_fragment_id
 			schema_identifier
 			premis_identifier
 			premis_relationship
@@ -60,7 +61,6 @@ export const GET_OBJECT_IE_BY_ID = `
 			schema_alternate_name
 			schema_duration
 			schema_license
-			meemoo_fragment_id
 			meemoo_media_object_id
 			schema_date_created
 			schema_date_created_lower_bound

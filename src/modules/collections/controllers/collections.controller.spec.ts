@@ -65,7 +65,7 @@ const mockUser: User = {
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
 	findCollectionsByUser: jest.fn(),
 	findCollectionById: jest.fn(),
-	findObjectInCollection: jest.fn(),
+	findObjectInCollectionBySchemaIdentifier: jest.fn(),
 	findObjectsByCollectionId: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
@@ -278,7 +278,7 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionById.mockResolvedValue(
 				mockCollectionsResponse.items[0]
 			);
-			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(null);
 
 			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
 				mockCollectionsResponse.items[0].id,
@@ -300,7 +300,7 @@ describe('CollectionsController', () => {
 					userProfileId: 'not-the-owner-id',
 				})
 				.mockResolvedValue(mockCollectionsResponse.items[0]);
-			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(null);
 
 			let error;
 			try {
@@ -327,7 +327,7 @@ describe('CollectionsController', () => {
 					...mockCollectionsResponse.items[0],
 					userProfileId: 'not-the-owner-id',
 				});
-			mockCollectionsService.findObjectInCollection.mockResolvedValue(null);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(null);
 
 			let error;
 			try {

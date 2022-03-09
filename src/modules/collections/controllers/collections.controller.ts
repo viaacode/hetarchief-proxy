@@ -108,7 +108,7 @@ export class CollectionsController {
 	@Post(':collectionId/objects/:objectId')
 	public async addObjectToCollection(
 		@Param('collectionId') collectionId: string,
-		@Param('objectId') objectId: string,
+		@Param('objectId') objectSchemaIdentifier: string,
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
 		const collection = await this.collectionsService.findCollectionById(collectionId);
@@ -116,9 +116,10 @@ export class CollectionsController {
 		if (collection.userProfileId !== user.id) {
 			throw new UnauthorizedException('You can only add objects to your own collections');
 		}
+
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			collectionId,
-			objectId
+			objectSchemaIdentifier
 		);
 		return collectionObject;
 	}
@@ -151,7 +152,7 @@ export class CollectionsController {
 	@Patch(':oldCollectionId/objects/:objectId/move')
 	public async moveObjectToAnotherCollection(
 		@Param('oldCollectionId') oldCollectionId: string,
-		@Param('objectId') objectId: string,
+		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
@@ -170,11 +171,11 @@ export class CollectionsController {
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			newCollectionId,
-			objectId
+			objectSchemaIdentifier
 		);
 		await this.collectionsService.removeObjectFromCollection(
 			oldCollectionId,
-			objectId,
+			objectSchemaIdentifier,
 			user.id
 		);
 		return collectionObject;
