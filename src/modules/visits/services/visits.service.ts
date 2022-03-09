@@ -74,7 +74,7 @@ export class VisitsService {
 			status: get(graphQlVisit, 'status'),
 			startAt: get(graphQlVisit, 'start_date'),
 			endAt: get(graphQlVisit, 'end_date'),
-			note: this.adaptNotes(graphQlVisit.notes),
+			note: this.adaptNotes(graphQlVisit.visit_notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			visitorName: (

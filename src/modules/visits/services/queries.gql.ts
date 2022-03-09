@@ -9,7 +9,7 @@ export const INSERT_VISIT = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			visit_notes(order_by: { created_at: desc }, limit: 1) {
 				id
 				note
 				profile {
@@ -40,7 +40,7 @@ export const UPDATE_VISIT = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			visit_notes(order_by: { created_at: desc }, limit: 1) {
 				id
 				note
 				profile {
@@ -71,7 +71,7 @@ export const FIND_VISITS = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			visit_notes(order_by: { created_at: desc }, limit: 1) {
 				id
 				note
 				profile {
@@ -107,7 +107,7 @@ export const FIND_VISIT_BY_ID = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			visit_notes(order_by: { created_at: desc }, limit: 1) {
 				id
 				note
 				profile {

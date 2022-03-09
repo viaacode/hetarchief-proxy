@@ -7,7 +7,7 @@ export default {
 	status: 'PENDING',
 	start_date: null,
 	end_date: null,
-	notes: [
+	visit_notes: [
 		{
 			id: 'bfad12ea-f637-49e3-9352-8f657cc5da80',
 			profile: {
