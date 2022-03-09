@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
@@ -41,6 +41,7 @@ import { SessionService } from '~shared/services/session.service';
 		NotificationsModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, SessionService],
+	providers: [AppService, SessionService, ConfigService],
+	exports: [ConfigService],
 })
 export class AppModule {}

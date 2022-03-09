@@ -2,6 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 
+import { Configuration } from '~config';
+
 import { Template } from '../types';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
@@ -9,7 +11,7 @@ import { CampaignMonitorService } from './campaign-monitor.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 
 const mockConfigService = {
-	get: jest.fn((key: string): string | boolean => {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'campaignMonitorApiEndpoint') {
 			return 'http://campaignmonitor';
 		}
@@ -24,6 +26,7 @@ const mockConfigService = {
 const mockVisit: Visit = {
 	id: '1',
 	spaceId: 'space-1',
+	spaceName: 'VRT',
 	userProfileId: 'user-1',
 	timeframe: 'july 2022',
 	reason: 'fake news investigation',

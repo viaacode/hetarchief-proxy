@@ -2,10 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Configuration } from '~config';
+
 import { SessionService } from '~shared/services/session.service';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: string): string | boolean => {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'environment') {
 			return 'production';
 		}
