@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { get, isEqual, omit } from 'lodash';
+import { get, isEqual, pick } from 'lodash';
 
 import { HetArchiefService } from '../services/het-archief.service';
 import { RelayState, SamlCallbackBody } from '../types';
@@ -119,7 +119,7 @@ export class HetArchiefController {
 					name: i18n.t('modules/collections/controllers___default-collection-name'),
 				});
 			} else {
-				if (!isEqual(omit(archiefUser, ['id', 'permissions']), userDto)) {
+				if (!isEqual(pick(archiefUser, ['firstName', 'lastName', 'email']), userDto)) {
 					// update user
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);

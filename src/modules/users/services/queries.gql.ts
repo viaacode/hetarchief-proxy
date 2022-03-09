@@ -7,7 +7,7 @@ export const GET_USER_BY_IDENTITY_ID = `
 			mail
 			accepted_tos_at
 			group {
-				permissions {
+				permissions(order_by: { permission: { name: asc }}) {
 					permission {
 						name
 					}
