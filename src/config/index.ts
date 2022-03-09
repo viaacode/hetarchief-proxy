@@ -37,6 +37,7 @@ const config = (): Configuration => {
 		host: getEnvValue('HOST', true),
 		clientHost: getEnvValue('CLIENT_HOST', true),
 		port: parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
+		proxyApiKey: getEnvValue('PROXY_API_KEY', true),
 		graphQlUrl: getEnvValue('GRAPHQL_URL', true),
 		graphQlSecret: getEnvValue('GRAPHQL_SECRET', env !== 'local'), // Not required on localhost
 		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',

@@ -1,6 +1,6 @@
 export const FIND_NOTIFICATIONS_BY_USER = `
-	query getNotificationsForUser($userProfileId: uuid, $moreRecentThan: timestamp, $offset: Int, $limit: Int) {
-		app_notification(where: {_or: [{recipient: {_eq: $userProfileId}, show_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}, order_by: {show_at: desc, status: desc, title: asc}, limit: $limit, offset: $offset) {
+	query getNotificationsForUser($userProfileId: uuid, $moreRecentThan: timestamptz, $offset: Int, $limit: Int) {
+		app_notification(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}, order_by: {created_at: desc, status: asc, title: asc}, limit: $limit, offset: $offset) {
 			id
 			description
 			title
@@ -8,14 +8,13 @@ export const FIND_NOTIFICATIONS_BY_USER = `
 			type
 			recipient
 			visit_id
-			show_at
 			created_at
 			updated_at
 			visit {
 				cp_space_id
 			}
 		}
-		app_notification_aggregate(where: {_or: [{recipient: {_eq: $userProfileId}, show_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}) {
+		app_notification_aggregate(where: {_or: [{recipient: {_eq: $userProfileId}, created_at: {_gt: $moreRecentThan}, status: {_eq: "READ"}}, {recipient: {_eq: $userProfileId}, status: {_eq: "UNREAD"}}]}) {
 			aggregate {
 				count
 			}
@@ -23,9 +22,9 @@ export const FIND_NOTIFICATIONS_BY_USER = `
 	}
 `;
 
-export const INSERT_NOTIFICATION = `
-	mutation insertNotification($object: app_notification_insert_input!) {
-		insert_app_notification(objects: [$object]) {
+export const INSERT_NOTIFICATIONS = `
+	mutation insertNotifications($objects: [app_notification_insert_input!]!) {
+		insert_app_notification(objects: $objects) {
 			returning {
 				id
 				description
@@ -34,7 +33,6 @@ export const INSERT_NOTIFICATION = `
 				type
 				recipient
 				visit_id
-				show_at
 				created_at
 				updated_at
 				visit {
@@ -56,7 +54,6 @@ export const UPDATE_NOTIFICATION = `
 				type
 				recipient
 				visit_id
-				show_at
 				created_at
 				updated_at
 				visit {

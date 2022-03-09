@@ -5,9 +5,16 @@ export enum VisitStatus {
 	CANCELLED_BY_VISITOR = 'CANCELLED_BY_VISITOR',
 }
 
+export enum VisitTimeframe {
+	ACTIVE = 'ACTIVE',
+	PAST = 'PAST',
+	FUTURE = 'FUTURE',
+}
+
 export interface Visit {
 	id: string;
 	spaceId: string;
+	spaceName: string;
 	userProfileId: string;
 	timeframe: string;
 	reason: string;

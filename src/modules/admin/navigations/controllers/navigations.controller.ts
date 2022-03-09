@@ -5,19 +5,19 @@ import {
 	Get,
 	Logger,
 	Param,
+	Patch,
 	Post,
-	Put,
 	Query,
 	Session,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
-import { SessionHelper } from '../../../../shared/auth/session-helper';
 import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto';
 import { NavigationsService } from '../services/navigations.service';
 import { Navigation } from '../types';
 
+import { SessionHelper } from '~shared/auth/session-helper';
 import { DeleteResponse } from '~shared/types/types';
 
 @ApiTags('Navigations')
@@ -76,7 +76,7 @@ export class NavigationsController {
 	@ApiOperation({
 		description: 'Update an existing navigation element',
 	})
-	@Put(':id')
+	@Patch(':id')
 	public async updateNavigationElement(
 		@Param('id') id: string,
 		@Body() updateNavigationDto: CreateNavigationDto
