@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { cloneDeep } from 'lodash';
 import nock from 'nock';
 
 import { Configuration } from '~config';
@@ -69,6 +70,10 @@ describe('MediaService', () => {
 		mediaService = module.get<MediaService>(MediaService);
 	});
 
+	afterEach(() => {
+		mockDataService.execute.mockRestore();
+	});
+
 	it('services should be defined', () => {
 		expect(mediaService).toBeDefined();
 	});
@@ -126,27 +131,28 @@ describe('MediaService', () => {
 		});
 
 		it('returns an empty array if no representations were found', async () => {
-			const originalReps = objectIe.data.object_ie[0].premis_is_represented_by;
-			objectIe.data.object_ie[0].premis_is_represented_by = null;
-			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const objectIeMock = cloneDeep(objectIe);
+			objectIeMock.data.object_ie[0].premis_is_represented_by = null;
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+
 			const response = await mediaService.findById(mockObjectId);
+
 			expect(response.id).toEqual(mockObjectId);
 			expect(response.representations).toEqual([]);
-			//reset
-			objectIe.data.object_ie[0].premis_is_represented_by = originalReps;
 		});
 
 		it('returns an empty array if no files were found', async () => {
-			const originalFiles =
-				objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes;
-			objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
-			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const objectIeMock = cloneDeep(objectIe);
+			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
+			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+
 			const response = await mediaService.findById(mockObjectId);
+
 			expect(response.id).toEqual(mockObjectId);
 			expect(response.representations[0].files).toEqual([]);
-			//reset
-			objectIe.data.object_ie[0].premis_is_represented_by[0].premis_includes = originalFiles;
 		});
+
 		it('throws a notfoundexception if the object was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {

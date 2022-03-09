@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { cloneDeep } from 'lodash';
 
 import cpSpace from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
@@ -41,9 +42,11 @@ describe('SpacesService', () => {
 		});
 
 		it('if the space description is empty it falls back to the maintainer description', () => {
-			cpSpace.schema_description = 'Space specific description';
-			const adapted = spacesService.adapt(cpSpace);
-			cpSpace.schema_description = null; // reset
+			const mockCpSpace = cloneDeep(cpSpace);
+			mockCpSpace.schema_description = 'Space specific description';
+
+			const adapted = spacesService.adapt(mockCpSpace);
+
 			// test some sample keys
 			expect(adapted.description).toEqual('Space specific description');
 		});

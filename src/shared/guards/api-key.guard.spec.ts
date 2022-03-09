@@ -19,7 +19,13 @@ const mockConfigService: ConfigService = {
 const mockExecutionContextCorrect = {
 	switchToHttp: jest.fn().mockReturnValue({
 		getRequest: jest.fn().mockReturnValue({
-			headers: { apiKey: mockApiKey },
+			header: (headerName: string) => {
+				if (headerName === 'apikey') {
+					return mockApiKey;
+				} else {
+					return undefined;
+				}
+			},
 		}),
 	}),
 } as unknown as ExecutionContext;
@@ -27,7 +33,9 @@ const mockExecutionContextCorrect = {
 const mockExecutionContextNotSet = {
 	switchToHttp: jest.fn().mockReturnValue({
 		getRequest: jest.fn().mockReturnValue({
-			headers: {},
+			header: () => {
+				return undefined;
+			},
 		}),
 	}),
 } as unknown as ExecutionContext;
@@ -35,7 +43,13 @@ const mockExecutionContextNotSet = {
 const mockExecutionContextWrong = {
 	switchToHttp: jest.fn().mockReturnValue({
 		getRequest: jest.fn().mockReturnValue({
-			headers: { apiKey: 'WrongApiKey' },
+			header: (headerName: string) => {
+				if (headerName === 'apikey') {
+					return 'wrongApiKey';
+				} else {
+					return undefined;
+				}
+			},
 		}),
 	}),
 } as unknown as ExecutionContext;

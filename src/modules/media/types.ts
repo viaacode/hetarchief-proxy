@@ -65,6 +65,7 @@ export interface File {
 	ebucoreIsMediaFragmentOf: string;
 	embedUrl: string;
 }
+
 export interface Representation {
 	name: string;
 	alternateName: string;
@@ -79,7 +80,6 @@ export interface Representation {
 
 export interface Media {
 	id: string;
-	schemaIdentifier: string;
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;
