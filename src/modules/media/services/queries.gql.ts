@@ -9,7 +9,7 @@ export const GET_OBJECT_IE_PLAY_INFO_BY_ID = `
 
 export const GET_OBJECT_IE_BY_ID = `
 	query objectDetail($id: String!) {
-		object_ie_by_pk(schema_identifier: $id) {
+		object_ie(where: { schema_identifier: { _eq: $id } }) {
 			schema_identifier
 			premis_identifier
 			premis_relationship
@@ -47,7 +47,6 @@ export const GET_OBJECT_IE_BY_ID = `
 			schema_spatial
 			schema_temporal
 			schema_keywords
-			schema_genre
 			dcterms_format
 			schema_in_language
 			schema_thumbnail_url
@@ -59,6 +58,8 @@ export const GET_OBJECT_IE_BY_ID = `
 			meemoo_media_object_id
 			schema_date_created
 			schema_date_created_lower_bound
+			ebucore_object_type
+			schema_genre
 		}
   	}
 `;
