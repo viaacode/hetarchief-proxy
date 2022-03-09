@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { get } from 'lodash';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
-import { User } from '../types';
+import { GqlPermissionData, User } from '../types';
 
 import {
 	GET_USER_BY_IDENTITY_ID,
@@ -27,6 +27,9 @@ export class UsersService {
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),
 			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
+			permissions: get(graphQlUser, 'group.permissions', []).map(
+				(permData: GqlPermissionData) => permData.permission.name
+			),
 		};
 	}
 
