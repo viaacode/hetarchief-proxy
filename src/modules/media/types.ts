@@ -79,6 +79,7 @@ export interface Representation {
 
 export interface Media {
 	id: string;
+	schemaIdentifier: string;
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;

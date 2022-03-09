@@ -37,6 +37,8 @@ const mockGqlCollectionObject: GqlObject = {
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
 	schema_identifier: '8s4jm2514q',
+	meemoo_fragment_id:
+		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 	maintainer: {
 		schema_identifier: 'OR-1v5bc86',
 		schema_name: 'Huis van Alijn',
@@ -121,6 +123,8 @@ const mockGqlCollectionObjectResult = {
 
 const mockCollectionObject: IeObject = {
 	id: '8s4jm2514q',
+	meemooFragmentId:
+		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	termsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -274,7 +278,7 @@ describe('CollectionsService', () => {
 	describe('findObjectInCollection', () => {
 		it('returns one objects in a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
-			const response = await collectionsService.findObjectInCollection(
+			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
 				mockCollectionObject.id
 			);
@@ -346,7 +350,7 @@ describe('CollectionsService', () => {
 	describe('addObjectToCollection', () => {
 		it('can add object to a collection', async () => {
 			const findObjectInCollectionSpy = jest
-				.spyOn(collectionsService, 'findObjectInCollection')
+				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
@@ -366,7 +370,7 @@ describe('CollectionsService', () => {
 
 		it('can not add object to a collection if it already exists', async () => {
 			const findObjectInCollectionSpy = jest
-				.spyOn(collectionsService, 'findObjectInCollection')
+				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
 				.mockResolvedValueOnce(mockCollectionObject);
 
 			let error;

@@ -45,7 +45,8 @@ export class MediaService {
 
 	public adapt(graphQlObject: any): Media {
 		return {
-			id: get(graphQlObject, 'schema_identifier'),
+			id: get(graphQlObject, 'meemoo_fragment_id'),
+			schemaIdentifier: get(graphQlObject, 'schema_identifier'),
 			premisIdentifier: get(graphQlObject, 'premis_identifier'),
 			premisRelationship: get(graphQlObject, 'premis_relationship'),
 			isPartOf: get(graphQlObject, 'schema_is_part_of'),

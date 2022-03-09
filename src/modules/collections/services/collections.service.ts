@@ -7,6 +7,7 @@ import {
 	CollectionObjectLink,
 	GqlCollection,
 	GqlCreateCollection,
+	GqlObject,
 	GqlUpdateCollection,
 	IeObject,
 } from '../types';
@@ -16,6 +17,7 @@ import {
 	FIND_COLLECTION_BY_ID,
 	FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
 	FIND_COLLECTIONS_BY_USER,
+	FIND_OBJECT_BY_FRAGMENT_IDENTIFIER,
 	FIND_OBJECT_IN_COLLECTION,
 	INSERT_COLLECTION,
 	INSERT_OBJECT_INTO_COLLECTION,
@@ -33,6 +35,26 @@ export class CollectionsService {
 
 	constructor(protected dataService: DataService) {}
 
+	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
+		if (!gqlIeObject) {
+			return undefined;
+		}
+		return {
+			maintainerId: get(gqlIeObject, 'maintainer.schema_identifier'),
+			maintainerName: get(gqlIeObject, 'maintainer.schema_name'),
+			readingRoomId: get(gqlIeObject, 'maintainer.space.id'),
+			creator: get(gqlIeObject, 'schema_creator'),
+			description: get(gqlIeObject, 'schema_description'),
+			format: get(gqlIeObject, 'dcterms_format'),
+			id: get(gqlIeObject, 'schema_identifier'),
+			meemooFragmentId: get(gqlIeObject, 'meemoo_fragment_id'),
+			name: get(gqlIeObject, 'schema_name'),
+			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
+			termsAvailable: get(gqlIeObject, 'dcterms_available'),
+			thumbnailUrl: get(gqlIeObject, 'schema_thumbnail_url'),
+		};
+	}
+
 	/**
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
@@ -48,44 +70,23 @@ export class CollectionsService {
 			createdAt: collection.created_at,
 			updatedAt: collection.updated_at,
 			isDefault: collection.is_default,
-			objects: gslLinkObjects?.map((gqlLinkObject) => ({
-				id: get(gqlLinkObject, 'ie.schema_identifier'),
-				name: get(gqlLinkObject, 'ie.schema_name'),
-				termsAvailable: get(gqlLinkObject, 'ie.dcterms_available'),
-				creator: get(gqlLinkObject, 'ie.schema_creator'),
-				description: get(gqlLinkObject, 'ie.schema_description'),
-				format: get(gqlLinkObject, 'ie.dcterms_format'),
-				numberOfPages: get(gqlLinkObject, 'ie.schema_number_of_pages'),
-				thumbnailUrl: get(gqlLinkObject, 'ie.schema_thumbnail_url'),
-				collectionEntryCreatedAt: get(gqlLinkObject, 'created_at'),
-				maintainerId: get(gqlLinkObject, 'ie.maintainer.schema_identifier'),
-				maintainerName: get(gqlLinkObject, 'ie.maintainer.schema_name'),
-				readingRoomId: get(gqlLinkObject, 'ie.maintainer.space.id'),
-			})),
+			objects: gslLinkObjects?.map(this.adaptCollectionObjectLink),
 		};
 	}
 
-	public adaptCollectionObjectLink(
+	public adaptCollectionObjectLink = (
 		gqlCollectionObjectLink: CollectionObjectLink | undefined
-	): IeObject | undefined {
+	): IeObject | undefined => {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
 		}
+		const func = this.adaptIeObject;
+		const objectIe = func(get(gqlCollectionObjectLink, 'ie'));
 		return {
-			maintainerId: get(gqlCollectionObjectLink, 'ie.maintainer.schema_identifier'),
-			maintainerName: get(gqlCollectionObjectLink, 'ie.maintainer.schema_name'),
-			readingRoomId: get(gqlCollectionObjectLink, 'ie.maintainer.space.id'),
 			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
-			creator: get(gqlCollectionObjectLink, 'ie.schema_creator'),
-			description: get(gqlCollectionObjectLink, 'ie.schema_description'),
-			format: get(gqlCollectionObjectLink, 'ie.dcterms_format'),
-			id: get(gqlCollectionObjectLink, 'ie.schema_identifier'),
-			name: get(gqlCollectionObjectLink, 'ie.schema_name'),
-			numberOfPages: get(gqlCollectionObjectLink, 'ie.schema_number_of_pages'),
-			termsAvailable: get(gqlCollectionObjectLink, 'ie.dcterms_available'),
-			thumbnailUrl: get(gqlCollectionObjectLink, 'ie.schema_thumbnail_url'),
+			...objectIe,
 		};
-	}
+	};
 
 	public async findCollectionsByUser(
 		userProfileId: string,
@@ -185,22 +186,40 @@ export class CollectionsService {
 		return response.data.delete_users_collection.affected_rows;
 	}
 
-	public async findObjectInCollection(
+	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
-		objectId: string
+		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
 		const response = await this.dataService.execute(FIND_OBJECT_IN_COLLECTION, {
 			collectionId,
-			objectId,
+			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.users_collection_ie[0];
-		this.logger.debug(`Found object ${objectId} in ${collectionId}`);
+		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject);
 	}
 
-	public async addObjectToCollection(collectionId: string, objectId: string): Promise<IeObject> {
-		const collectionObject = await this.findObjectInCollection(collectionId, objectId);
+	public async findObjectBySchemaIdentifier(
+		objectSchemaIdentifier: string
+	): Promise<IeObject | null> {
+		const response = await this.dataService.execute(FIND_OBJECT_BY_FRAGMENT_IDENTIFIER, {
+			objectSchemaIdentifier,
+		});
+		const foundObject = response.data.object_ie[0];
+		this.logger.debug(`Found object ${objectSchemaIdentifier}`);
+
+		return this.adaptIeObject(foundObject);
+	}
+
+	public async addObjectToCollection(
+		collectionId: string,
+		objectSchemaIdentifier: string
+	): Promise<IeObject> {
+		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
+			collectionId,
+			objectSchemaIdentifier
+		);
 		if (collectionObject) {
 			throw new BadRequestException({
 				code: 'OBJECT_ALREADY_EXISTS',
@@ -208,27 +227,36 @@ export class CollectionsService {
 			});
 		}
 
+		const objectInfo = await this.findObjectBySchemaIdentifier(objectSchemaIdentifier);
+
+		if (!objectInfo) {
+			throw new NotFoundException(
+				`Object with schema identifier ${objectSchemaIdentifier} was not found`
+			);
+		}
+
 		const response = await this.dataService.execute(INSERT_OBJECT_INTO_COLLECTION, {
 			collectionId,
-			objectId,
+			objectSchemaIdentifier,
+			objectMeemooFragmentId: objectInfo.meemooFragmentId,
 		});
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
-		this.logger.debug(`Collection object ${objectId} created`);
+		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
 	}
 
 	async removeObjectFromCollection(
 		collectionId: string,
-		objectId: string,
+		objectSchemaIdentifier: string,
 		userProfileId: string
 	) {
 		const response = await this.dataService.execute(REMOVE_OBJECT_FROM_COLLECTION, {
 			collectionId,
-			objectId,
+			objectSchemaIdentifier,
 			userProfileId,
 		});
-		this.logger.debug(`Collection object ${objectId} deleted`);
+		this.logger.debug(`Collection object ${objectSchemaIdentifier} deleted`);
 
 		return response.data.delete_users_collection_ie.affected_rows || 0;
 	}
