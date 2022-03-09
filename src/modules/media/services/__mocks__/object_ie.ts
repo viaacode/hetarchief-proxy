@@ -75,6 +75,33 @@ export default {
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 				schema_date_created: '[2020-09-01,)',
 				schema_date_created_lower_bound: '2020-09-01',
+				premis_is_represented_by: [
+					{
+						schema_name: 'Durf te vragen R002 A0001',
+						schema_alternate_name: 'Durf te vragen R002 A0001',
+						schema_description: null,
+						ie_meemoo_fragment_id:
+							'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+						dcterms_format: 'mp4',
+						schema_transcript: null,
+						schema_date_created: null,
+						id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
+						premis_includes: [
+							{
+								id: 'https://archief-media.viaa.be/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
+								schema_name: 'browse.mp4',
+								schema_alternate_name: '8911p09j1g.MXF',
+								schema_description: null,
+								representation_id:
+									'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
+								ebucore_media_type: 'mp4',
+								ebucore_is_media_fragment_of: null,
+								schema_embed_url:
+									'VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
+							},
+						],
+					},
+				],
 			},
 		],
 	},
