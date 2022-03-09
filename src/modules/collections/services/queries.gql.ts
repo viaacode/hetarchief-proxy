@@ -8,7 +8,7 @@ export const FIND_COLLECTIONS_BY_USER = `
 			created_at
 			updated_at
 			ies {
-				intellectual_entity {
+				ie {
 					schema_identifier
 				}
 			}
