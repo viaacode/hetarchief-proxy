@@ -30,7 +30,6 @@ import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationsController {
@@ -39,6 +38,7 @@ export class NotificationsController {
 		private visitService: VisitsService
 	) {}
 
+	@UseGuards(LoggedInGuard)
 	@Get()
 	public async getNotifications(
 		@Query() queryDto: NotificationsQueryDto,
@@ -54,6 +54,7 @@ export class NotificationsController {
 		return notifications;
 	}
 
+	@UseGuards(LoggedInGuard)
 	@Patch(':notificationId/mark-as-read')
 	public async markAsRead(
 		@Param('notificationId') notificationId: string,
@@ -67,6 +68,7 @@ export class NotificationsController {
 		return notification;
 	}
 
+	@UseGuards(LoggedInGuard)
 	@Patch('mark-as-read')
 	public async markAllAsRead(
 		@Session() session: Record<string, any>
