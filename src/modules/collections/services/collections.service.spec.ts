@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CollectionsService } from './collections.service';
 
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { CollectionObjectLink, IeObject } from '~modules/collections/types';
+import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -28,7 +28,7 @@ const mockGqlCollection2 = {
 	updated_at: '2022-02-22T13:51:01.995293',
 };
 
-const mockGqlCollectionObject = {
+const mockGqlCollectionObject: GqlObject = {
 	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	schema_creator: null,
 	dcterms_available: '2015-09-19T12:08:24',
@@ -37,11 +37,18 @@ const mockGqlCollectionObject = {
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
 	schema_identifier: '8s4jm2514q',
+	maintainer: {
+		schema_identifier: 'OR-1v5bc86',
+		schema_name: 'Huis van Alijn',
+		space: {
+			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+		},
+	},
 };
 
 const mockGqlCollectionObjectLink: CollectionObjectLink = {
 	created_at: '2022-02-02T10:55:16.542503',
-	intellectual_entity: mockGqlCollectionObject,
+	ie: mockGqlCollectionObject,
 };
 
 const mockGqlCollectionsResult = {
@@ -72,7 +79,7 @@ const mockGqlCollectionObjectsResult = {
 		users_collection_ie: [
 			{
 				created_at: '2022-02-02T10:55:16.542503',
-				intellectual_entity: {
+				ie: {
 					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 					schema_creator: null,
 					dcterms_available: '2015-09-19T12:08:24',
@@ -97,7 +104,7 @@ const mockGqlCollectionObjectResult = {
 		users_collection_ie: [
 			{
 				created_at: '2022-02-02T10:55:16.542503',
-				intellectual_entity: {
+				ie: {
 					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 					schema_creator: null,
 					dcterms_available: '2015-09-19T12:08:24',
@@ -123,6 +130,9 @@ const mockCollectionObject: IeObject = {
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
 	description: 'A description for this collection',
+	maintainerId: 'OR-1v5bc86',
+	maintainerName: 'Huis van Alijn',
+	readingRoomId: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 };
 
 const mockUser = {
@@ -165,7 +175,7 @@ describe('CollectionsService', () => {
 			expect(adapted.name).toEqual(mockGqlCollection.name);
 			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
 			expect(adapted.objects[0].termsAvailable).toEqual(
-				mockGqlCollection.ies[0].intellectual_entity.dcterms_available
+				mockGqlCollection.ies[0].ie.dcterms_available
 			);
 			expect(adapted.objects[0].collectionEntryCreatedAt).toEqual(
 				mockGqlCollection.ies[0].created_at
@@ -182,14 +192,10 @@ describe('CollectionsService', () => {
 				mockGqlCollectionObjectLink
 			);
 			// test some sample keys
-			expect(adapted.id).toEqual(
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
-			);
-			expect(adapted.name).toEqual(
-				mockGqlCollectionObjectLink.intellectual_entity.schema_name
-			);
+			expect(adapted.id).toEqual(mockGqlCollectionObjectLink.ie.schema_identifier);
+			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
 			expect(adapted.termsAvailable).toEqual(
-				mockGqlCollectionObjectLink.intellectual_entity.dcterms_available
+				mockGqlCollectionObjectLink.ie.dcterms_available
 			);
 			expect(adapted.collectionEntryCreatedAt).toEqual(
 				mockGqlCollectionObjectLink.created_at
@@ -242,8 +248,7 @@ describe('CollectionsService', () => {
 				{}
 			);
 			expect(response.items[0].id).toBe(
-				mockGqlCollectionObjectsResult.data.users_collection_ie[0].intellectual_entity
-					.schema_identifier
+				mockGqlCollectionObjectsResult.data.users_collection_ie[0].ie.schema_identifier
 			);
 		});
 
@@ -353,11 +358,9 @@ describe('CollectionsService', () => {
 
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+				mockGqlCollectionObjectLink.ie.schema_identifier
 			);
-			expect(response.id).toBe(
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
-			);
+			expect(response.id).toBe(mockGqlCollectionObjectLink.ie.schema_identifier);
 			findObjectInCollectionSpy.mockRestore();
 		});
 
@@ -370,7 +373,7 @@ describe('CollectionsService', () => {
 			try {
 				await collectionsService.addObjectToCollection(
 					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.intellectual_entity.schema_identifier
+					mockGqlCollectionObjectLink.ie.schema_identifier
 				);
 			} catch (e) {
 				error = e;
@@ -395,7 +398,7 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.intellectual_entity.schema_identifier,
+				mockGqlCollectionObjectLink.ie.schema_identifier,
 				mockUser.id
 			);
 			expect(affectedRows).toBe(1);
