@@ -5,13 +5,12 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Note, Visit, VisitStatus } from '../types';
+import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
@@ -85,7 +84,6 @@ export class VisitsService {
 			).trim(),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
-			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 		};
 	}
 
@@ -183,7 +181,7 @@ export class VisitsService {
 			status,
 			userProfileId,
 			spaceId,
-			started,
+			timeframe,
 			page,
 			size,
 			orderProp,
@@ -220,10 +218,29 @@ export class VisitsService {
 			};
 		}
 
-		if (started) {
-			where.start_date = {
-				_lte: new Date().toISOString(),
-			};
+		if (!isEmpty(timeframe)) {
+			switch (timeframe) {
+				case VisitTimeframe.FUTURE:
+					where.start_date = {
+						_gt: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.ACTIVE:
+					where.start_date = {
+						_lte: new Date().toISOString(),
+					};
+					where.end_date = {
+						_gte: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.PAST:
+					where.end_date = {
+						_lt: new Date().toISOString(),
+					};
+					break;
+			}
 		}
 
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {

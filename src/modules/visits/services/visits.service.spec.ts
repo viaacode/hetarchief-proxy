@@ -5,7 +5,7 @@ import cpVisit from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -162,10 +162,36 @@ describe('VisitsService', () => {
 			expect(response.total).toBe(100);
 		});
 
-		it('can filter on started visits', async () => {
+		it('can filter on timeframe ACTIVE', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findAll({
-				started: true,
+				timeframe: VisitTimeframe.ACTIVE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe FUTURE', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.FUTURE,
+				page: 1,
+				size: 10,
+			});
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on timeframe PAST', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll({
+				timeframe: VisitTimeframe.PAST,
 				page: 1,
 				size: 10,
 			});

@@ -14,7 +14,7 @@ import {
 import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
-import { VisitStatus } from '~modules/visits/types';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
@@ -97,7 +97,7 @@ export class VisitsQueryDto {
 		type: String,
 		description:
 			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
-		default: '%',
+		default: undefined,
 	})
 	query?: string;
 
@@ -106,6 +106,7 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Get all visits for this user',
+		default: undefined,
 	})
 	userProfileId?: string;
 
@@ -114,6 +115,7 @@ export class VisitsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Get all visits for this space',
+		default: undefined,
 	})
 	spaceId?: string;
 
@@ -124,6 +126,7 @@ export class VisitsQueryDto {
 		description: `Status of the visit request. Options are: ${Object.values(VisitStatus).join(
 			', '
 		)}`,
+		default: undefined,
 	})
 	@IsOptional()
 	@IsEnum(VisitStatus, { each: true })
@@ -137,14 +140,16 @@ export class VisitsQueryDto {
 	status?: VisitStatus | VisitStatus[];
 
 	@ApiPropertyOptional({
-		type: Boolean,
 		required: false,
-		description: 'Filters on visits where startAt <= now()',
+		enum: VisitTimeframe,
+		description: `Filters visits based on startAt and endAt times. Active means current time is between the startAt and endAt.  Options are: ${Object.values(
+			VisitTimeframe
+		).join(', ')}`,
+		default: undefined,
 	})
 	@IsOptional()
-	@IsBoolean()
-	@Type(() => Boolean)
-	started?: boolean;
+	@IsEnum(VisitTimeframe, { each: true })
+	timeframe?: VisitTimeframe;
 
 	@IsNumber()
 	@Type(() => Number)
