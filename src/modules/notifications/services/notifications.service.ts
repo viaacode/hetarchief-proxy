@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { format } from 'date-fns';
 import { get } from 'lodash';
 
 import {
