@@ -352,6 +352,9 @@ describe('CollectionsService', () => {
 			const findObjectInCollectionSpy = jest
 				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
+			const findObjectBySchemaIdentifierSpy = jest
+				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
+				.mockResolvedValueOnce(mockCollectionObject);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					insert_users_collection_ie: {
@@ -366,6 +369,7 @@ describe('CollectionsService', () => {
 			);
 			expect(response.id).toBe(mockGqlCollectionObjectLink.ie.schema_identifier);
 			findObjectInCollectionSpy.mockRestore();
+			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
 
 		it('can not add object to a collection if it already exists', async () => {
