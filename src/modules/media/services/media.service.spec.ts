@@ -28,7 +28,7 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
-const mockObjectId = objectIe.data.object_ie_by_pk.schema_identifier;
+const mockObjectId = objectIe.data.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -128,7 +128,7 @@ describe('MediaService', () => {
 		it('throws a notfoundexception if the object was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					object_ie_by_pk: null,
+					object_ie: [],
 				},
 			});
 			let error;
