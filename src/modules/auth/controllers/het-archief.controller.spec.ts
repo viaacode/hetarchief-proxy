@@ -2,6 +2,8 @@ import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Configuration } from '~config';
+
 import { HetArchiefService } from '../services/het-archief.service';
 
 import { HetArchiefController } from './het-archief.controller';
@@ -59,7 +61,7 @@ const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyI
 };
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: string): string | boolean => {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'clientHost') {
 			return hetArchiefLoginUrl;
 		}

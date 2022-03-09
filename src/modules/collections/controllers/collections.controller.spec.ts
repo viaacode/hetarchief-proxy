@@ -59,6 +59,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	permissions: ['CREATE_COLLECTION'],
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
