@@ -25,6 +25,11 @@ export const INSERT_VISIT = `
 				mail
 				id
 			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;
@@ -56,6 +61,11 @@ export const UPDATE_VISIT = `
 				mail
 				id
 			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
+			}
 		}
 	}
 `;
@@ -86,6 +96,11 @@ export const FIND_VISITS = `
 				last_name
 				mail
 				id
+			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
 			}
 		}
 		cp_visit_aggregate(where: $where) {
@@ -122,6 +137,11 @@ export const FIND_VISIT_BY_ID = `
 				last_name
 				mail
 				id
+			}
+			space {
+				schema_maintainer {
+					schema_name
+				}
 			}
 		}
 	}
