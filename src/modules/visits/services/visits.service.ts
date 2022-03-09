@@ -10,7 +10,7 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Note, Visit, VisitStatus } from '../types';
+import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
@@ -34,13 +34,14 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
+			VisitStatus.PENDING,
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.CANCELLED_BY_VISITOR]: [],
-		[VisitStatus.APPROVED]: [VisitStatus.DENIED],
-		[VisitStatus.DENIED]: [],
+		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
+		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
 	constructor(private dataService: DataService) {}
@@ -175,8 +176,17 @@ export class VisitsService {
 	}
 
 	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const { query, status, userProfileId, spaceId, page, size, orderProp, orderDirection } =
-			inputQuery;
+		const {
+			query,
+			status,
+			userProfileId,
+			spaceId,
+			timeframe,
+			page,
+			size,
+			orderProp,
+			orderDirection,
+		} = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -206,6 +216,31 @@ export class VisitsService {
 			where.cp_space_id = {
 				_eq: spaceId,
 			};
+		}
+
+		if (!isEmpty(timeframe)) {
+			switch (timeframe) {
+				case VisitTimeframe.FUTURE:
+					where.start_date = {
+						_gt: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.ACTIVE:
+					where.start_date = {
+						_lte: new Date().toISOString(),
+					};
+					where.end_date = {
+						_gte: new Date().toISOString(),
+					};
+					break;
+
+				case VisitTimeframe.PAST:
+					where.end_date = {
+						_lt: new Date().toISOString(),
+					};
+					break;
+			}
 		}
 
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
