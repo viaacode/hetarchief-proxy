@@ -393,4 +393,37 @@ describe('VisitsService', () => {
 			expect(error.message).toEqual('startAt must precede endAt');
 		});
 	});
+
+	describe('getApprovedAndStartedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndAlmostEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
+
+	describe('getApprovedAndEndedVisitsWithoutNotification', () => {
+		it('should get all visit requests that just started', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+
+			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
+
+			expect(visits).toHaveLength(1);
+			expect(visits[0].id).toEqual(cpVisit.id);
+		});
+	});
 });
