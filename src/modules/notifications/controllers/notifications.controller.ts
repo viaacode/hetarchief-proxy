@@ -11,8 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { addMonths, format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
+import { addMonths } from 'date-fns';
 import i18n from 'i18next';
 
 import {
