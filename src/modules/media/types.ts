@@ -73,4 +73,5 @@ export interface Media {
 	meemooMediaObjectId: string;
 	dateCreated: string;
 	dateCreatedLowerBound: string;
+	ebucoreObjectType: string;
 }
