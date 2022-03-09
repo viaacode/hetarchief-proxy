@@ -5,7 +5,6 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
@@ -84,7 +83,6 @@ export class VisitsService {
 			).trim(),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
-			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 		};
 	}
 
