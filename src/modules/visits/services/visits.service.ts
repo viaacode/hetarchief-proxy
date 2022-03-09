@@ -9,12 +9,7 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
-import {
-	CreateVisitDto,
-	UpdateVisitDto,
-	UpdateVisitStatusDto,
-	VisitsQueryDto,
-} from '../dto/visits.dto';
+import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { Note, Visit, VisitStatus } from '../types';
 
 import {
@@ -69,6 +64,7 @@ export class VisitsService {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),

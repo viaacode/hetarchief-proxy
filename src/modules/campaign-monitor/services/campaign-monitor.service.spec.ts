@@ -24,6 +24,7 @@ const mockConfigService = {
 const mockVisit: Visit = {
 	id: '1',
 	spaceId: 'space-1',
+	spaceName: 'VRT',
 	userProfileId: 'user-1',
 	timeframe: 'july 2022',
 	reason: 'fake news investigation',

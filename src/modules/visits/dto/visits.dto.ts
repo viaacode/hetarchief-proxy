@@ -176,6 +176,7 @@ export class VisitsQueryDto {
 		enum: [
 			'id',
 			'spaceId',
+			'spaceName',
 			'userProfileId',
 			'timeframe',
 			'reason',
