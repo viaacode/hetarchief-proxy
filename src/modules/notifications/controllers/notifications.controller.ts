@@ -79,6 +79,14 @@ export class NotificationsController {
 		return { status: `updated ${amountUpdated} notifications`, total: amountUpdated };
 	}
 
+	/**
+	 * Check all visit requests to see if any notifications have to be triggered related to startAt or endAt times
+	 *
+	 * This api call will be triggered by a cron job somewhere in openshift. We do this as a route for 2 reasons:
+	 *     - We can test these easily by triggering them using postman
+	 *     - They can be triggered once on a single pod if the proxy every has to be load balanced across multiple pods
+	 * @param apiKey
+	 */
 	@UseGuards(ApiKeyGuard)
 	@Post('check-new')
 	public async checkNewNotifications(
