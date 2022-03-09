@@ -193,7 +193,7 @@ export class MediaService {
 
 		const data = {
 			app: 'OR-*',
-			client: '', // Asked in ARC-536
+			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
 			referer: referer || this.host,
 			maxage: this.ticketServiceMaxAge,
 		};
