@@ -6,8 +6,8 @@ import {
 	Logger,
 	Param,
 	ParseUUIDPipe,
+	Patch,
 	Post,
-	Put,
 	Query,
 	Session,
 	UnauthorizedException,
@@ -75,7 +75,7 @@ export class CollectionsController {
 		return collection;
 	}
 
-	@Put(':collectionId')
+	@Patch(':collectionId')
 	public async updateCollection(
 		@Param('collectionId') collectionId: string,
 		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
@@ -148,7 +148,7 @@ export class CollectionsController {
 		}
 	}
 
-	@Put(':oldCollectionId/objects/:objectId/move')
+	@Patch(':oldCollectionId/objects/:objectId/move')
 	public async moveObjectToAnotherCollection(
 		@Param('oldCollectionId') oldCollectionId: string,
 		@Param('objectId') objectId: string,
