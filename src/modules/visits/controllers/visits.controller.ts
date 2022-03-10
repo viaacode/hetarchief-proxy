@@ -48,10 +48,22 @@ export class VisitsController {
 		return visit;
 	}
 
+	@Get(':spaceId/active')
+	public async getActiveVisitForUserAndSpace(
+		@Param('spaceId') spaceId: string,
+		@Session() session: Record<string, any>
+	): Promise<Visit | null> {
+		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
+			SessionHelper.getArchiefUserInfo(session).id,
+			spaceId
+		);
+		return activeVisit;
+	}
+
 	@Post()
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
-		@Session() session
+		@Session() session: Record<string, any>
 	): Promise<Visit> {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
