@@ -28,6 +28,15 @@ export const INSERT_VISIT = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -64,6 +73,15 @@ export const UPDATE_VISIT = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -100,6 +118,15 @@ export const FIND_VISITS = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -141,6 +168,15 @@ export const FIND_VISIT_BY_ID = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -171,6 +207,15 @@ export const FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -193,6 +238,15 @@ export const FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -215,6 +269,15 @@ export const FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
