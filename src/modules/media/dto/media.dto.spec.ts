@@ -1,10 +1,10 @@
-import { MediaQueryDto, PlayerTicketsQueryDto, SearchFilters } from '~modules/media/dto/media.dto';
+import { MediaQueryDto, PlayerTicketsQueryDto, SearchFilter } from '~modules/media/dto/media.dto';
 
 describe('NotificationsDto', () => {
 	describe('SearchFilters', () => {
 		it('should be able to construct a SearchFilters object', async () => {
-			const searchFilters = new SearchFilters();
-			expect(searchFilters).toEqual({});
+			const searchFilter = new SearchFilter();
+			expect(searchFilter).toEqual({});
 		});
 	});
 	describe('MediaQueryDto', () => {

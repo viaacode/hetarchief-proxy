@@ -19,17 +19,26 @@ export class SearchFilter {
 	field: SearchFilterField;
 
 	@IsArray()
+	@IsOptional()
 	@Transform((input) => {
 		if (!isArray(input.value)) {
 			return [input.value.trim()];
 		}
 		return input.value.map((kw) => kw.trim());
 	})
-	@ApiProperty({
+	@ApiPropertyOptional({
 		type: String,
-		description: `The value for the filter. Can be an array when querying for multiple values (OR operator)`,
+		description: `The array of values for the filter. Uses the OR operator. If both multiValue and value are set, value is ignored.`,
 	})
-	value: Array<string>;
+	multiValue?: Array<string>;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: `The single value for the filter. If both multiValue and value are set, value is ignored.`,
+	})
+	value?: string;
 
 	@IsString()
 	@IsEnum(Operator)

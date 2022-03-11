@@ -22,6 +22,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 };
 
 export enum QueryType {
+	TERM = 'term',
 	TERMS = 'terms',
 	RANGE = 'range',
 	MATCH = 'match',

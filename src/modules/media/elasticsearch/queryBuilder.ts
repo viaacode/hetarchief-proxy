@@ -12,6 +12,7 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
+	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	VALUE_OPERATORS,
 } from './consts';
@@ -92,16 +93,25 @@ export class QueryBuilder {
 				[searchFilter.operator]: searchFilter.value,
 			};
 		}
-		return searchFilter.value;
+		return searchFilter.multiValue || searchFilter.value;
+	}
+
+	protected static getQueryType(searchFilter: SearchFilter, value: any): any {
+		const defaultQueryType = this.config.DEFAULT_QUERY_TYPE[searchFilter.field];
+		if (defaultQueryType === QueryType.TERMS && !_.isArray(value)) {
+			return QueryType.TERM;
+		}
+		return defaultQueryType;
 	}
 
 	protected static buildFilter(elasticKey: string, searchFilter: SearchFilter): any {
 		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+		const value = this.buildValue(searchFilter);
 		return {
 			occurrenceType,
 			query: {
-				[this.config.DEFAULT_QUERY_TYPE[searchFilter.field]]: {
-					[elasticKey + this.suffix(searchFilter.field)]: this.buildValue(searchFilter),
+				[this.getQueryType(searchFilter, value)]: {
+					[elasticKey + this.suffix(searchFilter.field)]: value,
 				},
 			},
 		};
@@ -136,6 +146,11 @@ export class QueryBuilder {
 		_.set(filterObject, 'bool.filter', filterArray);
 		_.forEach(filters, (searchFilter: SearchFilter) => {
 			if (searchFilter.field === 'query') {
+				if (!searchFilter.value) {
+					// empty value, ignore
+					return;
+				}
+
 				const textFilters = this.buildFreeTextFilter(searchFilter);
 
 				textFilters.forEach((filter) =>
@@ -160,16 +175,6 @@ export class QueryBuilder {
 		});
 
 		return filterObject;
-	}
-
-	protected static applyAdvancedFilter(filterObject: any, advancedFilter: any): void {
-		advancedFilter.forEach((filter) => {
-			if (!filterObject.bool[filter.occurrenceType]) {
-				filterObject.bool[filter.occurrenceType] = [];
-			}
-
-			filterObject.bool[filter.occurrenceType].push(filter.query);
-		});
 	}
 
 	protected static applyFilter(filterObject: any, newFilter: any): void {
