@@ -22,7 +22,7 @@ const incompleteConfig = {
 		// no format property
 	},
 	DEFAULT_QUERY_TYPE: {
-		format: QueryType.TERM,
+		format: QueryType.TERMS,
 		duration: QueryType.RANGE,
 	},
 };
