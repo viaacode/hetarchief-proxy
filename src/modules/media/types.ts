@@ -88,6 +88,7 @@ export interface Media {
 	partOfSeason: string;
 	partOfSeries: string;
 	maintainerId: string;
+	maintainerName: string;
 	contactInfo: ContactInfo;
 	copyrightHolder: string;
 	copyrightNotice: string;
