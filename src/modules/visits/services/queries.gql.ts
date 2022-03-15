@@ -81,7 +81,7 @@ export const FIND_VISITS = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			notes(order_by: {created_at: desc}, limit: 1) {
 				id
 				note
 				profile {
@@ -101,6 +101,10 @@ export const FIND_VISITS = `
 				schema_maintainer {
 					schema_name
 				}
+			}
+			updater {
+				id
+				full_name
 			}
 		}
 		cp_visit_aggregate(where: $where) {

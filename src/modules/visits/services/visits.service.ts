@@ -10,7 +10,7 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
@@ -63,7 +63,7 @@ export class VisitsService {
 		return true;
 	}
 
-	public adapt(graphQlVisit: any): Visit {
+	public adapt(graphQlVisit: GqlVisit): Visit {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
@@ -77,6 +77,8 @@ export class VisitsService {
 			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
+			updatedById: get(graphQlVisit, 'updater.id'),
+			updatedByName: get(graphQlVisit, 'updater.full_name'),
 			visitorName: (
 				get(graphQlVisit, 'user_profile.first_name', '') +
 				' ' +
