@@ -48,7 +48,7 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Get(':spaceId/active')
+	@Get('active-for-space/:spaceId')
 	public async getActiveVisitForUserAndSpace(
 		@Param('spaceId') spaceId: string,
 		@Session() session: Record<string, any>
