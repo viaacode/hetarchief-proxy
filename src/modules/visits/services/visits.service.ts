@@ -129,10 +129,11 @@ export class VisitsService {
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
 
-		const updateVisit = {
+		const updateVisit: Partial<GqlVisit> = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
+			updated_by: userProfileId,
 		};
 
 		const currentVisit = await this.findById(id); // Get current visit status

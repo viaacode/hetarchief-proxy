@@ -38,6 +38,7 @@ export interface GqlVisit {
 		};
 	};
 	updater: Partial<GqlProfile>;
+	updated_by?: string;
 }
 
 export interface Visit {
