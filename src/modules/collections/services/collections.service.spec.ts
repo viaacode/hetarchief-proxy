@@ -172,6 +172,11 @@ describe('CollectionsService', () => {
 	});
 
 	describe('adapt', () => {
+		it('returns undefined if no graphQl object was given', () => {
+			const adapted = collectionsService.adaptIeObject(undefined);
+			expect(adapted).toBeUndefined();
+		});
+
 		it('can adapt a graphql collection response to our collection interface', () => {
 			const adapted = collectionsService.adaptCollection(mockGqlCollection);
 			// test some sample keys
@@ -347,6 +352,16 @@ describe('CollectionsService', () => {
 		});
 	});
 
+	describe('findObjectBySchemaIdentifier', () => {
+		it('can find an object by schema identifier', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie: [mockGqlCollectionObject] },
+			});
+			const object = await collectionsService.findObjectBySchemaIdentifier('8s4jm2514q');
+			expect(object.id).toEqual('8s4jm2514q');
+		});
+	});
+
 	describe('addObjectToCollection', () => {
 		it('can add object to a collection', async () => {
 			const findObjectInCollectionSpy = jest
@@ -392,6 +407,32 @@ describe('CollectionsService', () => {
 			});
 
 			findObjectInCollectionSpy.mockRestore();
+		});
+
+		it('throws a NotFoundException when the objectInfo was not found', async () => {
+			const findObjectInCollectionSpy = jest
+				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
+				.mockResolvedValueOnce(null);
+			const findObjectBySchemaIdentifierSpy = jest
+				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
+				.mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await collectionsService.addObjectToCollection(
+					mockGqlCollection1.id,
+					mockGqlCollectionObjectLink.ie.schema_identifier
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				statusCode: 404,
+				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.schema_identifier} was not found`,
+			});
+			findObjectInCollectionSpy.mockRestore();
+			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
 	});
 
