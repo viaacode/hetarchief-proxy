@@ -11,6 +11,7 @@ export const NUMBER_OF_FILTER_OPTIONS = 40;
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
 	query: 'query',
+	advancedQuery: 'query',
 	format: 'dcterms_format',
 	duration: 'schema_duration',
 	created: 'schema_date_created',

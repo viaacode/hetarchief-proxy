@@ -81,6 +81,23 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query).toEqual({ bool: { filter: [] } });
 		});
 
+		it('should return an advanced search query when an advancedQuery filter is specified', () => {
+			const esQuery = QueryBuilder.build({
+				filters: [
+					{
+						field: SearchFilterField.ADVANCED_QUERY,
+						value: 'searchme',
+						operator: Operator.CONTAINS,
+					},
+				],
+				size: 10,
+				page: 1,
+			});
+			expect(esQuery.query.bool.must[0].multi_match.fields).not.toContain(
+				'schema_transcript'
+			);
+		});
+
 		it('should filter on format', () => {
 			const esQuery = QueryBuilder.build({
 				filters: [

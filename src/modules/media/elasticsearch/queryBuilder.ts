@@ -16,11 +16,13 @@ import {
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	VALUE_OPERATORS,
 } from './consts';
-import searchQueryTemplate from './templates/search-query.json';
+import searchQueryAdvanced from './templates/search-query-advanced.json';
+import searchQuery from './templates/search-query.json';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
 
-const searchQueryObjectTemplate = _.values(searchQueryTemplate);
+const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
+const searchQueryTemplate = _.values(searchQuery);
 
 export class QueryBuilder {
 	private static config: QueryBuilderConfig = {
@@ -117,9 +119,9 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildFreeTextFilter(searchFilter: SearchFilter): any {
+	protected static buildFreeTextFilter(searchTemplate: any, searchFilter: SearchFilter): any {
 		// Replace {{query}} in the template with the escaped search terms
-		const textQueryFilterArray = _.cloneDeep(searchQueryObjectTemplate);
+		const textQueryFilterArray = _.cloneDeep(searchTemplate);
 		const escapedQueryString = searchFilter.value;
 		_.forEach(textQueryFilterArray, (matchObj) => {
 			_.set(matchObj, 'multi_match.query', escapedQueryString);
@@ -145,13 +147,19 @@ export class QueryBuilder {
 		const filterArray: any[] = [];
 		_.set(filterObject, 'bool.filter', filterArray);
 		_.forEach(filters, (searchFilter: SearchFilter) => {
-			if (searchFilter.field === 'query') {
+			if (
+				searchFilter.field === SearchFilterField.QUERY ||
+				searchFilter.field === SearchFilterField.ADVANCED_QUERY
+			) {
 				if (!searchFilter.value) {
 					// empty value, ignore
 					return;
 				}
-
-				const textFilters = this.buildFreeTextFilter(searchFilter);
+				const searchTemplate =
+					searchFilter.field === SearchFilterField.QUERY
+						? searchQueryTemplate
+						: searchQueryAdvancedTemplate;
+				const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
 
 				textFilters.forEach((filter) =>
 					this.applyFilter(filterObject, {

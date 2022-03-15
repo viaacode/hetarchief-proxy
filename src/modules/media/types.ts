@@ -102,6 +102,7 @@ export interface Media {
 
 export enum SearchFilterField {
 	QUERY = 'query',
+	ADVANCED_QUERY = 'advancedQuery',
 	FORMAT = 'format',
 	DURATION = 'duration',
 	CREATED = 'created',
