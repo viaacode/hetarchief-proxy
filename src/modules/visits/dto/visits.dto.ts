@@ -194,6 +194,8 @@ export class VisitsQueryDto {
 			'visitorName',
 			'visitorMail',
 			'visitorId',
+			'updatedById',
+			'updatedByName',
 		],
 	})
 	orderProp? = 'startAt';

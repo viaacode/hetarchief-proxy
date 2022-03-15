@@ -57,8 +57,8 @@ export interface Visit {
 	visitorName: string;
 	visitorMail: string;
 	visitorId: string;
-	updatedById: string;
-	updatedByName: string;
+	updatedById: string | null;
+	updatedByName: string | null;
 }
 
 export interface Note {

@@ -63,7 +63,7 @@ export class VisitsService {
 		return true;
 	}
 
-	public adapt(graphQlVisit: GqlVisit): Visit {
+	public adapt(graphQlVisit: Partial<GqlVisit>): Visit {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
@@ -79,11 +79,7 @@ export class VisitsService {
 			updatedAt: get(graphQlVisit, 'updated_at'),
 			updatedById: get(graphQlVisit, 'updater.id'),
 			updatedByName: get(graphQlVisit, 'updater.full_name'),
-			visitorName: (
-				get(graphQlVisit, 'user_profile.first_name', '') +
-				' ' +
-				get(graphQlVisit, 'user_profile.last_name', '')
-			).trim(),
+			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
 		};
@@ -197,8 +193,7 @@ export class VisitsService {
 
 		if (!isEmpty(query)) {
 			where._or = [
-				{ user_profile: { first_name: { _ilike: query } } },
-				{ user_profile: { last_name: { _ilike: query } } },
+				{ user_profile: { full_name: { _ilike: query } } },
 				{ user_profile: { mail: { _ilike: query } } },
 			];
 		}
