@@ -7,7 +7,11 @@ import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, PlayerTicket, Representation } from '../types';
 
-import { GET_FILE_BY_REPRESENTATION_ID, GET_OBJECT_IE_BY_ID } from './queries.gql';
+import {
+	GET_FILE_BY_REPRESENTATION_ID,
+	GET_OBJECT_IE_BY_ID,
+	GET_THUMBNAIL_URL_BY_ID,
+} from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -210,14 +214,47 @@ export class MediaService {
 		return `${this.mediaServiceUrl}/${embedUrl}?token=${playerTicket.jwt}`;
 	}
 
+	public async getThumbnailUrl(id: string, referer: string): Promise<string> {
+		const thumbnailPath = trimStart(await this.getThumbnailPath(id), '/');
+
+		const data = {
+			app: 'OR-*',
+			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
+			referer: referer || this.host,
+			maxage: this.ticketServiceMaxAge,
+		};
+		this.logger.log(data);
+
+		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
+			thumbnailPath,
+			{
+				searchParams: data,
+				resolveBodyOnly: true,
+			}
+		);
+
+		return `${this.mediaServiceUrl}/${thumbnailPath}?token=${playerTicket.jwt}`;
+	}
+
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
 		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_ID, { id });
 		if (!objectFile[0]) {
-			throw new NotFoundException(`Object IE with id '${id}' not found`);
+			throw new NotFoundException(`Object file with representation_id '${id}' not found`);
 		}
 
 		return objectFile[0].schema_embed_url;
+	}
+
+	public async getThumbnailPath(id: string): Promise<string> {
+		const {
+			data: { object_ie: objectIe },
+		} = await this.dataService.execute(GET_THUMBNAIL_URL_BY_ID, { id });
+		if (!objectIe[0]) {
+			throw new NotFoundException(`Object IE with id '${id}' not found`);
+		}
+
+		return objectIe[0].schema_thumbnail_url;
 	}
 }

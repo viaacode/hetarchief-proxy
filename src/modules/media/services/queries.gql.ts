@@ -13,6 +13,16 @@ export const GET_FILE_BY_REPRESENTATION_ID = `
 	}
 `;
 
+export const GET_THUMBNAIL_URL_BY_ID = `
+	query objectDetail($id: String!) {
+		object_ie(where: { schema_identifier: { _eq: $id } }) {
+			schema_identifier
+			schema_thumbnail_url
+			schema_embed_url
+		}
+  	}
+`;
+
 export const GET_OBJECT_IE_BY_ID = `
 	query objectDetail($id: String!) {
 		object_ie(where: { schema_identifier: { _eq: $id } }) {
