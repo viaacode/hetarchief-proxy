@@ -227,7 +227,7 @@ describe('MediaService', () => {
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: "Object IE with id 'unknown-id' not found",
+				message: "Object file with representation_id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
