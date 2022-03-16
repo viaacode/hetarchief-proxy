@@ -13,6 +13,7 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockNotification1: Notification = {
@@ -80,6 +81,7 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {

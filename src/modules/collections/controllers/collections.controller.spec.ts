@@ -7,6 +7,7 @@ import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
 import { User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockCollectionsResponse: IPagination<Collection> = {
@@ -60,6 +61,7 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
