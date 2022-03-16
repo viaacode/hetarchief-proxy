@@ -23,6 +23,7 @@ export class UsersService {
 	public adapt(graphQlUser: any): User {
 		return {
 			id: get(graphQlUser, 'id'),
+			full_name: get(graphQlUser, 'full_name'),
 			firstName: get(graphQlUser, 'first_name'),
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),
