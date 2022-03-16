@@ -1,4 +1,4 @@
-import { Operator, SearchFilterField } from '../types';
+import { Operator, OrderProperty, SearchFilterField } from '../types';
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -22,6 +22,13 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	name: 'schema_name',
 };
 
+export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
+	relevance: '_score',
+	created: 'schema_date_created',
+	published: 'schema_date_published',
+	name: 'schema_name.keyword',
+};
+
 export enum QueryType {
 	TERM = 'term', // Search for a single term exactly
 	TERMS = 'terms', // Must match at least one term exactly
@@ -35,8 +42,8 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	created: QueryType.RANGE,
 	published: QueryType.RANGE,
 	creator: QueryType.TERMS, // es flattened
-	genre: QueryType.TERMS, // TODO es text -> ook match query? error onder filter
-	keyword: QueryType.TERMS, // TERM, // TODO es text -> ook match query? error onder filter
+	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
 	name: QueryType.MATCH, // es text
 };
 

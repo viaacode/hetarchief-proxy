@@ -1,7 +1,15 @@
-import { MediaFormat, Operator, QueryBuilderConfig, SearchFilterField } from '../types';
+import {
+	MediaFormat,
+	Operator,
+	OrderProperty,
+	QueryBuilderConfig,
+	SearchFilterField,
+} from '../types';
 
 import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';
+
+import { SortDirection } from '~shared/types';
 
 const incompleteConfig = {
 	MAX_NUMBER_SEARCH_RESULTS: 2000,
@@ -215,6 +223,17 @@ describe('QueryBuilder', () => {
 
 			// reset
 			QueryBuilder.setConfig(originalConfig);
+		});
+
+		it('should sort on a given order property', () => {
+			const esQuery = QueryBuilder.build({
+				filters: [],
+				size: 10,
+				page: 1,
+				orderProp: OrderProperty.NAME,
+				orderDirection: SortDirection.asc,
+			});
+			expect(esQuery.sort).toEqual([{ 'schema_name.keyword': { order: 'asc' } }, '_score']);
 		});
 	});
 });
