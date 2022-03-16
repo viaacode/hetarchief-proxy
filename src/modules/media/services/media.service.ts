@@ -156,7 +156,7 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			if (e.response.statusCode === 404) {
+			if (e.response && e.response.statusCode === 404) {
 				this.logger.error(e.response.body);
 				throw new NotFoundException();
 			}
