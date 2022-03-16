@@ -27,7 +27,7 @@ export class SearchFilter {
 		return input.value.map((kw) => kw.trim());
 	})
 	@ApiPropertyOptional({
-		type: String,
+		type: [String],
 		description: `The array of values for the filter. Uses the OR operator. If both multiValue and value are set, value is ignored.`,
 	})
 	multiValue?: Array<string>;
@@ -54,7 +54,7 @@ export class MediaQueryDto {
 	@IsArray()
 	@ValidateNested()
 	@ApiPropertyOptional({
-		type: SearchFilter,
+		type: () => [SearchFilter],
 		description: 'Filter to query the media items',
 	})
 	filters?: SearchFilter[];

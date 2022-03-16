@@ -23,10 +23,10 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 };
 
 export enum QueryType {
-	TERM = 'term',
-	TERMS = 'terms',
-	RANGE = 'range',
-	MATCH = 'match',
+	TERM = 'term', // Search for a single term exactly
+	TERMS = 'terms', // Must match at least one term exactly
+	RANGE = 'range', // Date range or duration range
+	MATCH = 'match', // Text based fuzzy search
 }
 
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {

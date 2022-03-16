@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilter } from '../dto/media.dto';
@@ -119,7 +119,7 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildFreeTextFilter(searchTemplate: any, searchFilter: SearchFilter): any {
+	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
 		// Replace {{query}} in the template with the escaped search terms
 		const textQueryFilterArray = _.cloneDeep(searchTemplate);
 		const escapedQueryString = searchFilter.value;
@@ -152,8 +152,9 @@ export class QueryBuilder {
 				searchFilter.field === SearchFilterField.ADVANCED_QUERY
 			) {
 				if (!searchFilter.value) {
-					// empty value, ignore
-					return;
+					throw new BadRequestException(
+						`Value cannot be empty when filtering on field '${searchFilter.field}'`
+					);
 				}
 				const searchTemplate =
 					searchFilter.field === SearchFilterField.QUERY

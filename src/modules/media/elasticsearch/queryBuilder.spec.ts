@@ -67,18 +67,25 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
-			const esQuery = QueryBuilder.build({
-				filters: [
-					{
-						field: SearchFilterField.QUERY,
-						value: '',
-						operator: Operator.CONTAINS,
-					},
-				],
-				size: 10,
-				page: 1,
-			});
-			expect(esQuery.query).toEqual({ bool: { filter: [] } });
+			let error;
+			try {
+				QueryBuilder.build({
+					filters: [
+						{
+							field: SearchFilterField.QUERY,
+							value: '',
+							operator: Operator.CONTAINS,
+						},
+					],
+					size: 10,
+					page: 1,
+				});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response.error.message).toEqual(
+				`Value cannot be empty when filtering on field '${SearchFilterField.QUERY}'`
+			);
 		});
 
 		it('should return an advanced search query when an advancedQuery filter is specified', () => {

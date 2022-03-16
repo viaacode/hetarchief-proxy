@@ -1,6 +1,6 @@
 import { MediaQueryDto, PlayerTicketsQueryDto, SearchFilter } from '~modules/media/dto/media.dto';
 
-describe('NotificationsDto', () => {
+describe('MediaDto', () => {
 	describe('SearchFilters', () => {
 		it('should be able to construct a SearchFilters object', async () => {
 			const searchFilter = new SearchFilter();
