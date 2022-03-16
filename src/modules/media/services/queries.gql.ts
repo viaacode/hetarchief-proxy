@@ -27,6 +27,7 @@ export const GET_OBJECT_IE_BY_ID = `
 			schema_part_of_series
 			schema_maintainer {
 				id
+				label
 				primary_site {
 					address {
 						email

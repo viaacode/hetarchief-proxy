@@ -55,6 +55,7 @@ export class MediaService {
 			partOfSeason: get(graphQlObject, 'schema_part_of_season'),
 			partOfSeries: get(graphQlObject, 'schema_part_of_series'),
 			maintainerId: get(graphQlObject, 'schema_maintainer[0].id'),
+			maintainerName: get(graphQlObject, 'schema_maintainer[0].label'),
 			contactInfo: {
 				email: get(graphQlObject, 'schema_maintainer[0].primary_site.address.email'),
 				telephone: get(
