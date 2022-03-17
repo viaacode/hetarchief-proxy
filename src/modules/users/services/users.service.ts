@@ -21,6 +21,9 @@ export class UsersService {
 	constructor(protected dataService: DataService) {}
 
 	public adapt(graphQlUser: GqlUser): User | null {
+		if (!graphQlUser) {
+			return null;
+		}
 		return {
 			id: get(graphQlUser, 'id'),
 			firstName: get(graphQlUser, 'first_name'),
