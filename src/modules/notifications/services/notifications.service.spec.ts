@@ -93,6 +93,8 @@ const mockVisit: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockSpace: Space = {
