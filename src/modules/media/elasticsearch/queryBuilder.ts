@@ -106,7 +106,7 @@ export class QueryBuilder {
 	private static buildSortArray(orderProperty: OrderProperty, orderDirection: SortDirection) {
 		const mappedOrderProperty = this.config.ORDER_MAPPINGS[orderProperty];
 		const sortArray: any[] = [];
-		if (mappedOrderProperty !== OrderProperty.RELEVANCE) {
+		if (orderProperty !== OrderProperty.RELEVANCE) {
 			const sortItem = {
 				[mappedOrderProperty]: {
 					order: orderDirection,
