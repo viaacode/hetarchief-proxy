@@ -51,4 +51,5 @@ export const AGGS_PROPERTIES: Array<keyof SearchFilters> = ['format'];
 export const NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean } = {
 	query: false,
 	format: false,
+	genre: true,
 };
