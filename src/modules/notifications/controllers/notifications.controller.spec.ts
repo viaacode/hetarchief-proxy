@@ -10,7 +10,7 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -80,7 +80,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 

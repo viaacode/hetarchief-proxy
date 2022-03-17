@@ -175,28 +175,26 @@ export class VisitsService {
 		return !!insertNote;
 	}
 
-	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const {
-			query,
-			status,
-			userProfileId,
-			spaceId,
-			timeframe,
-			page,
-			size,
-			orderProp,
-			orderDirection,
-		} = inputQuery;
+	public async findAll(
+		inputQuery: VisitsQueryDto,
+		cpSpaceId: string | null // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
+	): Promise<IPagination<Visit>> {
+		const { query, status, timeframe, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
 		const where: any = {};
 
 		if (!isEmpty(query)) {
+			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
+			const filterBySpaceName = cpSpaceId
+				? []
+				: [{ space: { schema_maintainer: { schema_name: { _ilike: query } } } }];
 			where._or = [
 				{ user_profile: { first_name: { _ilike: query } } },
 				{ user_profile: { last_name: { _ilike: query } } },
 				{ user_profile: { mail: { _ilike: query } } },
+				...filterBySpaceName,
 			];
 		}
 
@@ -206,15 +204,9 @@ export class VisitsService {
 			};
 		}
 
-		if (!isEmpty(userProfileId)) {
-			where.user_profile_id = {
-				_eq: userProfileId,
-			};
-		}
-
-		if (!isEmpty(spaceId)) {
+		if (!isEmpty(cpSpaceId)) {
 			where.cp_space_id = {
-				_eq: spaceId,
+				_eq: cpSpaceId,
 			};
 		}
 

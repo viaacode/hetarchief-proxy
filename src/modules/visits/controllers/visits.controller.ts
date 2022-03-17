@@ -4,11 +4,13 @@ import {
 	Controller,
 	Get,
 	Logger,
+	NotFoundException,
 	Param,
 	Patch,
 	Post,
 	Query,
 	Session,
+	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -20,13 +22,15 @@ import { Visit, VisitStatus } from '../types';
 
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { Permission, User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
+@UseGuards(LoggedInGuard)
 @ApiTags('Visits')
 @Controller('visits')
-@UseGuards(LoggedInGuard)
 export class VisitsController {
 	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
 
@@ -37,9 +41,27 @@ export class VisitsController {
 	) {}
 
 	@Get()
-	public async getVisits(@Query() queryDto: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const visits = await this.visitsService.findAll(queryDto);
-		return visits;
+	public async getVisits(
+		@Query() queryDto: VisitsQueryDto,
+		@SessionUser() user: User
+	): Promise<IPagination<Visit>> {
+		if (user.permissions.includes(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, null);
+			return visits;
+		} else if (user.permissions.includes(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
+			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.id);
+			if (!cpSpace) {
+				throw new NotFoundException(
+					i18n.t('The current user does not seem to be linked to a cp space.')
+				);
+			}
+			const visits = await this.visitsService.findAll(queryDto, cpSpace.id);
+			return visits;
+		} else {
+			throw new UnauthorizedException(
+				i18n.t('You do not have the right permissions to call this route')
+			);
+		}
 	}
 
 	@Get(':id')
