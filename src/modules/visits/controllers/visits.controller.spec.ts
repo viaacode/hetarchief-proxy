@@ -10,6 +10,7 @@ import { NotificationsService } from '~modules/notifications/services/notificati
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import i18n from '~shared/i18n';
 
@@ -65,6 +66,7 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockSpace: Space = {
@@ -100,6 +102,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
+	getActiveVisitForUserAndSpace: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -163,6 +166,16 @@ describe('VisitsController', () => {
 		it('should return a visit by id', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.getVisitById('1');
+			expect(visit).toEqual(mockVisit1);
+		});
+	});
+
+	describe('getActiveVisitForUserAndSpace', () => {
+		it('should return the active visit for the current user', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
+			const visit = await visitsController.getActiveVisitForUserAndSpace('space-1', {
+				archiefUserInfo: { id: 'user-1' },
+			});
 			expect(visit).toEqual(mockVisit1);
 		});
 	});

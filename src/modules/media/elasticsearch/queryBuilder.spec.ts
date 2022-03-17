@@ -1,5 +1,4 @@
-import { AdvancedQuery } from '../dto/media.dto';
-import { MediaFormat, QueryBuilderConfig } from '../types';
+import { MediaFormat, Operator, QueryBuilderConfig, SearchFilterField } from '../types';
 
 import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';
@@ -22,7 +21,7 @@ const incompleteConfig = {
 		// no format property
 	},
 	DEFAULT_QUERY_TYPE: {
-		format: QueryType.TERM,
+		format: QueryType.TERMS,
 		duration: QueryType.RANGE,
 	},
 };
@@ -48,13 +47,19 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return a match_all query when empty filters are specified', () => {
-			const esQuery = QueryBuilder.build({ filters: {}, size: 10, page: 1 });
+			const esQuery = QueryBuilder.build({ filters: [], size: 10, page: 1 });
 			expect(esQuery.query).toEqual({ match_all: {} });
 		});
 
 		it('should return a search query when a query filter is specified', () => {
 			const esQuery = QueryBuilder.build({
-				filters: { query: 'searchme' },
+				filters: [
+					{
+						field: SearchFilterField.QUERY,
+						value: 'searchme',
+						operator: Operator.CONTAINS,
+					},
+				],
 				size: 10,
 				page: 1,
 			});
@@ -62,17 +67,53 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
+			let error;
+			try {
+				QueryBuilder.build({
+					filters: [
+						{
+							field: SearchFilterField.QUERY,
+							value: '',
+							operator: Operator.CONTAINS,
+						},
+					],
+					size: 10,
+					page: 1,
+				});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response.error.message).toEqual(
+				`Value cannot be empty when filtering on field '${SearchFilterField.QUERY}'`
+			);
+		});
+
+		it('should return an advanced search query when an advancedQuery filter is specified', () => {
 			const esQuery = QueryBuilder.build({
-				filters: { query: '' },
+				filters: [
+					{
+						field: SearchFilterField.ADVANCED_QUERY,
+						value: 'searchme',
+						operator: Operator.CONTAINS,
+					},
+				],
 				size: 10,
 				page: 1,
 			});
-			expect(esQuery.query).toEqual({ bool: { filter: [] } });
+			expect(esQuery.query.bool.must[0].multi_match.fields).not.toContain(
+				'schema_transcript'
+			);
 		});
 
 		it('should filter on format', () => {
 			const esQuery = QueryBuilder.build({
-				filters: { format: MediaFormat.VIDEO },
+				filters: [
+					{
+						field: SearchFilterField.FORMAT,
+						value: MediaFormat.VIDEO,
+						operator: Operator.IS,
+					},
+				],
 				size: 10,
 				page: 1,
 			});
@@ -85,7 +126,13 @@ describe('QueryBuilder', () => {
 		it('should use a range filter to filter on duration', () => {
 			const rangeQuery = { gte: '01:00:00' };
 			const esQuery = QueryBuilder.build({
-				filters: { duration: rangeQuery },
+				filters: [
+					{
+						field: SearchFilterField.DURATION,
+						value: '01:00:00',
+						operator: Operator.GTE,
+					},
+				],
 				size: 10,
 				page: 1,
 			});
@@ -102,7 +149,13 @@ describe('QueryBuilder', () => {
 			let error;
 			try {
 				QueryBuilder.build({
-					filters: { query: '', format: null },
+					filters: [
+						{
+							field: SearchFilterField.FORMAT,
+							value: null,
+							operator: Operator.CONTAINS,
+						},
+					],
 					size: 10,
 					page: 1,
 				});
@@ -122,10 +175,10 @@ describe('QueryBuilder', () => {
 			let error;
 			try {
 				QueryBuilder.build({
-					filters: { query: '' },
+					filters: [],
 					size: 10,
 					page: 1,
-					requestedAggs: ['format'],
+					requestedAggs: [SearchFilterField.FORMAT],
 				});
 			} catch (e) {
 				error = e;
@@ -139,20 +192,22 @@ describe('QueryBuilder', () => {
 		it('should add filter suffixes when required', () => {
 			const originalConfig = QueryBuilder.getConfig();
 			QueryBuilder.setConfig({
-				...(incompleteConfig as QueryBuilderConfig),
-				READABLE_TO_ELASTIC_FILTER_NAMES: {
-					query: 'query',
-					format: 'dcterms_format',
-				},
+				...originalConfig,
 				NEEDS_FILTER_SUFFIX: {
 					format: true,
 				},
 			});
 			const esQuery = QueryBuilder.build({
-				filters: { query: '', format: MediaFormat.VIDEO },
+				filters: [
+					{
+						field: SearchFilterField.FORMAT,
+						value: MediaFormat.VIDEO,
+						operator: Operator.CONTAINS,
+					},
+				],
 				size: 10,
 				page: 1,
-				requestedAggs: ['format'],
+				requestedAggs: [SearchFilterField.FORMAT],
 			});
 			expect(esQuery.aggs).toEqual({
 				dcterms_format: { terms: { field: 'dcterms_format.filter', size: 40 } },
@@ -160,21 +215,6 @@ describe('QueryBuilder', () => {
 
 			// reset
 			QueryBuilder.setConfig(originalConfig);
-		});
-
-		it('should build an advanced query', () => {
-			const advancedQuery = new AdvancedQuery();
-			advancedQuery.contains = 'test';
-			const esQuery = QueryBuilder.build({ filters: { name: advancedQuery } });
-			expect(esQuery.query.bool.filter.length).toBe(0);
-			expect(esQuery.query.bool.must.length).toBe(1);
-			expect(esQuery.query.bool.must[0].match.schema_name).toEqual('test');
-		});
-
-		it('should handle multiple values for a property', () => {
-			const esQuery = QueryBuilder.build({ filters: { keyword: ['key1', 'key2'] } });
-			expect(esQuery.query.bool.filter.length).toBe(2);
-			expect(esQuery.query.bool.filter[0].term.schema_keywords).toEqual('key1');
 		});
 	});
 });

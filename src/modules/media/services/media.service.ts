@@ -168,6 +168,7 @@ export class MediaService {
 
 	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
+		this.logger.log(esQuery);
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return mediaResponse;

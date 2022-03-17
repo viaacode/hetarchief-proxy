@@ -228,6 +228,30 @@ describe('VisitsService', () => {
 		});
 	});
 
+	describe('getActiveVisitForUserAndSpace', () => {
+		it('returns the active visit for the given user and space', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			expect(response.id).toBe(cpVisit.id);
+		});
+
+		it('returns null if the visit was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 0,
+						},
+					},
+				},
+			});
+			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+
+			expect(response).toBeNull();
+		});
+	});
+
 	describe('create', () => {
 		it('can create a new visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce({

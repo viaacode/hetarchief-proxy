@@ -1,4 +1,4 @@
-import { AdvancedQuery, SearchFilters } from '../dto/media.dto';
+import { Operator, SearchFilterField } from '../types';
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -9,8 +9,9 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
-export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string } = {
+export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
 	query: 'query',
+	advancedQuery: 'query',
 	format: 'dcterms_format',
 	duration: 'schema_duration',
 	created: 'schema_date_created',
@@ -22,33 +23,36 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: 
 };
 
 export enum QueryType {
-	TERM = 'term',
-	RANGE = 'range',
-	MATCH = 'match',
+	TERM = 'term', // Search for a single term exactly
+	TERMS = 'terms', // Must match at least one term exactly
+	RANGE = 'range', // Date range or duration range
+	MATCH = 'match', // Text based fuzzy search
 }
 
-export const DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType } = {
-	format: QueryType.TERM, // es keyword
+export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
+	format: QueryType.TERMS, // es keyword
 	duration: QueryType.RANGE,
 	created: QueryType.RANGE,
 	published: QueryType.RANGE,
-	creator: QueryType.TERM, // es flattened
-	genre: QueryType.TERM, // TODO es text -> ook match query? error onder filter
-	keyword: QueryType.TERM, // TODO es text -> ook match query? error onder filter
+	creator: QueryType.TERMS, // es flattened
+	genre: QueryType.TERMS, // TODO es text -> ook match query? error onder filter
+	keyword: QueryType.TERMS, // TERM, // TODO es text -> ook match query? error onder filter
 	name: QueryType.MATCH, // es text
 };
 
-export const OCCURRENCE_TYPE: { [prop in keyof AdvancedQuery]: string } = {
+export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 	contains: 'must',
 	containsNot: 'must_not',
-	is: 'must',
+	is: 'filter', // exact match === filter query
 	isNot: 'must_not',
 };
 
-// By default add the 'format' aggregation
-export const AGGS_PROPERTIES: Array<keyof SearchFilters> = ['format'];
+export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
-export const NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean } = {
+// By default add the 'format' aggregation
+export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
+
+export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 	query: false,
 	format: false,
 };

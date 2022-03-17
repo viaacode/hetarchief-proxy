@@ -270,6 +270,25 @@ export class VisitsService {
 		return this.adapt(visitResponse.data.cp_visit[0]);
 	}
 
+	public async getActiveVisitForUserAndSpace(
+		userProfileId: string,
+		spaceId: string
+	): Promise<Visit | null> {
+		const visits = await this.findAll({
+			userProfileId,
+			spaceId,
+			timeframe: VisitTimeframe.ACTIVE,
+			status: VisitStatus.APPROVED,
+			size: 1,
+			page: 1,
+		});
+
+		if (visits.total === 0) {
+			return null;
+		}
+		return visits.items[0];
+	}
+
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
