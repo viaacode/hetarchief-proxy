@@ -10,6 +10,7 @@ import { NotificationsService } from '~modules/notifications/services/notificati
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import i18n from '~shared/i18n';
 
@@ -65,6 +66,7 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockSpace: Space = {
