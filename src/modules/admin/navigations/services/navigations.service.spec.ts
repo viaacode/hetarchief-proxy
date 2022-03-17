@@ -4,6 +4,7 @@ import { NavigationsService } from './navigations.service';
 
 import { DataService } from '~modules/data/services/data.service';
 import { User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 
 const mockDataService = {
 	execute: jest.fn(),
@@ -16,6 +17,7 @@ const mockUser: User = {
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 describe('NavigationsService', () => {
