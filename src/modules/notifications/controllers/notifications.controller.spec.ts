@@ -72,6 +72,8 @@ const mockVisit: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
+	updatedByName: 'CP Admin',
 };
 
 const mockUser: User = {

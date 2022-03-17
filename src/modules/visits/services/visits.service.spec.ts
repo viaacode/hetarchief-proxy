@@ -37,6 +37,8 @@ const mockVisit: Visit = {
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
@@ -100,8 +102,7 @@ describe('VisitsService', () => {
 							id: '1',
 							status: 'APPROVED',
 							user_profile: {
-								first_name: 'Marie',
-								last_name: 'Odhiambo',
+								full_name: 'Marie Odhiambo',
 							},
 						},
 					],

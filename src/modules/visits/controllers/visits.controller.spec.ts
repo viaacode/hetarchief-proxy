@@ -36,6 +36,8 @@ const mockVisit1: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
+	updatedByName: 'CP Admin',
 };
 
 const mockVisit2: Visit = {
@@ -53,6 +55,8 @@ const mockVisit2: Visit = {
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockVisitsResponse = {
