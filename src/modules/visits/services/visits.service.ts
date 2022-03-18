@@ -63,11 +63,10 @@ export class VisitsService {
 		return true;
 	}
 
-	public static adaptSpaceAddress(graphQlVisit: any): string {
-		const path = 'space.schema_maintainer.information[0].primary_site.address';
-		const locality = get(graphQlVisit, `${path}.locality`);
-		const postalCode = get(graphQlVisit, `${path}.postal_code`);
-		const street = get(graphQlVisit, `${path}.street`);
+	public static adaptSpaceAddress(graphQlAddress: any): string {
+		const locality = get(graphQlAddress, `locality`);
+		const postalCode = get(graphQlAddress, `postal_code`);
+		const street = get(graphQlAddress, `street`);
 
 		return `${street}, ${postalCode} ${locality}`;
 	}
@@ -77,7 +76,9 @@ export class VisitsService {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
 			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
-			spaceAddress: VisitsService.adaptSpaceAddress(graphQlVisit),
+			spaceAddress: VisitsService.adaptSpaceAddress(
+				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
+			),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
