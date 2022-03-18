@@ -3,6 +3,7 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
@@ -73,6 +74,7 @@ const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -81,6 +83,8 @@ const mockVisit: Visit = {
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
 	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -125,6 +129,11 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+	{
+		send: jest.fn().mockResolvedValue(true),
+	};
+
 describe('NotificationsService', () => {
 	let notificationsService: NotificationsService;
 
@@ -135,6 +144,10 @@ describe('NotificationsService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: CampaignMonitorService,
+					useValue: mockCampaignMonitorService,
 				},
 			],
 		}).compile();

@@ -81,6 +81,7 @@ export class CampaignMonitorService {
 
 	public async send(emailInfo: VisitEmailInfo): Promise<boolean> {
 		if (!emailInfo.visit.spaceMail) {
+			// TODO Throw exception or ignore & log error?
 			throw new InternalServerErrorException(`Email adres cannot be empty`);
 		}
 
