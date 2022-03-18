@@ -17,6 +17,7 @@ export interface QueryBuilderConfig {
 	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
 	OCCURRENCE_TYPE: { [prop in Operator]?: string };
 	VALUE_OPERATORS: Array<Operator>;
+	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
 }
 
 export interface PlayerTicket {
@@ -121,4 +122,11 @@ export enum Operator {
 	IS_NOT = 'isNot',
 	GTE = 'gte',
 	LTE = 'lte',
+}
+
+export enum OrderProperty {
+	RELEVANCE = 'relevance',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	NAME = 'name',
 }
