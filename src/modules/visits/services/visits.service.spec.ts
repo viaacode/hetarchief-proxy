@@ -141,8 +141,7 @@ describe('VisitsService', () => {
 							id: '1',
 							status: 'APPROVED',
 							user_profile: {
-								first_name: 'Marie',
-								last_name: 'Odhiambo',
+								full_name: 'Marie Odhiambo',
 							},
 						},
 					],

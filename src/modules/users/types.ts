@@ -9,6 +9,7 @@ export enum Permission {
 
 export interface GqlUser {
 	id: string;
+	full_name: string;
 	first_name: string;
 	last_name: string;
 	mail: string;
