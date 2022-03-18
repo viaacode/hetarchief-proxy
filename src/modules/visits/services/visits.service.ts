@@ -277,14 +277,15 @@ export class VisitsService {
 		userProfileId: string,
 		spaceId: string
 	): Promise<Visit | null> {
-		const visits = await this.findAll({
-			userProfileId,
-			spaceId,
-			timeframe: VisitTimeframe.ACTIVE,
-			status: VisitStatus.APPROVED,
-			size: 1,
-			page: 1,
-		});
+		const visits = await this.findAll(
+			{
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+				size: 1,
+				page: 1,
+			},
+			spaceId
+		);
 
 		if (visits.total === 0) {
 			return null;
