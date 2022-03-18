@@ -13,6 +13,7 @@ import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dt
 import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
+	FIND_ACTIVE_VISIT_BY_USER_AND_SPACE,
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
@@ -71,7 +72,10 @@ export class VisitsService {
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
-	public adapt(graphQlVisit: Partial<GqlVisit>): Visit {
+	public adapt(graphQlVisit: Partial<GqlVisit>): Visit | null {
+		if (!graphQlVisit) {
+			return null;
+		}
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
@@ -283,20 +287,13 @@ export class VisitsService {
 		userProfileId: string,
 		spaceId: string
 	): Promise<Visit | null> {
-		const visits = await this.findAll(
-			{
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-				size: 1,
-				page: 1,
-			},
-			null
-		);
+		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
+			userProfileId,
+			spaceId,
+			now: new Date().toISOString(),
+		});
 
-		if (visits.total === 0) {
-			return null;
-		}
-		return visits.items[0];
+		return this.adapt(visitResponse.data.cp_visit[0]);
 	}
 
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
