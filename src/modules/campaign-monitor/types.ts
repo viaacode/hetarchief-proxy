@@ -7,6 +7,7 @@ export enum Template {
 }
 
 export interface VisitEmailInfo {
+	to: string;
 	template: Template;
 	visit: Visit;
 }

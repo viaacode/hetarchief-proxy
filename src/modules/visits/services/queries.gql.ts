@@ -21,6 +21,8 @@ export const INSERT_VISIT = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}
@@ -63,6 +65,8 @@ export const UPDATE_VISIT = `
 				note
 				profile {
 					full_name
+					first_name
+					last_name
 				}
 				created_at
 			}
@@ -119,6 +123,8 @@ export const FIND_VISITS = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}
@@ -173,6 +179,8 @@ export const FIND_VISIT_BY_ID = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}

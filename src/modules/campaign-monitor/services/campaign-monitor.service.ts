@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get } from 'lodash';
@@ -80,13 +80,14 @@ export class CampaignMonitorService {
 	}
 
 	public async send(emailInfo: VisitEmailInfo): Promise<boolean> {
-		if (!emailInfo.visit.spaceMail) {
-			// TODO Throw exception or ignore & log error?
-			throw new InternalServerErrorException(`Email adres cannot be empty`);
+		if (!emailInfo.to) {
+			// Throw exception will break too much
+			this.logger.error('Empty email address - Mail not sent', emailInfo);
+			return false;
 		}
 
 		const data: any = {
-			To: emailInfo.visit.spaceMail,
+			To: emailInfo.to,
 			ConsentToTrack: 'unchanged',
 			Data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
@@ -107,9 +108,7 @@ export class CampaignMonitorService {
 			);
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${emailInfo.visit.spaceMail}'. Template: ${
-					emailInfo.template
-				} - ${
+				`Mock email sent. To: '${data.To}'. Template: ${emailInfo.template} - ${
 					this.templateToCampaignMonitorIdMap[emailInfo.template]
 				}, data: ${JSON.stringify(data.Data)}`
 			);

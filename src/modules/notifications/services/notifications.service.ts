@@ -171,6 +171,7 @@ export class NotificationsService {
 				recipientIds
 			),
 			this.campaignMonitorService.send({
+				to: visit.spaceMail,
 				template: Template.VISIT_REQUEST_CP,
 				visit,
 			}),
@@ -207,6 +208,7 @@ export class NotificationsService {
 				},
 			]),
 			this.campaignMonitorService.send({
+				to: visit.visitorMail,
 				template: Template.VISIT_APPROVED,
 				visit,
 			}),
@@ -239,6 +241,7 @@ export class NotificationsService {
 				},
 			]),
 			this.campaignMonitorService.send({
+				to: visit.visitorMail,
 				template: Template.VISIT_DENIED,
 				visit,
 			}),
