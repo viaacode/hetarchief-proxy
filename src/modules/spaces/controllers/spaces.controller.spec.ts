@@ -58,5 +58,21 @@ describe('SpacesController', () => {
 			const space = await spacesController.getSpaceById('1');
 			expect(space.id).toEqual('1');
 		});
+
+		it("should throw a not found exception for space that doesn't exist", async () => {
+			mockSpacesService.findById.mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await spacesController.getSpaceById('1');
+			} catch (err) {
+				error = err;
+			}
+			expect(error?.response).toEqual({
+				statusCode: 404,
+				message: 'Space with id 1 not found',
+				error: 'Not Found',
+			});
+		});
 	});
 });

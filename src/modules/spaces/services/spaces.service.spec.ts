@@ -91,22 +91,42 @@ describe('SpacesService', () => {
 			expect(response.id).toBe('1');
 		});
 
-		it('throws a notfoundexception if the space was not found', async () => {
+		it('returns null if the space was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cp_space: [],
 				},
 			});
-			let error;
-			try {
-				await spacesService.findById('unknown-id');
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				message: 'Not Found',
-				statusCode: 404,
+
+			const space = await spacesService.findById('unknown-id');
+			expect(space).toBeNull();
+		});
+	});
+
+	describe('findSpaceByCpUserId', () => {
+		it('returns a single space', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_space: [
+						{
+							id: '1',
+						},
+					],
+				},
 			});
+			const response = await spacesService.findSpaceByCpUserId('1');
+			expect(response.id).toBe('1');
+		});
+
+		it('returns null if the space was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_space: [],
+				},
+			});
+
+			const space = await spacesService.findSpaceByCpUserId('unknown-id');
+			expect(space).toBeNull();
 		});
 	});
 

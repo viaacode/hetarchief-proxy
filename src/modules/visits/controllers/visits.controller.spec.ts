@@ -9,9 +9,10 @@ import { VisitsController } from './visits.controller';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { AudienceType, Space } from '~modules/spaces/types';
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import i18n from '~shared/i18n';
 
 const mockVisit1: Visit = {
@@ -69,7 +70,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 
@@ -120,6 +121,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	getMaintainerProfileIds: jest.fn(),
 	findById: jest.fn(),
+	findSpaceByCpUserId: jest.fn(),
 };
 
 describe('VisitsController', () => {
@@ -159,10 +161,68 @@ describe('VisitsController', () => {
 	});
 
 	describe('getVisits', () => {
-		it('should return all visits', async () => {
+		it('should return all visits for meemoo admin', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-			const visits = await visitsController.getVisits(null);
+
+			const visits = await visitsController.getVisits(null, {
+				...mockUser,
+				permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+			});
+
 			expect(visits).toEqual(mockVisitsResponse);
+		});
+
+		it('should return all visits of a single cpSpace for cp admin', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
+			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(mockSpace);
+
+			const visits = await visitsController.getVisits(null, {
+				...mockUser,
+				permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+			});
+
+			expect(visits).toEqual(mockVisitsResponse);
+		});
+
+		it('should throw a not found exception if the maintainer is not linked to any cp users', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
+			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await visitsController.getVisits(null, {
+					...mockUser,
+					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+				});
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response).toEqual({
+				statusCode: 404,
+				message: 'The current user does not seem to be linked to a cp space.',
+				error: 'Not Found',
+			});
+		});
+
+		it('should throw an unauthorized error for regular visitors', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
+
+			let error;
+			try {
+				await visitsController.getVisits(null, {
+					...mockUser,
+					permissions: [],
+				});
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error?.response).toEqual({
+				error: 'Unauthorized',
+				message: 'You do not have the right permissions to call this route',
+				statusCode: 401,
+			});
 		});
 	});
 

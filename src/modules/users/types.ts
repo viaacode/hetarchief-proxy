@@ -1,5 +1,12 @@
 import { Idp } from '~shared/auth/auth.types';
 
+export enum Permission {
+	CAN_READ_ALL_VISIT_REQUESTS = 'CAN_READ_ALL_VISIT_REQUESTS',
+	CAN_APPROVE_DENY_ALL_VISIT_REQUESTS = 'CAN_APPROVE_DENY_ALL_VISIT_REQUESTS',
+	CAN_READ_CP_VISIT_REQUESTS = 'CAN_READ_CP_VISIT_REQUESTS',
+	CAN_APPROVE_DENY_CP_VISIT_REQUESTS = 'CAN_APPROVE_DENY_CP_VISIT_REQUESTS',
+}
+
 export interface GqlUser {
 	id: string;
 	first_name: string;
@@ -26,7 +33,7 @@ export interface User {
 	lastName: string;
 	email: string;
 	acceptedTosAt: string;
-	permissions: string[];
+	permissions: Permission[];
 	idp: Idp;
 }
 

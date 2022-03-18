@@ -82,19 +82,22 @@ describe('VisitsService', () => {
 	describe('findAll', () => {
 		it('returns a paginated response with all visits', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				query: '%',
-				status: undefined,
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					query: '%',
+					status: undefined,
+					page: 1,
+					size: 10,
+				},
+				null
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
 		});
 
-		it('returns a paginated response with visits containing maria', async () => {
+		it('returns a paginated response with visits containing maria across all cpSpaces', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cp_visit: [
@@ -113,12 +116,52 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.findAll({
-				query: '%Marie%',
-				status: VisitStatus.APPROVED,
-				page: 1,
-				size: 10,
+			const response = await visitsService.findAll(
+				{
+					query: '%Marie%',
+					status: VisitStatus.APPROVED,
+					page: 1,
+					size: 10,
+				},
+				null
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.items[0]?.visitorName).toContain('Marie');
+			expect(response.items[0]?.status).toEqual(VisitStatus.APPROVED);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('returns a paginated response with visits containing maria within one cpSpace', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [
+						{
+							id: '1',
+							status: 'APPROVED',
+							user_profile: {
+								first_name: 'Marie',
+								last_name: 'Odhiambo',
+							},
+						},
+					],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
 			});
+			const response = await visitsService.findAll(
+				{
+					query: '%Marie%',
+					status: VisitStatus.APPROVED,
+					page: 1,
+					size: 10,
+				},
+				'space-1'
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.visitorName).toContain('Marie');
 			expect(response.items[0]?.status).toEqual(VisitStatus.APPROVED);
@@ -129,34 +172,26 @@ describe('VisitsService', () => {
 
 		it('can filter on an array of statuses', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				status: [VisitStatus.APPROVED, VisitStatus.DENIED],
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					status: [VisitStatus.APPROVED, VisitStatus.DENIED],
+					page: 1,
+					size: 10,
+				},
+				null
+			);
 			expect(response.items.length).toBe(1);
-		});
-
-		it('can filter on userProfileId', async () => {
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				userProfileId: 'user-1',
-				page: 1,
-				size: 10,
-			});
-			expect(response.items.length).toBe(1);
-			expect(response.page).toBe(1);
-			expect(response.size).toBe(10);
-			expect(response.total).toBe(100);
 		});
 
 		it('can filter on spaceId', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				spaceId: 'space-1',
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					page: 1,
+					size: 10,
+				},
+				'space-1'
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -165,11 +200,14 @@ describe('VisitsService', () => {
 
 		it('can filter on timeframe ACTIVE', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				timeframe: VisitTimeframe.ACTIVE,
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					timeframe: VisitTimeframe.ACTIVE,
+					page: 1,
+					size: 10,
+				},
+				null
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -178,11 +216,14 @@ describe('VisitsService', () => {
 
 		it('can filter on timeframe FUTURE', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				timeframe: VisitTimeframe.FUTURE,
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					timeframe: VisitTimeframe.FUTURE,
+					page: 1,
+					size: 10,
+				},
+				null
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
@@ -191,11 +232,14 @@ describe('VisitsService', () => {
 
 		it('can filter on timeframe PAST', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
-			const response = await visitsService.findAll({
-				timeframe: VisitTimeframe.PAST,
-				page: 1,
-				size: 10,
-			});
+			const response = await visitsService.findAll(
+				{
+					timeframe: VisitTimeframe.PAST,
+					page: 1,
+					size: 10,
+				},
+				null
+			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);

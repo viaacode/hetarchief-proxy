@@ -8,7 +8,7 @@ import { Idp, LdapUser } from '~shared/auth/auth.types';
 
 const IDP = 'idp';
 const IDP_USER_INFO_PATH = 'idpUserInfo';
-const ARCHIEF_USER_INFO_PATH = 'archiefUserInfo';
+export const ARCHIEF_USER_INFO_PATH = 'archiefUserInfo';
 
 export class SessionHelper {
 	public static ensureValidSession(session: Record<string, any>) {
