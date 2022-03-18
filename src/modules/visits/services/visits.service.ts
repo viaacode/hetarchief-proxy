@@ -72,7 +72,10 @@ export class VisitsService {
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
-	public adapt(graphQlVisit: Partial<GqlVisit>): Visit {
+	public adapt(graphQlVisit: Partial<GqlVisit>): Visit | null {
+		if (!graphQlVisit) {
+			return null;
+		}
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),

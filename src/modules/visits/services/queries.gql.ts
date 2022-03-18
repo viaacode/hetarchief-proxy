@@ -196,7 +196,7 @@ export const FIND_VISIT_BY_ID = `
 `;
 
 export const FIND_ACTIVE_VISIT_BY_USER_AND_SPACE = `
-	query findActiveVisitByUserAndSpace($userProfileId: uuid, $spaceId: uuid, $now: timestamp, $now: timestamp) {
+	query findActiveVisitByUserAndSpace($userProfileId: uuid, $spaceId: uuid, $now: timestamp) {
 		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, cp_space_id: {_eq: $spaceId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}}) {
 			id
 			cp_space_id
