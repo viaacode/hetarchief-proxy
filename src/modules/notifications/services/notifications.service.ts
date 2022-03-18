@@ -18,6 +18,8 @@ import {
 	UPDATE_NOTIFICATION,
 } from './queries.gql';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { Template } from '~modules/campaign-monitor/types';
 import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
@@ -30,7 +32,10 @@ import i18n from '~shared/i18n';
 export class NotificationsService {
 	private logger: Logger = new Logger(NotificationsService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		protected campaignMonitorService: CampaignMonitorService
+	) {}
 
 	/**
 	 * Adapt a notification as returned by a typical graphQl response to our internal notification data model
@@ -144,32 +149,45 @@ export class NotificationsService {
 		return affectedRows;
 	}
 
+	/**
+	 * Send notifications and email on new visit request
+	 */
 	public async onCreateVisit(
 		visit: Visit,
 		recipientIds: string[],
 		user: User
 	): Promise<Notification[]> {
-		return await this.createForMultipleRecipients(
-			{
-				title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
-				description: i18n.t('{{name}} wil je leeszaal bezoeken', {
-					name: user.firstName + ' ' + user.lastName,
-				}),
-				visit_id: visit.id,
-				type: NotificationType.NEW_VISIT_REQUEST,
-				status: NotificationStatus.UNREAD,
-			},
-			recipientIds
-		);
+		const [notifications] = await Promise.all([
+			this.createForMultipleRecipients(
+				{
+					title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
+					description: i18n.t('{{name}} wil je leeszaal bezoeken', {
+						name: user.firstName + ' ' + user.lastName,
+					}),
+					visit_id: visit.id,
+					type: NotificationType.NEW_VISIT_REQUEST,
+					status: NotificationStatus.UNREAD,
+				},
+				recipientIds
+			),
+			this.campaignMonitorService.send({
+				template: Template.VISIT_REQUEST_CP,
+				visit,
+			}),
+		]);
+		return notifications;
 	}
 
+	/**
+	 * Send notifications and email on approve visit request
+	 */
 	public async onApproveVisitRequest(
 		visit: Visit,
 		space: Space,
 		user: User
 	): Promise<Notification> {
-		return (
-			await this.create([
+		const [notifications] = await Promise.all([
+			this.create([
 				{
 					title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
 						name: space.name,
@@ -187,18 +205,26 @@ export class NotificationsService {
 					status: NotificationStatus.UNREAD,
 					recipient: user.id,
 				},
-			])
-		)[0];
+			]),
+			this.campaignMonitorService.send({
+				template: Template.VISIT_APPROVED,
+				visit,
+			}),
+		]);
+		return notifications[0];
 	}
 
+	/**
+	 * Send notifications and email on deny visit request
+	 */
 	public async onDenyVisitRequest(
 		visit: Visit,
 		space: Space,
 		user: User,
 		reason?: string
 	): Promise<Notification> {
-		return (
-			await this.create([
+		const [notifications] = await Promise.all([
+			this.create([
 				{
 					title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
 						name: space.name,
@@ -211,7 +237,12 @@ export class NotificationsService {
 					status: NotificationStatus.UNREAD,
 					recipient: user.id,
 				},
-			])
-		)[0];
+			]),
+			this.campaignMonitorService.send({
+				template: Template.VISIT_DENIED,
+				visit,
+			}),
+		]);
+		return notifications[0];
 	}
 }

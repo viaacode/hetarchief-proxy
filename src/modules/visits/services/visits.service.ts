@@ -68,6 +68,10 @@ export class VisitsService {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
 			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
+			spaceMail: get(
+				graphQlVisit,
+				'space.schema_maintainer.information[0].primary_site.address.email'
+			),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
@@ -82,6 +86,8 @@ export class VisitsService {
 				' ' +
 				get(graphQlVisit, 'user_profile.last_name', '')
 			).trim(),
+			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
+			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
 		};

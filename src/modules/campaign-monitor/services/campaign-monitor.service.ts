@@ -1,9 +1,28 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
+import { get } from 'lodash';
 
-import { EmailInfo, Template } from '../types';
+import { Template, VisitEmailInfo } from '../types';
 
+import { Visit } from '~modules/visits/types';
+import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+
+interface CampaignMonitorVisitData {
+	client_firstname: string;
+	client_lastname: string;
+	client_email: string;
+	contentpartner_name: string;
+	contentpartner_email: string;
+	request_reason: string;
+	request_time: string;
+	request_url: string;
+	request_remark: string;
+	start_date: string;
+	start_time: string;
+	end_date: string;
+	end_time: string;
+}
 @Injectable()
 export class CampaignMonitorService {
 	private logger: Logger = new Logger(CampaignMonitorService.name, { timestamp: true });
@@ -11,6 +30,7 @@ export class CampaignMonitorService {
 	private gotInstance: Got;
 	private templateToCampaignMonitorIdMap: Record<Template, any>;
 	private isEnabled: boolean;
+	private clientHost: string;
 
 	constructor(private configService: ConfigService) {
 		this.gotInstance = got.extend({
@@ -22,8 +42,10 @@ export class CampaignMonitorService {
 		});
 
 		this.isEnabled = this.configService.get('enableSendEmail');
+		this.clientHost = this.configService.get('clientHost');
 
 		this.templateToCampaignMonitorIdMap = {
+			VISIT_REQUEST_CP: this.configService.get('campaignMonitorTemplateVisitRequestCp'),
 			VISIT_APPROVED: this.configService.get('campaignMonitorTemplateVisitApproved'),
 			VISIT_DENIED: this.configService.get('campaignMonitorTemplateVisitDenied'),
 		};
@@ -33,12 +55,39 @@ export class CampaignMonitorService {
 		this.isEnabled = enabled;
 	}
 
-	// TODO call on status change
-	public async send(emailInfo: EmailInfo): Promise<boolean> {
+	public buildUrlToAdminVisit(): string {
+		const url = new URL(this.clientHost);
+		url.pathname = 'beheer/aanvragen';
+		return url.href;
+	}
+
+	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
+		return {
+			client_firstname: visit.visitorFirstName,
+			client_lastname: visit.visitorLastName,
+			client_email: visit.visitorMail,
+			contentpartner_name: visit.spaceName,
+			contentpartner_email: visit.spaceMail,
+			request_reason: visit.reason,
+			request_time: visit.timeframe,
+			request_url: this.buildUrlToAdminVisit(), // TODO deeplink to visit & extract to shared url builder?
+			request_remark: get(visit.note, 'note', ''),
+			start_date: visit.startAt ? formatAsBelgianDate(visit.startAt, 'd MMMM yyyy') : '',
+			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
+			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
+			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
+		};
+	}
+
+	public async send(emailInfo: VisitEmailInfo): Promise<boolean> {
+		if (!emailInfo.visit.spaceMail) {
+			throw new InternalServerErrorException(`Email adres cannot be empty`);
+		}
+
 		const data: any = {
-			To: emailInfo.to,
+			To: emailInfo.visit.spaceMail,
 			ConsentToTrack: 'unchanged',
-			Data: emailInfo.data,
+			Data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
 		if (this.isEnabled) {
@@ -57,9 +106,11 @@ export class CampaignMonitorService {
 			);
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${emailInfo.to}'. Template: ${emailInfo.template} - ${
+				`Mock email sent. To: '${emailInfo.visit.spaceMail}'. Template: ${
+					emailInfo.template
+				} - ${
 					this.templateToCampaignMonitorIdMap[emailInfo.template]
-				}`
+				}, data: ${JSON.stringify(data.Data)}`
 			);
 			return false;
 		}

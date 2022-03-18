@@ -15,6 +15,7 @@ export interface Visit {
 	id: string;
 	spaceId: string;
 	spaceName: string;
+	spaceMail: string;
 	userProfileId: string;
 	timeframe: string;
 	reason: string;
@@ -25,6 +26,8 @@ export interface Visit {
 	createdAt: string;
 	updatedAt: string;
 	visitorName: string;
+	visitorFirstName: string;
+	visitorLastName: string;
 	visitorMail: string;
 	visitorId: string;
 }

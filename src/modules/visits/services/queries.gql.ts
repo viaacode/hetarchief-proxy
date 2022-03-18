@@ -28,6 +28,13 @@ export const INSERT_VISIT = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+							}
+						}
+					}
 				}
 			}
 		}
@@ -64,6 +71,13 @@ export const UPDATE_VISIT = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+							}
+						}
+					}
 				}
 			}
 		}
@@ -100,6 +114,13 @@ export const FIND_VISITS = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+							}
+						}
+					}
 				}
 			}
 		}
@@ -141,6 +162,13 @@ export const FIND_VISIT_BY_ID = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+							}
+						}
+					}
 				}
 			}
 		}
