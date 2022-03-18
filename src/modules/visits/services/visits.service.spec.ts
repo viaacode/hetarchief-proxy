@@ -37,6 +37,8 @@ const mockVisit: Visit = {
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
@@ -100,8 +102,7 @@ describe('VisitsService', () => {
 							id: '1',
 							status: 'APPROVED',
 							user_profile: {
-								first_name: 'Marie',
-								last_name: 'Odhiambo',
+								full_name: 'Marie Odhiambo',
 							},
 						},
 					],
@@ -226,6 +227,30 @@ describe('VisitsService', () => {
 				message: "Visit with id 'unknown-id' not found",
 				statusCode: 404,
 			});
+		});
+	});
+
+	describe('getActiveVisitForUserAndSpace', () => {
+		it('returns the active visit for the given user and space', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			expect(response.id).toBe(cpVisit.id);
+		});
+
+		it('returns null if the visit was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_visit: [],
+					cp_visit_aggregate: {
+						aggregate: {
+							count: 0,
+						},
+					},
+				},
+			});
+			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+
+			expect(response).toBeNull();
 		});
 	});
 

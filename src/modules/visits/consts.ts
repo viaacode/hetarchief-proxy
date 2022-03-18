@@ -13,7 +13,9 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof Visit, string>> = {
 	endAt: 'end_date',
 	createdAt: 'created_at',
 	updatedAt: 'updated_at',
-	visitorName: 'user_profile.first_name', // TODO we need to include a full name prop to sort and search on => Bart Debunne
+	visitorName: 'user_profile.full_name',
 	visitorMail: 'user_profile.mail',
 	visitorId: 'user_profile.id',
+	updatedById: 'updated_by',
+	updatedByName: 'updater.full_name',
 };

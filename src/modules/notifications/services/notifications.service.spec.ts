@@ -9,6 +9,7 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { AudienceType, Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { Idp } from '~shared/auth/auth.types';
 
 const mockGqlNotification1 = {
 	description:
@@ -67,6 +68,7 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	permissions: ['CREATE_COLLECTION'],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockVisit: Visit = {
@@ -91,6 +93,8 @@ const mockVisit: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockSpace: Space = {

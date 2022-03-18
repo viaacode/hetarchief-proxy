@@ -10,7 +10,7 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
@@ -71,7 +71,7 @@ export class VisitsService {
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
-	public adapt(graphQlVisit: any): Visit {
+	public adapt(graphQlVisit: Partial<GqlVisit>): Visit {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
@@ -88,11 +88,9 @@ export class VisitsService {
 			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
-			visitorName: (
-				get(graphQlVisit, 'user_profile.first_name', '') +
-				' ' +
-				get(graphQlVisit, 'user_profile.last_name', '')
-			).trim(),
+			updatedById: get(graphQlVisit, 'updater.id'),
+			updatedByName: get(graphQlVisit, 'updater.full_name'),
+			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
 		};
@@ -138,10 +136,11 @@ export class VisitsService {
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
 
-		const updateVisit = {
+		const updateVisit: Partial<GqlVisit> = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
+			updated_by: userProfileId,
 		};
 
 		const currentVisit = await this.findById(id); // Get current visit status
@@ -205,8 +204,7 @@ export class VisitsService {
 
 		if (!isEmpty(query)) {
 			where._or = [
-				{ user_profile: { first_name: { _ilike: query } } },
-				{ user_profile: { last_name: { _ilike: query } } },
+				{ user_profile: { full_name: { _ilike: query } } },
 				{ user_profile: { mail: { _ilike: query } } },
 			];
 		}
@@ -281,6 +279,25 @@ export class VisitsService {
 		}
 
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getActiveVisitForUserAndSpace(
+		userProfileId: string,
+		spaceId: string
+	): Promise<Visit | null> {
+		const visits = await this.findAll({
+			userProfileId,
+			spaceId,
+			timeframe: VisitTimeframe.ACTIVE,
+			status: VisitStatus.APPROVED,
+			size: 1,
+			page: 1,
+		});
+
+		if (visits.total === 0) {
+			return null;
+		}
+		return visits.items[0];
 	}
 
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
