@@ -12,7 +12,7 @@ describe('MediaDto', () => {
 			const mediaQueryDto = new MediaQueryDto();
 			expect(mediaQueryDto).toEqual({
 				orderDirection: 'asc',
-				orderProp: 'dcterms_available',
+				orderProp: 'relevance',
 				page: 1,
 				size: 10,
 			});
