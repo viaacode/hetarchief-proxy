@@ -5,7 +5,12 @@ import { get, isEmpty, set } from 'lodash';
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { Space } from '../types';
 
-import { FIND_SPACE_BY_ID, FIND_SPACES, GET_SPACE_MAINTAINER_PROFILE_IDS } from './queries.gql';
+import {
+	FIND_SPACE_BY_CP_ADMIN_ID,
+	FIND_SPACE_BY_ID,
+	FIND_SPACES,
+	GET_SPACE_MAINTAINER_PROFILE_IDS,
+} from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -86,10 +91,20 @@ export class SpacesService {
 		});
 	}
 
-	public async findById(id: string): Promise<Space> {
+	public async findById(id: string): Promise<Space | null> {
 		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_ID, { id });
 		if (!spaceResponse.data.cp_space[0]) {
-			throw new NotFoundException();
+			return null;
+		}
+		return this.adapt(spaceResponse.data.cp_space[0]);
+	}
+
+	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
+		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_CP_ADMIN_ID, {
+			cpAdminId,
+		});
+		if (!spaceResponse.data.cp_space[0]) {
+			return null;
 		}
 		return this.adapt(spaceResponse.data.cp_space[0]);
 	}

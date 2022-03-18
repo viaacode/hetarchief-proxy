@@ -20,10 +20,13 @@ export const INSERT_VISIT = `
 			created_at
 			updated_at
 			user_profile {
-				first_name
-				last_name
+				full_name
 				mail
 				id
+			}
+			updater {
+				id
+				full_name
 			}
 			space {
 				schema_maintainer {
@@ -32,6 +35,9 @@ export const INSERT_VISIT = `
 						primary_site {
 							address {
 								email
+								locality
+								postal_code
+								street
 							}
 						}
 					}
@@ -63,10 +69,13 @@ export const UPDATE_VISIT = `
 			created_at
 			updated_at
 			user_profile {
-				first_name
-				last_name
+				full_name
 				mail
 				id
+			}
+			updater {
+				id
+				full_name
 			}
 			space {
 				schema_maintainer {
@@ -75,6 +84,9 @@ export const UPDATE_VISIT = `
 						primary_site {
 							address {
 								email
+								locality
+								postal_code
+								street
 							}
 						}
 					}
@@ -95,7 +107,7 @@ export const FIND_VISITS = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			notes(order_by: {created_at: desc}, limit: 1) {
 				id
 				note
 				profile {
@@ -106,8 +118,7 @@ export const FIND_VISITS = `
 			created_at
 			updated_at
 			user_profile {
-				first_name
-				last_name
+				full_name
 				mail
 				id
 			}
@@ -118,10 +129,17 @@ export const FIND_VISITS = `
 						primary_site {
 							address {
 								email
+								locality
+								postal_code
+								street
 							}
 						}
 					}
 				}
+			}
+			updater {
+				id
+				full_name
 			}
 		}
 		cp_visit_aggregate(where: $where) {
@@ -154,10 +172,13 @@ export const FIND_VISIT_BY_ID = `
 			created_at
 			updated_at
 			user_profile {
-				first_name
-				last_name
+				full_name
 				mail
 				id
+			}
+			updater {
+				id
+				full_name
 			}
 			space {
 				schema_maintainer {
@@ -166,6 +187,9 @@ export const FIND_VISIT_BY_ID = `
 						primary_site {
 							address {
 								email
+								locality
+								postal_code
+								street
 							}
 						}
 					}
@@ -196,9 +220,22 @@ export const FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -218,9 +255,22 @@ export const FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -240,9 +290,22 @@ export const FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}

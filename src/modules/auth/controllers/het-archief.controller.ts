@@ -19,6 +19,7 @@ import { RelayState, SamlCallbackBody } from '../types';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Permission } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import i18n from '~shared/i18n';
@@ -125,6 +126,13 @@ export class HetArchiefController {
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
 			}
+
+			// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
+			archiefUser.permissions = [
+				Permission.CAN_READ_CP_VISIT_REQUESTS,
+				Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
+			];
+			// TODO remove until here ----------------------------------------------------------------------------------------
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 

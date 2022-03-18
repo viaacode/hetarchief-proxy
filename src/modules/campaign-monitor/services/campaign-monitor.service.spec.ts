@@ -51,6 +51,8 @@ const getMockVisit = (): Visit => ({
 	visitorFirstName: 'Tom',
 	visitorLastName: 'Testerom',
 	visitorName: 'Tom Testerom',
+	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
+	updatedByName: 'CP Admin',
 });
 
 describe('CampaignMonitorService', () => {

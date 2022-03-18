@@ -11,11 +11,42 @@ export enum VisitTimeframe {
 	FUTURE = 'FUTURE',
 }
 
+export interface GqlProfile {
+	full_name: string;
+	first_name: string;
+	last_name: string;
+	mail: string;
+	id: string;
+}
+
+export interface GqlVisit {
+	id: string;
+	cp_space_id: string;
+	user_profile_id: string;
+	user_reason: string;
+	user_timeframe: string;
+	status: VisitStatus;
+	start_date: string;
+	end_date: string;
+	notes: any[];
+	created_at: string;
+	updated_at: string;
+	user_profile: Partial<GqlProfile>;
+	space: {
+		schema_maintainer: {
+			schema_name: string;
+		};
+	};
+	updater: Partial<GqlProfile>;
+	updated_by?: string;
+}
+
 export interface Visit {
 	id: string;
 	spaceId: string;
 	spaceName: string;
 	spaceMail: string;
+	spaceAddress?: string;
 	userProfileId: string;
 	timeframe: string;
 	reason: string;
@@ -30,6 +61,8 @@ export interface Visit {
 	visitorLastName: string;
 	visitorMail: string;
 	visitorId: string;
+	updatedById: string | null;
+	updatedByName: string | null;
 }
 
 export interface Note {

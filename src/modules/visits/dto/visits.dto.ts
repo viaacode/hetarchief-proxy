@@ -101,24 +101,6 @@ export class VisitsQueryDto {
 	})
 	query?: string;
 
-	@IsUUID()
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: String,
-		description: 'Get all visits for this user',
-		default: undefined,
-	})
-	userProfileId?: string;
-
-	@IsUUID()
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: String,
-		description: 'Get all visits for this space',
-		default: undefined,
-	})
-	spaceId?: string;
-
 	@ApiPropertyOptional({
 		isArray: true,
 		required: false,
@@ -194,6 +176,8 @@ export class VisitsQueryDto {
 			'visitorName',
 			'visitorMail',
 			'visitorId',
+			'updatedById',
+			'updatedByName',
 		],
 	})
 	orderProp? = 'startAt';
