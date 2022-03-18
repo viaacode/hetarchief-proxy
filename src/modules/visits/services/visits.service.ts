@@ -63,11 +63,22 @@ export class VisitsService {
 		return true;
 	}
 
+	public static adaptSpaceAddress(graphQlAddress: any): string {
+		const locality = get(graphQlAddress, `locality`);
+		const postalCode = get(graphQlAddress, `postal_code`);
+		const street = get(graphQlAddress, `street`);
+
+		return `${street}, ${postalCode} ${locality}`;
+	}
+
 	public adapt(graphQlVisit: Partial<GqlVisit>): Visit {
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
 			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
+			spaceAddress: VisitsService.adaptSpaceAddress(
+				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
+			),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
@@ -247,7 +258,7 @@ export class VisitsService {
 			limit,
 			orderBy: set(
 				{},
-				ORDER_PROP_TO_DB_PROP[orderProp || 'startAt'],
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP['startAt'],
 				orderDirection || SortDirection.desc
 			),
 		});
