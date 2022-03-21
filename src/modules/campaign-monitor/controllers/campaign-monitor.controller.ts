@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { SendMailDto } from '../dto/campaign-monitor.dto';
@@ -15,7 +15,11 @@ export class CampaignMonitorController {
 	 */
 	@UseGuards(ApiKeyGuard)
 	@Post('send')
-	public async sendMail(@Body() sendMailDto: SendMailDto): Promise<boolean> {
+	public async sendMail(
+		@Body() sendMailDto: SendMailDto,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		@Headers('apiKey') apiKey: string
+	): Promise<boolean> {
 		return this.campaignMonitorService.send(sendMailDto.templateId, sendMailDto.data);
 	}
 }

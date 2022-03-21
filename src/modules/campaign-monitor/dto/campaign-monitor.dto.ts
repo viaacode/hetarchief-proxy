@@ -103,6 +103,7 @@ export class SendMailDto {
 	@ApiProperty({
 		type: String,
 		description: 'The template ID for the email',
+		example: '8a583d31-8741-41de-ac38-69166c3213a3',
 	})
 	templateId: string;
 
@@ -112,6 +113,26 @@ export class SendMailDto {
 	@ApiProperty({
 		type: Object,
 		description: 'The data object with placeholder values for Campaign Monitor',
+		example: {
+			To: 'test.testers@meemoo.be',
+			ConsentToTrack: 'unchanged',
+			Data: {
+				client_firstname: 'Test',
+				client_lastname: 'Testers',
+				client_email: 'test.testers@meemoo.be',
+				contentpartner_name: 'Huis van Alijn',
+				contentpartner_email: 'huis.van.alijn@test.com',
+				request_reason: 'ik doe onderzoek',
+				request_time: 'donderdag namiddag',
+				request_url:
+					'http://localhost:3200/beheer/aanvragen?visitRequestId=9fb02525-7f04-494b-a908-15b2962adfbc',
+				request_remark: '',
+				start_date: '18 maart 2022',
+				start_time: '14:00',
+				end_date: '18 maart 2022',
+				end_time: '17:00',
+			},
+		},
 	})
 	data: CampaignMonitorData;
 }
