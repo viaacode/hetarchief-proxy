@@ -100,8 +100,8 @@ export class VisitsController {
 		const visit = await this.visitsService.create(createVisitDto, user.id);
 
 		// Send notifications
-		const recipientIds = await this.spacesService.getMaintainerProfileIds(visit.spaceId);
-		await this.notificationsService.onCreateVisit(visit, recipientIds, user);
+		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
+		await this.notificationsService.onCreateVisit(visit, recipients, user);
 
 		return visit;
 	}

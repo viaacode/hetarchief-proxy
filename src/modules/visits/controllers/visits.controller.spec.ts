@@ -124,7 +124,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	getMaintainerProfileIds: jest.fn(),
+	getMaintainerProfiles: jest.fn(),
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
@@ -253,7 +253,10 @@ describe('VisitsController', () => {
 		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisit1);
 			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
-			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -268,10 +271,10 @@ describe('VisitsController', () => {
 			);
 
 			expect(visit).toEqual(mockVisit1);
-			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(1);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(1);
 			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
-			mockSpacesService.getMaintainerProfileIds.mockClear();
+			mockSpacesService.getMaintainerProfiles.mockClear();
 		});
 
 		it('should throw an error if you try to create a new visit without accepting tos', async () => {
@@ -279,7 +282,10 @@ describe('VisitsController', () => {
 				mockVisit1,
 			});
 			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
-			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -303,10 +309,10 @@ describe('VisitsController', () => {
 					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
 				)
 			);
-			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(0);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
 			sessionHelperSpy.mockRestore();
-			mockSpacesService.getMaintainerProfileIds.mockClear();
+			mockSpacesService.getMaintainerProfiles.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
 		});
 	});

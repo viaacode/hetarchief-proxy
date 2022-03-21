@@ -1,4 +1,5 @@
 import { Visit } from '~modules/visits/types';
+import { Recipient } from '~shared/types/types';
 
 export enum Template {
 	VISIT_REQUEST_CP = 'VISIT_REQUEST_CP',
@@ -7,7 +8,7 @@ export enum Template {
 }
 
 export interface VisitEmailInfo {
-	to: string;
+	to: Recipient[];
 	template: Template;
 	visit: Visit;
 }

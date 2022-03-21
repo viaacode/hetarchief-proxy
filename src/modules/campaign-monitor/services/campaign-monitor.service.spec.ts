@@ -89,14 +89,14 @@ describe('CampaignMonitorService', () => {
 		});
 	});
 
-	describe('send', () => {
+	describe('sendForVisit', () => {
 		it('should send an email using campaign monitor', async () => {
 			nock('http://campaignmonitor/')
 				.post('/campaignMonitorTemplateVisitApproved/send')
 				.reply(201, {});
 			const visit = getMockVisit();
-			const result = await campaignMonitorService.send({
-				to: visit.visitorMail,
+			const result = await campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
 				template: Template.VISIT_APPROVED,
 				visit: getMockVisit(),
 			});
@@ -105,10 +105,10 @@ describe('CampaignMonitorService', () => {
 
 		it('should NOT call the campaign monitor if the template was not found', async () => {
 			const visit = getMockVisit();
-			const result = await campaignMonitorService.send({
+			const result = await campaignMonitorService.sendForVisit({
 				template: Template.VISIT_DENIED, // Denied template is null and triggers the error
 				visit,
-				to: visit.visitorMail,
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
 			});
 			expect(result).toBeFalsy();
 		});
@@ -116,20 +116,20 @@ describe('CampaignMonitorService', () => {
 		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
 			const visit = getMockVisit();
-			const result = await campaignMonitorService.send({
+			const result = await campaignMonitorService.sendForVisit({
 				template: Template.VISIT_APPROVED,
 				visit,
-				to: visit.visitorMail,
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
 			});
 			expect(result).toBeFalsy();
 			campaignMonitorService.setIsEnabled(true);
 		});
 
 		it('should return false if there is no email adres', async () => {
-			const result = await campaignMonitorService.send({
+			const result = await campaignMonitorService.sendForVisit({
 				template: Template.VISIT_APPROVED,
 				visit: getMockVisit(),
-				to: null,
+				to: [],
 			});
 			expect(result).toBeFalsy();
 		});

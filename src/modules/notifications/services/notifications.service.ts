@@ -27,6 +27,7 @@ import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import i18n from '~shared/i18n';
+import { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {
@@ -154,7 +155,7 @@ export class NotificationsService {
 	 */
 	public async onCreateVisit(
 		visit: Visit,
-		recipientIds: string[],
+		recipients: Recipient[],
 		user: User
 	): Promise<Notification[]> {
 		const [notifications] = await Promise.all([
@@ -168,10 +169,10 @@ export class NotificationsService {
 					type: NotificationType.NEW_VISIT_REQUEST,
 					status: NotificationStatus.UNREAD,
 				},
-				recipientIds
+				recipients.map((recipient) => recipient.id)
 			),
-			this.campaignMonitorService.send({
-				to: visit.spaceMail,
+			this.campaignMonitorService.sendForVisit({
+				to: recipients,
 				template: Template.VISIT_REQUEST_CP,
 				visit,
 			}),
@@ -204,11 +205,11 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id,
+					recipient: user.id, // TODO question this should be the visit.visitorId, because user is the logged in user??
 				},
 			]),
-			this.campaignMonitorService.send({
-				to: visit.visitorMail,
+			this.campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
 				template: Template.VISIT_APPROVED,
 				visit,
 			}),
@@ -237,11 +238,11 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id,
+					recipient: user.id, // TODO question this should be the visit.visitorId, because user is the logged in user??
 				},
 			]),
-			this.campaignMonitorService.send({
-				to: visit.visitorMail,
+			this.campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
 				template: Template.VISIT_DENIED,
 				visit,
 			}),

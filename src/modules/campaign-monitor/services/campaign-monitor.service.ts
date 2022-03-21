@@ -3,26 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get } from 'lodash';
 
+import { CampaignMonitorData, CampaignMonitorVisitData } from '../dto/campaign-monitor.dto';
 import { Template, VisitEmailInfo } from '../types';
 
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
-interface CampaignMonitorVisitData {
-	client_firstname: string;
-	client_lastname: string;
-	client_email: string;
-	contentpartner_name: string;
-	contentpartner_email: string;
-	request_reason: string;
-	request_time: string;
-	request_url: string;
-	request_remark: string;
-	start_date: string;
-	start_time: string;
-	end_date: string;
-	end_time: string;
-}
 @Injectable()
 export class CampaignMonitorService {
 	private logger: Logger = new Logger(CampaignMonitorService.name, { timestamp: true });
@@ -79,38 +65,49 @@ export class CampaignMonitorService {
 		};
 	}
 
-	public async send(emailInfo: VisitEmailInfo): Promise<boolean> {
-		if (!emailInfo.to) {
-			// Throw exception will break too much
-			this.logger.error('Empty email address - Mail not sent', emailInfo);
+	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
+		const recipients: string[] = [];
+		emailInfo.to.forEach((recipient) => {
+			if (!recipient.email) {
+				// Throw exception will break too much
+				this.logger.error(
+					`Mail will not be sent to user id ${recipient.id} - empty email address`
+				);
+			} else {
+				recipients.push(recipient.email);
+			}
+		});
+
+		if (recipients.length === 0) {
 			return false;
 		}
 
-		const data: any = {
-			To: emailInfo.to,
+		const cmTemplateId = this.templateToCampaignMonitorIdMap[emailInfo.template];
+		if (!cmTemplateId) {
+			this.logger.error(
+				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
+			);
+			return false;
+		}
+
+		const data: CampaignMonitorData = {
+			To: recipients,
 			ConsentToTrack: 'unchanged',
 			Data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
+		return this.send(cmTemplateId, data);
+	}
 
+	public async send(template: string, data: CampaignMonitorData): Promise<boolean> {
 		if (this.isEnabled) {
-			const cmTemplateId = this.templateToCampaignMonitorIdMap[emailInfo.template];
-			if (!cmTemplateId) {
-				this.logger.error(
-					`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
-				);
-				return false;
-			}
-			await this.gotInstance.post(
-				`${this.templateToCampaignMonitorIdMap[emailInfo.template]}/send`,
-				{
-					json: data,
-				}
-			);
+			await this.gotInstance.post(`${template}/send`, {
+				json: data,
+			});
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${data.To}'. Template: ${emailInfo.template} - ${
-					this.templateToCampaignMonitorIdMap[emailInfo.template]
-				}, data: ${JSON.stringify(data.Data)}`
+				`Mock email sent. To: '${data.To}'. Template: ${template}, data: ${JSON.stringify(
+					data
+				)}`
 			);
 			return false;
 		}

@@ -135,7 +135,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
-		send: jest.fn().mockResolvedValue(true),
+		sendForVisit: jest.fn().mockResolvedValue(true),
 	};
 
 describe('NotificationsService', () => {
@@ -235,7 +235,7 @@ describe('NotificationsService', () => {
 
 			const response = await notificationsService.onCreateVisit(
 				mockVisit,
-				[mockUser.id],
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
 				mockUser
 			);
 
