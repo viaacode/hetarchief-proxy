@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, trimStart } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -224,7 +224,8 @@ export class MediaService {
 			referer: referer || this.host,
 			maxage: this.ticketServiceMaxAge,
 		};
-		this.logger.log(data);
+		// TODO delete log once this works on all envs
+		this.logger.debug(data);
 
 		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
 			thumbnailPath,

@@ -12,7 +12,6 @@ import { AudienceType, Space } from '~modules/spaces/types';
 import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
-import { SessionUser } from '~shared/decorators/user.decorator';
 import i18n from '~shared/i18n';
 
 const mockVisit1: Visit = {

@@ -26,10 +26,10 @@ export class MediaController {
 		return url;
 	}
 
-	@Get('thumbnail-ticket/:representationId')
+	@Get('thumbnail-ticket')
 	public async getThumbnailUrl(
 		@Headers('referer') referer: string,
-		@Param() representationId: string
+		@Query() thumbnailQuery: ThumbnailQueryDto
 	): Promise<string> {
 		const url = await this.mediaService.getThumbnailUrl(thumbnailQuery.id, referer);
 		return url;
