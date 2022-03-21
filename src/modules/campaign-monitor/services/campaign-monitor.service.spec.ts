@@ -45,6 +45,8 @@ const mockVisit: Visit = {
 	visitorId: 'user-1',
 	visitorMail: 'test@studiohyperdrive.be',
 	visitorName: 'Tom Testerom',
+	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
+	updatedByName: 'CP Admin',
 };
 
 describe('CampaignMonitorService', () => {

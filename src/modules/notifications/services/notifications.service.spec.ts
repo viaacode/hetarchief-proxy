@@ -7,8 +7,9 @@ import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
 import { AudienceType, Space } from '~modules/spaces/types';
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { Idp } from '~shared/auth/auth.types';
 
 const mockGqlNotification1 = {
 	description:
@@ -66,7 +67,8 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockVisit: Visit = {
@@ -91,6 +93,8 @@ const mockVisit: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: null,
+	updatedByName: null,
 };
 
 const mockSpace: Space = {

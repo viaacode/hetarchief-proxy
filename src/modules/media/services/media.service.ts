@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isEmpty, trimStart } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -172,6 +172,7 @@ export class MediaService {
 
 	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
+		this.logger.log(esQuery);
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return mediaResponse;
