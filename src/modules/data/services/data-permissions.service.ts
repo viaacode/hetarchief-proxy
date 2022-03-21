@@ -26,7 +26,7 @@ export class DataPermissionsService {
 		origin: QueryOrigin,
 		queryDto: GraphQlQueryDto
 	): Promise<boolean> {
-		this.logger.log(`Veryfing... ${queryName}`);
+		this.logger.log(`Verifying... ${queryName}`);
 		if (DataPermissionsService.QUERY_PERMISSIONS[origin][queryName]) {
 			this.logger.log(`Permissions set for query ${queryName}`);
 			return DataPermissionsService.QUERY_PERMISSIONS[origin]['TEST_QUERY'](

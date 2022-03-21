@@ -1,8 +1,8 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
-import { AdvancedQuery, MediaQueryDto, SearchFilters } from '../dto/media.dto';
-import { QueryBuilderConfig } from '../types';
+import { MediaQueryDto, SearchFilter } from '../dto/media.dto';
+import { Operator, OrderProperty, QueryBuilderConfig, SearchFilterField } from '../types';
 
 import {
 	AGGS_PROPERTIES,
@@ -12,16 +12,22 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
+	ORDER_MAPPINGS,
+	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	VALUE_OPERATORS,
 } from './consts';
-import searchQueryTemplate from './templates/search-query.json';
+import searchQueryAdvanced from './templates/search-query-advanced.json';
+import searchQuery from './templates/search-query.json';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
 
-const searchQueryObjectTemplate = _.values(searchQueryTemplate);
+const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
+const searchQueryTemplate = _.values(searchQuery);
 
 export class QueryBuilder {
-	private static config = {
+	private static config: QueryBuilderConfig = {
 		AGGS_PROPERTIES,
 		MAX_COUNT_SEARCH_RESULTS,
 		MAX_NUMBER_SEARCH_RESULTS,
@@ -30,6 +36,8 @@ export class QueryBuilder {
 		READABLE_TO_ELASTIC_FILTER_NAMES,
 		DEFAULT_QUERY_TYPE,
 		OCCURRENCE_TYPE,
+		VALUE_OPERATORS,
+		ORDER_MAPPINGS,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -64,15 +72,13 @@ export class QueryBuilder {
 
 			// Specify the aggs objects with optional search terms
 			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
+
 			// Add sorting
-			queryObject.sort = [
-				'_score',
-				{
-					[searchRequest.orderProp]: {
-						order: searchRequest.orderDirection,
-					},
-				},
-			];
+			_.set(
+				queryObject,
+				'sort',
+				this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection)
+			);
 
 			return queryObject;
 		} catch (err) {
@@ -81,45 +87,83 @@ export class QueryBuilder {
 	}
 
 	/**
-	 * AND filter: https://stackoverflow.com/a/52206289/373207
-	 * @param elasticKey
-	 * @param readableKey
-	 * @param values
+	 * Converts a sort property and direction to an elasticsearch sort array
+	 * eg:
+	 *     orderProperty: 'name',
+	 *     orderDirection: 'asc'
+	 * is converted into:
+	 *     [
+	 *        {
+	 *     			"schema_name": {
+	 *     				"order": "asc"
+	 *     			}
+	 *     		},
+	 *        "_score"
+	 *     ]
+	 * @param orderProperty
+	 * @param orderDirection
 	 */
-	private static generateAndFilter(
-		elasticKey: string,
-		readableKey: keyof SearchFilters,
-		value: string | AdvancedQuery
-	): any {
+	private static buildSortArray(orderProperty: OrderProperty, orderDirection: SortDirection) {
+		const mappedOrderProperty = this.config.ORDER_MAPPINGS[orderProperty];
+		const sortArray: any[] = [];
+		if (orderProperty !== OrderProperty.RELEVANCE) {
+			const sortItem = {
+				[mappedOrderProperty]: {
+					order: orderDirection,
+				},
+			};
+
+			sortArray.push(sortItem);
+		}
+
+		// Always order by relevance if 2 search items have identical primary sort values
+		sortArray.push(this.config.ORDER_MAPPINGS[OrderProperty.RELEVANCE]);
+		return sortArray;
+	}
+
+	protected static getOccurrenceType(operator: Operator): string {
+		return this.config.OCCURRENCE_TYPE[operator] || 'filter';
+	}
+
+	protected static buildValue(searchFilter: SearchFilter): any {
+		if (this.config.VALUE_OPERATORS.includes(searchFilter.operator)) {
+			return {
+				[searchFilter.operator]: searchFilter.value,
+			};
+		}
+		return searchFilter.multiValue || searchFilter.value;
+	}
+
+	protected static getQueryType(searchFilter: SearchFilter, value: any): any {
+		const defaultQueryType = this.config.DEFAULT_QUERY_TYPE[searchFilter.field];
+		if (defaultQueryType === QueryType.TERMS && !_.isArray(value)) {
+			return QueryType.TERM;
+		}
+		return defaultQueryType;
+	}
+
+	protected static buildFilter(elasticKey: string, searchFilter: SearchFilter): any {
+		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+		const value = this.buildValue(searchFilter);
 		return {
-			[this.config.DEFAULT_QUERY_TYPE[readableKey]]: {
-				[elasticKey + this.suffix(readableKey)]: value,
+			occurrenceType,
+			query: {
+				[this.getQueryType(searchFilter, value)]: {
+					[elasticKey + this.suffix(searchFilter.field)]: value,
+				},
 			},
 		};
 	}
 
-	/**
-	 * AND filter: https://stackoverflow.com/a/52206289/373207
-	 * @param elasticKey
-	 * @param readableKey
-	 * @param values
-	 */
-	private static generateAdvancedFilter(
-		elasticKey: string,
-		readableKey: keyof SearchFilters,
-		advancedQuery: AdvancedQuery
-	): any {
-		const keys = Object.keys(advancedQuery);
-		const result = keys.map((key) => ({
-			occurrenceType: this.config.OCCURRENCE_TYPE[key],
-			query: {
-				[this.config.DEFAULT_QUERY_TYPE[readableKey]]: {
-					[elasticKey + this.suffix(readableKey)]: advancedQuery[key],
-				},
-			},
-		}));
+	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
+		// Replace {{query}} in the template with the escaped search terms
+		const textQueryFilterArray = _.cloneDeep(searchTemplate);
+		const escapedQueryString = searchFilter.value;
+		_.forEach(textQueryFilterArray, (matchObj) => {
+			_.set(matchObj, 'multi_match.query', escapedQueryString);
+		});
 
-		return result;
+		return textQueryFilterArray;
 	}
 
 	/**
@@ -127,69 +171,63 @@ export class QueryBuilder {
 	 * Containing the search terms and the checked filters
 	 * @param filters
 	 */
-	private static buildFilterObject(filters: Partial<SearchFilters> | undefined) {
+	private static buildFilterObject(filters: SearchFilter[] | undefined) {
 		if (!filters || _.isEmpty(filters)) {
 			// Return query object that will match all results
 			return { match_all: {} };
 		}
 
 		const filterObject: any = {};
-		const stringQuery = _.get(filters, 'query');
-		if (stringQuery) {
-			// Replace {{query}} in the template with the escaped search terms
-			const textQueryObjectArray = _.cloneDeep(searchQueryObjectTemplate);
-			const escapedQueryString = stringQuery;
-			_.forEach(textQueryObjectArray, (matchObj) => {
-				_.set(matchObj, 'multi_match.query', escapedQueryString);
-			});
-
-			_.set(filterObject, 'bool.must', textQueryObjectArray);
-
-			if (_.keys(filters).length === 1) {
-				// Only a string query is passed, no need to add further filters
-				return filterObject;
-			}
-		}
 
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
 		_.set(filterObject, 'bool.filter', filterArray);
-		_.forEach(filters, (value: any, readableKey: keyof SearchFilters) => {
-			if (readableKey === 'query') {
-				return; // Query filter has already been handled, skip this foreach iteration
+		_.forEach(filters, (searchFilter: SearchFilter) => {
+			if (
+				searchFilter.field === SearchFilterField.QUERY ||
+				searchFilter.field === SearchFilterField.ADVANCED_QUERY
+			) {
+				if (!searchFilter.value) {
+					throw new BadRequestException(
+						`Value cannot be empty when filtering on field '${searchFilter.field}'`
+					);
+				}
+				const searchTemplate =
+					searchFilter.field === SearchFilterField.QUERY
+						? searchQueryTemplate
+						: searchQueryAdvancedTemplate;
+				const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+
+				textFilters.forEach((filter) =>
+					this.applyFilter(filterObject, {
+						occurrenceType: this.getOccurrenceType(searchFilter.operator),
+						query: filter,
+					})
+				);
+				return;
 			}
 
 			// // Map frontend filter names to elasticsearch names
-			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[readableKey];
+			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
 			if (!elasticKey) {
 				throw new InternalServerErrorException(
-					`Failed to resolve agg property: ${readableKey}`
+					`Failed to resolve agg property: ${searchFilter.field}`
 				);
 			}
 
-			if (value instanceof AdvancedQuery) {
-				const advancedFilter = this.generateAdvancedFilter(elasticKey, readableKey, value);
-				this.applyAdvancedFilter(filterObject, advancedFilter);
-			} else if (_.isArray(value)) {
-				value.forEach((option) => {
-					filterArray.push(this.generateAndFilter(elasticKey, readableKey, option));
-				});
-			} else {
-				filterArray.push(this.generateAndFilter(elasticKey, readableKey, value));
-			}
+			const advancedFilter = this.buildFilter(elasticKey, searchFilter);
+			this.applyFilter(filterObject, advancedFilter);
 		});
 
 		return filterObject;
 	}
 
-	protected static applyAdvancedFilter(filterObject: any, advancedFilter: any): void {
-		advancedFilter.forEach((filter) => {
-			if (!filterObject.bool[filter.occurrenceType]) {
-				filterObject.bool[filter.occurrenceType] = [];
-			}
+	protected static applyFilter(filterObject: any, newFilter: any): void {
+		if (!filterObject.bool[newFilter.occurrenceType]) {
+			filterObject.bool[newFilter.occurrenceType] = [];
+		}
 
-			filterObject.bool[filter.occurrenceType].push(filter.query);
-		});
+		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
 	}
 	/**
 	 * Builds up an object containing the elasticsearch  aggregation objects
@@ -209,7 +247,7 @@ export class QueryBuilder {
 		const aggs: any = {};
 		_.forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
-				this.config.READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as keyof SearchFilters];
+				this.config.READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as SearchFilterField];
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(
 					`Failed to resolve agg property: ${aggProperty}`
@@ -238,7 +276,7 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static suffix(prop: keyof SearchFilters): string {
+	private static suffix(prop: SearchFilterField): string {
 		return this.config.NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
 	}
 }

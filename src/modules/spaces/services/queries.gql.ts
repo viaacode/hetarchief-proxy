@@ -79,6 +79,45 @@ export const FIND_SPACE_BY_ID = `
 	}
 `;
 
+export const FIND_SPACE_BY_CP_ADMIN_ID = `
+query spaces($cpAdminId: uuid!) {
+  cp_space(where: {schema_maintainer: {maintainer_users_profiles: {users_profile_id: {_eq: $cpAdminId}}}}) {
+    id
+    schema_image
+    schema_color
+    schema_audience_type
+    schema_description
+    schema_public_access
+    schema_service_description
+    is_published
+    published_at
+    created_at
+    updated_at
+    schema_maintainer {
+      schema_name
+      schema_identifier
+      information {
+        description
+        logo {
+          iri
+        }
+        primary_site {
+          address {
+            email
+            locality
+            postal_code
+            street
+            telephone
+            post_office_box_number
+          }
+        }
+      }
+    }
+  }
+}
+
+`;
+
 export const GET_SPACE_MAINTAINER_PROFILE_IDS = `
 	query getNotificationsForUser($spaceId: uuid) {
 		cp_maintainer_users_profile(where: {maintainer: {space: {id: {_eq: $spaceId}}}}) {

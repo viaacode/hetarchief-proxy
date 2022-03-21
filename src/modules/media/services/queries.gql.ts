@@ -15,7 +15,7 @@ export const GET_FILE_BY_REPRESENTATION_ID = `
 
 export const GET_OBJECT_IE_BY_ID = `
 	query objectDetail($id: String!) {
-		object_ie(where: { schema_identifier: { _eq: $id } }) {
+		object_ie(where: {schema_identifier: {_eq: $id}}) {
 			meemoo_fragment_id
 			schema_identifier
 			premis_identifier
@@ -52,13 +52,12 @@ export const GET_OBJECT_IE_BY_ID = `
 			schema_actor
 			schema_contributor
 			schema_publisher
-			schema_spatial
-			schema_temporal
+			schema_temporal_coverage
+			schema_spatial_coverage
 			schema_keywords
 			dcterms_format
 			schema_in_language
 			schema_thumbnail_url
-			schema_embed_url
 			schema_alternate_name
 			schema_duration
 			schema_license
@@ -88,5 +87,5 @@ export const GET_OBJECT_IE_BY_ID = `
 				}
 			}
 		}
-  	}
+	}
 `;

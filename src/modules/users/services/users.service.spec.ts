@@ -11,6 +11,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 const graphQlUserResponse = {
 	id: '123',
+	full_name: 'Tom Testerom',
 	first_name: 'Tom',
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',

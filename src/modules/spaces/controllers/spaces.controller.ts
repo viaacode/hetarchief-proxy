@@ -1,10 +1,20 @@
-import { Controller, Get, Logger, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Logger,
+	NotFoundException,
+	Param,
+	ParseUUIDPipe,
+	Query,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
+
+import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
 @Controller('spaces')
@@ -20,8 +30,11 @@ export class SpacesController {
 	}
 
 	@Get(':id')
-	public async getSpaceById(@Param('id', ParseUUIDPipe) id: string): Promise<Space> {
+	public async getSpaceById(@Param('id', ParseUUIDPipe) id: string): Promise<Space | null> {
 		const space = await this.spacesService.findById(id);
+		if (!space) {
+			throw new NotFoundException(i18n.t(`Space with id ${id} not found`));
+		}
 		return space;
 	}
 }

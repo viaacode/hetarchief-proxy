@@ -10,9 +10,10 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
 
 import {
+	FIND_ACTIVE_VISIT_BY_USER_AND_SPACE,
 	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
 	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
@@ -63,21 +64,25 @@ export class VisitsService {
 		return true;
 	}
 
-	public static adaptSpaceAddress(graphQlVisit: any): string {
-		const path = 'space.schema_maintainer.information[0].primary_site.address';
-		const locality = get(graphQlVisit, `${path}.locality`);
-		const postalCode = get(graphQlVisit, `${path}.postal_code`);
-		const street = get(graphQlVisit, `${path}.street`);
+	public static adaptSpaceAddress(graphQlAddress: any): string {
+		const locality = get(graphQlAddress, `locality`);
+		const postalCode = get(graphQlAddress, `postal_code`);
+		const street = get(graphQlAddress, `street`);
 
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
-	public adapt(graphQlVisit: any): Visit {
+	public adapt(graphQlVisit: Partial<GqlVisit>): Visit | null {
+		if (!graphQlVisit) {
+			return null;
+		}
 		return {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
 			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
-			spaceAddress: VisitsService.adaptSpaceAddress(graphQlVisit),
+			spaceAddress: VisitsService.adaptSpaceAddress(
+				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
+			),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
 			reason: get(graphQlVisit, 'user_reason'),
@@ -87,11 +92,9 @@ export class VisitsService {
 			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
-			visitorName: (
-				get(graphQlVisit, 'user_profile.first_name', '') +
-				' ' +
-				get(graphQlVisit, 'user_profile.last_name', '')
-			).trim(),
+			updatedById: get(graphQlVisit, 'updater.id'),
+			updatedByName: get(graphQlVisit, 'updater.full_name'),
+			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
 		};
@@ -137,10 +140,11 @@ export class VisitsService {
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
 
-		const updateVisit = {
+		const updateVisit: Partial<GqlVisit> = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
+			updated_by: userProfileId,
 		};
 
 		const currentVisit = await this.findById(id); // Get current visit status
@@ -185,28 +189,25 @@ export class VisitsService {
 		return !!insertNote;
 	}
 
-	public async findAll(inputQuery: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const {
-			query,
-			status,
-			userProfileId,
-			spaceId,
-			timeframe,
-			page,
-			size,
-			orderProp,
-			orderDirection,
-		} = inputQuery;
+	public async findAll(
+		inputQuery: VisitsQueryDto,
+		cpSpaceId: string | null // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
+	): Promise<IPagination<Visit>> {
+		const { query, status, timeframe, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
 		const where: any = {};
 
 		if (!isEmpty(query)) {
+			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
+			const filterBySpaceName = cpSpaceId
+				? []
+				: [{ space: { schema_maintainer: { schema_name: { _ilike: query } } } }];
 			where._or = [
-				{ user_profile: { first_name: { _ilike: query } } },
-				{ user_profile: { last_name: { _ilike: query } } },
+				{ user_profile: { full_name: { _ilike: query } } },
 				{ user_profile: { mail: { _ilike: query } } },
+				...filterBySpaceName,
 			];
 		}
 
@@ -216,15 +217,9 @@ export class VisitsService {
 			};
 		}
 
-		if (!isEmpty(userProfileId)) {
-			where.user_profile_id = {
-				_eq: userProfileId,
-			};
-		}
-
-		if (!isEmpty(spaceId)) {
+		if (!isEmpty(cpSpaceId)) {
 			where.cp_space_id = {
-				_eq: spaceId,
+				_eq: cpSpaceId,
 			};
 		}
 
@@ -278,6 +273,19 @@ export class VisitsService {
 		if (!visitResponse.data.cp_visit[0]) {
 			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
+
+		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getActiveVisitForUserAndSpace(
+		userProfileId: string,
+		spaceId: string
+	): Promise<Visit | null> {
+		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
+			userProfileId,
+			spaceId,
+			now: new Date().toISOString(),
+		});
 
 		return this.adapt(visitResponse.data.cp_visit[0]);
 	}

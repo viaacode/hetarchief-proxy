@@ -1,10 +1,41 @@
+import { Idp } from '~shared/auth/auth.types';
+
+export enum Permission {
+	CAN_READ_ALL_VISIT_REQUESTS = 'CAN_READ_ALL_VISIT_REQUESTS',
+	CAN_APPROVE_DENY_ALL_VISIT_REQUESTS = 'CAN_APPROVE_DENY_ALL_VISIT_REQUESTS',
+	CAN_READ_CP_VISIT_REQUESTS = 'CAN_READ_CP_VISIT_REQUESTS',
+	CAN_APPROVE_DENY_CP_VISIT_REQUESTS = 'CAN_APPROVE_DENY_CP_VISIT_REQUESTS',
+}
+
+export interface GqlUser {
+	id: string;
+	full_name: string;
+	first_name: string;
+	last_name: string;
+	mail: string;
+	accepted_tos_at?: string;
+	group: GqlUserGroup;
+	identities: {
+		identity_provider_name: string;
+	}[];
+}
+
+export interface GqlUserGroup {
+	permissions: {
+		permission: {
+			name: string;
+		};
+	}[];
+}
+
 export interface User {
 	id: string;
 	firstName: string;
 	lastName: string;
 	email: string;
 	acceptedTosAt: string;
-	permissions: string[];
+	permissions: Permission[];
+	idp: Idp;
 }
 
 export interface GqlPermission {
