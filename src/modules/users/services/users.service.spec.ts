@@ -57,6 +57,13 @@ describe('UsersService', () => {
 		expect(usersService).toBeDefined();
 	});
 
+	describe('adapt', () => {
+		it('can adapt an empty user', () => {
+			const result = usersService.adapt(null);
+			expect(result).toBeNull();
+		});
+	});
+
 	describe('getUserByIdentityId', () => {
 		it('should get a user by identity id', async () => {
 			//data.users_profile[0]
