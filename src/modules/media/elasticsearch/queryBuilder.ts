@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilter } from '../dto/media.dto';
-import { Operator, QueryBuilderConfig, SearchFilterField } from '../types';
+import { Operator, OrderProperty, QueryBuilderConfig, SearchFilterField } from '../types';
 
 import {
 	AGGS_PROPERTIES,
@@ -12,6 +12,7 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
+	ORDER_MAPPINGS,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	VALUE_OPERATORS,
@@ -20,6 +21,7 @@ import searchQueryAdvanced from './templates/search-query-advanced.json';
 import searchQuery from './templates/search-query.json';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { SortDirection } from '~shared/types';
 
 const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
 const searchQueryTemplate = _.values(searchQuery);
@@ -35,6 +37,7 @@ export class QueryBuilder {
 		DEFAULT_QUERY_TYPE,
 		OCCURRENCE_TYPE,
 		VALUE_OPERATORS,
+		ORDER_MAPPINGS,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -69,20 +72,53 @@ export class QueryBuilder {
 
 			// Specify the aggs objects with optional search terms
 			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
+
 			// Add sorting
-			queryObject.sort = [
-				'_score',
-				{
-					[searchRequest.orderProp]: {
-						order: searchRequest.orderDirection,
-					},
-				},
-			];
+			_.set(
+				queryObject,
+				'sort',
+				this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection)
+			);
 
 			return queryObject;
 		} catch (err) {
 			throw new InternalServerErrorException('Failed to build query object', err);
 		}
+	}
+
+	/**
+	 * Converts a sort property and direction to an elasticsearch sort array
+	 * eg:
+	 *     orderProperty: 'name',
+	 *     orderDirection: 'asc'
+	 * is converted into:
+	 *     [
+	 *        {
+	 *     			"schema_name": {
+	 *     				"order": "asc"
+	 *     			}
+	 *     		},
+	 *        "_score"
+	 *     ]
+	 * @param orderProperty
+	 * @param orderDirection
+	 */
+	private static buildSortArray(orderProperty: OrderProperty, orderDirection: SortDirection) {
+		const mappedOrderProperty = this.config.ORDER_MAPPINGS[orderProperty];
+		const sortArray: any[] = [];
+		if (orderProperty !== OrderProperty.RELEVANCE) {
+			const sortItem = {
+				[mappedOrderProperty]: {
+					order: orderDirection,
+				},
+			};
+
+			sortArray.push(sortItem);
+		}
+
+		// Always order by relevance if 2 search items have identical primary sort values
+		sortArray.push(this.config.ORDER_MAPPINGS[OrderProperty.RELEVANCE]);
+		return sortArray;
 	}
 
 	protected static getOccurrenceType(operator: Operator): string {

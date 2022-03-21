@@ -3,7 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { isArray } from 'lodash';
 
-import { Operator, SearchFilterField } from '../types';
+import { Operator, OrderProperty, SearchFilterField } from '../types';
 
 import { SortDirection } from '~shared/types';
 
@@ -90,35 +90,15 @@ export class MediaQueryDto {
 	requestedAggs?: SearchFilterField[];
 
 	@IsString()
-	@Type(() => String)
+	@IsEnum(OrderProperty)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'dcterms_available',
-		enum: [
-			'schema_in_language',
-			'dcterms_available',
-			'schema_creator.Archiefvormer?',
-			'schema_creator.Maker?',
-			'schema_creator.productionCompany?',
-			'schema_identifier',
-			'schema_description?',
-			'schema_publisher.Publisher',
-			'schema_duration',
-			'schema_abstract?',
-			'premis_identifier',
-			'schema_genre?',
-			'schema_date_published?',
-			'schema_license?',
-			'schema_date_created?',
-			'schema_contributor',
-			'schema_maintainer.schema_identifier',
-			'dcterms_format',
-			'schema_name',
-		],
+		default: 'relevance',
+		enum: OrderProperty,
 	})
-	orderProp? = 'dcterms_available';
+	orderProp? = OrderProperty.RELEVANCE;
 
 	@IsString()
 	@Type(() => String)
