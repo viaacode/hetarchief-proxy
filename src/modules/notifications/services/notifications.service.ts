@@ -171,8 +171,10 @@ export class NotificationsService {
 				},
 				recipients.map((recipient) => recipient.id)
 			),
+			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
+			// See ARC-305
 			this.campaignMonitorService.sendForVisit({
-				to: recipients,
+				to: [{ id: `space-${visit.spaceId}`, email: visit.spaceMail }],
 				template: Template.VISIT_REQUEST_CP,
 				visit,
 			}),
