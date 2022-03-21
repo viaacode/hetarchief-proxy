@@ -158,6 +158,8 @@ export class NotificationsService {
 		recipients: Recipient[],
 		user: User
 	): Promise<Notification[]> {
+		const newVisitRequestEmail = visit.spaceMail || recipients[0]?.email;
+
 		const [notifications] = await Promise.all([
 			this.createForMultipleRecipients(
 				{
@@ -174,7 +176,7 @@ export class NotificationsService {
 			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
 			// See ARC-305
 			this.campaignMonitorService.sendForVisit({
-				to: [{ id: `space-${visit.spaceId}`, email: visit.spaceMail }],
+				to: [{ id: `space-${visit.spaceId}`, email: newVisitRequestEmail }],
 				template: Template.VISIT_REQUEST_CP,
 				visit,
 			}),
@@ -185,11 +187,7 @@ export class NotificationsService {
 	/**
 	 * Send notifications and email on approve visit request
 	 */
-	public async onApproveVisitRequest(
-		visit: Visit,
-		space: Space,
-		user: User
-	): Promise<Notification> {
+	public async onApproveVisitRequest(visit: Visit, space: Space): Promise<Notification> {
 		const [notifications] = await Promise.all([
 			this.create([
 				{
@@ -207,7 +205,7 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id, // TODO question this should be the visit.visitorId, because user is the logged in user??
+					recipient: visit.visitorId,
 				},
 			]),
 			this.campaignMonitorService.sendForVisit({
@@ -225,7 +223,6 @@ export class NotificationsService {
 	public async onDenyVisitRequest(
 		visit: Visit,
 		space: Space,
-		user: User,
 		reason?: string
 	): Promise<Notification> {
 		const [notifications] = await Promise.all([
@@ -240,7 +237,7 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id, // TODO question this should be the visit.visitorId, because user is the logged in user??
+					recipient: visit.visitorId,
 				},
 			]),
 			this.campaignMonitorService.sendForVisit({

@@ -47,14 +47,17 @@ describe('CampaignMonitorController', () => {
 		it('should send an email', async () => {
 			mockCampaignMonitorService.send.mockResolvedValueOnce(true);
 
-			const sent = await campaignMonitorController.sendMail({
-				templateId: 'template-id-1',
-				data: {
-					To: 'test@studiohyperdrive.be',
-					ConsentToTrack: 'unchanged',
-					Data: {},
+			const sent = await campaignMonitorController.sendMail(
+				{
+					templateId: 'template-id-1',
+					data: {
+						To: 'test@studiohyperdrive.be',
+						ConsentToTrack: 'unchanged',
+						Data: {},
+					},
 				},
-			});
+				'mySecretApiKey'
+			);
 
 			expect(sent).toBeTruthy();
 		});

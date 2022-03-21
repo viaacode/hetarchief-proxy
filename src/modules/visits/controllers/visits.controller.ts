@@ -121,12 +121,11 @@ export class VisitsController {
 			// Send notifications
 			const space = await this.spacesService.findById(visit.spaceId);
 			if (updateVisitDto.status === VisitStatus.APPROVED) {
-				await this.notificationsService.onApproveVisitRequest(visit, space, user);
+				await this.notificationsService.onApproveVisitRequest(visit, space);
 			} else if (updateVisitDto.status === VisitStatus.DENIED) {
 				await this.notificationsService.onDenyVisitRequest(
 					visit,
 					space,
-					user,
 					updateVisitDto.note
 				);
 			}
