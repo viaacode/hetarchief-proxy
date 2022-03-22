@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 
 import { NavigationsModule } from '~modules/admin/navigations';
 import { AuthModule } from '~modules/auth';
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
@@ -29,6 +30,7 @@ import { SessionService } from '~shared/services/session.service';
 		}),
 		ScheduleModule.forRoot(),
 		AuthModule,
+		CampaignMonitorModule,
 		DataModule,
 		MediaModule,
 		SpacesModule,

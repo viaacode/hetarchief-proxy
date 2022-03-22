@@ -45,6 +45,7 @@ export interface Visit {
 	id: string;
 	spaceId: string;
 	spaceName: string;
+	spaceMail: string;
 	spaceAddress?: string;
 	userProfileId: string;
 	timeframe: string;
@@ -56,6 +57,8 @@ export interface Visit {
 	createdAt: string;
 	updatedAt: string;
 	visitorName: string;
+	visitorFirstName: string;
+	visitorLastName: string;
 	visitorMail: string;
 	visitorId: string;
 	updatedById: string | null;

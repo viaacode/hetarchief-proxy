@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
@@ -9,11 +9,12 @@ import {
 	FIND_SPACE_BY_CP_ADMIN_ID,
 	FIND_SPACE_BY_ID,
 	FIND_SPACES,
-	GET_SPACE_MAINTAINER_PROFILE_IDS,
+	GET_SPACE_MAINTAINER_PROFILES,
 } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {
@@ -109,12 +110,13 @@ export class SpacesService {
 		return this.adapt(spaceResponse.data.cp_space[0]);
 	}
 
-	public async getMaintainerProfileIds(spaceId: string): Promise<string[]> {
-		const profiles = await this.dataService.execute(GET_SPACE_MAINTAINER_PROFILE_IDS, {
+	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
+		const profiles = await this.dataService.execute(GET_SPACE_MAINTAINER_PROFILES, {
 			spaceId,
 		});
-		return get(profiles, 'data.cp_maintainer_users_profile', []).map(
-			(item) => item.users_profile_id
-		);
+		return get(profiles, 'data.cp_maintainer_users_profile', []).map((item) => ({
+			id: item.users_profile_id,
+			email: item.profile.mail,
+		}));
 	}
 }

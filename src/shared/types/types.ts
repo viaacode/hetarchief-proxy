@@ -18,3 +18,8 @@ export interface ContactInfo {
 	telephone: string;
 	address: Address;
 }
+
+export interface Recipient {
+	id: string;
+	email: string;
+}
