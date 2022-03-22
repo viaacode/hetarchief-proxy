@@ -3,6 +3,7 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
@@ -75,6 +76,7 @@ const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -83,6 +85,8 @@ const mockVisit: Visit = {
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
 	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -129,6 +133,11 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+	{
+		sendForVisit: jest.fn().mockResolvedValue(true),
+	};
+
 describe('NotificationsService', () => {
 	let notificationsService: NotificationsService;
 
@@ -139,6 +148,10 @@ describe('NotificationsService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: CampaignMonitorService,
+					useValue: mockCampaignMonitorService,
 				},
 			],
 		}).compile();
@@ -215,6 +228,58 @@ describe('NotificationsService', () => {
 	});
 
 	describe('onCreateVisit', () => {
+		it('should send the email to the first maintainer (recipient) if there is no mail space email', async () => {
+			const originalSpaceMail = mockVisit.spaceMail;
+			mockVisit.spaceMail = null;
+
+			const createForMultipleRecipientsSpy = jest
+				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.mockResolvedValueOnce([mockNotification]);
+
+			const response = await notificationsService.onCreateVisit(
+				mockVisit,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				mockUser
+			);
+
+			expect(response).toHaveLength(1);
+			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
+			expect(mockCampaignMonitorService.sendForVisit.mock.calls[0][0].to).toEqual([
+				{
+					id: 'space-3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+					email: 'test.testers@meemoo.be',
+				},
+			]);
+			createForMultipleRecipientsSpy.mockRestore();
+			mockCampaignMonitorService.sendForVisit.mockClear();
+
+			mockVisit.spaceMail = originalSpaceMail;
+		});
+
+		it('should not send the email if there is no spaceMail and no first recipient', async () => {
+			const originalSpaceMail = mockVisit.spaceMail;
+			mockVisit.spaceMail = null;
+
+			const createForMultipleRecipientsSpy = jest
+				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.mockResolvedValueOnce([mockNotification]);
+
+			const response = await notificationsService.onCreateVisit(mockVisit, [], mockUser);
+
+			expect(response).toHaveLength(1);
+			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
+			expect(mockCampaignMonitorService.sendForVisit.mock.calls[0][0].to).toEqual([
+				{
+					id: 'space-3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+					email: undefined,
+				},
+			]);
+			createForMultipleRecipientsSpy.mockRestore();
+			mockCampaignMonitorService.sendForVisit.mockClear();
+
+			mockVisit.spaceMail = originalSpaceMail;
+		});
+
 		it('should send a notification about a visit request creation', async () => {
 			const createForMultipleRecipientsSpy = jest
 				.spyOn(notificationsService, 'createForMultipleRecipients')
@@ -222,7 +287,7 @@ describe('NotificationsService', () => {
 
 			const response = await notificationsService.onCreateVisit(
 				mockVisit,
-				[mockUser.id],
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
 				mockUser
 			);
 
@@ -238,11 +303,7 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onApproveVisitRequest(
-				mockVisit,
-				mockSpace,
-				mockUser
-			);
+			const response = await notificationsService.onApproveVisitRequest(mockVisit, mockSpace);
 
 			expect(response.status).toEqual(NotificationStatus.UNREAD);
 			createNotificationSpy.mockRestore();
@@ -255,11 +316,7 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onDenyVisitRequest(
-				mockVisit,
-				mockSpace,
-				mockUser
-			);
+			const response = await notificationsService.onDenyVisitRequest(mockVisit, mockSpace);
 
 			expect(response.status).toEqual(NotificationStatus.UNREAD);
 			createNotificationSpy.mockRestore();
