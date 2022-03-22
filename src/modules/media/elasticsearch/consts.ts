@@ -62,4 +62,5 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 	query: false,
 	format: false,
+	genre: true,
 };
