@@ -27,6 +27,7 @@ export const configValidationSchema = Joi.object({
 	ENABLE_SEND_EMAIL: Joi.boolean().default(false),
 	CAMPAIGN_MONITOR_API_ENDPOINT: Joi.string().allow(''),
 	CAMPAIGN_MONITOR_API_KEY: Joi.string().allow(''),
+	CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP: Joi.string().allow(''),
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED: Joi.string().allow(''),
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED: Joi.string().allow(''),
 });

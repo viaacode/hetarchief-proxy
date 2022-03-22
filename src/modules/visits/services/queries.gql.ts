@@ -21,6 +21,8 @@ export const INSERT_VISIT = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}
@@ -32,13 +34,14 @@ export const INSERT_VISIT = `
 				schema_maintainer {
 					schema_name
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
 						}
-					  }
 					}
 				}
 			}
@@ -62,6 +65,8 @@ export const UPDATE_VISIT = `
 				note
 				profile {
 					full_name
+					first_name
+					last_name
 				}
 				created_at
 			}
@@ -80,13 +85,14 @@ export const UPDATE_VISIT = `
 				schema_maintainer {
 					schema_name
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
 						}
-					  }
 					}
 				}
 			}
@@ -117,6 +123,8 @@ export const FIND_VISITS = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}
@@ -124,13 +132,14 @@ export const FIND_VISITS = `
 				schema_maintainer {
 					schema_name
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
 						}
-					  }
 					}
 				}
 			}
@@ -170,6 +179,8 @@ export const FIND_VISIT_BY_ID = `
 			updated_at
 			user_profile {
 				full_name
+				first_name
+				last_name
 				mail
 				id
 			}
@@ -181,13 +192,14 @@ export const FIND_VISIT_BY_ID = `
 				schema_maintainer {
 					schema_name
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
 						}
-					  }
 					}
 				}
 			}

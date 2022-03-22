@@ -30,6 +30,7 @@ export interface Configuration {
 	enableSendEmail: boolean;
 	campaignMonitorApiEndpoint: string;
 	campaignMonitorApiKey: string;
+	campaignMonitorTemplateVisitRequestCp: string;
 	campaignMonitorTemplateVisitApproved: string;
 	campaignMonitorTemplateVisitDenied: string;
 }
