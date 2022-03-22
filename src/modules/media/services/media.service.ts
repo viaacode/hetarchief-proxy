@@ -162,7 +162,7 @@ export class MediaService {
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
+	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 		this.logger.log(esQuery);
 
@@ -170,7 +170,7 @@ export class MediaService {
 		try {
 			mediaResponse = await this.executeQuery(esIndex, esQuery);
 		} catch (err) {
-			if (JSON.stringify(err.response.body).includes('index_not_found_exception')) {
+			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
 				// TODO remove this fallback once or-ids match between INT and local DB
 				mediaResponse = await this.executeQuery(null, esQuery);
 			} else {

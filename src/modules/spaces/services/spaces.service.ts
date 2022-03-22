@@ -84,7 +84,7 @@ export class SpacesService {
 		// Build where object
 		const filterArray: any[] = [];
 
-		if (query && query !== '%') {
+		if (query && query !== '%' && query !== '%%') {
 			filterArray.push({
 				_or: [
 					{ schema_description: { _ilike: query } },

@@ -14,7 +14,7 @@ export class MediaController {
 	// TODO comment this endpoint, since users always need to search inside one reading room
 	@Post()
 	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto);
+		const media = await this.mediaService.findAll(queryDto, null);
 		return media;
 	}
 
