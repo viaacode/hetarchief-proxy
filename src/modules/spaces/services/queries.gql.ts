@@ -118,10 +118,13 @@ query spaces($cpAdminId: uuid!) {
 
 `;
 
-export const GET_SPACE_MAINTAINER_PROFILE_IDS = `
+export const GET_SPACE_MAINTAINER_PROFILES = `
 	query getNotificationsForUser($spaceId: uuid) {
 		cp_maintainer_users_profile(where: {maintainer: {space: {id: {_eq: $spaceId}}}}) {
 			users_profile_id
+			profile {
+				mail
+			}
 		}
 	}
 `;

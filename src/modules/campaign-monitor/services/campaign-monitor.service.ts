@@ -1,8 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
+import { get } from 'lodash';
 
-import { EmailInfo, Template } from '../types';
+import { CampaignMonitorData, CampaignMonitorVisitData } from '../dto/campaign-monitor.dto';
+import { Template, VisitEmailInfo } from '../types';
+
+import { Visit } from '~modules/visits/types';
+import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
 @Injectable()
 export class CampaignMonitorService {
@@ -11,6 +16,7 @@ export class CampaignMonitorService {
 	private gotInstance: Got;
 	private templateToCampaignMonitorIdMap: Record<Template, any>;
 	private isEnabled: boolean;
+	private clientHost: string;
 
 	constructor(private configService: ConfigService) {
 		this.gotInstance = got.extend({
@@ -22,8 +28,10 @@ export class CampaignMonitorService {
 		});
 
 		this.isEnabled = this.configService.get('enableSendEmail');
+		this.clientHost = this.configService.get('clientHost');
 
 		this.templateToCampaignMonitorIdMap = {
+			VISIT_REQUEST_CP: this.configService.get('campaignMonitorTemplateVisitRequestCp'),
 			VISIT_APPROVED: this.configService.get('campaignMonitorTemplateVisitApproved'),
 			VISIT_DENIED: this.configService.get('campaignMonitorTemplateVisitDenied'),
 		};
@@ -33,33 +41,73 @@ export class CampaignMonitorService {
 		this.isEnabled = enabled;
 	}
 
-	// TODO call on status change
-	public async send(emailInfo: EmailInfo): Promise<boolean> {
-		const data: any = {
-			To: emailInfo.to,
-			ConsentToTrack: 'unchanged',
-			Data: emailInfo.data,
-		};
+	public buildUrlToAdminVisit(): string {
+		const url = new URL(this.clientHost);
+		url.pathname = 'beheer/aanvragen';
+		return url.href;
+	}
 
-		if (this.isEnabled) {
-			const cmTemplateId = this.templateToCampaignMonitorIdMap[emailInfo.template];
-			if (!cmTemplateId) {
+	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
+		return {
+			client_firstname: visit.visitorFirstName,
+			client_lastname: visit.visitorLastName,
+			client_email: visit.visitorMail,
+			contentpartner_name: visit.spaceName,
+			contentpartner_email: visit.spaceMail,
+			request_reason: visit.reason,
+			request_time: visit.timeframe,
+			request_url: this.buildUrlToAdminVisit(), // TODO deeplink to visit & extract to shared url builder?
+			request_remark: get(visit.note, 'note', ''),
+			start_date: visit.startAt ? formatAsBelgianDate(visit.startAt, 'd MMMM yyyy') : '',
+			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
+			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
+			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
+		};
+	}
+
+	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
+		const recipients: string[] = [];
+		emailInfo.to.forEach((recipient) => {
+			if (!recipient.email) {
+				// Throw exception will break too much
 				this.logger.error(
-					`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
+					`Mail will not be sent to user id ${recipient.id} - empty email address`
 				);
-				return false;
+			} else {
+				recipients.push(recipient.email);
 			}
-			await this.gotInstance.post(
-				`${this.templateToCampaignMonitorIdMap[emailInfo.template]}/send`,
-				{
-					json: data,
-				}
+		});
+
+		if (recipients.length === 0) {
+			return false;
+		}
+
+		const cmTemplateId = this.templateToCampaignMonitorIdMap[emailInfo.template];
+		if (!cmTemplateId) {
+			this.logger.error(
+				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
 			);
+			return false;
+		}
+
+		const data: CampaignMonitorData = {
+			To: recipients,
+			ConsentToTrack: 'unchanged',
+			Data: this.convertVisitToEmailTemplateData(emailInfo.visit),
+		};
+		return this.send(cmTemplateId, data);
+	}
+
+	public async send(template: string, data: CampaignMonitorData): Promise<boolean> {
+		if (this.isEnabled) {
+			await this.gotInstance.post(`${template}/send`, {
+				json: data,
+			});
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${emailInfo.to}'. Template: ${emailInfo.template} - ${
-					this.templateToCampaignMonitorIdMap[emailInfo.template]
-				}`
+				`Mock email sent. To: '${data.To}'. Template: ${template}, data: ${JSON.stringify(
+					data
+				)}`
 			);
 			return false;
 		}
