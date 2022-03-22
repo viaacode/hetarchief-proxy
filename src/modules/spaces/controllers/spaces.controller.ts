@@ -1,19 +1,23 @@
 import {
+	Body,
 	Controller,
 	Get,
 	Logger,
 	NotFoundException,
 	Param,
 	ParseUUIDPipe,
+	Patch,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { SpacesQueryDto } from '../dto/spaces.dto';
+import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
+import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
@@ -35,6 +39,16 @@ export class SpacesController {
 		if (!space) {
 			throw new NotFoundException(i18n.t(`Space with id ${id} not found`));
 		}
+		return space;
+	}
+
+	@Patch(':id')
+	@UseGuards(LoggedInGuard)
+	public async updateSpace(
+		@Param('id', ParseUUIDPipe) id: string,
+		@Body() updateSpaceDto: UpdateSpaceDto
+	): Promise<Space> {
+		const space = await this.spacesService.update(id, updateSpaceDto);
 		return space;
 	}
 }

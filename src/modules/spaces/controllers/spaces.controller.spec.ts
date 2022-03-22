@@ -20,6 +20,7 @@ const mockSpacesResponse = {
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	update: jest.fn(),
 };
 
 describe('SpacesController', () => {
@@ -73,6 +74,14 @@ describe('SpacesController', () => {
 				message: 'Space with id 1 not found',
 				error: 'Not Found',
 			});
+		});
+	});
+
+	describe('updateSpace', () => {
+		it('should update a space', async () => {
+			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			const space = await spacesController.updateSpace('1', {});
+			expect(space.id).toEqual('1');
 		});
 	});
 });

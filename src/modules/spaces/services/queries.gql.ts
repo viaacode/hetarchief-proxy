@@ -125,3 +125,41 @@ export const GET_SPACE_MAINTAINER_PROFILE_IDS = `
 		}
 	}
 `;
+
+export const UPDATE_SPACE = `
+	mutation updateSpace($id: uuid!, $updateSpace: cp_space_set_input!) {
+		update_cp_space_by_pk(pk_columns: {id: $id}, _set: $updateSpace) {
+			id
+			schema_image
+			schema_color
+			schema_audience_type
+			schema_description
+			schema_public_access
+			schema_service_description
+			is_published
+			published_at
+			created_at
+			updated_at
+			schema_maintainer {
+				schema_name
+				schema_identifier
+				information {
+					description
+					logo {
+						iri
+					}
+					primary_site {
+						address {
+							email
+							locality
+							postal_code
+							street
+							telephone
+							post_office_box_number
+						}
+					}
+				}
+			}
+		}
+	}
+`;

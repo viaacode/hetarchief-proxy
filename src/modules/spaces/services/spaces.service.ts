@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
-import { SpacesQueryDto } from '../dto/spaces.dto';
+import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { Space } from '../types';
 
 import {
@@ -10,6 +10,7 @@ import {
 	FIND_SPACE_BY_ID,
 	FIND_SPACES,
 	GET_SPACE_MAINTAINER_PROFILE_IDS,
+	UPDATE_SPACE,
 } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -71,6 +72,28 @@ export class SpacesService {
 			createdAt: get(graphQlSpace, 'created_at'),
 			updatedAt: get(graphQlSpace, 'updated_at'),
 		};
+	}
+
+	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
+		const updateKeys = Object.keys(updateSpaceDto);
+		const updateSpace = {
+			...(updateKeys.includes('color') ? { schema_color: updateSpaceDto.color } : {}),
+			...(updateKeys.includes('description')
+				? { schema_description: updateSpaceDto.description }
+				: {}),
+			...(updateKeys.includes('serviceDescription')
+				? { schema_service_description: updateSpaceDto.serviceDescription }
+				: {}),
+		};
+		const {
+			data: { update_cp_space_by_pk: updatedSpace },
+		} = await this.dataService.execute(UPDATE_SPACE, { id, updateSpace });
+
+		if (!updatedSpace) {
+			throw new NotFoundException(`Space with id '${id}' not found`);
+		}
+
+		return this.adapt(updatedSpace);
 	}
 
 	public async findAll(inputQuery: SpacesQueryDto): Promise<IPagination<Space>> {
