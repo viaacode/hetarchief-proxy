@@ -113,6 +113,7 @@ export enum SearchFilterField {
 	GENRE = 'genre',
 	KEYWORD = 'keyword',
 	NAME = 'name',
+	LANGUAGE = 'language',
 }
 
 export enum Operator {
