@@ -143,7 +143,7 @@ export class MediaService {
 		}));
 	}
 
-	public getSearchEndpoint(esIndex: string): string {
+	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
 		}
@@ -157,10 +157,6 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			if (e.response.statusCode === 404) {
-				this.logger.error(e.response.body);
-				throw new NotFoundException();
-			}
 			this.logger.error(e.response.body);
 			throw e;
 		}
@@ -169,7 +165,18 @@ export class MediaService {
 	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 		this.logger.log(esQuery);
-		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+
+		let mediaResponse;
+		try {
+			mediaResponse = await this.executeQuery(esIndex, esQuery);
+		} catch (err) {
+			if (JSON.stringify(err.response.body).includes('index_not_found_exception')) {
+				// TODO remove this fallback once or-ids match between INT and local DB
+				mediaResponse = await this.executeQuery(null, esQuery);
+			} else {
+				throw err;
+			}
+		}
 
 		return mediaResponse;
 	}

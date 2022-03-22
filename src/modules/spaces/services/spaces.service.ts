@@ -3,7 +3,7 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
 import { SpacesQueryDto } from '../dto/spaces.dto';
-import { Space } from '../types';
+import { AccessType, Space } from '../types';
 
 import {
 	FIND_SPACE_BY_CP_ADMIN_ID,
@@ -74,11 +74,68 @@ export class SpacesService {
 		};
 	}
 
-	public async findAll(inputQuery: SpacesQueryDto): Promise<IPagination<Space>> {
-		const { query, page, size, orderProp, orderDirection } = inputQuery;
+	public async findAll(
+		inputQuery: SpacesQueryDto,
+		userProfileId: string | undefined
+	): Promise<IPagination<Space>> {
+		const { query, accessType, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
+
+		// Build where object
+		const filterArray: any[] = [];
+
+		if (query && query !== '%') {
+			filterArray.push({
+				_or: [
+					{ schema_description: { _ilike: query } },
+					{ schema_maintainer: { schema_name: { _ilike: query } } },
+				],
+			});
+		}
+
+		if (accessType) {
+			if (!userProfileId) {
+				return Pagination<Space>({
+					items: [],
+					page,
+					size,
+					total: 0,
+				});
+			}
+			const now = new Date().toISOString();
+			if (accessType === AccessType.ACTIVE) {
+				filterArray.push({
+					visits: {
+						start_date: { _lte: now },
+						end_date: { _gte: now },
+						status: { _eq: 'APPROVED' },
+						user_profile_id: { _eq: userProfileId },
+					},
+				});
+			} else {
+				filterArray.push({
+					_and: [
+						{
+							_not: {
+								visits: {
+									_or: [
+										{ start_date: { _gt: now } },
+										{ end_date: { _lt: now } },
+										{ status: { _neq: 'APPROVED' } },
+									],
+									user_profile_id: { _eq: userProfileId },
+								},
+							},
+						},
+						{},
+					],
+				});
+			}
+		}
+		const where: any = { _and: filterArray };
+
 		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
-			query,
+			where,
 			offset,
 			limit,
 			orderBy: set({}, orderProp, orderDirection),

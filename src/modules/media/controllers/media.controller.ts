@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Headers, Logger, Param, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { MediaQueryDto, PlayerTicketsQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
@@ -11,6 +11,7 @@ export class MediaController {
 
 	constructor(private mediaService: MediaService) {}
 
+	// TODO comment this endpoint, since users always need to search inside one reading room
 	@Post()
 	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
 		const media = await this.mediaService.findAll(queryDto);
@@ -32,9 +33,11 @@ export class MediaController {
 	}
 
 	@Post(':esIndex')
+	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(
 		@Body() queryDto: MediaQueryDto,
-		@Param('esIndex') esIndex: string
+		@Param('esIndex')
+		esIndex: string
 	): Promise<any> {
 		const media = await this.mediaService.findAll(queryDto, esIndex);
 		return media;
