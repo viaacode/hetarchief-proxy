@@ -231,6 +231,39 @@ describe('VisitsController', () => {
 		});
 	});
 
+	describe('getPersonalVisits', () => {
+		it('should return all visits for a user', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
+
+			const visits = await visitsController.getPersonalVisits(null, {
+				...mockUser,
+				permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+			});
+
+			expect(visits).toEqual(mockVisitsResponse);
+		});
+
+		it('should throw an error if user does not have the correct permission', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
+
+			let error;
+			try {
+				await visitsController.getPersonalVisits(null, {
+					...mockUser,
+					permissions: [],
+				});
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response).toEqual({
+				statusCode: 401,
+				message: 'You do not have the right permissions to call this route',
+				error: 'Unauthorized',
+			});
+		});
+	});
+
 	describe('getVisitById', () => {
 		it('should return a visit by id', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
