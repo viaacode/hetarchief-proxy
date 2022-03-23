@@ -2,7 +2,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { OrderProperty } from '~modules/media/types';
 import { AccessType } from '~modules/spaces/types';
 import { SortDirection } from '~shared/types';
 
