@@ -1,0 +1,15 @@
+[
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 100,
+      "fields": [
+        "schema_description^20",
+        "schema_abstract",
+        "schema_transcript"
+      ]
+    }
+  }
+]
