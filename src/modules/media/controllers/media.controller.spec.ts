@@ -26,6 +26,7 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	getPlayableUrl: jest.fn(),
+	getThumbnailUrl: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -63,6 +64,14 @@ describe('MediaController', () => {
 		it('should return a playable url', async () => {
 			mockMediaService.getPlayableUrl.mockResolvedValueOnce('http://playme');
 			const url = await mediaController.getPlayableUrl('referer', { id: '1' });
+			expect(url).toEqual('http://playme');
+		});
+	});
+
+	describe('getThumbnailUrl', () => {
+		it('should return a thumbnail url', async () => {
+			mockMediaService.getThumbnailUrl.mockResolvedValueOnce('http://playme');
+			const url = await mediaController.getThumbnailUrl('referer', { id: '1' });
 			expect(url).toEqual('http://playme');
 		});
 	});

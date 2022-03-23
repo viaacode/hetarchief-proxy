@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isEmpty, trimStart } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';

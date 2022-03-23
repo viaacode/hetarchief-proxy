@@ -204,6 +204,37 @@ describe('MediaService', () => {
 		});
 	});
 
+	describe('getThumbnailUrl', () => {
+		it('returns a thumbnail url', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
+			});
+			nock('http://ticketservice/')
+				.get('/vrt/item-1')
+				.query(true)
+				.reply(200, { jwt: 'secret-jwt-token' });
+			const url = await mediaService.getThumbnailUrl('vrt-id', 'referer');
+			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
+		});
+
+		it('uses the fallback referer if none was set', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
+			});
+			nock('http://ticketservice/')
+				.get('/vrt/item-1')
+				.query({
+					app: 'OR-*',
+					client: '',
+					referer: 'host',
+					maxage: 'ticketServiceMaxAge',
+				})
+				.reply(200, { jwt: 'secret-jwt-token' });
+			const url = await mediaService.getThumbnailUrl('vrt-id', undefined);
+			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
+		});
+	});
+
 	describe('getEmbedUrl', () => {
 		it('returns the embedUrl for an item', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
@@ -228,6 +259,35 @@ describe('MediaService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				message: "Object file with representation_id 'unknown-id' not found",
+				statusCode: 404,
+			});
+		});
+	});
+
+	describe('getThumbnailPath', () => {
+		it('returns the thumbnail url for an item', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
+			});
+			const url = await mediaService.getThumbnailPath('vrt-id');
+			expect(url).toEqual('vrt/item-1');
+		});
+
+		it('throws a notfoundexception if the item was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					object_ie: [],
+				},
+			});
+			let error;
+			try {
+				await mediaService.getThumbnailPath('unknown-id');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message: "Object IE with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
