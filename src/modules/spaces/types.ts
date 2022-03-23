@@ -5,6 +5,11 @@ export enum AudienceType {
 	PRIVATE = 'PRIVATE',
 }
 
+export enum AccessType {
+	ACTIVE = 'ACTIVE',
+	NO_ACCESS = 'NO_ACCESS',
+}
+
 export interface Space {
 	id: string;
 	maintainerId: string;
