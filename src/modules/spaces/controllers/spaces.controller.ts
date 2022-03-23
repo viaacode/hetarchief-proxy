@@ -14,6 +14,7 @@ import { SpacesQueryDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
+import { SessionUser } from '~shared/decorators/user.decorator';
 import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
@@ -24,8 +25,11 @@ export class SpacesController {
 	constructor(private spacesService: SpacesService) {}
 
 	@Get()
-	public async getSpaces(@Query() queryDto: SpacesQueryDto): Promise<IPagination<Space>> {
-		const spaces = await this.spacesService.findAll(queryDto);
+	public async getSpaces(
+		@Query() queryDto: SpacesQueryDto,
+		@SessionUser() user
+	): Promise<IPagination<Space>> {
+		const spaces = await this.spacesService.findAll(queryDto, user?.id);
 		return spaces;
 	}
 
