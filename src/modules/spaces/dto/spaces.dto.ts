@@ -103,4 +103,15 @@ export class UpdateSpaceDto {
 		default: undefined,
 	})
 	serviceDescription?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'The url to the image for this space. S3 images only. Will delete the previous from S3 if one was set. If a file is uploaded and image is set, image will be ignored',
+		default: undefined,
+	})
+	image?: string;
 }

@@ -5,6 +5,7 @@ import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
+const VALID_MIME_TYPES: string[] = ['image/png', 'image/gif', 'image/jpeg', 'image/bmp'];
 
 /**
  * Environment variables are loaded differently locally and on IBM cloud
@@ -90,6 +91,20 @@ const config = (): Configuration => {
 			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED',
 			false
 		),
+		assetServerEndpoint: getEnvValue('ASSET_SERVER_ENDPOINT', true),
+		assetServerTokenEndpoint: getEnvValue('ASSET_SERVER_TOKEN_ENDPOINT', true),
+		assetServerTokenSecret: getEnvValue('ASSET_SERVER_TOKEN_SECRET', true),
+		assetServerTokenPassword: getEnvValue('ASSET_SERVER_TOKEN_PASSWORD', true),
+		assetServerTokenUsername: getEnvValue('ASSET_SERVER_TOKEN_USERNAME', true),
+		assetServerBucketName: getEnvValue('ASSET_SERVER_BUCKET_NAME', true),
+		tempAssetFolder: getEnvValue('TEMP_ASSET_FOLDER', false) || '/tmp',
+		multerOptions: {
+			dest: getEnvValue('TEMP_ASSET_FOLDER', false) || '/tmp',
+			limits: {
+				fileSize: 200000000,
+			},
+			fileFilter: (req, file, cb) => cb(null, VALID_MIME_TYPES.includes(file.mimetype)),
+		},
 	};
 };
 
