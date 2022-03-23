@@ -176,7 +176,15 @@ export class QueryBuilder {
 			return { match_all: {} };
 		}
 
-		const filterObject: any = {};
+		const filterObject: any = {
+			bool: {
+				must_not: {
+					term: {
+						'type.keyword': 'SOLR', // We never want to get results with type: SOLR
+					},
+				},
+			},
+		};
 
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
@@ -224,6 +232,7 @@ export class QueryBuilder {
 
 		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
 	}
+
 	/**
 	 * Builds up an object containing the elasticsearch  aggregation objects
 	 * The result of these aggregations will be used to show in the multi select options lists in the search page

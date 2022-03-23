@@ -4,6 +4,9 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
+import { Permission, User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
+
 const mockSpacesResponse = {
 	items: [
 		{
@@ -15,6 +18,16 @@ const mockSpacesResponse = {
 			name: 'Space X',
 		},
 	],
+};
+
+const mockUser: User = {
+	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohyperdrive.be',
+	acceptedTosAt: '2022-02-21T14:00:00',
+	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -47,7 +60,13 @@ describe('SpacesController', () => {
 	describe('getSpaces', () => {
 		it('should return all spaces', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
-			const spaces = await spacesController.getSpaces(null);
+			const spaces = await spacesController.getSpaces(null, mockUser);
+			expect(spaces.items.length).toEqual(2);
+		});
+
+		it('should return all spaces if no user is logged in', async () => {
+			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
+			const spaces = await spacesController.getSpaces(null, undefined);
 			expect(spaces.items.length).toEqual(2);
 		});
 	});
