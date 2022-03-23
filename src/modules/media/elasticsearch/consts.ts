@@ -20,6 +20,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	genre: 'schema_genre',
 	keyword: 'schema_keywords',
 	name: 'schema_name',
+	language: 'schema_in_language',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -62,4 +63,5 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 	query: false,
 	format: false,
+	genre: true,
 };

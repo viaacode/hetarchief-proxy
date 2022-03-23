@@ -22,6 +22,7 @@ import { Space } from '../types';
 
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
@@ -30,11 +31,14 @@ import i18n from '~shared/i18n';
 export class SpacesController {
 	private logger: Logger = new Logger(SpacesController.name, { timestamp: true });
 
-	constructor(protected spacesService: SpacesService, protected assetsService: AssetsService) {}
+	constructor(private spacesService: SpacesService, private assetsService: AssetsService) {}
 
 	@Get()
-	public async getSpaces(@Query() queryDto: SpacesQueryDto): Promise<IPagination<Space>> {
-		const spaces = await this.spacesService.findAll(queryDto);
+	public async getSpaces(
+		@Query() queryDto: SpacesQueryDto,
+		@SessionUser() user
+	): Promise<IPagination<Space>> {
+		const spaces = await this.spacesService.findAll(queryDto, user?.id);
 		return spaces;
 	}
 
@@ -56,10 +60,15 @@ export class SpacesController {
 		@UploadedFile() file: Express.Multer.File
 	): Promise<Space> {
 		if (file) {
+			const space = await this.spacesService.findById(id);
 			console.log(file);
-			const key = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
-			// todo save key
-			this.logger.log(`Saved key: ${key}`);
+			// const url = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
+			const url = `http://${file.originalname}`;
+			// todo save url
+			if (space.image) {
+				await this.assetsService.delete(space.image);
+			}
+			updateSpaceDto.image = url;
 		}
 		const space = await this.spacesService.update(id, updateSpaceDto);
 		return space;
