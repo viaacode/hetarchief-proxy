@@ -48,7 +48,7 @@ export class VisitsController {
 		const has = (name: Permission) => user.permissions.includes(name);
 
 		if (has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: null });
+			const visits = await this.visitsService.findAll(queryDto, {});
 			return visits;
 		} else if (has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
 			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.id);
