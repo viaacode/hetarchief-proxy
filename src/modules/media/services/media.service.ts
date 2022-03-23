@@ -216,7 +216,7 @@ export class MediaService {
 	}
 
 	public async getThumbnailUrl(id: string, referer: string): Promise<string> {
-		const thumbnailPath = trimStart(await this.getThumbnailPath(id), '/');
+		const thumbnailPath = await this.getThumbnailPath(id);
 
 		const data = {
 			app: 'OR-*',
