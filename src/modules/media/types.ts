@@ -18,6 +18,8 @@ export interface QueryBuilderConfig {
 	OCCURRENCE_TYPE: { [prop in Operator]?: string };
 	VALUE_OPERATORS: Array<Operator>;
 	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
+	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
+	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
 }
 
 export interface PlayerTicket {
@@ -113,6 +115,11 @@ export enum SearchFilterField {
 	GENRE = 'genre',
 	KEYWORD = 'keyword',
 	NAME = 'name',
+	PUBLISHER = 'publisher',
+	DESCRIPTION = 'description',
+	ERA = 'era',
+	LOCATION = 'location',
+	LANGUAGE = 'language',
 }
 
 export enum Operator {

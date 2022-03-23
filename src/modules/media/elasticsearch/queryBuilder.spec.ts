@@ -32,6 +32,13 @@ const incompleteConfig = {
 		format: QueryType.TERMS,
 		duration: QueryType.RANGE,
 	},
+	MULTI_MATCH_FIELDS: [
+		SearchFilterField.QUERY,
+		SearchFilterField.ADVANCED_QUERY,
+		SearchFilterField.NAME,
+		SearchFilterField.DESCRIPTION,
+	],
+	MULTI_MATCH_QUERY_MAPPING: {},
 };
 
 describe('QueryBuilder', () => {
