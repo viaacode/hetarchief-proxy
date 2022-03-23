@@ -257,7 +257,7 @@ export class QueryBuilder {
 			aggs[elasticProperty] = {
 				terms: {
 					field: elasticProperty + this.suffix(aggProperty),
-					size: (searchRequest as any).aggsSize || this.config.NUMBER_OF_FILTER_OPTIONS,
+					size: this.config.NUMBER_OF_FILTER_OPTIONS,
 				},
 			};
 			// }

@@ -64,7 +64,7 @@ export class VisitsService {
 		return true;
 	}
 
-	public static adaptSpaceAddress(graphQlAddress: any): string {
+	public adaptSpaceAddress(graphQlAddress: any): string {
 		const locality = get(graphQlAddress, `locality`);
 		const postalCode = get(graphQlAddress, `postal_code`);
 		const street = get(graphQlAddress, `street`);
@@ -80,7 +80,11 @@ export class VisitsService {
 			id: get(graphQlVisit, 'id'),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
 			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
-			spaceAddress: VisitsService.adaptSpaceAddress(
+			spaceMail: get(
+				graphQlVisit,
+				'space.schema_maintainer.information[0].primary_site.address.email'
+			),
+			spaceAddress: this.adaptSpaceAddress(
 				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
 			),
 			userProfileId: get(graphQlVisit, 'user_profile_id'),
@@ -92,11 +96,13 @@ export class VisitsService {
 			note: this.adaptNotes(graphQlVisit.notes),
 			createdAt: get(graphQlVisit, 'created_at'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
-			updatedById: get(graphQlVisit, 'updater.id'),
-			updatedByName: get(graphQlVisit, 'updater.full_name'),
 			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 			visitorMail: get(graphQlVisit, 'user_profile.mail'),
 			visitorId: get(graphQlVisit, 'user_profile.id'),
+			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
+			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
+			updatedById: get(graphQlVisit, 'updater.id'),
+			updatedByName: get(graphQlVisit, 'updater.full_name'),
 		};
 	}
 

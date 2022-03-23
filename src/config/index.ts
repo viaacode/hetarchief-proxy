@@ -78,6 +78,10 @@ const config = (): Configuration => {
 		enableSendEmail: getEnvValue('ENABLE_SEND_EMAIL', true) === 'true',
 		campaignMonitorApiEndpoint: getEnvValue('CAMPAIGN_MONITOR_API_ENDPOINT', false),
 		campaignMonitorApiKey: getEnvValue('CAMPAIGN_MONITOR_API_KEY', false),
+		campaignMonitorTemplateVisitRequestCp: getEnvValue(
+			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP',
+			false
+		),
 		campaignMonitorTemplateVisitApproved: getEnvValue(
 			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED',
 			false

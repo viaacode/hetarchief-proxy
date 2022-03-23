@@ -18,6 +18,8 @@ import {
 	UPDATE_NOTIFICATION,
 } from './queries.gql';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { Template } from '~modules/campaign-monitor/types';
 import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
 import { User } from '~modules/users/types';
@@ -25,12 +27,16 @@ import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import i18n from '~shared/i18n';
+import { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {
 	private logger: Logger = new Logger(NotificationsService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		protected campaignMonitorService: CampaignMonitorService
+	) {}
 
 	/**
 	 * Adapt a notification as returned by a typical graphQl response to our internal notification data model
@@ -144,32 +150,46 @@ export class NotificationsService {
 		return affectedRows;
 	}
 
+	/**
+	 * Send notifications and email on new visit request
+	 */
 	public async onCreateVisit(
 		visit: Visit,
-		recipientIds: string[],
+		recipients: Recipient[],
 		user: User
 	): Promise<Notification[]> {
-		return await this.createForMultipleRecipients(
-			{
-				title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
-				description: i18n.t('{{name}} wil je leeszaal bezoeken', {
-					name: user.firstName + ' ' + user.lastName,
-				}),
-				visit_id: visit.id,
-				type: NotificationType.NEW_VISIT_REQUEST,
-				status: NotificationStatus.UNREAD,
-			},
-			recipientIds
-		);
+		const newVisitRequestEmail = visit.spaceMail || recipients[0]?.email;
+
+		const [notifications] = await Promise.all([
+			this.createForMultipleRecipients(
+				{
+					title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
+					description: i18n.t('{{name}} wil je leeszaal bezoeken', {
+						name: user.firstName + ' ' + user.lastName,
+					}),
+					visit_id: visit.id,
+					type: NotificationType.NEW_VISIT_REQUEST,
+					status: NotificationStatus.UNREAD,
+				},
+				recipients.map((recipient) => recipient.id)
+			),
+			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
+			// See ARC-305
+			this.campaignMonitorService.sendForVisit({
+				to: [{ id: `space-${visit.spaceId}`, email: newVisitRequestEmail }],
+				template: Template.VISIT_REQUEST_CP,
+				visit,
+			}),
+		]);
+		return notifications;
 	}
 
-	public async onApproveVisitRequest(
-		visit: Visit,
-		space: Space,
-		user: User
-	): Promise<Notification> {
-		return (
-			await this.create([
+	/**
+	 * Send notifications and email on approve visit request
+	 */
+	public async onApproveVisitRequest(visit: Visit, space: Space): Promise<Notification> {
+		const [notifications] = await Promise.all([
+			this.create([
 				{
 					title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
 						name: space.name,
@@ -185,20 +205,28 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id,
+					recipient: visit.visitorId,
 				},
-			])
-		)[0];
+			]),
+			this.campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+				template: Template.VISIT_APPROVED,
+				visit,
+			}),
+		]);
+		return notifications[0];
 	}
 
+	/**
+	 * Send notifications and email on deny visit request
+	 */
 	public async onDenyVisitRequest(
 		visit: Visit,
 		space: Space,
-		user: User,
 		reason?: string
 	): Promise<Notification> {
-		return (
-			await this.create([
+		const [notifications] = await Promise.all([
+			this.create([
 				{
 					title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
 						name: space.name,
@@ -209,9 +237,15 @@ export class NotificationsService {
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
-					recipient: user.id,
+					recipient: visit.visitorId,
 				},
-			])
-		)[0];
+			]),
+			this.campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+				template: Template.VISIT_DENIED,
+				visit,
+			}),
+		]);
+		return notifications[0];
 	}
 }

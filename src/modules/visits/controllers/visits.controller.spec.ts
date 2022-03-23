@@ -18,6 +18,7 @@ const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -26,6 +27,8 @@ const mockVisit1: Visit = {
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
 	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -44,6 +47,7 @@ const mockVisit2: Visit = {
 	id: '40f3f893-ba4f-4bc8-a871-0d492172134d',
 	spaceId: '24ddc913-3e03-42ea-9bd1-ba486401bc30',
 	spaceName: 'Huis van Alijn',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 2',
@@ -52,6 +56,8 @@ const mockVisit2: Visit = {
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
 	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -118,7 +124,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	getMaintainerProfileIds: jest.fn(),
+	getMaintainerProfiles: jest.fn(),
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
@@ -247,7 +253,10 @@ describe('VisitsController', () => {
 		it('should create a new visit', async () => {
 			mockVisitsService.create.mockResolvedValueOnce(mockVisit1);
 			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
-			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -262,10 +271,10 @@ describe('VisitsController', () => {
 			);
 
 			expect(visit).toEqual(mockVisit1);
-			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(1);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(1);
 			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
-			mockSpacesService.getMaintainerProfileIds.mockClear();
+			mockSpacesService.getMaintainerProfiles.mockClear();
 		});
 
 		it('should throw an error if you try to create a new visit without accepting tos', async () => {
@@ -273,7 +282,10 @@ describe('VisitsController', () => {
 				mockVisit1,
 			});
 			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
-			mockSpacesService.getMaintainerProfileIds.mockResolvedValueOnce(['1', '2']);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -297,10 +309,10 @@ describe('VisitsController', () => {
 					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
 				)
 			);
-			expect(mockSpacesService.getMaintainerProfileIds).toBeCalledTimes(0);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
 			sessionHelperSpy.mockRestore();
-			mockSpacesService.getMaintainerProfileIds.mockClear();
+			mockSpacesService.getMaintainerProfiles.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
 		});
 	});
