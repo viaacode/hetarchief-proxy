@@ -24,7 +24,7 @@ const getMockMediaResponse = () => ({
 
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
-	findById: jest.fn(),
+	findByMeemooFragmentId: jest.fn(),
 	getPlayableUrl: jest.fn(),
 };
 
@@ -72,7 +72,7 @@ describe('MediaController', () => {
 			const mockResponse = getMockMediaResponse();
 			mockResponse.hits.total.value = 1;
 			mockResponse.hits.hits.shift();
-			mockMediaService.findById.mockResolvedValueOnce(mockResponse);
+			mockMediaService.findByMeemooFragmentId.mockResolvedValueOnce(mockResponse);
 			const media = await mediaController.getMediaById('1');
 			expect(media.hits.total.value).toEqual(1);
 			expect(media.hits.hits.length).toEqual(1);

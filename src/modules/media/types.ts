@@ -61,7 +61,8 @@ export interface Representation {
 }
 
 export interface Media {
-	id: string;
+	meemooFragmentId: string; // Unique id per object
+	schemaIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;
@@ -96,7 +97,6 @@ export interface Media {
 	alternateName: string;
 	duration: string;
 	license: any;
-	meemooFragmentId: string;
 	meemooMediaObjectId: string;
 	dateCreated: string;
 	dateCreatedLowerBound: string;

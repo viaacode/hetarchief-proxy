@@ -17,7 +17,7 @@ import {
 	FIND_COLLECTION_BY_ID,
 	FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
 	FIND_COLLECTIONS_BY_USER,
-	FIND_OBJECT_BY_FRAGMENT_IDENTIFIER,
+	FIND_OBJECT_BY_MEEMOO_FRAGMENT_ID,
 	FIND_OBJECT_IN_COLLECTION,
 	INSERT_COLLECTION,
 	INSERT_OBJECT_INTO_COLLECTION,
@@ -46,8 +46,8 @@ export class CollectionsService {
 			creator: get(gqlIeObject, 'schema_creator'),
 			description: get(gqlIeObject, 'schema_description'),
 			format: get(gqlIeObject, 'dcterms_format'),
-			id: get(gqlIeObject, 'schema_identifier'),
 			meemooFragmentId: get(gqlIeObject, 'meemoo_fragment_id'),
+			schemaIdentifier: get(gqlIeObject, 'schema_identifier'),
 			name: get(gqlIeObject, 'schema_name'),
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
@@ -188,37 +188,37 @@ export class CollectionsService {
 
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
-		objectSchemaIdentifier: string
+		objectMeemooFragmentId: string
 	): Promise<IeObject | null> {
 		const response = await this.dataService.execute(FIND_OBJECT_IN_COLLECTION, {
 			collectionId,
-			objectSchemaIdentifier,
+			objectMeemooFragmentId,
 		});
 		const foundObject = response.data.users_collection_ie[0];
-		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
+		this.logger.debug(`Found object ${objectMeemooFragmentId} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject);
 	}
 
-	public async findObjectBySchemaIdentifier(
-		objectSchemaIdentifier: string
+	public async findObjectByMeemooFragmentId(
+		objectMeemooFragmentId: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(FIND_OBJECT_BY_FRAGMENT_IDENTIFIER, {
-			objectSchemaIdentifier,
+		const response = await this.dataService.execute(FIND_OBJECT_BY_MEEMOO_FRAGMENT_ID, {
+			objectMeemooFragmentId,
 		});
 		const foundObject = response.data.object_ie[0];
-		this.logger.debug(`Found object ${objectSchemaIdentifier}`);
+		this.logger.debug(`Found object ${objectMeemooFragmentId}`);
 
 		return this.adaptIeObject(foundObject);
 	}
 
 	public async addObjectToCollection(
 		collectionId: string,
-		objectSchemaIdentifier: string
+		objectMeemooFragmentId: string
 	): Promise<IeObject> {
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
-			objectSchemaIdentifier
+			objectMeemooFragmentId
 		);
 		if (collectionObject) {
 			throw new BadRequestException({
@@ -227,36 +227,35 @@ export class CollectionsService {
 			});
 		}
 
-		const objectInfo = await this.findObjectBySchemaIdentifier(objectSchemaIdentifier);
+		const objectInfo = await this.findObjectByMeemooFragmentId(objectMeemooFragmentId);
 
 		if (!objectInfo) {
 			throw new NotFoundException(
-				`Object with schema identifier ${objectSchemaIdentifier} was not found`
+				`Object with schema identifier ${objectMeemooFragmentId} was not found`
 			);
 		}
 
 		const response = await this.dataService.execute(INSERT_OBJECT_INTO_COLLECTION, {
 			collectionId,
-			objectSchemaIdentifier,
-			objectMeemooFragmentId: objectInfo.meemooFragmentId,
+			objectMeemooFragmentId,
 		});
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
-		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
+		this.logger.debug(`Collection object ${objectMeemooFragmentId} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
 	}
 
 	async removeObjectFromCollection(
 		collectionId: string,
-		objectSchemaIdentifier: string,
+		objectMeemooFragmentId: string,
 		userProfileId: string
 	) {
 		const response = await this.dataService.execute(REMOVE_OBJECT_FROM_COLLECTION, {
 			collectionId,
-			objectSchemaIdentifier,
+			objectMeemooFragmentId,
 			userProfileId,
 		});
-		this.logger.debug(`Collection object ${objectSchemaIdentifier} deleted`);
+		this.logger.debug(`Collection object ${objectMeemooFragmentId} deleted`);
 
 		return response.data.delete_users_collection_ie.affected_rows || 0;
 	}

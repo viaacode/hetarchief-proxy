@@ -2,6 +2,8 @@ export default {
 	data: {
 		object_ie: [
 			{
+				meemoo_fragment_id:
+					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 				schema_identifier: '8911p09j1g',
 				premis_identifier: 'WP00178829',
 				premis_relationship: null,
@@ -69,8 +71,6 @@ export default {
 				schema_alternate_name: null,
 				schema_duration: '00:39:52',
 				schema_license: null,
-				meemoo_fragment_id:
-					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 				meemoo_media_object_id:
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 				schema_date_created: '[2020-09-01,)',
