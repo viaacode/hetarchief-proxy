@@ -2,6 +2,7 @@ import path from 'path';
 
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cron } from '@nestjs/schedule';
 import AWS, { AWSError, S3 } from 'aws-sdk';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
@@ -34,6 +35,26 @@ export class AssetsService {
 
 	public setToken(assetToken: AssetToken) {
 		this.token = assetToken;
+	}
+
+	@Cron('0 0 04 * * *')
+	public async emptyUploadFolder(): Promise<boolean> {
+		try {
+			await fse.emptyDir(this.configService.get('tempAssetFolder'));
+			this.logger.log(
+				`CRON: upload folder '${this.configService.get('tempAssetFolder')}' emptied`
+			);
+		} catch (e) {
+			this.logger.error({
+				message: `CRON error emptying upload folder ${this.configService.get(
+					'tempAssetFolder'
+				)} `,
+				error: new Error(),
+			});
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

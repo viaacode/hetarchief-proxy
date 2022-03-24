@@ -46,7 +46,7 @@ jest.mock('aws-sdk', () => ({
 jest.mock('fs-extra', () => ({
 	unlink: jest.fn(),
 	readFile: jest.fn(),
-	bambajee: jest.fn(),
+	emptyDir: jest.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce('error'),
 }));
 
 describe('AssetsService', () => {
@@ -68,6 +68,20 @@ describe('AssetsService', () => {
 
 	it('services should be defined', () => {
 		expect(assetsService).toBeDefined();
+	});
+
+	describe('emptyUploadFolder', () => {
+		it('can empty the upload folder', async () => {
+			// note: return values for fse.emptyDir are specified above
+			const result = await assetsService.emptyUploadFolder();
+			expect(result).toBeTruthy();
+		});
+
+		it('catches the error when the dir could not be emptied', async () => {
+			// note: return values for fse.emptyDir are specified above
+			const result = await assetsService.emptyUploadFolder();
+			expect(result).toBeFalsy();
+		});
 	});
 
 	describe('upload', () => {
