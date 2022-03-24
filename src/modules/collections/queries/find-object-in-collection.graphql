@@ -1,0 +1,15 @@
+query findObjectInCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
+	users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_meemoo_fragment_id: {_eq: $objectMeemooFragmentId}}) {
+		ie {
+			meemoo_fragment_id
+			schema_identifier
+			schema_name
+			schema_creator
+			dcterms_available
+			schema_thumbnail_url
+			dcterms_format
+			schema_number_of_pages
+		}
+		created_at
+	}
+}

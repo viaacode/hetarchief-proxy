@@ -1,0 +1,5 @@
+mutation removeObjectFromCollection($objectMeemooFragmentId: String, $collectionId: uuid, $userProfileId: uuid) {
+	delete_users_collection_ie(where: {object_ie_meemoo_fragment_id: {_eq: $objectMeemooFragmentId}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
+		affected_rows
+	}
+}

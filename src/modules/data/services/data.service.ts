@@ -9,8 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
+import { GraphQLClient } from 'graphql-request';
 import { keys } from 'lodash';
 
+import { getSdk } from '../../../generated/graphql';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
@@ -24,10 +26,15 @@ export class DataService {
 	private whitelistEnabled: boolean;
 	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
 
+	private readonly sdk: ReturnType<typeof getSdk>;
+
 	constructor(
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
+		const client = new GraphQLClient('https://countries.trevorblades.com');
+		this.sdk = getSdk(client);
+
 		if (configService.get('environment') !== 'production') {
 			this.logger.log('GraphQl config: ', {
 				url: this.configService.get('graphQlUrl'),
@@ -60,6 +67,10 @@ export class DataService {
 				? JSON.parse(fse.readFileSync(clientWhitelistPath, { encoding: 'utf8' }))
 				: {},
 		};
+	}
+
+	public getSdk(): ReturnType<typeof getSdk> {
+		return this.sdk;
 	}
 
 	/**
