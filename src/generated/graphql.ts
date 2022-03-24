@@ -1,6 +1,4 @@
-import { GraphQLClient } from 'graphql-request';
-import * as Dom from 'graphql-request/dist/types.dom';
-import gql from 'graphql-tag';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -10133,7 +10131,7 @@ export type FindObjectInCollectionQuery = {
 };
 
 export type InsertCollectionsMutationVariables = Exact<{
-	objects: Array<Users_Collection_Insert_Input> | Users_Collection_Insert_Input;
+	object: Users_Collection_Insert_Input;
 }>;
 
 export type InsertCollectionsMutation = {
@@ -10216,362 +10214,1379 @@ export type UpdateCollectionMutation = {
 	} | null;
 };
 
-export const DeleteCollectionDocument = gql`
-	mutation deleteCollection($collectionId: uuid, $userProfileId: uuid) {
-		delete_users_collection(
-			where: { id: { _eq: $collectionId }, user_profile_id: { _eq: $userProfileId } }
-		) {
-			affected_rows
-		}
-	}
-`;
-export const FindCollectionByIdDocument = gql`
-	query findCollectionById($collectionId: uuid) {
-		users_collection(where: { id: { _eq: $collectionId } }) {
-			created_at
-			id
-			is_default
-			name
-			updated_at
-			user_profile_id
-		}
-	}
-`;
-export const FindCollectionObjectsByCollectionIdDocument = gql`
-	query findCollectionObjectsByCollectionId(
-		$collectionId: uuid
-		$userProfileId: uuid
-		$where: users_collection_ie_bool_exp!
-		$offset: Int
-		$limit: Int
-	) {
-		users_collection_ie(
-			where: {
-				_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
-				collection: { user_profile_id: { _eq: $userProfileId } }
-			}
-			offset: $offset
-			limit: $limit
-		) {
-			created_at
-			ie {
-				schema_name
-				schema_creator
-				schema_description
-				dcterms_available
-				schema_thumbnail_url
-				dcterms_format
-				schema_number_of_pages
-				schema_identifier
-			}
-		}
-		users_collection_ie_aggregate(
-			where: { _and: [{ user_collection_id: { _eq: $collectionId } }, $where] }
-		) {
-			aggregate {
-				count
-			}
-		}
-	}
-`;
-export const FindCollectionsByUserDocument = gql`
-	query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
-		users_collection(
-			where: { user_profile_id: { _eq: $userProfileId } }
-			order_by: { created_at: asc }
-			offset: $offset
-			limit: $limit
-		) {
-			id
-			name
-			user_profile_id
-			is_default
-			created_at
-			updated_at
-			ies {
-				ie {
-					schema_identifier
-				}
-			}
-		}
-		users_collection_aggregate(where: { user_profile_id: { _eq: $userProfileId } }) {
-			aggregate {
-				count
-			}
-		}
-	}
-`;
-export const GetObjectByMeemooFragmentIdDocument = gql`
-	query getObjectByMeemooFragmentId($objectMeemooFragmentId: String) {
-		object_ie(where: { meemoo_fragment_id: { _eq: $objectMeemooFragmentId } }, limit: 1) {
-			schema_name
-			schema_creator
-			dcterms_available
-			schema_thumbnail_url
-			dcterms_format
-			schema_number_of_pages
-			schema_identifier
-			meemoo_fragment_id
-		}
-	}
-`;
-export const FindObjectInCollectionDocument = gql`
-	query findObjectInCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
-		users_collection_ie(
-			where: {
-				user_collection_id: { _eq: $collectionId }
-				object_ie_meemoo_fragment_id: { _eq: $objectMeemooFragmentId }
-			}
-		) {
-			ie {
-				meemoo_fragment_id
-				schema_identifier
-				schema_name
-				schema_creator
-				dcterms_available
-				schema_thumbnail_url
-				dcterms_format
-				schema_number_of_pages
-			}
-			created_at
-		}
-	}
-`;
-export const InsertCollectionsDocument = gql`
-	mutation insertCollections($objects: [users_collection_insert_input!]!) {
-		insert_users_collection(objects: $objects) {
-			returning {
-				id
-				name
-				user_profile_id
-				is_default
-				created_at
-				updated_at
-			}
-		}
-	}
-`;
-export const InsertObjectIntoCollectionDocument = gql`
-	mutation insertObjectIntoCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
-		insert_users_collection_ie(
-			objects: {
-				user_collection_id: $collectionId
-				object_ie_meemoo_fragment_id: $objectMeemooFragmentId
-			}
-		) {
-			returning {
-				created_at
-				ie {
-					meemoo_fragment_id
-					schema_identifier
-					dcterms_format
-					dcterms_available
-					schema_creator
-					schema_description
-					schema_name
-					schema_maintainer_id
-					schema_number_of_pages
-				}
-			}
-		}
-	}
-`;
-export const RemoveObjectFromCollectionDocument = gql`
-	mutation removeObjectFromCollection(
-		$objectMeemooFragmentId: String
-		$collectionId: uuid
-		$userProfileId: uuid
-	) {
-		delete_users_collection_ie(
-			where: {
-				object_ie_meemoo_fragment_id: { _eq: $objectMeemooFragmentId }
-				user_collection_id: { _eq: $collectionId }
-				collection: { user_profile_id: { _eq: $userProfileId } }
-			}
-		) {
-			affected_rows
-		}
-	}
-`;
-export const UpdateCollectionDocument = gql`
-	mutation updateCollection(
-		$collectionId: uuid
-		$userProfileId: uuid
-		$collection: users_collection_set_input
-	) {
-		update_users_collection(
-			where: { id: { _eq: $collectionId }, user_profile_id: { _eq: $userProfileId } }
-			_set: $collection
-		) {
-			returning {
-				id
-				name
-				user_profile_id
-				is_default
-				created_at
-				updated_at
-			}
-		}
-	}
-`;
-
-export type SdkFunctionWrapper = <T>(
-	action: (requestHeaders?: Record<string, string>) => Promise<T>,
-	operationName: string,
-	operationType?: string
-) => Promise<T>;
-
-const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
-
-export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
-	return {
-		deleteCollection(
-			variables?: DeleteCollectionMutationVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<DeleteCollectionMutation> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<DeleteCollectionMutation>(DeleteCollectionDocument, variables, {
-						...requestHeaders,
-						...wrappedRequestHeaders,
-					}),
-				'deleteCollection',
-				'mutation'
-			);
+export const DeleteCollectionDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'deleteCollection' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'userProfileId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'delete_users_collection' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'collectionId',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_profile_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'userProfileId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
 		},
-		findCollectionById(
-			variables?: FindCollectionByIdQueryVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<FindCollectionByIdQuery> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<FindCollectionByIdQuery>(FindCollectionByIdDocument, variables, {
-						...requestHeaders,
-						...wrappedRequestHeaders,
-					}),
-				'findCollectionById',
-				'query'
-			);
+	],
+} as unknown as DocumentNode<DeleteCollectionMutation, DeleteCollectionMutationVariables>;
+export const FindCollectionByIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findCollectionById' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'collectionId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_default' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+							],
+						},
+					},
+				],
+			},
 		},
-		findCollectionObjectsByCollectionId(
-			variables: FindCollectionObjectsByCollectionIdQueryVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<FindCollectionObjectsByCollectionIdQuery> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<FindCollectionObjectsByCollectionIdQuery>(
-						FindCollectionObjectsByCollectionIdDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'findCollectionObjectsByCollectionId',
-				'query'
-			);
+	],
+} as unknown as DocumentNode<FindCollectionByIdQuery, FindCollectionByIdQueryVariables>;
+export const FindCollectionObjectsByCollectionIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findCollectionObjectsByCollectionId' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'userProfileId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'users_collection_ie_bool_exp' },
+						},
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: '_and' },
+											value: {
+												kind: 'ListValue',
+												values: [
+													{
+														kind: 'ObjectValue',
+														fields: [
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'user_collection_id',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_eq',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'collectionId',
+																				},
+																			},
+																		},
+																	],
+																},
+															},
+														],
+													},
+													{
+														kind: 'Variable',
+														name: { kind: 'Name', value: 'where' },
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'collection' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: {
+															kind: 'Name',
+															value: 'user_profile_id',
+														},
+														value: {
+															kind: 'ObjectValue',
+															fields: [
+																{
+																	kind: 'ObjectField',
+																	name: {
+																		kind: 'Name',
+																		value: '_eq',
+																	},
+																	value: {
+																		kind: 'Variable',
+																		name: {
+																			kind: 'Name',
+																			value: 'userProfileId',
+																		},
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'offset' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'offset' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'ie' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_creator' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_description' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'dcterms_available' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_thumbnail_url',
+												},
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'dcterms_format' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_number_of_pages',
+												},
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection_ie_aggregate' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: '_and' },
+											value: {
+												kind: 'ListValue',
+												values: [
+													{
+														kind: 'ObjectValue',
+														fields: [
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'user_collection_id',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_eq',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'collectionId',
+																				},
+																			},
+																		},
+																	],
+																},
+															},
+														],
+													},
+													{
+														kind: 'Variable',
+														name: { kind: 'Name', value: 'where' },
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'aggregate' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'count' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-		findCollectionsByUser(
-			variables?: FindCollectionsByUserQueryVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<FindCollectionsByUserQuery> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<FindCollectionsByUserQuery>(
-						FindCollectionsByUserDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'findCollectionsByUser',
-				'query'
-			);
+	],
+} as unknown as DocumentNode<
+	FindCollectionObjectsByCollectionIdQuery,
+	FindCollectionObjectsByCollectionIdQueryVariables
+>;
+export const FindCollectionsByUserDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findCollectionsByUser' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'userProfileId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_profile_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'userProfileId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'created_at' },
+											value: { kind: 'EnumValue', value: 'asc' },
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'offset' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'offset' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_default' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'ies' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'ie' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_identifier',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection_aggregate' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_profile_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'userProfileId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'aggregate' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'count' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-		getObjectByMeemooFragmentId(
-			variables?: GetObjectByMeemooFragmentIdQueryVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<GetObjectByMeemooFragmentIdQuery> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<GetObjectByMeemooFragmentIdQuery>(
-						GetObjectByMeemooFragmentIdDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'getObjectByMeemooFragmentId',
-				'query'
-			);
+	],
+} as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
+export const GetObjectByMeemooFragmentIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getObjectByMeemooFragmentId' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: {
+						kind: 'Variable',
+						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+					},
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'object_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'meemoo_fragment_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'objectMeemooFragmentId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'IntValue', value: '1' },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_creator' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'dcterms_available' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_thumbnail_url' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'dcterms_format' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_number_of_pages' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_identifier' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meemoo_fragment_id' },
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-		findObjectInCollection(
-			variables?: FindObjectInCollectionQueryVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<FindObjectInCollectionQuery> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<FindObjectInCollectionQuery>(
-						FindObjectInCollectionDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'findObjectInCollection',
-				'query'
-			);
+	],
+} as unknown as DocumentNode<
+	GetObjectByMeemooFragmentIdQuery,
+	GetObjectByMeemooFragmentIdQueryVariables
+>;
+export const FindObjectInCollectionDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findObjectInCollection' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: {
+						kind: 'Variable',
+						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+					},
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'users_collection_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_collection_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'collectionId',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: {
+												kind: 'Name',
+												value: 'object_ie_meemoo_fragment_id',
+											},
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'objectMeemooFragmentId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'ie' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'meemoo_fragment_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_creator' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'dcterms_available' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_thumbnail_url',
+												},
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'dcterms_format' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_number_of_pages',
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+							],
+						},
+					},
+				],
+			},
 		},
-		insertCollections(
-			variables: InsertCollectionsMutationVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<InsertCollectionsMutation> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<InsertCollectionsMutation>(
-						InsertCollectionsDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'insertCollections',
-				'mutation'
-			);
+	],
+} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
+export const InsertCollectionsDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'insertCollections' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'object' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'users_collection_insert_input' },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'insert_users_collection' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'objects' },
+								value: {
+									kind: 'ListValue',
+									values: [
+										{
+											kind: 'Variable',
+											name: { kind: 'Name', value: 'object' },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'returning' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'user_profile_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'is_default' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'updated_at' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-		insertObjectIntoCollection(
-			variables?: InsertObjectIntoCollectionMutationVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<InsertObjectIntoCollectionMutation> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<InsertObjectIntoCollectionMutation>(
-						InsertObjectIntoCollectionDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'insertObjectIntoCollection',
-				'mutation'
-			);
+	],
+} as unknown as DocumentNode<InsertCollectionsMutation, InsertCollectionsMutationVariables>;
+export const InsertObjectIntoCollectionDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'insertObjectIntoCollection' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: {
+						kind: 'Variable',
+						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+					},
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'insert_users_collection_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'objects' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_collection_id' },
+											value: {
+												kind: 'Variable',
+												name: { kind: 'Name', value: 'collectionId' },
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: {
+												kind: 'Name',
+												value: 'object_ie_meemoo_fragment_id',
+											},
+											value: {
+												kind: 'Variable',
+												name: {
+													kind: 'Name',
+													value: 'objectMeemooFragmentId',
+												},
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'returning' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'ie' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'meemoo_fragment_id',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_identifier',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'dcterms_format',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'dcterms_available',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_creator',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_description',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_name',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_maintainer_id',
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'schema_number_of_pages',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-		removeObjectFromCollection(
-			variables?: RemoveObjectFromCollectionMutationVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<RemoveObjectFromCollectionMutation> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<RemoveObjectFromCollectionMutation>(
-						RemoveObjectFromCollectionDocument,
-						variables,
-						{ ...requestHeaders, ...wrappedRequestHeaders }
-					),
-				'removeObjectFromCollection',
-				'mutation'
-			);
+	],
+} as unknown as DocumentNode<
+	InsertObjectIntoCollectionMutation,
+	InsertObjectIntoCollectionMutationVariables
+>;
+export const RemoveObjectFromCollectionDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'removeObjectFromCollection' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: {
+						kind: 'Variable',
+						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+					},
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'userProfileId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'delete_users_collection_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: {
+												kind: 'Name',
+												value: 'object_ie_meemoo_fragment_id',
+											},
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'objectMeemooFragmentId',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_collection_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'collectionId',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'collection' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: {
+															kind: 'Name',
+															value: 'user_profile_id',
+														},
+														value: {
+															kind: 'ObjectValue',
+															fields: [
+																{
+																	kind: 'ObjectField',
+																	name: {
+																		kind: 'Name',
+																		value: '_eq',
+																	},
+																	value: {
+																		kind: 'Variable',
+																		name: {
+																			kind: 'Name',
+																			value: 'userProfileId',
+																		},
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
 		},
-		updateCollection(
-			variables?: UpdateCollectionMutationVariables,
-			requestHeaders?: Dom.RequestInit['headers']
-		): Promise<UpdateCollectionMutation> {
-			return withWrapper(
-				(wrappedRequestHeaders) =>
-					client.request<UpdateCollectionMutation>(UpdateCollectionDocument, variables, {
-						...requestHeaders,
-						...wrappedRequestHeaders,
-					}),
-				'updateCollection',
-				'mutation'
-			);
+	],
+} as unknown as DocumentNode<
+	RemoveObjectFromCollectionMutation,
+	RemoveObjectFromCollectionMutationVariables
+>;
+export const UpdateCollectionDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'updateCollection' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collectionId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'userProfileId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'collection' } },
+					type: {
+						kind: 'NamedType',
+						name: { kind: 'Name', value: 'users_collection_set_input' },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'update_users_collection' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'collectionId',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'user_profile_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'userProfileId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: '_set' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'collection' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'returning' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'user_profile_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'is_default' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'updated_at' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
 		},
-	};
-}
-export type Sdk = ReturnType<typeof getSdk>;
+	],
+} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;

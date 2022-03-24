@@ -1,5 +1,5 @@
-mutation insertCollections($objects: [users_collection_insert_input!]!) {
-	insert_users_collection(objects: $objects) {
+mutation insertCollections($object: users_collection_insert_input!) {
+	insert_users_collection(objects: [$object]) {
 		returning {
 			id
 			name

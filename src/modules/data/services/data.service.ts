@@ -9,10 +9,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
+import { DocumentNode } from 'graphql';
 import { GraphQLClient } from 'graphql-request';
+import { print } from 'graphql/language/printer';
 import { keys } from 'lodash';
 
-import { getSdk } from '../../../generated/graphql';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
@@ -26,15 +27,10 @@ export class DataService {
 	private whitelistEnabled: boolean;
 	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
 
-	private readonly sdk: ReturnType<typeof getSdk>;
-
 	constructor(
 		private configService: ConfigService,
 		private dataPermissionsService: DataPermissionsService
 	) {
-		const client = new GraphQLClient('https://countries.trevorblades.com');
-		this.sdk = getSdk(client);
-
 		if (configService.get('environment') !== 'production') {
 			this.logger.log('GraphQl config: ', {
 				url: this.configService.get('graphQlUrl'),
@@ -67,10 +63,6 @@ export class DataService {
 				? JSON.parse(fse.readFileSync(clientWhitelistPath, { encoding: 'utf8' }))
 				: {},
 		};
-	}
-
-	public getSdk(): ReturnType<typeof getSdk> {
-		return this.sdk;
 	}
 
 	/**
@@ -146,12 +138,12 @@ export class DataService {
 	 * execute a (GraphQl) query
 	 */
 	public async execute(
-		query: string,
+		query: string | DocumentNode,
 		variables: { [varName: string]: any } = {}
 	): Promise<GraphQlResponse> {
 		try {
 			const queryData = {
-				query,
+				query: typeof query === 'string' ? query : print(query),
 				variables,
 			};
 			const data = await this.gotInstance.post<GraphQlResponse>({

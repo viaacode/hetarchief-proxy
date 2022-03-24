@@ -3,6 +3,18 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
 import {
+	DeleteCollectionDocument,
+	FindCollectionByIdDocument,
+	FindCollectionObjectsByCollectionIdDocument,
+	FindCollectionsByUserDocument,
+	FindObjectInCollectionDocument,
+	GetObjectByMeemooFragmentIdDocument,
+	InsertCollectionsDocument,
+	InsertObjectIntoCollectionDocument,
+	RemoveObjectFromCollectionDocument,
+	UpdateCollectionDocument,
+} from '../../../generated/graphql';
+import {
 	Collection,
 	CollectionObjectLink,
 	GqlCollection,
@@ -57,7 +69,7 @@ export class CollectionsService {
 			createdAt: gqlCollection.created_at,
 			updatedAt: gqlCollection.updated_at,
 			isDefault: gqlCollection.is_default,
-			objects: (gqlCollection as GqlCollectionWithObjects).ies.map(
+			objects: (gqlCollection as GqlCollectionWithObjects).ies?.map(
 				this.adaptCollectionObjectLink
 			),
 		};
@@ -83,28 +95,28 @@ export class CollectionsService {
 		size = 1000
 	): Promise<IPagination<Collection>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const collectionsResponse = await this.dataService.getSdk().findCollectionsByUser({
+		const collectionsResponse = await this.dataService.execute(FindCollectionsByUserDocument, {
 			userProfileId,
 			offset,
 			limit,
 		});
 
 		return Pagination<Collection>({
-			items: collectionsResponse.users_collection.map((collection: any) =>
+			items: collectionsResponse.data.users_collection.map((collection: any) =>
 				this.adaptCollection(collection)
 			),
 			page,
 			size,
-			total: collectionsResponse.users_collection_aggregate.aggregate.count,
+			total: collectionsResponse.data.users_collection_aggregate.aggregate.count,
 		});
 	}
 
 	public async findCollectionById(collectionId: string): Promise<Collection> {
-		const collectionResponse = await this.dataService.getSdk().findCollectionById({
+		const collectionResponse = await this.dataService.execute(FindCollectionByIdDocument, {
 			collectionId,
 		});
 
-		return this.adaptCollection(collectionResponse.users_collection[0]);
+		return this.adaptCollection(collectionResponse.data.users_collection[0]);
 	}
 
 	public async findObjectsByCollectionId(
@@ -115,21 +127,22 @@ export class CollectionsService {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const where = { ie: { schema_name: { _ilike: query } } };
-		const collectionObjectsResponse = await this.dataService
-			.getSdk()
-			.findCollectionObjectsByCollectionId({
+		const collectionObjectsResponse = await this.dataService.execute(
+			FindCollectionObjectsByCollectionIdDocument,
+			{
 				collectionId,
 				userProfileId,
 				where,
 				offset,
 				limit,
-			});
-		if (!collectionObjectsResponse.users_collection_ie) {
+			}
+		);
+		if (!collectionObjectsResponse.data.users_collection_ie) {
 			throw new NotFoundException();
 		}
-		const total = collectionObjectsResponse.users_collection_ie_aggregate.aggregate.count;
+		const total = collectionObjectsResponse.data.users_collection_ie_aggregate.aggregate.count;
 		return {
-			items: collectionObjectsResponse.users_collection_ie.map(
+			items: collectionObjectsResponse.data.users_collection_ie.map(
 				this.adaptCollectionObjectLink
 			),
 			page,
@@ -140,10 +153,10 @@ export class CollectionsService {
 	}
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
-		const response = await this.dataService
-			.getSdk()
-			.insertCollections({ objects: [collection] });
-		const createdCollection = response.insert_users_collection.returning[0];
+		const response = await this.dataService.execute(InsertCollectionsDocument, {
+			object: collection,
+		});
+		const createdCollection = response.data.insert_users_collection.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
 		return this.adaptCollection(createdCollection);
@@ -154,37 +167,37 @@ export class CollectionsService {
 		userProfileId: string,
 		collection: GqlUpdateCollection
 	): Promise<Collection> {
-		const response = await this.dataService.getSdk().updateCollection({
+		const response = await this.dataService.execute(UpdateCollectionDocument, {
 			collectionId,
 			userProfileId,
 			collection,
 		});
 
-		const updatedCollection = response.update_users_collection.returning[0];
+		const updatedCollection = response.data.update_users_collection.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
 		return this.adaptCollection(updatedCollection);
 	}
 
 	public async delete(collectionId: string, userProfileId: string): Promise<number> {
-		const response = await this.dataService.getSdk().deleteCollection({
+		const response = await this.dataService.execute(DeleteCollectionDocument, {
 			collectionId,
 			userProfileId,
 		});
 		this.logger.debug(`Collection ${collectionId} deleted`);
 
-		return response.delete_users_collection.affected_rows;
+		return response.data.delete_users_collection.affected_rows;
 	}
 
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
 		objectMeemooFragmentId: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.getSdk().findObjectInCollection({
+		const response = await this.dataService.execute(FindObjectInCollectionDocument, {
 			collectionId,
 			objectMeemooFragmentId,
 		});
-		const foundObject = response.users_collection_ie[0];
+		const foundObject = response.data.users_collection_ie[0];
 		this.logger.debug(`Found object ${objectMeemooFragmentId} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject);
@@ -193,10 +206,10 @@ export class CollectionsService {
 	public async findObjectByMeemooFragmentId(
 		objectMeemooFragmentId: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.getSdk().getObjectByMeemooFragmentId({
+		const response = await this.dataService.execute(GetObjectByMeemooFragmentIdDocument, {
 			objectMeemooFragmentId,
 		});
-		const foundObject = response.object_ie[0];
+		const foundObject = response.data.object_ie[0];
 		this.logger.debug(`Found object ${objectMeemooFragmentId}`);
 
 		return this.adaptIeObject(foundObject);
@@ -225,11 +238,11 @@ export class CollectionsService {
 			);
 		}
 
-		const response = await this.dataService.getSdk().insertObjectIntoCollection({
+		const response = await this.dataService.execute(InsertObjectIntoCollectionDocument, {
 			collectionId,
 			objectMeemooFragmentId,
 		});
-		const createdObject = response.insert_users_collection_ie.returning[0];
+		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectMeemooFragmentId} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
@@ -240,13 +253,13 @@ export class CollectionsService {
 		objectMeemooFragmentId: string,
 		userProfileId: string
 	) {
-		const response = await this.dataService.getSdk().removeObjectFromCollection({
+		const response = await this.dataService.execute(RemoveObjectFromCollectionDocument, {
 			collectionId,
 			objectMeemooFragmentId,
 			userProfileId,
 		});
 		this.logger.debug(`Collection object ${objectMeemooFragmentId} deleted`);
 
-		return response.delete_users_collection_ie.affected_rows || 0;
+		return response.data.delete_users_collection_ie.affected_rows || 0;
 	}
 }
