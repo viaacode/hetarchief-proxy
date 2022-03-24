@@ -92,7 +92,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -126,7 +126,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.visitorName).toContain('Marie');
@@ -162,7 +162,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				'space-1'
+				{ cpSpaceId: 'space-1' }
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.items[0]?.visitorName).toContain('Marie');
@@ -180,7 +180,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 		});
@@ -192,7 +192,22 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				'space-1'
+				{ cpSpaceId: 'space-1' }
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on userProfileId', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.findAll(
+				{
+					page: 1,
+					size: 10,
+				},
+				{ userProfileId: mockUserProfileId }
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -208,7 +223,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -224,7 +239,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -240,7 +255,7 @@ describe('VisitsService', () => {
 					page: 1,
 					size: 10,
 				},
-				null
+				{}
 			);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);

@@ -45,23 +45,42 @@ export class VisitsController {
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: User
 	): Promise<IPagination<Visit>> {
-		if (user.permissions.includes(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, null);
+		const has = (name: Permission) => user.permissions.includes(name);
+
+		if (has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, {});
 			return visits;
-		} else if (user.permissions.includes(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
+		} else if (has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
 			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.id);
+
 			if (!cpSpace) {
 				throw new NotFoundException(
 					i18n.t('The current user does not seem to be linked to a cp space.')
 				);
 			}
-			const visits = await this.visitsService.findAll(queryDto, cpSpace.id);
+
+			const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: cpSpace.id });
 			return visits;
 		} else {
 			throw new UnauthorizedException(
 				i18n.t('You do not have the right permissions to call this route')
 			);
 		}
+	}
+
+	@Get('personal')
+	public async getPersonalVisits(
+		@Query() queryDto: VisitsQueryDto,
+		@SessionUser() user: User
+	): Promise<IPagination<Visit>> {
+		if (user.permissions.includes(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, { userProfileId: user.id });
+			return visits;
+		}
+
+		throw new UnauthorizedException(
+			i18n.t('You do not have the right permissions to call this route')
+		);
 	}
 
 	@Get(':id')
