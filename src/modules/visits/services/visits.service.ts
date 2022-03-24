@@ -208,7 +208,7 @@ export class VisitsService {
 		/** Dynamically build the where object  */
 		const where: any = {};
 
-		if (!isEmpty(query)) {
+		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
 			const filterBySpaceName = parameters.cpSpaceId
 				? []
