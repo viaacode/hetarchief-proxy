@@ -85,6 +85,7 @@ export class SpacesService {
 			...(updateKeys.includes('serviceDescription')
 				? { schema_service_description: updateSpaceDto.serviceDescription }
 				: {}),
+			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
 		};
 		const {
 			data: { update_cp_space_by_pk: updatedSpace },

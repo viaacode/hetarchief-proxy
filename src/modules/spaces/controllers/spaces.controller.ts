@@ -59,18 +59,18 @@ export class SpacesController {
 		@Body() updateSpaceDto: UpdateSpaceDto,
 		@UploadedFile() file: Express.Multer.File
 	): Promise<Space> {
+		let space = await this.spacesService.findById(id);
 		if (file) {
-			const space = await this.spacesService.findById(id);
-			console.log(file);
-			// const url = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
-			const url = `http://${file.originalname}`;
-			// todo save url
+			updateSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
 			if (space.image) {
+				// space already has an image: delete existing one
 				await this.assetsService.delete(space.image);
 			}
-			updateSpaceDto.image = url;
+		} else if (space.image && updateSpaceDto.image === '') {
+			// image is empty: delete current image
+			await this.assetsService.delete(space.image);
 		}
-		const space = await this.spacesService.update(id, updateSpaceDto);
+		space = await this.spacesService.update(id, updateSpaceDto);
 		return space;
 	}
 }

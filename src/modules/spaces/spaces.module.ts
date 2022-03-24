@@ -14,12 +14,7 @@ import { DataModule } from '~modules/data';
 		DataModule,
 		MulterModule.registerAsync({
 			imports: [ConfigModule],
-			useFactory: async (configService: ConfigService) => {
-				// TODO remove debug
-				const config = configService.get('multerOptions');
-				console.log('MULTER CONFIG: ', config);
-				return configService.get('multerOptions');
-			},
+			useFactory: async (configService: ConfigService) => configService.get('multerOptions'),
 			inject: [ConfigService],
 		}),
 		AssetsModule,

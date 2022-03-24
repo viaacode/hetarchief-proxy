@@ -41,14 +41,14 @@ export class AssetsService {
 	 * curl
 	 *   -X POST
 	 *   -H "X-User-Secret-Key-Meta: myLittleSecret"
-	 *   -u avo-qas:*****************
-	 *   http://s3-qas.do.viaa.be:88/_admin/manage/tenants/hetarchief-qas/tokens
+	 *   -u hetarchief-s3:*****************
+	 *   https://s3-qas.do.viaa.be/_admin/manage/tenants/hetarchief-int/tokens
 	 *
 	 * Example token:
 	 * {
 	 * 	"token": "2e2fdbeb1d6df787428964f3574ed4d6",
-	 * 	"owner": "avo-qas",
-	 * 	"scope": "+hetarchief-qas",
+	 * 	"owner": "hetarchief-s3",
+	 * 	"scope": "+hetarchief-int",
 	 * 	"expiration": "2019-12-18T19:10:38.947Z",
 	 * 	"creation": "2019-12-17T19:10:38.000Z",
 	 * 	"secret": "jWX47N9Sa6v2txQDaD7kyjfXa3gA2m2m"
@@ -102,17 +102,6 @@ export class AssetsService {
 
 		// Save meta info in the database so we can find this file when we implement the asset library
 		const url = await this.uploadToObjectStore(key, file);
-		this.logger.log({ key, url });
-		// const asset = { // TODO store all assets in a general content_asset table like avo?
-		// 	owner_id: uploadAssetInfo.ownerId,
-		// 	content_asset_type_id: uploadAssetInfo.type,
-		// 	label: url,
-		// 	description: null as string | null,
-		// 	path: url,
-		// };
-		// await DataService.execute(INSERT_CONTENT_ASSET, {
-		// 	asset,
-		// });
 
 		// Remove temp file from temp folder, since it should be uploaded to the asset server now
 		await fse.unlink(file.path);
@@ -154,6 +143,42 @@ export class AssetsService {
 			} catch (err) {
 				const error = new InternalServerErrorException({
 					message: 'Failed to upload asset to the asset service',
+					error: err,
+				});
+				this.logger.error(error);
+				reject(error);
+			}
+		});
+	}
+
+	public async delete(url: string) {
+		const s3Client: S3 = await this.getS3Client();
+		return new Promise<void>((resolve, reject) => {
+			try {
+				s3Client.deleteObject(
+					{
+						Key: url
+							.split(`/${this.configService.get('assetServerBucketName')}/`)
+							.pop(),
+						Bucket: this.configService.get('assetServerBucketName'),
+					},
+					(err: AWSError) => {
+						if (err) {
+							const error = new InternalServerErrorException({
+								message: 'Failed to delete asset from the s3 asset service',
+								error: err,
+								url,
+							});
+							this.logger.error(error);
+							reject(error);
+						} else {
+							resolve();
+						}
+					}
+				);
+			} catch (err) {
+				const error = new InternalServerErrorException({
+					message: 'Failed to delete asset from S3',
 					error: err,
 				});
 				this.logger.error(error);
