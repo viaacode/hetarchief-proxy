@@ -3,10 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AssetsService } from './services/assets.service';
 
-import { DataModule } from '~modules/data';
-
 @Module({
-	imports: [DataModule, ConfigModule],
+	imports: [ConfigModule],
 	providers: [AssetsService],
 	exports: [AssetsService],
 })

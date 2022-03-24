@@ -10,8 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AssetFileType, AssetToken } from '../types';
 
-import { DataService } from '~modules/data/services/data.service';
-
 @Injectable()
 export class AssetsService {
 	private logger: Logger = new Logger(AssetsService.name, { timestamp: true });
@@ -20,7 +18,7 @@ export class AssetsService {
 	private gotInstance: Got;
 	private s3: S3;
 
-	constructor(protected dataService: DataService, protected configService: ConfigService) {
+	constructor(protected configService: ConfigService) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('assetServerTokenEndpoint'),
 			resolveBodyOnly: true,
@@ -32,6 +30,10 @@ export class AssetsService {
 				'X-User-Secret-Key-Meta': this.configService.get('assetServerTokenSecret'),
 			},
 		});
+	}
+
+	public setToken(assetToken: AssetToken) {
+		this.token = assetToken;
 	}
 
 	/**
@@ -142,7 +144,7 @@ export class AssetsService {
 				);
 			} catch (err) {
 				const error = new InternalServerErrorException({
-					message: 'Failed to upload asset to the asset service',
+					message: 'Failed to upload asset to the s3 asset service',
 					error: err,
 				});
 				this.logger.error(error);
@@ -153,7 +155,7 @@ export class AssetsService {
 
 	public async delete(url: string) {
 		const s3Client: S3 = await this.getS3Client();
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<boolean>((resolve, reject) => {
 			try {
 				s3Client.deleteObject(
 					{
@@ -165,14 +167,14 @@ export class AssetsService {
 					(err: AWSError) => {
 						if (err) {
 							const error = new InternalServerErrorException({
-								message: 'Failed to delete asset from the s3 asset service',
+								message: 'Failed to delete asset from S3',
 								error: err,
 								url,
 							});
 							this.logger.error(error);
 							reject(error);
 						} else {
-							resolve();
+							resolve(true);
 						}
 					}
 				);

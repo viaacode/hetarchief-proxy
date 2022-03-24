@@ -1,137 +1,179 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import nock from 'nock';
+
+import { Configuration } from '~config';
+
+import { AssetFileType } from '../types';
 
 import { AssetsService } from './assets.service';
 
-import { DataService } from '~modules/data/services/data.service';
-import { Idp } from '~shared/auth/auth.types';
+const mockConfigService = {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'assetServerTokenEndpoint') {
+			return 'http://assettoken/s3';
+		}
+		if (key === 'assetServerEndpoint') {
+			return 'http://hetarchief.assets/';
+		}
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+		return key;
+	}),
 };
 
-const graphQlUserResponse = {
-	id: '123',
-	full_name: 'Tom Testerom',
-	first_name: 'Tom',
-	last_name: 'Testerom',
-	mail: 'test@studiohypderdrive.be',
-	accepted_tos_at: '2022-02-21T14:00:00',
-	group: {
-		permissions: [
-			{
-				permission: {
-					name: 'CREATE_COLLECTION',
-				},
-			},
-		],
-	},
+const mockFile: Express.Multer.File = {
+	fieldname: 'file',
+	originalname: 'image.jpg',
+	encoding: '7bit',
+	mimetype: 'image/png',
+	size: 6714,
+	filename: 'ee1c7ce7dc5a8b49ca95fc2f62425edc',
+	path: '',
+	buffer: null,
+	stream: null,
+	destination: null,
 };
 
-const archiefUser = {
-	id: '123',
-	firstName: 'Tom',
-	lastName: 'Testerom',
-	email: 'test@studiohypderdrive.be',
-	acceptedTosAt: '2022-02-21T14:00:00',
-	permissions: ['CREATE_COLLECTION'],
+const mockS3Instance = {
+	putObject: jest.fn((obj, cb) => cb()),
+	deleteObject: jest.fn((obj, cb) => cb()),
 };
 
-describe('UsersService', () => {
-	let usersService: AssetsService;
+jest.mock('aws-sdk', () => ({
+	S3: jest.fn(() => mockS3Instance),
+}));
+
+jest.mock('fs-extra', () => ({
+	unlink: jest.fn(),
+	readFile: jest.fn(),
+	bambajee: jest.fn(),
+}));
+
+describe('AssetsService', () => {
+	let assetsService: AssetsService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				AssetsService,
 				{
-					provide: DataService,
-					useValue: mockDataService,
+					provide: ConfigService,
+					useValue: mockConfigService,
 				},
 			],
 		}).compile();
 
-		usersService = module.get<AssetsService>(AssetsService);
+		assetsService = module.get<AssetsService>(AssetsService);
 	});
 
 	it('services should be defined', () => {
-		expect(usersService).toBeDefined();
+		expect(assetsService).toBeDefined();
 	});
 
-	describe('adapt', () => {
-		it('can adapt an empty user', () => {
-			const result = usersService.adapt(null);
-			expect(result).toBeNull();
+	describe('upload', () => {
+		it('can upload a file to S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			const url = await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
+			expect(
+				url.startsWith('http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE')
+			).toBeTruthy();
 		});
-	});
 
-	describe('getUserByIdentityId', () => {
-		it('should get a user by identity id', async () => {
-			//data.users_profile[0]
-			mockDataService.execute.mockReturnValueOnce({
-				data: { users_profile: [graphQlUserResponse] },
+		it('throws an exception when the S3 client could not be created', async () => {
+			// don't nock the token request triggers the error
+			let error;
+			try {
+				await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Failed to get s3 client');
+		});
+
+		it('requests a new token if the current token is almost expired', async () => {
+			assetsService.setToken({
+				token: '2e2fdbeb1d6df787428964f3574ed4d6',
+				owner: 'hetarchief-s3',
+				scope: '+hetarchief-int',
+				expiration: new Date().toISOString(),
+				creation: '2019-12-17T19:10:38.000Z',
+				secret: 'jWX47N9Sa6v2txQDaD7kyjfXa3gA2m2m',
 			});
-
-			const result = await usersService.getUserByIdentityId('123');
-			expect(result).toEqual(archiefUser);
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			const url = await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
+			expect(
+				url.startsWith('http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE')
+			).toBeTruthy();
 		});
 
-		it('throws a notfoundexception if the user was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					users_profile: [],
-				},
+		it('throws an exception if the file could not be uploaded to S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			mockS3Instance.putObject.mockImplementationOnce(() => {
+				throw new Error('AWS error');
 			});
+			let error;
+			try {
+				await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Failed to upload asset to the s3 asset service');
+		});
 
-			const user = await usersService.getUserByIdentityId('unknown-id');
-
-			expect(user).toBeNull();
+		it('the promise is rejected if file could not be uploaded to S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			mockS3Instance.putObject.mockImplementationOnce((obj, cb) => {
+				cb(new Error('AWS error'));
+			});
+			let error;
+			try {
+				await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Failed to upload asset to the s3 asset service');
 		});
 	});
 
-	describe('createUserWithIdp', () => {
-		it('should create a user and link an IDP', async () => {
-			// Mock insert user
-			mockDataService.execute
-				.mockReturnValueOnce({
-					data: { insert_users_profile_one: graphQlUserResponse },
-				})
-				.mockReturnValueOnce({}); // insert idp
-
-			const result = await usersService.createUserWithIdp(
-				{ firstName: 'Tom', lastName: 'Testerom', email: 'test@studiohypderdrive.be' },
-				Idp.HETARCHIEF,
-				'idp-1'
+	describe('delete', () => {
+		it('can delete a file from S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			const deleted = await assetsService.delete(
+				'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
 			);
-			expect(result).toEqual(archiefUser);
+			expect(deleted).toBeTruthy();
 		});
-	});
 
-	describe('updateUser', () => {
-		it('should update a user', async () => {
-			// Mock insert user
-			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: graphQlUserResponse },
+		it('throws an exception if the file could not be deleted from S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			mockS3Instance.deleteObject.mockImplementationOnce(() => {
+				throw new Error('AWS error');
 			});
-
-			const result = await usersService.updateUser('123', {
-				firstName: 'Tom',
-				lastName: 'Testerom',
-				email: 'test@studiohypderdrive.be',
-			});
-			expect(result).toEqual(archiefUser);
+			let error;
+			try {
+				await assetsService.delete(
+					'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Failed to delete asset from S3');
 		});
-	});
 
-	describe('updateAcceptedTos', () => {
-		it('should update if a user accepted the terms of service', async () => {
-			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: graphQlUserResponse },
+		it('the promise is rejected if file could not be deleted from S3', async () => {
+			nock('http://assettoken/s3').post('/').reply(201, {});
+			mockS3Instance.deleteObject.mockImplementationOnce((obj, cb) => {
+				cb(new Error('AWS error'));
 			});
-
-			const result = await usersService.updateAcceptedTos('123', {
-				acceptedTosAt: '2022-02-21T18:00:00',
-			});
-			expect(result).toEqual(archiefUser);
+			let error;
+			try {
+				await assetsService.delete(
+					'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual('Failed to delete asset from S3');
 		});
 	});
 });
