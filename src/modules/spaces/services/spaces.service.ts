@@ -8,6 +8,7 @@ import { AccessType, Space } from '../types';
 import {
 	FIND_SPACE_BY_CP_ADMIN_ID,
 	FIND_SPACE_BY_ID,
+	FIND_SPACE_BY_MAINTAINER_IDENTIFIER,
 	FIND_SPACES,
 	GET_SPACE_MAINTAINER_PROFILES,
 } from './queries.gql';
@@ -151,6 +152,16 @@ export class SpacesService {
 
 	public async findById(id: string): Promise<Space | null> {
 		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_ID, { id });
+		if (!spaceResponse.data.cp_space[0]) {
+			return null;
+		}
+		return this.adapt(spaceResponse.data.cp_space[0]);
+	}
+
+	public async findBySlug(slug: string): Promise<Space | null> {
+		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_MAINTAINER_IDENTIFIER, {
+			slug,
+		});
 		if (!spaceResponse.data.cp_space[0]) {
 			return null;
 		}
