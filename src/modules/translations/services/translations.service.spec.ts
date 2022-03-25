@@ -1,4 +1,6 @@
+import { CACHE_MANAGER } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Cache } from 'cache-manager';
 
 import { TranslationsService } from './translations.service';
 
@@ -6,6 +8,11 @@ import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
+	get: jest.fn(),
+	set: jest.fn(),
 };
 
 const mockTranslationsResponse = {
@@ -23,6 +30,10 @@ describe('TranslationsService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheManager,
 				},
 			],
 		}).compile();
