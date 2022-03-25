@@ -1,0 +1,18 @@
+mutation insertObjectIntoCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
+	insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_meemoo_fragment_id: $objectMeemooFragmentId}) {
+		returning {
+			created_at
+			ie {
+				meemoo_fragment_id
+				schema_identifier
+				dcterms_format
+				dcterms_available
+				schema_creator
+				schema_description
+				schema_name
+				schema_maintainer_id
+				schema_number_of_pages
+			}
+		}
+	}
+}

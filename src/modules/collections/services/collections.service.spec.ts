@@ -90,6 +90,8 @@ const mockGqlCollectionObjectsResult = {
 					dcterms_format: 'video',
 					schema_number_of_pages: null,
 					schema_identifier: '8s4jm2514q',
+					meemoo_fragment_id:
+						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 				},
 			},
 		],
@@ -115,6 +117,8 @@ const mockGqlCollectionObjectResult = {
 					dcterms_format: 'video',
 					schema_number_of_pages: null,
 					schema_identifier: '8s4jm2514q',
+					meemoo_fragment_id:
+						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 				},
 			},
 		],
@@ -122,9 +126,9 @@ const mockGqlCollectionObjectResult = {
 };
 
 const mockCollectionObject: IeObject = {
-	id: '8s4jm2514q',
 	meemooFragmentId:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+	schema_identifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	termsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -201,7 +205,12 @@ describe('CollectionsService', () => {
 				mockGqlCollectionObjectLink
 			);
 			// test some sample keys
-			expect(adapted.id).toEqual(mockGqlCollectionObjectLink.ie.schema_identifier);
+			expect(adapted.meemooFragmentId).toEqual(
+				mockGqlCollectionObjectLink.ie.meemoo_fragment_id
+			);
+			expect(adapted.schema_identifier).toEqual(
+				mockGqlCollectionObjectLink.ie.schema_identifier
+			);
 			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
 			expect(adapted.termsAvailable).toEqual(
 				mockGqlCollectionObjectLink.ie.dcterms_available
@@ -256,8 +265,8 @@ describe('CollectionsService', () => {
 				mockUser.id,
 				{}
 			);
-			expect(response.items[0].id).toBe(
-				mockGqlCollectionObjectsResult.data.users_collection_ie[0].ie.schema_identifier
+			expect(response.items[0].meemooFragmentId).toBe(
+				mockGqlCollectionObjectsResult.data.users_collection_ie[0].ie.meemoo_fragment_id
 			);
 		});
 
@@ -285,9 +294,9 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
 			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
-				mockCollectionObject.id
+				mockCollectionObject.meemooFragmentId
 			);
-			expect(response.id).toBe(mockCollectionObject.id);
+			expect(response.meemooFragmentId).toBe(mockCollectionObject.meemooFragmentId);
 		});
 	});
 
@@ -358,7 +367,7 @@ describe('CollectionsService', () => {
 				data: { object_ie: [mockGqlCollectionObject] },
 			});
 			const object = await collectionsService.findObjectBySchemaIdentifier('8s4jm2514q');
-			expect(object.id).toEqual('8s4jm2514q');
+			expect(object.meemooFragmentId).toEqual('8s4jm2514q');
 		});
 	});
 
@@ -380,9 +389,11 @@ describe('CollectionsService', () => {
 
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.ie.schema_identifier
+				mockGqlCollectionObjectLink.ie.meemoo_fragment_id
 			);
-			expect(response.id).toBe(mockGqlCollectionObjectLink.ie.schema_identifier);
+			expect(response.meemooFragmentId).toBe(
+				mockGqlCollectionObjectLink.ie.meemoo_fragment_id
+			);
 			findObjectInCollectionSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
@@ -396,7 +407,7 @@ describe('CollectionsService', () => {
 			try {
 				await collectionsService.addObjectToCollection(
 					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier
+					mockGqlCollectionObjectLink.ie.meemoo_fragment_id
 				);
 			} catch (e) {
 				error = e;
@@ -421,7 +432,7 @@ describe('CollectionsService', () => {
 			try {
 				await collectionsService.addObjectToCollection(
 					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier
+					mockGqlCollectionObjectLink.ie.meemoo_fragment_id
 				);
 			} catch (e) {
 				error = e;
@@ -447,7 +458,7 @@ describe('CollectionsService', () => {
 			});
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.ie.schema_identifier,
+				mockGqlCollectionObjectLink.ie.meemoo_fragment_id,
 				mockUser.id
 			);
 			expect(affectedRows).toBe(1);

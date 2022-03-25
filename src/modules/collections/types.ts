@@ -1,3 +1,14 @@
+import {
+	FindCollectionByIdQuery,
+	FindCollectionObjectsByCollectionIdQuery,
+	FindCollectionsByUserQuery,
+	FindObjectInCollectionQuery,
+	GetObjectByMeemooFragmentIdQuery,
+	InsertCollectionsMutation,
+	InsertObjectIntoCollectionMutation,
+	UpdateCollectionMutation,
+} from '../../generated/graphql';
+
 export interface Collection {
 	id: string;
 	name: string;
@@ -8,15 +19,13 @@ export interface Collection {
 	objects?: IeObject[];
 }
 
-export interface GqlCollection {
-	id: string;
-	name: string;
-	created_at: string;
-	updated_at: string;
-	is_default: boolean;
-	user_profile_id: string;
-	ies?: CollectionObjectLink[];
-}
+export type GqlCollectionWithObjects = FindCollectionsByUserQuery['users_collection'][0];
+
+export type GqlCollection =
+	| GqlCollectionWithObjects
+	| FindCollectionByIdQuery['users_collection'][0]
+	| InsertCollectionsMutation['insert_users_collection']['returning'][0]
+	| UpdateCollectionMutation['update_users_collection']['returning'][0];
 
 export interface GqlCreateCollection {
 	name: string;
@@ -34,36 +43,21 @@ export interface GqlUpdateCollection {
 	updated_at?: string;
 }
 
-export interface CollectionObjectLink {
-	created_at: string;
-	ie: GqlObject;
-}
+export type CollectionObjectLink =
+	| FindObjectInCollectionQuery['users_collection_ie'][0]
+	| FindCollectionsByUserQuery['users_collection'][0]['ies'][0]
+	| InsertObjectIntoCollectionMutation['insert_users_collection_ie']
+	| FindCollectionObjectsByCollectionIdQuery['users_collection_ie'][0];
 
-export interface GqlObject {
-	schema_name: string;
-	schema_creator: any;
-	dcterms_available: string;
-	schema_thumbnail_url: string;
-	dcterms_format: string;
-	schema_number_of_pages: any;
-	schema_identifier: string;
-	meemoo_fragment_id: string;
-	maintainer: {
-		schema_identifier: string;
-		schema_name: string;
-		space: {
-			id: string;
-		};
-	};
-}
+export type GqlObject = GetObjectByMeemooFragmentIdQuery['object_ie'][0];
 
 export interface IeObject {
+	meemooFragmentId: string; // Unique id per object
+	schemaIdentifier: string; // PID: not unique per object
 	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
 	format: string;
-	id: string;
-	meemooFragmentId: string;
 	name: string;
 	numberOfPages: any;
 	termsAvailable: string;
