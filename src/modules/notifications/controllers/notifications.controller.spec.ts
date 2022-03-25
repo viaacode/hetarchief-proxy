@@ -10,9 +10,10 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockNotification1: Notification = {
@@ -53,6 +54,7 @@ const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -61,6 +63,8 @@ const mockVisit: Visit = {
 	endAt: '2022-03-03T17:00:00',
 	createdAt: '2022-02-11T15:28:40.676',
 	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -71,6 +75,8 @@ const mockVisit: Visit = {
 		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
+	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
+	updatedByName: 'CP Admin',
 };
 
 const mockUser: User = {
@@ -79,7 +85,8 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {

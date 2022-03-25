@@ -13,6 +13,9 @@ export const GET_USER_BY_IDENTITY_ID = `
 					}
 				}
 			}
+			identities {
+				identity_provider_name
+			}
 		}
 	}
 `;
@@ -31,6 +34,9 @@ export const INSERT_USER = `
 						name
 					}
 				}
+			}
+			identities {
+				identity_provider_name
 			}
 		}
 	}
@@ -58,6 +64,9 @@ export const UPDATE_USER = `
 						name
 					}
 				}
+			}
+			identities {
+				identity_provider_name
 			}
 		}
 	}

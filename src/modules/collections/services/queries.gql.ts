@@ -39,6 +39,8 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 		users_collection_ie(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where], collection: {user_profile_id: {_eq: $userProfileId}}}, offset: $offset, limit: $limit) {
 			created_at
 			ie {
+				schema_identifier
+				meemoo_identifier
 				schema_name
 				schema_creator
 				schema_description
@@ -46,14 +48,6 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 				schema_thumbnail_url
 				dcterms_format
 				schema_number_of_pages
-				schema_identifier
-				maintainer {
-					schema_identifier
-					schema_name
-					space {
-						id
-					}
-				}
 			}
 		}
 		users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
@@ -104,50 +98,45 @@ export const DELETE_COLLECTION = `
 
 export const FIND_OBJECT_IN_COLLECTION = `
 	query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
+		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
 			ie {
+				schema_identifier
+				meemoo_identifier
 				schema_name
 				schema_creator
 				dcterms_available
 				schema_thumbnail_url
 				dcterms_format
 				schema_number_of_pages
-				schema_identifier
-				meemoo_fragment_id
 			}
 			created_at
 		}
 	}
 `;
 
-export const FIND_OBJECT_BY_FRAGMENT_IDENTIFIER = `
+export const FIND_OBJECT_BY_SCHEMA_IDENTIFIER = `
 	query getObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
 		object_ie(where: {schema_identifier: {_eq: $objectSchemaIdentifier}}, limit: 1) {
+			schema_identifier
+			meemoo_identifier
 			schema_name
 			schema_creator
 			dcterms_available
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
-			schema_identifier
-			meemoo_fragment_id
-			maintainer {
-				schema_identifier
-				schema_name
-				space {
-					id
-				}
-			}
 		}
 	}
 `;
 
 export const INSERT_OBJECT_INTO_COLLECTION = `
-	mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String, $objectMeemooFragmentId: String) {
-		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_schema_identifier: $objectSchemaIdentifier, object_ie_meemoo_fragment_id: $objectMeemooFragmentId}) {
+	mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
+		insert_users_collection_ie(objects: {user_collection_id: $collectionId, ie_schema_identifier: $objectSchemaIdentifier}) {
 			returning {
 				created_at
 				ie {
+					schema_identifier
+					meemoo_identifier
 					dcterms_format
 					dcterms_available
 					schema_creator
@@ -155,7 +144,6 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 					schema_name
 					schema_maintainer_id
 					schema_number_of_pages
-					schema_identifier
 				}
 			}
 		}
@@ -164,7 +152,7 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 
 export const REMOVE_OBJECT_FROM_COLLECTION = `
 	mutation removeObjectFromCollection($objectSchemaIdentifier: String, $collectionId: uuid, $userProfileId: uuid) {
-		delete_users_collection_ie(where: {object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
+		delete_users_collection_ie(where: {ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
 			affected_rows
 		}
 	}

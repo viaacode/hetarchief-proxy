@@ -1,0 +1,90 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+abels:
+  app: proxy-${env}
+  template: notify-template
+message: |-
+  The cron was added and will run every min vor env ${env}
+metadata:
+  annotations:
+    description: |-
+      Provides notification cron
+    openshift.io/display-name: proxy-cron
+    openshift.io/documentation-url: https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3289743391/Technische+documentatie
+    openshift.io/long-description: This template provides a cron instance for notification triggers
+    tags: proxy,cron,api,jobTemplate
+  name: notify-template
+objects:
+- apiVersion: batch/v1beta1
+  kind: CronJob
+  metadata:
+    labels:
+      action_name: noftify
+      app: proxy
+      env: ${env}
+      template: cronjob
+    name: noftify-${env}
+
+  spec:
+    concurrencyPolicy: Forbid
+    failedJobsHistoryLimit: 1
+    jobTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        template:
+          metadata:
+
+            creationTimestamp: null
+            labels:
+              action_name: notify
+              app: proxy
+              env: qas
+              template: cronjob_job
+          spec:
+            containers:
+            - command:
+              - /bin/sh
+              - -c
+              - 'curl -s -X POST -H "accept: */*"  -H "apiKey: $PROXY_API_KEY" $SVC_PORT$NOTIFY_PATH'
+              env:
+              - name: NODE_ENV
+                value: production
+              envFrom:
+              - configMapRef:
+                  name: proxy-crons-${env}
+              - configMapRef:
+                  name: proxy-${env}
+              - secretRef:
+                  name: proxy-${env}
+              - secretRef:
+                  name: hetarchief-redis-${env}
+              image: image-registry.openshift-image-registry.svc:5000/hetarchief/proxy:${env}
+              imagePullPolicy: IfNotPresent
+              name: hetarchief-crons
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: Never
+            schedulerName: default-scheduler
+            securityContext:
+              runAsUser: 1000
+            terminationGracePeriodSeconds: 30
+    schedule: '* * * * *'
+    successfulJobsHistoryLimit: 1
+    suspend: false
+
+- apiVersion: v1
+  data:
+    NOTIFY_PATH: /notifications/check-new
+    SVC_PORT: proxy-${env}:3000
+  kind: ConfigMap
+  metadata:
+    name: proxy-crons-${env}
+    namespace: hetarchief
+
+
+parameters:
+- name: env
+  value: qas

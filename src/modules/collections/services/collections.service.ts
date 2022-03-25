@@ -17,7 +17,7 @@ import {
 	FIND_COLLECTION_BY_ID,
 	FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
 	FIND_COLLECTIONS_BY_USER,
-	FIND_OBJECT_BY_FRAGMENT_IDENTIFIER,
+	FIND_OBJECT_BY_SCHEMA_IDENTIFIER,
 	FIND_OBJECT_IN_COLLECTION,
 	INSERT_COLLECTION,
 	INSERT_OBJECT_INTO_COLLECTION,
@@ -46,8 +46,8 @@ export class CollectionsService {
 			creator: get(gqlIeObject, 'schema_creator'),
 			description: get(gqlIeObject, 'schema_description'),
 			format: get(gqlIeObject, 'dcterms_format'),
-			id: get(gqlIeObject, 'schema_identifier'),
-			meemooFragmentId: get(gqlIeObject, 'meemoo_fragment_id'),
+			schemaIdentifier: get(gqlIeObject, 'schema_identifier'), // Unique for each object
+			meemooIdentifier: get(gqlIeObject, 'meemoo_identifier'),
 			name: get(gqlIeObject, 'schema_name'),
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
@@ -203,7 +203,7 @@ export class CollectionsService {
 	public async findObjectBySchemaIdentifier(
 		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(FIND_OBJECT_BY_FRAGMENT_IDENTIFIER, {
+		const response = await this.dataService.execute(FIND_OBJECT_BY_SCHEMA_IDENTIFIER, {
 			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.object_ie[0];
@@ -238,7 +238,6 @@ export class CollectionsService {
 		const response = await this.dataService.execute(INSERT_OBJECT_INTO_COLLECTION, {
 			collectionId,
 			objectSchemaIdentifier,
-			objectMeemooFragmentId: objectInfo.meemooFragmentId,
 		});
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);

@@ -1,7 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { AccessType } from '~modules/spaces/types';
 import { SortDirection } from '~shared/types';
 
 export class SpacesQueryDto {
@@ -10,9 +11,21 @@ export class SpacesQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: "The query to search for. Use '%' for wildcard.",
-		default: '%',
+		default: undefined,
 	})
-	query? = '%';
+	query? = undefined;
+
+	@IsString()
+	@IsEnum(AccessType)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Get spaces that are currently accessible by the user',
+		default: undefined,
+		example: AccessType.ACTIVE,
+		enum: AccessType,
+	})
+	accessType? = undefined;
 
 	@IsNumber()
 	@Type(() => Number)

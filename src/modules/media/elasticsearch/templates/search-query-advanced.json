@@ -29,8 +29,7 @@
         "schema_keywords",
         "schema_in_language",
         "dcterms_format",
-        "ebucore_object_type",
-        "schema_transcript"
+        "ebucore_object_type"
       ]
     }
   },
@@ -64,8 +63,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
-        "ebucore_object_type",
-        "schema_transcript"
+        "ebucore_object_type"
       ]
     }
   },
@@ -100,8 +98,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
-        "ebucore_object_type",
-        "schema_transcript"
+        "ebucore_object_type"
       ]
     }
   },
@@ -135,8 +132,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
-        "ebucore_object_type",
-        "schema_transcript"
+        "ebucore_object_type"
       ]
     }
   },
@@ -171,8 +167,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
-        "ebucore_object_type",
-        "schema_transcript"
+        "ebucore_object_type"
       ]
     }
   }

@@ -6,7 +6,8 @@ import { CollectionsService } from '../services/collections.service';
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 const mockCollectionsResponse: IPagination<Collection> = {
@@ -34,6 +35,9 @@ const mockCollectionsResponse: IPagination<Collection> = {
 	size: 1000,
 };
 
+const mockSchemaIdentifier =
+	'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5';
+
 const mockCollectionObjectsResponse = {
 	items: [
 		{
@@ -59,7 +63,8 @@ const mockUser: User = {
 	lastName: 'Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	idp: Idp.HETARCHIEF,
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
@@ -190,7 +195,7 @@ describe('CollectionsController', () => {
 			);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockSchemaIdentifier,
 				{}
 			);
 			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
@@ -209,7 +214,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.addObjectToCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockSchemaIdentifier,
 					{}
 				);
 			} catch (e) {
@@ -227,7 +232,7 @@ describe('CollectionsController', () => {
 			);
 			const collectionObject = await collectionsController.removeObjectFromCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockSchemaIdentifier,
 				{}
 			);
 			expect(collectionObject).toEqual({ status: 'object has been deleted' });
@@ -259,7 +264,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.removeObjectFromCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockSchemaIdentifier,
 					{}
 				);
 			} catch (e) {
@@ -282,7 +287,7 @@ describe('CollectionsController', () => {
 
 			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockSchemaIdentifier,
 				mockCollectionsResponse.items[1].id,
 				{}
 			);
@@ -306,7 +311,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
 					{}
 				);
@@ -333,7 +338,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
 					{}
 				);

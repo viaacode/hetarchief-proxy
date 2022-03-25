@@ -4,11 +4,13 @@ import {
 	Controller,
 	Get,
 	Logger,
+	NotFoundException,
 	Param,
 	Patch,
 	Post,
 	Query,
 	Session,
+	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -20,13 +22,15 @@ import { Visit, VisitStatus } from '../types';
 
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { Permission, User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
+@UseGuards(LoggedInGuard)
 @ApiTags('Visits')
 @Controller('visits')
-@UseGuards(LoggedInGuard)
 export class VisitsController {
 	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
 
@@ -37,9 +41,46 @@ export class VisitsController {
 	) {}
 
 	@Get()
-	public async getVisits(@Query() queryDto: VisitsQueryDto): Promise<IPagination<Visit>> {
-		const visits = await this.visitsService.findAll(queryDto);
-		return visits;
+	public async getVisits(
+		@Query() queryDto: VisitsQueryDto,
+		@SessionUser() user: User
+	): Promise<IPagination<Visit>> {
+		const has = (name: Permission) => user.permissions.includes(name);
+
+		if (has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, {});
+			return visits;
+		} else if (has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
+			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.id);
+
+			if (!cpSpace) {
+				throw new NotFoundException(
+					i18n.t('The current user does not seem to be linked to a cp space.')
+				);
+			}
+
+			const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: cpSpace.id });
+			return visits;
+		} else {
+			throw new UnauthorizedException(
+				i18n.t('You do not have the right permissions to call this route')
+			);
+		}
+	}
+
+	@Get('personal')
+	public async getPersonalVisits(
+		@Query() queryDto: VisitsQueryDto,
+		@SessionUser() user: User
+	): Promise<IPagination<Visit>> {
+		if (user.permissions.includes(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, { userProfileId: user.id });
+			return visits;
+		}
+
+		throw new UnauthorizedException(
+			i18n.t('You do not have the right permissions to call this route')
+		);
 	}
 
 	@Get(':id')
@@ -48,10 +89,22 @@ export class VisitsController {
 		return visit;
 	}
 
+	@Get('active-for-space/:maintainerOrgId')
+	public async getActiveVisitForUserAndSpace(
+		@Param('maintainerOrgId') maintainerOrgId: string,
+		@Session() session: Record<string, any>
+	): Promise<Visit | null> {
+		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
+			SessionHelper.getArchiefUserInfo(session).id,
+			maintainerOrgId
+		);
+		return activeVisit;
+	}
+
 	@Post()
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
-		@Session() session
+		@Session() session: Record<string, any>
 	): Promise<Visit> {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
@@ -66,8 +119,8 @@ export class VisitsController {
 		const visit = await this.visitsService.create(createVisitDto, user.id);
 
 		// Send notifications
-		const recipientIds = await this.spacesService.getMaintainerProfileIds(visit.spaceId);
-		await this.notificationsService.onCreateVisit(visit, recipientIds, user);
+		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
+		await this.notificationsService.onCreateVisit(visit, recipients, user);
 
 		return visit;
 	}
@@ -87,12 +140,11 @@ export class VisitsController {
 			// Send notifications
 			const space = await this.spacesService.findById(visit.spaceId);
 			if (updateVisitDto.status === VisitStatus.APPROVED) {
-				await this.notificationsService.onApproveVisitRequest(visit, space, user);
+				await this.notificationsService.onApproveVisitRequest(visit, space);
 			} else if (updateVisitDto.status === VisitStatus.DENIED) {
 				await this.notificationsService.onDenyVisitRequest(
 					visit,
 					space,
-					user,
 					updateVisitDto.note
 				);
 			}
