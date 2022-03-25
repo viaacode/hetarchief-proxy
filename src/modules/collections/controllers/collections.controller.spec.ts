@@ -35,6 +35,9 @@ const mockCollectionsResponse: IPagination<Collection> = {
 	size: 1000,
 };
 
+const mockMeemooFragmentId =
+	'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5';
+
 const mockCollectionObjectsResponse = {
 	items: [
 		{
@@ -192,7 +195,7 @@ describe('CollectionsController', () => {
 			);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockMeemooFragmentId,
 				{}
 			);
 			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
@@ -211,7 +214,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.addObjectToCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockMeemooFragmentId,
 					{}
 				);
 			} catch (e) {
@@ -229,7 +232,7 @@ describe('CollectionsController', () => {
 			);
 			const collectionObject = await collectionsController.removeObjectFromCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockMeemooFragmentId,
 				{}
 			);
 			expect(collectionObject).toEqual({ status: 'object has been deleted' });
@@ -261,7 +264,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.removeObjectFromCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockMeemooFragmentId,
 					{}
 				);
 			} catch (e) {
@@ -284,7 +287,7 @@ describe('CollectionsController', () => {
 
 			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
 				mockCollectionsResponse.items[0].id,
-				'8s4jm2514q',
+				mockMeemooFragmentId,
 				mockCollectionsResponse.items[1].id,
 				{}
 			);
@@ -308,7 +311,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockMeemooFragmentId,
 					mockCollectionsResponse.items[1].id,
 					{}
 				);
@@ -335,7 +338,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					mockCollectionsResponse.items[0].id,
-					'8s4jm2514q',
+					mockMeemooFragmentId,
 					mockCollectionsResponse.items[1].id,
 					{}
 				);

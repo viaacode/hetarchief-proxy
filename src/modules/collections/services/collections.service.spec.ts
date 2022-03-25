@@ -128,7 +128,7 @@ const mockGqlCollectionObjectResult = {
 const mockCollectionObject: IeObject = {
 	meemooFragmentId:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	schema_identifier: '8s4jm2514q',
+	schemaIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	termsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -208,7 +208,7 @@ describe('CollectionsService', () => {
 			expect(adapted.meemooFragmentId).toEqual(
 				mockGqlCollectionObjectLink.ie.meemoo_fragment_id
 			);
-			expect(adapted.schema_identifier).toEqual(
+			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlCollectionObjectLink.ie.schema_identifier
 			);
 			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
@@ -366,8 +366,10 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: { object_ie: [mockGqlCollectionObject] },
 			});
-			const object = await collectionsService.findObjectBySchemaIdentifier('8s4jm2514q');
-			expect(object.meemooFragmentId).toEqual('8s4jm2514q');
+			const object = await collectionsService.findObjectByMeemooFragmentId(
+				mockCollectionObject.meemooFragmentId
+			);
+			expect(object.meemooFragmentId).toEqual(mockCollectionObject.meemooFragmentId);
 		});
 	});
 
@@ -377,7 +379,7 @@ describe('CollectionsService', () => {
 				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
+				.spyOn(collectionsService, 'findObjectByMeemooFragmentId')
 				.mockResolvedValueOnce(mockCollectionObject);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
@@ -425,7 +427,7 @@ describe('CollectionsService', () => {
 				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
+				.spyOn(collectionsService, 'findObjectByMeemooFragmentId')
 				.mockResolvedValueOnce(null);
 
 			let error;
@@ -440,7 +442,7 @@ describe('CollectionsService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				statusCode: 404,
-				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.schema_identifier} was not found`,
+				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.meemoo_fragment_id} was not found`,
 			});
 			findObjectInCollectionSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();
