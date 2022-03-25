@@ -77,11 +77,11 @@ export default {
 				schema_date_created_lower_bound: '2020-09-01',
 				premis_is_represented_by: [
 					{
+						ie_schema_identifier:
+							'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 						schema_name: 'Durf te vragen R002 A0001',
 						schema_alternate_name: 'Durf te vragen R002 A0001',
 						schema_description: null,
-						ie_schema_identifier:
-							'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 						dcterms_format: 'mp4',
 						schema_transcript: null,
 						schema_date_created: null,

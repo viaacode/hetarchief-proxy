@@ -98,7 +98,7 @@ export const DELETE_COLLECTION = `
 
 export const FIND_OBJECT_IN_COLLECTION = `
 	query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
+		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
 			ie {
 				schema_identifier
 				meemoo_identifier
@@ -131,7 +131,7 @@ export const FIND_OBJECT_BY_SCHEMA_IDENTIFIER = `
 
 export const INSERT_OBJECT_INTO_COLLECTION = `
 	mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_schema_identifier: $objectSchemaIdentifier}) {
+		insert_users_collection_ie(objects: {user_collection_id: $collectionId, ie_schema_identifier: $objectSchemaIdentifier}) {
 			returning {
 				created_at
 				ie {
@@ -152,7 +152,7 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 
 export const REMOVE_OBJECT_FROM_COLLECTION = `
 	mutation removeObjectFromCollection($objectSchemaIdentifier: String, $collectionId: uuid, $userProfileId: uuid) {
-		delete_users_collection_ie(where: {object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
+		delete_users_collection_ie(where: {ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
 			affected_rows
 		}
 	}

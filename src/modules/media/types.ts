@@ -37,12 +37,12 @@ export interface PlayerTicket {
 	};
 }
 
-export interface File {
+export interface MediaFile {
 	id: string;
 	name: string;
 	alternateName: string;
 	description: string;
-	representationId: string;
+	schemaIdentifier: string;
 	ebucoreMediaType: string;
 	ebucoreIsMediaFragmentOf: string;
 	embedUrl: string;
@@ -57,7 +57,7 @@ export interface Representation {
 	transcript: string;
 	dateCreated: string;
 	id: string;
-	files: File[];
+	files: MediaFile[];
 }
 
 export interface Media {

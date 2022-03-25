@@ -1,12 +1,6 @@
-export const GET_FILE_BY_SCHEMA_IDENTIFIER = `
+export const GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER = `
 	query getFileBySchemaIdentifier($id: String) {
-		object_file(where: {schema_identifier: {_eq: $id } }) {
-			schema_identifier
-			schema_name
-			schema_alternate_name
-			schema_description
-			ebucore_media_type
-			ebucore_is_media_fragment_of
+		object_file(where: {representation_schema_identifier: {_eq: $id } }) {
 			schema_embed_url
 		}
 	}
@@ -66,10 +60,10 @@ export const GET_OBJECT_IE_BY_ID = `
 			ebucore_object_type
 			schema_genre
 			premis_is_represented_by {
+        ie_schema_identifier
 				schema_name
 				schema_alternate_name
 				schema_description
-				ie_schema_identifier
 				dcterms_format
 				schema_transcript
 				schema_date_created
@@ -77,7 +71,7 @@ export const GET_OBJECT_IE_BY_ID = `
 					schema_name
 					schema_alternate_name
 					schema_description
-					schema_identifier
+					representation_schema_identifier
 					ebucore_media_type
 					ebucore_is_media_fragment_of
 					schema_embed_url
