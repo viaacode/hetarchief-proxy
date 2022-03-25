@@ -7,7 +7,7 @@ import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, PlayerTicket, Representation } from '../types';
 
-import { GET_FILE_BY_REPRESENTATION_ID, GET_OBJECT_IE_BY_ID } from './queries.gql';
+import { GET_FILE_BY_SCHEMA_IDENTIFIER, GET_OBJECT_IE_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -221,7 +221,7 @@ export class MediaService {
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_ID, { id });
+		} = await this.dataService.execute(GET_FILE_BY_SCHEMA_IDENTIFIER, { id });
 		if (!objectFile[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

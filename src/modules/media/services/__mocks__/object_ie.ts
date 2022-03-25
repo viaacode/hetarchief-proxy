@@ -88,11 +88,12 @@ export default {
 						id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
 						premis_includes: [
 							{
-								id: 'https://archief-media.viaa.be/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
+								schema_identifier:
+									'https://archief-media.viaa.be/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
 								schema_name: 'browse.mp4',
 								schema_alternate_name: '8911p09j1g.MXF',
 								schema_description: null,
-								representation_id:
+								representation_schema_identifier:
 									'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
 								ebucore_media_type: 'mp4',
 								ebucore_is_media_fragment_of: null,

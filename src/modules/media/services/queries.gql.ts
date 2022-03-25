@@ -1,11 +1,10 @@
-export const GET_FILE_BY_REPRESENTATION_ID = `
-	query getFileByRepresentationId($id: String) {
-		object_file(where: {representation_id: {_eq: $id } }) {
-			id
+export const GET_FILE_BY_SCHEMA_IDENTIFIER = `
+	query getFileBySchemaIdentifier($id: String) {
+		object_file(where: {schema_identifier: {_eq: $id } }) {
+			schema_identifier
 			schema_name
 			schema_alternate_name
 			schema_description
-			representation_id
 			ebucore_media_type
 			ebucore_is_media_fragment_of
 			schema_embed_url
