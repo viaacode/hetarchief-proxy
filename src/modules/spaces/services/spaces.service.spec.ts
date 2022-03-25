@@ -82,6 +82,7 @@ describe('SpacesService', () => {
 				color: 'red',
 				description: 'my-space',
 				serviceDescription: 'service description',
+				image: '',
 			});
 			expect(response.id).toEqual('1');
 		});

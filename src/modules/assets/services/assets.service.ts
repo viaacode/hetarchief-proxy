@@ -6,7 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import AWS, { AWSError, S3 } from 'aws-sdk';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
-import _, { kebabCase } from 'lodash';
+import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AssetFileType, AssetToken } from '../types';
@@ -119,7 +119,7 @@ export class AssetsService {
 
 	public async upload(assetFiletype: AssetFileType, file: Express.Multer.File): Promise<string> {
 		const parsedFilename = path.parse(file.originalname);
-		const key = `${assetFiletype}/${kebabCase(parsedFilename.name)}-${uuidv4()}${
+		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}-${uuidv4()}${
 			parsedFilename.ext
 		}`;
 

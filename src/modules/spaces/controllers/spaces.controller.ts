@@ -84,7 +84,7 @@ export class SpacesController {
 		@Body() updateSpaceDto: UpdateSpaceDto,
 		@UploadedFile() file: Express.Multer.File
 	): Promise<Space> {
-		let space = await this.spacesService.findById(id);
+		const space = await this.spacesService.findById(id);
 		if (file) {
 			updateSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
 			if (space.image) {
@@ -95,7 +95,6 @@ export class SpacesController {
 			// image is empty: delete current image
 			await this.assetsService.delete(space.image);
 		}
-		space = await this.spacesService.update(id, updateSpaceDto);
-		return space;
+		return this.spacesService.update(id, updateSpaceDto);
 	}
 }
