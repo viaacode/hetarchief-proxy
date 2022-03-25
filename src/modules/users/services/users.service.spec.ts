@@ -11,6 +11,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 const graphQlUserResponse = {
 	id: '123',
+	full_name: 'Tom Testerom',
 	first_name: 'Tom',
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',
@@ -54,6 +55,13 @@ describe('UsersService', () => {
 
 	it('services should be defined', () => {
 		expect(usersService).toBeDefined();
+	});
+
+	describe('adapt', () => {
+		it('can adapt an empty user', () => {
+			const result = usersService.adapt(null);
+			expect(result).toBeNull();
+		});
 	});
 
 	describe('getUserByIdentityId', () => {

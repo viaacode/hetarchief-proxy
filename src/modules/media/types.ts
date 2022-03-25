@@ -1,4 +1,3 @@
-import { AdvancedQuery, SearchFilters } from './dto/media.dto';
 import { QueryType } from './elasticsearch/consts';
 
 import { ContactInfo } from '~shared/types/types';
@@ -9,14 +8,18 @@ export enum MediaFormat {
 }
 
 export interface QueryBuilderConfig {
-	AGGS_PROPERTIES: Array<keyof SearchFilters>;
+	AGGS_PROPERTIES: Array<SearchFilterField>;
 	MAX_COUNT_SEARCH_RESULTS: number;
 	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean };
+	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean };
 	NUMBER_OF_FILTER_OPTIONS: number;
-	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string };
-	DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType };
-	OCCURRENCE_TYPE: { [prop in keyof AdvancedQuery]: string };
+	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
+	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
+	OCCURRENCE_TYPE: { [prop in Operator]?: string };
+	VALUE_OPERATORS: Array<Operator>;
+	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
+	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
+	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
 }
 
 export interface PlayerTicket {
@@ -34,27 +37,6 @@ export interface PlayerTicket {
 	};
 }
 
-/**
- * premis_is_represented_by {
-      schema_name
-      schema_alternate_name
-      schema_description
-      ie_meemoo_fragment_id
-      dcterms_format
-      schema_transcript
-      schema_date_created
-      id
-      premis_includes {
-        id
-        schema_name
-        schema_alternate_name
-        schema_description
-        representation_id
-        ebucore_media_type
-        ebucore_is_media_fragment_of
-        schema_embed_url
-      }
- */
 export interface File {
 	id: string;
 	name: string;
@@ -120,4 +102,38 @@ export interface Media {
 	dateCreatedLowerBound: string;
 	ebucoreObjectType: string;
 	representations: Representation[];
+}
+
+export enum SearchFilterField {
+	QUERY = 'query',
+	ADVANCED_QUERY = 'advancedQuery',
+	FORMAT = 'format',
+	DURATION = 'duration',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	CREATOR = 'creator',
+	GENRE = 'genre',
+	KEYWORD = 'keyword',
+	NAME = 'name',
+	PUBLISHER = 'publisher',
+	DESCRIPTION = 'description',
+	ERA = 'era',
+	LOCATION = 'location',
+	LANGUAGE = 'language',
+}
+
+export enum Operator {
+	CONTAINS = 'contains',
+	CONTAINS_NOT = 'containsNot',
+	IS = 'is',
+	IS_NOT = 'isNot',
+	GTE = 'gte',
+	LTE = 'lte',
+}
+
+export enum OrderProperty {
+	RELEVANCE = 'relevance',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	NAME = 'name',
 }

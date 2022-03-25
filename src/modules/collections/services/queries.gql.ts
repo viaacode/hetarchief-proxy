@@ -47,13 +47,6 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 				dcterms_format
 				schema_number_of_pages
 				schema_identifier
-				maintainer {
-					schema_identifier
-					schema_name
-					space {
-						id
-					}
-				}
 			}
 		}
 		users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
@@ -131,13 +124,6 @@ export const FIND_OBJECT_BY_FRAGMENT_IDENTIFIER = `
 			schema_number_of_pages
 			schema_identifier
 			meemoo_fragment_id
-			maintainer {
-				schema_identifier
-				schema_name
-				space {
-					id
-				}
-			}
 		}
 	}
 `;

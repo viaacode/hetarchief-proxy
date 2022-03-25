@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isEmpty, trimStart } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -143,7 +143,7 @@ export class MediaService {
 		}));
 	}
 
-	public getSearchEndpoint(esIndex: string): string {
+	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
 		}
@@ -157,18 +157,26 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			if (e.response.statusCode === 404) {
-				this.logger.error(e.response.body);
-				throw new NotFoundException();
-			}
 			this.logger.error(e.response.body);
 			throw e;
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
+	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
-		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+		this.logger.log(esQuery);
+
+		let mediaResponse;
+		try {
+			mediaResponse = await this.executeQuery(esIndex, esQuery);
+		} catch (err) {
+			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
+				// TODO remove this fallback once or-ids match between INT and local DB
+				mediaResponse = await this.executeQuery(null, esQuery);
+			} else {
+				throw err;
+			}
+		}
 
 		return mediaResponse;
 	}

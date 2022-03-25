@@ -20,14 +20,29 @@ export const INSERT_VISIT = `
 			created_at
 			updated_at
 			user_profile {
+				full_name
 				first_name
 				last_name
 				mail
 				id
 			}
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
+						}
+					}
 				}
 			}
 		}
@@ -50,20 +65,35 @@ export const UPDATE_VISIT = `
 				note
 				profile {
 					full_name
+					first_name
+					last_name
 				}
 				created_at
 			}
 			created_at
 			updated_at
 			user_profile {
-				first_name
-				last_name
+				full_name
 				mail
 				id
+			}
+			updater {
+				id
+				full_name
 			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
+						}
+					}
 				}
 			}
 		}
@@ -81,7 +111,7 @@ export const FIND_VISITS = `
 			status
 			start_date
 			end_date
-			notes(order_by: { created_at: desc }, limit: 1) {
+			notes(order_by: {created_at: desc}, limit: 1) {
 				id
 				note
 				profile {
@@ -92,6 +122,7 @@ export const FIND_VISITS = `
 			created_at
 			updated_at
 			user_profile {
+				full_name
 				first_name
 				last_name
 				mail
@@ -100,7 +131,21 @@ export const FIND_VISITS = `
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
+						}
+					}
 				}
+			}
+			updater {
+				id
+				full_name
 			}
 		}
 		cp_visit_aggregate(where: $where) {
@@ -133,14 +178,77 @@ export const FIND_VISIT_BY_ID = `
 			created_at
 			updated_at
 			user_profile {
+				full_name
 				first_name
 				last_name
 				mail
 				id
 			}
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+`;
+
+export const FIND_ACTIVE_VISIT_BY_USER_AND_SPACE = `
+	query findActiveVisitByUserAndSpace($userProfileId: uuid, $spaceId: uuid, $now: timestamp) {
+		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, cp_space_id: {_eq: $spaceId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}}) {
+			id
+			cp_space_id
+			user_profile_id
+			user_reason
+			user_timeframe
+			status
+			start_date
+			end_date
+			notes(order_by: {created_at: desc}, limit: 1) {
+				id
+				note
+				profile {
+					full_name
+				}
+				created_at
+			}
+			created_at
+			updated_at
+			user_profile {
+				full_name
+				mail
+				id
+			}
+			updater {
+				id
+				full_name
+			}
+			space {
+				schema_maintainer {
+					schema_name
+					information {
+						primary_site {
+							address {
+								locality
+								postal_code
+								street
+							}
+						}
+					}
 				}
 			}
 		}
@@ -168,9 +276,22 @@ export const FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -190,9 +311,22 @@ export const FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}
@@ -212,9 +346,22 @@ export const FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 			end_date
 			created_at
 			updated_at
+			updater {
+				id
+				full_name
+			}
 			space {
 				schema_maintainer {
 					schema_name
+					information {
+					  primary_site {
+						address {
+						  locality
+						  postal_code
+						  street
+						}
+					  }
+					}
 				}
 			}
 		}

@@ -1,4 +1,16 @@
-import { AdvancedQuery, SearchFilters } from '../dto/media.dto';
+import _ from 'lodash';
+
+import { Operator, OrderProperty, SearchFilterField } from '../types';
+
+import descriptionSearchQuery from './templates/description-search-query.json';
+import nameSearchQuery from './templates/name-search-query.json';
+import searchQueryAdvanced from './templates/search-query-advanced.json';
+import searchQuery from './templates/search-query.json';
+
+const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
+const searchQueryTemplate = _.values(searchQuery);
+const nameSearchQueryTemplate = _.values(nameSearchQuery);
+const descriptionSearchQueryTemplate = _.values(descriptionSearchQuery);
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -9,8 +21,9 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
-export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: string } = {
+export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
 	query: 'query',
+	advancedQuery: 'query',
 	format: 'dcterms_format',
 	duration: 'schema_duration',
 	created: 'schema_date_created',
@@ -19,36 +32,69 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in keyof SearchFilters]: 
 	genre: 'schema_genre',
 	keyword: 'schema_keywords',
 	name: 'schema_name',
+	publisher: 'schema_publisher',
+	description: 'schema_description',
+	era: 'schema_temporal_coverage',
+	location: 'schema_spatial_coverage',
+	language: 'schema_in_language',
+};
+
+export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
+	relevance: '_score',
+	created: 'schema_date_created',
+	published: 'schema_date_published',
+	name: 'schema_name.keyword',
 };
 
 export enum QueryType {
-	TERM = 'term',
-	RANGE = 'range',
-	MATCH = 'match',
+	TERM = 'term', // Search for a single term exactly
+	TERMS = 'terms', // Must match at least one term exactly
+	RANGE = 'range', // Date range or duration range
+	MATCH = 'match', // Text based fuzzy search
 }
 
-export const DEFAULT_QUERY_TYPE: { [prop in keyof SearchFilters]: QueryType } = {
-	format: QueryType.TERM, // es keyword
+export const MULTI_MATCH_FIELDS: Array<SearchFilterField> = [
+	SearchFilterField.QUERY,
+	SearchFilterField.ADVANCED_QUERY,
+	SearchFilterField.NAME,
+	SearchFilterField.DESCRIPTION,
+];
+
+export const MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any } = {
+	query: searchQueryTemplate,
+	advancedQuery: searchQueryAdvancedTemplate,
+	name: nameSearchQueryTemplate,
+	description: descriptionSearchQueryTemplate,
+};
+
+export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
+	format: QueryType.TERMS, // es keyword
 	duration: QueryType.RANGE,
 	created: QueryType.RANGE,
 	published: QueryType.RANGE,
-	creator: QueryType.TERM, // es flattened
-	genre: QueryType.TERM, // TODO es text -> ook match query? error onder filter
-	keyword: QueryType.TERM, // TODO es text -> ook match query? error onder filter
-	name: QueryType.MATCH, // es text
+	creator: QueryType.TERMS, // es flattened
+	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	publisher: QueryType.TERMS,
+	era: QueryType.MATCH,
+	location: QueryType.MATCH,
+	language: QueryType.TERMS,
 };
 
-export const OCCURRENCE_TYPE: { [prop in keyof AdvancedQuery]: string } = {
+export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 	contains: 'must',
 	containsNot: 'must_not',
-	is: 'must',
+	is: 'filter', // exact match === filter query
 	isNot: 'must_not',
 };
 
-// By default add the 'format' aggregation
-export const AGGS_PROPERTIES: Array<keyof SearchFilters> = ['format'];
+export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
-export const NEEDS_FILTER_SUFFIX: { [prop in keyof SearchFilters]: boolean } = {
+// By default add the 'format' aggregation
+export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
+
+export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 	query: false,
 	format: false,
+	genre: true,
 };

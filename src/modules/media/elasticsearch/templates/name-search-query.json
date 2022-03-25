@@ -1,0 +1,23 @@
+[
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 100,
+      "fields": [
+        "schema_name^20",
+        "schema_alternate_name",
+        "schema_is_part_of",
+        "schema_is_part_of.alternatief",
+        "schema_is_part_of.archief",
+        "schema_is_part_of.deelarchief",
+        "schema_is_part_of.deelreeks",
+        "schema_is_part_of.programma, ",
+        "schema_is_part_of.reeks",
+        "schema_is_part_of.seizoen",
+        "schema_is_part_of.serie"
+      ]
+    }
+  }
+]

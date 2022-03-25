@@ -81,7 +81,7 @@ describe('MediaService', () => {
 	describe('findAll', () => {
 		it('returns the es response from the main _search endpoint if no index is specified', async () => {
 			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({});
+			const response = await mediaService.findAll({}, null);
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});
@@ -95,15 +95,28 @@ describe('MediaService', () => {
 			expect(response.hits.hits.length).toBe(2);
 		});
 
-		it('returns a 404 not found if the index is unknown', async () => {
-			nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
-			let error;
-			try {
-				await mediaService.findAll({}, 'my-index');
-			} catch (e) {
-				error = e.response;
-			}
-			expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+		// TODO re-enable this test once the or-ids of the maintainers are the same between local development DB and the elasticsearch INT
+		// it('returns a 404 not found if the index is unknown', async () => {
+		// 	nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
+		// 	let error;
+		// 	try {
+		// 		await mediaService.findAll({}, 'my-index');
+		// 	} catch (e) {
+		// 		error = e.response;
+		// 	}
+		// 	expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+		// });
+
+		it('returns the es response from the main _search endpoint if the index is not found (TEMP FOR TESTING)', async () => {
+			nock('http://elasticsearch/')
+				.post('/my-index/_search')
+				.reply(404, {
+					error: { type: 'index_not_found_exception' },
+				});
+			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
+			const response = await mediaService.findAll({}, 'my-index');
+			expect(response.hits.total.value).toBe(2);
+			expect(response.hits.hits.length).toBe(2);
 		});
 
 		it('throws an exception when a non-404 error occurs', async () => {
