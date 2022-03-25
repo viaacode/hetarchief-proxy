@@ -108,7 +108,7 @@ export class CollectionsController {
 	@Post(':collectionId/objects/:objectId')
 	public async addObjectToCollection(
 		@Param('collectionId') collectionId: string,
-		@Param('objectId') objectMeemooFragmentId: string,
+		@Param('objectId') objectSchemaIdentifier: string,
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
 		const collection = await this.collectionsService.findCollectionById(collectionId);
@@ -119,7 +119,7 @@ export class CollectionsController {
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			collectionId,
-			objectMeemooFragmentId
+			objectSchemaIdentifier
 		);
 		return collectionObject;
 	}
@@ -152,7 +152,7 @@ export class CollectionsController {
 	@Patch(':oldCollectionId/objects/:objectId/move')
 	public async moveObjectToAnotherCollection(
 		@Param('oldCollectionId') oldCollectionId: string,
-		@Param('objectId') objectMeemooFragmentId: string,
+		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
@@ -171,11 +171,11 @@ export class CollectionsController {
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			newCollectionId,
-			objectMeemooFragmentId
+			objectSchemaIdentifier
 		);
 		await this.collectionsService.removeObjectFromCollection(
 			oldCollectionId,
-			objectMeemooFragmentId,
+			objectSchemaIdentifier,
 			user.id
 		);
 		return collectionObject;

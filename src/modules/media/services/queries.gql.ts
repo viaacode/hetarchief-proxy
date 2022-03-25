@@ -14,10 +14,10 @@ export const GET_FILE_BY_REPRESENTATION_ID = `
 `;
 
 export const GET_OBJECT_IE_BY_ID = `
-	query objectDetail($meemooFragmentId: String!) {
-		object_ie(where: {meemoo_fragment_id: {_eq: $meemooFragmentId}}) {
-			meemoo_fragment_id
+	query objectDetail($schemaIdentifier: String!) {
+		object_ie(where: {schema_identifier: {_eq: $schemaIdentifier}}) {
 			schema_identifier
+			meemoo_identifier
 			premis_identifier
 			premis_relationship
 			schema_is_part_of
@@ -70,17 +70,15 @@ export const GET_OBJECT_IE_BY_ID = `
 				schema_name
 				schema_alternate_name
 				schema_description
-				ie_meemoo_fragment_id
+				ie_schema_identifier
 				dcterms_format
 				schema_transcript
 				schema_date_created
-				id
 				premis_includes {
-					id
 					schema_name
 					schema_alternate_name
 					schema_description
-					representation_id
+					schema_identifier
 					ebucore_media_type
 					ebucore_is_media_fragment_of
 					schema_embed_url

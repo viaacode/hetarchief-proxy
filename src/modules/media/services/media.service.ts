@@ -45,7 +45,7 @@ export class MediaService {
 
 	public adapt(graphQlObject: any): Media {
 		return {
-			meemooFragmentId: get(graphQlObject, 'meemoo_fragment_id'),
+			meemooIdentifier: get(graphQlObject, 'meemoo_identifier'),
 			schemaIdentifier: get(graphQlObject, 'schema_identifier'),
 			premisIdentifier: get(graphQlObject, 'premis_identifier'),
 			premisRelationship: get(graphQlObject, 'premis_relationship'),
@@ -118,7 +118,7 @@ export class MediaService {
 			name: get(representation, 'schema_name'),
 			alternateName: get(representation, 'schema_alternate_name'),
 			description: get(representation, 'schema_description'),
-			meemooFragmentId: get(representation, 'ie_meemoo_fragment_id'),
+			meemooIdentifier: get(representation, 'ie_meemoo_identifier'),
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
@@ -185,13 +185,13 @@ export class MediaService {
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findByMeemooFragmentId(meemooFragmentId: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { meemooFragmentId });
+		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
 
 		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${meemooFragmentId}' not found`);
+			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
 		return this.adapt(objectIe[0]);

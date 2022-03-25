@@ -40,8 +40,8 @@ export interface CollectionObjectLink {
 }
 
 export interface GqlObject {
-	meemoo_fragment_id: string;
 	schema_identifier: string;
+	meemoo_identifier: string;
 	schema_name: string;
 	schema_creator: any;
 	dcterms_available: string;
@@ -58,7 +58,7 @@ export interface GqlObject {
 }
 
 export interface IeObject {
-	meemooFragmentId: string; // Unique id per object
+	meemooIdentifier: string; // Unique id per object
 	schemaIdentifier: string; // PID: not unique per object
 	collectionEntryCreatedAt?: string;
 	creator: any;

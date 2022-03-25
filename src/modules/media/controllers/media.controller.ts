@@ -29,7 +29,7 @@ export class MediaController {
 
 	@Get(':id')
 	public async getMediaById(@Param('id') id: string): Promise<any> {
-		return this.mediaService.findByMeemooFragmentId(id);
+		return this.mediaService.findBySchemaIdentifier(id);
 	}
 
 	@Post(':esIndex')

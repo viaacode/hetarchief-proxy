@@ -2,9 +2,9 @@ export default {
 	data: {
 		object_ie: [
 			{
-				meemoo_fragment_id:
+				schema_identifier:
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-				schema_identifier: '8911p09j1g',
+				meemoo_identifier: '8911p09j1g',
 				premis_identifier: 'WP00178829',
 				premis_relationship: null,
 				schema_is_part_of: null,
@@ -80,7 +80,7 @@ export default {
 						schema_name: 'Durf te vragen R002 A0001',
 						schema_alternate_name: 'Durf te vragen R002 A0001',
 						schema_description: null,
-						ie_meemoo_fragment_id:
+						ie_schema_identifier:
 							'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 						dcterms_format: 'mp4',
 						schema_transcript: null,
