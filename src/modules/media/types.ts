@@ -52,7 +52,7 @@ export interface Representation {
 	name: string;
 	alternateName: string;
 	description: string;
-	meemooIdentifier: string;
+	schemaIdentifier: string;
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
@@ -61,8 +61,8 @@ export interface Representation {
 }
 
 export interface Media {
-	meemooIdentifier: string; // Unique id per object
-	schemaIdentifier: string; // PID (not unique per object)
+	schemaIdentifier: string; // Unique id per object
+	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;

@@ -126,9 +126,9 @@ const mockGqlCollectionObjectResult = {
 };
 
 const mockCollectionObject: IeObject = {
-	meemooIdentifier:
+	schemaIdentifier:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	schemaIdentifier: '8s4jm2514q',
+	meemooIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	termsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -294,9 +294,9 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
 			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
-				mockCollectionObject.meemooIdentifier
+				mockCollectionObject.schemaIdentifier
 			);
-			expect(response.meemooIdentifier).toBe(mockCollectionObject.meemooIdentifier);
+			expect(response.schemaIdentifier).toBe(mockCollectionObject.schemaIdentifier);
 		});
 	});
 
@@ -367,9 +367,9 @@ describe('CollectionsService', () => {
 				data: { object_ie: [mockGqlCollectionObject] },
 			});
 			const object = await collectionsService.findObjectBySchemaIdentifier(
-				mockCollectionObject.meemooIdentifier
+				mockCollectionObject.schemaIdentifier
 			);
-			expect(object.meemooIdentifier).toEqual(mockCollectionObject.meemooIdentifier);
+			expect(object.schemaIdentifier).toEqual(mockCollectionObject.schemaIdentifier);
 		});
 	});
 
@@ -393,7 +393,7 @@ describe('CollectionsService', () => {
 				mockGqlCollection1.id,
 				mockGqlCollectionObjectLink.ie.schema_identifier
 			);
-			expect(response.meemooIdentifier).toBe(
+			expect(response.schemaIdentifier).toBe(
 				mockGqlCollectionObjectLink.ie.schema_identifier
 			);
 			findObjectInCollectionSpy.mockRestore();
@@ -442,7 +442,7 @@ describe('CollectionsService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				statusCode: 404,
-				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.meemoo_identifier} was not found`,
+				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.schema_identifier} was not found`,
 			});
 			findObjectInCollectionSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();

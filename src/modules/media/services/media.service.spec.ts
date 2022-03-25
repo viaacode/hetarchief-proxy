@@ -135,7 +135,7 @@ describe('MediaService', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
 			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
-			expect(response.meemooIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
@@ -151,7 +151,7 @@ describe('MediaService', () => {
 
 			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.meemooIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toEqual([]);
 		});
 
@@ -162,7 +162,7 @@ describe('MediaService', () => {
 
 			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.meemooIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
 
