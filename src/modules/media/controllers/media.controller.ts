@@ -23,7 +23,10 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
 	): Promise<string> {
-		const url = await this.mediaService.getPlayableUrl(playerTicketsQuery.id, referer);
+		const url = await this.mediaService.getPlayableUrl(
+			decodeURIComponent(playerTicketsQuery.id),
+			referer
+		);
 		return url;
 	}
 
