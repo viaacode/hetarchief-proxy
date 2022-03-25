@@ -9,7 +9,7 @@ export const FIND_COLLECTIONS_BY_USER = `
 			updated_at
 			ies {
 				ie {
-					schema_identifier
+					meemoo_fragment_id
 				}
 			}
 		}
@@ -46,6 +46,7 @@ export const FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID = `
 				schema_thumbnail_url
 				dcterms_format
 				schema_number_of_pages
+				meemoo_fragment_id
 				schema_identifier
 			}
 		}
@@ -96,8 +97,8 @@ export const DELETE_COLLECTION = `
 `;
 
 export const FIND_OBJECT_IN_COLLECTION = `
-	query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
+	query findObjectInCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
+		users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_meemoo_fragment_id: {_eq: $objectMeemooFragmentId}}) {
 			ie {
 				schema_name
 				schema_creator
@@ -113,24 +114,24 @@ export const FIND_OBJECT_IN_COLLECTION = `
 	}
 `;
 
-export const FIND_OBJECT_BY_FRAGMENT_IDENTIFIER = `
-	query getObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
-		object_ie(where: {schema_identifier: {_eq: $objectSchemaIdentifier}}, limit: 1) {
+export const FIND_OBJECT_BY_MEEMOO_FRAGMENT_ID = `
+	query getObjectBySchemaIdentifier($objectMeemooFragmentId: String) {
+		object_ie(where: {meemoo_fragment_id: {_eq: $objectMeemooFragmentId}}, limit: 1) {
 			schema_name
 			schema_creator
 			dcterms_available
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
-			schema_identifier
 			meemoo_fragment_id
+			schema_identifier
 		}
 	}
 `;
 
 export const INSERT_OBJECT_INTO_COLLECTION = `
-	mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String, $objectMeemooFragmentId: String) {
-		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_schema_identifier: $objectSchemaIdentifier, object_ie_meemoo_fragment_id: $objectMeemooFragmentId}) {
+	mutation insertObjectIntoCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
+		insert_users_collection_ie(objects: {user_collection_id: $collectionId, object_ie_meemoo_fragment_id: $objectMeemooFragmentId}) {
 			returning {
 				created_at
 				ie {
@@ -141,6 +142,7 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 					schema_name
 					schema_maintainer_id
 					schema_number_of_pages
+					meemoo_fragment_id
 					schema_identifier
 				}
 			}
@@ -149,8 +151,8 @@ export const INSERT_OBJECT_INTO_COLLECTION = `
 `;
 
 export const REMOVE_OBJECT_FROM_COLLECTION = `
-	mutation removeObjectFromCollection($objectSchemaIdentifier: String, $collectionId: uuid, $userProfileId: uuid) {
-		delete_users_collection_ie(where: {object_ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
+	mutation removeObjectFromCollection($objectMeemooFragmentId: String, $collectionId: uuid, $userProfileId: uuid) {
+		delete_users_collection_ie(where: {object_ie_meemoo_fragment_id: {_eq: $objectMeemooFragmentId}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
 			affected_rows
 		}
 	}

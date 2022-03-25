@@ -40,14 +40,14 @@ export interface CollectionObjectLink {
 }
 
 export interface GqlObject {
+	meemoo_fragment_id: string;
+	schema_identifier: string;
 	schema_name: string;
 	schema_creator: any;
 	dcterms_available: string;
 	schema_thumbnail_url: string;
 	dcterms_format: string;
 	schema_number_of_pages: any;
-	schema_identifier: string;
-	meemoo_fragment_id: string;
 	maintainer: {
 		schema_identifier: string;
 		schema_name: string;
@@ -58,12 +58,12 @@ export interface GqlObject {
 }
 
 export interface IeObject {
+	meemooFragmentId: string; // Unique id per object
+	schemaIdentifier: string; // PID: not unique per object
 	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
 	format: string;
-	id: string;
-	meemooFragmentId: string;
 	name: string;
 	numberOfPages: any;
 	termsAvailable: string;

@@ -14,8 +14,8 @@ export const GET_FILE_BY_REPRESENTATION_ID = `
 `;
 
 export const GET_OBJECT_IE_BY_ID = `
-	query objectDetail($id: String!) {
-		object_ie(where: {schema_identifier: {_eq: $id}}) {
+	query objectDetail($meemooFragmentId: String!) {
+		object_ie(where: {meemoo_fragment_id: {_eq: $meemooFragmentId}}) {
 			meemoo_fragment_id
 			schema_identifier
 			premis_identifier
