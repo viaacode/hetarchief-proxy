@@ -1,0 +1,5 @@
+query getContentPagesByIds($ids: [uuid!]) {
+	cms_content(where: {id: {_in: $ids}, is_deleted: { _eq: false }}) {
+		user_profile_id
+	}
+}

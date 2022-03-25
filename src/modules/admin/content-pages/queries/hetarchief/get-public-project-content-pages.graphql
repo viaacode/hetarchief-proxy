@@ -1,0 +1,14 @@
+query getPublicProjectContentPages($limit: Int = 20, $orderBy: [cms_content_order_by!] = {}) {
+	cms_content(
+		limit: $limit
+		order_by: $orderBy
+		where: {
+			content_type: { _eq: "PROJECT" }
+			is_public: { _eq: true }
+			is_deleted: { _eq: false }
+		}
+	) {
+		path
+		title
+	}
+}
