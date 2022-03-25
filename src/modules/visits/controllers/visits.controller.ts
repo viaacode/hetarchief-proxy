@@ -89,14 +89,14 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Get('active-for-space/:spaceId')
+	@Get('active-for-space/:maintainerOrgId')
 	public async getActiveVisitForUserAndSpace(
-		@Param('spaceId') spaceId: string,
+		@Param('maintainerOrgId') maintainerOrgId: string,
 		@Session() session: Record<string, any>
 	): Promise<Visit | null> {
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			SessionHelper.getArchiefUserInfo(session).id,
-			spaceId
+			maintainerOrgId
 		);
 		return activeVisit;
 	}
