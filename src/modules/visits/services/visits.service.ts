@@ -293,11 +293,11 @@ export class VisitsService {
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
-		spaceId: string
+		maintainerOrgId: string
 	): Promise<Visit | null> {
 		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
 			userProfileId,
-			spaceId,
+			maintainerOrgId,
 			now: new Date().toISOString(),
 		});
 
