@@ -15,6 +15,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "prestart:dev": "npm run generate-database-types",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -26,7 +27,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
     "i18n:extract": "ts-node --transpile-only --require dotenv/config scripts/extract-and-replace-translations.ts dotenv_config_path=.env/.env.local && npm run format",
-    "gql:extract": "ts-node --transpile-only --require dotenv/config scripts/whitelist-gql-queries.ts dotenv_config_path=.env/.env.local"
+    "gql:extract": "ts-node --transpile-only --require dotenv/config scripts/whitelist-gql-queries.ts dotenv_config_path=.env/.env.local",
+    "generate-database-types": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@nestjs/common": "8.2.3",
@@ -45,6 +47,7 @@
     "express-session": "1.17.2",
     "fs-extra": "10.0.0",
     "got": "11.8.3",
+    "graphql": "15.8.0",
     "helmet": "5.0.2",
     "i18next": "21.6.3",
     "joi": "17.5.0",
@@ -62,6 +65,13 @@
   "devDependencies": {
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/introspection": "2.1.1",
+    "@graphql-codegen/typed-document-node": "2.2.8",
+    "@graphql-codegen/typescript": "2.4.8",
+    "@graphql-codegen/typescript-operations": "2.3.5",
+    "@graphql-codegen/typescript-resolvers": "2.6.1",
+    "@graphql-typed-document-node/core": "3.1.1",
     "@nestjs/cli": "8.1.5",
     "@nestjs/schematics": "8.0.5",
     "@nestjs/testing": "8.2.3",
