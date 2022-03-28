@@ -9,6 +9,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
+import { DocumentNode } from 'graphql';
+import { print } from 'graphql/language/printer';
 import { keys } from 'lodash';
 
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
@@ -135,12 +137,12 @@ export class DataService {
 	 * execute a (GraphQl) query
 	 */
 	public async execute(
-		query: string,
+		query: string | DocumentNode,
 		variables: { [varName: string]: any } = {}
 	): Promise<GraphQlResponse> {
 		try {
 			const queryData = {
-				query,
+				query: typeof query === 'string' ? query : print(query),
 				variables,
 			};
 			const data = await this.gotInstance.post<GraphQlResponse>({

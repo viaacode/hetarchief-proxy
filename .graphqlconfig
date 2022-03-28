@@ -1,0 +1,12 @@
+{
+	"name": "Hetarchief GraphQL Schema",
+	"schemaPath": "schema.graphql",
+	"extensions": {
+		"endpoints": {
+			"Default GraphQL Endpoint": {
+				"url": "http://localhost:9000/v1/graphql",
+				"introspect": false
+			}
+		}
+	}
+}
