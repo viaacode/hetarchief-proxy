@@ -1,0 +1,12 @@
+mutation insertCollections($object: users_collection_insert_input!) {
+	insert_users_collection(objects: [$object]) {
+		returning {
+			id
+			name
+			user_profile_id
+			is_default
+			created_at
+			updated_at
+		}
+	}
+}

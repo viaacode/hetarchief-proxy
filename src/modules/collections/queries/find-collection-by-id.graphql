@@ -1,0 +1,10 @@
+query findCollectionById($collectionId: uuid) {
+	users_collection(where: {id: {_eq: $collectionId}}) {
+		created_at
+		id
+		is_default
+		name
+		updated_at
+		user_profile_id
+	}
+}
