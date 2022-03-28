@@ -208,7 +208,7 @@ export class VisitsService {
 		/** Dynamically build the where object  */
 		const where: any = {};
 
-		if (!isEmpty(query)) {
+		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
 			const filterBySpaceName = parameters.cpSpaceId
 				? []
@@ -293,11 +293,11 @@ export class VisitsService {
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
-		spaceId: string
+		maintainerOrgId: string
 	): Promise<Visit | null> {
 		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
 			userProfileId,
-			spaceId,
+			maintainerOrgId,
 			now: new Date().toISOString(),
 		});
 

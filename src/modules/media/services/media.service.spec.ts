@@ -29,7 +29,7 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
-const mockObjectId = objectIe.data.object_ie[0].schema_identifier;
+const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -134,8 +134,8 @@ describe('MediaService', () => {
 	describe('findById', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
-			const response = await mediaService.findById(mockObjectId);
-			expect(response.id).toEqual(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
@@ -149,9 +149,9 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findById(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toEqual([]);
 		});
 
@@ -160,9 +160,9 @@ describe('MediaService', () => {
 			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findById(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
 
@@ -174,13 +174,13 @@ describe('MediaService', () => {
 			});
 			let error;
 			try {
-				await mediaService.findById(mockObjectId);
+				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 			} catch (e) {
 				error = e;
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: `Object IE with id '${mockObjectId}' not found`,
+				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
 		});
