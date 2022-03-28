@@ -80,10 +80,11 @@ export class SessionService {
 			sessionConfig.store = new redisStore({ client: redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
-		} else {
-			sessionConfig.store = new FileStore({});
-			this.logger.log('isDevelopment: File Store ready');
 		}
+		// else {
+		// 	sessionConfig.store = new FileStore({});
+		// 	this.logger.log('isDevelopment: File Store ready');
+		// }
 
 		return sessionConfig;
 	}

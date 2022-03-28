@@ -5,9 +5,9 @@ import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, PlayerTicket, Representation } from '../types';
+import { Media, MediaFile, PlayerTicket, Representation } from '../types';
 
-import { GET_FILE_BY_REPRESENTATION_ID, GET_OBJECT_IE_BY_ID } from './queries.gql';
+import { GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, GET_OBJECT_IE_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -45,8 +45,8 @@ export class MediaService {
 
 	public adapt(graphQlObject: any): Media {
 		return {
-			meemooFragmentId: get(graphQlObject, 'meemoo_fragment_id'),
 			schemaIdentifier: get(graphQlObject, 'schema_identifier'),
+			meemooIdentifier: get(graphQlObject, 'meemoo_identifier'),
 			premisIdentifier: get(graphQlObject, 'premis_identifier'),
 			premisRelationship: get(graphQlObject, 'premis_relationship'),
 			isPartOf: get(graphQlObject, 'schema_is_part_of'),
@@ -118,7 +118,7 @@ export class MediaService {
 			name: get(representation, 'schema_name'),
 			alternateName: get(representation, 'schema_alternate_name'),
 			description: get(representation, 'schema_description'),
-			meemooFragmentId: get(representation, 'ie_meemoo_fragment_id'),
+			schemaIdentifier: get(representation, 'ie_schema_identifier'),
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
@@ -127,20 +127,22 @@ export class MediaService {
 		}));
 	}
 
-	public adaptFiles(graphQlFiles: any): File[] {
+	public adaptFiles(graphQlFiles: any): MediaFile[] {
 		if (isEmpty(graphQlFiles)) {
 			return [];
 		}
-		return graphQlFiles.map((file) => ({
-			id: get(file, 'id'),
-			name: get(file, 'schema_name'),
-			alternateName: get(file, 'schema_alternate_name'),
-			description: get(file, 'schema_description'),
-			representationId: get(file, 'representation_id'),
-			ebucoreMediaType: get(file, 'ebucore_media_type'),
-			ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
-			embedUrl: get(file, 'schema_embed_url'),
-		}));
+		return graphQlFiles.map(
+			(file): MediaFile => ({
+				id: get(file, 'id'),
+				name: get(file, 'schema_name'),
+				alternateName: get(file, 'schema_alternate_name'),
+				description: get(file, 'schema_description'),
+				schemaIdentifier: get(file, 'representation_schema_identifier'),
+				ebucoreMediaType: get(file, 'ebucore_media_type'),
+				ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
+				embedUrl: get(file, 'schema_embed_url'),
+			})
+		);
 	}
 
 	public getSearchEndpoint(esIndex: string | null): string {
@@ -185,13 +187,13 @@ export class MediaService {
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findByMeemooFragmentId(meemooFragmentId: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { meemooFragmentId });
+		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
 
 		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${meemooFragmentId}' not found`);
+			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
 		return this.adapt(objectIe[0]);
@@ -221,7 +223,7 @@ export class MediaService {
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_ID, { id });
+		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, { id });
 		if (!objectFile[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

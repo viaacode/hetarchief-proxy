@@ -37,12 +37,12 @@ export interface PlayerTicket {
 	};
 }
 
-export interface File {
+export interface MediaFile {
 	id: string;
 	name: string;
 	alternateName: string;
 	description: string;
-	representationId: string;
+	schemaIdentifier: string;
 	ebucoreMediaType: string;
 	ebucoreIsMediaFragmentOf: string;
 	embedUrl: string;
@@ -52,17 +52,17 @@ export interface Representation {
 	name: string;
 	alternateName: string;
 	description: string;
-	meemooFragmentId: string;
+	schemaIdentifier: string;
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
 	id: string;
-	files: File[];
+	files: MediaFile[];
 }
 
 export interface Media {
-	meemooFragmentId: string; // Unique id per object
-	schemaIdentifier: string; // PID (not unique per object)
+	schemaIdentifier: string; // Unique id per object
+	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;
