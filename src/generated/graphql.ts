@@ -10179,6 +10179,7 @@ export type FindCollectionObjectsByCollectionIdQuery = {
 		ie: {
 			__typename?: 'object_ie';
 			schema_identifier: string;
+			meemoo_identifier: string;
 			schema_name: string;
 			schema_creator?: any | null;
 			schema_description?: string | null;
@@ -10666,6 +10667,10 @@ export const FindCollectionObjectsByCollectionIdDocument = {
 											{
 												kind: 'Field',
 												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'meemoo_identifier' },
 											},
 											{
 												kind: 'Field',

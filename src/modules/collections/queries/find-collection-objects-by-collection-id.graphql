@@ -3,6 +3,7 @@ query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: u
 		created_at
 		ie {
 			schema_identifier
+			meemoo_identifier
 			schema_name
 			schema_creator
 			schema_description

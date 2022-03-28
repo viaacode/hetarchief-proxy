@@ -39,13 +39,6 @@ const mockGqlCollectionObject: GqlObject = {
 	meemoo_identifier: '8s4jm2514q',
 	schema_identifier:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	maintainer: {
-		schema_identifier: 'OR-1v5bc86',
-		schema_name: 'Huis van Alijn',
-		space: {
-			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-		},
-	},
 };
 
 const mockGqlCollectionObjectLink: CollectionObjectLink = {
@@ -187,11 +180,8 @@ describe('CollectionsService', () => {
 			expect(adapted.id).toEqual(mockGqlCollection.id);
 			expect(adapted.name).toEqual(mockGqlCollection.name);
 			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
-			expect(adapted.objects[0].termsAvailable).toEqual(
-				mockGqlCollection.ies[0].ie.dcterms_available
-			);
-			expect(adapted.objects[0].collectionEntryCreatedAt).toEqual(
-				mockGqlCollection.ies[0].created_at
+			expect(adapted.objects[0].schemaIdentifier).toEqual(
+				mockGqlCollection.ies[0].ie.schema_identifier
 			);
 		});
 

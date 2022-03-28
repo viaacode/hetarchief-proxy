@@ -1,6 +1,6 @@
-import { GqlCollection } from '~modules/collections/types';
+import { GqlCollectionWithObjects } from '~modules/collections/types';
 
-export const mockGqlCollection: GqlCollection = {
+export const mockGqlCollection: GqlCollectionWithObjects = {
 	id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 	name: 'Favorieten',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
