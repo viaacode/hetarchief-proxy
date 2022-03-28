@@ -1,5 +1,10 @@
 query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
-	users_collection(where: {user_profile_id: {_eq: $userProfileId}}, order_by: {created_at: asc}, offset: $offset, limit: $limit) {
+	users_collection(
+		where: { user_profile_id: { _eq: $userProfileId } }
+		order_by: { created_at: asc }
+		offset: $offset
+		limit: $limit
+	) {
 		id
 		name
 		user_profile_id
@@ -12,7 +17,7 @@ query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			}
 		}
 	}
-	users_collection_aggregate(where: {user_profile_id: {_eq: $userProfileId}}) {
+	users_collection_aggregate(where: { user_profile_id: { _eq: $userProfileId } }) {
 		aggregate {
 			count
 		}
