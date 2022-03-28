@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { get } from 'lodash';
 
@@ -20,9 +20,12 @@ export class TranslationsService {
 		let translations: Translations = await this.cacheManager.get('translations');
 		if (!translations) {
 			const response = await this.dataService.execute(GET_SITE_VARIABLES_BY_NAME, {
-				name: `translations-frontend`,
+				name: 'TRANSLATIONS_FRONTEND',
 			});
-			translations = get(response, 'data.cms_site_variables[0]');
+			translations = get(response, 'data.cms_site_variables[0].value');
+			if (!translations) {
+				throw new NotFoundException('No translations have been set in the database');
+			}
 			await this.cacheManager.set('translations', translations, { ttl: 3600 }); // cache for 1h
 		}
 

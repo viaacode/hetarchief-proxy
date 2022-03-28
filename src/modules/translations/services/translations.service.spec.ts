@@ -16,7 +16,7 @@ const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 };
 
 const mockTranslationsResponse = {
-	name: 'translations-frontend',
+	name: 'TRANSLATIONS_FRONTEND',
 	value: { key1: 'translation 1' },
 };
 
@@ -56,7 +56,21 @@ describe('TranslationsService', () => {
 			});
 			const translations = await translationsService.getTranslations();
 
-			expect(translations).toEqual(mockTranslationsResponse);
+			expect(translations).toEqual(mockTranslationsResponse.value);
+		});
+
+		it('throws an exception if no translations were set', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { cms_site_variables: undefined },
+			});
+			let error;
+			try {
+				await translationsService.getTranslations();
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toEqual('No translations have been set in the database');
 		});
 	});
 });
