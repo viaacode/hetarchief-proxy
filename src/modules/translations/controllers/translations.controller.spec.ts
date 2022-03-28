@@ -9,7 +9,7 @@ const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.Sp
 };
 
 const mockTranslationsResponse = {
-	name: 'translations-frontend',
+	name: 'TRANSLATIONS_FRONTEND',
 	value: { key1: 'translation 1' },
 };
 
