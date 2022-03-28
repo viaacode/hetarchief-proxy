@@ -7,8 +7,8 @@ import {
 	FindCollectionByIdDocument,
 	FindCollectionObjectsByCollectionIdDocument,
 	FindCollectionsByUserDocument,
+	FindObjectBySchemaIdentifierDocument,
 	FindObjectInCollectionDocument,
-	GetObjectByMeemooFragmentIdDocument,
 	InsertCollectionsDocument,
 	InsertObjectIntoCollectionDocument,
 	RemoveObjectFromCollectionDocument,
@@ -206,7 +206,7 @@ export class CollectionsService {
 	public async findObjectBySchemaIdentifier(
 		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(FIND_OBJECT_BY_SCHEMA_IDENTIFIER, {
+		const response = await this.dataService.execute(FindObjectBySchemaIdentifierDocument, {
 			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.object_ie[0];

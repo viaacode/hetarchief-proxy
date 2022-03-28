@@ -1,7 +1,7 @@
-query findObjectInCollection($collectionId: uuid, $objectMeemooFragmentId: String) {
-	users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, object_ie_meemoo_fragment_id: {_eq: $objectMeemooFragmentId}}) {
+query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
+	users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
 		ie {
-			meemoo_fragment_id
+			meemoo_identifier
 			schema_identifier
 			schema_name
 			schema_creator

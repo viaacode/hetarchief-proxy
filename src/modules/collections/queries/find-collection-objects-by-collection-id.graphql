@@ -2,6 +2,7 @@ query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: u
 	users_collection_ie(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where], collection: {user_profile_id: {_eq: $userProfileId}}}, offset: $offset, limit: $limit) {
 		created_at
 		ie {
+			schema_identifier
 			schema_name
 			schema_creator
 			schema_description
@@ -9,7 +10,6 @@ query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: u
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
-			schema_identifier
 		}
 	}
 	users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
