@@ -4,6 +4,8 @@ import { MediaService } from '../services/media.service';
 
 import { MediaController } from './media.controller';
 
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+
 const getMockMediaResponse = () => ({
 	hits: {
 		total: {
@@ -25,7 +27,11 @@ const getMockMediaResponse = () => ({
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findBySchemaIdentifier: jest.fn(),
+};
+
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
 	getPlayableUrl: jest.fn(),
+	getEmbedUrl: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -61,7 +67,7 @@ describe('MediaController', () => {
 
 	describe('getPlayableUrl', () => {
 		it('should return a playable url', async () => {
-			mockMediaService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+			mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
 			const url = await mediaController.getPlayableUrl('referer', { id: '1' });
 			expect(url).toEqual('http://playme');
 		});

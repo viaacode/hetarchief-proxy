@@ -22,21 +22,6 @@ export interface QueryBuilderConfig {
 	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
 }
 
-export interface PlayerTicket {
-	jwt: string;
-	context: {
-		aud: string;
-		exp: number;
-		sub: string;
-		ip: string;
-		referer: string;
-		fragment: {
-			start: string;
-			end: string;
-		};
-	};
-}
-
 export interface MediaFile {
 	id: string;
 	name: string;

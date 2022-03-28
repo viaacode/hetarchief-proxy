@@ -1,11 +1,12 @@
 overwrite: true
-schema: "http://localhost:9000/v1/graphql"
+schema: ${GRAPHQL_URL}
 documents:
   - "./src/**/*.graphql"
   # ignore avo specific queries, since the database structure there is different from the hetarchief database structure
   - "!./src/modules/admin/content-pages/queries/avo/**.graphql"
+  - "!./src/modules/admin/player-ticket/queries/avo/**.graphql"
 generates:
-  src/generated/graphql.ts:
+  src/generated/graphql-db-types-hetarchief.ts:
     plugins:
       - typescript
       - typescript-operations

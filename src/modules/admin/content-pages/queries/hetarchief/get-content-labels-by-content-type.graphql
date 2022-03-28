@@ -1,4 +1,4 @@
-query getContentLabels($contentType: String!) {
+query getContentLabelsByContentType($contentType: lookup_cms_content_type_enum!) {
 	cms_content_labels(where: { content_type: { _eq: $contentType } }) {
 		id
 		label

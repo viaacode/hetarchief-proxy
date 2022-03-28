@@ -1,12 +1,37 @@
-import { Controller, Get, Post, Query, Req, Session, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Controller,
+	Get,
+	Logger,
+	Post,
+	Query,
+	Req,
+	Session,
+	UseGuards,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { get } from 'lodash';
+import { Avo } from '@viaa/avo2-types';
+import { SearchResultItem } from '@viaa/avo2-types/types/search';
+import * as promiseUtils from 'blend-promise-utils';
+import { Request } from 'express';
+import { get, intersection, isEmpty, keys, set } from 'lodash';
 
-import { ContentPage } from '../types';
+import {
+	ContentPage,
+	LabelObj,
+	MediaItemResponse,
+	ResolvedItemOrCollection,
+} from '../content-pages.types';
 
+import {
+	DEFAULT_AUDIO_STILL,
+	MEDIA_PLAYER_BLOCKS,
+} from '~modules/admin/content-pages/content-pages.consts';
 import { ContentPagesQueryDto } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -15,7 +40,13 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 @ApiTags('ContentPages')
 @Controller('contentPages')
 export class ContentPagesController {
-	constructor(private contentPagesService: ContentPagesService) {}
+	private logger: Logger = new Logger(ContentPagesController.name, { timestamp: true });
+
+	constructor(
+		private contentPagesService: ContentPagesService,
+		private configService: ConfigService,
+		private playerTicketService: PlayerTicketService
+	) {}
 
 	@Post('/overview')
 	public async getContentPagesForOverview(
@@ -49,29 +80,32 @@ export class ContentPagesController {
 		// People that can edit the content page are not restricted by the publish_at, depublish_at, is_public settings
 		if (!canEditContentPage) {
 			if (
-				contentPage.publish_at &&
-				new Date().getTime() < new Date(contentPage.publish_at).getTime()
+				contentPage.publishAt &&
+				new Date().getTime() < new Date(contentPage.publishAt).getTime()
 			) {
 				return null; // Not yet published
 			}
 
 			if (
-				contentPage.depublish_at &&
-				new Date().getTime() > new Date(contentPage.depublish_at).getTime()
+				contentPage.depublishAt &&
+				new Date().getTime() > new Date(contentPage.depublishAt).getTime()
 			) {
-				throw new BadRequestError('The content page was depublished', null, {
-					error: 'CONTENT_PAGE_DEPUBLISHED',
-					contentPageType: get(contentPage, 'content_type'),
+				throw new BadRequestException({
+					message: 'The content page was depublished',
+					additionalInfo: {
+						code: 'CONTENT_PAGE_DEPUBLISHED',
+						contentPageType: get(contentPage, 'content_type'),
+					},
 				});
 			}
 
-			if (!contentPage.is_public) {
+			if (!contentPage.isPublic) {
 				return null;
 			}
 		}
 
 		// Check if content page is accessible for the user who requested the content page
-		if (!intersection(contentPage.user_group_ids, getUserGroupIds(user)).length) {
+		if (!intersection(contentPage.userGroupIds, SessionHelper.getUserGroupIds(user)).length) {
 			return null;
 		}
 
@@ -86,162 +120,364 @@ export class ContentPagesController {
 		return contentPage;
 	}
 
-	// @Get()
-	// async getContentPageByPath(
-	// 	@Query('path') path: string
-	// ): Promise<ContentPage | { error: string }> {
-	// 	let content: ContentPage | string = null;
-	// 	try {
-	// 		const user: User | null = SessionHelper.getAvoUserInfoFromSession(
-	// 			this.context.request
-	// 		);
-	// 		content = await ContentPageController.getContentPageByPath(
-	// 			path,
-	// 			user,
-	// 			this.context.request
-	// 		);
-	// 	} catch (err) {
-	// 		if (get(err, 'innerException.additionalInfo.error') === 'CONTENT_PAGE_DEPUBLISHED') {
-	// 			await this.context.response.status(403).json(
-	// 				new NotFoundError('content page was depublished', null, {
-	// 					...(err as CustomError).innerException.additionalInfo,
-	// 				})
-	// 			);
-	// 			return;
-	// 		}
-	// 		logger.error(new InternalServerError('Failed to get content page', err));
-	// 		throw new InternalServerError('Failed to get content page', null, { path });
-	// 	}
-	// 	if (content) {
-	// 		return content;
-	// 	}
-	// 	throw new NotFoundError(
-	// 		'The content page was not found or you do not have rights to see it',
-	// 		null,
-	// 		{ path }
-	// 	);
-	// }
-	//
-	// @Get('path-exist')
-	// async doesContentPageExist(
-	// 	@Query('path') path: string
-	// ): Promise<{ exists: boolean; title: string; id: number }> {
-	// 	try {
-	// 		const contentPage = await ContentPageService.getContentPageByPath(path);
-	// 		return {
-	// 			exists: !!contentPage,
-	// 			title: get(contentPage, 'title') || null,
-	// 			id: get(contentPage, 'id', null),
-	// 		};
-	// 	} catch (err) {
-	// 		throw new InternalServerError('Failed to get content page', null, { path });
-	// 	}
-	// }
-	//
-	// @Post('/overview')
-	// async getContentPagesForOverview(
-	// 	body: ContentPageOverviewParams
-	// ): Promise<ContentPageOverviewResponse> {
-	// 	try {
-	// 		return ContentPageController.getContentPagesForOverview(
-	// 			body.withBlock,
-	// 			body.contentType,
-	// 			body.labelIds,
-	// 			body.selectedLabelIds,
-	// 			body.orderByProp || 'published_at',
-	// 			body.orderByDirection || 'desc',
-	// 			body.offset,
-	// 			body.limit,
-	// 			IdpHelper.getAvoUserInfoFromSession(this.context.request)
-	// 		);
-	// 	} catch (err) {
-	// 		logger.error(new InternalServerError('Failed to get content page for overview', err));
-	// 		throw new InternalServerError('Failed to get content page for overview', null, {
-	// 			body,
-	// 		});
-	// 	}
-	// }
-	//
-	// /**
-	//  * Resolves the objects (items, collections, bundles, search queries) that are references inside the media grid blocks to their actual objects
-	//  * @param body
-	//  * @Return Promise<any[]>: the media grid blocks with their content stored under the results property
-	//  */
-	// @Post('')
-	// @UseGuards(LoggedInGuard)
-	// async resolveMediaGridBlocks(body: {
-	// 	searchQuery: string | undefined;
-	// 	searchQueryLimit: string | undefined;
-	// 	mediaItems:
-	// 		| {
-	// 				mediaItem: {
-	// 					type: 'ITEM' | 'COLLECTION' | 'BUNDLE';
-	// 					value: string;
-	// 				};
-	// 		  }[]
-	// 		| undefined;
-	// }): Promise<any[]> {
-	// 	try {
-	// 		const user = IdpHelper.getAvoUserInfoFromSession(this.context.request);
-	// 		if (!user.profile.permissions.includes('SEARCH')) {
-	// 			throw new UnauthorizedError(
-	// 				'You do not have the required permission for this route'
-	// 			);
-	// 		}
-	// 		return await ContentPageController.resolveMediaTileItems(
-	// 			body.searchQuery,
-	// 			body.searchQueryLimit,
-	// 			body.mediaItems,
-	// 			this.context.request
-	// 		);
-	// 	} catch (err) {
-	// 		throw new NotFoundError(
-	// 			'Something went wrong while resolving the media grid blocks',
-	// 			err,
-	// 			{ body }
-	// 		);
-	// 	}
-	// }
-	//
-	// @UseGuards(ApiKeyGuard)
-	// @Post('update-published-dates')
-	// async updatePublishDates(): Promise<{ message: string }> {
-	// 	try {
-	// 		const response = await ContentPageController.updatePublishDates();
-	//
-	// 		return {
-	// 			message: `content page publish dates have been updated, ${response.published} published, ${response.unpublished} unpublished`,
-	// 		};
-	// 	} catch (err) {
-	// 		const error = new CustomError('Failed to update content page publish dates', err);
-	// 		logger.error(error);
-	// 		throw new InternalServerError(error.message);
-	// 	}
-	// }
-	//
-	// @Post('labels')
-	// async getContentPageLabelsByTypeAndIds(body: ContentLabelsRequestBody): Promise<LabelObj[]> {
-	// 	try {
-	// 		if ((body as any).labelIds) {
-	// 			return await ContentPageController.getContentPageLabelsByTypeAndIds(
-	// 				body.contentType,
-	// 				(body as any).labelIds
-	// 			);
-	// 		}
-	//
-	// 		// else labels query param is set
-	// 		return await ContentPageController.getContentPageLabelsByTypeAndLabels(
-	// 			body.contentType,
-	// 			(body as any).labels
-	// 		);
-	// 	} catch (err) {
-	// 		const error = new InternalServerError(
-	// 			'Failed to get content page labels by type and labels or labelIds',
-	// 			err,
-	// 			{ body }
-	// 		);
-	// 		logger.error(error);
-	// 		throw new InternalServerError(error.message, null, error.additionalInfo);
-	// 	}
-	// }
+	private async resolveMediaTileItemsInPage(contentPage: ContentPage, request: Request) {
+		const mediaGridBlocks = contentPage.contentBlocks.filter(
+			(contentBlock) => contentBlock.blockType === 'MEDIA_GRID'
+		);
+		if (mediaGridBlocks.length) {
+			await promiseUtils.mapLimit(mediaGridBlocks, 2, async (mediaGridBlock: any) => {
+				try {
+					const searchQuery = get(
+						mediaGridBlock,
+						'variables.blockState.searchQuery.value'
+					);
+					const searchQueryLimit = get(
+						mediaGridBlock,
+						'variables.blockState.searchQueryLimit'
+					);
+					const mediaItems = get(mediaGridBlock, 'variables.componentState', []).filter(
+						(item: any) => item.mediaItem
+					);
+
+					const results: any[] = await this.resolveMediaTileItems(
+						searchQuery,
+						searchQueryLimit,
+						mediaItems,
+						request
+					);
+
+					set(mediaGridBlock, 'variables.blockState.results', results);
+				} catch (err) {
+					this.logger.error({
+						message: 'Failed to resolve media grid content',
+						innerException: err,
+						additionalInfo: {
+							mediaGridBlocks,
+							mediaGridBlock,
+						},
+					});
+				}
+			});
+		}
+	}
+
+	private async resolveMediaPlayersInPage(contentPage: ContentPage, request: Request) {
+		const mediaPlayerBlocks = contentPage.contentBlocks.filter((contentBlock) =>
+			keys(MEDIA_PLAYER_BLOCKS).includes(contentBlock.blockType)
+		);
+		if (mediaPlayerBlocks.length) {
+			await promiseUtils.mapLimit(mediaPlayerBlocks, 2, async (mediaPlayerBlock: any) => {
+				try {
+					const blockInfo = MEDIA_PLAYER_BLOCKS[mediaPlayerBlock.content_block_type];
+					const externalId = get(mediaPlayerBlock, blockInfo.getItemExternalIdPath);
+					if (externalId) {
+						const itemInfo = await this.contentPagesService.fetchItemByExternalId(
+							externalId
+						);
+						let videoSrc: string | undefined;
+						if (itemInfo && itemInfo.browse_path) {
+							videoSrc = await this.playerTicketService.getPlayableUrl(
+								itemInfo.browse_path,
+								await SessionHelper.getIp(request),
+								request.header('Referer') || 'http://localhost:3200/'
+							);
+						}
+
+						// Copy all required properties to be able to render the video player without having to use the data route to fetch item information
+						if (videoSrc && !get(mediaPlayerBlock, blockInfo.setVideoSrcPath)) {
+							set(mediaPlayerBlock, blockInfo.setVideoSrcPath, videoSrc);
+						}
+						[
+							['external_id', 'setItemExternalIdPath'],
+							['thumbnail_path', 'setPosterSrcPath'],
+							['title', 'setTitlePath'],
+							['description', 'setDescriptionPath'],
+							['issued', 'setIssuedPath'],
+							['organisation', 'setOrganisationPath'],
+							['duration', 'setDurationPath'],
+						].forEach((props) => {
+							if (
+								itemInfo &&
+								(itemInfo as any)[props[0]] &&
+								!get(mediaPlayerBlock, (blockInfo as any)[props[1]])
+							) {
+								if (
+									props[0] === 'thumbnail_path' &&
+									itemInfo.type.label === 'audio'
+								) {
+									// Replace poster for audio items with default still
+									set(
+										mediaPlayerBlock,
+										(blockInfo as any)[props[1]],
+										DEFAULT_AUDIO_STILL
+									);
+								} else {
+									set(
+										mediaPlayerBlock,
+										(blockInfo as any)[props[1]],
+										(itemInfo as any)[props[0]]
+									);
+								}
+							}
+						});
+					}
+				} catch (err) {
+					this.logger.error({
+						message: 'Failed to resolve media grid content',
+						innerException: err,
+						additionalInfo: {
+							mediaPlayerBlocks,
+							mediaPlayerBlock,
+						},
+					});
+				}
+			});
+		}
+	}
+
+	public async resolveMediaTileItems(
+		searchQuery: string | undefined,
+		searchQueryLimit: string | undefined,
+		mediaItems:
+			| {
+					mediaItem: {
+						type: 'ITEM' | 'COLLECTION' | 'BUNDLE';
+						value: string;
+					};
+			  }[]
+			| undefined,
+		request: Request
+	): Promise<Partial<Avo.Item.Item | Avo.Collection.Collection>[]> {
+		let manualResults: any[] = [];
+		let searchResults: any[] = [];
+
+		// Check for items/collections
+		const nonEmptyMediaItems = mediaItems.filter((mediaItem) => !isEmpty(mediaItem));
+		if (nonEmptyMediaItems.length) {
+			manualResults = await promiseUtils.mapLimit(
+				nonEmptyMediaItems,
+				10,
+				async (itemInfo: {
+					mediaItem: {
+						type: 'ITEM' | 'COLLECTION' | 'BUNDLE';
+						value: string;
+					};
+				}) => {
+					const result: MediaItemResponse | null =
+						await this.contentPagesService.fetchCollectionOrItem(
+							itemInfo.mediaItem.type === 'BUNDLE'
+								? 'COLLECTION'
+								: itemInfo.mediaItem.type,
+							itemInfo.mediaItem.value
+						);
+					if (result) {
+						// Replace audio thumbnail
+						if (get(result, 'type.label') === 'audio') {
+							result.thumbnailUrl = DEFAULT_AUDIO_STILL;
+						}
+
+						// Set video play url
+						if ((result as any).browse_path) {
+							(result as any).src = await this.getPlayableUrlByBrowsePathSilent(
+								(result as any).browse_path,
+								request
+							);
+							delete (result as any).browse_path; // Do not expose browse_path to the world
+						}
+					}
+					return result;
+				}
+			);
+		}
+
+		// Check for search queries
+		if (searchQuery) {
+			// resolve search query to a list of results
+			const parsedSearchQuery = JSON.parse(searchQuery);
+			let searchQueryLimitNum: number = parseInt(searchQueryLimit, 10);
+			if (isNaN(searchQueryLimitNum)) {
+				searchQueryLimitNum = 8;
+			}
+			const searchResponse = await this.contentPagesService.fetchSearchQuery(
+				searchQueryLimitNum - manualResults.length, // Fetch less search results if the user already specified some manual results
+				parsedSearchQuery.filters || {},
+				parsedSearchQuery.orderProperty || 'relevance',
+				parsedSearchQuery.orderDirection || 'desc'
+			);
+			searchResults = await promiseUtils.mapLimit(searchResponse.results || [], 8, (result) =>
+				this.mapSearchResultToItemOrCollection(result, request)
+			);
+		}
+
+		return [...manualResults, ...searchResults];
+	}
+
+	private async mapSearchResultToItemOrCollection(
+		searchResult: SearchResultItem,
+		request: Request
+	): Promise<ResolvedItemOrCollection> {
+		const isItem =
+			searchResult.administrative_type === 'video' ||
+			searchResult.administrative_type === 'audio';
+		const isAudio = searchResult.administrative_type === 'audio';
+
+		if (isItem) {
+			const item = {
+				external_id: searchResult.external_id,
+				title: searchResult.dc_title,
+				created_at: searchResult.dcterms_issued,
+				description: searchResult.dcterms_abstract,
+				duration: searchResult.duration_time,
+				lom_classification: searchResult.lom_classification,
+				lom_context: searchResult.lom_context,
+				lom_intended_enduser_role: searchResult.lom_intended_enduser_role,
+				lom_keywords: searchResult.lom_keywords,
+				lom_languages: searchResult.lom_languages,
+				lom_typical_age_range: searchResult.lom_typical_age_range,
+				issued: searchResult.dcterms_issued,
+				thumbnail_path: isAudio ? DEFAULT_AUDIO_STILL : searchResult.thumbnail_path,
+				org_id: searchResult.original_cp_id,
+				organisation: {
+					name: searchResult.original_cp,
+					or_id: searchResult.original_cp_id,
+				} as Avo.Organization.Organization,
+				series: searchResult.dc_titles_serie,
+				type: {
+					label: searchResult.administrative_type,
+				} as any,
+				view_counts_aggregate: {
+					aggregate: {
+						sum: {
+							count: searchResult.views_count,
+						},
+					},
+				},
+			} as Partial<Avo.Item.Item> & { src?: string };
+			if (isItem) {
+				item.src = await this.getPlayableUrlByExternalIdSilent(
+					searchResult.external_id,
+					request
+				);
+			}
+			try {
+				// TODO cache logos for quicker access
+				const org = await OrganisationService.fetchOrganization(
+					searchResult.original_cp_id
+				);
+				item.organisation.logo_url = get(org, 'logo_url') || null;
+			} catch (err) {
+				this.logger.error({
+					message: 'Failed to set organization logo_url for item',
+					innerException: err,
+					additionalInfo: {
+						external_id: searchResult.external_id,
+						original_cp_id: searchResult.original_cp_id,
+					},
+				});
+			}
+			return item;
+		}
+		return {
+			id: searchResult.id,
+			title: searchResult.dc_title,
+			created_at: searchResult.dcterms_issued,
+			description: searchResult.dcterms_abstract,
+			duration: searchResult.duration_time,
+			lom_classification: searchResult.lom_classification,
+			lom_context: searchResult.lom_context,
+			lom_intended_enduser_role: searchResult.lom_intended_enduser_role,
+			lom_keywords: searchResult.lom_keywords,
+			lom_languages: searchResult.lom_languages,
+			lom_typical_age_range: searchResult.lom_typical_age_range,
+			issued: searchResult.dcterms_issued,
+			thumbnail_path: searchResult.thumbnail_path,
+			org_id: searchResult.original_cp_id,
+			organisation: {
+				name: searchResult.original_cp,
+				or_id: searchResult.original_cp_id,
+			} as Avo.Organization.Organization,
+			series: searchResult.dc_titles_serie,
+			type: {
+				label: searchResult.administrative_type,
+			} as Avo.Core.MediaType,
+			collection_fragments_aggregate: {
+				aggregate: {
+					count: (searchResult as any).fragment_count || 0, // TODO add to typings repo after completion of: https://meemoo.atlassian.net/browse/AVO-1107
+				},
+			},
+			view_counts_aggregate: {
+				aggregate: {
+					sum: {
+						count: searchResult.views_count,
+					},
+				},
+			},
+		} as Partial<Avo.Collection.Collection>;
+	}
+
+	private async getPlayableUrlByExternalIdSilent(
+		externalId: string,
+		request: Request
+	): Promise<string | null> {
+		try {
+			return (
+				(await this.playerTicketService.getPlayableUrl(
+					externalId,
+					await SessionHelper.getIp(request),
+					request.header('Referer') || 'http://localhost:8080/'
+				)) || null
+			);
+		} catch (err) {
+			this.logger.error({
+				message: 'Failed to get playable url for item',
+				innerException: err,
+				additionalInfo: {
+					externalId,
+				},
+			});
+			return null;
+		}
+	}
+
+	private async getPlayableUrlByBrowsePathSilent(
+		browsePath: string,
+		request: Request
+	): Promise<string | null> {
+		try {
+			return (
+				(await this.playerTicketService.getPlayableUrl(
+					browsePath,
+					await SessionHelper.getIp(request),
+					request.header('Referer') || 'http://localhost:8080/'
+				)) || null
+			);
+		} catch (err) {
+			this.logger.error({
+				message: 'Failed to get playable url for item',
+				innerException: err,
+				additionalInfo: {
+					browsePath,
+				},
+			});
+			return null;
+		}
+	}
+
+	private async updatePublishDates() {
+		return this.contentPagesService.updatePublishDates();
+	}
+
+	private async getContentPageLabelsByTypeAndLabels(
+		contentType: string,
+		labels: string[]
+	): Promise<LabelObj[]> {
+		return this.contentPagesService.getContentPageLabelsByTypeAndLabels(contentType, labels);
+	}
+
+	private async getContentPageLabelsByTypeAndIds(
+		contentType: string,
+		labelIds: string[]
+	): Promise<LabelObj[]> {
+		return this.contentPagesService.getContentPageLabelsByTypeAndIds(contentType, labelIds);
+	}
 }

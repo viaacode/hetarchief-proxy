@@ -1,4 +1,4 @@
-query getPublicContentPageByTitle(
+query getPublicContentPagesByTitle(
 	$limit: Int = 20
 	$orderBy: [cms_content_order_by!] = {}
 	$where: cms_content_bool_exp = {}

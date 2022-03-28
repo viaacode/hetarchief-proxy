@@ -41,6 +41,9 @@ const config = (): Configuration => {
 		graphQlUrl: getEnvValue('GRAPHQL_URL', true),
 		graphQlSecret: getEnvValue('GRAPHQL_SECRET', env !== 'local'), // Not required on localhost
 		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
+		graphqlUrlAvo: getEnvValue('GRAPHQL_URL_AVO', true),
+		graphqlSecretAvo: getEnvValue('GRAPHQL_SECRET_AVO', true),
+		databaseApplicationType: getEnvValue('DATABASE_APPLICATION_TYPE', true),
 		cookieSecret: getEnvValue('COOKIE_SECRET', true),
 		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		redisConnectionString: getEnvValue('REDIS_CONNECTION_STRING', false),

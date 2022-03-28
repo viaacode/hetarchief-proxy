@@ -7,7 +7,7 @@ import {
 	InsertCollectionsMutation,
 	InsertObjectIntoCollectionMutation,
 	UpdateCollectionMutation,
-} from '../../generated/graphql';
+} from '../../generated/graphql-db-types-hetarchief';
 
 export interface Collection {
 	id: string;

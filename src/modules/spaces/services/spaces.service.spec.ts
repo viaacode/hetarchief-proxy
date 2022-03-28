@@ -13,6 +13,7 @@ const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
 	firstName: 'Tom',
 	lastName: 'Testerom',
+	full_name: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],

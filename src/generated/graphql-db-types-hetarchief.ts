@@ -547,6 +547,14 @@ export enum App_Notification_Update_Column {
 /** columns and relationships of "cms.content" */
 export type Cms_Content = {
 	__typename?: 'cms_content';
+	/** An array relationship */
+	content_blocks: Array<Cms_Content_Blocks>;
+	/** An aggregate relationship */
+	content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** An array relationship */
+	content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** An aggregate relationship */
+	content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
 	content_type: Scalars['String'];
 	content_width: Scalars['String'];
 	created_at: Scalars['timestamp'];
@@ -579,6 +587,42 @@ export type Cms_Content = {
 };
 
 /** columns and relationships of "cms.content" */
+export type Cms_ContentContent_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
 export type Cms_ContentUser_Group_IdsArgs = {
 	path?: InputMaybe<Scalars['String']>;
 };
@@ -604,9 +648,379 @@ export type Cms_Content_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "cms.content" */
+export type Cms_Content_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cms_Content_Max_Order_By>;
+	min?: InputMaybe<Cms_Content_Min_Order_By>;
+};
+
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Cms_Content_Append_Input = {
 	user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "cms.content" */
+export type Cms_Content_Arr_Rel_Insert_Input = {
+	data: Array<Cms_Content_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
+};
+
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "cms.content_blocks"
+ *
+ */
+export type Cms_Content_Blocks = {
+	__typename?: 'cms_content_blocks';
+	/** An object relationship */
+	cms_content_block_type: Lookup_Cms_Content_Block_Type;
+	/** An object relationship */
+	content: Cms_Content;
+	content_block_type: Lookup_Cms_Content_Block_Type_Enum;
+	content_id: Scalars['uuid'];
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	position: Scalars['Int'];
+	updated_at: Scalars['timestamp'];
+	variables?: Maybe<Scalars['jsonb']>;
+};
+
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "cms.content_blocks"
+ *
+ */
+export type Cms_Content_BlocksVariablesArgs = {
+	path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate = {
+	__typename?: 'cms_content_blocks_aggregate';
+	aggregate?: Maybe<Cms_Content_Blocks_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Blocks>;
+};
+
+/** aggregate fields of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_Fields = {
+	__typename?: 'cms_content_blocks_aggregate_fields';
+	avg?: Maybe<Cms_Content_Blocks_Avg_Fields>;
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Blocks_Max_Fields>;
+	min?: Maybe<Cms_Content_Blocks_Min_Fields>;
+	stddev?: Maybe<Cms_Content_Blocks_Stddev_Fields>;
+	stddev_pop?: Maybe<Cms_Content_Blocks_Stddev_Pop_Fields>;
+	stddev_samp?: Maybe<Cms_Content_Blocks_Stddev_Samp_Fields>;
+	sum?: Maybe<Cms_Content_Blocks_Sum_Fields>;
+	var_pop?: Maybe<Cms_Content_Blocks_Var_Pop_Fields>;
+	var_samp?: Maybe<Cms_Content_Blocks_Var_Samp_Fields>;
+	variance?: Maybe<Cms_Content_Blocks_Variance_Fields>;
+};
+
+/** aggregate fields of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_Order_By = {
+	avg?: InputMaybe<Cms_Content_Blocks_Avg_Order_By>;
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cms_Content_Blocks_Max_Order_By>;
+	min?: InputMaybe<Cms_Content_Blocks_Min_Order_By>;
+	stddev?: InputMaybe<Cms_Content_Blocks_Stddev_Order_By>;
+	stddev_pop?: InputMaybe<Cms_Content_Blocks_Stddev_Pop_Order_By>;
+	stddev_samp?: InputMaybe<Cms_Content_Blocks_Stddev_Samp_Order_By>;
+	sum?: InputMaybe<Cms_Content_Blocks_Sum_Order_By>;
+	var_pop?: InputMaybe<Cms_Content_Blocks_Var_Pop_Order_By>;
+	var_samp?: InputMaybe<Cms_Content_Blocks_Var_Samp_Order_By>;
+	variance?: InputMaybe<Cms_Content_Blocks_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Blocks_Append_Input = {
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "cms.content_blocks" */
+export type Cms_Content_Blocks_Arr_Rel_Insert_Input = {
+	data: Array<Cms_Content_Blocks_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Cms_Content_Blocks_Avg_Fields = {
+	__typename?: 'cms_content_blocks_avg_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Avg_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_blocks". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Blocks_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+	content?: InputMaybe<Cms_Content_Bool_Exp>;
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp>;
+	content_id?: InputMaybe<Uuid_Comparison_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	position?: InputMaybe<Int_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	variables?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Constraint {
+	/** unique or primary key constraint */
+	ContentBlocksPkey = 'content_blocks_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Cms_Content_Blocks_Delete_At_Path_Input = {
+	variables?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Cms_Content_Blocks_Delete_Elem_Input = {
+	variables?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Cms_Content_Blocks_Delete_Key_Input = {
+	variables?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "cms.content_blocks" */
+export type Cms_Content_Blocks_Inc_Input = {
+	position?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "cms.content_blocks" */
+export type Cms_Content_Blocks_Insert_Input = {
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input>;
+	content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	position?: InputMaybe<Scalars['Int']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Blocks_Max_Fields = {
+	__typename?: 'cms_content_blocks_max_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	position?: Maybe<Scalars['Int']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Max_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Blocks_Min_Fields = {
+	__typename?: 'cms_content_blocks_min_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	position?: Maybe<Scalars['Int']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Min_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "cms.content_blocks" */
+export type Cms_Content_Blocks_Mutation_Response = {
+	__typename?: 'cms_content_blocks_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Blocks>;
+};
+
+/** on conflict condition type for table "cms.content_blocks" */
+export type Cms_Content_Blocks_On_Conflict = {
+	constraint: Cms_Content_Blocks_Constraint;
+	update_columns?: Array<Cms_Content_Blocks_Update_Column>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_blocks". */
+export type Cms_Content_Blocks_Order_By = {
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Order_By>;
+	content?: InputMaybe<Cms_Content_Order_By>;
+	content_block_type?: InputMaybe<Order_By>;
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+	variables?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_blocks */
+export type Cms_Content_Blocks_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Blocks_Prepend_Input = {
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Select_Column {
+	/** column name */
+	ContentBlockType = 'content_block_type',
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Position = 'position',
+	/** column name */
+	UpdatedAt = 'updated_at',
+	/** column name */
+	Variables = 'variables',
+}
+
+/** input type for updating data in table "cms.content_blocks" */
+export type Cms_Content_Blocks_Set_Input = {
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	position?: InputMaybe<Scalars['Int']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate stddev on columns */
+export type Cms_Content_Blocks_Stddev_Fields = {
+	__typename?: 'cms_content_blocks_stddev_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Cms_Content_Blocks_Stddev_Pop_Fields = {
+	__typename?: 'cms_content_blocks_stddev_pop_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Pop_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Cms_Content_Blocks_Stddev_Samp_Fields = {
+	__typename?: 'cms_content_blocks_stddev_samp_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Samp_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Cms_Content_Blocks_Sum_Fields = {
+	__typename?: 'cms_content_blocks_sum_fields';
+	position?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Sum_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Update_Column {
+	/** column name */
+	ContentBlockType = 'content_block_type',
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Position = 'position',
+	/** column name */
+	UpdatedAt = 'updated_at',
+	/** column name */
+	Variables = 'variables',
+}
+
+/** aggregate var_pop on columns */
+export type Cms_Content_Blocks_Var_Pop_Fields = {
+	__typename?: 'cms_content_blocks_var_pop_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Var_Pop_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Cms_Content_Blocks_Var_Samp_Fields = {
+	__typename?: 'cms_content_blocks_var_samp_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Var_Samp_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Cms_Content_Blocks_Variance_Fields = {
+	__typename?: 'cms_content_blocks_variance_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Variance_Order_By = {
+	position?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "cms.content". All fields are combined with a logical 'AND'. */
@@ -614,6 +1028,8 @@ export type Cms_Content_Bool_Exp = {
 	_and?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
 	_not?: InputMaybe<Cms_Content_Bool_Exp>;
 	_or?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
+	content_blocks?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
 	content_type?: InputMaybe<String_Comparison_Exp>;
 	content_width?: InputMaybe<String_Comparison_Exp>;
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -652,6 +1068,199 @@ export enum Cms_Content_Constraint {
 	ContentPkey = 'content_pkey',
 }
 
+/**
+ * linking table between content pages and the content_labels
+ *
+ *
+ * columns and relationships of "cms.content_content_labels"
+ *
+ */
+export type Cms_Content_Content_Labels = {
+	__typename?: 'cms_content_content_labels';
+	/** An object relationship */
+	content: Cms_Content;
+	content_id: Scalars['uuid'];
+	/** An object relationship */
+	content_label: Cms_Content_Labels;
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	label_id: Scalars['uuid'];
+	updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate = {
+	__typename?: 'cms_content_content_labels_aggregate';
+	aggregate?: Maybe<Cms_Content_Content_Labels_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Content_Labels>;
+};
+
+/** aggregate fields of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_Fields = {
+	__typename?: 'cms_content_content_labels_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Content_Labels_Max_Fields>;
+	min?: Maybe<Cms_Content_Content_Labels_Min_Fields>;
+};
+
+/** aggregate fields of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cms_Content_Content_Labels_Max_Order_By>;
+	min?: InputMaybe<Cms_Content_Content_Labels_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Arr_Rel_Insert_Input = {
+	data: Array<Cms_Content_Content_Labels_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_content_labels". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Content_Labels_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
+	content?: InputMaybe<Cms_Content_Bool_Exp>;
+	content_id?: InputMaybe<Uuid_Comparison_Exp>;
+	content_label?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	label_id?: InputMaybe<Uuid_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Constraint {
+	/** unique or primary key constraint */
+	ContentContentLabelsPkey = 'content_content_labels_pkey',
+}
+
+/** input type for inserting data into table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Insert_Input = {
+	content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	content_label?: InputMaybe<Cms_Content_Labels_Obj_Rel_Insert_Input>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label_id?: InputMaybe<Scalars['uuid']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Content_Labels_Max_Fields = {
+	__typename?: 'cms_content_content_labels_max_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label_id?: Maybe<Scalars['uuid']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Max_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Content_Labels_Min_Fields = {
+	__typename?: 'cms_content_content_labels_min_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label_id?: Maybe<Scalars['uuid']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Min_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Mutation_Response = {
+	__typename?: 'cms_content_content_labels_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Content_Labels>;
+};
+
+/** on conflict condition type for table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_On_Conflict = {
+	constraint: Cms_Content_Content_Labels_Constraint;
+	update_columns?: Array<Cms_Content_Content_Labels_Update_Column>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_content_labels". */
+export type Cms_Content_Content_Labels_Order_By = {
+	content?: InputMaybe<Cms_Content_Order_By>;
+	content_id?: InputMaybe<Order_By>;
+	content_label?: InputMaybe<Cms_Content_Labels_Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_content_labels */
+export type Cms_Content_Content_Labels_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** select columns of table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Select_Column {
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	LabelId = 'label_id',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Set_Input = {
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label_id?: InputMaybe<Scalars['uuid']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Update_Column {
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	LabelId = 'label_id',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type Cms_Content_Delete_At_Path_Input = {
 	user_group_ids?: InputMaybe<Array<Scalars['String']>>;
@@ -669,6 +1278,8 @@ export type Cms_Content_Delete_Key_Input = {
 
 /** input type for inserting data into table "cms.content" */
 export type Cms_Content_Insert_Input = {
+	content_blocks?: InputMaybe<Cms_Content_Blocks_Arr_Rel_Insert_Input>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
 	content_type?: InputMaybe<Scalars['String']>;
 	content_width?: InputMaybe<Scalars['String']>;
 	created_at?: InputMaybe<Scalars['timestamp']>;
@@ -698,6 +1309,251 @@ export type Cms_Content_Insert_Input = {
 	user_profile_id?: InputMaybe<Scalars['uuid']>;
 };
 
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_Labels = {
+	__typename?: 'cms_content_labels';
+	/** An object relationship */
+	cms_content_type: Lookup_Cms_Content_Type;
+	/** An array relationship */
+	content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** An aggregate relationship */
+	content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	content_type: Lookup_Cms_Content_Type_Enum;
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	label: Scalars['String'];
+	link_to?: Maybe<Scalars['jsonb']>;
+	updated_at: Scalars['timestamp'];
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsContent_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsContent_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsLink_ToArgs = {
+	path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate = {
+	__typename?: 'cms_content_labels_aggregate';
+	aggregate?: Maybe<Cms_Content_Labels_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Labels>;
+};
+
+/** aggregate fields of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate_Fields = {
+	__typename?: 'cms_content_labels_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Labels_Max_Fields>;
+	min?: Maybe<Cms_Content_Labels_Min_Fields>;
+};
+
+/** aggregate fields of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Labels_Append_Input = {
+	link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_labels". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Labels_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum_Comparison_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	label?: InputMaybe<String_Comparison_Exp>;
+	link_to?: InputMaybe<Jsonb_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_labels" */
+export enum Cms_Content_Labels_Constraint {
+	/** unique or primary key constraint */
+	ContentLabelsLabelContentTypeKey = 'content_labels_label_content_type_key',
+	/** unique or primary key constraint */
+	ContentLabelsPkey = 'content_labels_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Cms_Content_Labels_Delete_At_Path_Input = {
+	link_to?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Cms_Content_Labels_Delete_Elem_Input = {
+	link_to?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Cms_Content_Labels_Delete_Key_Input = {
+	link_to?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "cms.content_labels" */
+export type Cms_Content_Labels_Insert_Input = {
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Obj_Rel_Insert_Input>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label?: InputMaybe<Scalars['String']>;
+	link_to?: InputMaybe<Scalars['jsonb']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Labels_Max_Fields = {
+	__typename?: 'cms_content_labels_max_fields';
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label?: Maybe<Scalars['String']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Labels_Min_Fields = {
+	__typename?: 'cms_content_labels_min_fields';
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label?: Maybe<Scalars['String']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "cms.content_labels" */
+export type Cms_Content_Labels_Mutation_Response = {
+	__typename?: 'cms_content_labels_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Labels>;
+};
+
+/** input type for inserting object relation for remote table "cms.content_labels" */
+export type Cms_Content_Labels_Obj_Rel_Insert_Input = {
+	data: Cms_Content_Labels_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** on conflict condition type for table "cms.content_labels" */
+export type Cms_Content_Labels_On_Conflict = {
+	constraint: Cms_Content_Labels_Constraint;
+	update_columns?: Array<Cms_Content_Labels_Update_Column>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_labels". */
+export type Cms_Content_Labels_Order_By = {
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Order_By>;
+	content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
+	content_type?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label?: InputMaybe<Order_By>;
+	link_to?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_labels */
+export type Cms_Content_Labels_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Labels_Prepend_Input = {
+	link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "cms.content_labels" */
+export enum Cms_Content_Labels_Select_Column {
+	/** column name */
+	ContentType = 'content_type',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Label = 'label',
+	/** column name */
+	LinkTo = 'link_to',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "cms.content_labels" */
+export type Cms_Content_Labels_Set_Input = {
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label?: InputMaybe<Scalars['String']>;
+	link_to?: InputMaybe<Scalars['jsonb']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "cms.content_labels" */
+export enum Cms_Content_Labels_Update_Column {
+	/** column name */
+	ContentType = 'content_type',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Label = 'label',
+	/** column name */
+	LinkTo = 'link_to',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
 /** aggregate max on columns */
 export type Cms_Content_Max_Fields = {
 	__typename?: 'cms_content_max_fields';
@@ -722,6 +1578,31 @@ export type Cms_Content_Max_Fields = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 	updated_by_profile_id?: Maybe<Scalars['uuid']>;
 	user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "cms.content" */
+export type Cms_Content_Max_Order_By = {
+	content_type?: InputMaybe<Order_By>;
+	content_width?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	depublish_at?: InputMaybe<Order_By>;
+	description?: InputMaybe<Order_By>;
+	header_path?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	meta_description?: InputMaybe<Order_By>;
+	/** slug van de pagina */
+	path?: InputMaybe<Order_By>;
+	publish_at?: InputMaybe<Order_By>;
+	published_at?: InputMaybe<Order_By>;
+	seo_description?: InputMaybe<Order_By>;
+	seo_image_path?: InputMaybe<Order_By>;
+	seo_keywords?: InputMaybe<Order_By>;
+	seo_title?: InputMaybe<Order_By>;
+	thumbnail_path?: InputMaybe<Order_By>;
+	title?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+	updated_by_profile_id?: InputMaybe<Order_By>;
+	user_profile_id?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -750,6 +1631,31 @@ export type Cms_Content_Min_Fields = {
 	user_profile_id?: Maybe<Scalars['uuid']>;
 };
 
+/** order by min() on columns of table "cms.content" */
+export type Cms_Content_Min_Order_By = {
+	content_type?: InputMaybe<Order_By>;
+	content_width?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	depublish_at?: InputMaybe<Order_By>;
+	description?: InputMaybe<Order_By>;
+	header_path?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	meta_description?: InputMaybe<Order_By>;
+	/** slug van de pagina */
+	path?: InputMaybe<Order_By>;
+	publish_at?: InputMaybe<Order_By>;
+	published_at?: InputMaybe<Order_By>;
+	seo_description?: InputMaybe<Order_By>;
+	seo_image_path?: InputMaybe<Order_By>;
+	seo_keywords?: InputMaybe<Order_By>;
+	seo_title?: InputMaybe<Order_By>;
+	thumbnail_path?: InputMaybe<Order_By>;
+	title?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+	updated_by_profile_id?: InputMaybe<Order_By>;
+	user_profile_id?: InputMaybe<Order_By>;
+};
+
 /** response of any mutation on the table "cms.content" */
 export type Cms_Content_Mutation_Response = {
 	__typename?: 'cms_content_mutation_response';
@@ -757,6 +1663,13 @@ export type Cms_Content_Mutation_Response = {
 	affected_rows: Scalars['Int'];
 	/** data from the rows affected by the mutation */
 	returning: Array<Cms_Content>;
+};
+
+/** input type for inserting object relation for remote table "cms.content" */
+export type Cms_Content_Obj_Rel_Insert_Input = {
+	data: Cms_Content_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
 };
 
 /** on conflict condition type for table "cms.content" */
@@ -768,6 +1681,8 @@ export type Cms_Content_On_Conflict = {
 
 /** Ordering options when selecting data from "cms.content". */
 export type Cms_Content_Order_By = {
+	content_blocks_aggregate?: InputMaybe<Cms_Content_Blocks_Aggregate_Order_By>;
+	content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
 	content_type?: InputMaybe<Order_By>;
 	content_width?: InputMaybe<Order_By>;
 	created_at?: InputMaybe<Order_By>;
@@ -1644,9 +2559,17 @@ export type Cp_Maintainer = {
 	created_at: Scalars['timestamp'];
 	has_index: Scalars['Boolean'];
 	has_space: Scalars['Boolean'];
+	/** An array relationship */
+	ies: Array<Object_Ie>;
+	/** An aggregate relationship */
+	ies_aggregate: Object_Ie_Aggregate;
 	/** An object relationship */
 	index?: Maybe<Cp_Index>;
 	information?: Maybe<Array<Maybe<ContentPartner>>>;
+	/** An array relationship */
+	maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
+	/** An aggregate relationship */
+	maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
 	schema_identifier: Scalars['String'];
 	schema_name?: Maybe<Scalars['String']>;
 	/** An object relationship */
@@ -1661,8 +2584,68 @@ export type Cp_Maintainer = {
  * columns and relationships of "cp.maintainer"
  *
  */
+export type Cp_MaintainerIesArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Order_By>>;
+	where?: InputMaybe<Object_Ie_Bool_Exp>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
+export type Cp_MaintainerIes_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Order_By>>;
+	where?: InputMaybe<Object_Ie_Bool_Exp>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
 export type Cp_MaintainerInformationArgs = {
 	iri?: InputMaybe<Scalars['String']>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
+export type Cp_MaintainerMaintainer_Users_ProfilesArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
+export type Cp_MaintainerMaintainer_Users_Profiles_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 };
 
 /** aggregated selection of "cp.maintainer" */
@@ -1694,7 +2677,9 @@ export type Cp_Maintainer_Bool_Exp = {
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	has_index?: InputMaybe<Boolean_Comparison_Exp>;
 	has_space?: InputMaybe<Boolean_Comparison_Exp>;
+	ies?: InputMaybe<Object_Ie_Bool_Exp>;
 	index?: InputMaybe<Cp_Index_Bool_Exp>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 	schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_name?: InputMaybe<String_Comparison_Exp>;
 	space?: InputMaybe<Cp_Space_Bool_Exp>;
@@ -1712,7 +2697,9 @@ export type Cp_Maintainer_Insert_Input = {
 	created_at?: InputMaybe<Scalars['timestamp']>;
 	has_index?: InputMaybe<Scalars['Boolean']>;
 	has_space?: InputMaybe<Scalars['Boolean']>;
+	ies?: InputMaybe<Object_Ie_Arr_Rel_Insert_Input>;
 	index?: InputMaybe<Cp_Index_Obj_Rel_Insert_Input>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
 	schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_name?: InputMaybe<Scalars['String']>;
 	space?: InputMaybe<Cp_Space_Obj_Rel_Insert_Input>;
@@ -1765,7 +2752,9 @@ export type Cp_Maintainer_Order_By = {
 	created_at?: InputMaybe<Order_By>;
 	has_index?: InputMaybe<Order_By>;
 	has_space?: InputMaybe<Order_By>;
+	ies_aggregate?: InputMaybe<Object_Ie_Aggregate_Order_By>;
 	index?: InputMaybe<Cp_Index_Order_By>;
+	maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
 	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 	space?: InputMaybe<Cp_Space_Order_By>;
@@ -1858,6 +2847,20 @@ export type Cp_Maintainer_Users_Profile_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cp_Maintainer_Users_Profile_Max_Order_By>;
+	min?: InputMaybe<Cp_Maintainer_Users_Profile_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
+	data: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "cp.maintainer_users_profile". All fields are combined with a logical 'AND'. */
 export type Cp_Maintainer_Users_Profile_Bool_Exp = {
 	_and?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Bool_Exp>>;
@@ -1895,12 +2898,26 @@ export type Cp_Maintainer_Users_Profile_Max_Fields = {
 	users_profile_id?: Maybe<Scalars['uuid']>;
 };
 
+/** order by max() on columns of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Max_Order_By = {
+	id?: InputMaybe<Order_By>;
+	maintainer_identifier?: InputMaybe<Order_By>;
+	users_profile_id?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Cp_Maintainer_Users_Profile_Min_Fields = {
 	__typename?: 'cp_maintainer_users_profile_min_fields';
 	id?: Maybe<Scalars['uuid']>;
 	maintainer_identifier?: Maybe<Scalars['String']>;
 	users_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Min_Order_By = {
+	id?: InputMaybe<Order_By>;
+	maintainer_identifier?: InputMaybe<Order_By>;
+	users_profile_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "cp.maintainer_users_profile" */
@@ -1973,6 +2990,8 @@ export type Cp_Space = {
 	id: Scalars['uuid'];
 	is_published?: Maybe<Scalars['Boolean']>;
 	published_at?: Maybe<Scalars['timestamp']>;
+	/** An object relationship */
+	schemaAudienceTypeBySchemaAudienceType: Lookup_Schema_Audience_Type;
 	schema_audience_type: Lookup_Schema_Audience_Type_Enum;
 	schema_color?: Maybe<Scalars['String']>;
 	schema_description?: Maybe<Scalars['String']>;
@@ -2049,6 +3068,7 @@ export type Cp_Space_Bool_Exp = {
 	id?: InputMaybe<Uuid_Comparison_Exp>;
 	is_published?: InputMaybe<Boolean_Comparison_Exp>;
 	published_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Bool_Exp>;
 	schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum_Comparison_Exp>;
 	schema_color?: InputMaybe<String_Comparison_Exp>;
 	schema_description?: InputMaybe<String_Comparison_Exp>;
@@ -2075,6 +3095,7 @@ export type Cp_Space_Insert_Input = {
 	id?: InputMaybe<Scalars['uuid']>;
 	is_published?: InputMaybe<Scalars['Boolean']>;
 	published_at?: InputMaybe<Scalars['timestamp']>;
+	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Obj_Rel_Insert_Input>;
 	schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
 	schema_color?: InputMaybe<Scalars['String']>;
 	schema_description?: InputMaybe<Scalars['String']>;
@@ -2144,6 +3165,7 @@ export type Cp_Space_Order_By = {
 	id?: InputMaybe<Order_By>;
 	is_published?: InputMaybe<Order_By>;
 	published_at?: InputMaybe<Order_By>;
+	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Order_By>;
 	schema_audience_type?: InputMaybe<Order_By>;
 	schema_color?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
@@ -2993,6 +4015,314 @@ export enum Lookup_App_Notification_Type_Update_Column {
 }
 
 /**
+ * Graphql enum types for content blocks
+ *
+ *
+ * columns and relationships of "lookup.cms_content_block_type"
+ *
+ */
+export type Lookup_Cms_Content_Block_Type = {
+	__typename?: 'lookup_cms_content_block_type';
+	comment?: Maybe<Scalars['String']>;
+	value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate = {
+	__typename?: 'lookup_cms_content_block_type_aggregate';
+	aggregate?: Maybe<Lookup_Cms_Content_Block_Type_Aggregate_Fields>;
+	nodes: Array<Lookup_Cms_Content_Block_Type>;
+};
+
+/** aggregate fields of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate_Fields = {
+	__typename?: 'lookup_cms_content_block_type_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Lookup_Cms_Content_Block_Type_Max_Fields>;
+	min?: Maybe<Lookup_Cms_Content_Block_Type_Min_Fields>;
+};
+
+/** aggregate fields of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.cms_content_block_type". All fields are combined with a logical 'AND'. */
+export type Lookup_Cms_Content_Block_Type_Bool_Exp = {
+	_and?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
+	_not?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+	_or?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
+	comment?: InputMaybe<String_Comparison_Exp>;
+	value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Constraint {
+	/** unique or primary key constraint */
+	CmsContentBlockTypePkey = 'cms_content_block_type_pkey',
+}
+
+export enum Lookup_Cms_Content_Block_Type_Enum {
+	Accordions = 'ACCORDIONS',
+	AnchorLinks = 'ANCHOR_LINKS',
+	Buttons = 'BUTTONS',
+	ContentPageMeta = 'CONTENT_PAGE_META',
+	Ctas = 'CTAS',
+	Eventbrite = 'EVENTBRITE',
+	Heading = 'HEADING',
+	Hero = 'HERO',
+	Iframe = 'IFRAME',
+	Image = 'IMAGE',
+	ImageGrid = 'IMAGE_GRID',
+	Intro = 'INTRO',
+	Klaar = 'KLAAR',
+	Links = 'LINKS',
+	LogoGrid = 'LOGO_GRID',
+	MediaGrid = 'MEDIA_GRID',
+	MediaPlayer = 'MEDIA_PLAYER',
+	MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
+	PageOverview = 'PAGE_OVERVIEW',
+	ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
+	Quote = 'QUOTE',
+	RichText = 'RICH_TEXT',
+	RichTextTwoColumns = 'RICH_TEXT_TWO_COLUMNS',
+	Search = 'SEARCH',
+	Spotlight = 'SPOTLIGHT',
+	Subtitle = 'SUBTITLE',
+	Title = 'TITLE',
+	TitleImageText = 'TITLE_IMAGE_TEXT',
+	TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
+	UspGrid = 'USP_GRID',
+	Video = 'VIDEO',
+	VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON',
+}
+
+/** Boolean expression to compare columns of type "lookup_cms_content_block_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp = {
+	_eq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	_in?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
+	_is_null?: InputMaybe<Scalars['Boolean']>;
+	_neq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	_nin?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Insert_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Cms_Content_Block_Type_Max_Fields = {
+	__typename?: 'lookup_cms_content_block_type_max_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Cms_Content_Block_Type_Min_Fields = {
+	__typename?: 'lookup_cms_content_block_type_min_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Mutation_Response = {
+	__typename?: 'lookup_cms_content_block_type_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Lookup_Cms_Content_Block_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input = {
+	data: Lookup_Cms_Content_Block_Type_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_On_Conflict = {
+	constraint: Lookup_Cms_Content_Block_Type_Constraint;
+	update_columns?: Array<Lookup_Cms_Content_Block_Type_Update_Column>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.cms_content_block_type". */
+export type Lookup_Cms_Content_Block_Type_Order_By = {
+	comment?: InputMaybe<Order_By>;
+	value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_cms_content_block_type */
+export type Lookup_Cms_Content_Block_Type_Pk_Columns_Input = {
+	value: Scalars['String'];
+};
+
+/** select columns of table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Select_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/** input type for updating data in table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Set_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Update_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/**
+ * GraphQL enum type for content types, e.g. pages, news, projects.
+ *
+ *
+ * columns and relationships of "lookup.cms_content_type"
+ *
+ */
+export type Lookup_Cms_Content_Type = {
+	__typename?: 'lookup_cms_content_type';
+	comment?: Maybe<Scalars['String']>;
+	value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate = {
+	__typename?: 'lookup_cms_content_type_aggregate';
+	aggregate?: Maybe<Lookup_Cms_Content_Type_Aggregate_Fields>;
+	nodes: Array<Lookup_Cms_Content_Type>;
+};
+
+/** aggregate fields of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate_Fields = {
+	__typename?: 'lookup_cms_content_type_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Lookup_Cms_Content_Type_Max_Fields>;
+	min?: Maybe<Lookup_Cms_Content_Type_Min_Fields>;
+};
+
+/** aggregate fields of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.cms_content_type". All fields are combined with a logical 'AND'. */
+export type Lookup_Cms_Content_Type_Bool_Exp = {
+	_and?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
+	_not?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+	_or?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
+	comment?: InputMaybe<String_Comparison_Exp>;
+	value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Constraint {
+	/** unique or primary key constraint */
+	CmsContentTypePkey = 'cms_content_type_pkey',
+}
+
+export enum Lookup_Cms_Content_Type_Enum {
+	/** Pagina */
+	Pagina = 'PAGINA',
+}
+
+/** Boolean expression to compare columns of type "lookup_cms_content_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Cms_Content_Type_Enum_Comparison_Exp = {
+	_eq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	_in?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
+	_is_null?: InputMaybe<Scalars['Boolean']>;
+	_neq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	_nin?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Insert_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Cms_Content_Type_Max_Fields = {
+	__typename?: 'lookup_cms_content_type_max_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Cms_Content_Type_Min_Fields = {
+	__typename?: 'lookup_cms_content_type_min_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Mutation_Response = {
+	__typename?: 'lookup_cms_content_type_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Lookup_Cms_Content_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Obj_Rel_Insert_Input = {
+	data: Lookup_Cms_Content_Type_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_On_Conflict = {
+	constraint: Lookup_Cms_Content_Type_Constraint;
+	update_columns?: Array<Lookup_Cms_Content_Type_Update_Column>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.cms_content_type". */
+export type Lookup_Cms_Content_Type_Order_By = {
+	comment?: InputMaybe<Order_By>;
+	value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_cms_content_type */
+export type Lookup_Cms_Content_Type_Pk_Columns_Input = {
+	value: Scalars['String'];
+};
+
+/** select columns of table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Select_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/** input type for updating data in table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Set_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Update_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/**
  * de circle of life van een bezoek
  *
  *
@@ -3204,6 +4534,13 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
 	returning: Array<Lookup_Schema_Audience_Type>;
 };
 
+/** input type for inserting object relation for remote table "lookup.schema_audience_type" */
+export type Lookup_Schema_Audience_Type_Obj_Rel_Insert_Input = {
+	data: Lookup_Schema_Audience_Type_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Lookup_Schema_Audience_Type_On_Conflict>;
+};
+
 /** on conflict condition type for table "lookup.schema_audience_type" */
 export type Lookup_Schema_Audience_Type_On_Conflict = {
 	constraint: Lookup_Schema_Audience_Type_Constraint;
@@ -3253,8 +4590,20 @@ export type Mutation_Root = {
 	delete_app_notification_by_pk?: Maybe<App_Notification>;
 	/** delete data from the table: "cms.content" */
 	delete_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** delete data from the table: "cms.content_blocks" */
+	delete_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** delete single row from the table: "cms.content_blocks" */
+	delete_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** delete single row from the table: "cms.content" */
 	delete_cms_content_by_pk?: Maybe<Cms_Content>;
+	/** delete data from the table: "cms.content_content_labels" */
+	delete_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** delete single row from the table: "cms.content_content_labels" */
+	delete_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** delete data from the table: "cms.content_labels" */
+	delete_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** delete single row from the table: "cms.content_labels" */
+	delete_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** delete data from the table: "cms.navigation_element" */
 	delete_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
 	/** delete single row from the table: "cms.navigation_element" */
@@ -3291,6 +4640,14 @@ export type Mutation_Root = {
 	delete_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** delete single row from the table: "lookup.app_notification_type" */
 	delete_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** delete data from the table: "lookup.cms_content_block_type" */
+	delete_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** delete single row from the table: "lookup.cms_content_block_type" */
+	delete_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** delete data from the table: "lookup.cms_content_type" */
+	delete_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** delete single row from the table: "lookup.cms_content_type" */
+	delete_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** delete data from the table: "lookup.cp_visit_status" */
 	delete_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** delete single row from the table: "lookup.cp_visit_status" */
@@ -3361,6 +4718,18 @@ export type Mutation_Root = {
 	insert_app_notification_one?: Maybe<App_Notification>;
 	/** insert data into the table: "cms.content" */
 	insert_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** insert data into the table: "cms.content_blocks" */
+	insert_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_blocks" */
+	insert_cms_content_blocks_one?: Maybe<Cms_Content_Blocks>;
+	/** insert data into the table: "cms.content_content_labels" */
+	insert_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_content_labels" */
+	insert_cms_content_content_labels_one?: Maybe<Cms_Content_Content_Labels>;
+	/** insert data into the table: "cms.content_labels" */
+	insert_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_labels" */
+	insert_cms_content_labels_one?: Maybe<Cms_Content_Labels>;
 	/** insert a single row into the table: "cms.content" */
 	insert_cms_content_one?: Maybe<Cms_Content>;
 	/** insert data into the table: "cms.navigation_element" */
@@ -3399,6 +4768,14 @@ export type Mutation_Root = {
 	insert_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** insert a single row into the table: "lookup.app_notification_type" */
 	insert_lookup_app_notification_type_one?: Maybe<Lookup_App_Notification_Type>;
+	/** insert data into the table: "lookup.cms_content_block_type" */
+	insert_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** insert a single row into the table: "lookup.cms_content_block_type" */
+	insert_lookup_cms_content_block_type_one?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** insert data into the table: "lookup.cms_content_type" */
+	insert_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** insert a single row into the table: "lookup.cms_content_type" */
+	insert_lookup_cms_content_type_one?: Maybe<Lookup_Cms_Content_Type>;
 	/** insert data into the table: "lookup.cp_visit_status" */
 	insert_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** insert a single row into the table: "lookup.cp_visit_status" */
@@ -3469,8 +4846,20 @@ export type Mutation_Root = {
 	update_app_notification_by_pk?: Maybe<App_Notification>;
 	/** update data of the table: "cms.content" */
 	update_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** update data of the table: "cms.content_blocks" */
+	update_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** update single row of the table: "cms.content_blocks" */
+	update_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** update single row of the table: "cms.content" */
 	update_cms_content_by_pk?: Maybe<Cms_Content>;
+	/** update data of the table: "cms.content_content_labels" */
+	update_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** update single row of the table: "cms.content_content_labels" */
+	update_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** update data of the table: "cms.content_labels" */
+	update_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** update single row of the table: "cms.content_labels" */
+	update_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** update data of the table: "cms.navigation_element" */
 	update_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
 	/** update single row of the table: "cms.navigation_element" */
@@ -3507,6 +4896,14 @@ export type Mutation_Root = {
 	update_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** update single row of the table: "lookup.app_notification_type" */
 	update_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** update data of the table: "lookup.cms_content_block_type" */
+	update_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** update single row of the table: "lookup.cms_content_block_type" */
+	update_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** update data of the table: "lookup.cms_content_type" */
+	update_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** update single row of the table: "lookup.cms_content_type" */
+	update_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** update data of the table: "lookup.cp_visit_status" */
 	update_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** update single row of the table: "lookup.cp_visit_status" */
@@ -3589,7 +4986,37 @@ export type Mutation_RootDelete_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Cms_Content_BlocksArgs = {
+	where: Cms_Content_Blocks_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Cms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Content_LabelsArgs = {
+	where: Cms_Content_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_LabelsArgs = {
+	where: Cms_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -3680,6 +5107,26 @@ export type Mutation_RootDelete_Lookup_App_Notification_TypeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Lookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Block_TypeArgs = {
+	where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_TypeArgs = {
+	where: Lookup_Cms_Content_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -3863,6 +5310,42 @@ export type Mutation_RootInsert_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Cms_Content_BlocksArgs = {
+	objects: Array<Cms_Content_Blocks_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Blocks_OneArgs = {
+	object: Cms_Content_Blocks_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Content_LabelsArgs = {
+	objects: Array<Cms_Content_Content_Labels_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Content_Labels_OneArgs = {
+	object: Cms_Content_Content_Labels_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_LabelsArgs = {
+	objects: Array<Cms_Content_Labels_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Labels_OneArgs = {
+	object: Cms_Content_Labels_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Cms_Content_OneArgs = {
 	object: Cms_Content_Insert_Input;
 	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
@@ -3974,6 +5457,30 @@ export type Mutation_RootInsert_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootInsert_Lookup_App_Notification_Type_OneArgs = {
 	object: Lookup_App_Notification_Type_Insert_Input;
 	on_conflict?: InputMaybe<Lookup_App_Notification_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Block_TypeArgs = {
+	objects: Array<Lookup_Cms_Content_Block_Type_Insert_Input>;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Block_Type_OneArgs = {
+	object: Lookup_Cms_Content_Block_Type_Insert_Input;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_TypeArgs = {
+	objects: Array<Lookup_Cms_Content_Type_Insert_Input>;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Type_OneArgs = {
+	object: Lookup_Cms_Content_Type_Insert_Input;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
 };
 
 /** mutation root */
@@ -4192,6 +5699,30 @@ export type Mutation_RootUpdate_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Cms_Content_BlocksArgs = {
+	_append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
+	_inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
+	_prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
+	where: Cms_Content_Blocks_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Blocks_By_PkArgs = {
+	_append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
+	_inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
+	_prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
+	pk_columns: Cms_Content_Blocks_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Cms_Content_By_PkArgs = {
 	_append?: InputMaybe<Cms_Content_Append_Input>;
 	_delete_at_path?: InputMaybe<Cms_Content_Delete_At_Path_Input>;
@@ -4200,6 +5731,40 @@ export type Mutation_RootUpdate_Cms_Content_By_PkArgs = {
 	_prepend?: InputMaybe<Cms_Content_Prepend_Input>;
 	_set?: InputMaybe<Cms_Content_Set_Input>;
 	pk_columns: Cms_Content_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Content_LabelsArgs = {
+	_set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
+	where: Cms_Content_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Content_Labels_By_PkArgs = {
+	_set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
+	pk_columns: Cms_Content_Content_Labels_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_LabelsArgs = {
+	_append?: InputMaybe<Cms_Content_Labels_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
+	_prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Labels_Set_Input>;
+	where: Cms_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Labels_By_PkArgs = {
+	_append?: InputMaybe<Cms_Content_Labels_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
+	_prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Labels_Set_Input>;
+	pk_columns: Cms_Content_Labels_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -4330,6 +5895,30 @@ export type Mutation_RootUpdate_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
 	_set?: InputMaybe<Lookup_App_Notification_Type_Set_Input>;
 	pk_columns: Lookup_App_Notification_Type_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Block_TypeArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
+	where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Block_Type_By_PkArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
+	pk_columns: Lookup_Cms_Content_Block_Type_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_TypeArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
+	where: Lookup_Cms_Content_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Type_By_PkArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
+	pk_columns: Lookup_Cms_Content_Type_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -4811,6 +6400,10 @@ export enum Object_File_Update_Column {
 /** columns and relationships of "object.ie" */
 export type Object_Ie = {
 	__typename?: 'object_ie';
+	/** An array relationship */
+	collection_ies: Array<Users_Collection_Ie>;
+	/** An aggregate relationship */
+	collection_ies_aggregate: Users_Collection_Ie_Aggregate;
 	/** Datum waarop de IE beschikbaar is gemaakt */
 	dcterms_available?: Maybe<Scalars['timestamp']>;
 	/** De datum waarop de IE werd gemaakt in edtf */
@@ -4902,6 +6495,24 @@ export type Object_Ie = {
 };
 
 /** columns and relationships of "object.ie" */
+export type Object_IeCollection_IesArgs = {
+	distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
+	where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+};
+
+/** columns and relationships of "object.ie" */
+export type Object_IeCollection_Ies_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
+	where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+};
+
+/** columns and relationships of "object.ie" */
 export type Object_IePremis_IdentifierArgs = {
 	path?: InputMaybe<Scalars['String']>;
 };
@@ -4988,6 +6599,21 @@ export type Object_Ie_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "object.ie" */
+export type Object_Ie_Aggregate_Order_By = {
+	avg?: InputMaybe<Object_Ie_Avg_Order_By>;
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Object_Ie_Max_Order_By>;
+	min?: InputMaybe<Object_Ie_Min_Order_By>;
+	stddev?: InputMaybe<Object_Ie_Stddev_Order_By>;
+	stddev_pop?: InputMaybe<Object_Ie_Stddev_Pop_Order_By>;
+	stddev_samp?: InputMaybe<Object_Ie_Stddev_Samp_Order_By>;
+	sum?: InputMaybe<Object_Ie_Sum_Order_By>;
+	var_pop?: InputMaybe<Object_Ie_Var_Pop_Order_By>;
+	var_samp?: InputMaybe<Object_Ie_Var_Samp_Order_By>;
+	variance?: InputMaybe<Object_Ie_Variance_Order_By>;
+};
+
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Object_Ie_Append_Input = {
 	/** Overige lokale identifiers van de Content Partner (json) */
@@ -5005,6 +6631,13 @@ export type Object_Ie_Append_Input = {
 	schema_publisher?: InputMaybe<Scalars['jsonb']>;
 };
 
+/** input type for inserting array relation for remote table "object.ie" */
+export type Object_Ie_Arr_Rel_Insert_Input = {
+	data: Array<Object_Ie_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
+};
+
 /** aggregate avg on columns */
 export type Object_Ie_Avg_Fields = {
 	__typename?: 'object_ie_avg_fields';
@@ -5014,11 +6647,20 @@ export type Object_Ie_Avg_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
+/** order by avg() on columns of table "object.ie" */
+export type Object_Ie_Avg_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "object.ie". All fields are combined with a logical 'AND'. */
 export type Object_Ie_Bool_Exp = {
 	_and?: InputMaybe<Array<Object_Ie_Bool_Exp>>;
 	_not?: InputMaybe<Object_Ie_Bool_Exp>;
 	_or?: InputMaybe<Array<Object_Ie_Bool_Exp>>;
+	collection_ies?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
 	dcterms_available?: InputMaybe<Timestamp_Comparison_Exp>;
 	dcterms_created?: InputMaybe<String_Comparison_Exp>;
 	dcterms_format?: InputMaybe<String_Comparison_Exp>;
@@ -5189,6 +6831,7 @@ export enum Object_Ie_Index_Select_Column {
 
 /** input type for inserting data into table "object.ie" */
 export type Object_Ie_Insert_Input = {
+	collection_ies?: InputMaybe<Users_Collection_Ie_Arr_Rel_Insert_Input>;
 	/** Datum waarop de IE beschikbaar is gemaakt */
 	dcterms_available?: InputMaybe<Scalars['timestamp']>;
 	/** De datum waarop de IE werd gemaakt in edtf */
@@ -5326,6 +6969,57 @@ export type Object_Ie_Max_Fields = {
 	updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
+/** order by max() on columns of table "object.ie" */
+export type Object_Ie_Max_Order_By = {
+	/** Datum waarop de IE beschikbaar is gemaakt */
+	dcterms_available?: InputMaybe<Order_By>;
+	/** De datum waarop de IE werd gemaakt in edtf */
+	dcterms_created?: InputMaybe<Order_By>;
+	/** Het mediatype: video, audio, beeld, document, ... */
+	dcterms_format?: InputMaybe<Order_By>;
+	/** De datum waarop de IE werd uitgebracht in edtf */
+	dcterms_issued?: InputMaybe<Order_By>;
+	dcterms_medium?: InputMaybe<Order_By>;
+	ebucore_object_type?: InputMaybe<Order_By>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: InputMaybe<Order_By>;
+	meemoo_media_object_id?: InputMaybe<Order_By>;
+	meemoofilm_base?: InputMaybe<Order_By>;
+	meemoofilm_embeddedCaptionLanguage?: InputMaybe<Order_By>;
+	meemoofilm_image_or_sound?: InputMaybe<Order_By>;
+	/** Maakt deel uit van een andere IE */
+	premis_is_part_of?: InputMaybe<Order_By>;
+	/** Is verwant aan een andere IE */
+	premis_relationship?: InputMaybe<Order_By>;
+	/** De inhoudelijke samenvatting van de IE */
+	schema_abstract?: InputMaybe<Order_By>;
+	/** Een alternatieve titel of naam van de IE */
+	schema_alternate_name?: InputMaybe<Order_By>;
+	/** De naam of ID van de rechtenhoudende persoon of organisatie */
+	schema_copyright_holder?: InputMaybe<Order_By>;
+	/** Opmerkingen bij rechten en hergebruik */
+	schema_copyright_notice?: InputMaybe<Order_By>;
+	schema_date_created_lower_bound?: InputMaybe<Order_By>;
+	/** Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond */
+	schema_date_published?: InputMaybe<Order_By>;
+	/** Een korte omschrijving van de IE */
+	schema_description?: InputMaybe<Order_By>;
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** de unieke fragmentid in mediahaven */
+	schema_identifier?: InputMaybe<Order_By>;
+	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
+	schema_maintainer_id?: InputMaybe<Order_By>;
+	schema_maintainer_id_lower?: InputMaybe<Order_By>;
+	/** De primaire titel van de IE */
+	schema_name?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+	/** Een URL naar een thumbnail of placeholder voor de IE */
+	schema_thumbnail_url?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Object_Ie_Min_Fields = {
 	__typename?: 'object_ie_min_fields';
@@ -5378,6 +7072,57 @@ export type Object_Ie_Min_Fields = {
 	updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
+/** order by min() on columns of table "object.ie" */
+export type Object_Ie_Min_Order_By = {
+	/** Datum waarop de IE beschikbaar is gemaakt */
+	dcterms_available?: InputMaybe<Order_By>;
+	/** De datum waarop de IE werd gemaakt in edtf */
+	dcterms_created?: InputMaybe<Order_By>;
+	/** Het mediatype: video, audio, beeld, document, ... */
+	dcterms_format?: InputMaybe<Order_By>;
+	/** De datum waarop de IE werd uitgebracht in edtf */
+	dcterms_issued?: InputMaybe<Order_By>;
+	dcterms_medium?: InputMaybe<Order_By>;
+	ebucore_object_type?: InputMaybe<Order_By>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: InputMaybe<Order_By>;
+	meemoo_media_object_id?: InputMaybe<Order_By>;
+	meemoofilm_base?: InputMaybe<Order_By>;
+	meemoofilm_embeddedCaptionLanguage?: InputMaybe<Order_By>;
+	meemoofilm_image_or_sound?: InputMaybe<Order_By>;
+	/** Maakt deel uit van een andere IE */
+	premis_is_part_of?: InputMaybe<Order_By>;
+	/** Is verwant aan een andere IE */
+	premis_relationship?: InputMaybe<Order_By>;
+	/** De inhoudelijke samenvatting van de IE */
+	schema_abstract?: InputMaybe<Order_By>;
+	/** Een alternatieve titel of naam van de IE */
+	schema_alternate_name?: InputMaybe<Order_By>;
+	/** De naam of ID van de rechtenhoudende persoon of organisatie */
+	schema_copyright_holder?: InputMaybe<Order_By>;
+	/** Opmerkingen bij rechten en hergebruik */
+	schema_copyright_notice?: InputMaybe<Order_By>;
+	schema_date_created_lower_bound?: InputMaybe<Order_By>;
+	/** Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond */
+	schema_date_published?: InputMaybe<Order_By>;
+	/** Een korte omschrijving van de IE */
+	schema_description?: InputMaybe<Order_By>;
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** de unieke fragmentid in mediahaven */
+	schema_identifier?: InputMaybe<Order_By>;
+	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
+	schema_maintainer_id?: InputMaybe<Order_By>;
+	schema_maintainer_id_lower?: InputMaybe<Order_By>;
+	/** De primaire titel van de IE */
+	schema_name?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+	/** Een URL naar een thumbnail of placeholder voor de IE */
+	schema_thumbnail_url?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
 /** response of any mutation on the table "object.ie" */
 export type Object_Ie_Mutation_Response = {
 	__typename?: 'object_ie_mutation_response';
@@ -5403,6 +7148,7 @@ export type Object_Ie_On_Conflict = {
 
 /** Ordering options when selecting data from "object.ie". */
 export type Object_Ie_Order_By = {
+	collection_ies_aggregate?: InputMaybe<Users_Collection_Ie_Aggregate_Order_By>;
 	dcterms_available?: InputMaybe<Order_By>;
 	dcterms_created?: InputMaybe<Order_By>;
 	dcterms_format?: InputMaybe<Order_By>;
@@ -5672,6 +7418,14 @@ export type Object_Ie_Stddev_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
+/** order by stddev() on columns of table "object.ie" */
+export type Object_Ie_Stddev_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+};
+
 /** aggregate stddev_pop on columns */
 export type Object_Ie_Stddev_Pop_Fields = {
 	__typename?: 'object_ie_stddev_pop_fields';
@@ -5679,6 +7433,14 @@ export type Object_Ie_Stddev_Pop_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Float']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "object.ie" */
+export type Object_Ie_Stddev_Pop_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -5690,6 +7452,14 @@ export type Object_Ie_Stddev_Samp_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
+/** order by stddev_samp() on columns of table "object.ie" */
+export type Object_Ie_Stddev_Samp_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+};
+
 /** aggregate sum on columns */
 export type Object_Ie_Sum_Fields = {
 	__typename?: 'object_ie_sum_fields';
@@ -5697,6 +7467,14 @@ export type Object_Ie_Sum_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Int']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "object.ie" */
+export type Object_Ie_Sum_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /** update columns of table "object.ie" */
@@ -5808,6 +7586,14 @@ export type Object_Ie_Var_Pop_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
+/** order by var_pop() on columns of table "object.ie" */
+export type Object_Ie_Var_Pop_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+};
+
 /** aggregate var_samp on columns */
 export type Object_Ie_Var_Samp_Fields = {
 	__typename?: 'object_ie_var_samp_fields';
@@ -5817,6 +7603,14 @@ export type Object_Ie_Var_Samp_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
+/** order by var_samp() on columns of table "object.ie" */
+export type Object_Ie_Var_Samp_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
+};
+
 /** aggregate variance on columns */
 export type Object_Ie_Variance_Fields = {
 	__typename?: 'object_ie_variance_fields';
@@ -5824,6 +7618,14 @@ export type Object_Ie_Variance_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Float']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "object.ie" */
+export type Object_Ie_Variance_Order_By = {
+	/** Tijd in seconden van tijdsgebaseerde media. */
+	schema_duration_in_seconds?: InputMaybe<Order_By>;
+	/** Aantal paginas van geschreven media */
+	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /**
@@ -6184,8 +7986,26 @@ export type Query_Root = {
 	cms_content: Array<Cms_Content>;
 	/** fetch aggregated fields from the table: "cms.content" */
 	cms_content_aggregate: Cms_Content_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" */
+	cms_content_blocks: Array<Cms_Content_Blocks>;
+	/** fetch aggregated fields from the table: "cms.content_blocks" */
+	cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" using primary key columns */
+	cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** fetch data from the table: "cms.content" using primary key columns */
 	cms_content_by_pk?: Maybe<Cms_Content>;
+	/** fetch data from the table: "cms.content_content_labels" */
+	cms_content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_content_labels" */
+	cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_content_labels" using primary key columns */
+	cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** fetch data from the table: "cms.content_labels" */
+	cms_content_labels: Array<Cms_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_labels" */
+	cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_labels" using primary key columns */
+	cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** fetch data from the table: "cms.navigation_element" */
 	cms_navigation_element: Array<Cms_Navigation_Element>;
 	/** fetch aggregated fields from the table: "cms.navigation_element" */
@@ -6241,6 +8061,18 @@ export type Query_Root = {
 	lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
 	/** fetch data from the table: "lookup.app_notification_type" using primary key columns */
 	lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** fetch data from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
+	lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** fetch data from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_type" using primary key columns */
+	lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** fetch data from the table: "lookup.cp_visit_status" */
 	lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
 	/** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -6382,7 +8214,67 @@ export type Query_RootCms_Content_AggregateArgs = {
 	where?: InputMaybe<Cms_Content_Bool_Exp>;
 };
 
+export type Query_RootCms_Content_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
 export type Query_RootCms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Query_RootCms_Content_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Query_RootCms_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -6568,6 +8460,46 @@ export type Query_RootLookup_App_Notification_Type_AggregateArgs = {
 };
 
 export type Query_RootLookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Query_RootLookup_Cms_Content_Block_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Query_RootLookup_Cms_Content_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -6936,8 +8868,26 @@ export type Subscription_Root = {
 	cms_content: Array<Cms_Content>;
 	/** fetch aggregated fields from the table: "cms.content" */
 	cms_content_aggregate: Cms_Content_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" */
+	cms_content_blocks: Array<Cms_Content_Blocks>;
+	/** fetch aggregated fields from the table: "cms.content_blocks" */
+	cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" using primary key columns */
+	cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** fetch data from the table: "cms.content" using primary key columns */
 	cms_content_by_pk?: Maybe<Cms_Content>;
+	/** fetch data from the table: "cms.content_content_labels" */
+	cms_content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_content_labels" */
+	cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_content_labels" using primary key columns */
+	cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** fetch data from the table: "cms.content_labels" */
+	cms_content_labels: Array<Cms_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_labels" */
+	cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_labels" using primary key columns */
+	cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** fetch data from the table: "cms.navigation_element" */
 	cms_navigation_element: Array<Cms_Navigation_Element>;
 	/** fetch aggregated fields from the table: "cms.navigation_element" */
@@ -6992,6 +8942,18 @@ export type Subscription_Root = {
 	lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
 	/** fetch data from the table: "lookup.app_notification_type" using primary key columns */
 	lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** fetch data from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
+	lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** fetch data from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_type" using primary key columns */
+	lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** fetch data from the table: "lookup.cp_visit_status" */
 	lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
 	/** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -7130,7 +9092,67 @@ export type Subscription_RootCms_Content_AggregateArgs = {
 	where?: InputMaybe<Cms_Content_Bool_Exp>;
 };
 
+export type Subscription_RootCms_Content_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
 export type Subscription_RootCms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Subscription_RootCms_Content_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Subscription_RootCms_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -7311,6 +9333,46 @@ export type Subscription_RootLookup_App_Notification_Type_AggregateArgs = {
 };
 
 export type Subscription_RootLookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Subscription_RootLookup_Cms_Content_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -8855,6 +10917,10 @@ export type Users_Group = {
 	permissions: Array<Users_Group_Permission>;
 	/** An aggregate relationship */
 	permissions_aggregate: Users_Group_Permission_Aggregate;
+	/** An array relationship */
+	profiles: Array<Users_Profile>;
+	/** An aggregate relationship */
+	profiles_aggregate: Users_Profile_Aggregate;
 	updated_at: Scalars['timestamp'];
 };
 
@@ -8886,6 +10952,36 @@ export type Users_GroupPermissions_AggregateArgs = {
 	offset?: InputMaybe<Scalars['Int']>;
 	order_by?: InputMaybe<Array<Users_Group_Permission_Order_By>>;
 	where?: InputMaybe<Users_Group_Permission_Bool_Exp>;
+};
+
+/**
+ * Gebruikersgroepen
+ *
+ *
+ * columns and relationships of "users.group"
+ *
+ */
+export type Users_GroupProfilesArgs = {
+	distinct_on?: InputMaybe<Array<Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Profile_Order_By>>;
+	where?: InputMaybe<Users_Profile_Bool_Exp>;
+};
+
+/**
+ * Gebruikersgroepen
+ *
+ *
+ * columns and relationships of "users.group"
+ *
+ */
+export type Users_GroupProfiles_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Profile_Order_By>>;
+	where?: InputMaybe<Users_Profile_Bool_Exp>;
 };
 
 /** aggregated selection of "users.group" */
@@ -8920,6 +11016,7 @@ export type Users_Group_Bool_Exp = {
 	label?: InputMaybe<String_Comparison_Exp>;
 	name?: InputMaybe<String_Comparison_Exp>;
 	permissions?: InputMaybe<Users_Group_Permission_Bool_Exp>;
+	profiles?: InputMaybe<Users_Profile_Bool_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
 
@@ -8937,6 +11034,7 @@ export type Users_Group_Insert_Input = {
 	label?: InputMaybe<Scalars['String']>;
 	name?: InputMaybe<Scalars['String']>;
 	permissions?: InputMaybe<Users_Group_Permission_Arr_Rel_Insert_Input>;
+	profiles?: InputMaybe<Users_Profile_Arr_Rel_Insert_Input>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 };
 
@@ -8993,6 +11091,7 @@ export type Users_Group_Order_By = {
 	label?: InputMaybe<Order_By>;
 	name?: InputMaybe<Order_By>;
 	permissions_aggregate?: InputMaybe<Users_Group_Permission_Aggregate_Order_By>;
+	profiles_aggregate?: InputMaybe<Users_Profile_Aggregate_Order_By>;
 	updated_at?: InputMaybe<Order_By>;
 };
 
@@ -9224,6 +11323,8 @@ export type Users_Identity = {
 	created_at: Scalars['timestamptz'];
 	id: Scalars['uuid'];
 	identity_id: Scalars['String'];
+	/** An object relationship */
+	identity_provider: Users_Identity_Provider;
 	identity_provider_name: Scalars['String'];
 	/** An object relationship */
 	profile: Users_Profile;
@@ -9274,6 +11375,7 @@ export type Users_Identity_Bool_Exp = {
 	created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 	id?: InputMaybe<Uuid_Comparison_Exp>;
 	identity_id?: InputMaybe<String_Comparison_Exp>;
+	identity_provider?: InputMaybe<Users_Identity_Provider_Bool_Exp>;
 	identity_provider_name?: InputMaybe<String_Comparison_Exp>;
 	profile?: InputMaybe<Users_Profile_Bool_Exp>;
 	profile_id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -9293,6 +11395,7 @@ export type Users_Identity_Insert_Input = {
 	created_at?: InputMaybe<Scalars['timestamptz']>;
 	id?: InputMaybe<Scalars['uuid']>;
 	identity_id?: InputMaybe<Scalars['String']>;
+	identity_provider?: InputMaybe<Users_Identity_Provider_Obj_Rel_Insert_Input>;
 	identity_provider_name?: InputMaybe<Scalars['String']>;
 	profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
 	profile_id?: InputMaybe<Scalars['uuid']>;
@@ -9362,6 +11465,7 @@ export type Users_Identity_Order_By = {
 	created_at?: InputMaybe<Order_By>;
 	id?: InputMaybe<Order_By>;
 	identity_id?: InputMaybe<Order_By>;
+	identity_provider?: InputMaybe<Users_Identity_Provider_Order_By>;
 	identity_provider_name?: InputMaybe<Order_By>;
 	profile?: InputMaybe<Users_Profile_Order_By>;
 	profile_id?: InputMaybe<Order_By>;
@@ -9377,7 +11481,29 @@ export type Users_Identity_Pk_Columns_Input = {
 export type Users_Identity_Provider = {
 	__typename?: 'users_identity_provider';
 	description?: Maybe<Scalars['String']>;
+	/** An array relationship */
+	identities: Array<Users_Identity>;
+	/** An aggregate relationship */
+	identities_aggregate: Users_Identity_Aggregate;
 	name: Scalars['String'];
+};
+
+/** columns and relationships of "users.identity_provider" */
+export type Users_Identity_ProviderIdentitiesArgs = {
+	distinct_on?: InputMaybe<Array<Users_Identity_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
+	where?: InputMaybe<Users_Identity_Bool_Exp>;
+};
+
+/** columns and relationships of "users.identity_provider" */
+export type Users_Identity_ProviderIdentities_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Users_Identity_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
+	where?: InputMaybe<Users_Identity_Bool_Exp>;
 };
 
 /** aggregated selection of "users.identity_provider" */
@@ -9407,6 +11533,7 @@ export type Users_Identity_Provider_Bool_Exp = {
 	_not?: InputMaybe<Users_Identity_Provider_Bool_Exp>;
 	_or?: InputMaybe<Array<Users_Identity_Provider_Bool_Exp>>;
 	description?: InputMaybe<String_Comparison_Exp>;
+	identities?: InputMaybe<Users_Identity_Bool_Exp>;
 	name?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -9421,6 +11548,7 @@ export enum Users_Identity_Provider_Constraint {
 /** input type for inserting data into table "users.identity_provider" */
 export type Users_Identity_Provider_Insert_Input = {
 	description?: InputMaybe<Scalars['String']>;
+	identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
 	name?: InputMaybe<Scalars['String']>;
 };
 
@@ -9447,6 +11575,13 @@ export type Users_Identity_Provider_Mutation_Response = {
 	returning: Array<Users_Identity_Provider>;
 };
 
+/** input type for inserting object relation for remote table "users.identity_provider" */
+export type Users_Identity_Provider_Obj_Rel_Insert_Input = {
+	data: Users_Identity_Provider_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Users_Identity_Provider_On_Conflict>;
+};
+
 /** on conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
 	constraint: Users_Identity_Provider_Constraint;
@@ -9457,6 +11592,7 @@ export type Users_Identity_Provider_On_Conflict = {
 /** Ordering options when selecting data from "users.identity_provider". */
 export type Users_Identity_Provider_Order_By = {
 	description?: InputMaybe<Order_By>;
+	identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
 	name?: InputMaybe<Order_By>;
 };
 
@@ -9749,6 +11885,14 @@ export type Users_Profile = {
 	collections: Array<Users_Collection>;
 	/** An aggregate relationship */
 	collections_aggregate: Users_Collection_Aggregate;
+	/** An array relationship */
+	contents: Array<Cms_Content>;
+	/** An array relationship */
+	contentsByUserProfileId: Array<Cms_Content>;
+	/** An aggregate relationship */
+	contentsByUserProfileId_aggregate: Cms_Content_Aggregate;
+	/** An aggregate relationship */
+	contents_aggregate: Cms_Content_Aggregate;
 	created_at?: Maybe<Scalars['timestamp']>;
 	first_name?: Maybe<Scalars['String']>;
 	/** A computed field, executes function "users.user_profile_full_name" */
@@ -9764,6 +11908,10 @@ export type Users_Profile = {
 	last_name?: Maybe<Scalars['String']>;
 	mail?: Maybe<Scalars['String']>;
 	/** An array relationship */
+	maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
+	/** An aggregate relationship */
+	maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
+	/** An array relationship */
 	notes: Array<Cp_Visit_Note>;
 	/** An aggregate relationship */
 	notes_aggregate: Cp_Visit_Note_Aggregate;
@@ -9774,6 +11922,10 @@ export type Users_Profile = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 	/** An array relationship */
 	visits: Array<Cp_Visit>;
+	/** An array relationship */
+	visitsByUpdatedBy: Array<Cp_Visit>;
+	/** An aggregate relationship */
+	visitsByUpdatedBy_aggregate: Cp_Visit_Aggregate;
 	/** An aggregate relationship */
 	visits_aggregate: Cp_Visit_Aggregate;
 };
@@ -9815,6 +11967,66 @@ export type Users_ProfileCollections_AggregateArgs = {
  * columns and relationships of "users.profile"
  *
  */
+export type Users_ProfileContentsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileContentsByUserProfileIdArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileContentsByUserProfileId_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileContents_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
 export type Users_ProfileIdentitiesArgs = {
 	distinct_on?: InputMaybe<Array<Users_Identity_Select_Column>>;
 	limit?: InputMaybe<Scalars['Int']>;
@@ -9836,6 +12048,36 @@ export type Users_ProfileIdentities_AggregateArgs = {
 	offset?: InputMaybe<Scalars['Int']>;
 	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
 	where?: InputMaybe<Users_Identity_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileMaintainer_Users_ProfilesArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileMaintainer_Users_Profiles_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 };
 
 /**
@@ -9920,6 +12162,36 @@ export type Users_ProfileVisitsArgs = {
  * columns and relationships of "users.profile"
  *
  */
+export type Users_ProfileVisitsByUpdatedByArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
+	where?: InputMaybe<Cp_Visit_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileVisitsByUpdatedBy_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
+	where?: InputMaybe<Cp_Visit_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
 export type Users_ProfileVisits_AggregateArgs = {
 	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
 	limit?: InputMaybe<Scalars['Int']>;
@@ -9949,6 +12221,20 @@ export type Users_Profile_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "users.profile" */
+export type Users_Profile_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Users_Profile_Max_Order_By>;
+	min?: InputMaybe<Users_Profile_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "users.profile" */
+export type Users_Profile_Arr_Rel_Insert_Input = {
+	data: Array<Users_Profile_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "users.profile". All fields are combined with a logical 'AND'. */
 export type Users_Profile_Bool_Exp = {
 	_and?: InputMaybe<Array<Users_Profile_Bool_Exp>>;
@@ -9956,6 +12242,8 @@ export type Users_Profile_Bool_Exp = {
 	_or?: InputMaybe<Array<Users_Profile_Bool_Exp>>;
 	accepted_tos_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 	collections?: InputMaybe<Users_Collection_Bool_Exp>;
+	contents?: InputMaybe<Cms_Content_Bool_Exp>;
+	contentsByUserProfileId?: InputMaybe<Cms_Content_Bool_Exp>;
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	first_name?: InputMaybe<String_Comparison_Exp>;
 	full_name?: InputMaybe<String_Comparison_Exp>;
@@ -9965,10 +12253,12 @@ export type Users_Profile_Bool_Exp = {
 	identities?: InputMaybe<Users_Identity_Bool_Exp>;
 	last_name?: InputMaybe<String_Comparison_Exp>;
 	mail?: InputMaybe<String_Comparison_Exp>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 	notes?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
 	notifications?: InputMaybe<App_Notification_Bool_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	visits?: InputMaybe<Cp_Visit_Bool_Exp>;
+	visitsByUpdatedBy?: InputMaybe<Cp_Visit_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "users.profile" */
@@ -9981,6 +12271,8 @@ export enum Users_Profile_Constraint {
 export type Users_Profile_Insert_Input = {
 	accepted_tos_at?: InputMaybe<Scalars['timestamptz']>;
 	collections?: InputMaybe<Users_Collection_Arr_Rel_Insert_Input>;
+	contents?: InputMaybe<Cms_Content_Arr_Rel_Insert_Input>;
+	contentsByUserProfileId?: InputMaybe<Cms_Content_Arr_Rel_Insert_Input>;
 	created_at?: InputMaybe<Scalars['timestamp']>;
 	first_name?: InputMaybe<Scalars['String']>;
 	group?: InputMaybe<Users_Group_Obj_Rel_Insert_Input>;
@@ -9989,10 +12281,12 @@ export type Users_Profile_Insert_Input = {
 	identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
 	last_name?: InputMaybe<Scalars['String']>;
 	mail?: InputMaybe<Scalars['String']>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
 	notes?: InputMaybe<Cp_Visit_Note_Arr_Rel_Insert_Input>;
 	notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 	visits?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
+	visitsByUpdatedBy?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -10008,6 +12302,18 @@ export type Users_Profile_Max_Fields = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 };
 
+/** order by max() on columns of table "users.profile" */
+export type Users_Profile_Max_Order_By = {
+	accepted_tos_at?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	first_name?: InputMaybe<Order_By>;
+	group_id?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	last_name?: InputMaybe<Order_By>;
+	mail?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Users_Profile_Min_Fields = {
 	__typename?: 'users_profile_min_fields';
@@ -10019,6 +12325,18 @@ export type Users_Profile_Min_Fields = {
 	last_name?: Maybe<Scalars['String']>;
 	mail?: Maybe<Scalars['String']>;
 	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "users.profile" */
+export type Users_Profile_Min_Order_By = {
+	accepted_tos_at?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	first_name?: InputMaybe<Order_By>;
+	group_id?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	last_name?: InputMaybe<Order_By>;
+	mail?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "users.profile" */
@@ -10048,6 +12366,8 @@ export type Users_Profile_On_Conflict = {
 export type Users_Profile_Order_By = {
 	accepted_tos_at?: InputMaybe<Order_By>;
 	collections_aggregate?: InputMaybe<Users_Collection_Aggregate_Order_By>;
+	contentsByUserProfileId_aggregate?: InputMaybe<Cms_Content_Aggregate_Order_By>;
+	contents_aggregate?: InputMaybe<Cms_Content_Aggregate_Order_By>;
 	created_at?: InputMaybe<Order_By>;
 	first_name?: InputMaybe<Order_By>;
 	full_name?: InputMaybe<Order_By>;
@@ -10057,9 +12377,11 @@ export type Users_Profile_Order_By = {
 	identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
 	last_name?: InputMaybe<Order_By>;
 	mail?: InputMaybe<Order_By>;
+	maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
 	notes_aggregate?: InputMaybe<Cp_Visit_Note_Aggregate_Order_By>;
 	notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
 	updated_at?: InputMaybe<Order_By>;
+	visitsByUpdatedBy_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
 	visits_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
 };
 
@@ -10131,6 +12453,464 @@ export type Uuid_Comparison_Exp = {
 	_lte?: InputMaybe<Scalars['uuid']>;
 	_neq?: InputMaybe<Scalars['uuid']>;
 	_nin?: InputMaybe<Array<Scalars['uuid']>>;
+};
+
+export type DeleteContentLabelLinksMutationVariables = Exact<{
+	contentPageId: Scalars['uuid'];
+	labelIds: Array<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+export type DeleteContentLabelLinksMutation = {
+	__typename?: 'mutation_root';
+	delete_cms_content_content_labels?: {
+		__typename?: 'cms_content_content_labels_mutation_response';
+		affected_rows: number;
+	} | null;
+};
+
+export type GetContentByIdQueryVariables = Exact<{
+	id: Scalars['uuid'];
+}>;
+
+export type GetContentByIdQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{
+		__typename?: 'cms_content';
+		content_type: string;
+		content_width: string;
+		created_at: any;
+		depublish_at?: any | null;
+		description?: string | null;
+		seo_description?: string | null;
+		meta_description?: string | null;
+		id: any;
+		thumbnail_path?: string | null;
+		is_protected: boolean;
+		is_public?: boolean | null;
+		path?: string | null;
+		user_profile_id?: any | null;
+		publish_at?: any | null;
+		published_at?: any | null;
+		title: string;
+		updated_at?: any | null;
+		user_group_ids?: any | null;
+		owner_profile?: {
+			__typename?: 'users_profile';
+			id: any;
+			full_name?: string | null;
+			mail?: string | null;
+			maintainer_users_profiles: Array<{
+				__typename?: 'cp_maintainer_users_profile';
+				maintainer: {
+					__typename?: 'cp_maintainer';
+					schema_identifier: string;
+					schema_name?: string | null;
+					information?: Array<{
+						__typename?: 'ContentPartner';
+						logo?: { __typename?: 'Logo'; iri: string } | null;
+					} | null> | null;
+				};
+			}>;
+			group?: { __typename?: 'users_group'; label: string; id: any } | null;
+		} | null;
+		content_content_labels: Array<{
+			__typename?: 'cms_content_content_labels';
+			content_label: {
+				__typename?: 'cms_content_labels';
+				label: string;
+				id: any;
+				link_to?: any | null;
+			};
+		}>;
+		content_blocks: Array<{
+			__typename?: 'cms_content_blocks';
+			content_block_type: Lookup_Cms_Content_Block_Type_Enum;
+			content_id: any;
+			created_at: any;
+			id: any;
+			position: number;
+			updated_at: any;
+			variables?: any | null;
+		}>;
+	}>;
+};
+
+export type GetContentLabelsByContentTypeQueryVariables = Exact<{
+	contentType: Lookup_Cms_Content_Type_Enum;
+}>;
+
+export type GetContentLabelsByContentTypeQuery = {
+	__typename?: 'query_root';
+	cms_content_labels: Array<{
+		__typename?: 'cms_content_labels';
+		id: any;
+		label: string;
+		content_type: Lookup_Cms_Content_Type_Enum;
+		link_to?: any | null;
+	}>;
+};
+
+export type GetContentPageByPathQueryVariables = Exact<{
+	path: Scalars['String'];
+}>;
+
+export type GetContentPageByPathQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{
+		__typename?: 'cms_content';
+		content_type: string;
+		content_width: string;
+		created_at: any;
+		depublish_at?: any | null;
+		description?: string | null;
+		seo_description?: string | null;
+		meta_description?: string | null;
+		id: any;
+		thumbnail_path?: string | null;
+		is_protected: boolean;
+		is_public?: boolean | null;
+		path?: string | null;
+		user_profile_id?: any | null;
+		publish_at?: any | null;
+		published_at?: any | null;
+		title: string;
+		updated_at?: any | null;
+		user_group_ids?: any | null;
+		owner_profile?: {
+			__typename?: 'users_profile';
+			first_name?: string | null;
+			last_name?: string | null;
+			group?: { __typename?: 'users_group'; id: any; label: string } | null;
+		} | null;
+		content_content_labels: Array<{
+			__typename?: 'cms_content_content_labels';
+			content_label: {
+				__typename?: 'cms_content_labels';
+				id: any;
+				label: string;
+				link_to?: any | null;
+			};
+		}>;
+		content_blocks: Array<{
+			__typename?: 'cms_content_blocks';
+			content_block_type: Lookup_Cms_Content_Block_Type_Enum;
+			content_id: any;
+			created_at: any;
+			id: any;
+			position: number;
+			updated_at: any;
+			variables?: any | null;
+		}>;
+	}>;
+};
+
+export type GetContentPageLabelsByTypeAndIdsQueryVariables = Exact<{
+	contentType: Lookup_Cms_Content_Type_Enum;
+	labelIds: Array<Scalars['uuid']> | Scalars['uuid'];
+}>;
+
+export type GetContentPageLabelsByTypeAndIdsQuery = {
+	__typename?: 'query_root';
+	cms_content_labels: Array<{ __typename?: 'cms_content_labels'; label: string; id: any }>;
+};
+
+export type GetContentPageLabelsByTypeAndLabelsQueryVariables = Exact<{
+	contentType: Lookup_Cms_Content_Type_Enum;
+	labels: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+export type GetContentPageLabelsByTypeAndLabelsQuery = {
+	__typename?: 'query_root';
+	cms_content_labels: Array<{ __typename?: 'cms_content_labels'; label: string; id: any }>;
+};
+
+export type GetContentPagesByIdsQueryVariables = Exact<{
+	ids?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
+}>;
+
+export type GetContentPagesByIdsQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{ __typename?: 'cms_content'; user_profile_id?: any | null }>;
+};
+
+export type GetContentPagesWithBlocksQueryVariables = Exact<{
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+	offset?: InputMaybe<Scalars['Int']>;
+	limit?: InputMaybe<Scalars['Int']>;
+	orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+	labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
+	orUserGroupIds?: InputMaybe<
+		Array<Cms_Content_Content_Labels_Bool_Exp> | Cms_Content_Content_Labels_Bool_Exp
+	>;
+}>;
+
+export type GetContentPagesWithBlocksQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{
+		__typename?: 'cms_content';
+		content_type: string;
+		created_at: any;
+		depublish_at?: any | null;
+		description?: string | null;
+		seo_description?: string | null;
+		meta_description?: string | null;
+		id: any;
+		thumbnail_path?: string | null;
+		is_protected: boolean;
+		is_public?: boolean | null;
+		path?: string | null;
+		publish_at?: any | null;
+		published_at?: any | null;
+		title: string;
+		updated_at?: any | null;
+		owner_profile?: {
+			__typename?: 'users_profile';
+			first_name?: string | null;
+			last_name?: string | null;
+			group?: { __typename?: 'users_group'; id: any; label: string } | null;
+		} | null;
+		content_content_labels: Array<{
+			__typename?: 'cms_content_content_labels';
+			content_label: {
+				__typename?: 'cms_content_labels';
+				id: any;
+				label: string;
+				link_to?: any | null;
+			};
+		}>;
+		content_blocks: Array<{
+			__typename?: 'cms_content_blocks';
+			content_block_type: Lookup_Cms_Content_Block_Type_Enum;
+			content_id: any;
+			created_at: any;
+			id: any;
+			position: number;
+			updated_at: any;
+			variables?: any | null;
+		}>;
+	}>;
+	cms_content_aggregate: {
+		__typename?: 'cms_content_aggregate';
+		aggregate?: { __typename?: 'cms_content_aggregate_fields'; count: number } | null;
+	};
+	cms_content_labels: Array<{
+		__typename?: 'cms_content_labels';
+		id: any;
+		content_content_labels_aggregate: {
+			__typename?: 'cms_content_content_labels_aggregate';
+			aggregate?: {
+				__typename?: 'cms_content_content_labels_aggregate_fields';
+				count: number;
+			} | null;
+		};
+	}>;
+};
+
+export type GetContentPagesQueryVariables = Exact<{
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+	offset?: InputMaybe<Scalars['Int']>;
+	limit?: InputMaybe<Scalars['Int']>;
+	orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+	labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
+	orUserGroupIds?: InputMaybe<
+		Array<Cms_Content_Content_Labels_Bool_Exp> | Cms_Content_Content_Labels_Bool_Exp
+	>;
+}>;
+
+export type GetContentPagesQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{
+		__typename?: 'cms_content';
+		id: any;
+		content_type: string;
+		created_at: any;
+		depublish_at?: any | null;
+		description?: string | null;
+		seo_description?: string | null;
+		meta_description?: string | null;
+		thumbnail_path?: string | null;
+		is_protected: boolean;
+		is_public?: boolean | null;
+		path?: string | null;
+		publish_at?: any | null;
+		published_at?: any | null;
+		title: string;
+		updated_at?: any | null;
+		user_group_ids?: any | null;
+		user_profile_id?: any | null;
+		owner_profile?: {
+			__typename?: 'users_profile';
+			first_name?: string | null;
+			last_name?: string | null;
+			group?: { __typename?: 'users_group'; id: any; label: string } | null;
+		} | null;
+		content_content_labels: Array<{
+			__typename?: 'cms_content_content_labels';
+			content_label: {
+				__typename?: 'cms_content_labels';
+				id: any;
+				label: string;
+				link_to?: any | null;
+			};
+		}>;
+	}>;
+	cms_content_aggregate: {
+		__typename?: 'cms_content_aggregate';
+		aggregate?: { __typename?: 'cms_content_aggregate_fields'; count: number } | null;
+	};
+	cms_content_labels: Array<{
+		__typename?: 'cms_content_labels';
+		id: any;
+		content_content_labels_aggregate: {
+			__typename?: 'cms_content_content_labels_aggregate';
+			aggregate?: {
+				__typename?: 'cms_content_content_labels_aggregate_fields';
+				count: number;
+			} | null;
+		};
+	}>;
+};
+
+export type GetContentTypesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetContentTypesQuery = {
+	__typename?: 'query_root';
+	lookup_cms_content_type: Array<{
+		__typename?: 'lookup_cms_content_type';
+		value: string;
+		comment?: string | null;
+	}>;
+};
+
+export type GetPermissionsFromContentPageByPathQueryVariables = Exact<{
+	path: Scalars['String'];
+}>;
+
+export type GetPermissionsFromContentPageByPathQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{ __typename?: 'cms_content'; user_group_ids?: any | null }>;
+};
+
+export type GetPublicContentPagesByTitleQueryVariables = Exact<{
+	limit?: InputMaybe<Scalars['Int']>;
+	orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+}>;
+
+export type GetPublicContentPagesByTitleQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{ __typename?: 'cms_content'; path?: string | null; title: string }>;
+};
+
+export type GetPublicContentPagesQueryVariables = Exact<{
+	where?: InputMaybe<Cms_Content_Bool_Exp>;
+}>;
+
+export type GetPublicContentPagesQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{
+		__typename?: 'cms_content';
+		path?: string | null;
+		updated_at?: any | null;
+	}>;
+};
+
+export type GetPublicProjectContentPagesByTitleQueryVariables = Exact<{
+	title: Scalars['String'];
+	limit?: InputMaybe<Scalars['Int']>;
+	orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+}>;
+
+export type GetPublicProjectContentPagesByTitleQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{ __typename?: 'cms_content'; path?: string | null; title: string }>;
+};
+
+export type GetPublicProjectContentPagesQueryVariables = Exact<{
+	limit?: InputMaybe<Scalars['Int']>;
+	orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+}>;
+
+export type GetPublicProjectContentPagesQuery = {
+	__typename?: 'query_root';
+	cms_content: Array<{ __typename?: 'cms_content'; path?: string | null; title: string }>;
+};
+
+export type InsertContentLabelLinksMutationVariables = Exact<{
+	objects:
+		| Array<Cms_Content_Content_Labels_Insert_Input>
+		| Cms_Content_Content_Labels_Insert_Input;
+}>;
+
+export type InsertContentLabelLinksMutation = {
+	__typename?: 'mutation_root';
+	insert_cms_content_content_labels?: {
+		__typename?: 'cms_content_content_labels_mutation_response';
+		affected_rows: number;
+	} | null;
+};
+
+export type InsertContentMutationVariables = Exact<{
+	contentPage: Cms_Content_Insert_Input;
+}>;
+
+export type InsertContentMutation = {
+	__typename?: 'mutation_root';
+	insert_cms_content?: {
+		__typename?: 'cms_content_mutation_response';
+		returning: Array<{ __typename?: 'cms_content'; id: any }>;
+	} | null;
+};
+
+export type SoftDeleteContentMutationVariables = Exact<{
+	id: Scalars['uuid'];
+}>;
+
+export type SoftDeleteContentMutation = {
+	__typename?: 'mutation_root';
+	update_cms_content?: {
+		__typename?: 'cms_content_mutation_response';
+		affected_rows: number;
+	} | null;
+};
+
+export type UpdateContentByIdMutationVariables = Exact<{
+	id: Scalars['uuid'];
+	contentPage: Cms_Content_Set_Input;
+}>;
+
+export type UpdateContentByIdMutation = {
+	__typename?: 'mutation_root';
+	update_cms_content?: {
+		__typename?: 'cms_content_mutation_response';
+		affected_rows: number;
+	} | null;
+};
+
+export type UpdateContentPagePublishDatesMutationVariables = Exact<{
+	now?: InputMaybe<Scalars['timestamp']>;
+	publishedAt?: InputMaybe<Scalars['timestamp']>;
+}>;
+
+export type UpdateContentPagePublishDatesMutation = {
+	__typename?: 'mutation_root';
+	publish_content_pages?: {
+		__typename?: 'cms_content_mutation_response';
+		affected_rows: number;
+	} | null;
+	unpublish_content_pages?: {
+		__typename?: 'cms_content_mutation_response';
+		affected_rows: number;
+	} | null;
+};
+
+export type GetFileByRepresentationSchemaIdentifierQueryVariables = Exact<{
+	id?: InputMaybe<Scalars['String']>;
+}>;
+
+export type GetFileByRepresentationSchemaIdentifierQuery = {
+	__typename?: 'query_root';
+	object_file: Array<{ __typename?: 'object_file'; schema_embed_url?: string | null }>;
 };
 
 export type DeleteCollectionMutationVariables = Exact<{
@@ -10220,6 +13000,25 @@ export type FindCollectionsByUserQuery = {
 		__typename?: 'users_collection_aggregate';
 		aggregate?: { __typename?: 'users_collection_aggregate_fields'; count: number } | null;
 	};
+};
+
+export type GetObjectBySchemaIdentifierQueryVariables = Exact<{
+	objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
+}>;
+
+export type GetObjectBySchemaIdentifierQuery = {
+	__typename?: 'query_root';
+	object_ie: Array<{
+		__typename?: 'object_ie';
+		schema_identifier: string;
+		meemoo_identifier: string;
+		schema_name: string;
+		schema_creator?: any | null;
+		dcterms_available?: any | null;
+		schema_thumbnail_url?: string | null;
+		dcterms_format: string;
+		schema_number_of_pages?: number | null;
+	}>;
 };
 
 export type FindObjectBySchemaIdentifierQueryVariables = Exact<{
@@ -10349,6 +13148,2998 @@ export type UpdateCollectionMutation = {
 	} | null;
 };
 
+export const DeleteContentLabelLinksDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'deleteContentLabelLinks' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentPageId' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'labelIds' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+							},
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'delete_cms_content_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'label_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'labelIds',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'contentPageId',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	DeleteContentLabelLinksMutation,
+	DeleteContentLabelLinksMutationVariables
+>;
+export const GetContentByIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentById' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_width' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'depublish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'seo_description' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meta_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'thumbnail_path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'owner_profile' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'full_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'mail' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'maintainer_users_profiles',
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'maintainer',
+															},
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'schema_identifier',
+																		},
+																	},
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'schema_name',
+																		},
+																	},
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'information',
+																		},
+																		selectionSet: {
+																			kind: 'SelectionSet',
+																			selections: [
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'logo',
+																					},
+																					selectionSet: {
+																						kind: 'SelectionSet',
+																						selections:
+																							[
+																								{
+																									kind: 'Field',
+																									name: {
+																										kind: 'Name',
+																										value: 'iri',
+																									},
+																								},
+																							],
+																					},
+																				},
+																			],
+																		},
+																	},
+																],
+															},
+														},
+													],
+												},
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'group' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'publish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_group_ids' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_content_labels' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_label' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'link_to',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_blocks' },
+									arguments: [
+										{
+											kind: 'Argument',
+											name: { kind: 'Name', value: 'order_by' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: 'position' },
+														value: { kind: 'EnumValue', value: 'asc' },
+													},
+												],
+											},
+										},
+									],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'position' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'updated_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'variables' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetContentByIdQuery, GetContentByIdQueryVariables>;
+export const GetContentLabelsByContentTypeDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentLabelsByContentType' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentType' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'lookup_cms_content_type_enum' },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_type' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'contentType',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'label' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'link_to' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetContentLabelsByContentTypeQuery,
+	GetContentLabelsByContentTypeQueryVariables
+>;
+export const GetContentPageByPathDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPageByPath' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'path' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'path' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'path' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_width' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'depublish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'seo_description' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meta_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'thumbnail_path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'owner_profile' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'first_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'last_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'group' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'publish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_group_ids' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_content_labels' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_label' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'link_to',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_blocks' },
+									arguments: [
+										{
+											kind: 'Argument',
+											name: { kind: 'Name', value: 'order_by' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: 'position' },
+														value: { kind: 'EnumValue', value: 'asc' },
+													},
+												],
+											},
+										},
+									],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'position' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'updated_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'variables' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetContentPageByPathQuery, GetContentPageByPathQueryVariables>;
+export const GetContentPageLabelsByTypeAndIdsDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPageLabelsByTypeAndIds' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentType' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'lookup_cms_content_type_enum' },
+						},
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'labelIds' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+							},
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'labelIds',
+															},
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_type' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'contentType',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'label' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetContentPageLabelsByTypeAndIdsQuery,
+	GetContentPageLabelsByTypeAndIdsQueryVariables
+>;
+export const GetContentPageLabelsByTypeAndLabelsDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPageLabelsByTypeAndLabels' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentType' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'lookup_cms_content_type_enum' },
+						},
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'labels' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: {
+									kind: 'NamedType',
+									name: { kind: 'Name', value: 'String' },
+								},
+							},
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'label' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'labels' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_type' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'contentType',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'label' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetContentPageLabelsByTypeAndLabelsQuery,
+	GetContentPageLabelsByTypeAndLabelsQueryVariables
+>;
+export const GetContentPagesByIdsDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPagesByIds' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'ids' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'ids' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetContentPagesByIdsQuery, GetContentPagesByIdsQueryVariables>;
+export const GetContentPagesWithBlocksDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPagesWithBlocks' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NamedType',
+						name: { kind: 'Name', value: 'cms_content_bool_exp' },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '0' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '10' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: { kind: 'Name', value: 'cms_content_order_by' },
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'labelIds' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+						},
+					},
+					defaultValue: { kind: 'ListValue', values: [] },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orUserGroupIds' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: {
+									kind: 'Name',
+									value: 'cms_content_content_labels_bool_exp',
+								},
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'offset' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'offset' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'orderBy' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'depublish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'seo_description' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meta_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'thumbnail_path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'owner_profile' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'first_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'last_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'group' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'publish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_content_labels' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_label' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'link_to',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_blocks' },
+									arguments: [
+										{
+											kind: 'Argument',
+											name: { kind: 'Name', value: 'order_by' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: 'position' },
+														value: { kind: 'EnumValue', value: 'asc' },
+													},
+												],
+											},
+										},
+									],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_id' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'created_at' },
+											},
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'position' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'updated_at' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'variables' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_block_type' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_aggregate' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'aggregate' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'count' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'labelIds',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{
+									kind: 'Field',
+									name: {
+										kind: 'Name',
+										value: 'content_content_labels_aggregate',
+									},
+									arguments: [
+										{
+											kind: 'Argument',
+											name: { kind: 'Name', value: 'where' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_or' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'orUserGroupIds',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'aggregate' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'count' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetContentPagesWithBlocksQuery,
+	GetContentPagesWithBlocksQueryVariables
+>;
+export const GetContentPagesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentPages' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NamedType',
+						name: { kind: 'Name', value: 'cms_content_bool_exp' },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '0' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '10' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: { kind: 'Name', value: 'cms_content_order_by' },
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'labelIds' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+						},
+					},
+					defaultValue: { kind: 'ListValue', values: [] },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orUserGroupIds' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: {
+									kind: 'Name',
+									value: 'cms_content_content_labels_bool_exp',
+								},
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'offset' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'offset' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'orderBy' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'content_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'depublish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'seo_description' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meta_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'thumbnail_path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'owner_profile' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'first_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'last_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'group' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'publish_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_group_ids' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'content_content_labels' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'content_label' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' },
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'label' },
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'link_to',
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_aggregate' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'aggregate' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'count' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_in' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'labelIds',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{
+									kind: 'Field',
+									name: {
+										kind: 'Name',
+										value: 'content_content_labels_aggregate',
+									},
+									arguments: [
+										{
+											kind: 'Argument',
+											name: { kind: 'Name', value: 'where' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_or' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'orUserGroupIds',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'aggregate' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'count' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetContentPagesQuery, GetContentPagesQueryVariables>;
+export const GetContentTypesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getContentTypes' },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'lookup_cms_content_type' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'value' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'comment' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetContentTypesQuery, GetContentTypesQueryVariables>;
+export const GetPermissionsFromContentPageByPathDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'GetPermissionsFromContentPageByPath' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'path' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'path' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'path' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'user_group_ids' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetPermissionsFromContentPageByPathQuery,
+	GetPermissionsFromContentPageByPathQueryVariables
+>;
+export const GetPublicContentPagesByTitleDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getPublicContentPagesByTitle' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '20' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: { kind: 'Name', value: 'cms_content_order_by' },
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NamedType',
+						name: { kind: 'Name', value: 'cms_content_bool_exp' },
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'orderBy' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetPublicContentPagesByTitleQuery,
+	GetPublicContentPagesByTitleQueryVariables
+>;
+export const GetPublicContentPagesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getPublicContentPages' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NamedType',
+						name: { kind: 'Name', value: 'cms_content_bool_exp' },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetPublicContentPagesQuery, GetPublicContentPagesQueryVariables>;
+export const GetPublicProjectContentPagesByTitleDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getPublicProjectContentPagesByTitle' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'title' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '20' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: { kind: 'Name', value: 'cms_content_order_by' },
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'title' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_ilike' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'title' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_type' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'StringValue',
+															value: 'PROJECT',
+															block: false,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_public' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: true,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'orderBy' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetPublicProjectContentPagesByTitleQuery,
+	GetPublicProjectContentPagesByTitleQueryVariables
+>;
+export const GetPublicProjectContentPagesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getPublicProjectContentPages' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					defaultValue: { kind: 'IntValue', value: '20' },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: {
+								kind: 'NamedType',
+								name: { kind: 'Name', value: 'cms_content_order_by' },
+							},
+						},
+					},
+					defaultValue: { kind: 'ObjectValue', fields: [] },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'orderBy' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'content_type' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'StringValue',
+															value: 'PROJECT',
+															block: false,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_public' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: true,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'title' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetPublicProjectContentPagesQuery,
+	GetPublicProjectContentPagesQueryVariables
+>;
+export const InsertContentLabelLinksDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'insertContentLabelLinks' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'objects' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: {
+									kind: 'NamedType',
+									name: {
+										kind: 'Name',
+										value: 'cms_content_content_labels_insert_input',
+									},
+								},
+							},
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'insert_cms_content_content_labels' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'objects' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'objects' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	InsertContentLabelLinksMutation,
+	InsertContentLabelLinksMutationVariables
+>;
+export const InsertContentDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'insertContent' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentPage' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'cms_content_insert_input' },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'insert_cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'objects' },
+								value: {
+									kind: 'ListValue',
+									values: [
+										{
+											kind: 'Variable',
+											name: { kind: 'Name', value: 'contentPage' },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'returning' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<InsertContentMutation, InsertContentMutationVariables>;
+export const SoftDeleteContentDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'softDeleteContent' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'update_cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: '_set' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: { kind: 'BooleanValue', value: true },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<SoftDeleteContentMutation, SoftDeleteContentMutationVariables>;
+export const UpdateContentByIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'updateContentById' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'contentPage' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'cms_content_set_input' },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'update_cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: '_set' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'contentPage' },
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<UpdateContentByIdMutation, UpdateContentByIdMutationVariables>;
+export const UpdateContentPagePublishDatesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'updateContentPagePublishDates' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'now' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'timestamp' } },
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'publishedAt' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'timestamp' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						alias: { kind: 'Name', value: 'publish_content_pages' },
+						name: { kind: 'Name', value: 'update_cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: '_or' },
+											value: {
+												kind: 'ListValue',
+												values: [
+													{
+														kind: 'ObjectValue',
+														fields: [
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'publish_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_lte',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'now',
+																				},
+																			},
+																		},
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: false,
+																			},
+																		},
+																	],
+																},
+															},
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'depublish_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_gte',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'now',
+																				},
+																			},
+																		},
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: false,
+																			},
+																		},
+																	],
+																},
+															},
+														],
+													},
+													{
+														kind: 'ObjectValue',
+														fields: [
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'publish_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_lte',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'now',
+																				},
+																			},
+																		},
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: false,
+																			},
+																		},
+																	],
+																},
+															},
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'depublish_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: true,
+																			},
+																		},
+																	],
+																},
+															},
+														],
+													},
+													{
+														kind: 'ObjectValue',
+														fields: [
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'publish_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: true,
+																			},
+																		},
+																	],
+																},
+															},
+															{
+																kind: 'ObjectField',
+																name: {
+																	kind: 'Name',
+																	value: 'published_at',
+																},
+																value: {
+																	kind: 'ObjectValue',
+																	fields: [
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_gte',
+																			},
+																			value: {
+																				kind: 'Variable',
+																				name: {
+																					kind: 'Name',
+																					value: 'now',
+																				},
+																			},
+																		},
+																		{
+																			kind: 'ObjectField',
+																			name: {
+																				kind: 'Name',
+																				value: '_is_null',
+																			},
+																			value: {
+																				kind: 'BooleanValue',
+																				value: false,
+																			},
+																		},
+																	],
+																},
+															},
+														],
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'published_at' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_is_null' },
+														value: {
+															kind: 'BooleanValue',
+															value: true,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: '_set' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'published_at' },
+											value: {
+												kind: 'Variable',
+												name: { kind: 'Name', value: 'publishedAt' },
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_public' },
+											value: { kind: 'BooleanValue', value: true },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						alias: { kind: 'Name', value: 'unpublish_content_pages' },
+						name: { kind: 'Name', value: 'update_cms_content' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'depublish_at' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_lt' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'now' },
+														},
+													},
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_is_null' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_public' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: true,
+														},
+													},
+												],
+											},
+										},
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_deleted' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'BooleanValue',
+															value: false,
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: '_set' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'is_public' },
+											value: { kind: 'BooleanValue', value: false },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'affected_rows' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	UpdateContentPagePublishDatesMutation,
+	UpdateContentPagePublishDatesMutationVariables
+>;
+export const GetFileByRepresentationSchemaIdentifierDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getFileByRepresentationSchemaIdentifier' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'object_file' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: {
+												kind: 'Name',
+												value: 'representation_schema_identifier',
+											},
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_embed_url' },
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetFileByRepresentationSchemaIdentifierQuery,
+	GetFileByRepresentationSchemaIdentifierQueryVariables
+>;
 export const DeleteCollectionDocument = {
 	kind: 'Document',
 	definitions: [
@@ -10980,6 +16771,102 @@ export const FindCollectionsByUserDocument = {
 		},
 	],
 } as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
+export const GetObjectBySchemaIdentifierDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getObjectBySchemaIdentifier' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: {
+						kind: 'Variable',
+						name: { kind: 'Name', value: 'objectSchemaIdentifier' },
+					},
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'object_ie' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'schema_identifier' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: {
+																kind: 'Name',
+																value: 'objectSchemaIdentifier',
+															},
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'IntValue', value: '1' },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_identifier' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meemoo_identifier' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_creator' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'dcterms_available' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_thumbnail_url' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'dcterms_format' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_number_of_pages' },
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetObjectBySchemaIdentifierQuery,
+	GetObjectBySchemaIdentifierQueryVariables
+>;
 export const FindObjectBySchemaIdentifierDocument = {
 	kind: 'Document',
 	definitions: [

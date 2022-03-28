@@ -9,6 +9,9 @@ export interface Configuration {
 	graphQlUrl: string;
 	graphQlSecret: string;
 	graphQlEnableWhitelist: boolean;
+	graphqlUrlAvo: string;
+	graphqlSecretAvo: string;
+	databaseApplicationType: string;
 	cookieSecret: string;
 	cookieMaxAge: number;
 	redisConnectionString: string;

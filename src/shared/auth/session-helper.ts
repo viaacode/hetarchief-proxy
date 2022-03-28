@@ -1,10 +1,13 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
+import { Request } from 'express';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
+import publicIp from 'public-ip';
 
 import { User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const IDP = 'idp';
 const IDP_USER_INFO_PATH = 'idpUserInfo';
@@ -82,6 +85,13 @@ export class SessionHelper {
 		return session[ARCHIEF_USER_INFO_PATH];
 	}
 
+	public static getUserGroupIds(user: User | null | undefined): number[] {
+		return [
+			...get(user, 'userGroupIds', []),
+			user ? SpecialPermissionGroups.loggedInUsers : SpecialPermissionGroups.loggedOutUsers,
+		];
+	}
+
 	/**
 	 * Returns when the session expires based on the input date (usually 'now')
 	 */
@@ -95,6 +105,25 @@ export class SessionHelper {
 		)(now);
 
 		return expiresAt.toISOString();
+	}
+
+	public static async getIp(request: Request): Promise<string> {
+		const forwardedFor =
+			request.headers['X-Forwarded-For'] || request.headers['x-forwarded-for'];
+		const ip = Array.isArray(forwardedFor)
+			? forwardedFor[0]
+			: forwardedFor || (request as any).ip;
+
+		if (ip?.includes('::ffff:')) {
+			return ip.replace('::ffff:', '');
+		}
+
+		if (ip === '::1') {
+			// Localhost request (local development) => get external ip of the developer machine
+			return publicIp.v4();
+		}
+
+		return ip;
 	}
 
 	public static getIdpUserInfo(session: Record<string, any>): LdapUser | null {

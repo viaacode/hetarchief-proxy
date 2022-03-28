@@ -1,0 +1,235 @@
+import { Avo } from '@viaa/avo2-types';
+
+import {
+	DeleteContentLabelLinksMutation as DeleteContentLabelLinksMutationAvo,
+	GetContentByIdQuery as GetContentByIdQueryAvo,
+	GetContentLabelsByContentTypeQuery as GetContentLabelsByContentTypeQueryAvo,
+	GetContentPageByPathQuery as GetContentPageByPathQueryAvo,
+	GetContentPageLabelsByTypeAndIdsQuery as GetContentPageLabelsByTypeAndIdsQueryAvo,
+	GetContentPageLabelsByTypeAndLabelsQuery as GetContentPageLabelsByTypeAndLabelsQueryAvo,
+	GetContentPagesByIdsQuery as GetContentPagesByIdsQueryAvo,
+	GetContentPagesQuery as GetContentPagesQueryAvo,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
+	GetContentTypesQuery as GetContentTypesQueryAvo,
+	GetPermissionsFromContentPageByPathQuery as GetPermissionsFromContentPageByPathQueryAvo,
+	GetPublicContentPagesByTitleQuery as GetPublicContentPagesByTitleQueryAvo,
+	GetPublicContentPagesQuery as GetPublicContentPagesQueryAvo,
+	GetPublicProjectContentPagesByTitleQuery as GetPublicProjectContentPagesByTitleQueryAvo,
+	GetPublicProjectContentPagesQuery as GetPublicProjectContentPagesQueryAvo,
+	InsertContentLabelLinksMutation as InsertContentLabelLinksMutationAvo,
+	InsertContentMutation as InsertContentMutationAvo,
+	SoftDeleteContentMutation as SoftDeleteContentMutationAvo,
+	UpdateContentByIdMutation as UpdateContentByIdMutationAvo,
+	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationAvo,
+} from '../../../generated/graphql-db-types-avo';
+import {
+	DeleteContentLabelLinksMutation as DeleteContentLabelLinksMutationHetArchief,
+	GetContentByIdQuery as GetContentByIdQueryHetArchief,
+	GetContentLabelsByContentTypeQuery as GetContentLabelsByContentTypeQueryHetArchief,
+	GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief,
+	GetContentPageLabelsByTypeAndIdsQuery as GetContentPageLabelsByTypeAndIdsQueryHetArchief,
+	GetContentPageLabelsByTypeAndLabelsQuery as GetContentPageLabelsByTypeAndLabelsQueryHetArchief,
+	GetContentPagesByIdsQuery as GetContentPagesByIdsQueryHetArchief,
+	GetContentPagesQuery as GetContentPagesQueryHetArchief,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
+	GetContentTypesQuery as GetContentTypesQueryHetArchief,
+	GetPermissionsFromContentPageByPathQuery as GetPermissionsFromContentPageByPathQueryHetArchief,
+	GetPublicContentPagesByTitleQuery as GetPublicContentPagesByTitleQueryHetArchief,
+	GetPublicContentPagesQuery as GetPublicContentPagesQueryHetArchief,
+	GetPublicProjectContentPagesByTitleQuery as GetPublicProjectContentPagesByTitleQueryHetArchief,
+	GetPublicProjectContentPagesQuery as GetPublicProjectContentPagesQueryHetArchief,
+	InsertContentLabelLinksMutation as InsertContentLabelLinksMutationHetArchief,
+	InsertContentMutation as InsertContentMutationHetArchief,
+	SoftDeleteContentMutation as SoftDeleteContentMutationHetArchief,
+	UpdateContentByIdMutation as UpdateContentByIdMutationHetArchief,
+	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationHetArchief,
+} from '../../../generated/graphql-db-types-hetarchief';
+
+import { Media } from '~modules/media/types';
+import { User } from '~modules/users/types';
+
+export enum AvoOrHetArchief {
+	avo = 'avo',
+	hetArchief = 'hetArchief',
+}
+
+export type ContentPickerType =
+	// Avo
+	| 'COLLECTION'
+	| 'ITEM'
+	| 'BUNDLE'
+	| 'DROPDOWN'
+	| 'SEARCH_QUERY'
+	| 'PROJECTS'
+
+	// Het archief
+	| 'IE_COLLECTION'
+	| 'IE_OBJECT'
+
+	// Both
+	| 'CONTENT_PAGE'
+	| 'INTERNAL_LINK'
+	| 'EXTERNAL_LINK'
+	| 'ANCHOR_LINK'
+	| 'PROFILE';
+
+export type LinkTarget = '_self' | '_blank';
+
+export interface PickerItem {
+	label?: string;
+	type: ContentPickerType;
+	value: string;
+	target?: LinkTarget;
+}
+
+export interface ContentBlock {
+	id: number;
+	variables: { [key: string]: any } | any[] | null;
+	position: number;
+	createdAt: string;
+	updatedAt: string;
+	blockType: string;
+}
+
+export type ContentWidth = 'REGULAR' | 'LARGE' | 'MEDIUM';
+
+export interface ContentPageLabel {
+	id: number;
+	label: string;
+	content_type: ContentPageType;
+	link_to: PickerItem | null;
+	created_at: string;
+	updated_at: string;
+	content_content_labels: ContentPageLabelLink[];
+}
+
+export interface ContentPageLabelLink {
+	id: number;
+	content_id: number;
+	label_id: number;
+	created_at: string;
+	updated_at: string;
+	content_label: ContentPageLabel;
+	content: ContentPage[];
+}
+
+export interface GqlUserProfile {
+	first_name: string;
+	last_name: string;
+	group: Group;
+}
+
+export interface Group {
+	id: string;
+	label: string;
+}
+
+export interface CmsContentAggregate {
+	aggregate: Aggregate;
+}
+
+export interface Aggregate {
+	count: number;
+}
+
+export interface ContentPage {
+	id: number;
+	thumbnailPath: string | null;
+	title: string;
+	description: string | null;
+	seoDescription: string | null;
+	metaDescription: string | null;
+	path: string | null;
+	isPublic: boolean;
+	publishedAt: string;
+	publishAt: string | null;
+	depublishAt: string | null;
+	createdAt: string;
+	updatedAt: string | null;
+	isProtected: boolean;
+	contentType: string;
+	contentWidth: ContentWidth;
+	owner: User;
+	userProfileId: string | null;
+	userGroupIds: number[] | null;
+	contentBlocks: ContentBlock[];
+	labels: ContentPageLabel[];
+}
+
+export type GqlContentPage =
+	| GetContentPageByPathQueryAvo['app_content'][0]
+	| GetContentPageByPathQueryHetArchief['cms_content'][0];
+export type GqlContentBlock =
+	| GetContentPageByPathQueryHetArchief['cms_content'][0]['content_blocks'][0]
+	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];
+
+export type ContentPageType =
+	| 'NIEUWS_ITEM'
+	| 'FAQ_ITEM'
+	| 'SCREENCAST'
+	| 'PAGINA'
+	| 'PROJECT'
+	| 'OVERZICHT';
+
+export interface MediaPlayerPathInfo {
+	getItemExternalIdPath: string;
+	setItemExternalIdPath: string;
+	setVideoSrcPath: string;
+	setPosterSrcPath: string;
+	setTitlePath: string;
+	setDescriptionPath: string;
+	setIssuedPath: string;
+	setOrganisationPath: string;
+	setDurationPath: string;
+}
+
+export type ResolvedIeObject = Partial<Media> & {
+	src?: string;
+};
+
+export type MediaItemResponse = Partial<Media> & {
+	count: number;
+};
+
+export interface ContentPageOverviewParams {
+	withBlock: boolean;
+	contentType: string;
+	// Visible tabs in the page overview component for which we should fetch item counts
+	labelIds: number[];
+	// Selected tabs for which we should fetch content page items
+	selectedLabelIds: number[];
+	orderByProp?: string;
+	orderByDirection?: 'asc' | 'desc';
+	offset: number;
+	limit: number;
+}
+
+export interface ContentPageOverviewResponse {
+	pages: ContentPage[];
+	count: number;
+	labelCounts: { [id: number]: number };
+}
+
+export type LabelObj = {
+	label: string;
+	id: number;
+};
+
+export type ContentLabelsRequestBody =
+	| {
+			contentType: string;
+			labelIds: string[];
+	  }
+	| {
+			contentType: string;
+			labels: string[];
+	  };
+
+export interface SearchDateRange {
+	gte: string | '' | undefined;
+	lte: string | '' | undefined;
+}
+
+export type ResolvedItemOrCollection = Partial<Avo.Item.Item | Avo.Collection.Collection> & {
+	src?: string;
+};

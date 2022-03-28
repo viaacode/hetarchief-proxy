@@ -13,7 +13,7 @@ import {
 	InsertObjectIntoCollectionDocument,
 	RemoveObjectFromCollectionDocument,
 	UpdateCollectionDocument,
-} from '../../../generated/graphql';
+} from '../../../generated/graphql-db-types-hetarchief';
 import {
 	Collection,
 	CollectionObjectLink,

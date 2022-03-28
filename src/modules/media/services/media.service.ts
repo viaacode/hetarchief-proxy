@@ -5,9 +5,9 @@ import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, MediaFile, PlayerTicket, Representation } from '../types';
+import { Media, MediaFile, Representation } from '../types';
 
-import { GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, GET_OBJECT_IE_BY_ID } from './queries.gql';
+import { GET_OBJECT_IE_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -197,37 +197,5 @@ export class MediaService {
 		}
 
 		return this.adapt(objectIe[0]);
-	}
-
-	public async getPlayableUrl(id: string, referer: string): Promise<string> {
-		const embedUrl = await this.getEmbedUrl(id);
-
-		const data = {
-			app: 'OR-*',
-			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: referer || this.host,
-			maxage: this.ticketServiceMaxAge,
-		};
-
-		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			embedUrl,
-			{
-				searchParams: data,
-				resolveBodyOnly: true,
-			}
-		);
-
-		return `${this.mediaServiceUrl}/${embedUrl}?token=${playerTicket.jwt}`;
-	}
-
-	public async getEmbedUrl(id: string): Promise<string> {
-		const {
-			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, { id });
-		if (!objectFile[0]) {
-			throw new NotFoundException(`Object IE with id '${id}' not found`);
-		}
-
-		return objectFile[0].schema_embed_url;
 	}
 }

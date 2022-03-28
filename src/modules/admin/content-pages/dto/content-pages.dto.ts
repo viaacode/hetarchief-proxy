@@ -2,9 +2,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
+import { SearchDateRange } from '~modules/admin/content-pages/content-pages.types';
 import { SortDirection } from '~shared/types';
 
-export class ContentPageFilters {
+export class ContentPageFiltersDto {
 	@IsString()
 	@IsOptional()
 	@ApiPropertyOptional({
@@ -71,7 +72,7 @@ export class ContentPageFilters {
 		required: false,
 		example: { gte: '2021-12-30T23:00:00.000Z' },
 	})
-	createdAt?: { gte?: string; lte?: string };
+	createdAt?: SearchDateRange;
 
 	@IsObject()
 	@IsOptional()
@@ -81,7 +82,7 @@ export class ContentPageFilters {
 		required: false,
 		example: { gte: '2021-12-30T23:00:00.000Z' },
 	})
-	updatedAt?: { gte?: string; lte?: string };
+	updatedAt?: SearchDateRange;
 
 	@IsBoolean()
 	@IsOptional()
@@ -107,7 +108,7 @@ export class ContentPageFilters {
 		required: false,
 		example: { gte: '2021-12-30T23:00:00.000Z' },
 	})
-	publishedAt?: { gte?: string; lte?: string };
+	publishedAt?: SearchDateRange;
 
 	@IsObject()
 	@IsOptional()
@@ -117,7 +118,7 @@ export class ContentPageFilters {
 		required: false,
 		example: { gte: '2021-12-30T23:00:00.000Z' },
 	})
-	publishAt?: { gte?: string; lte?: string };
+	publishAt?: SearchDateRange;
 
 	@IsObject()
 	@IsOptional()
@@ -127,7 +128,7 @@ export class ContentPageFilters {
 		required: false,
 		example: { gte: '2021-12-30T23:00:00.000Z' },
 	})
-	depublishAt?: { gte?: string; lte?: string };
+	depublishAt?: SearchDateRange;
 
 	@IsArray()
 	@IsOptional()
@@ -148,10 +149,10 @@ export class ContentPageFilters {
 
 export class ContentPagesQueryDto {
 	@IsObject()
-	@Type(() => ContentPageFilters)
+	@Type(() => ContentPageFiltersDto)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: ContentPageFilters,
+		type: ContentPageFiltersDto,
 		description: 'Filters to specify which content pages you want to receive',
 		default: undefined,
 	})

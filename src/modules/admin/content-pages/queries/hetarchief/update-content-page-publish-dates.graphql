@@ -1,4 +1,4 @@
-mutation publishContentPages($now: timestamp, $publishedAt: timestamp) {
+mutation updateContentPagePublishDates($now: timestamp, $publishedAt: timestamp) {
 	publish_content_pages: update_cms_content(
 		where: {
 			_or: [

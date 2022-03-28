@@ -1,4 +1,4 @@
-query getContentPagesHetArchief(
+query getContentPages(
 	$where: cms_content_bool_exp
 	$offset: Int = 0
 	$limit: Int = 10
