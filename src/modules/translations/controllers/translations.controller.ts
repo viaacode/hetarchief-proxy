@@ -1,12 +1,9 @@
-import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { TranslationsService } from '../services/translations.service';
 import { Translations } from '../types';
 
-import { LoggedInGuard } from '~shared/guards/logged-in.guard';
-
-@UseGuards(LoggedInGuard)
 @ApiTags('Translations')
 @Controller('translations')
 export class TranslationsController {
