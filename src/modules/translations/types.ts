@@ -1,4 +1,1 @@
-export interface Translations {
-	name: string;
-	value: Record<string, string>;
-}
+export type Translations = Record<string, string>;
