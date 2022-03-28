@@ -46,8 +46,8 @@ export class CollectionsService {
 			creator: get(gqlIeObject, 'schema_creator'),
 			description: get(gqlIeObject, 'schema_description'),
 			format: get(gqlIeObject, 'dcterms_format'),
-			meemooFragmentId: get(gqlIeObject, 'meemoo_fragment_id'),
-			schemaIdentifier: get(gqlIeObject, 'schema_identifier'),
+			schemaIdentifier: get(gqlIeObject, 'schema_identifier'), // Unique for each object
+			meemooIdentifier: get(gqlIeObject, 'meemoo_identifier'),
 			name: get(gqlIeObject, 'schema_name'),
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
@@ -191,37 +191,37 @@ export class CollectionsService {
 
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
-		objectMeemooFragmentId: string
+		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
 		const response = await this.dataService.execute(FindObjectInCollectionDocument, {
 			collectionId,
-			objectMeemooFragmentId,
+			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.users_collection_ie[0];
-		this.logger.debug(`Found object ${objectMeemooFragmentId} in ${collectionId}`);
+		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject);
 	}
 
-	public async findObjectByMeemooFragmentId(
-		objectMeemooFragmentId: string
+	public async findObjectBySchemaIdentifier(
+		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(GetObjectByMeemooFragmentIdDocument, {
-			objectMeemooFragmentId,
+		const response = await this.dataService.execute(FIND_OBJECT_BY_SCHEMA_IDENTIFIER, {
+			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.object_ie[0];
-		this.logger.debug(`Found object ${objectMeemooFragmentId}`);
+		this.logger.debug(`Found object ${objectSchemaIdentifier}`);
 
 		return this.adaptIeObject(foundObject);
 	}
 
 	public async addObjectToCollection(
 		collectionId: string,
-		objectMeemooFragmentId: string
+		objectSchemaIdentifier: string
 	): Promise<IeObject> {
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
-			objectMeemooFragmentId
+			objectSchemaIdentifier
 		);
 		if (collectionObject) {
 			throw new BadRequestException({
@@ -230,35 +230,35 @@ export class CollectionsService {
 			});
 		}
 
-		const objectInfo = await this.findObjectByMeemooFragmentId(objectMeemooFragmentId);
+		const objectInfo = await this.findObjectBySchemaIdentifier(objectSchemaIdentifier);
 
 		if (!objectInfo) {
 			throw new NotFoundException(
-				`Object with schema identifier ${objectMeemooFragmentId} was not found`
+				`Object with schema identifier ${objectSchemaIdentifier} was not found`
 			);
 		}
 
 		const response = await this.dataService.execute(InsertObjectIntoCollectionDocument, {
 			collectionId,
-			objectMeemooFragmentId,
+			objectSchemaIdentifier,
 		});
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
-		this.logger.debug(`Collection object ${objectMeemooFragmentId} created`);
+		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
 		return this.adaptCollectionObjectLink(createdObject);
 	}
 
 	async removeObjectFromCollection(
 		collectionId: string,
-		objectMeemooFragmentId: string,
+		objectSchemaIdentifier: string,
 		userProfileId: string
 	) {
 		const response = await this.dataService.execute(RemoveObjectFromCollectionDocument, {
 			collectionId,
-			objectMeemooFragmentId,
+			objectSchemaIdentifier,
 			userProfileId,
 		});
-		this.logger.debug(`Collection object ${objectMeemooFragmentId} deleted`);
+		this.logger.debug(`Collection object ${objectSchemaIdentifier} deleted`);
 
 		return response.data.delete_users_collection_ie.affected_rows || 0;
 	}

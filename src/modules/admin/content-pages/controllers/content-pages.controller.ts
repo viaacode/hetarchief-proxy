@@ -1,16 +1,4 @@
-import {
-	Controller,
-	Get,
-	Headers,
-	Param,
-	ParseUUIDPipe,
-	Patch,
-	Post,
-	Query,
-	Req,
-	Session,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Query, Req, Session, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
@@ -19,6 +7,7 @@ import { ContentPage } from '../types';
 
 import { ContentPagesQueryDto } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
+import { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
@@ -49,9 +38,9 @@ export class ContentPagesController {
 		const permissions = get(user, 'permissions', []);
 		const userId = get(user, 'id', []);
 		const canEditContentPage =
-			permissions.includes('EDIT_ANY_CONTENT_PAGES') ||
-			(permissions.includes('EDIT_OWN_CONTENT_PAGES') &&
-				contentPage.user_profile_id === userId);
+			permissions.includes(Permission.EDIT_ANY_CONTENT_PAGES) ||
+			(permissions.includes(Permission.EDIT_OWN_CONTENT_PAGES) &&
+				contentPage.owner.id === userId);
 
 		if (!contentPage) {
 			return null;

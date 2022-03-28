@@ -29,7 +29,7 @@ const mockDataService = {
 	execute: jest.fn(),
 };
 
-const mockObjectMeemooFragmentId = objectIe.data.object_ie[0].meemoo_fragment_id;
+const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -134,8 +134,8 @@ describe('MediaService', () => {
 	describe('findById', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
-			const response = await mediaService.findByMeemooFragmentId(mockObjectMeemooFragmentId);
-			expect(response.id).toEqual(mockObjectMeemooFragmentId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
@@ -149,9 +149,9 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findByMeemooFragmentId(mockObjectMeemooFragmentId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectMeemooFragmentId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toEqual([]);
 		});
 
@@ -160,9 +160,9 @@ describe('MediaService', () => {
 			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findByMeemooFragmentId(mockObjectMeemooFragmentId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectMeemooFragmentId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
 
@@ -174,13 +174,13 @@ describe('MediaService', () => {
 			});
 			let error;
 			try {
-				await mediaService.findByMeemooFragmentId(mockObjectMeemooFragmentId);
+				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 			} catch (e) {
 				error = e;
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: `Object IE with id '${mockObjectMeemooFragmentId}' not found`,
+				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
 		});

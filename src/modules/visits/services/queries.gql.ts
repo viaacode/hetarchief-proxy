@@ -208,8 +208,8 @@ export const FIND_VISIT_BY_ID = `
 `;
 
 export const FIND_ACTIVE_VISIT_BY_USER_AND_SPACE = `
-	query findActiveVisitByUserAndSpace($userProfileId: uuid, $maintainerId: String, $now: timestamp) {
-		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}, space: {schema_maintainer_id: {_eq: $maintainerId}}}) {
+	query findActiveVisitByUserAndSpace($userProfileId: uuid, $maintainerOrgId: String, $now: timestamp) {
+		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}, space: {schema_maintainer_id: {_eq: $maintainerOrgId}}}) {
 			id
 			cp_space_id
 			user_profile_id

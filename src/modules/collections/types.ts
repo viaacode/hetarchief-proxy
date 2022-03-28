@@ -52,8 +52,8 @@ export type CollectionObjectLink =
 export type GqlObject = GetObjectByMeemooFragmentIdQuery['object_ie'][0];
 
 export interface IeObject {
-	meemooFragmentId: string; // Unique id per object
-	schemaIdentifier: string; // PID: not unique per object
+	schemaIdentifier: string; // Unique id per object
+	meemooIdentifier: string; // PID: not unique per object
 	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
