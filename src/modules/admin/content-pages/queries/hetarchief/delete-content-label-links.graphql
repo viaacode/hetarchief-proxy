@@ -1,4 +1,4 @@
-mutation deleteContentLabelLinks($contentPageId: Int!, $labelIds: [Int!]!) {
+mutation deleteContentLabelLinks($contentPageId: uuid!, $labelIds: [uuid!]!) {
 	delete_cms_content_content_labels(
 		where: { label_id: { _in: $labelIds }, content_id: { _eq: $contentPageId } }
 	) {

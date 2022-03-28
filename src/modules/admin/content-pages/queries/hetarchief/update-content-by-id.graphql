@@ -1,4 +1,4 @@
-mutation updateContentById($id: Int!, $contentPage: cms_content_set_input!) {
+mutation updateContentById($id: uuid!, $contentPage: cms_content_set_input!) {
 	update_cms_content(
 		where: { id: { _eq: $id }, is_deleted: { _eq: false } }
 		_set: $contentPage

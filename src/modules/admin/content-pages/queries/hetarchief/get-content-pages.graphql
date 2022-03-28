@@ -1,9 +1,9 @@
 query getContentPagesHetArchief(
-	$where: cms_content_bool_exp,
-	$offset: Int = 0,
-	$limit: Int = 10,
-	$orderBy: [cms_content_order_by!] = {},
-	$labelIds: [uuid!] = [],
+	$where: cms_content_bool_exp
+	$offset: Int = 0
+	$limit: Int = 10
+	$orderBy: [cms_content_order_by!] = {}
+	$labelIds: [uuid!] = []
 	$orUserGroupIds: [cms_content_content_labels_bool_exp!] = {}
 ) {
 	cms_content(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
@@ -45,9 +45,9 @@ query getContentPagesHetArchief(
 			count
 		}
 	}
-	cms_content_labels(where: {id: {_in: $labelIds}}) {
+	cms_content_labels(where: { id: { _in: $labelIds } }) {
 		id
-		content_content_labels_aggregate(where: {_or: $orUserGroupIds}) {
+		content_content_labels_aggregate(where: { _or: $orUserGroupIds }) {
 			aggregate {
 				count
 			}

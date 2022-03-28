@@ -1,5 +1,5 @@
 query getCollectionTileById($id: uuid!) {
-	obj: app_collections(where: {id: {_eq: $id}, is_deleted: { _eq: false }}) {
+	obj: app_collections(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
 		created_at
 		title
 		thumbnail_path

@@ -14,6 +14,7 @@ export type Scalars = {
 	_text: any;
 	date: any;
 	daterange: any;
+	json: any;
 	jsonb: any;
 	time: any;
 	timestamp: any;
@@ -2837,6 +2838,19 @@ export type Daterange_Comparison_Exp = {
 	_nin?: InputMaybe<Array<Scalars['daterange']>>;
 };
 
+/** Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'. */
+export type Json_Comparison_Exp = {
+	_eq?: InputMaybe<Scalars['json']>;
+	_gt?: InputMaybe<Scalars['json']>;
+	_gte?: InputMaybe<Scalars['json']>;
+	_in?: InputMaybe<Array<Scalars['json']>>;
+	_is_null?: InputMaybe<Scalars['Boolean']>;
+	_lt?: InputMaybe<Scalars['json']>;
+	_lte?: InputMaybe<Scalars['json']>;
+	_neq?: InputMaybe<Scalars['json']>;
+	_nin?: InputMaybe<Array<Scalars['json']>>;
+};
+
 /** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
 	/** is the column contained in the given json value */
@@ -3696,7 +3710,7 @@ export type Mutation_RootDelete_Object_FileArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Object_File_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 /** mutation root */
@@ -3706,7 +3720,7 @@ export type Mutation_RootDelete_Object_IeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Object_Ie_By_PkArgs = {
-	meemoo_fragment_id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 /** mutation root */
@@ -3716,7 +3730,7 @@ export type Mutation_RootDelete_Object_RepresentationArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Object_Representation_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 /** mutation root */
@@ -3766,7 +3780,7 @@ export type Mutation_RootDelete_Users_Collection_IeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Users_Collection_Ie_By_PkArgs = {
-	object_ie_meemoo_fragment_id: Scalars['String'];
+	ie_schema_identifier: Scalars['String'];
 	user_collection_id: Scalars['uuid'];
 };
 
@@ -4563,13 +4577,15 @@ export type Object_File = {
 	__typename?: 'object_file';
 	ebucore_is_media_fragment_of?: Maybe<Scalars['String']>;
 	ebucore_media_type: Scalars['String'];
-	id: Scalars['String'];
 	/** An object relationship */
 	premis_is_included_in: Object_Representation;
-	representation_id: Scalars['String'];
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier: Scalars['String'];
 	schema_alternate_name?: Maybe<Scalars['String']>;
 	schema_description?: Maybe<Scalars['String']>;
 	schema_embed_url?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de file */
+	schema_identifier: Scalars['String'];
 	schema_name?: Maybe<Scalars['String']>;
 };
 
@@ -4615,12 +4631,12 @@ export type Object_File_Bool_Exp = {
 	_or?: InputMaybe<Array<Object_File_Bool_Exp>>;
 	ebucore_is_media_fragment_of?: InputMaybe<String_Comparison_Exp>;
 	ebucore_media_type?: InputMaybe<String_Comparison_Exp>;
-	id?: InputMaybe<String_Comparison_Exp>;
 	premis_is_included_in?: InputMaybe<Object_Representation_Bool_Exp>;
-	representation_id?: InputMaybe<String_Comparison_Exp>;
+	representation_schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_alternate_name?: InputMaybe<String_Comparison_Exp>;
 	schema_description?: InputMaybe<String_Comparison_Exp>;
 	schema_embed_url?: InputMaybe<String_Comparison_Exp>;
+	schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_name?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -4634,12 +4650,14 @@ export enum Object_File_Constraint {
 export type Object_File_Insert_Input = {
 	ebucore_is_media_fragment_of?: InputMaybe<Scalars['String']>;
 	ebucore_media_type?: InputMaybe<Scalars['String']>;
-	id?: InputMaybe<Scalars['String']>;
 	premis_is_included_in?: InputMaybe<Object_Representation_Obj_Rel_Insert_Input>;
-	representation_id?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_alternate_name?: InputMaybe<Scalars['String']>;
 	schema_description?: InputMaybe<Scalars['String']>;
 	schema_embed_url?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de file */
+	schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_name?: InputMaybe<Scalars['String']>;
 };
 
@@ -4648,11 +4666,13 @@ export type Object_File_Max_Fields = {
 	__typename?: 'object_file_max_fields';
 	ebucore_is_media_fragment_of?: Maybe<Scalars['String']>;
 	ebucore_media_type?: Maybe<Scalars['String']>;
-	id?: Maybe<Scalars['String']>;
-	representation_id?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: Maybe<Scalars['String']>;
 	schema_alternate_name?: Maybe<Scalars['String']>;
 	schema_description?: Maybe<Scalars['String']>;
 	schema_embed_url?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de file */
+	schema_identifier?: Maybe<Scalars['String']>;
 	schema_name?: Maybe<Scalars['String']>;
 };
 
@@ -4660,11 +4680,13 @@ export type Object_File_Max_Fields = {
 export type Object_File_Max_Order_By = {
 	ebucore_is_media_fragment_of?: InputMaybe<Order_By>;
 	ebucore_media_type?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	representation_id?: InputMaybe<Order_By>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: InputMaybe<Order_By>;
 	schema_alternate_name?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
 	schema_embed_url?: InputMaybe<Order_By>;
+	/** de unieke identifier van de file */
+	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 };
 
@@ -4673,11 +4695,13 @@ export type Object_File_Min_Fields = {
 	__typename?: 'object_file_min_fields';
 	ebucore_is_media_fragment_of?: Maybe<Scalars['String']>;
 	ebucore_media_type?: Maybe<Scalars['String']>;
-	id?: Maybe<Scalars['String']>;
-	representation_id?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: Maybe<Scalars['String']>;
 	schema_alternate_name?: Maybe<Scalars['String']>;
 	schema_description?: Maybe<Scalars['String']>;
 	schema_embed_url?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de file */
+	schema_identifier?: Maybe<Scalars['String']>;
 	schema_name?: Maybe<Scalars['String']>;
 };
 
@@ -4685,11 +4709,13 @@ export type Object_File_Min_Fields = {
 export type Object_File_Min_Order_By = {
 	ebucore_is_media_fragment_of?: InputMaybe<Order_By>;
 	ebucore_media_type?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	representation_id?: InputMaybe<Order_By>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: InputMaybe<Order_By>;
 	schema_alternate_name?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
 	schema_embed_url?: InputMaybe<Order_By>;
+	/** de unieke identifier van de file */
+	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 };
 
@@ -4713,18 +4739,19 @@ export type Object_File_On_Conflict = {
 export type Object_File_Order_By = {
 	ebucore_is_media_fragment_of?: InputMaybe<Order_By>;
 	ebucore_media_type?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
 	premis_is_included_in?: InputMaybe<Object_Representation_Order_By>;
-	representation_id?: InputMaybe<Order_By>;
+	representation_schema_identifier?: InputMaybe<Order_By>;
 	schema_alternate_name?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
 	schema_embed_url?: InputMaybe<Order_By>;
+	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: object_file */
 export type Object_File_Pk_Columns_Input = {
-	id: Scalars['String'];
+	/** de unieke identifier van de file */
+	schema_identifier: Scalars['String'];
 };
 
 /** select columns of table "object.file" */
@@ -4734,15 +4761,15 @@ export enum Object_File_Select_Column {
 	/** column name */
 	EbucoreMediaType = 'ebucore_media_type',
 	/** column name */
-	Id = 'id',
-	/** column name */
-	RepresentationId = 'representation_id',
+	RepresentationSchemaIdentifier = 'representation_schema_identifier',
 	/** column name */
 	SchemaAlternateName = 'schema_alternate_name',
 	/** column name */
 	SchemaDescription = 'schema_description',
 	/** column name */
 	SchemaEmbedUrl = 'schema_embed_url',
+	/** column name */
+	SchemaIdentifier = 'schema_identifier',
 	/** column name */
 	SchemaName = 'schema_name',
 }
@@ -4751,11 +4778,13 @@ export enum Object_File_Select_Column {
 export type Object_File_Set_Input = {
 	ebucore_is_media_fragment_of?: InputMaybe<Scalars['String']>;
 	ebucore_media_type?: InputMaybe<Scalars['String']>;
-	id?: InputMaybe<Scalars['String']>;
-	representation_id?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de representation waartoe deze file behoort */
+	representation_schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_alternate_name?: InputMaybe<Scalars['String']>;
 	schema_description?: InputMaybe<Scalars['String']>;
 	schema_embed_url?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de file */
+	schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_name?: InputMaybe<Scalars['String']>;
 };
 
@@ -4766,15 +4795,15 @@ export enum Object_File_Update_Column {
 	/** column name */
 	EbucoreMediaType = 'ebucore_media_type',
 	/** column name */
-	Id = 'id',
-	/** column name */
-	RepresentationId = 'representation_id',
+	RepresentationSchemaIdentifier = 'representation_schema_identifier',
 	/** column name */
 	SchemaAlternateName = 'schema_alternate_name',
 	/** column name */
 	SchemaDescription = 'schema_description',
 	/** column name */
 	SchemaEmbedUrl = 'schema_embed_url',
+	/** column name */
+	SchemaIdentifier = 'schema_identifier',
 	/** column name */
 	SchemaName = 'schema_name',
 }
@@ -4794,8 +4823,8 @@ export type Object_Ie = {
 	ebucore_object_type?: Maybe<Scalars['String']>;
 	/** An object relationship */
 	maintainer?: Maybe<Cp_Maintainer>;
-	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id: Scalars['String'];
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier: Scalars['String'];
 	meemoo_media_object_id?: Maybe<Scalars['String']>;
 	meemoofilm_base?: Maybe<Scalars['String']>;
 	meemoofilm_color?: Maybe<Scalars['Boolean']>;
@@ -4837,7 +4866,7 @@ export type Object_Ie = {
 	/** Tijd in seconden van tijdsgebaseerde media. */
 	schema_duration_in_seconds?: Maybe<Scalars['Int']>;
 	schema_genre?: Maybe<Scalars['_text']>;
-	/** De meemoo identifier voor een IE */
+	/** de unieke fragmentid in mediahaven */
 	schema_identifier: Scalars['String'];
 	/** De taal of talen die in de IE gebruikt worden */
 	schema_in_language?: Maybe<Scalars['_text']>;
@@ -4997,7 +5026,7 @@ export type Object_Ie_Bool_Exp = {
 	dcterms_medium?: InputMaybe<String_Comparison_Exp>;
 	ebucore_object_type?: InputMaybe<String_Comparison_Exp>;
 	maintainer?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-	meemoo_fragment_id?: InputMaybe<String_Comparison_Exp>;
+	meemoo_identifier?: InputMaybe<String_Comparison_Exp>;
 	meemoo_media_object_id?: InputMaybe<String_Comparison_Exp>;
 	meemoofilm_base?: InputMaybe<String_Comparison_Exp>;
 	meemoofilm_color?: InputMaybe<Boolean_Comparison_Exp>;
@@ -5109,6 +5138,55 @@ export type Object_Ie_Inc_Input = {
 	schema_number_of_pages?: InputMaybe<Scalars['Int']>;
 };
 
+/** columns and relationships of "object.ie_index" */
+export type Object_Ie_Index = {
+	__typename?: 'object_ie_index';
+	document?: Maybe<Scalars['json']>;
+};
+
+/** columns and relationships of "object.ie_index" */
+export type Object_Ie_IndexDocumentArgs = {
+	path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "object.ie_index" */
+export type Object_Ie_Index_Aggregate = {
+	__typename?: 'object_ie_index_aggregate';
+	aggregate?: Maybe<Object_Ie_Index_Aggregate_Fields>;
+	nodes: Array<Object_Ie_Index>;
+};
+
+/** aggregate fields of "object.ie_index" */
+export type Object_Ie_Index_Aggregate_Fields = {
+	__typename?: 'object_ie_index_aggregate_fields';
+	count: Scalars['Int'];
+};
+
+/** aggregate fields of "object.ie_index" */
+export type Object_Ie_Index_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Object_Ie_Index_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "object.ie_index". All fields are combined with a logical 'AND'. */
+export type Object_Ie_Index_Bool_Exp = {
+	_and?: InputMaybe<Array<Object_Ie_Index_Bool_Exp>>;
+	_not?: InputMaybe<Object_Ie_Index_Bool_Exp>;
+	_or?: InputMaybe<Array<Object_Ie_Index_Bool_Exp>>;
+	document?: InputMaybe<Json_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "object.ie_index". */
+export type Object_Ie_Index_Order_By = {
+	document?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "object.ie_index" */
+export enum Object_Ie_Index_Select_Column {
+	/** column name */
+	Document = 'document',
+}
+
 /** input type for inserting data into table "object.ie" */
 export type Object_Ie_Insert_Input = {
 	/** Datum waarop de IE beschikbaar is gemaakt */
@@ -5122,8 +5200,8 @@ export type Object_Ie_Insert_Input = {
 	dcterms_medium?: InputMaybe<Scalars['String']>;
 	ebucore_object_type?: InputMaybe<Scalars['String']>;
 	maintainer?: InputMaybe<Cp_Maintainer_Obj_Rel_Insert_Input>;
-	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: InputMaybe<Scalars['String']>;
 	meemoo_media_object_id?: InputMaybe<Scalars['String']>;
 	meemoofilm_base?: InputMaybe<Scalars['String']>;
 	meemoofilm_color?: InputMaybe<Scalars['Boolean']>;
@@ -5162,7 +5240,7 @@ export type Object_Ie_Insert_Input = {
 	/** Tijd in seconden van tijdsgebaseerde media. */
 	schema_duration_in_seconds?: InputMaybe<Scalars['Int']>;
 	schema_genre?: InputMaybe<Scalars['_text']>;
-	/** De meemoo identifier voor een IE */
+	/** de unieke fragmentid in mediahaven */
 	schema_identifier?: InputMaybe<Scalars['String']>;
 	/** De taal of talen die in de IE gebruikt worden */
 	schema_in_language?: InputMaybe<Scalars['_text']>;
@@ -5209,8 +5287,8 @@ export type Object_Ie_Max_Fields = {
 	dcterms_issued?: Maybe<Scalars['String']>;
 	dcterms_medium?: Maybe<Scalars['String']>;
 	ebucore_object_type?: Maybe<Scalars['String']>;
-	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: Maybe<Scalars['String']>;
 	meemoo_media_object_id?: Maybe<Scalars['String']>;
 	meemoofilm_base?: Maybe<Scalars['String']>;
 	meemoofilm_embeddedCaptionLanguage?: Maybe<Scalars['String']>;
@@ -5234,7 +5312,7 @@ export type Object_Ie_Max_Fields = {
 	schema_description?: Maybe<Scalars['String']>;
 	/** Tijd in seconden van tijdsgebaseerde media. */
 	schema_duration_in_seconds?: Maybe<Scalars['Int']>;
-	/** De meemoo identifier voor een IE */
+	/** de unieke fragmentid in mediahaven */
 	schema_identifier?: Maybe<Scalars['String']>;
 	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
 	schema_maintainer_id?: Maybe<Scalars['String']>;
@@ -5261,8 +5339,8 @@ export type Object_Ie_Min_Fields = {
 	dcterms_issued?: Maybe<Scalars['String']>;
 	dcterms_medium?: Maybe<Scalars['String']>;
 	ebucore_object_type?: Maybe<Scalars['String']>;
-	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: Maybe<Scalars['String']>;
 	meemoo_media_object_id?: Maybe<Scalars['String']>;
 	meemoofilm_base?: Maybe<Scalars['String']>;
 	meemoofilm_embeddedCaptionLanguage?: Maybe<Scalars['String']>;
@@ -5286,7 +5364,7 @@ export type Object_Ie_Min_Fields = {
 	schema_description?: Maybe<Scalars['String']>;
 	/** Tijd in seconden van tijdsgebaseerde media. */
 	schema_duration_in_seconds?: Maybe<Scalars['Int']>;
-	/** De meemoo identifier voor een IE */
+	/** de unieke fragmentid in mediahaven */
 	schema_identifier?: Maybe<Scalars['String']>;
 	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
 	schema_maintainer_id?: Maybe<Scalars['String']>;
@@ -5332,7 +5410,7 @@ export type Object_Ie_Order_By = {
 	dcterms_medium?: InputMaybe<Order_By>;
 	ebucore_object_type?: InputMaybe<Order_By>;
 	maintainer?: InputMaybe<Cp_Maintainer_Order_By>;
-	meemoo_fragment_id?: InputMaybe<Order_By>;
+	meemoo_identifier?: InputMaybe<Order_By>;
 	meemoo_media_object_id?: InputMaybe<Order_By>;
 	meemoofilm_base?: InputMaybe<Order_By>;
 	meemoofilm_color?: InputMaybe<Order_By>;
@@ -5380,7 +5458,7 @@ export type Object_Ie_Order_By = {
 /** primary key columns input for table: object_ie */
 export type Object_Ie_Pk_Columns_Input = {
 	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 /** prepend existing jsonb value of filtered columns with new jsonb value */
@@ -5415,7 +5493,7 @@ export enum Object_Ie_Select_Column {
 	/** column name */
 	EbucoreObjectType = 'ebucore_object_type',
 	/** column name */
-	MeemooFragmentId = 'meemoo_fragment_id',
+	MeemooIdentifier = 'meemoo_identifier',
 	/** column name */
 	MeemooMediaObjectId = 'meemoo_media_object_id',
 	/** column name */
@@ -5512,8 +5590,8 @@ export type Object_Ie_Set_Input = {
 	dcterms_issued?: InputMaybe<Scalars['String']>;
 	dcterms_medium?: InputMaybe<Scalars['String']>;
 	ebucore_object_type?: InputMaybe<Scalars['String']>;
-	/** de unieke fragmentid in mediahaven */
-	meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** De meemoo PID (external_id) voor een IE */
+	meemoo_identifier?: InputMaybe<Scalars['String']>;
 	meemoo_media_object_id?: InputMaybe<Scalars['String']>;
 	meemoofilm_base?: InputMaybe<Scalars['String']>;
 	meemoofilm_color?: InputMaybe<Scalars['Boolean']>;
@@ -5551,7 +5629,7 @@ export type Object_Ie_Set_Input = {
 	/** Tijd in seconden van tijdsgebaseerde media. */
 	schema_duration_in_seconds?: InputMaybe<Scalars['Int']>;
 	schema_genre?: InputMaybe<Scalars['_text']>;
-	/** De meemoo identifier voor een IE */
+	/** de unieke fragmentid in mediahaven */
 	schema_identifier?: InputMaybe<Scalars['String']>;
 	/** De taal of talen die in de IE gebruikt worden */
 	schema_in_language?: InputMaybe<Scalars['_text']>;
@@ -5636,7 +5714,7 @@ export enum Object_Ie_Update_Column {
 	/** column name */
 	EbucoreObjectType = 'ebucore_object_type',
 	/** column name */
-	MeemooFragmentId = 'meemoo_fragment_id',
+	MeemooIdentifier = 'meemoo_identifier',
 	/** column name */
 	MeemooMediaObjectId = 'meemoo_media_object_id',
 	/** column name */
@@ -5759,9 +5837,8 @@ export type Object_Representation = {
 	__typename?: 'object_representation';
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format: Scalars['String'];
-	id: Scalars['String'];
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id: Scalars['String'];
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier: Scalars['String'];
 	/** An array relationship */
 	premis_includes: Array<Object_File>;
 	/** An aggregate relationship */
@@ -5774,6 +5851,8 @@ export type Object_Representation = {
 	schema_date_created?: Maybe<Scalars['timestamp']>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de representatie */
+	schema_identifier: Scalars['String'];
 	/** filename aka PathToVideo */
 	schema_name: Scalars['String'];
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5851,13 +5930,13 @@ export type Object_Representation_Bool_Exp = {
 	_not?: InputMaybe<Object_Representation_Bool_Exp>;
 	_or?: InputMaybe<Array<Object_Representation_Bool_Exp>>;
 	dcterms_format?: InputMaybe<String_Comparison_Exp>;
-	id?: InputMaybe<String_Comparison_Exp>;
-	ie_meemoo_fragment_id?: InputMaybe<String_Comparison_Exp>;
+	ie_schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	premis_includes?: InputMaybe<Object_File_Bool_Exp>;
 	premis_represents?: InputMaybe<Object_Ie_Bool_Exp>;
 	schema_alternate_name?: InputMaybe<String_Comparison_Exp>;
 	schema_date_created?: InputMaybe<Timestamp_Comparison_Exp>;
 	schema_description?: InputMaybe<String_Comparison_Exp>;
+	schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_name?: InputMaybe<String_Comparison_Exp>;
 	schema_transcript?: InputMaybe<String_Comparison_Exp>;
 };
@@ -5874,9 +5953,8 @@ export enum Object_Representation_Constraint {
 export type Object_Representation_Insert_Input = {
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: InputMaybe<Scalars['String']>;
-	id?: InputMaybe<Scalars['String']>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: InputMaybe<Scalars['String']>;
 	premis_includes?: InputMaybe<Object_File_Arr_Rel_Insert_Input>;
 	premis_represents?: InputMaybe<Object_Ie_Obj_Rel_Insert_Input>;
 	/** label */
@@ -5885,6 +5963,8 @@ export type Object_Representation_Insert_Input = {
 	schema_date_created?: InputMaybe<Scalars['timestamp']>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: InputMaybe<Scalars['String']>;
 	/** filename aka PathToVideo */
 	schema_name?: InputMaybe<Scalars['String']>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5896,15 +5976,16 @@ export type Object_Representation_Max_Fields = {
 	__typename?: 'object_representation_max_fields';
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: Maybe<Scalars['String']>;
-	id?: Maybe<Scalars['String']>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: Maybe<Scalars['String']>;
 	/** label */
 	schema_alternate_name?: Maybe<Scalars['String']>;
 	/** datum waarop de resource van de representation werd aangemaakt */
 	schema_date_created?: Maybe<Scalars['timestamp']>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: Maybe<Scalars['String']>;
 	/** filename aka PathToVideo */
 	schema_name?: Maybe<Scalars['String']>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5915,15 +5996,16 @@ export type Object_Representation_Max_Fields = {
 export type Object_Representation_Max_Order_By = {
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	/** label */
 	schema_alternate_name?: InputMaybe<Order_By>;
 	/** datum waarop de resource van de representation werd aangemaakt */
 	schema_date_created?: InputMaybe<Order_By>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: InputMaybe<Order_By>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: InputMaybe<Order_By>;
 	/** filename aka PathToVideo */
 	schema_name?: InputMaybe<Order_By>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5935,15 +6017,16 @@ export type Object_Representation_Min_Fields = {
 	__typename?: 'object_representation_min_fields';
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: Maybe<Scalars['String']>;
-	id?: Maybe<Scalars['String']>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: Maybe<Scalars['String']>;
 	/** label */
 	schema_alternate_name?: Maybe<Scalars['String']>;
 	/** datum waarop de resource van de representation werd aangemaakt */
 	schema_date_created?: Maybe<Scalars['timestamp']>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: Maybe<Scalars['String']>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: Maybe<Scalars['String']>;
 	/** filename aka PathToVideo */
 	schema_name?: Maybe<Scalars['String']>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5954,15 +6037,16 @@ export type Object_Representation_Min_Fields = {
 export type Object_Representation_Min_Order_By = {
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	/** label */
 	schema_alternate_name?: InputMaybe<Order_By>;
 	/** datum waarop de resource van de representation werd aangemaakt */
 	schema_date_created?: InputMaybe<Order_By>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: InputMaybe<Order_By>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: InputMaybe<Order_By>;
 	/** filename aka PathToVideo */
 	schema_name?: InputMaybe<Order_By>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -5995,20 +6079,21 @@ export type Object_Representation_On_Conflict = {
 /** Ordering options when selecting data from "object.representation". */
 export type Object_Representation_Order_By = {
 	dcterms_format?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	premis_includes_aggregate?: InputMaybe<Object_File_Aggregate_Order_By>;
 	premis_represents?: InputMaybe<Object_Ie_Order_By>;
 	schema_alternate_name?: InputMaybe<Order_By>;
 	schema_date_created?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
+	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 	schema_transcript?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: object_representation */
 export type Object_Representation_Pk_Columns_Input = {
-	id: Scalars['String'];
+	/** de unieke identifier van de representatie */
+	schema_identifier: Scalars['String'];
 };
 
 /** select columns of table "object.representation" */
@@ -6016,15 +6101,15 @@ export enum Object_Representation_Select_Column {
 	/** column name */
 	DctermsFormat = 'dcterms_format',
 	/** column name */
-	Id = 'id',
-	/** column name */
-	IeMeemooFragmentId = 'ie_meemoo_fragment_id',
+	IeSchemaIdentifier = 'ie_schema_identifier',
 	/** column name */
 	SchemaAlternateName = 'schema_alternate_name',
 	/** column name */
 	SchemaDateCreated = 'schema_date_created',
 	/** column name */
 	SchemaDescription = 'schema_description',
+	/** column name */
+	SchemaIdentifier = 'schema_identifier',
 	/** column name */
 	SchemaName = 'schema_name',
 	/** column name */
@@ -6035,15 +6120,16 @@ export enum Object_Representation_Select_Column {
 export type Object_Representation_Set_Input = {
 	/** het bestandstype van de represenatatie, container */
 	dcterms_format?: InputMaybe<Scalars['String']>;
-	id?: InputMaybe<Scalars['String']>;
-	/** de FragmentId van de IE waarvan dit de representation is */
-	ie_meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de IE waarvan dit de representation is */
+	ie_schema_identifier?: InputMaybe<Scalars['String']>;
 	/** label */
 	schema_alternate_name?: InputMaybe<Scalars['String']>;
 	/** datum waarop de resource van de representation werd aangemaakt */
 	schema_date_created?: InputMaybe<Scalars['timestamp']>;
 	/** de optionele beschrijving van de representatie zelf */
 	schema_description?: InputMaybe<Scalars['String']>;
+	/** de unieke identifier van de representatie */
+	schema_identifier?: InputMaybe<Scalars['String']>;
 	/** filename aka PathToVideo */
 	schema_name?: InputMaybe<Scalars['String']>;
 	/** de geschreven neerslag van een IE zijn audio */
@@ -6055,15 +6141,15 @@ export enum Object_Representation_Update_Column {
 	/** column name */
 	DctermsFormat = 'dcterms_format',
 	/** column name */
-	Id = 'id',
-	/** column name */
-	IeMeemooFragmentId = 'ie_meemoo_fragment_id',
+	IeSchemaIdentifier = 'ie_schema_identifier',
 	/** column name */
 	SchemaAlternateName = 'schema_alternate_name',
 	/** column name */
 	SchemaDateCreated = 'schema_date_created',
 	/** column name */
 	SchemaDescription = 'schema_description',
+	/** column name */
+	SchemaIdentifier = 'schema_identifier',
 	/** column name */
 	SchemaName = 'schema_name',
 	/** column name */
@@ -6179,6 +6265,10 @@ export type Query_Root = {
 	object_ie_aggregate: Object_Ie_Aggregate;
 	/** fetch data from the table: "object.ie" using primary key columns */
 	object_ie_by_pk?: Maybe<Object_Ie>;
+	/** fetch data from the table: "object.ie_index" */
+	object_ie_index: Array<Object_Ie_Index>;
+	/** fetch aggregated fields from the table: "object.ie_index" */
+	object_ie_index_aggregate: Object_Ie_Index_Aggregate;
 	/** fetch data from the table: "object.representation" */
 	object_representation: Array<Object_Representation>;
 	/** fetch aggregated fields from the table: "object.representation" */
@@ -6538,7 +6628,7 @@ export type Query_RootObject_File_AggregateArgs = {
 };
 
 export type Query_RootObject_File_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 export type Query_RootObject_IeArgs = {
@@ -6558,7 +6648,23 @@ export type Query_RootObject_Ie_AggregateArgs = {
 };
 
 export type Query_RootObject_Ie_By_PkArgs = {
-	meemoo_fragment_id: Scalars['String'];
+	schema_identifier: Scalars['String'];
+};
+
+export type Query_RootObject_Ie_IndexArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Index_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Index_Order_By>>;
+	where?: InputMaybe<Object_Ie_Index_Bool_Exp>;
+};
+
+export type Query_RootObject_Ie_Index_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Index_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Index_Order_By>>;
+	where?: InputMaybe<Object_Ie_Index_Bool_Exp>;
 };
 
 export type Query_RootObject_RepresentationArgs = {
@@ -6578,7 +6684,7 @@ export type Query_RootObject_Representation_AggregateArgs = {
 };
 
 export type Query_RootObject_Representation_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 export type Query_RootOrganizationsArgs = {
@@ -6694,7 +6800,7 @@ export type Query_RootUsers_Collection_Ie_AggregateArgs = {
 };
 
 export type Query_RootUsers_Collection_Ie_By_PkArgs = {
-	object_ie_meemoo_fragment_id: Scalars['String'];
+	ie_schema_identifier: Scalars['String'];
 	user_collection_id: Scalars['uuid'];
 };
 
@@ -6910,6 +7016,10 @@ export type Subscription_Root = {
 	object_ie_aggregate: Object_Ie_Aggregate;
 	/** fetch data from the table: "object.ie" using primary key columns */
 	object_ie_by_pk?: Maybe<Object_Ie>;
+	/** fetch data from the table: "object.ie_index" */
+	object_ie_index: Array<Object_Ie_Index>;
+	/** fetch aggregated fields from the table: "object.ie_index" */
+	object_ie_index_aggregate: Object_Ie_Index_Aggregate;
 	/** fetch data from the table: "object.representation" */
 	object_representation: Array<Object_Representation>;
 	/** fetch aggregated fields from the table: "object.representation" */
@@ -7261,7 +7371,7 @@ export type Subscription_RootObject_File_AggregateArgs = {
 };
 
 export type Subscription_RootObject_File_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 export type Subscription_RootObject_IeArgs = {
@@ -7281,7 +7391,23 @@ export type Subscription_RootObject_Ie_AggregateArgs = {
 };
 
 export type Subscription_RootObject_Ie_By_PkArgs = {
-	meemoo_fragment_id: Scalars['String'];
+	schema_identifier: Scalars['String'];
+};
+
+export type Subscription_RootObject_Ie_IndexArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Index_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Index_Order_By>>;
+	where?: InputMaybe<Object_Ie_Index_Bool_Exp>;
+};
+
+export type Subscription_RootObject_Ie_Index_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Object_Ie_Index_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Object_Ie_Index_Order_By>>;
+	where?: InputMaybe<Object_Ie_Index_Bool_Exp>;
 };
 
 export type Subscription_RootObject_RepresentationArgs = {
@@ -7301,7 +7427,7 @@ export type Subscription_RootObject_Representation_AggregateArgs = {
 };
 
 export type Subscription_RootObject_Representation_By_PkArgs = {
-	id: Scalars['String'];
+	schema_identifier: Scalars['String'];
 };
 
 export type Subscription_RootSync_AudioArgs = {
@@ -7401,7 +7527,7 @@ export type Subscription_RootUsers_Collection_Ie_AggregateArgs = {
 };
 
 export type Subscription_RootUsers_Collection_Ie_By_PkArgs = {
-	object_ie_meemoo_fragment_id: Scalars['String'];
+	ie_schema_identifier: Scalars['String'];
 	user_collection_id: Scalars['uuid'];
 };
 
@@ -8404,7 +8530,8 @@ export type Users_Collection_Ie = {
 	created_at: Scalars['timestamp'];
 	/** An object relationship */
 	ie: Object_Ie;
-	object_ie_meemoo_fragment_id: Scalars['String'];
+	/** de fragment id van de ie */
+	ie_schema_identifier: Scalars['String'];
 	updated_at: Scalars['timestamp'];
 	user_collection_id: Scalars['uuid'];
 };
@@ -8452,7 +8579,7 @@ export type Users_Collection_Ie_Bool_Exp = {
 	collection?: InputMaybe<Users_Collection_Bool_Exp>;
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	ie?: InputMaybe<Object_Ie_Bool_Exp>;
-	object_ie_meemoo_fragment_id?: InputMaybe<String_Comparison_Exp>;
+	ie_schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	user_collection_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
@@ -8468,7 +8595,8 @@ export type Users_Collection_Ie_Insert_Input = {
 	collection?: InputMaybe<Users_Collection_Obj_Rel_Insert_Input>;
 	created_at?: InputMaybe<Scalars['timestamp']>;
 	ie?: InputMaybe<Object_Ie_Obj_Rel_Insert_Input>;
-	object_ie_meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: InputMaybe<Scalars['String']>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 	user_collection_id?: InputMaybe<Scalars['uuid']>;
 };
@@ -8477,7 +8605,8 @@ export type Users_Collection_Ie_Insert_Input = {
 export type Users_Collection_Ie_Max_Fields = {
 	__typename?: 'users_collection_ie_max_fields';
 	created_at?: Maybe<Scalars['timestamp']>;
-	object_ie_meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: Maybe<Scalars['String']>;
 	updated_at?: Maybe<Scalars['timestamp']>;
 	user_collection_id?: Maybe<Scalars['uuid']>;
 };
@@ -8485,7 +8614,8 @@ export type Users_Collection_Ie_Max_Fields = {
 /** order by max() on columns of table "users.collection_ie" */
 export type Users_Collection_Ie_Max_Order_By = {
 	created_at?: InputMaybe<Order_By>;
-	object_ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	updated_at?: InputMaybe<Order_By>;
 	user_collection_id?: InputMaybe<Order_By>;
 };
@@ -8494,7 +8624,8 @@ export type Users_Collection_Ie_Max_Order_By = {
 export type Users_Collection_Ie_Min_Fields = {
 	__typename?: 'users_collection_ie_min_fields';
 	created_at?: Maybe<Scalars['timestamp']>;
-	object_ie_meemoo_fragment_id?: Maybe<Scalars['String']>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: Maybe<Scalars['String']>;
 	updated_at?: Maybe<Scalars['timestamp']>;
 	user_collection_id?: Maybe<Scalars['uuid']>;
 };
@@ -8502,7 +8633,8 @@ export type Users_Collection_Ie_Min_Fields = {
 /** order by min() on columns of table "users.collection_ie" */
 export type Users_Collection_Ie_Min_Order_By = {
 	created_at?: InputMaybe<Order_By>;
-	object_ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	updated_at?: InputMaybe<Order_By>;
 	user_collection_id?: InputMaybe<Order_By>;
 };
@@ -8528,14 +8660,15 @@ export type Users_Collection_Ie_Order_By = {
 	collection?: InputMaybe<Users_Collection_Order_By>;
 	created_at?: InputMaybe<Order_By>;
 	ie?: InputMaybe<Object_Ie_Order_By>;
-	object_ie_meemoo_fragment_id?: InputMaybe<Order_By>;
+	ie_schema_identifier?: InputMaybe<Order_By>;
 	updated_at?: InputMaybe<Order_By>;
 	user_collection_id?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: users_collection_ie */
 export type Users_Collection_Ie_Pk_Columns_Input = {
-	object_ie_meemoo_fragment_id: Scalars['String'];
+	/** de fragment id van de ie */
+	ie_schema_identifier: Scalars['String'];
 	user_collection_id: Scalars['uuid'];
 };
 
@@ -8544,7 +8677,7 @@ export enum Users_Collection_Ie_Select_Column {
 	/** column name */
 	CreatedAt = 'created_at',
 	/** column name */
-	ObjectIeMeemooFragmentId = 'object_ie_meemoo_fragment_id',
+	IeSchemaIdentifier = 'ie_schema_identifier',
 	/** column name */
 	UpdatedAt = 'updated_at',
 	/** column name */
@@ -8554,7 +8687,8 @@ export enum Users_Collection_Ie_Select_Column {
 /** input type for updating data in table "users.collection_ie" */
 export type Users_Collection_Ie_Set_Input = {
 	created_at?: InputMaybe<Scalars['timestamp']>;
-	object_ie_meemoo_fragment_id?: InputMaybe<Scalars['String']>;
+	/** de fragment id van de ie */
+	ie_schema_identifier?: InputMaybe<Scalars['String']>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 	user_collection_id?: InputMaybe<Scalars['uuid']>;
 };
@@ -8564,7 +8698,7 @@ export enum Users_Collection_Ie_Update_Column {
 	/** column name */
 	CreatedAt = 'created_at',
 	/** column name */
-	ObjectIeMeemooFragmentId = 'object_ie_meemoo_fragment_id',
+	IeSchemaIdentifier = 'ie_schema_identifier',
 	/** column name */
 	UpdatedAt = 'updated_at',
 	/** column name */
@@ -10044,6 +10178,8 @@ export type FindCollectionObjectsByCollectionIdQuery = {
 		created_at: any;
 		ie: {
 			__typename?: 'object_ie';
+			schema_identifier: string;
+			meemoo_identifier: string;
 			schema_name: string;
 			schema_creator?: any | null;
 			schema_description?: string | null;
@@ -10051,7 +10187,6 @@ export type FindCollectionObjectsByCollectionIdQuery = {
 			schema_thumbnail_url?: string | null;
 			dcterms_format: string;
 			schema_number_of_pages?: number | null;
-			schema_identifier: string;
 		};
 	}>;
 	users_collection_ie_aggregate: {
@@ -10087,28 +10222,28 @@ export type FindCollectionsByUserQuery = {
 	};
 };
 
-export type GetObjectByMeemooFragmentIdQueryVariables = Exact<{
-	objectMeemooFragmentId?: InputMaybe<Scalars['String']>;
+export type FindObjectBySchemaIdentifierQueryVariables = Exact<{
+	objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 }>;
 
-export type GetObjectByMeemooFragmentIdQuery = {
+export type FindObjectBySchemaIdentifierQuery = {
 	__typename?: 'query_root';
 	object_ie: Array<{
 		__typename?: 'object_ie';
+		schema_identifier: string;
+		meemoo_identifier: string;
 		schema_name: string;
 		schema_creator?: any | null;
 		dcterms_available?: any | null;
 		schema_thumbnail_url?: string | null;
 		dcterms_format: string;
 		schema_number_of_pages?: number | null;
-		schema_identifier: string;
-		meemoo_fragment_id: string;
 	}>;
 };
 
 export type FindObjectInCollectionQueryVariables = Exact<{
 	collectionId?: InputMaybe<Scalars['uuid']>;
-	objectMeemooFragmentId?: InputMaybe<Scalars['String']>;
+	objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 }>;
 
 export type FindObjectInCollectionQuery = {
@@ -10118,7 +10253,7 @@ export type FindObjectInCollectionQuery = {
 		created_at: any;
 		ie: {
 			__typename?: 'object_ie';
-			meemoo_fragment_id: string;
+			meemoo_identifier: string;
 			schema_identifier: string;
 			schema_name: string;
 			schema_creator?: any | null;
@@ -10152,7 +10287,7 @@ export type InsertCollectionsMutation = {
 
 export type InsertObjectIntoCollectionMutationVariables = Exact<{
 	collectionId?: InputMaybe<Scalars['uuid']>;
-	objectMeemooFragmentId?: InputMaybe<Scalars['String']>;
+	objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 }>;
 
 export type InsertObjectIntoCollectionMutation = {
@@ -10164,8 +10299,8 @@ export type InsertObjectIntoCollectionMutation = {
 			created_at: any;
 			ie: {
 				__typename?: 'object_ie';
-				meemoo_fragment_id: string;
 				schema_identifier: string;
+				meemoo_identifier: string;
 				dcterms_format: string;
 				dcterms_available?: any | null;
 				schema_creator?: any | null;
@@ -10179,7 +10314,7 @@ export type InsertObjectIntoCollectionMutation = {
 };
 
 export type RemoveObjectFromCollectionMutationVariables = Exact<{
-	objectMeemooFragmentId?: InputMaybe<Scalars['String']>;
+	objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 	collectionId?: InputMaybe<Scalars['uuid']>;
 	userProfileId?: InputMaybe<Scalars['uuid']>;
 }>;
@@ -10531,6 +10666,14 @@ export const FindCollectionObjectsByCollectionIdDocument = {
 										selections: [
 											{
 												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'meemoo_identifier' },
+											},
+											{
+												kind: 'Field',
 												name: { kind: 'Name', value: 'schema_name' },
 											},
 											{
@@ -10562,10 +10705,6 @@ export const FindCollectionObjectsByCollectionIdDocument = {
 													kind: 'Name',
 													value: 'schema_number_of_pages',
 												},
-											},
-											{
-												kind: 'Field',
-												name: { kind: 'Name', value: 'schema_identifier' },
 											},
 										],
 									},
@@ -10841,19 +10980,19 @@ export const FindCollectionsByUserDocument = {
 		},
 	],
 } as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
-export const GetObjectByMeemooFragmentIdDocument = {
+export const FindObjectBySchemaIdentifierDocument = {
 	kind: 'Document',
 	definitions: [
 		{
 			kind: 'OperationDefinition',
 			operation: 'query',
-			name: { kind: 'Name', value: 'getObjectByMeemooFragmentId' },
+			name: { kind: 'Name', value: 'findObjectBySchemaIdentifier' },
 			variableDefinitions: [
 				{
 					kind: 'VariableDefinition',
 					variable: {
 						kind: 'Variable',
-						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+						name: { kind: 'Name', value: 'objectSchemaIdentifier' },
 					},
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
 				},
@@ -10873,7 +11012,7 @@ export const GetObjectByMeemooFragmentIdDocument = {
 									fields: [
 										{
 											kind: 'ObjectField',
-											name: { kind: 'Name', value: 'meemoo_fragment_id' },
+											name: { kind: 'Name', value: 'schema_identifier' },
 											value: {
 												kind: 'ObjectValue',
 												fields: [
@@ -10884,7 +11023,7 @@ export const GetObjectByMeemooFragmentIdDocument = {
 															kind: 'Variable',
 															name: {
 																kind: 'Name',
-																value: 'objectMeemooFragmentId',
+																value: 'objectSchemaIdentifier',
 															},
 														},
 													},
@@ -10903,6 +11042,14 @@ export const GetObjectByMeemooFragmentIdDocument = {
 						selectionSet: {
 							kind: 'SelectionSet',
 							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_identifier' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'meemoo_identifier' },
+								},
 								{ kind: 'Field', name: { kind: 'Name', value: 'schema_name' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'schema_creator' } },
 								{
@@ -10918,14 +11065,6 @@ export const GetObjectByMeemooFragmentIdDocument = {
 									kind: 'Field',
 									name: { kind: 'Name', value: 'schema_number_of_pages' },
 								},
-								{
-									kind: 'Field',
-									name: { kind: 'Name', value: 'schema_identifier' },
-								},
-								{
-									kind: 'Field',
-									name: { kind: 'Name', value: 'meemoo_fragment_id' },
-								},
 							],
 						},
 					},
@@ -10934,8 +11073,8 @@ export const GetObjectByMeemooFragmentIdDocument = {
 		},
 	],
 } as unknown as DocumentNode<
-	GetObjectByMeemooFragmentIdQuery,
-	GetObjectByMeemooFragmentIdQueryVariables
+	FindObjectBySchemaIdentifierQuery,
+	FindObjectBySchemaIdentifierQueryVariables
 >;
 export const FindObjectInCollectionDocument = {
 	kind: 'Document',
@@ -10954,7 +11093,7 @@ export const FindObjectInCollectionDocument = {
 					kind: 'VariableDefinition',
 					variable: {
 						kind: 'Variable',
-						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+						name: { kind: 'Name', value: 'objectSchemaIdentifier' },
 					},
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
 				},
@@ -10994,10 +11133,7 @@ export const FindObjectInCollectionDocument = {
 										},
 										{
 											kind: 'ObjectField',
-											name: {
-												kind: 'Name',
-												value: 'object_ie_meemoo_fragment_id',
-											},
+											name: { kind: 'Name', value: 'ie_schema_identifier' },
 											value: {
 												kind: 'ObjectValue',
 												fields: [
@@ -11008,7 +11144,7 @@ export const FindObjectInCollectionDocument = {
 															kind: 'Variable',
 															name: {
 																kind: 'Name',
-																value: 'objectMeemooFragmentId',
+																value: 'objectSchemaIdentifier',
 															},
 														},
 													},
@@ -11030,7 +11166,7 @@ export const FindObjectInCollectionDocument = {
 										selections: [
 											{
 												kind: 'Field',
-												name: { kind: 'Name', value: 'meemoo_fragment_id' },
+												name: { kind: 'Name', value: 'meemoo_identifier' },
 											},
 											{
 												kind: 'Field',
@@ -11177,7 +11313,7 @@ export const InsertObjectIntoCollectionDocument = {
 					kind: 'VariableDefinition',
 					variable: {
 						kind: 'Variable',
-						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+						name: { kind: 'Name', value: 'objectSchemaIdentifier' },
 					},
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
 				},
@@ -11205,15 +11341,12 @@ export const InsertObjectIntoCollectionDocument = {
 										},
 										{
 											kind: 'ObjectField',
-											name: {
-												kind: 'Name',
-												value: 'object_ie_meemoo_fragment_id',
-											},
+											name: { kind: 'Name', value: 'ie_schema_identifier' },
 											value: {
 												kind: 'Variable',
 												name: {
 													kind: 'Name',
-													value: 'objectMeemooFragmentId',
+													value: 'objectSchemaIdentifier',
 												},
 											},
 										},
@@ -11244,14 +11377,14 @@ export const InsertObjectIntoCollectionDocument = {
 															kind: 'Field',
 															name: {
 																kind: 'Name',
-																value: 'meemoo_fragment_id',
+																value: 'schema_identifier',
 															},
 														},
 														{
 															kind: 'Field',
 															name: {
 																kind: 'Name',
-																value: 'schema_identifier',
+																value: 'meemoo_identifier',
 															},
 														},
 														{
@@ -11332,7 +11465,7 @@ export const RemoveObjectFromCollectionDocument = {
 					kind: 'VariableDefinition',
 					variable: {
 						kind: 'Variable',
-						name: { kind: 'Name', value: 'objectMeemooFragmentId' },
+						name: { kind: 'Name', value: 'objectSchemaIdentifier' },
 					},
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
 				},
@@ -11362,10 +11495,7 @@ export const RemoveObjectFromCollectionDocument = {
 									fields: [
 										{
 											kind: 'ObjectField',
-											name: {
-												kind: 'Name',
-												value: 'object_ie_meemoo_fragment_id',
-											},
+											name: { kind: 'Name', value: 'ie_schema_identifier' },
 											value: {
 												kind: 'ObjectValue',
 												fields: [
@@ -11376,7 +11506,7 @@ export const RemoveObjectFromCollectionDocument = {
 															kind: 'Variable',
 															name: {
 																kind: 'Name',
-																value: 'objectMeemooFragmentId',
+																value: 'objectSchemaIdentifier',
 															},
 														},
 													},

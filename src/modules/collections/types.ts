@@ -2,8 +2,8 @@ import {
 	FindCollectionByIdQuery,
 	FindCollectionObjectsByCollectionIdQuery,
 	FindCollectionsByUserQuery,
+	FindObjectBySchemaIdentifierQuery,
 	FindObjectInCollectionQuery,
-	GetObjectByMeemooFragmentIdQuery,
 	InsertCollectionsMutation,
 	InsertObjectIntoCollectionMutation,
 	UpdateCollectionMutation,
@@ -49,7 +49,7 @@ export type CollectionObjectLink =
 	| InsertObjectIntoCollectionMutation['insert_users_collection_ie']
 	| FindCollectionObjectsByCollectionIdQuery['users_collection_ie'][0];
 
-export type GqlObject = GetObjectByMeemooFragmentIdQuery['object_ie'][0];
+export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
 
 export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
