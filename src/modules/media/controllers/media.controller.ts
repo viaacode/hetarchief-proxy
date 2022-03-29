@@ -11,12 +11,12 @@ export class MediaController {
 
 	constructor(private mediaService: MediaService) {}
 
-	// TODO comment this endpoint, since users always need to search inside one reading room
-	@Post()
-	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, null);
-		return media;
-	}
+	// To be re-enabled in phase2 for cross-bezoekersruimte search
+	// @Post()
+	// public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
+	// 	const media = await this.mediaService.findAll(queryDto, null);
+	// 	return media;
+	// }
 
 	@Get('player-ticket')
 	public async getPlayableUrl(
