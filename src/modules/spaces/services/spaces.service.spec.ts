@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
 
-import cpSpace from './__mocks__/cp_space';
+import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -50,16 +50,18 @@ describe('SpacesService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our space interface', () => {
-			const adapted = spacesService.adapt(cpSpace);
+			const adapted = spacesService.adapt(mockGqlSpace);
 			// test some sample keys
-			expect(adapted.id).toEqual('65790f8f-6365-4891-8ce2-4563f360db89');
-			expect(adapted.name).toEqual('VRT');
-			expect(adapted.logo).toEqual('https://assets.viaa.be/images/OR-rf5kf25');
-			expect(adapted.contactInfo.address.postalCode).toEqual('1043');
+			expect(adapted.id).toEqual(mockGqlSpace.id);
+			expect(adapted.name).toEqual(mockGqlSpace.schema_maintainer.schema_name);
+			expect(adapted.logo).toEqual(mockGqlSpace.schema_maintainer.information[0].logo.iri);
+			expect(adapted.contactInfo.address.postalCode).toEqual(
+				mockGqlSpace.schema_maintainer.information[0].primary_site.address.postal_code
+			);
 		});
 
 		it('if the space description is empty it falls back to the maintainer description', () => {
-			const mockCpSpace = cloneDeep(cpSpace);
+			const mockCpSpace = cloneDeep(mockGqlSpace);
 			mockCpSpace.schema_description = 'Space specific description';
 
 			const adapted = spacesService.adapt(mockCpSpace);
