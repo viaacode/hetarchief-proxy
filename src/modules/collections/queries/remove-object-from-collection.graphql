@@ -1,5 +1,15 @@
-mutation removeObjectFromCollection($objectSchemaIdentifier: String, $collectionId: uuid, $userProfileId: uuid) {
-	delete_users_collection_ie(where: {ie_schema_identifier: {_eq: $objectSchemaIdentifier}, user_collection_id: {_eq: $collectionId}, collection: {user_profile_id: {_eq: $userProfileId}}}) {
+mutation removeObjectFromCollection(
+	$objectSchemaIdentifier: String
+	$collectionId: uuid
+	$userProfileId: uuid
+) {
+	delete_users_collection_ie(
+		where: {
+			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
+			user_collection_id: { _eq: $collectionId }
+			collection: { user_profile_id: { _eq: $userProfileId } }
+		}
+	) {
 		affected_rows
 	}
 }
