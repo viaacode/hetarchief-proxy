@@ -272,6 +272,37 @@ describe('SpacesService', () => {
 		});
 	});
 
+	describe('findBySlug', () => {
+		const slug = 'slug';
+
+		it('returns a single space by slug', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_space: [
+						{
+							schema_maintainer: {
+								schema_identifier: slug,
+							},
+						},
+					],
+				},
+			});
+			const response = await spacesService.findBySlug(slug);
+			expect(response.maintainerId).toBe(slug);
+		});
+
+		it('returns null if the space was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_space: [],
+				},
+			});
+
+			const space = await spacesService.findBySlug('unknown-id');
+			expect(space).toBeNull();
+		});
+	});
+
 	describe('findSpaceByCpUserId', () => {
 		it('returns a single space', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
