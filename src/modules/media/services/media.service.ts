@@ -5,10 +5,10 @@ import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, Representation } from '../types';
+import { Media, MediaFile, Representation } from '../types';
 
 import {
-	GET_FILE_BY_REPRESENTATION_ID,
+	GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER,
 	GET_OBJECT_IE_BY_ID,
 	GET_THUMBNAIL_URL_BY_ID,
 } from './queries.gql';
@@ -38,7 +38,7 @@ export class MediaService {
 
 	public adapt(graphQlObject: any): Media {
 		return {
-			id: get(graphQlObject, 'schema_identifier'),
+			schemaIdentifier: get(graphQlObject, 'schema_identifier'),
 			meemooIdentifier: get(graphQlObject, 'meemoo_identifier'),
 			premisIdentifier: get(graphQlObject, 'premis_identifier'),
 			premisRelationship: get(graphQlObject, 'premis_relationship'),
@@ -111,7 +111,7 @@ export class MediaService {
 			name: get(representation, 'schema_name'),
 			alternateName: get(representation, 'schema_alternate_name'),
 			description: get(representation, 'schema_description'),
-			schemaIdentifier: get(representation, 'schema_identifier'),
+			schemaIdentifier: get(representation, 'ie_schema_identifier'),
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
@@ -120,23 +120,25 @@ export class MediaService {
 		}));
 	}
 
-	public adaptFiles(graphQlFiles: any): File[] {
+	public adaptFiles(graphQlFiles: any): MediaFile[] {
 		if (isEmpty(graphQlFiles)) {
 			return [];
 		}
-		return graphQlFiles.map((file) => ({
-			schemaIdentifier: get(file, 'schema_identifier'),
-			name: get(file, 'schema_name'),
-			alternateName: get(file, 'schema_alternate_name'),
-			description: get(file, 'schema_description'),
-			representationId: get(file, 'representation_id'),
-			ebucoreMediaType: get(file, 'ebucore_media_type'),
-			ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
-			embedUrl: get(file, 'schema_embed_url'),
-		}));
+		return graphQlFiles.map(
+			(file): MediaFile => ({
+				id: get(file, 'id'),
+				name: get(file, 'schema_name'),
+				alternateName: get(file, 'schema_alternate_name'),
+				description: get(file, 'schema_description'),
+				schemaIdentifier: get(file, 'representation_schema_identifier'),
+				ebucoreMediaType: get(file, 'ebucore_media_type'),
+				ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
+				embedUrl: get(file, 'schema_embed_url'),
+			})
+		);
 	}
 
-	public getSearchEndpoint(esIndex: string): string {
+	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
 		}
@@ -150,19 +152,26 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			if (e.response.statusCode === 404) {
-				this.logger.error(e.response.body);
-				throw new NotFoundException();
-			}
 			this.logger.error(e.response.body);
 			throw e;
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string = null): Promise<any> {
+	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 		this.logger.log(esQuery);
-		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+
+		let mediaResponse;
+		try {
+			mediaResponse = await this.executeQuery(esIndex, esQuery);
+		} catch (err) {
+			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
+				// TODO remove this fallback once or-ids match between INT and local DB
+				mediaResponse = await this.executeQuery(null, esQuery);
+			} else {
+				throw err;
+			}
+		}
 
 		return mediaResponse;
 	}
@@ -171,13 +180,13 @@ export class MediaService {
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findById(id: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { id });
+		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
 
 		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${id}' not found`);
+			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
 		return this.adapt(objectIe[0]);
@@ -200,7 +209,7 @@ export class MediaService {
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_ID, { id });
+		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, { id });
 		if (!objectFile[0]) {
 			throw new NotFoundException(`Object file with representation_id '${id}' not found`);
 		}

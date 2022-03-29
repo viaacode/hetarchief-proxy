@@ -32,6 +32,13 @@ const incompleteConfig = {
 		format: QueryType.TERMS,
 		duration: QueryType.RANGE,
 	},
+	MULTI_MATCH_FIELDS: [
+		SearchFilterField.QUERY,
+		SearchFilterField.ADVANCED_QUERY,
+		SearchFilterField.NAME,
+		SearchFilterField.DESCRIPTION,
+	],
+	MULTI_MATCH_QUERY_MAPPING: {},
 };
 
 describe('QueryBuilder', () => {
@@ -127,7 +134,20 @@ describe('QueryBuilder', () => {
 			});
 
 			expect(esQuery.query).toEqual({
-				bool: { filter: [{ term: { dcterms_format: 'video' } }] },
+				bool: {
+					must_not: {
+						term: {
+							'type.keyword': 'SOLR',
+						},
+					},
+					filter: [
+						{
+							term: {
+								dcterms_format: 'video',
+							},
+						},
+					],
+				},
 			});
 		});
 
@@ -146,7 +166,14 @@ describe('QueryBuilder', () => {
 			});
 
 			expect(esQuery.query).toEqual({
-				bool: { filter: [{ range: { schema_duration: rangeQuery } }] },
+				bool: {
+					must_not: {
+						term: {
+							'type.keyword': 'SOLR',
+						},
+					},
+					filter: [{ range: { schema_duration: rangeQuery } }],
+				},
 			});
 		});
 

@@ -197,7 +197,10 @@ export class VisitsService {
 
 	public async findAll(
 		inputQuery: VisitsQueryDto,
-		cpSpaceId: string | null // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
+		parameters: {
+			cpSpaceId?: string | null; // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
+			userProfileId?: string;
+		}
 	): Promise<IPagination<Visit>> {
 		const { query, status, timeframe, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -205,11 +208,12 @@ export class VisitsService {
 		/** Dynamically build the where object  */
 		const where: any = {};
 
-		if (!isEmpty(query)) {
+		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
-			const filterBySpaceName = cpSpaceId
+			const filterBySpaceName = parameters.cpSpaceId
 				? []
 				: [{ space: { schema_maintainer: { schema_name: { _ilike: query } } } }];
+
 			where._or = [
 				{ user_profile: { full_name: { _ilike: query } } },
 				{ user_profile: { mail: { _ilike: query } } },
@@ -223,9 +227,9 @@ export class VisitsService {
 			};
 		}
 
-		if (!isEmpty(cpSpaceId)) {
+		if (!isEmpty(parameters.cpSpaceId)) {
 			where.cp_space_id = {
-				_eq: cpSpaceId,
+				_eq: parameters.cpSpaceId,
 			};
 		}
 
@@ -252,6 +256,10 @@ export class VisitsService {
 					};
 					break;
 			}
+		}
+
+		if (!isEmpty(parameters.userProfileId)) {
+			where.user_profile_id = { _eq: parameters.userProfileId };
 		}
 
 		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
@@ -285,11 +293,11 @@ export class VisitsService {
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
-		spaceId: string
+		maintainerOrgId: string
 	): Promise<Visit | null> {
 		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
 			userProfileId,
-			spaceId,
+			maintainerOrgId,
 			now: new Date().toISOString(),
 		});
 

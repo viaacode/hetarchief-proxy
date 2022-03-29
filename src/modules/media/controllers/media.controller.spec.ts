@@ -24,7 +24,7 @@ const getMockMediaResponse = () => ({
 
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
-	findById: jest.fn(),
+	findBySchemaIdentifier: jest.fn(),
 	getPlayableUrl: jest.fn(),
 	getThumbnailUrl: jest.fn(),
 };
@@ -81,7 +81,7 @@ describe('MediaController', () => {
 			const mockResponse = getMockMediaResponse();
 			mockResponse.hits.total.value = 1;
 			mockResponse.hits.hits.shift();
-			mockMediaService.findById.mockResolvedValueOnce(mockResponse);
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			const media = await mediaController.getMediaById('1');
 			expect(media.hits.total.value).toEqual(1);
 			expect(media.hits.hits.length).toEqual(1);

@@ -35,7 +35,7 @@ const mockTicketsService: Partial<Record<keyof TicketsService, jest.SpyInstance>
 	getThumbnailToken: jest.fn(),
 };
 
-const mockObjectId = objectIe.data.object_ie[0].schema_identifier;
+const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -91,7 +91,7 @@ describe('MediaService', () => {
 	describe('findAll', () => {
 		it('returns the es response from the main _search endpoint if no index is specified', async () => {
 			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({});
+			const response = await mediaService.findAll({}, null);
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});
@@ -105,15 +105,28 @@ describe('MediaService', () => {
 			expect(response.hits.hits.length).toBe(2);
 		});
 
-		it('returns a 404 not found if the index is unknown', async () => {
-			nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
-			let error;
-			try {
-				await mediaService.findAll({}, 'my-index');
-			} catch (e) {
-				error = e.response;
-			}
-			expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+		// TODO re-enable this test once the or-ids of the maintainers are the same between local development DB and the elasticsearch INT
+		// it('returns a 404 not found if the index is unknown', async () => {
+		// 	nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
+		// 	let error;
+		// 	try {
+		// 		await mediaService.findAll({}, 'my-index');
+		// 	} catch (e) {
+		// 		error = e.response;
+		// 	}
+		// 	expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
+		// });
+
+		it('returns the es response from the main _search endpoint if the index is not found (TEMP FOR TESTING)', async () => {
+			nock('http://elasticsearch/')
+				.post('/my-index/_search')
+				.reply(404, {
+					error: { type: 'index_not_found_exception' },
+				});
+			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
+			const response = await mediaService.findAll({}, 'my-index');
+			expect(response.hits.total.value).toBe(2);
+			expect(response.hits.hits.length).toBe(2);
 		});
 
 		it('throws an exception when a non-404 error occurs', async () => {
@@ -131,8 +144,8 @@ describe('MediaService', () => {
 	describe('findById', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
-			const response = await mediaService.findById(mockObjectId);
-			expect(response.id).toEqual(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
@@ -146,9 +159,9 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findById(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toEqual([]);
 		});
 
@@ -157,9 +170,9 @@ describe('MediaService', () => {
 			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findById(mockObjectId);
+			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 
-			expect(response.id).toEqual(mockObjectId);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
 
@@ -171,13 +184,13 @@ describe('MediaService', () => {
 			});
 			let error;
 			try {
-				await mediaService.findById(mockObjectId);
+				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
 			} catch (e) {
 				error = e;
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: `Object IE with id '${mockObjectId}' not found`,
+				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
 		});

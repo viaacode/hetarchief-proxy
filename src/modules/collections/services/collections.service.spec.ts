@@ -36,16 +36,9 @@ const mockGqlCollectionObject: GqlObject = {
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
-	schema_identifier: '8s4jm2514q',
-	meemoo_fragment_id:
+	meemoo_identifier: '8s4jm2514q',
+	schema_identifier:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	maintainer: {
-		schema_identifier: 'OR-1v5bc86',
-		schema_name: 'Huis van Alijn',
-		space: {
-			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-		},
-	},
 };
 
 const mockGqlCollectionObjectLink: CollectionObjectLink = {
@@ -89,7 +82,9 @@ const mockGqlCollectionObjectsResult = {
 						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 					dcterms_format: 'video',
 					schema_number_of_pages: null,
-					schema_identifier: '8s4jm2514q',
+					meemoo_identifier: '8s4jm2514q',
+					schema_identifier:
+						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 				},
 			},
 		],
@@ -114,7 +109,9 @@ const mockGqlCollectionObjectResult = {
 						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 					dcterms_format: 'video',
 					schema_number_of_pages: null,
-					schema_identifier: '8s4jm2514q',
+					meemoo_identifier: '8s4jm2514q',
+					schema_identifier:
+						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 				},
 			},
 		],
@@ -122,9 +119,9 @@ const mockGqlCollectionObjectResult = {
 };
 
 const mockCollectionObject: IeObject = {
-	id: '8s4jm2514q',
-	meemooFragmentId:
+	schemaIdentifier:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+	meemooIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	termsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -183,11 +180,8 @@ describe('CollectionsService', () => {
 			expect(adapted.id).toEqual(mockGqlCollection.id);
 			expect(adapted.name).toEqual(mockGqlCollection.name);
 			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
-			expect(adapted.objects[0].termsAvailable).toEqual(
-				mockGqlCollection.ies[0].ie.dcterms_available
-			);
-			expect(adapted.objects[0].collectionEntryCreatedAt).toEqual(
-				mockGqlCollection.ies[0].created_at
+			expect(adapted.objects[0].schemaIdentifier).toEqual(
+				mockGqlCollection.ies[0].ie.schema_identifier
 			);
 		});
 
@@ -201,7 +195,12 @@ describe('CollectionsService', () => {
 				mockGqlCollectionObjectLink
 			);
 			// test some sample keys
-			expect(adapted.id).toEqual(mockGqlCollectionObjectLink.ie.schema_identifier);
+			expect(adapted.schemaIdentifier).toEqual(
+				mockGqlCollectionObjectLink.ie.schema_identifier
+			);
+			expect(adapted.meemooIdentifier).toEqual(
+				mockGqlCollectionObjectLink.ie.meemoo_identifier
+			);
 			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
 			expect(adapted.termsAvailable).toEqual(
 				mockGqlCollectionObjectLink.ie.dcterms_available
@@ -256,7 +255,7 @@ describe('CollectionsService', () => {
 				mockUser.id,
 				{}
 			);
-			expect(response.items[0].id).toBe(
+			expect(response.items[0].schemaIdentifier).toBe(
 				mockGqlCollectionObjectsResult.data.users_collection_ie[0].ie.schema_identifier
 			);
 		});
@@ -285,9 +284,9 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
 			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
-				mockCollectionObject.id
+				mockCollectionObject.schemaIdentifier
 			);
-			expect(response.id).toBe(mockCollectionObject.id);
+			expect(response.schemaIdentifier).toBe(mockCollectionObject.schemaIdentifier);
 		});
 	});
 
@@ -357,8 +356,10 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: { object_ie: [mockGqlCollectionObject] },
 			});
-			const object = await collectionsService.findObjectBySchemaIdentifier('8s4jm2514q');
-			expect(object.id).toEqual('8s4jm2514q');
+			const object = await collectionsService.findObjectBySchemaIdentifier(
+				mockCollectionObject.schemaIdentifier
+			);
+			expect(object.schemaIdentifier).toEqual(mockCollectionObject.schemaIdentifier);
 		});
 	});
 
@@ -382,7 +383,9 @@ describe('CollectionsService', () => {
 				mockGqlCollection1.id,
 				mockGqlCollectionObjectLink.ie.schema_identifier
 			);
-			expect(response.id).toBe(mockGqlCollectionObjectLink.ie.schema_identifier);
+			expect(response.schemaIdentifier).toBe(
+				mockGqlCollectionObjectLink.ie.schema_identifier
+			);
 			findObjectInCollectionSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();
 		});

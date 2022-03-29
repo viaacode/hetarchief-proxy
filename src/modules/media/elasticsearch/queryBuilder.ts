@@ -9,6 +9,8 @@ import {
 	DEFAULT_QUERY_TYPE,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
+	MULTI_MATCH_FIELDS,
+	MULTI_MATCH_QUERY_MAPPING,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
@@ -17,14 +19,9 @@ import {
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	VALUE_OPERATORS,
 } from './consts';
-import searchQueryAdvanced from './templates/search-query-advanced.json';
-import searchQuery from './templates/search-query.json';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
-
-const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
-const searchQueryTemplate = _.values(searchQuery);
 
 export class QueryBuilder {
 	private static config: QueryBuilderConfig = {
@@ -38,6 +35,8 @@ export class QueryBuilder {
 		OCCURRENCE_TYPE,
 		VALUE_OPERATORS,
 		ORDER_MAPPINGS,
+		MULTI_MATCH_FIELDS,
+		MULTI_MATCH_QUERY_MAPPING,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -177,25 +176,29 @@ export class QueryBuilder {
 			return { match_all: {} };
 		}
 
-		const filterObject: any = {};
+		const filterObject: any = {
+			bool: {
+				must_not: {
+					term: {
+						'type.keyword': 'SOLR', // We never want to get results with type: SOLR
+					},
+				},
+			},
+		};
 
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
 		_.set(filterObject, 'bool.filter', filterArray);
 		_.forEach(filters, (searchFilter: SearchFilter) => {
-			if (
-				searchFilter.field === SearchFilterField.QUERY ||
-				searchFilter.field === SearchFilterField.ADVANCED_QUERY
-			) {
+			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
+			// query multiple fields at once
+			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
 				if (!searchFilter.value) {
 					throw new BadRequestException(
 						`Value cannot be empty when filtering on field '${searchFilter.field}'`
 					);
 				}
-				const searchTemplate =
-					searchFilter.field === SearchFilterField.QUERY
-						? searchQueryTemplate
-						: searchQueryAdvancedTemplate;
+				const searchTemplate = this.config.MULTI_MATCH_QUERY_MAPPING[searchFilter.field];
 				const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
 
 				textFilters.forEach((filter) =>
@@ -211,7 +214,7 @@ export class QueryBuilder {
 			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
 			if (!elasticKey) {
 				throw new InternalServerErrorException(
-					`Failed to resolve agg property: ${searchFilter.field}`
+					`Failed to resolve field to the ES fieldname: ${searchFilter.field}`
 				);
 			}
 
@@ -229,6 +232,7 @@ export class QueryBuilder {
 
 		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
 	}
+
 	/**
 	 * Builds up an object containing the elasticsearch  aggregation objects
 	 * The result of these aggregations will be used to show in the multi select options lists in the search page

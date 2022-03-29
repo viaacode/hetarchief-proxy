@@ -3,27 +3,27 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
 import {
+	DeleteCollectionDocument,
+	FindCollectionByIdDocument,
+	FindCollectionObjectsByCollectionIdDocument,
+	FindCollectionsByUserDocument,
+	FindObjectBySchemaIdentifierDocument,
+	FindObjectInCollectionDocument,
+	InsertCollectionsDocument,
+	InsertObjectIntoCollectionDocument,
+	RemoveObjectFromCollectionDocument,
+	UpdateCollectionDocument,
+} from '../../../generated/graphql';
+import {
 	Collection,
 	CollectionObjectLink,
 	GqlCollection,
+	GqlCollectionWithObjects,
 	GqlCreateCollection,
 	GqlObject,
 	GqlUpdateCollection,
 	IeObject,
 } from '../types';
-
-import {
-	DELETE_COLLECTION,
-	FIND_COLLECTION_BY_ID,
-	FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
-	FIND_COLLECTIONS_BY_USER,
-	FIND_OBJECT_BY_FRAGMENT_IDENTIFIER,
-	FIND_OBJECT_IN_COLLECTION,
-	INSERT_COLLECTION,
-	INSERT_OBJECT_INTO_COLLECTION,
-	REMOVE_OBJECT_FROM_COLLECTION,
-	UPDATE_COLLECTION,
-} from './queries.gql';
 
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { DataService } from '~modules/data/services/data.service';
@@ -46,8 +46,8 @@ export class CollectionsService {
 			creator: get(gqlIeObject, 'schema_creator'),
 			description: get(gqlIeObject, 'schema_description'),
 			format: get(gqlIeObject, 'dcterms_format'),
-			id: get(gqlIeObject, 'schema_identifier'),
-			meemooFragmentId: get(gqlIeObject, 'meemoo_fragment_id'),
+			schemaIdentifier: get(gqlIeObject, 'schema_identifier'), // Unique for each object
+			meemooIdentifier: get(gqlIeObject, 'meemoo_identifier'),
 			name: get(gqlIeObject, 'schema_name'),
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
@@ -62,15 +62,16 @@ export class CollectionsService {
 		if (!gqlCollection) {
 			return undefined;
 		}
-		const { ies: gslLinkObjects, ...collection } = gqlCollection;
 		return {
-			id: collection.id,
-			name: collection.name,
-			userProfileId: collection.user_profile_id,
-			createdAt: collection.created_at,
-			updatedAt: collection.updated_at,
-			isDefault: collection.is_default,
-			objects: gslLinkObjects?.map(this.adaptCollectionObjectLink),
+			id: gqlCollection.id,
+			name: gqlCollection.name,
+			userProfileId: gqlCollection.user_profile_id,
+			createdAt: gqlCollection.created_at,
+			updatedAt: gqlCollection.updated_at,
+			isDefault: gqlCollection.is_default,
+			objects: (gqlCollection as GqlCollectionWithObjects).ies?.map(
+				this.adaptCollectionObjectLink
+			),
 		};
 	}
 
@@ -94,7 +95,7 @@ export class CollectionsService {
 		size = 1000
 	): Promise<IPagination<Collection>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const collectionsResponse = await this.dataService.execute(FIND_COLLECTIONS_BY_USER, {
+		const collectionsResponse = await this.dataService.execute(FindCollectionsByUserDocument, {
 			userProfileId,
 			offset,
 			limit,
@@ -111,7 +112,7 @@ export class CollectionsService {
 	}
 
 	public async findCollectionById(collectionId: string): Promise<Collection> {
-		const collectionResponse = await this.dataService.execute(FIND_COLLECTION_BY_ID, {
+		const collectionResponse = await this.dataService.execute(FindCollectionByIdDocument, {
 			collectionId,
 		});
 
@@ -127,7 +128,7 @@ export class CollectionsService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const where = { ie: { schema_name: { _ilike: query } } };
 		const collectionObjectsResponse = await this.dataService.execute(
-			FIND_COLLECTION_OBJECTS_BY_COLLECTION_ID,
+			FindCollectionObjectsByCollectionIdDocument,
 			{
 				collectionId,
 				userProfileId,
@@ -152,7 +153,9 @@ export class CollectionsService {
 	}
 
 	public async create(collection: GqlCreateCollection): Promise<Collection> {
-		const response = await this.dataService.execute(INSERT_COLLECTION, { object: collection });
+		const response = await this.dataService.execute(InsertCollectionsDocument, {
+			object: collection,
+		});
 		const createdCollection = response.data.insert_users_collection.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
@@ -164,7 +167,7 @@ export class CollectionsService {
 		userProfileId: string,
 		collection: GqlUpdateCollection
 	): Promise<Collection> {
-		const response = await this.dataService.execute(UPDATE_COLLECTION, {
+		const response = await this.dataService.execute(UpdateCollectionDocument, {
 			collectionId,
 			userProfileId,
 			collection,
@@ -177,7 +180,7 @@ export class CollectionsService {
 	}
 
 	public async delete(collectionId: string, userProfileId: string): Promise<number> {
-		const response = await this.dataService.execute(DELETE_COLLECTION, {
+		const response = await this.dataService.execute(DeleteCollectionDocument, {
 			collectionId,
 			userProfileId,
 		});
@@ -190,7 +193,7 @@ export class CollectionsService {
 		collectionId: string,
 		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(FIND_OBJECT_IN_COLLECTION, {
+		const response = await this.dataService.execute(FindObjectInCollectionDocument, {
 			collectionId,
 			objectSchemaIdentifier,
 		});
@@ -203,7 +206,7 @@ export class CollectionsService {
 	public async findObjectBySchemaIdentifier(
 		objectSchemaIdentifier: string
 	): Promise<IeObject | null> {
-		const response = await this.dataService.execute(FIND_OBJECT_BY_FRAGMENT_IDENTIFIER, {
+		const response = await this.dataService.execute(FindObjectBySchemaIdentifierDocument, {
 			objectSchemaIdentifier,
 		});
 		const foundObject = response.data.object_ie[0];
@@ -235,10 +238,9 @@ export class CollectionsService {
 			);
 		}
 
-		const response = await this.dataService.execute(INSERT_OBJECT_INTO_COLLECTION, {
+		const response = await this.dataService.execute(InsertObjectIntoCollectionDocument, {
 			collectionId,
 			objectSchemaIdentifier,
-			objectMeemooFragmentId: objectInfo.meemooFragmentId,
 		});
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
@@ -251,7 +253,7 @@ export class CollectionsService {
 		objectSchemaIdentifier: string,
 		userProfileId: string
 	) {
-		const response = await this.dataService.execute(REMOVE_OBJECT_FROM_COLLECTION, {
+		const response = await this.dataService.execute(RemoveObjectFromCollectionDocument, {
 			collectionId,
 			objectSchemaIdentifier,
 			userProfileId,

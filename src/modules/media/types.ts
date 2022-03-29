@@ -18,6 +18,8 @@ export interface QueryBuilderConfig {
 	OCCURRENCE_TYPE: { [prop in Operator]?: string };
 	VALUE_OPERATORS: Array<Operator>;
 	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
+	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
+	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
 }
 
 export interface PlayerTicket {
@@ -35,12 +37,12 @@ export interface PlayerTicket {
 	};
 }
 
-export interface File {
-	schemaIdentifier: string;
+export interface MediaFile {
+	id: string;
 	name: string;
 	alternateName: string;
 	description: string;
-	representationId: string;
+	schemaIdentifier: string;
 	ebucoreMediaType: string;
 	ebucoreIsMediaFragmentOf: string;
 	embedUrl: string;
@@ -55,11 +57,12 @@ export interface Representation {
 	transcript: string;
 	dateCreated: string;
 	id: string;
-	files: File[];
+	files: MediaFile[];
 }
 
 export interface Media {
-	id: string;
+	schemaIdentifier: string; // Unique id per object
+	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;
@@ -94,7 +97,6 @@ export interface Media {
 	alternateName: string;
 	duration: string;
 	license: any;
-	meemooIdentifier: string;
 	meemooMediaObjectId: string;
 	dateCreated: string;
 	dateCreatedLowerBound: string;
@@ -113,6 +115,11 @@ export enum SearchFilterField {
 	GENRE = 'genre',
 	KEYWORD = 'keyword',
 	NAME = 'name',
+	PUBLISHER = 'publisher',
+	DESCRIPTION = 'description',
+	ERA = 'era',
+	LOCATION = 'location',
+	LANGUAGE = 'language',
 }
 
 export enum Operator {

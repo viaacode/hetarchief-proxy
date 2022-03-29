@@ -1,4 +1,16 @@
+import _ from 'lodash';
+
 import { Operator, OrderProperty, SearchFilterField } from '../types';
+
+import descriptionSearchQuery from './templates/description-search-query.json';
+import nameSearchQuery from './templates/name-search-query.json';
+import searchQueryAdvanced from './templates/search-query-advanced.json';
+import searchQuery from './templates/search-query.json';
+
+const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
+const searchQueryTemplate = _.values(searchQuery);
+const nameSearchQueryTemplate = _.values(nameSearchQuery);
+const descriptionSearchQueryTemplate = _.values(descriptionSearchQuery);
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -20,6 +32,11 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	genre: 'schema_genre',
 	keyword: 'schema_keywords',
 	name: 'schema_name',
+	publisher: 'schema_publisher',
+	description: 'schema_description',
+	era: 'schema_temporal_coverage',
+	location: 'schema_spatial_coverage',
+	language: 'schema_in_language',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -36,6 +53,20 @@ export enum QueryType {
 	MATCH = 'match', // Text based fuzzy search
 }
 
+export const MULTI_MATCH_FIELDS: Array<SearchFilterField> = [
+	SearchFilterField.QUERY,
+	SearchFilterField.ADVANCED_QUERY,
+	SearchFilterField.NAME,
+	SearchFilterField.DESCRIPTION,
+];
+
+export const MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any } = {
+	query: searchQueryTemplate,
+	advancedQuery: searchQueryAdvancedTemplate,
+	name: nameSearchQueryTemplate,
+	description: descriptionSearchQueryTemplate,
+};
+
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	format: QueryType.TERMS, // es keyword
 	duration: QueryType.RANGE,
@@ -44,7 +75,10 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	creator: QueryType.TERMS, // es flattened
 	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
 	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	name: QueryType.MATCH, // es text
+	publisher: QueryType.TERMS,
+	era: QueryType.MATCH,
+	location: QueryType.MATCH,
+	language: QueryType.TERMS,
 };
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {

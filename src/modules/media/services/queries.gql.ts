@@ -1,13 +1,6 @@
-export const GET_FILE_BY_REPRESENTATION_ID = `
-	query getFileByRepresentationId($id: String) {
+export const GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER = `
+	query getFileBySchemaIdentifier($id: String) {
 		object_file(where: {representation_schema_identifier: {_eq: $id } }) {
-			schema_identifier
-			schema_name
-			schema_alternate_name
-			schema_description
-			representation_schema_identifier
-			ebucore_media_type
-			ebucore_is_media_fragment_of
 			schema_embed_url
 		}
 	}
@@ -23,10 +16,10 @@ export const GET_THUMBNAIL_URL_BY_ID = `
 `;
 
 export const GET_OBJECT_IE_BY_ID = `
-	query objectDetail($id: String!) {
-		object_ie(where: {schema_identifier: {_eq: $id}}) {
-			meemoo_identifier
+	query objectDetail($schemaIdentifier: String!) {
+		object_ie(where: {schema_identifier: {_eq: $schemaIdentifier}}) {
 			schema_identifier
+			meemoo_identifier
 			premis_identifier
 			premis_relationship
 			schema_is_part_of
@@ -76,16 +69,14 @@ export const GET_OBJECT_IE_BY_ID = `
 			ebucore_object_type
 			schema_genre
 			premis_is_represented_by {
+        		ie_schema_identifier
 				schema_name
 				schema_alternate_name
 				schema_description
-				ie_schema_identifier
 				dcterms_format
 				schema_transcript
 				schema_date_created
-				schema_identifier
 				premis_includes {
-					schema_identifier
 					schema_name
 					schema_alternate_name
 					schema_description
