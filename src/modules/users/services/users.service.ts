@@ -26,7 +26,7 @@ export class UsersService {
 		}
 		return {
 			id: get(graphQlUser, 'id'),
-			full_name: get(graphQlUser, 'full_name'),
+			fullName: get(graphQlUser, 'full_name'),
 			firstName: get(graphQlUser, 'first_name'),
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),

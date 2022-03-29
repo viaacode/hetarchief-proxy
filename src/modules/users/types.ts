@@ -8,6 +8,7 @@ export enum Permission {
 	CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS = 'CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS',
 	EDIT_ANY_CONTENT_PAGES = 'EDIT_ANY_CONTENT_PAGES',
 	EDIT_OWN_CONTENT_PAGES = 'EDIT_OWN_CONTENT_PAGES',
+	SEARCH = 'SEARCH',
 }
 
 export interface GqlUser {
@@ -33,7 +34,7 @@ export interface GqlUserGroup {
 
 export interface User {
 	id: string;
-	full_name: string;
+	fullName: string;
 	firstName: string;
 	lastName: string;
 	email: string;

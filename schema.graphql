@@ -360,8 +360,10 @@ columns and relationships of "cms.content_blocks"
 """
 type cms_content_blocks {
     "An object relationship"
+    cms_content_block_type: lookup_cms_content_block_type!
+    "An object relationship"
     content: cms_content!
-    content_block_type: String!
+    content_block_type: lookup_cms_content_block_type_enum!
     content_id: uuid!
     created_at: timestamp!
     id: uuid!
@@ -401,7 +403,6 @@ type cms_content_blocks_avg_fields {
 
 "aggregate max on columns"
 type cms_content_blocks_max_fields {
-    content_block_type: String
     content_id: uuid
     created_at: timestamp
     id: uuid
@@ -411,7 +412,6 @@ type cms_content_blocks_max_fields {
 
 "aggregate min on columns"
 type cms_content_blocks_min_fields {
-    content_block_type: String
     content_id: uuid
     created_at: timestamp
     id: uuid
@@ -528,6 +528,8 @@ labels to marks certain content pages and group them together
 columns and relationships of "cms.content_labels"
 """
 type cms_content_labels {
+    "An object relationship"
+    cms_content_type: lookup_cms_content_type!
     "An array relationship"
     content_content_labels(
         "distinct select on columns"
@@ -554,7 +556,7 @@ type cms_content_labels {
         "filter the rows returned"
         where: cms_content_content_labels_bool_exp
     ): cms_content_content_labels_aggregate!
-    content_type: String!
+    content_type: lookup_cms_content_type_enum!
     created_at: timestamp!
     id: uuid!
     label: String!
@@ -580,7 +582,6 @@ type cms_content_labels_aggregate_fields {
 
 "aggregate max on columns"
 type cms_content_labels_max_fields {
-    content_type: String
     created_at: timestamp
     id: uuid
     label: String
@@ -589,7 +590,6 @@ type cms_content_labels_max_fields {
 
 "aggregate min on columns"
 type cms_content_labels_min_fields {
-    content_type: String
     created_at: timestamp
     id: uuid
     label: String
@@ -925,61 +925,9 @@ type cp_maintainer {
     created_at: timestamp!
     has_index: Boolean!
     has_space: Boolean!
-    "An array relationship"
-    ies(
-        "distinct select on columns"
-        distinct_on: [object_ie_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [object_ie_order_by!],
-        "filter the rows returned"
-        where: object_ie_bool_exp
-    ): [object_ie!]!
-    "An aggregate relationship"
-    ies_aggregate(
-        "distinct select on columns"
-        distinct_on: [object_ie_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [object_ie_order_by!],
-        "filter the rows returned"
-        where: object_ie_bool_exp
-    ): object_ie_aggregate!
     "An object relationship"
     index: cp_index
     information(iri: String): [ContentPartner]
-    "An array relationship"
-    maintainer_users_profiles(
-        "distinct select on columns"
-        distinct_on: [cp_maintainer_users_profile_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cp_maintainer_users_profile_order_by!],
-        "filter the rows returned"
-        where: cp_maintainer_users_profile_bool_exp
-    ): [cp_maintainer_users_profile!]!
-    "An aggregate relationship"
-    maintainer_users_profiles_aggregate(
-        "distinct select on columns"
-        distinct_on: [cp_maintainer_users_profile_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cp_maintainer_users_profile_order_by!],
-        "filter the rows returned"
-        where: cp_maintainer_users_profile_bool_exp
-    ): cp_maintainer_users_profile_aggregate!
     schema_identifier: String!
     schema_name: String
     "An object relationship"
@@ -1088,8 +1036,6 @@ type cp_space {
     id: uuid!
     is_published: Boolean
     published_at: timestamp
-    "An object relationship"
-    schemaAudienceTypeBySchemaAudienceType: lookup_schema_audience_type!
     schema_audience_type: lookup_schema_audience_type_enum!
     schema_color: String
     schema_description: String
@@ -1423,7 +1369,7 @@ Graphql enum types for content blocks
 columns and relationships of "lookup.cms_content_block_type"
 """
 type lookup_cms_content_block_type {
-    description: String
+    comment: String
     value: String!
 }
 
@@ -1442,13 +1388,13 @@ type lookup_cms_content_block_type_aggregate_fields {
 
 "aggregate max on columns"
 type lookup_cms_content_block_type_max_fields {
-    description: String
+    comment: String
     value: String
 }
 
 "aggregate min on columns"
 type lookup_cms_content_block_type_min_fields {
-    description: String
+    comment: String
     value: String
 }
 
@@ -1468,7 +1414,7 @@ GraphQL enum type for content types, e.g. pages, news, projects.
 columns and relationships of "lookup.cms_content_type"
 """
 type lookup_cms_content_type {
-    description: String
+    comment: String
     value: String!
 }
 
@@ -1487,13 +1433,13 @@ type lookup_cms_content_type_aggregate_fields {
 
 "aggregate max on columns"
 type lookup_cms_content_type_max_fields {
-    description: String
+    comment: String
     value: String
 }
 
 "aggregate min on columns"
 type lookup_cms_content_type_min_fields {
-    description: String
+    comment: String
     value: String
 }
 
@@ -1729,7 +1675,10 @@ type mutation_root {
         where: object_file_bool_exp!
     ): object_file_mutation_response
     "delete single row from the table: \"object.file\""
-    delete_object_file_by_pk(id: String!): object_file
+    delete_object_file_by_pk(
+        "de unieke identifier van de file"
+        schema_identifier: String!
+    ): object_file
     "delete data from the table: \"object.ie\""
     delete_object_ie(
         "filter the rows which have to be deleted"
@@ -1738,7 +1687,7 @@ type mutation_root {
     "delete single row from the table: \"object.ie\""
     delete_object_ie_by_pk(
         "de unieke fragmentid in mediahaven"
-        meemoo_fragment_id: String!
+        schema_identifier: String!
     ): object_ie
     "delete data from the table: \"object.representation\""
     delete_object_representation(
@@ -1746,7 +1695,10 @@ type mutation_root {
         where: object_representation_bool_exp!
     ): object_representation_mutation_response
     "delete single row from the table: \"object.representation\""
-    delete_object_representation_by_pk(id: String!): object_representation
+    delete_object_representation_by_pk(
+        "de unieke identifier van de representatie"
+        schema_identifier: String!
+    ): object_representation
     "delete data from the table: \"sync.audio\""
     delete_sync_audio(
         "filter the rows which have to be deleted"
@@ -1790,7 +1742,11 @@ type mutation_root {
         where: users_collection_ie_bool_exp!
     ): users_collection_ie_mutation_response
     "delete single row from the table: \"users.collection_ie\""
-    delete_users_collection_ie_by_pk(object_ie_meemoo_fragment_id: String!, user_collection_id: uuid!): users_collection_ie
+    delete_users_collection_ie_by_pk(
+        "de fragment id van de ie"
+        ie_schema_identifier: String!,
+        user_collection_id: uuid!
+    ): users_collection_ie
     "delete data from the table: \"users.group\""
     delete_users_group(
         "filter the rows which have to be deleted"
@@ -2901,13 +2857,15 @@ columns and relationships of "object.file"
 type object_file {
     ebucore_is_media_fragment_of: String
     ebucore_media_type: String!
-    id: String!
     "An object relationship"
     premis_is_included_in: object_representation!
-    representation_id: String!
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: String!
     schema_alternate_name: String
     schema_description: String
     schema_embed_url: String
+    "de unieke identifier van de file"
+    schema_identifier: String!
     schema_name: String
 }
 
@@ -2928,11 +2886,13 @@ type object_file_aggregate_fields {
 type object_file_max_fields {
     ebucore_is_media_fragment_of: String
     ebucore_media_type: String
-    id: String
-    representation_id: String
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: String
     schema_alternate_name: String
     schema_description: String
     schema_embed_url: String
+    "de unieke identifier van de file"
+    schema_identifier: String
     schema_name: String
 }
 
@@ -2940,11 +2900,13 @@ type object_file_max_fields {
 type object_file_min_fields {
     ebucore_is_media_fragment_of: String
     ebucore_media_type: String
-    id: String
-    representation_id: String
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: String
     schema_alternate_name: String
     schema_description: String
     schema_embed_url: String
+    "de unieke identifier van de file"
+    schema_identifier: String
     schema_name: String
 }
 
@@ -2958,32 +2920,6 @@ type object_file_mutation_response {
 
 "columns and relationships of \"object.ie\""
 type object_ie {
-    "An array relationship"
-    collection_ies(
-        "distinct select on columns"
-        distinct_on: [users_collection_ie_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_collection_ie_order_by!],
-        "filter the rows returned"
-        where: users_collection_ie_bool_exp
-    ): [users_collection_ie!]!
-    "An aggregate relationship"
-    collection_ies_aggregate(
-        "distinct select on columns"
-        distinct_on: [users_collection_ie_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_collection_ie_order_by!],
-        "filter the rows returned"
-        where: users_collection_ie_bool_exp
-    ): users_collection_ie_aggregate!
     "Datum waarop de IE beschikbaar is gemaakt"
     dcterms_available: timestamp
     "De datum waarop de IE werd gemaakt in edtf"
@@ -2996,8 +2932,8 @@ type object_ie {
     ebucore_object_type: String
     "An object relationship"
     maintainer: cp_maintainer
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String!
+    "De meemoo PID (external_id) voor een IE"
+    meemoo_identifier: String!
     meemoo_media_object_id: String
     meemoofilm_base: String
     meemoofilm_color: Boolean
@@ -3073,7 +3009,7 @@ type object_ie {
     "Tijd in seconden van tijdsgebaseerde media."
     schema_duration_in_seconds: Int
     schema_genre: _text
-    "De meemoo identifier voor een IE"
+    "de unieke fragmentid in mediahaven"
     schema_identifier: String!
     "De taal of talen die in de IE gebruikt worden"
     schema_in_language: _text
@@ -3146,6 +3082,41 @@ type object_ie_avg_fields {
     schema_number_of_pages: Float
 }
 
+"columns and relationships of \"object.ie_index\""
+type object_ie_index {
+    document(
+        "JSON select path"
+        path: String
+    ): json
+    document_id: String
+    index_id: String
+}
+
+"aggregated selection of \"object.ie_index\""
+type object_ie_index_aggregate {
+    aggregate: object_ie_index_aggregate_fields
+    nodes: [object_ie_index!]!
+}
+
+"aggregate fields of \"object.ie_index\""
+type object_ie_index_aggregate_fields {
+    count(columns: [object_ie_index_select_column!], distinct: Boolean): Int!
+    max: object_ie_index_max_fields
+    min: object_ie_index_min_fields
+}
+
+"aggregate max on columns"
+type object_ie_index_max_fields {
+    document_id: String
+    index_id: String
+}
+
+"aggregate min on columns"
+type object_ie_index_min_fields {
+    document_id: String
+    index_id: String
+}
+
 "aggregate max on columns"
 type object_ie_max_fields {
     "Datum waarop de IE beschikbaar is gemaakt"
@@ -3158,8 +3129,8 @@ type object_ie_max_fields {
     dcterms_issued: String
     dcterms_medium: String
     ebucore_object_type: String
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String
+    "De meemoo PID (external_id) voor een IE"
+    meemoo_identifier: String
     meemoo_media_object_id: String
     meemoofilm_base: String
     meemoofilm_embeddedCaptionLanguage: String
@@ -3183,7 +3154,7 @@ type object_ie_max_fields {
     schema_description: String
     "Tijd in seconden van tijdsgebaseerde media."
     schema_duration_in_seconds: Int
-    "De meemoo identifier voor een IE"
+    "de unieke fragmentid in mediahaven"
     schema_identifier: String
     "De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2)"
     schema_maintainer_id: String
@@ -3209,8 +3180,8 @@ type object_ie_min_fields {
     dcterms_issued: String
     dcterms_medium: String
     ebucore_object_type: String
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String
+    "De meemoo PID (external_id) voor een IE"
+    meemoo_identifier: String
     meemoo_media_object_id: String
     meemoofilm_base: String
     meemoofilm_embeddedCaptionLanguage: String
@@ -3234,7 +3205,7 @@ type object_ie_min_fields {
     schema_description: String
     "Tijd in seconden van tijdsgebaseerde media."
     schema_duration_in_seconds: Int
-    "De meemoo identifier voor een IE"
+    "de unieke fragmentid in mediahaven"
     schema_identifier: String
     "De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2)"
     schema_maintainer_id: String
@@ -3322,9 +3293,8 @@ columns and relationships of "object.representation"
 type object_representation {
     "het bestandstype van de represenatatie, container"
     dcterms_format: String!
-    id: String!
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: String!
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: String!
     "An array relationship"
     premis_includes(
         "distinct select on columns"
@@ -3359,6 +3329,8 @@ type object_representation {
     schema_date_created: timestamp
     "de optionele beschrijving van de representatie zelf"
     schema_description: String
+    "de unieke identifier van de representatie"
+    schema_identifier: String!
     "filename aka PathToVideo"
     schema_name: String!
     "de geschreven neerslag van een IE zijn audio"
@@ -3382,15 +3354,16 @@ type object_representation_aggregate_fields {
 type object_representation_max_fields {
     "het bestandstype van de represenatatie, container"
     dcterms_format: String
-    id: String
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: String
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: String
     "label"
     schema_alternate_name: String
     "datum waarop de resource van de representation werd aangemaakt"
     schema_date_created: timestamp
     "de optionele beschrijving van de representatie zelf"
     schema_description: String
+    "de unieke identifier van de representatie"
+    schema_identifier: String
     "filename aka PathToVideo"
     schema_name: String
     "de geschreven neerslag van een IE zijn audio"
@@ -3401,15 +3374,16 @@ type object_representation_max_fields {
 type object_representation_min_fields {
     "het bestandstype van de represenatatie, container"
     dcterms_format: String
-    id: String
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: String
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: String
     "label"
     schema_alternate_name: String
     "datum waarop de resource van de representation werd aangemaakt"
     schema_date_created: timestamp
     "de optionele beschrijving van de representatie zelf"
     schema_description: String
+    "de unieke identifier van de representatie"
+    schema_identifier: String
     "filename aka PathToVideo"
     schema_name: String
     "de geschreven neerslag van een IE zijn audio"
@@ -3957,7 +3931,10 @@ type query_root {
         where: object_file_bool_exp
     ): object_file_aggregate!
     "fetch data from the table: \"object.file\" using primary key columns"
-    object_file_by_pk(id: String!): object_file
+    object_file_by_pk(
+        "de unieke identifier van de file"
+        schema_identifier: String!
+    ): object_file
     "fetch data from the table: \"object.ie\""
     object_ie(
         "distinct select on columns"
@@ -3987,8 +3964,34 @@ type query_root {
     "fetch data from the table: \"object.ie\" using primary key columns"
     object_ie_by_pk(
         "de unieke fragmentid in mediahaven"
-        meemoo_fragment_id: String!
+        schema_identifier: String!
     ): object_ie
+    "fetch data from the table: \"object.ie_index\""
+    object_ie_index(
+        "distinct select on columns"
+        distinct_on: [object_ie_index_select_column!],
+        "limit the number of rows returned"
+        limit: Int,
+        "skip the first n rows. Use only with order_by"
+        offset: Int,
+        "sort the rows by one or more columns"
+        order_by: [object_ie_index_order_by!],
+        "filter the rows returned"
+        where: object_ie_index_bool_exp
+    ): [object_ie_index!]!
+    "fetch aggregated fields from the table: \"object.ie_index\""
+    object_ie_index_aggregate(
+        "distinct select on columns"
+        distinct_on: [object_ie_index_select_column!],
+        "limit the number of rows returned"
+        limit: Int,
+        "skip the first n rows. Use only with order_by"
+        offset: Int,
+        "sort the rows by one or more columns"
+        order_by: [object_ie_index_order_by!],
+        "filter the rows returned"
+        where: object_ie_index_bool_exp
+    ): object_ie_index_aggregate!
     "fetch data from the table: \"object.representation\""
     object_representation(
         "distinct select on columns"
@@ -4016,7 +4019,10 @@ type query_root {
         where: object_representation_bool_exp
     ): object_representation_aggregate!
     "fetch data from the table: \"object.representation\" using primary key columns"
-    object_representation_by_pk(id: String!): object_representation
+    object_representation_by_pk(
+        "de unieke identifier van de representatie"
+        schema_identifier: String!
+    ): object_representation
     organizations(id: String, iri: String): [Organization]
     persons(family_name: String, given_name: String, iri: String): [Person]
     schools(id: String, iri: String): [School]
@@ -4168,7 +4174,11 @@ type query_root {
         where: users_collection_ie_bool_exp
     ): users_collection_ie_aggregate!
     "fetch data from the table: \"users.collection_ie\" using primary key columns"
-    users_collection_ie_by_pk(object_ie_meemoo_fragment_id: String!, user_collection_id: uuid!): users_collection_ie
+    users_collection_ie_by_pk(
+        "de fragment id van de ie"
+        ie_schema_identifier: String!,
+        user_collection_id: uuid!
+    ): users_collection_ie
     "fetch data from the table: \"users.group\""
     users_group(
         "distinct select on columns"
@@ -4871,7 +4881,10 @@ type subscription_root {
         where: object_file_bool_exp
     ): object_file_aggregate!
     "fetch data from the table: \"object.file\" using primary key columns"
-    object_file_by_pk(id: String!): object_file
+    object_file_by_pk(
+        "de unieke identifier van de file"
+        schema_identifier: String!
+    ): object_file
     "fetch data from the table: \"object.ie\""
     object_ie(
         "distinct select on columns"
@@ -4901,8 +4914,34 @@ type subscription_root {
     "fetch data from the table: \"object.ie\" using primary key columns"
     object_ie_by_pk(
         "de unieke fragmentid in mediahaven"
-        meemoo_fragment_id: String!
+        schema_identifier: String!
     ): object_ie
+    "fetch data from the table: \"object.ie_index\""
+    object_ie_index(
+        "distinct select on columns"
+        distinct_on: [object_ie_index_select_column!],
+        "limit the number of rows returned"
+        limit: Int,
+        "skip the first n rows. Use only with order_by"
+        offset: Int,
+        "sort the rows by one or more columns"
+        order_by: [object_ie_index_order_by!],
+        "filter the rows returned"
+        where: object_ie_index_bool_exp
+    ): [object_ie_index!]!
+    "fetch aggregated fields from the table: \"object.ie_index\""
+    object_ie_index_aggregate(
+        "distinct select on columns"
+        distinct_on: [object_ie_index_select_column!],
+        "limit the number of rows returned"
+        limit: Int,
+        "skip the first n rows. Use only with order_by"
+        offset: Int,
+        "sort the rows by one or more columns"
+        order_by: [object_ie_index_order_by!],
+        "filter the rows returned"
+        where: object_ie_index_bool_exp
+    ): object_ie_index_aggregate!
     "fetch data from the table: \"object.representation\""
     object_representation(
         "distinct select on columns"
@@ -4930,7 +4969,10 @@ type subscription_root {
         where: object_representation_bool_exp
     ): object_representation_aggregate!
     "fetch data from the table: \"object.representation\" using primary key columns"
-    object_representation_by_pk(id: String!): object_representation
+    object_representation_by_pk(
+        "de unieke identifier van de representatie"
+        schema_identifier: String!
+    ): object_representation
     "fetch data from the table: \"sync.audio\""
     sync_audio(
         "distinct select on columns"
@@ -5079,7 +5121,11 @@ type subscription_root {
         where: users_collection_ie_bool_exp
     ): users_collection_ie_aggregate!
     "fetch data from the table: \"users.collection_ie\" using primary key columns"
-    users_collection_ie_by_pk(object_ie_meemoo_fragment_id: String!, user_collection_id: uuid!): users_collection_ie
+    users_collection_ie_by_pk(
+        "de fragment id van de ie"
+        ie_schema_identifier: String!,
+        user_collection_id: uuid!
+    ): users_collection_ie
     "fetch data from the table: \"users.group\""
     users_group(
         "distinct select on columns"
@@ -5539,7 +5585,8 @@ type users_collection_ie {
     created_at: timestamp!
     "An object relationship"
     ie: object_ie!
-    object_ie_meemoo_fragment_id: String!
+    "de fragment id van de ie"
+    ie_schema_identifier: String!
     updated_at: timestamp!
     user_collection_id: uuid!
 }
@@ -5560,7 +5607,8 @@ type users_collection_ie_aggregate_fields {
 "aggregate max on columns"
 type users_collection_ie_max_fields {
     created_at: timestamp
-    object_ie_meemoo_fragment_id: String
+    "de fragment id van de ie"
+    ie_schema_identifier: String
     updated_at: timestamp
     user_collection_id: uuid
 }
@@ -5568,7 +5616,8 @@ type users_collection_ie_max_fields {
 "aggregate min on columns"
 type users_collection_ie_min_fields {
     created_at: timestamp
-    object_ie_meemoo_fragment_id: String
+    "de fragment id van de ie"
+    ie_schema_identifier: String
     updated_at: timestamp
     user_collection_id: uuid
 }
@@ -5646,32 +5695,6 @@ type users_group {
         "filter the rows returned"
         where: users_group_permission_bool_exp
     ): users_group_permission_aggregate!
-    "An array relationship"
-    profiles(
-        "distinct select on columns"
-        distinct_on: [users_profile_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_profile_order_by!],
-        "filter the rows returned"
-        where: users_profile_bool_exp
-    ): [users_profile!]!
-    "An aggregate relationship"
-    profiles_aggregate(
-        "distinct select on columns"
-        distinct_on: [users_profile_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_profile_order_by!],
-        "filter the rows returned"
-        where: users_profile_bool_exp
-    ): users_profile_aggregate!
     updated_at: timestamp!
 }
 
@@ -5779,8 +5802,6 @@ type users_identity {
     created_at: timestamptz!
     id: uuid!
     identity_id: String!
-    "An object relationship"
-    identity_provider: users_identity_provider!
     identity_provider_name: String!
     "An object relationship"
     profile: users_profile!
@@ -5832,32 +5853,6 @@ type users_identity_mutation_response {
 "columns and relationships of \"users.identity_provider\""
 type users_identity_provider {
     description: String
-    "An array relationship"
-    identities(
-        "distinct select on columns"
-        distinct_on: [users_identity_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_identity_order_by!],
-        "filter the rows returned"
-        where: users_identity_bool_exp
-    ): [users_identity!]!
-    "An aggregate relationship"
-    identities_aggregate(
-        "distinct select on columns"
-        distinct_on: [users_identity_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [users_identity_order_by!],
-        "filter the rows returned"
-        where: users_identity_bool_exp
-    ): users_identity_aggregate!
     name: String!
 }
 
@@ -6012,58 +6007,6 @@ type users_profile {
         "filter the rows returned"
         where: users_collection_bool_exp
     ): users_collection_aggregate!
-    "An array relationship"
-    contents(
-        "distinct select on columns"
-        distinct_on: [cms_content_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cms_content_order_by!],
-        "filter the rows returned"
-        where: cms_content_bool_exp
-    ): [cms_content!]!
-    "An array relationship"
-    contentsByUserProfileId(
-        "distinct select on columns"
-        distinct_on: [cms_content_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cms_content_order_by!],
-        "filter the rows returned"
-        where: cms_content_bool_exp
-    ): [cms_content!]!
-    "An aggregate relationship"
-    contentsByUserProfileId_aggregate(
-        "distinct select on columns"
-        distinct_on: [cms_content_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cms_content_order_by!],
-        "filter the rows returned"
-        where: cms_content_bool_exp
-    ): cms_content_aggregate!
-    "An aggregate relationship"
-    contents_aggregate(
-        "distinct select on columns"
-        distinct_on: [cms_content_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cms_content_order_by!],
-        "filter the rows returned"
-        where: cms_content_bool_exp
-    ): cms_content_aggregate!
     created_at: timestamp
     first_name: String
     "A computed field, executes function \"users.user_profile_full_name\""
@@ -6192,32 +6135,6 @@ type users_profile {
         "filter the rows returned"
         where: cp_visit_bool_exp
     ): [cp_visit!]!
-    "An array relationship"
-    visitsByUpdatedBy(
-        "distinct select on columns"
-        distinct_on: [cp_visit_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cp_visit_order_by!],
-        "filter the rows returned"
-        where: cp_visit_bool_exp
-    ): [cp_visit!]!
-    "An aggregate relationship"
-    visitsByUpdatedBy_aggregate(
-        "distinct select on columns"
-        distinct_on: [cp_visit_select_column!],
-        "limit the number of rows returned"
-        limit: Int,
-        "skip the first n rows. Use only with order_by"
-        offset: Int,
-        "sort the rows by one or more columns"
-        order_by: [cp_visit_order_by!],
-        "filter the rows returned"
-        where: cp_visit_bool_exp
-    ): cp_visit_aggregate!
     "An aggregate relationship"
     visits_aggregate(
         "distinct select on columns"
@@ -6946,10 +6863,45 @@ enum lookup_cms_content_block_type_constraint {
     cms_content_block_type_pkey
 }
 
+enum lookup_cms_content_block_type_enum {
+    ACCORDIONS
+    ANCHOR_LINKS
+    BUTTONS
+    CONTENT_PAGE_META
+    CTAS
+    EVENTBRITE
+    HEADING
+    HERO
+    IFRAME
+    IMAGE
+    IMAGE_GRID
+    INTRO
+    KLAAR
+    LINKS
+    LOGO_GRID
+    MEDIA_GRID
+    MEDIA_PLAYER
+    MEDIA_PLAYER_TITLE_TEXT_BUTTON
+    PAGE_OVERVIEW
+    PROJECTS_SPOTLIGHT
+    QUOTE
+    RICH_TEXT
+    RICH_TEXT_TWO_COLUMNS
+    SEARCH
+    SPOTLIGHT
+    SUBTITLE
+    TITLE
+    TITLE_IMAGE_TEXT
+    TITLE_IMAGE_TEXT_BUTTON
+    USP_GRID
+    VIDEO
+    VIDEO_TITLE_TEXT_BUTTON
+}
+
 "select columns of table \"lookup.cms_content_block_type\""
 enum lookup_cms_content_block_type_select_column {
     "column name"
-    description
+    comment
     "column name"
     value
 }
@@ -6957,7 +6909,7 @@ enum lookup_cms_content_block_type_select_column {
 "update columns of table \"lookup.cms_content_block_type\""
 enum lookup_cms_content_block_type_update_column {
     "column name"
-    description
+    comment
     "column name"
     value
 }
@@ -6968,10 +6920,15 @@ enum lookup_cms_content_type_constraint {
     cms_content_type_pkey
 }
 
+enum lookup_cms_content_type_enum {
+    "Pagina"
+    PAGINA
+}
+
 "select columns of table \"lookup.cms_content_type\""
 enum lookup_cms_content_type_select_column {
     "column name"
-    description
+    comment
     "column name"
     value
 }
@@ -6979,7 +6936,7 @@ enum lookup_cms_content_type_select_column {
 "update columns of table \"lookup.cms_content_type\""
 enum lookup_cms_content_type_update_column {
     "column name"
-    description
+    comment
     "column name"
     value
 }
@@ -7048,15 +7005,15 @@ enum object_file_select_column {
     "column name"
     ebucore_media_type
     "column name"
-    id
-    "column name"
-    representation_id
+    representation_schema_identifier
     "column name"
     schema_alternate_name
     "column name"
     schema_description
     "column name"
     schema_embed_url
+    "column name"
+    schema_identifier
     "column name"
     schema_name
 }
@@ -7068,15 +7025,15 @@ enum object_file_update_column {
     "column name"
     ebucore_media_type
     "column name"
-    id
-    "column name"
-    representation_id
+    representation_schema_identifier
     "column name"
     schema_alternate_name
     "column name"
     schema_description
     "column name"
     schema_embed_url
+    "column name"
+    schema_identifier
     "column name"
     schema_name
 }
@@ -7087,6 +7044,16 @@ enum object_ie_constraint {
     ie_meemoo_fragment_id_key
     "unique or primary key constraint"
     intellectual_entity_pkey
+}
+
+"select columns of table \"object.ie_index\""
+enum object_ie_index_select_column {
+    "column name"
+    document
+    "column name"
+    document_id
+    "column name"
+    index_id
 }
 
 "select columns of table \"object.ie\""
@@ -7104,7 +7071,7 @@ enum object_ie_select_column {
     "column name"
     ebucore_object_type
     "column name"
-    meemoo_fragment_id
+    meemoo_identifier
     "column name"
     meemoo_media_object_id
     "column name"
@@ -7204,7 +7171,7 @@ enum object_ie_update_column {
     "column name"
     ebucore_object_type
     "column name"
-    meemoo_fragment_id
+    meemoo_identifier
     "column name"
     meemoo_media_object_id
     "column name"
@@ -7302,15 +7269,15 @@ enum object_representation_select_column {
     "column name"
     dcterms_format
     "column name"
-    id
-    "column name"
-    ie_meemoo_fragment_id
+    ie_schema_identifier
     "column name"
     schema_alternate_name
     "column name"
     schema_date_created
     "column name"
     schema_description
+    "column name"
+    schema_identifier
     "column name"
     schema_name
     "column name"
@@ -7322,15 +7289,15 @@ enum object_representation_update_column {
     "column name"
     dcterms_format
     "column name"
-    id
-    "column name"
-    ie_meemoo_fragment_id
+    ie_schema_identifier
     "column name"
     schema_alternate_name
     "column name"
     schema_date_created
     "column name"
     schema_description
+    "column name"
+    schema_identifier
     "column name"
     schema_name
     "column name"
@@ -7508,7 +7475,7 @@ enum users_collection_ie_select_column {
     "column name"
     created_at
     "column name"
-    object_ie_meemoo_fragment_id
+    ie_schema_identifier
     "column name"
     updated_at
     "column name"
@@ -7520,7 +7487,7 @@ enum users_collection_ie_update_column {
     "column name"
     created_at
     "column name"
-    object_ie_meemoo_fragment_id
+    ie_schema_identifier
     "column name"
     updated_at
     "column name"
@@ -7779,6 +7746,8 @@ scalar date
 
 scalar daterange
 
+scalar json
+
 scalar jsonb
 
 scalar time
@@ -7982,23 +7951,9 @@ input app_notification_set_input {
     visit_id: uuid
 }
 
-"order by aggregate values of table \"cms.content\""
-input cms_content_aggregate_order_by {
-    count: order_by
-    max: cms_content_max_order_by
-    min: cms_content_min_order_by
-}
-
 "append existing jsonb value of filtered columns with new jsonb value"
 input cms_content_append_input {
     user_group_ids: jsonb
-}
-
-"input type for inserting array relation for remote table \"cms.content\""
-input cms_content_arr_rel_insert_input {
-    data: [cms_content_insert_input!]!
-    "on conflict condition"
-    on_conflict: cms_content_on_conflict
 }
 
 "order by aggregate values of table \"cms.content_blocks\""
@@ -8038,8 +7993,9 @@ input cms_content_blocks_bool_exp {
     _and: [cms_content_blocks_bool_exp!]
     _not: cms_content_blocks_bool_exp
     _or: [cms_content_blocks_bool_exp!]
+    cms_content_block_type: lookup_cms_content_block_type_bool_exp
     content: cms_content_bool_exp
-    content_block_type: String_comparison_exp
+    content_block_type: lookup_cms_content_block_type_enum_comparison_exp
     content_id: uuid_comparison_exp
     created_at: timestamp_comparison_exp
     id: uuid_comparison_exp
@@ -8070,8 +8026,9 @@ input cms_content_blocks_inc_input {
 
 "input type for inserting data into table \"cms.content_blocks\""
 input cms_content_blocks_insert_input {
+    cms_content_block_type: lookup_cms_content_block_type_obj_rel_insert_input
     content: cms_content_obj_rel_insert_input
-    content_block_type: String
+    content_block_type: lookup_cms_content_block_type_enum
     content_id: uuid
     created_at: timestamp
     id: uuid
@@ -8082,7 +8039,6 @@ input cms_content_blocks_insert_input {
 
 "order by max() on columns of table \"cms.content_blocks\""
 input cms_content_blocks_max_order_by {
-    content_block_type: order_by
     content_id: order_by
     created_at: order_by
     id: order_by
@@ -8092,7 +8048,6 @@ input cms_content_blocks_max_order_by {
 
 "order by min() on columns of table \"cms.content_blocks\""
 input cms_content_blocks_min_order_by {
-    content_block_type: order_by
     content_id: order_by
     created_at: order_by
     id: order_by
@@ -8109,6 +8064,7 @@ input cms_content_blocks_on_conflict {
 
 "Ordering options when selecting data from \"cms.content_blocks\"."
 input cms_content_blocks_order_by {
+    cms_content_block_type: lookup_cms_content_block_type_order_by
     content: cms_content_order_by
     content_block_type: order_by
     content_id: order_by
@@ -8131,7 +8087,7 @@ input cms_content_blocks_prepend_input {
 
 "input type for updating data in table \"cms.content_blocks\""
 input cms_content_blocks_set_input {
-    content_block_type: String
+    content_block_type: lookup_cms_content_block_type_enum
     content_id: uuid
     created_at: timestamp
     id: uuid
@@ -8357,8 +8313,9 @@ input cms_content_labels_bool_exp {
     _and: [cms_content_labels_bool_exp!]
     _not: cms_content_labels_bool_exp
     _or: [cms_content_labels_bool_exp!]
+    cms_content_type: lookup_cms_content_type_bool_exp
     content_content_labels: cms_content_content_labels_bool_exp
-    content_type: String_comparison_exp
+    content_type: lookup_cms_content_type_enum_comparison_exp
     created_at: timestamp_comparison_exp
     id: uuid_comparison_exp
     label: String_comparison_exp
@@ -8383,8 +8340,9 @@ input cms_content_labels_delete_key_input {
 
 "input type for inserting data into table \"cms.content_labels\""
 input cms_content_labels_insert_input {
+    cms_content_type: lookup_cms_content_type_obj_rel_insert_input
     content_content_labels: cms_content_content_labels_arr_rel_insert_input
-    content_type: String
+    content_type: lookup_cms_content_type_enum
     created_at: timestamp
     id: uuid
     label: String
@@ -8408,6 +8366,7 @@ input cms_content_labels_on_conflict {
 
 "Ordering options when selecting data from \"cms.content_labels\"."
 input cms_content_labels_order_by {
+    cms_content_type: lookup_cms_content_type_order_by
     content_content_labels_aggregate: cms_content_content_labels_aggregate_order_by
     content_type: order_by
     created_at: order_by
@@ -8429,62 +8388,12 @@ input cms_content_labels_prepend_input {
 
 "input type for updating data in table \"cms.content_labels\""
 input cms_content_labels_set_input {
-    content_type: String
+    content_type: lookup_cms_content_type_enum
     created_at: timestamp
     id: uuid
     label: String
     link_to: jsonb
     updated_at: timestamp
-}
-
-"order by max() on columns of table \"cms.content\""
-input cms_content_max_order_by {
-    content_type: order_by
-    content_width: order_by
-    created_at: order_by
-    depublish_at: order_by
-    description: order_by
-    header_path: order_by
-    id: order_by
-    meta_description: order_by
-    "slug van de pagina"
-    path: order_by
-    publish_at: order_by
-    published_at: order_by
-    seo_description: order_by
-    seo_image_path: order_by
-    seo_keywords: order_by
-    seo_title: order_by
-    thumbnail_path: order_by
-    title: order_by
-    updated_at: order_by
-    updated_by_profile_id: order_by
-    user_profile_id: order_by
-}
-
-"order by min() on columns of table \"cms.content\""
-input cms_content_min_order_by {
-    content_type: order_by
-    content_width: order_by
-    created_at: order_by
-    depublish_at: order_by
-    description: order_by
-    header_path: order_by
-    id: order_by
-    meta_description: order_by
-    "slug van de pagina"
-    path: order_by
-    publish_at: order_by
-    published_at: order_by
-    seo_description: order_by
-    seo_image_path: order_by
-    seo_keywords: order_by
-    seo_title: order_by
-    thumbnail_path: order_by
-    title: order_by
-    updated_at: order_by
-    updated_by_profile_id: order_by
-    user_profile_id: order_by
 }
 
 "input type for inserting object relation for remote table \"cms.content\""
@@ -8837,9 +8746,7 @@ input cp_maintainer_bool_exp {
     created_at: timestamp_comparison_exp
     has_index: Boolean_comparison_exp
     has_space: Boolean_comparison_exp
-    ies: object_ie_bool_exp
     index: cp_index_bool_exp
-    maintainer_users_profiles: cp_maintainer_users_profile_bool_exp
     schema_identifier: String_comparison_exp
     schema_name: String_comparison_exp
     space: cp_space_bool_exp
@@ -8851,9 +8758,7 @@ input cp_maintainer_insert_input {
     created_at: timestamp
     has_index: Boolean
     has_space: Boolean
-    ies: object_ie_arr_rel_insert_input
     index: cp_index_obj_rel_insert_input
-    maintainer_users_profiles: cp_maintainer_users_profile_arr_rel_insert_input
     schema_identifier: String
     schema_name: String
     space: cp_space_obj_rel_insert_input
@@ -8879,9 +8784,7 @@ input cp_maintainer_order_by {
     created_at: order_by
     has_index: order_by
     has_space: order_by
-    ies_aggregate: object_ie_aggregate_order_by
     index: cp_index_order_by
-    maintainer_users_profiles_aggregate: cp_maintainer_users_profile_aggregate_order_by
     schema_identifier: order_by
     schema_name: order_by
     space: cp_space_order_by
@@ -8989,7 +8892,6 @@ input cp_space_bool_exp {
     id: uuid_comparison_exp
     is_published: Boolean_comparison_exp
     published_at: timestamp_comparison_exp
-    schemaAudienceTypeBySchemaAudienceType: lookup_schema_audience_type_bool_exp
     schema_audience_type: lookup_schema_audience_type_enum_comparison_exp
     schema_color: String_comparison_exp
     schema_description: String_comparison_exp
@@ -9008,7 +8910,6 @@ input cp_space_insert_input {
     id: uuid
     is_published: Boolean
     published_at: timestamp
-    schemaAudienceTypeBySchemaAudienceType: lookup_schema_audience_type_obj_rel_insert_input
     schema_audience_type: lookup_schema_audience_type_enum
     schema_color: String
     schema_description: String
@@ -9041,7 +8942,6 @@ input cp_space_order_by {
     id: order_by
     is_published: order_by
     published_at: order_by
-    schemaAudienceTypeBySchemaAudienceType: lookup_schema_audience_type_order_by
     schema_audience_type: order_by
     schema_color: order_by
     schema_description: order_by
@@ -9345,6 +9245,19 @@ input daterange_comparison_exp {
     _nin: [daterange!]
 }
 
+"Boolean expression to compare columns of type \"json\". All fields are combined with logical 'AND'."
+input json_comparison_exp {
+    _eq: json
+    _gt: json
+    _gte: json
+    _in: [json!]
+    _is_null: Boolean
+    _lt: json
+    _lte: json
+    _neq: json
+    _nin: [json!]
+}
+
 "Boolean expression to compare columns of type \"jsonb\". All fields are combined with logical 'AND'."
 input jsonb_comparison_exp {
     "is the column contained in the given json value"
@@ -9412,14 +9325,30 @@ input lookup_cms_content_block_type_bool_exp {
     _and: [lookup_cms_content_block_type_bool_exp!]
     _not: lookup_cms_content_block_type_bool_exp
     _or: [lookup_cms_content_block_type_bool_exp!]
-    description: String_comparison_exp
+    comment: String_comparison_exp
     value: String_comparison_exp
+}
+
+"Boolean expression to compare columns of type \"lookup_cms_content_block_type_enum\". All fields are combined with logical 'AND'."
+input lookup_cms_content_block_type_enum_comparison_exp {
+    _eq: lookup_cms_content_block_type_enum
+    _in: [lookup_cms_content_block_type_enum!]
+    _is_null: Boolean
+    _neq: lookup_cms_content_block_type_enum
+    _nin: [lookup_cms_content_block_type_enum!]
 }
 
 "input type for inserting data into table \"lookup.cms_content_block_type\""
 input lookup_cms_content_block_type_insert_input {
-    description: String
+    comment: String
     value: String
+}
+
+"input type for inserting object relation for remote table \"lookup.cms_content_block_type\""
+input lookup_cms_content_block_type_obj_rel_insert_input {
+    data: lookup_cms_content_block_type_insert_input!
+    "on conflict condition"
+    on_conflict: lookup_cms_content_block_type_on_conflict
 }
 
 "on conflict condition type for table \"lookup.cms_content_block_type\""
@@ -9431,7 +9360,7 @@ input lookup_cms_content_block_type_on_conflict {
 
 "Ordering options when selecting data from \"lookup.cms_content_block_type\"."
 input lookup_cms_content_block_type_order_by {
-    description: order_by
+    comment: order_by
     value: order_by
 }
 
@@ -9442,7 +9371,7 @@ input lookup_cms_content_block_type_pk_columns_input {
 
 "input type for updating data in table \"lookup.cms_content_block_type\""
 input lookup_cms_content_block_type_set_input {
-    description: String
+    comment: String
     value: String
 }
 
@@ -9451,14 +9380,30 @@ input lookup_cms_content_type_bool_exp {
     _and: [lookup_cms_content_type_bool_exp!]
     _not: lookup_cms_content_type_bool_exp
     _or: [lookup_cms_content_type_bool_exp!]
-    description: String_comparison_exp
+    comment: String_comparison_exp
     value: String_comparison_exp
+}
+
+"Boolean expression to compare columns of type \"lookup_cms_content_type_enum\". All fields are combined with logical 'AND'."
+input lookup_cms_content_type_enum_comparison_exp {
+    _eq: lookup_cms_content_type_enum
+    _in: [lookup_cms_content_type_enum!]
+    _is_null: Boolean
+    _neq: lookup_cms_content_type_enum
+    _nin: [lookup_cms_content_type_enum!]
 }
 
 "input type for inserting data into table \"lookup.cms_content_type\""
 input lookup_cms_content_type_insert_input {
-    description: String
+    comment: String
     value: String
+}
+
+"input type for inserting object relation for remote table \"lookup.cms_content_type\""
+input lookup_cms_content_type_obj_rel_insert_input {
+    data: lookup_cms_content_type_insert_input!
+    "on conflict condition"
+    on_conflict: lookup_cms_content_type_on_conflict
 }
 
 "on conflict condition type for table \"lookup.cms_content_type\""
@@ -9470,7 +9415,7 @@ input lookup_cms_content_type_on_conflict {
 
 "Ordering options when selecting data from \"lookup.cms_content_type\"."
 input lookup_cms_content_type_order_by {
-    description: order_by
+    comment: order_by
     value: order_by
 }
 
@@ -9481,7 +9426,7 @@ input lookup_cms_content_type_pk_columns_input {
 
 "input type for updating data in table \"lookup.cms_content_type\""
 input lookup_cms_content_type_set_input {
-    description: String
+    comment: String
     value: String
 }
 
@@ -9548,13 +9493,6 @@ input lookup_schema_audience_type_insert_input {
     value: String
 }
 
-"input type for inserting object relation for remote table \"lookup.schema_audience_type\""
-input lookup_schema_audience_type_obj_rel_insert_input {
-    data: lookup_schema_audience_type_insert_input!
-    "on conflict condition"
-    on_conflict: lookup_schema_audience_type_on_conflict
-}
-
 "on conflict condition type for table \"lookup.schema_audience_type\""
 input lookup_schema_audience_type_on_conflict {
     constraint: lookup_schema_audience_type_constraint!
@@ -9600,12 +9538,12 @@ input object_file_bool_exp {
     _or: [object_file_bool_exp!]
     ebucore_is_media_fragment_of: String_comparison_exp
     ebucore_media_type: String_comparison_exp
-    id: String_comparison_exp
     premis_is_included_in: object_representation_bool_exp
-    representation_id: String_comparison_exp
+    representation_schema_identifier: String_comparison_exp
     schema_alternate_name: String_comparison_exp
     schema_description: String_comparison_exp
     schema_embed_url: String_comparison_exp
+    schema_identifier: String_comparison_exp
     schema_name: String_comparison_exp
 }
 
@@ -9613,12 +9551,14 @@ input object_file_bool_exp {
 input object_file_insert_input {
     ebucore_is_media_fragment_of: String
     ebucore_media_type: String
-    id: String
     premis_is_included_in: object_representation_obj_rel_insert_input
-    representation_id: String
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: String
     schema_alternate_name: String
     schema_description: String
     schema_embed_url: String
+    "de unieke identifier van de file"
+    schema_identifier: String
     schema_name: String
 }
 
@@ -9626,11 +9566,13 @@ input object_file_insert_input {
 input object_file_max_order_by {
     ebucore_is_media_fragment_of: order_by
     ebucore_media_type: order_by
-    id: order_by
-    representation_id: order_by
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: order_by
     schema_alternate_name: order_by
     schema_description: order_by
     schema_embed_url: order_by
+    "de unieke identifier van de file"
+    schema_identifier: order_by
     schema_name: order_by
 }
 
@@ -9638,11 +9580,13 @@ input object_file_max_order_by {
 input object_file_min_order_by {
     ebucore_is_media_fragment_of: order_by
     ebucore_media_type: order_by
-    id: order_by
-    representation_id: order_by
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: order_by
     schema_alternate_name: order_by
     schema_description: order_by
     schema_embed_url: order_by
+    "de unieke identifier van de file"
+    schema_identifier: order_by
     schema_name: order_by
 }
 
@@ -9657,45 +9601,33 @@ input object_file_on_conflict {
 input object_file_order_by {
     ebucore_is_media_fragment_of: order_by
     ebucore_media_type: order_by
-    id: order_by
     premis_is_included_in: object_representation_order_by
-    representation_id: order_by
+    representation_schema_identifier: order_by
     schema_alternate_name: order_by
     schema_description: order_by
     schema_embed_url: order_by
+    schema_identifier: order_by
     schema_name: order_by
 }
 
 "primary key columns input for table: object_file"
 input object_file_pk_columns_input {
-    id: String!
+    "de unieke identifier van de file"
+    schema_identifier: String!
 }
 
 "input type for updating data in table \"object.file\""
 input object_file_set_input {
     ebucore_is_media_fragment_of: String
     ebucore_media_type: String
-    id: String
-    representation_id: String
+    "de unieke identifier van de representation waartoe deze file behoort"
+    representation_schema_identifier: String
     schema_alternate_name: String
     schema_description: String
     schema_embed_url: String
+    "de unieke identifier van de file"
+    schema_identifier: String
     schema_name: String
-}
-
-"order by aggregate values of table \"object.ie\""
-input object_ie_aggregate_order_by {
-    avg: object_ie_avg_order_by
-    count: order_by
-    max: object_ie_max_order_by
-    min: object_ie_min_order_by
-    stddev: object_ie_stddev_order_by
-    stddev_pop: object_ie_stddev_pop_order_by
-    stddev_samp: object_ie_stddev_samp_order_by
-    sum: object_ie_sum_order_by
-    var_pop: object_ie_var_pop_order_by
-    var_samp: object_ie_var_samp_order_by
-    variance: object_ie_variance_order_by
 }
 
 "append existing jsonb value of filtered columns with new jsonb value"
@@ -9715,27 +9647,11 @@ input object_ie_append_input {
     schema_publisher: jsonb
 }
 
-"input type for inserting array relation for remote table \"object.ie\""
-input object_ie_arr_rel_insert_input {
-    data: [object_ie_insert_input!]!
-    "on conflict condition"
-    on_conflict: object_ie_on_conflict
-}
-
-"order by avg() on columns of table \"object.ie\""
-input object_ie_avg_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
 "Boolean expression to filter rows from the table \"object.ie\". All fields are combined with a logical 'AND'."
 input object_ie_bool_exp {
     _and: [object_ie_bool_exp!]
     _not: object_ie_bool_exp
     _or: [object_ie_bool_exp!]
-    collection_ies: users_collection_ie_bool_exp
     dcterms_available: timestamp_comparison_exp
     dcterms_created: String_comparison_exp
     dcterms_format: String_comparison_exp
@@ -9743,7 +9659,7 @@ input object_ie_bool_exp {
     dcterms_medium: String_comparison_exp
     ebucore_object_type: String_comparison_exp
     maintainer: cp_maintainer_bool_exp
-    meemoo_fragment_id: String_comparison_exp
+    meemoo_identifier: String_comparison_exp
     meemoo_media_object_id: String_comparison_exp
     meemoofilm_base: String_comparison_exp
     meemoofilm_color: Boolean_comparison_exp
@@ -9847,9 +9763,25 @@ input object_ie_inc_input {
     schema_number_of_pages: Int
 }
 
+"Boolean expression to filter rows from the table \"object.ie_index\". All fields are combined with a logical 'AND'."
+input object_ie_index_bool_exp {
+    _and: [object_ie_index_bool_exp!]
+    _not: object_ie_index_bool_exp
+    _or: [object_ie_index_bool_exp!]
+    document: json_comparison_exp
+    document_id: String_comparison_exp
+    index_id: String_comparison_exp
+}
+
+"Ordering options when selecting data from \"object.ie_index\"."
+input object_ie_index_order_by {
+    document: order_by
+    document_id: order_by
+    index_id: order_by
+}
+
 "input type for inserting data into table \"object.ie\""
 input object_ie_insert_input {
-    collection_ies: users_collection_ie_arr_rel_insert_input
     "Datum waarop de IE beschikbaar is gemaakt"
     dcterms_available: timestamp
     "De datum waarop de IE werd gemaakt in edtf"
@@ -9861,8 +9793,8 @@ input object_ie_insert_input {
     dcterms_medium: String
     ebucore_object_type: String
     maintainer: cp_maintainer_obj_rel_insert_input
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String
+    "De meemoo PID (external_id) voor een IE"
+    meemoo_identifier: String
     meemoo_media_object_id: String
     meemoofilm_base: String
     meemoofilm_color: Boolean
@@ -9901,7 +9833,7 @@ input object_ie_insert_input {
     "Tijd in seconden van tijdsgebaseerde media."
     schema_duration_in_seconds: Int
     schema_genre: _text
-    "De meemoo identifier voor een IE"
+    "de unieke fragmentid in mediahaven"
     schema_identifier: String
     "De taal of talen die in de IE gebruikt worden"
     schema_in_language: _text
@@ -9935,108 +9867,6 @@ input object_ie_insert_input {
     updated_at: timestamptz
 }
 
-"order by max() on columns of table \"object.ie\""
-input object_ie_max_order_by {
-    "Datum waarop de IE beschikbaar is gemaakt"
-    dcterms_available: order_by
-    "De datum waarop de IE werd gemaakt in edtf"
-    dcterms_created: order_by
-    "Het mediatype: video, audio, beeld, document, ..."
-    dcterms_format: order_by
-    "De datum waarop de IE werd uitgebracht in edtf"
-    dcterms_issued: order_by
-    dcterms_medium: order_by
-    ebucore_object_type: order_by
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: order_by
-    meemoo_media_object_id: order_by
-    meemoofilm_base: order_by
-    meemoofilm_embeddedCaptionLanguage: order_by
-    meemoofilm_image_or_sound: order_by
-    "Maakt deel uit van een andere IE"
-    premis_is_part_of: order_by
-    "Is verwant aan een andere IE"
-    premis_relationship: order_by
-    "De inhoudelijke samenvatting van de IE"
-    schema_abstract: order_by
-    "Een alternatieve titel of naam van de IE"
-    schema_alternate_name: order_by
-    "De naam of ID van de rechtenhoudende persoon of organisatie"
-    schema_copyright_holder: order_by
-    "Opmerkingen bij rechten en hergebruik"
-    schema_copyright_notice: order_by
-    schema_date_created_lower_bound: order_by
-    "Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond"
-    schema_date_published: order_by
-    "Een korte omschrijving van de IE"
-    schema_description: order_by
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "De meemoo identifier voor een IE"
-    schema_identifier: order_by
-    "De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2)"
-    schema_maintainer_id: order_by
-    schema_maintainer_id_lower: order_by
-    "De primaire titel van de IE"
-    schema_name: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-    "Een URL naar een thumbnail of placeholder voor de IE"
-    schema_thumbnail_url: order_by
-    updated_at: order_by
-}
-
-"order by min() on columns of table \"object.ie\""
-input object_ie_min_order_by {
-    "Datum waarop de IE beschikbaar is gemaakt"
-    dcterms_available: order_by
-    "De datum waarop de IE werd gemaakt in edtf"
-    dcterms_created: order_by
-    "Het mediatype: video, audio, beeld, document, ..."
-    dcterms_format: order_by
-    "De datum waarop de IE werd uitgebracht in edtf"
-    dcterms_issued: order_by
-    dcterms_medium: order_by
-    ebucore_object_type: order_by
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: order_by
-    meemoo_media_object_id: order_by
-    meemoofilm_base: order_by
-    meemoofilm_embeddedCaptionLanguage: order_by
-    meemoofilm_image_or_sound: order_by
-    "Maakt deel uit van een andere IE"
-    premis_is_part_of: order_by
-    "Is verwant aan een andere IE"
-    premis_relationship: order_by
-    "De inhoudelijke samenvatting van de IE"
-    schema_abstract: order_by
-    "Een alternatieve titel of naam van de IE"
-    schema_alternate_name: order_by
-    "De naam of ID van de rechtenhoudende persoon of organisatie"
-    schema_copyright_holder: order_by
-    "Opmerkingen bij rechten en hergebruik"
-    schema_copyright_notice: order_by
-    schema_date_created_lower_bound: order_by
-    "Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond"
-    schema_date_published: order_by
-    "Een korte omschrijving van de IE"
-    schema_description: order_by
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "De meemoo identifier voor een IE"
-    schema_identifier: order_by
-    "De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2)"
-    schema_maintainer_id: order_by
-    schema_maintainer_id_lower: order_by
-    "De primaire titel van de IE"
-    schema_name: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-    "Een URL naar een thumbnail of placeholder voor de IE"
-    schema_thumbnail_url: order_by
-    updated_at: order_by
-}
-
 "input type for inserting object relation for remote table \"object.ie\""
 input object_ie_obj_rel_insert_input {
     data: object_ie_insert_input!
@@ -10053,7 +9883,6 @@ input object_ie_on_conflict {
 
 "Ordering options when selecting data from \"object.ie\"."
 input object_ie_order_by {
-    collection_ies_aggregate: users_collection_ie_aggregate_order_by
     dcterms_available: order_by
     dcterms_created: order_by
     dcterms_format: order_by
@@ -10061,7 +9890,7 @@ input object_ie_order_by {
     dcterms_medium: order_by
     ebucore_object_type: order_by
     maintainer: cp_maintainer_order_by
-    meemoo_fragment_id: order_by
+    meemoo_identifier: order_by
     meemoo_media_object_id: order_by
     meemoofilm_base: order_by
     meemoofilm_color: order_by
@@ -10109,7 +9938,7 @@ input object_ie_order_by {
 "primary key columns input for table: object_ie"
 input object_ie_pk_columns_input {
     "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String!
+    schema_identifier: String!
 }
 
 "prepend existing jsonb value of filtered columns with new jsonb value"
@@ -10141,8 +9970,8 @@ input object_ie_set_input {
     dcterms_issued: String
     dcterms_medium: String
     ebucore_object_type: String
-    "de unieke fragmentid in mediahaven"
-    meemoo_fragment_id: String
+    "De meemoo PID (external_id) voor een IE"
+    meemoo_identifier: String
     meemoo_media_object_id: String
     meemoofilm_base: String
     meemoofilm_color: Boolean
@@ -10180,7 +10009,7 @@ input object_ie_set_input {
     "Tijd in seconden van tijdsgebaseerde media."
     schema_duration_in_seconds: Int
     schema_genre: _text
-    "De meemoo identifier voor een IE"
+    "de unieke fragmentid in mediahaven"
     schema_identifier: String
     "De taal of talen die in de IE gebruikt worden"
     schema_in_language: _text
@@ -10214,62 +10043,6 @@ input object_ie_set_input {
     updated_at: timestamptz
 }
 
-"order by stddev() on columns of table \"object.ie\""
-input object_ie_stddev_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by stddev_pop() on columns of table \"object.ie\""
-input object_ie_stddev_pop_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by stddev_samp() on columns of table \"object.ie\""
-input object_ie_stddev_samp_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by sum() on columns of table \"object.ie\""
-input object_ie_sum_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by var_pop() on columns of table \"object.ie\""
-input object_ie_var_pop_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by var_samp() on columns of table \"object.ie\""
-input object_ie_var_samp_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
-"order by variance() on columns of table \"object.ie\""
-input object_ie_variance_order_by {
-    "Tijd in seconden van tijdsgebaseerde media."
-    schema_duration_in_seconds: order_by
-    "Aantal paginas van geschreven media"
-    schema_number_of_pages: order_by
-}
-
 "order by aggregate values of table \"object.representation\""
 input object_representation_aggregate_order_by {
     count: order_by
@@ -10290,13 +10063,13 @@ input object_representation_bool_exp {
     _not: object_representation_bool_exp
     _or: [object_representation_bool_exp!]
     dcterms_format: String_comparison_exp
-    id: String_comparison_exp
-    ie_meemoo_fragment_id: String_comparison_exp
+    ie_schema_identifier: String_comparison_exp
     premis_includes: object_file_bool_exp
     premis_represents: object_ie_bool_exp
     schema_alternate_name: String_comparison_exp
     schema_date_created: timestamp_comparison_exp
     schema_description: String_comparison_exp
+    schema_identifier: String_comparison_exp
     schema_name: String_comparison_exp
     schema_transcript: String_comparison_exp
 }
@@ -10305,9 +10078,8 @@ input object_representation_bool_exp {
 input object_representation_insert_input {
     "het bestandstype van de represenatatie, container"
     dcterms_format: String
-    id: String
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: String
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: String
     premis_includes: object_file_arr_rel_insert_input
     premis_represents: object_ie_obj_rel_insert_input
     "label"
@@ -10316,6 +10088,8 @@ input object_representation_insert_input {
     schema_date_created: timestamp
     "de optionele beschrijving van de representatie zelf"
     schema_description: String
+    "de unieke identifier van de representatie"
+    schema_identifier: String
     "filename aka PathToVideo"
     schema_name: String
     "de geschreven neerslag van een IE zijn audio"
@@ -10326,15 +10100,16 @@ input object_representation_insert_input {
 input object_representation_max_order_by {
     "het bestandstype van de represenatatie, container"
     dcterms_format: order_by
-    id: order_by
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: order_by
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: order_by
     "label"
     schema_alternate_name: order_by
     "datum waarop de resource van de representation werd aangemaakt"
     schema_date_created: order_by
     "de optionele beschrijving van de representatie zelf"
     schema_description: order_by
+    "de unieke identifier van de representatie"
+    schema_identifier: order_by
     "filename aka PathToVideo"
     schema_name: order_by
     "de geschreven neerslag van een IE zijn audio"
@@ -10345,15 +10120,16 @@ input object_representation_max_order_by {
 input object_representation_min_order_by {
     "het bestandstype van de represenatatie, container"
     dcterms_format: order_by
-    id: order_by
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: order_by
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: order_by
     "label"
     schema_alternate_name: order_by
     "datum waarop de resource van de representation werd aangemaakt"
     schema_date_created: order_by
     "de optionele beschrijving van de representatie zelf"
     schema_description: order_by
+    "de unieke identifier van de representatie"
+    schema_identifier: order_by
     "filename aka PathToVideo"
     schema_name: order_by
     "de geschreven neerslag van een IE zijn audio"
@@ -10377,35 +10153,37 @@ input object_representation_on_conflict {
 "Ordering options when selecting data from \"object.representation\"."
 input object_representation_order_by {
     dcterms_format: order_by
-    id: order_by
-    ie_meemoo_fragment_id: order_by
+    ie_schema_identifier: order_by
     premis_includes_aggregate: object_file_aggregate_order_by
     premis_represents: object_ie_order_by
     schema_alternate_name: order_by
     schema_date_created: order_by
     schema_description: order_by
+    schema_identifier: order_by
     schema_name: order_by
     schema_transcript: order_by
 }
 
 "primary key columns input for table: object_representation"
 input object_representation_pk_columns_input {
-    id: String!
+    "de unieke identifier van de representatie"
+    schema_identifier: String!
 }
 
 "input type for updating data in table \"object.representation\""
 input object_representation_set_input {
     "het bestandstype van de represenatatie, container"
     dcterms_format: String
-    id: String
-    "de FragmentId van de IE waarvan dit de representation is"
-    ie_meemoo_fragment_id: String
+    "de unieke identifier van de IE waarvan dit de representation is"
+    ie_schema_identifier: String
     "label"
     schema_alternate_name: String
     "datum waarop de resource van de representation werd aangemaakt"
     schema_date_created: timestamp
     "de optionele beschrijving van de representatie zelf"
     schema_description: String
+    "de unieke identifier van de representatie"
+    schema_identifier: String
     "filename aka PathToVideo"
     schema_name: String
     "de geschreven neerslag van een IE zijn audio"
@@ -10814,7 +10592,7 @@ input users_collection_ie_bool_exp {
     collection: users_collection_bool_exp
     created_at: timestamp_comparison_exp
     ie: object_ie_bool_exp
-    object_ie_meemoo_fragment_id: String_comparison_exp
+    ie_schema_identifier: String_comparison_exp
     updated_at: timestamp_comparison_exp
     user_collection_id: uuid_comparison_exp
 }
@@ -10824,7 +10602,8 @@ input users_collection_ie_insert_input {
     collection: users_collection_obj_rel_insert_input
     created_at: timestamp
     ie: object_ie_obj_rel_insert_input
-    object_ie_meemoo_fragment_id: String
+    "de fragment id van de ie"
+    ie_schema_identifier: String
     updated_at: timestamp
     user_collection_id: uuid
 }
@@ -10832,7 +10611,8 @@ input users_collection_ie_insert_input {
 "order by max() on columns of table \"users.collection_ie\""
 input users_collection_ie_max_order_by {
     created_at: order_by
-    object_ie_meemoo_fragment_id: order_by
+    "de fragment id van de ie"
+    ie_schema_identifier: order_by
     updated_at: order_by
     user_collection_id: order_by
 }
@@ -10840,7 +10620,8 @@ input users_collection_ie_max_order_by {
 "order by min() on columns of table \"users.collection_ie\""
 input users_collection_ie_min_order_by {
     created_at: order_by
-    object_ie_meemoo_fragment_id: order_by
+    "de fragment id van de ie"
+    ie_schema_identifier: order_by
     updated_at: order_by
     user_collection_id: order_by
 }
@@ -10857,21 +10638,23 @@ input users_collection_ie_order_by {
     collection: users_collection_order_by
     created_at: order_by
     ie: object_ie_order_by
-    object_ie_meemoo_fragment_id: order_by
+    ie_schema_identifier: order_by
     updated_at: order_by
     user_collection_id: order_by
 }
 
 "primary key columns input for table: users_collection_ie"
 input users_collection_ie_pk_columns_input {
-    object_ie_meemoo_fragment_id: String!
+    "de fragment id van de ie"
+    ie_schema_identifier: String!
     user_collection_id: uuid!
 }
 
 "input type for updating data in table \"users.collection_ie\""
 input users_collection_ie_set_input {
     created_at: timestamp
-    object_ie_meemoo_fragment_id: String
+    "de fragment id van de ie"
+    ie_schema_identifier: String
     updated_at: timestamp
     user_collection_id: uuid
 }
@@ -10958,7 +10741,6 @@ input users_group_bool_exp {
     label: String_comparison_exp
     name: String_comparison_exp
     permissions: users_group_permission_bool_exp
-    profiles: users_profile_bool_exp
     updated_at: timestamp_comparison_exp
 }
 
@@ -10970,7 +10752,6 @@ input users_group_insert_input {
     label: String
     name: String
     permissions: users_group_permission_arr_rel_insert_input
-    profiles: users_profile_arr_rel_insert_input
     updated_at: timestamp
 }
 
@@ -10996,7 +10777,6 @@ input users_group_order_by {
     label: order_by
     name: order_by
     permissions_aggregate: users_group_permission_aggregate_order_by
-    profiles_aggregate: users_profile_aggregate_order_by
     updated_at: order_by
 }
 
@@ -11114,7 +10894,6 @@ input users_identity_bool_exp {
     created_at: timestamptz_comparison_exp
     id: uuid_comparison_exp
     identity_id: String_comparison_exp
-    identity_provider: users_identity_provider_bool_exp
     identity_provider_name: String_comparison_exp
     profile: users_profile_bool_exp
     profile_id: uuid_comparison_exp
@@ -11126,7 +10905,6 @@ input users_identity_insert_input {
     created_at: timestamptz
     id: uuid
     identity_id: String
-    identity_provider: users_identity_provider_obj_rel_insert_input
     identity_provider_name: String
     profile: users_profile_obj_rel_insert_input
     profile_id: uuid
@@ -11165,7 +10943,6 @@ input users_identity_order_by {
     created_at: order_by
     id: order_by
     identity_id: order_by
-    identity_provider: users_identity_provider_order_by
     identity_provider_name: order_by
     profile: users_profile_order_by
     profile_id: order_by
@@ -11183,22 +10960,13 @@ input users_identity_provider_bool_exp {
     _not: users_identity_provider_bool_exp
     _or: [users_identity_provider_bool_exp!]
     description: String_comparison_exp
-    identities: users_identity_bool_exp
     name: String_comparison_exp
 }
 
 "input type for inserting data into table \"users.identity_provider\""
 input users_identity_provider_insert_input {
     description: String
-    identities: users_identity_arr_rel_insert_input
     name: String
-}
-
-"input type for inserting object relation for remote table \"users.identity_provider\""
-input users_identity_provider_obj_rel_insert_input {
-    data: users_identity_provider_insert_input!
-    "on conflict condition"
-    on_conflict: users_identity_provider_on_conflict
 }
 
 "on conflict condition type for table \"users.identity_provider\""
@@ -11211,7 +10979,6 @@ input users_identity_provider_on_conflict {
 "Ordering options when selecting data from \"users.identity_provider\"."
 input users_identity_provider_order_by {
     description: order_by
-    identities_aggregate: users_identity_aggregate_order_by
     name: order_by
 }
 
@@ -11301,20 +11068,6 @@ input users_permission_set_input {
     updated_at: timestamp
 }
 
-"order by aggregate values of table \"users.profile\""
-input users_profile_aggregate_order_by {
-    count: order_by
-    max: users_profile_max_order_by
-    min: users_profile_min_order_by
-}
-
-"input type for inserting array relation for remote table \"users.profile\""
-input users_profile_arr_rel_insert_input {
-    data: [users_profile_insert_input!]!
-    "on conflict condition"
-    on_conflict: users_profile_on_conflict
-}
-
 "Boolean expression to filter rows from the table \"users.profile\". All fields are combined with a logical 'AND'."
 input users_profile_bool_exp {
     _and: [users_profile_bool_exp!]
@@ -11322,8 +11075,6 @@ input users_profile_bool_exp {
     _or: [users_profile_bool_exp!]
     accepted_tos_at: timestamptz_comparison_exp
     collections: users_collection_bool_exp
-    contents: cms_content_bool_exp
-    contentsByUserProfileId: cms_content_bool_exp
     created_at: timestamp_comparison_exp
     first_name: String_comparison_exp
     full_name: String_comparison_exp
@@ -11338,15 +11089,12 @@ input users_profile_bool_exp {
     notifications: app_notification_bool_exp
     updated_at: timestamp_comparison_exp
     visits: cp_visit_bool_exp
-    visitsByUpdatedBy: cp_visit_bool_exp
 }
 
 "input type for inserting data into table \"users.profile\""
 input users_profile_insert_input {
     accepted_tos_at: timestamptz
     collections: users_collection_arr_rel_insert_input
-    contents: cms_content_arr_rel_insert_input
-    contentsByUserProfileId: cms_content_arr_rel_insert_input
     created_at: timestamp
     first_name: String
     group: users_group_obj_rel_insert_input
@@ -11360,31 +11108,6 @@ input users_profile_insert_input {
     notifications: app_notification_arr_rel_insert_input
     updated_at: timestamp
     visits: cp_visit_arr_rel_insert_input
-    visitsByUpdatedBy: cp_visit_arr_rel_insert_input
-}
-
-"order by max() on columns of table \"users.profile\""
-input users_profile_max_order_by {
-    accepted_tos_at: order_by
-    created_at: order_by
-    first_name: order_by
-    group_id: order_by
-    id: order_by
-    last_name: order_by
-    mail: order_by
-    updated_at: order_by
-}
-
-"order by min() on columns of table \"users.profile\""
-input users_profile_min_order_by {
-    accepted_tos_at: order_by
-    created_at: order_by
-    first_name: order_by
-    group_id: order_by
-    id: order_by
-    last_name: order_by
-    mail: order_by
-    updated_at: order_by
 }
 
 "input type for inserting object relation for remote table \"users.profile\""
@@ -11405,8 +11128,6 @@ input users_profile_on_conflict {
 input users_profile_order_by {
     accepted_tos_at: order_by
     collections_aggregate: users_collection_aggregate_order_by
-    contentsByUserProfileId_aggregate: cms_content_aggregate_order_by
-    contents_aggregate: cms_content_aggregate_order_by
     created_at: order_by
     first_name: order_by
     full_name: order_by
@@ -11420,7 +11141,6 @@ input users_profile_order_by {
     notes_aggregate: cp_visit_note_aggregate_order_by
     notifications_aggregate: app_notification_aggregate_order_by
     updated_at: order_by
-    visitsByUpdatedBy_aggregate: cp_visit_aggregate_order_by
     visits_aggregate: cp_visit_aggregate_order_by
 }
 

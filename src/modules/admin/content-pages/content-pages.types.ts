@@ -21,7 +21,7 @@ import {
 	SoftDeleteContentMutation as SoftDeleteContentMutationAvo,
 	UpdateContentByIdMutation as UpdateContentByIdMutationAvo,
 	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationAvo,
-} from '../../../generated/graphql-db-types-avo';
+} from '~generated/graphql-db-types-avo';
 import {
 	DeleteContentLabelLinksMutation as DeleteContentLabelLinksMutationHetArchief,
 	GetContentByIdQuery as GetContentByIdQueryHetArchief,
@@ -43,10 +43,8 @@ import {
 	SoftDeleteContentMutation as SoftDeleteContentMutationHetArchief,
 	UpdateContentByIdMutation as UpdateContentByIdMutationHetArchief,
 	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationHetArchief,
-} from '../../../generated/graphql-db-types-hetarchief';
-
+} from '~generated/graphql-db-types-hetarchief';
 import { Media } from '~modules/media/types';
-import { User } from '~modules/users/types';
 
 export enum AvoOrHetArchief {
 	avo = 'avo',
@@ -149,7 +147,7 @@ export interface ContentPage {
 	isProtected: boolean;
 	contentType: string;
 	contentWidth: ContentWidth;
-	owner: User;
+	owner: ContentPageUser;
 	userProfileId: string | null;
 	userGroupIds: number[] | null;
 	contentBlocks: ContentBlock[];
@@ -162,6 +160,18 @@ export type GqlContentPage =
 export type GqlContentBlock =
 	| GetContentPageByPathQueryHetArchief['cms_content'][0]['content_blocks'][0]
 	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];
+
+export type GqlUser =
+	| GetContentPageByPathQueryAvo['app_content'][0]['profile']
+	| GetContentPageByPathQueryHetArchief['cms_content'][0]['owner_profile'];
+
+export interface ContentPageUser {
+	id: string;
+	fullName: string;
+	firstName: string;
+	lastName: string;
+	groupId: string | number;
+}
 
 export type ContentPageType =
 	| 'NIEUWS_ITEM'
@@ -233,3 +243,16 @@ export interface SearchDateRange {
 export type ResolvedItemOrCollection = Partial<Avo.Item.Item | Avo.Collection.Collection> & {
 	src?: string;
 };
+
+export type FetchSearchQueryFunctionAvo = (
+	limit: number,
+	filters: Partial<Avo.Search.Filters>,
+	orderProperty: Avo.Search.OrderProperty,
+	orderDirection: Avo.Search.OrderDirection
+) => Promise<Avo.Search.Search | null>;
+
+export enum MediaItemType {
+	ITEM = 'ITEM',
+	COLLECTION = 'COLLECTION',
+	BUNDLE = 'BUNDLE',
+}

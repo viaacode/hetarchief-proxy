@@ -3,18 +3,6 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
 import {
-	DeleteCollectionDocument,
-	FindCollectionByIdDocument,
-	FindCollectionObjectsByCollectionIdDocument,
-	FindCollectionsByUserDocument,
-	FindObjectBySchemaIdentifierDocument,
-	FindObjectInCollectionDocument,
-	InsertCollectionsDocument,
-	InsertObjectIntoCollectionDocument,
-	RemoveObjectFromCollectionDocument,
-	UpdateCollectionDocument,
-} from '../../../generated/graphql-db-types-hetarchief';
-import {
 	Collection,
 	CollectionObjectLink,
 	GqlCollection,
@@ -25,6 +13,18 @@ import {
 	IeObject,
 } from '../types';
 
+import {
+	DeleteCollectionDocument,
+	FindCollectionByIdDocument,
+	FindCollectionObjectsByCollectionIdDocument,
+	FindCollectionsByUserDocument,
+	FindObjectBySchemaIdentifierDocument,
+	FindObjectInCollectionDocument,
+	InsertCollectionsDocument,
+	InsertObjectIntoCollectionDocument,
+	RemoveObjectFromCollectionDocument,
+	UpdateCollectionDocument,
+} from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';

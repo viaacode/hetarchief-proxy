@@ -23,7 +23,7 @@ import {
 	SoftDeleteContentDocument as SoftDeleteContentDocumentAvo,
 	UpdateContentByIdDocument as UpdateContentByIdDocumentAvo,
 	UpdateContentPagePublishDatesDocument as UpdateContentPagePublishDatesDocumentAvo,
-} from '../../../generated/graphql-db-types-avo';
+} from '~generated/graphql-db-types-avo';
 import {
 	DeleteContentLabelLinksDocument as DeleteContentLabelLinksDocumentHetArchief,
 	GetContentByIdDocument as GetContentByIdDocumentHetArchief,
@@ -45,8 +45,7 @@ import {
 	SoftDeleteContentDocument as SoftDeleteContentDocumentHetArchief,
 	UpdateContentByIdDocument as UpdateContentByIdDocumentHetArchief,
 	UpdateContentPagePublishDatesDocument as UpdateContentPagePublishDatesDocumentHetArchief,
-} from '../../../generated/graphql-db-types-hetarchief';
-
+} from '~generated/graphql-db-types-hetarchief';
 import {
 	AvoOrHetArchief,
 	MediaPlayerPathInfo,
@@ -76,7 +75,7 @@ type ContentPageQueries = {
 };
 
 export const CONTENT_PAGE_QUERIES: Record<AvoOrHetArchief, ContentPageQueries> = {
-	avo: {
+	[AvoOrHetArchief.avo]: {
 		DeleteContentLabelLinksDocument: DeleteContentLabelLinksDocumentAvo,
 		GetContentByIdDocument: GetContentByIdDocumentAvo,
 		GetContentLabelsByContentTypeDocument: GetContentLabelsByContentTypeDocumentAvo,
@@ -98,7 +97,7 @@ export const CONTENT_PAGE_QUERIES: Record<AvoOrHetArchief, ContentPageQueries> =
 		UpdateContentByIdDocument: UpdateContentByIdDocumentAvo,
 		UpdateContentPagePublishDatesDocument: UpdateContentPagePublishDatesDocumentAvo,
 	},
-	hetArchief: {
+	[AvoOrHetArchief.hetArchief]: {
 		DeleteContentLabelLinksDocument: DeleteContentLabelLinksDocumentHetArchief,
 		GetContentByIdDocument: GetContentByIdDocumentHetArchief,
 		GetContentLabelsByContentTypeDocument: GetContentLabelsByContentTypeDocumentHetArchief,

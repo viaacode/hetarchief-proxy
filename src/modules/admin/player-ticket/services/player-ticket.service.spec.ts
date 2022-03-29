@@ -18,6 +18,9 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 		if (key === 'mediaServiceUrl') {
 			return 'http://mediaservice';
 		}
+		if (key === 'databaseApplicationType') {
+			return 'hetArchief';
+		}
 		return key;
 	}),
 };
@@ -57,21 +60,15 @@ describe('PlayerTicketService', () => {
 
 	describe('getPlayableUrl', () => {
 		it('returns a playable url', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
 			nock('http://ticketservice/')
 				.get('/vrt/item-1')
 				.query(true)
 				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await playerTicketService.getPlayableUrl('vrt-id', 'referer');
+			const url = await playerTicketService.getPlayableUrl('vrt/item-1', 'referer');
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
 		});
 
 		it('uses the fallback referer if none was set', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
 			nock('http://ticketservice/')
 				.get('/vrt/item-1')
 				.query({
@@ -81,7 +78,7 @@ describe('PlayerTicketService', () => {
 					maxage: 'ticketServiceMaxAge',
 				})
 				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await playerTicketService.getPlayableUrl('vrt-id', undefined);
+			const url = await playerTicketService.getPlayableUrl('vrt/item-1', undefined);
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
 		});
 	});
@@ -95,7 +92,7 @@ describe('PlayerTicketService', () => {
 			expect(url).toEqual('vrt/item-1');
 		});
 
-		it('throws a notfoundexception if the item was not found', async () => {
+		it('throws a not found exception if the item was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					object_file: [],
@@ -109,7 +106,7 @@ describe('PlayerTicketService', () => {
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: "Object IE with id 'unknown-id' not found",
+				message: "Object with id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});

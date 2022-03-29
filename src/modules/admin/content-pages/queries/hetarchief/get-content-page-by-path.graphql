@@ -12,8 +12,8 @@ query getContentPageByPath($path: String!) {
 		is_protected
 		is_public
 		path
-		user_profile_id
 		owner_profile {
+			id
 			first_name
 			last_name
 			group {

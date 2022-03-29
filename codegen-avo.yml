@@ -7,6 +7,7 @@ documents:
   # Only generate types for avo specific queries. This code should eventually be moved to the admin core package
   - "./src/modules/admin/content-pages/queries/avo/**.graphql"
   - "./src/modules/admin/player-ticket/queries/avo/**.graphql"
+  - "./src/modules/admin/organisations/queries/avo/**.graphql"
 generates:
   src/generated/graphql-db-types-avo.ts:
     plugins:

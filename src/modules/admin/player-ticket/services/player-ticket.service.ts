@@ -8,29 +8,22 @@ import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get } from 'lodash';
 
-import { GetItemBrowsePathByExternalIdDocument } from '../../../../generated/graphql-db-types-avo';
 import { PlayerTicket } from '../player-ticket.types';
 
-import { GetFileByRepresentationSchemaIdentifierDocument } from 'src/generated/graphql-db-types-hetarchief';
+import { GetItemBrowsePathByExternalIdDocument } from '~generated/graphql-db-types-avo';
+import { GetFileByRepresentationSchemaIdentifierDocument } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export class PlayerTicketService {
 	private logger: Logger = new Logger(PlayerTicketService.name, { timestamp: true });
-	private gotInstance: Got;
 	private playerTicketsGotInstance: Got;
-	private ticketServiceMaxAge: number;
-	private mediaServiceUrl: string;
-	private host: string;
+	private readonly ticketServiceMaxAge: number;
+	private readonly mediaServiceUrl: string;
+	private readonly host: string;
 
-	constructor(private configService: ConfigService, protected dataService: DataService) {
-		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('elasticSearchUrl'),
-			resolveBodyOnly: true,
-			responseType: 'json',
-		});
-
+	constructor(protected configService: ConfigService, protected dataService: DataService) {
 		this.playerTicketsGotInstance = got.extend({
 			prefixUrl: this.configService.get('ticketServiceUrl'),
 			resolveBodyOnly: true,
@@ -67,40 +60,29 @@ export class PlayerTicketService {
 	}
 
 	public async getEmbedUrl(id: string): Promise<string> {
+		let response;
 		if (this.configService.get('avoOrHetArchief') === AvoOrHetArchief.hetArchief) {
 			// Het archief
-			const {
-				data: { object_file: objectFile },
-			} = await this.dataService.execute(GetFileByRepresentationSchemaIdentifierDocument, {
-				id,
-			});
-
-			if (!objectFile[0]) {
-				throw new NotFoundException(`Object IE with id '${id}' not found`);
-			}
-
-			return objectFile[0].schema_embed_url;
+			response = await this.dataService.execute(
+				GetFileByRepresentationSchemaIdentifierDocument,
+				{
+					id,
+				}
+			);
 		} else {
 			// AVO
-			const response = await this.dataService.execute(GetItemBrowsePathByExternalIdDocument, {
+			response = await this.dataService.execute(GetItemBrowsePathByExternalIdDocument, {
 				externalId: id,
 			});
-
-			const browsePath: string = get(response, 'data.app_item_meta[0].browse_path');
-
-			if (!browsePath) {
-				throw new InternalServerErrorException({
-					message:
-						'Failed to get token for item since the item was not found or it does not have a browse_path',
-
-					additionalInfo: {
-						browsePath,
-						id,
-					},
-				});
-			}
-
-			return browsePath;
 		}
+
+		const browsePath: string =
+			get(response, 'data.app_item_meta[0].browse_path') ||
+			get(response, 'data.object_file[0].schema_embed_url');
+		if (!browsePath) {
+			throw new NotFoundException(`Object with id '${id}' not found`);
+		}
+
+		return browsePath;
 	}
 }

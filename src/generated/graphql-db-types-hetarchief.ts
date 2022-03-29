@@ -648,23 +648,9 @@ export type Cms_Content_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "cms.content" */
-export type Cms_Content_Aggregate_Order_By = {
-	count?: InputMaybe<Order_By>;
-	max?: InputMaybe<Cms_Content_Max_Order_By>;
-	min?: InputMaybe<Cms_Content_Min_Order_By>;
-};
-
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Cms_Content_Append_Input = {
 	user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** input type for inserting array relation for remote table "cms.content" */
-export type Cms_Content_Arr_Rel_Insert_Input = {
-	data: Array<Cms_Content_Insert_Input>;
-	/** on conflict condition */
-	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
 };
 
 /**
@@ -1580,31 +1566,6 @@ export type Cms_Content_Max_Fields = {
 	user_profile_id?: Maybe<Scalars['uuid']>;
 };
 
-/** order by max() on columns of table "cms.content" */
-export type Cms_Content_Max_Order_By = {
-	content_type?: InputMaybe<Order_By>;
-	content_width?: InputMaybe<Order_By>;
-	created_at?: InputMaybe<Order_By>;
-	depublish_at?: InputMaybe<Order_By>;
-	description?: InputMaybe<Order_By>;
-	header_path?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	meta_description?: InputMaybe<Order_By>;
-	/** slug van de pagina */
-	path?: InputMaybe<Order_By>;
-	publish_at?: InputMaybe<Order_By>;
-	published_at?: InputMaybe<Order_By>;
-	seo_description?: InputMaybe<Order_By>;
-	seo_image_path?: InputMaybe<Order_By>;
-	seo_keywords?: InputMaybe<Order_By>;
-	seo_title?: InputMaybe<Order_By>;
-	thumbnail_path?: InputMaybe<Order_By>;
-	title?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
-	updated_by_profile_id?: InputMaybe<Order_By>;
-	user_profile_id?: InputMaybe<Order_By>;
-};
-
 /** aggregate min on columns */
 export type Cms_Content_Min_Fields = {
 	__typename?: 'cms_content_min_fields';
@@ -1629,31 +1590,6 @@ export type Cms_Content_Min_Fields = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 	updated_by_profile_id?: Maybe<Scalars['uuid']>;
 	user_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by min() on columns of table "cms.content" */
-export type Cms_Content_Min_Order_By = {
-	content_type?: InputMaybe<Order_By>;
-	content_width?: InputMaybe<Order_By>;
-	created_at?: InputMaybe<Order_By>;
-	depublish_at?: InputMaybe<Order_By>;
-	description?: InputMaybe<Order_By>;
-	header_path?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	meta_description?: InputMaybe<Order_By>;
-	/** slug van de pagina */
-	path?: InputMaybe<Order_By>;
-	publish_at?: InputMaybe<Order_By>;
-	published_at?: InputMaybe<Order_By>;
-	seo_description?: InputMaybe<Order_By>;
-	seo_image_path?: InputMaybe<Order_By>;
-	seo_keywords?: InputMaybe<Order_By>;
-	seo_title?: InputMaybe<Order_By>;
-	thumbnail_path?: InputMaybe<Order_By>;
-	title?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
-	updated_by_profile_id?: InputMaybe<Order_By>;
-	user_profile_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "cms.content" */
@@ -2559,17 +2495,9 @@ export type Cp_Maintainer = {
 	created_at: Scalars['timestamp'];
 	has_index: Scalars['Boolean'];
 	has_space: Scalars['Boolean'];
-	/** An array relationship */
-	ies: Array<Object_Ie>;
-	/** An aggregate relationship */
-	ies_aggregate: Object_Ie_Aggregate;
 	/** An object relationship */
 	index?: Maybe<Cp_Index>;
 	information?: Maybe<Array<Maybe<ContentPartner>>>;
-	/** An array relationship */
-	maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
-	/** An aggregate relationship */
-	maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
 	schema_identifier: Scalars['String'];
 	schema_name?: Maybe<Scalars['String']>;
 	/** An object relationship */
@@ -2584,68 +2512,8 @@ export type Cp_Maintainer = {
  * columns and relationships of "cp.maintainer"
  *
  */
-export type Cp_MaintainerIesArgs = {
-	distinct_on?: InputMaybe<Array<Object_Ie_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Object_Ie_Order_By>>;
-	where?: InputMaybe<Object_Ie_Bool_Exp>;
-};
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerIes_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Object_Ie_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Object_Ie_Order_By>>;
-	where?: InputMaybe<Object_Ie_Bool_Exp>;
-};
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
 export type Cp_MaintainerInformationArgs = {
 	iri?: InputMaybe<Scalars['String']>;
-};
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerMaintainer_Users_ProfilesArgs = {
-	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerMaintainer_Users_Profiles_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 };
 
 /** aggregated selection of "cp.maintainer" */
@@ -2677,9 +2545,7 @@ export type Cp_Maintainer_Bool_Exp = {
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	has_index?: InputMaybe<Boolean_Comparison_Exp>;
 	has_space?: InputMaybe<Boolean_Comparison_Exp>;
-	ies?: InputMaybe<Object_Ie_Bool_Exp>;
 	index?: InputMaybe<Cp_Index_Bool_Exp>;
-	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 	schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_name?: InputMaybe<String_Comparison_Exp>;
 	space?: InputMaybe<Cp_Space_Bool_Exp>;
@@ -2697,9 +2563,7 @@ export type Cp_Maintainer_Insert_Input = {
 	created_at?: InputMaybe<Scalars['timestamp']>;
 	has_index?: InputMaybe<Scalars['Boolean']>;
 	has_space?: InputMaybe<Scalars['Boolean']>;
-	ies?: InputMaybe<Object_Ie_Arr_Rel_Insert_Input>;
 	index?: InputMaybe<Cp_Index_Obj_Rel_Insert_Input>;
-	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
 	schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_name?: InputMaybe<Scalars['String']>;
 	space?: InputMaybe<Cp_Space_Obj_Rel_Insert_Input>;
@@ -2752,9 +2616,7 @@ export type Cp_Maintainer_Order_By = {
 	created_at?: InputMaybe<Order_By>;
 	has_index?: InputMaybe<Order_By>;
 	has_space?: InputMaybe<Order_By>;
-	ies_aggregate?: InputMaybe<Object_Ie_Aggregate_Order_By>;
 	index?: InputMaybe<Cp_Index_Order_By>;
-	maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
 	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 	space?: InputMaybe<Cp_Space_Order_By>;
@@ -2990,8 +2852,6 @@ export type Cp_Space = {
 	id: Scalars['uuid'];
 	is_published?: Maybe<Scalars['Boolean']>;
 	published_at?: Maybe<Scalars['timestamp']>;
-	/** An object relationship */
-	schemaAudienceTypeBySchemaAudienceType: Lookup_Schema_Audience_Type;
 	schema_audience_type: Lookup_Schema_Audience_Type_Enum;
 	schema_color?: Maybe<Scalars['String']>;
 	schema_description?: Maybe<Scalars['String']>;
@@ -3068,7 +2928,6 @@ export type Cp_Space_Bool_Exp = {
 	id?: InputMaybe<Uuid_Comparison_Exp>;
 	is_published?: InputMaybe<Boolean_Comparison_Exp>;
 	published_at?: InputMaybe<Timestamp_Comparison_Exp>;
-	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Bool_Exp>;
 	schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum_Comparison_Exp>;
 	schema_color?: InputMaybe<String_Comparison_Exp>;
 	schema_description?: InputMaybe<String_Comparison_Exp>;
@@ -3095,7 +2954,6 @@ export type Cp_Space_Insert_Input = {
 	id?: InputMaybe<Scalars['uuid']>;
 	is_published?: InputMaybe<Scalars['Boolean']>;
 	published_at?: InputMaybe<Scalars['timestamp']>;
-	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Obj_Rel_Insert_Input>;
 	schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
 	schema_color?: InputMaybe<Scalars['String']>;
 	schema_description?: InputMaybe<Scalars['String']>;
@@ -3165,7 +3023,6 @@ export type Cp_Space_Order_By = {
 	id?: InputMaybe<Order_By>;
 	is_published?: InputMaybe<Order_By>;
 	published_at?: InputMaybe<Order_By>;
-	schemaAudienceTypeBySchemaAudienceType?: InputMaybe<Lookup_Schema_Audience_Type_Order_By>;
 	schema_audience_type?: InputMaybe<Order_By>;
 	schema_color?: InputMaybe<Order_By>;
 	schema_description?: InputMaybe<Order_By>;
@@ -4532,13 +4389,6 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
 	affected_rows: Scalars['Int'];
 	/** data from the rows affected by the mutation */
 	returning: Array<Lookup_Schema_Audience_Type>;
-};
-
-/** input type for inserting object relation for remote table "lookup.schema_audience_type" */
-export type Lookup_Schema_Audience_Type_Obj_Rel_Insert_Input = {
-	data: Lookup_Schema_Audience_Type_Insert_Input;
-	/** on conflict condition */
-	on_conflict?: InputMaybe<Lookup_Schema_Audience_Type_On_Conflict>;
 };
 
 /** on conflict condition type for table "lookup.schema_audience_type" */
@@ -6400,10 +6250,6 @@ export enum Object_File_Update_Column {
 /** columns and relationships of "object.ie" */
 export type Object_Ie = {
 	__typename?: 'object_ie';
-	/** An array relationship */
-	collection_ies: Array<Users_Collection_Ie>;
-	/** An aggregate relationship */
-	collection_ies_aggregate: Users_Collection_Ie_Aggregate;
 	/** Datum waarop de IE beschikbaar is gemaakt */
 	dcterms_available?: Maybe<Scalars['timestamp']>;
 	/** De datum waarop de IE werd gemaakt in edtf */
@@ -6495,24 +6341,6 @@ export type Object_Ie = {
 };
 
 /** columns and relationships of "object.ie" */
-export type Object_IeCollection_IesArgs = {
-	distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-	where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
-};
-
-/** columns and relationships of "object.ie" */
-export type Object_IeCollection_Ies_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-	where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
-};
-
-/** columns and relationships of "object.ie" */
 export type Object_IePremis_IdentifierArgs = {
 	path?: InputMaybe<Scalars['String']>;
 };
@@ -6599,21 +6427,6 @@ export type Object_Ie_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "object.ie" */
-export type Object_Ie_Aggregate_Order_By = {
-	avg?: InputMaybe<Object_Ie_Avg_Order_By>;
-	count?: InputMaybe<Order_By>;
-	max?: InputMaybe<Object_Ie_Max_Order_By>;
-	min?: InputMaybe<Object_Ie_Min_Order_By>;
-	stddev?: InputMaybe<Object_Ie_Stddev_Order_By>;
-	stddev_pop?: InputMaybe<Object_Ie_Stddev_Pop_Order_By>;
-	stddev_samp?: InputMaybe<Object_Ie_Stddev_Samp_Order_By>;
-	sum?: InputMaybe<Object_Ie_Sum_Order_By>;
-	var_pop?: InputMaybe<Object_Ie_Var_Pop_Order_By>;
-	var_samp?: InputMaybe<Object_Ie_Var_Samp_Order_By>;
-	variance?: InputMaybe<Object_Ie_Variance_Order_By>;
-};
-
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type Object_Ie_Append_Input = {
 	/** Overige lokale identifiers van de Content Partner (json) */
@@ -6631,13 +6444,6 @@ export type Object_Ie_Append_Input = {
 	schema_publisher?: InputMaybe<Scalars['jsonb']>;
 };
 
-/** input type for inserting array relation for remote table "object.ie" */
-export type Object_Ie_Arr_Rel_Insert_Input = {
-	data: Array<Object_Ie_Insert_Input>;
-	/** on conflict condition */
-	on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
-};
-
 /** aggregate avg on columns */
 export type Object_Ie_Avg_Fields = {
 	__typename?: 'object_ie_avg_fields';
@@ -6647,20 +6453,11 @@ export type Object_Ie_Avg_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
-/** order by avg() on columns of table "object.ie" */
-export type Object_Ie_Avg_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "object.ie". All fields are combined with a logical 'AND'. */
 export type Object_Ie_Bool_Exp = {
 	_and?: InputMaybe<Array<Object_Ie_Bool_Exp>>;
 	_not?: InputMaybe<Object_Ie_Bool_Exp>;
 	_or?: InputMaybe<Array<Object_Ie_Bool_Exp>>;
-	collection_ies?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
 	dcterms_available?: InputMaybe<Timestamp_Comparison_Exp>;
 	dcterms_created?: InputMaybe<String_Comparison_Exp>;
 	dcterms_format?: InputMaybe<String_Comparison_Exp>;
@@ -6784,6 +6581,8 @@ export type Object_Ie_Inc_Input = {
 export type Object_Ie_Index = {
 	__typename?: 'object_ie_index';
 	document?: Maybe<Scalars['json']>;
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "object.ie_index" */
@@ -6802,6 +6601,8 @@ export type Object_Ie_Index_Aggregate = {
 export type Object_Ie_Index_Aggregate_Fields = {
 	__typename?: 'object_ie_index_aggregate_fields';
 	count: Scalars['Int'];
+	max?: Maybe<Object_Ie_Index_Max_Fields>;
+	min?: Maybe<Object_Ie_Index_Min_Fields>;
 };
 
 /** aggregate fields of "object.ie_index" */
@@ -6816,22 +6617,43 @@ export type Object_Ie_Index_Bool_Exp = {
 	_not?: InputMaybe<Object_Ie_Index_Bool_Exp>;
 	_or?: InputMaybe<Array<Object_Ie_Index_Bool_Exp>>;
 	document?: InputMaybe<Json_Comparison_Exp>;
+	document_id?: InputMaybe<String_Comparison_Exp>;
+	index_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Object_Ie_Index_Max_Fields = {
+	__typename?: 'object_ie_index_max_fields';
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Object_Ie_Index_Min_Fields = {
+	__typename?: 'object_ie_index_min_fields';
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
 };
 
 /** Ordering options when selecting data from "object.ie_index". */
 export type Object_Ie_Index_Order_By = {
 	document?: InputMaybe<Order_By>;
+	document_id?: InputMaybe<Order_By>;
+	index_id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "object.ie_index" */
 export enum Object_Ie_Index_Select_Column {
 	/** column name */
 	Document = 'document',
+	/** column name */
+	DocumentId = 'document_id',
+	/** column name */
+	IndexId = 'index_id',
 }
 
 /** input type for inserting data into table "object.ie" */
 export type Object_Ie_Insert_Input = {
-	collection_ies?: InputMaybe<Users_Collection_Ie_Arr_Rel_Insert_Input>;
 	/** Datum waarop de IE beschikbaar is gemaakt */
 	dcterms_available?: InputMaybe<Scalars['timestamp']>;
 	/** De datum waarop de IE werd gemaakt in edtf */
@@ -6969,57 +6791,6 @@ export type Object_Ie_Max_Fields = {
 	updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
-/** order by max() on columns of table "object.ie" */
-export type Object_Ie_Max_Order_By = {
-	/** Datum waarop de IE beschikbaar is gemaakt */
-	dcterms_available?: InputMaybe<Order_By>;
-	/** De datum waarop de IE werd gemaakt in edtf */
-	dcterms_created?: InputMaybe<Order_By>;
-	/** Het mediatype: video, audio, beeld, document, ... */
-	dcterms_format?: InputMaybe<Order_By>;
-	/** De datum waarop de IE werd uitgebracht in edtf */
-	dcterms_issued?: InputMaybe<Order_By>;
-	dcterms_medium?: InputMaybe<Order_By>;
-	ebucore_object_type?: InputMaybe<Order_By>;
-	/** De meemoo PID (external_id) voor een IE */
-	meemoo_identifier?: InputMaybe<Order_By>;
-	meemoo_media_object_id?: InputMaybe<Order_By>;
-	meemoofilm_base?: InputMaybe<Order_By>;
-	meemoofilm_embeddedCaptionLanguage?: InputMaybe<Order_By>;
-	meemoofilm_image_or_sound?: InputMaybe<Order_By>;
-	/** Maakt deel uit van een andere IE */
-	premis_is_part_of?: InputMaybe<Order_By>;
-	/** Is verwant aan een andere IE */
-	premis_relationship?: InputMaybe<Order_By>;
-	/** De inhoudelijke samenvatting van de IE */
-	schema_abstract?: InputMaybe<Order_By>;
-	/** Een alternatieve titel of naam van de IE */
-	schema_alternate_name?: InputMaybe<Order_By>;
-	/** De naam of ID van de rechtenhoudende persoon of organisatie */
-	schema_copyright_holder?: InputMaybe<Order_By>;
-	/** Opmerkingen bij rechten en hergebruik */
-	schema_copyright_notice?: InputMaybe<Order_By>;
-	schema_date_created_lower_bound?: InputMaybe<Order_By>;
-	/** Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond */
-	schema_date_published?: InputMaybe<Order_By>;
-	/** Een korte omschrijving van de IE */
-	schema_description?: InputMaybe<Order_By>;
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** de unieke fragmentid in mediahaven */
-	schema_identifier?: InputMaybe<Order_By>;
-	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
-	schema_maintainer_id?: InputMaybe<Order_By>;
-	schema_maintainer_id_lower?: InputMaybe<Order_By>;
-	/** De primaire titel van de IE */
-	schema_name?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-	/** Een URL naar een thumbnail of placeholder voor de IE */
-	schema_thumbnail_url?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
-};
-
 /** aggregate min on columns */
 export type Object_Ie_Min_Fields = {
 	__typename?: 'object_ie_min_fields';
@@ -7072,57 +6843,6 @@ export type Object_Ie_Min_Fields = {
 	updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
-/** order by min() on columns of table "object.ie" */
-export type Object_Ie_Min_Order_By = {
-	/** Datum waarop de IE beschikbaar is gemaakt */
-	dcterms_available?: InputMaybe<Order_By>;
-	/** De datum waarop de IE werd gemaakt in edtf */
-	dcterms_created?: InputMaybe<Order_By>;
-	/** Het mediatype: video, audio, beeld, document, ... */
-	dcterms_format?: InputMaybe<Order_By>;
-	/** De datum waarop de IE werd uitgebracht in edtf */
-	dcterms_issued?: InputMaybe<Order_By>;
-	dcterms_medium?: InputMaybe<Order_By>;
-	ebucore_object_type?: InputMaybe<Order_By>;
-	/** De meemoo PID (external_id) voor een IE */
-	meemoo_identifier?: InputMaybe<Order_By>;
-	meemoo_media_object_id?: InputMaybe<Order_By>;
-	meemoofilm_base?: InputMaybe<Order_By>;
-	meemoofilm_embeddedCaptionLanguage?: InputMaybe<Order_By>;
-	meemoofilm_image_or_sound?: InputMaybe<Order_By>;
-	/** Maakt deel uit van een andere IE */
-	premis_is_part_of?: InputMaybe<Order_By>;
-	/** Is verwant aan een andere IE */
-	premis_relationship?: InputMaybe<Order_By>;
-	/** De inhoudelijke samenvatting van de IE */
-	schema_abstract?: InputMaybe<Order_By>;
-	/** Een alternatieve titel of naam van de IE */
-	schema_alternate_name?: InputMaybe<Order_By>;
-	/** De naam of ID van de rechtenhoudende persoon of organisatie */
-	schema_copyright_holder?: InputMaybe<Order_By>;
-	/** Opmerkingen bij rechten en hergebruik */
-	schema_copyright_notice?: InputMaybe<Order_By>;
-	schema_date_created_lower_bound?: InputMaybe<Order_By>;
-	/** Datum waarop de IE voor het eerst werd uitgegeven, uitgezonden of vertoond */
-	schema_date_published?: InputMaybe<Order_By>;
-	/** Een korte omschrijving van de IE */
-	schema_description?: InputMaybe<Order_By>;
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** de unieke fragmentid in mediahaven */
-	schema_identifier?: InputMaybe<Order_By>;
-	/** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
-	schema_maintainer_id?: InputMaybe<Order_By>;
-	schema_maintainer_id_lower?: InputMaybe<Order_By>;
-	/** De primaire titel van de IE */
-	schema_name?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-	/** Een URL naar een thumbnail of placeholder voor de IE */
-	schema_thumbnail_url?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
-};
-
 /** response of any mutation on the table "object.ie" */
 export type Object_Ie_Mutation_Response = {
 	__typename?: 'object_ie_mutation_response';
@@ -7148,7 +6868,6 @@ export type Object_Ie_On_Conflict = {
 
 /** Ordering options when selecting data from "object.ie". */
 export type Object_Ie_Order_By = {
-	collection_ies_aggregate?: InputMaybe<Users_Collection_Ie_Aggregate_Order_By>;
 	dcterms_available?: InputMaybe<Order_By>;
 	dcterms_created?: InputMaybe<Order_By>;
 	dcterms_format?: InputMaybe<Order_By>;
@@ -7418,14 +7137,6 @@ export type Object_Ie_Stddev_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
-/** order by stddev() on columns of table "object.ie" */
-export type Object_Ie_Stddev_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-};
-
 /** aggregate stddev_pop on columns */
 export type Object_Ie_Stddev_Pop_Fields = {
 	__typename?: 'object_ie_stddev_pop_fields';
@@ -7433,14 +7144,6 @@ export type Object_Ie_Stddev_Pop_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Float']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "object.ie" */
-export type Object_Ie_Stddev_Pop_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -7452,14 +7155,6 @@ export type Object_Ie_Stddev_Samp_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
-/** order by stddev_samp() on columns of table "object.ie" */
-export type Object_Ie_Stddev_Samp_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-};
-
 /** aggregate sum on columns */
 export type Object_Ie_Sum_Fields = {
 	__typename?: 'object_ie_sum_fields';
@@ -7467,14 +7162,6 @@ export type Object_Ie_Sum_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Int']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "object.ie" */
-export type Object_Ie_Sum_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /** update columns of table "object.ie" */
@@ -7586,14 +7273,6 @@ export type Object_Ie_Var_Pop_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
-/** order by var_pop() on columns of table "object.ie" */
-export type Object_Ie_Var_Pop_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-};
-
 /** aggregate var_samp on columns */
 export type Object_Ie_Var_Samp_Fields = {
 	__typename?: 'object_ie_var_samp_fields';
@@ -7603,14 +7282,6 @@ export type Object_Ie_Var_Samp_Fields = {
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
 };
 
-/** order by var_samp() on columns of table "object.ie" */
-export type Object_Ie_Var_Samp_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
-};
-
 /** aggregate variance on columns */
 export type Object_Ie_Variance_Fields = {
 	__typename?: 'object_ie_variance_fields';
@@ -7618,14 +7289,6 @@ export type Object_Ie_Variance_Fields = {
 	schema_duration_in_seconds?: Maybe<Scalars['Float']>;
 	/** Aantal paginas van geschreven media */
 	schema_number_of_pages?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "object.ie" */
-export type Object_Ie_Variance_Order_By = {
-	/** Tijd in seconden van tijdsgebaseerde media. */
-	schema_duration_in_seconds?: InputMaybe<Order_By>;
-	/** Aantal paginas van geschreven media */
-	schema_number_of_pages?: InputMaybe<Order_By>;
 };
 
 /**
@@ -10917,10 +10580,6 @@ export type Users_Group = {
 	permissions: Array<Users_Group_Permission>;
 	/** An aggregate relationship */
 	permissions_aggregate: Users_Group_Permission_Aggregate;
-	/** An array relationship */
-	profiles: Array<Users_Profile>;
-	/** An aggregate relationship */
-	profiles_aggregate: Users_Profile_Aggregate;
 	updated_at: Scalars['timestamp'];
 };
 
@@ -10952,36 +10611,6 @@ export type Users_GroupPermissions_AggregateArgs = {
 	offset?: InputMaybe<Scalars['Int']>;
 	order_by?: InputMaybe<Array<Users_Group_Permission_Order_By>>;
 	where?: InputMaybe<Users_Group_Permission_Bool_Exp>;
-};
-
-/**
- * Gebruikersgroepen
- *
- *
- * columns and relationships of "users.group"
- *
- */
-export type Users_GroupProfilesArgs = {
-	distinct_on?: InputMaybe<Array<Users_Profile_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Profile_Order_By>>;
-	where?: InputMaybe<Users_Profile_Bool_Exp>;
-};
-
-/**
- * Gebruikersgroepen
- *
- *
- * columns and relationships of "users.group"
- *
- */
-export type Users_GroupProfiles_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Users_Profile_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Profile_Order_By>>;
-	where?: InputMaybe<Users_Profile_Bool_Exp>;
 };
 
 /** aggregated selection of "users.group" */
@@ -11016,7 +10645,6 @@ export type Users_Group_Bool_Exp = {
 	label?: InputMaybe<String_Comparison_Exp>;
 	name?: InputMaybe<String_Comparison_Exp>;
 	permissions?: InputMaybe<Users_Group_Permission_Bool_Exp>;
-	profiles?: InputMaybe<Users_Profile_Bool_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
 
@@ -11034,7 +10662,6 @@ export type Users_Group_Insert_Input = {
 	label?: InputMaybe<Scalars['String']>;
 	name?: InputMaybe<Scalars['String']>;
 	permissions?: InputMaybe<Users_Group_Permission_Arr_Rel_Insert_Input>;
-	profiles?: InputMaybe<Users_Profile_Arr_Rel_Insert_Input>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 };
 
@@ -11091,7 +10718,6 @@ export type Users_Group_Order_By = {
 	label?: InputMaybe<Order_By>;
 	name?: InputMaybe<Order_By>;
 	permissions_aggregate?: InputMaybe<Users_Group_Permission_Aggregate_Order_By>;
-	profiles_aggregate?: InputMaybe<Users_Profile_Aggregate_Order_By>;
 	updated_at?: InputMaybe<Order_By>;
 };
 
@@ -11323,8 +10949,6 @@ export type Users_Identity = {
 	created_at: Scalars['timestamptz'];
 	id: Scalars['uuid'];
 	identity_id: Scalars['String'];
-	/** An object relationship */
-	identity_provider: Users_Identity_Provider;
 	identity_provider_name: Scalars['String'];
 	/** An object relationship */
 	profile: Users_Profile;
@@ -11375,7 +10999,6 @@ export type Users_Identity_Bool_Exp = {
 	created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 	id?: InputMaybe<Uuid_Comparison_Exp>;
 	identity_id?: InputMaybe<String_Comparison_Exp>;
-	identity_provider?: InputMaybe<Users_Identity_Provider_Bool_Exp>;
 	identity_provider_name?: InputMaybe<String_Comparison_Exp>;
 	profile?: InputMaybe<Users_Profile_Bool_Exp>;
 	profile_id?: InputMaybe<Uuid_Comparison_Exp>;
@@ -11395,7 +11018,6 @@ export type Users_Identity_Insert_Input = {
 	created_at?: InputMaybe<Scalars['timestamptz']>;
 	id?: InputMaybe<Scalars['uuid']>;
 	identity_id?: InputMaybe<Scalars['String']>;
-	identity_provider?: InputMaybe<Users_Identity_Provider_Obj_Rel_Insert_Input>;
 	identity_provider_name?: InputMaybe<Scalars['String']>;
 	profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
 	profile_id?: InputMaybe<Scalars['uuid']>;
@@ -11465,7 +11087,6 @@ export type Users_Identity_Order_By = {
 	created_at?: InputMaybe<Order_By>;
 	id?: InputMaybe<Order_By>;
 	identity_id?: InputMaybe<Order_By>;
-	identity_provider?: InputMaybe<Users_Identity_Provider_Order_By>;
 	identity_provider_name?: InputMaybe<Order_By>;
 	profile?: InputMaybe<Users_Profile_Order_By>;
 	profile_id?: InputMaybe<Order_By>;
@@ -11481,29 +11102,7 @@ export type Users_Identity_Pk_Columns_Input = {
 export type Users_Identity_Provider = {
 	__typename?: 'users_identity_provider';
 	description?: Maybe<Scalars['String']>;
-	/** An array relationship */
-	identities: Array<Users_Identity>;
-	/** An aggregate relationship */
-	identities_aggregate: Users_Identity_Aggregate;
 	name: Scalars['String'];
-};
-
-/** columns and relationships of "users.identity_provider" */
-export type Users_Identity_ProviderIdentitiesArgs = {
-	distinct_on?: InputMaybe<Array<Users_Identity_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
-	where?: InputMaybe<Users_Identity_Bool_Exp>;
-};
-
-/** columns and relationships of "users.identity_provider" */
-export type Users_Identity_ProviderIdentities_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Users_Identity_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
-	where?: InputMaybe<Users_Identity_Bool_Exp>;
 };
 
 /** aggregated selection of "users.identity_provider" */
@@ -11533,7 +11132,6 @@ export type Users_Identity_Provider_Bool_Exp = {
 	_not?: InputMaybe<Users_Identity_Provider_Bool_Exp>;
 	_or?: InputMaybe<Array<Users_Identity_Provider_Bool_Exp>>;
 	description?: InputMaybe<String_Comparison_Exp>;
-	identities?: InputMaybe<Users_Identity_Bool_Exp>;
 	name?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -11548,7 +11146,6 @@ export enum Users_Identity_Provider_Constraint {
 /** input type for inserting data into table "users.identity_provider" */
 export type Users_Identity_Provider_Insert_Input = {
 	description?: InputMaybe<Scalars['String']>;
-	identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
 	name?: InputMaybe<Scalars['String']>;
 };
 
@@ -11575,13 +11172,6 @@ export type Users_Identity_Provider_Mutation_Response = {
 	returning: Array<Users_Identity_Provider>;
 };
 
-/** input type for inserting object relation for remote table "users.identity_provider" */
-export type Users_Identity_Provider_Obj_Rel_Insert_Input = {
-	data: Users_Identity_Provider_Insert_Input;
-	/** on conflict condition */
-	on_conflict?: InputMaybe<Users_Identity_Provider_On_Conflict>;
-};
-
 /** on conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
 	constraint: Users_Identity_Provider_Constraint;
@@ -11592,7 +11182,6 @@ export type Users_Identity_Provider_On_Conflict = {
 /** Ordering options when selecting data from "users.identity_provider". */
 export type Users_Identity_Provider_Order_By = {
 	description?: InputMaybe<Order_By>;
-	identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
 	name?: InputMaybe<Order_By>;
 };
 
@@ -11885,14 +11474,6 @@ export type Users_Profile = {
 	collections: Array<Users_Collection>;
 	/** An aggregate relationship */
 	collections_aggregate: Users_Collection_Aggregate;
-	/** An array relationship */
-	contents: Array<Cms_Content>;
-	/** An array relationship */
-	contentsByUserProfileId: Array<Cms_Content>;
-	/** An aggregate relationship */
-	contentsByUserProfileId_aggregate: Cms_Content_Aggregate;
-	/** An aggregate relationship */
-	contents_aggregate: Cms_Content_Aggregate;
 	created_at?: Maybe<Scalars['timestamp']>;
 	first_name?: Maybe<Scalars['String']>;
 	/** A computed field, executes function "users.user_profile_full_name" */
@@ -11922,10 +11503,6 @@ export type Users_Profile = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 	/** An array relationship */
 	visits: Array<Cp_Visit>;
-	/** An array relationship */
-	visitsByUpdatedBy: Array<Cp_Visit>;
-	/** An aggregate relationship */
-	visitsByUpdatedBy_aggregate: Cp_Visit_Aggregate;
 	/** An aggregate relationship */
 	visits_aggregate: Cp_Visit_Aggregate;
 };
@@ -11958,66 +11535,6 @@ export type Users_ProfileCollections_AggregateArgs = {
 	offset?: InputMaybe<Scalars['Int']>;
 	order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
 	where?: InputMaybe<Users_Collection_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
-export type Users_ProfileContentsArgs = {
-	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-	where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
-export type Users_ProfileContentsByUserProfileIdArgs = {
-	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-	where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
-export type Users_ProfileContentsByUserProfileId_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-	where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
-export type Users_ProfileContents_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-	where?: InputMaybe<Cms_Content_Bool_Exp>;
 };
 
 /**
@@ -12162,36 +11679,6 @@ export type Users_ProfileVisitsArgs = {
  * columns and relationships of "users.profile"
  *
  */
-export type Users_ProfileVisitsByUpdatedByArgs = {
-	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-	where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
-export type Users_ProfileVisitsByUpdatedBy_AggregateArgs = {
-	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	offset?: InputMaybe<Scalars['Int']>;
-	order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-	where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-/**
- * A user his identifying attributes aka profile information
- *
- *
- * columns and relationships of "users.profile"
- *
- */
 export type Users_ProfileVisits_AggregateArgs = {
 	distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
 	limit?: InputMaybe<Scalars['Int']>;
@@ -12221,20 +11708,6 @@ export type Users_Profile_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "users.profile" */
-export type Users_Profile_Aggregate_Order_By = {
-	count?: InputMaybe<Order_By>;
-	max?: InputMaybe<Users_Profile_Max_Order_By>;
-	min?: InputMaybe<Users_Profile_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "users.profile" */
-export type Users_Profile_Arr_Rel_Insert_Input = {
-	data: Array<Users_Profile_Insert_Input>;
-	/** on conflict condition */
-	on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
-};
-
 /** Boolean expression to filter rows from the table "users.profile". All fields are combined with a logical 'AND'. */
 export type Users_Profile_Bool_Exp = {
 	_and?: InputMaybe<Array<Users_Profile_Bool_Exp>>;
@@ -12242,8 +11715,6 @@ export type Users_Profile_Bool_Exp = {
 	_or?: InputMaybe<Array<Users_Profile_Bool_Exp>>;
 	accepted_tos_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 	collections?: InputMaybe<Users_Collection_Bool_Exp>;
-	contents?: InputMaybe<Cms_Content_Bool_Exp>;
-	contentsByUserProfileId?: InputMaybe<Cms_Content_Bool_Exp>;
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	first_name?: InputMaybe<String_Comparison_Exp>;
 	full_name?: InputMaybe<String_Comparison_Exp>;
@@ -12258,7 +11729,6 @@ export type Users_Profile_Bool_Exp = {
 	notifications?: InputMaybe<App_Notification_Bool_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 	visits?: InputMaybe<Cp_Visit_Bool_Exp>;
-	visitsByUpdatedBy?: InputMaybe<Cp_Visit_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "users.profile" */
@@ -12271,8 +11741,6 @@ export enum Users_Profile_Constraint {
 export type Users_Profile_Insert_Input = {
 	accepted_tos_at?: InputMaybe<Scalars['timestamptz']>;
 	collections?: InputMaybe<Users_Collection_Arr_Rel_Insert_Input>;
-	contents?: InputMaybe<Cms_Content_Arr_Rel_Insert_Input>;
-	contentsByUserProfileId?: InputMaybe<Cms_Content_Arr_Rel_Insert_Input>;
 	created_at?: InputMaybe<Scalars['timestamp']>;
 	first_name?: InputMaybe<Scalars['String']>;
 	group?: InputMaybe<Users_Group_Obj_Rel_Insert_Input>;
@@ -12286,7 +11754,6 @@ export type Users_Profile_Insert_Input = {
 	notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
 	visits?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
-	visitsByUpdatedBy?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -12302,18 +11769,6 @@ export type Users_Profile_Max_Fields = {
 	updated_at?: Maybe<Scalars['timestamp']>;
 };
 
-/** order by max() on columns of table "users.profile" */
-export type Users_Profile_Max_Order_By = {
-	accepted_tos_at?: InputMaybe<Order_By>;
-	created_at?: InputMaybe<Order_By>;
-	first_name?: InputMaybe<Order_By>;
-	group_id?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	last_name?: InputMaybe<Order_By>;
-	mail?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
-};
-
 /** aggregate min on columns */
 export type Users_Profile_Min_Fields = {
 	__typename?: 'users_profile_min_fields';
@@ -12325,18 +11780,6 @@ export type Users_Profile_Min_Fields = {
 	last_name?: Maybe<Scalars['String']>;
 	mail?: Maybe<Scalars['String']>;
 	updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** order by min() on columns of table "users.profile" */
-export type Users_Profile_Min_Order_By = {
-	accepted_tos_at?: InputMaybe<Order_By>;
-	created_at?: InputMaybe<Order_By>;
-	first_name?: InputMaybe<Order_By>;
-	group_id?: InputMaybe<Order_By>;
-	id?: InputMaybe<Order_By>;
-	last_name?: InputMaybe<Order_By>;
-	mail?: InputMaybe<Order_By>;
-	updated_at?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "users.profile" */
@@ -12366,8 +11809,6 @@ export type Users_Profile_On_Conflict = {
 export type Users_Profile_Order_By = {
 	accepted_tos_at?: InputMaybe<Order_By>;
 	collections_aggregate?: InputMaybe<Users_Collection_Aggregate_Order_By>;
-	contentsByUserProfileId_aggregate?: InputMaybe<Cms_Content_Aggregate_Order_By>;
-	contents_aggregate?: InputMaybe<Cms_Content_Aggregate_Order_By>;
 	created_at?: InputMaybe<Order_By>;
 	first_name?: InputMaybe<Order_By>;
 	full_name?: InputMaybe<Order_By>;
@@ -12381,7 +11822,6 @@ export type Users_Profile_Order_By = {
 	notes_aggregate?: InputMaybe<Cp_Visit_Note_Aggregate_Order_By>;
 	notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
 	updated_at?: InputMaybe<Order_By>;
-	visitsByUpdatedBy_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
 	visits_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
 };
 
@@ -12570,7 +12010,6 @@ export type GetContentPageByPathQuery = {
 		is_protected: boolean;
 		is_public?: boolean | null;
 		path?: string | null;
-		user_profile_id?: any | null;
 		publish_at?: any | null;
 		published_at?: any | null;
 		title: string;
@@ -12578,6 +12017,7 @@ export type GetContentPageByPathQuery = {
 		user_group_ids?: any | null;
 		owner_profile?: {
 			__typename?: 'users_profile';
+			id: any;
 			first_name?: string | null;
 			last_name?: string | null;
 			group?: { __typename?: 'users_group'; id: any; label: string } | null;
@@ -12902,6 +12342,23 @@ export type UpdateContentPagePublishDatesMutation = {
 		__typename?: 'cms_content_mutation_response';
 		affected_rows: number;
 	} | null;
+};
+
+export type GetOrganisationQueryVariables = Exact<{
+	id?: InputMaybe<Scalars['String']>;
+}>;
+
+export type GetOrganisationQuery = {
+	__typename?: 'query_root';
+	cp_maintainer: Array<{
+		__typename?: 'cp_maintainer';
+		schema_name?: string | null;
+		schema_identifier: string;
+		information?: Array<{
+			__typename?: 'ContentPartner';
+			logo?: { __typename?: 'Logo'; iri: string } | null;
+		} | null> | null;
+	}>;
 };
 
 export type GetFileByRepresentationSchemaIdentifierQueryVariables = Exact<{
@@ -13705,13 +13162,13 @@ export const GetContentPageByPathDocument = {
 								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
 								{
 									kind: 'Field',
 									name: { kind: 'Name', value: 'owner_profile' },
 									selectionSet: {
 										kind: 'SelectionSet',
 										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 											{
 												kind: 'Field',
 												name: { kind: 'Name', value: 'first_name' },
@@ -16071,6 +15528,92 @@ export const UpdateContentPagePublishDatesDocument = {
 	UpdateContentPagePublishDatesMutation,
 	UpdateContentPagePublishDatesMutationVariables
 >;
+export const GetOrganisationDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getOrganisation' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_maintainer' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'schema_identifier' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'information' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'logo' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'iri' },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_name' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_identifier' },
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetOrganisationQuery, GetOrganisationQueryVariables>;
 export const GetFileByRepresentationSchemaIdentifierDocument = {
 	kind: 'Document',
 	definitions: [

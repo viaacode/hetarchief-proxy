@@ -46,6 +46,10 @@ describe('MediaController', () => {
 					provide: MediaService,
 					useValue: mockMediaService,
 				},
+				{
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
+				},
 			],
 		}).compile();
 

@@ -36402,7 +36402,6 @@ export type GetContentPageByPathQuery = {
 		is_protected: boolean;
 		is_public?: boolean | null;
 		path?: string | null;
-		user_profile_id?: any | null;
 		publish_at?: any | null;
 		published_at?: any | null;
 		title: string;
@@ -36410,6 +36409,7 @@ export type GetContentPageByPathQuery = {
 		user_group_ids?: any | null;
 		profile?: {
 			__typename?: 'users_profiles';
+			id: any;
 			user?: {
 				__typename?: 'shared_users';
 				first_name?: string | null;
@@ -36834,6 +36834,20 @@ export type UpdateContentPagePublishDatesMutation = {
 		__typename?: 'app_content_mutation_response';
 		affected_rows: number;
 	} | null;
+};
+
+export type GetOrganisationQueryVariables = Exact<{
+	id: Scalars['String'];
+}>;
+
+export type GetOrganisationQuery = {
+	__typename?: 'query_root';
+	shared_organisations: Array<{
+		__typename?: 'shared_organisations';
+		or_id: string;
+		name: string;
+		logo_url?: string | null;
+	}>;
 };
 
 export type GetItemBrowsePathByExternalIdQueryVariables = Exact<{
@@ -37556,13 +37570,13 @@ export const GetContentPageByPathDocument = {
 								{ kind: 'Field', name: { kind: 'Name', value: 'is_protected' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'is_public' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'path' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'user_profile_id' } },
 								{
 									kind: 'Field',
 									name: { kind: 'Name', value: 'profile' },
 									selectionSet: {
 										kind: 'SelectionSet',
 										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 											{
 												kind: 'Field',
 												alias: { kind: 'Name', value: 'user' },
@@ -40423,6 +40437,71 @@ export const UpdateContentPagePublishDatesDocument = {
 	UpdateContentPagePublishDatesMutation,
 	UpdateContentPagePublishDatesMutationVariables
 >;
+export const GetOrganisationDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getOrganisation' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shared_organisations' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'or_id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'or_id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'logo_url' } },
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<GetOrganisationQuery, GetOrganisationQueryVariables>;
 export const GetItemBrowsePathByExternalIdDocument = {
 	kind: 'Document',
 	definitions: [

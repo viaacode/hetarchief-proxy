@@ -83,7 +83,7 @@ const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
-	full_name: 'Test Testers',
+	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',

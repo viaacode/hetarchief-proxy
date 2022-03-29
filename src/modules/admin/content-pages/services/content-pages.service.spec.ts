@@ -1,23 +1,40 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
-import { DataService } from '~modules/data/services/data.service';
-import { Permission, User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
+import { Configuration } from '~config';
 
-const mockUser: User = {
-	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
-	firstName: 'Test',
-	lastName: 'Testers',
-	full_name: 'Test Testers',
-	email: 'test.testers@meemoo.be',
-	idp: Idp.HETARCHIEF,
-	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
-};
+import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
+import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'elasticSearchUrl') {
+			return 'http://elasticsearch'; // should be a syntactically valid url
+		}
+		if (key === 'ticketServiceUrl') {
+			return 'http://ticketservice';
+		}
+		if (key === 'mediaServiceUrl') {
+			return 'http://mediaservice';
+		}
+		return key;
+	}),
+};
+
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
+	getPlayableUrl: jest.fn(),
+	getEmbedUrl: jest.fn(),
+};
+
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
+	getOrganisation: jest.fn(),
+	adapt: jest.fn(),
 };
 
 describe('ContentPagesService', () => {
@@ -31,6 +48,18 @@ describe('ContentPagesService', () => {
 					provide: DataService,
 					useValue: mockDataService,
 				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
+				{
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
+				},
+				{
+					provide: OrganisationsService,
+					useValue: mockOrganisationsService,
+				},
 			],
 		}).compile();
 
@@ -41,7 +70,7 @@ describe('ContentPagesService', () => {
 		expect(contentPagesService).toBeDefined();
 	});
 
-	describe('adapt', () => {
+	describe('adaptContentPage', () => {
 		it('should adapt a graphql contentPage response to our contentPage interface', () => {
 			// const adapted = contentPagesService.adaptContentPage(mockGqlContentPage);
 			// // test some sample keys
@@ -50,9 +79,39 @@ describe('ContentPagesService', () => {
 			// expect(adapted.visitId).toEqual(mockGqlContentPage.visit_id);
 		});
 
-		it('should return undefined in the gql contentPage is undefined', () => {
+		it('should return null in the gql contentPage is undefined', () => {
 			const adapted = contentPagesService.adaptContentPage(undefined);
-			expect(adapted).toBeUndefined();
+			expect(adapted).toBeNull();
+		});
+	});
+
+	describe('adaptContentBlock', () => {
+		it('should adapt a graphql content block response to our contentPage interface', () => {
+			// const adapted = contentPagesService.adaptContentPage(mockGqlContentPage);
+			// // test some sample keys
+			// expect(adapted.id).toEqual(mockGqlContentPage.id);
+			// expect(adapted.type).toEqual(mockGqlContentPage.type);
+			// expect(adapted.visitId).toEqual(mockGqlContentPage.visit_id);
+		});
+
+		it('should return null in the gql content block is undefined', () => {
+			const adapted = contentPagesService.adaptContentBlock(undefined);
+			expect(adapted).toBeNull();
+		});
+	});
+
+	describe('adaptUser', () => {
+		it('should adapt a graphql contentPage owner to our contentPageUser interface', () => {
+			// const adapted = contentPagesService.adaptContentPage(mockGqlContentPage);
+			// // test some sample keys
+			// expect(adapted.id).toEqual(mockGqlContentPage.id);
+			// expect(adapted.type).toEqual(mockGqlContentPage.type);
+			// expect(adapted.visitId).toEqual(mockGqlContentPage.visit_id);
+		});
+
+		it('should return null in the gql content page owner is undefined', () => {
+			const adapted = contentPagesService.adaptUser(undefined);
+			expect(adapted).toBeNull();
 		});
 	});
 });
