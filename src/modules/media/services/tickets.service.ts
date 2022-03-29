@@ -52,7 +52,7 @@ export class TicketsService {
 		const data = {
 			app: 'OR-*',
 			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: '', // referer || this.host,
+			referer: referer || this.host,
 			maxage: this.ticketServiceMaxAge,
 		};
 		// TODO delete log once this works on all envs

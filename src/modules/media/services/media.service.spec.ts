@@ -7,6 +7,7 @@ import { Configuration } from '~config';
 
 import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
+import { TicketsService } from './tickets.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -25,8 +26,13 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 	}),
 };
 
-const mockDataService = {
+const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockTicketsService: Partial<Record<keyof TicketsService, jest.SpyInstance>> = {
+	getPlayerToken: jest.fn(),
+	getThumbnailToken: jest.fn(),
 };
 
 const mockObjectId = objectIe.data.object_ie[0].schema_identifier;
@@ -63,6 +69,10 @@ describe('MediaService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: TicketsService,
+					useValue: mockTicketsService,
 				},
 			],
 		}).compile();
@@ -178,28 +188,9 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
 			});
-			nock('http://ticketservice/')
-				.get('/vrt/item-1')
-				.query(true)
-				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await mediaService.getPlayableUrl('vrt-id', 'referer');
-			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
-		});
+			mockTicketsService.getPlayerToken.mockResolvedValueOnce('secret-jwt-token');
 
-		it('uses the fallback referer if none was set', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
-			nock('http://ticketservice/')
-				.get('/vrt/item-1')
-				.query({
-					app: 'OR-*',
-					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
-				})
-				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await mediaService.getPlayableUrl('vrt-id', undefined);
+			const url = await mediaService.getPlayableUrl('vrt-id', 'referer');
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
 		});
 	});
@@ -209,28 +200,9 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
 			});
-			nock('http://ticketservice/')
-				.get('/vrt/item-1')
-				.query(true)
-				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await mediaService.getThumbnailUrl('vrt-id', 'referer');
-			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
-		});
+			mockTicketsService.getThumbnailToken.mockResolvedValueOnce('secret-jwt-token');
 
-		it('uses the fallback referer if none was set', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
-			});
-			nock('http://ticketservice/')
-				.get('/vrt/item-1')
-				.query({
-					app: 'OR-*',
-					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
-				})
-				.reply(200, { jwt: 'secret-jwt-token' });
-			const url = await mediaService.getThumbnailUrl('vrt-id', undefined);
+			const url = await mediaService.getThumbnailUrl('vrt-id', 'referer');
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
 		});
 	});
