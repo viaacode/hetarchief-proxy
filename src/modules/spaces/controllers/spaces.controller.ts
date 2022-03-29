@@ -1,12 +1,4 @@
-import {
-	Controller,
-	Get,
-	Logger,
-	NotFoundException,
-	Param,
-	ParseUUIDPipe,
-	Query,
-} from '@nestjs/common';
+import { Controller, Get, Logger, NotFoundException, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
@@ -37,7 +29,7 @@ export class SpacesController {
 	public async getSpaceBySlug(@Param('slug') slug: string): Promise<Space | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
-			throw new NotFoundException(i18n.t(`Space with slug ${slug} not found`));
+			throw new NotFoundException(i18n.t(`Space with slug "${slug}" not found`));
 		}
 		return space;
 	}

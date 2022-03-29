@@ -33,6 +33,9 @@ const mockUser: User = {
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	findSpaceByCpUserId: jest.fn(),
+	getMaintainerProfiles: jest.fn(),
+	findBySlug: jest.fn(),
 };
 
 describe('SpacesController', () => {
@@ -72,24 +75,24 @@ describe('SpacesController', () => {
 	});
 
 	describe('getSpaceById', () => {
-		it('should return a space by id', async () => {
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			const space = await spacesController.getSpaceById('1');
+		it('should return a space by slug', async () => {
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			const space = await spacesController.getSpaceBySlug('huis-van-alijn');
 			expect(space.id).toEqual('1');
 		});
 
 		it("should throw a not found exception for space that doesn't exist", async () => {
-			mockSpacesService.findById.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
 
 			let error;
 			try {
-				await spacesController.getSpaceById('1');
+				await spacesController.getSpaceBySlug('huis-van-alijn');
 			} catch (err) {
 				error = err;
 			}
 			expect(error?.response).toEqual({
 				statusCode: 404,
-				message: 'Space with id 1 not found',
+				message: 'Space with slug "huis-van-alijn" not found',
 				error: 'Not Found',
 			});
 		});

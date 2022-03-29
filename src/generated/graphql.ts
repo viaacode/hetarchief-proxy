@@ -547,6 +547,14 @@ export enum App_Notification_Update_Column {
 /** columns and relationships of "cms.content" */
 export type Cms_Content = {
 	__typename?: 'cms_content';
+	/** An array relationship */
+	content_blocks: Array<Cms_Content_Blocks>;
+	/** An aggregate relationship */
+	content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** An array relationship */
+	content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** An aggregate relationship */
+	content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
 	content_type: Scalars['String'];
 	content_width: Scalars['String'];
 	created_at: Scalars['timestamp'];
@@ -576,6 +584,42 @@ export type Cms_Content = {
 	updater_profile?: Maybe<Users_Profile>;
 	user_group_ids?: Maybe<Scalars['jsonb']>;
 	user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/** columns and relationships of "cms.content" */
+export type Cms_ContentContent_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
 };
 
 /** columns and relationships of "cms.content" */
@@ -609,11 +653,369 @@ export type Cms_Content_Append_Input = {
 	user_group_ids?: InputMaybe<Scalars['jsonb']>;
 };
 
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "cms.content_blocks"
+ *
+ */
+export type Cms_Content_Blocks = {
+	__typename?: 'cms_content_blocks';
+	/** An object relationship */
+	cms_content_block_type: Lookup_Cms_Content_Block_Type;
+	/** An object relationship */
+	content: Cms_Content;
+	content_block_type: Lookup_Cms_Content_Block_Type_Enum;
+	content_id: Scalars['uuid'];
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	position: Scalars['Int'];
+	updated_at: Scalars['timestamp'];
+	variables?: Maybe<Scalars['jsonb']>;
+};
+
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "cms.content_blocks"
+ *
+ */
+export type Cms_Content_BlocksVariablesArgs = {
+	path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate = {
+	__typename?: 'cms_content_blocks_aggregate';
+	aggregate?: Maybe<Cms_Content_Blocks_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Blocks>;
+};
+
+/** aggregate fields of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_Fields = {
+	__typename?: 'cms_content_blocks_aggregate_fields';
+	avg?: Maybe<Cms_Content_Blocks_Avg_Fields>;
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Blocks_Max_Fields>;
+	min?: Maybe<Cms_Content_Blocks_Min_Fields>;
+	stddev?: Maybe<Cms_Content_Blocks_Stddev_Fields>;
+	stddev_pop?: Maybe<Cms_Content_Blocks_Stddev_Pop_Fields>;
+	stddev_samp?: Maybe<Cms_Content_Blocks_Stddev_Samp_Fields>;
+	sum?: Maybe<Cms_Content_Blocks_Sum_Fields>;
+	var_pop?: Maybe<Cms_Content_Blocks_Var_Pop_Fields>;
+	var_samp?: Maybe<Cms_Content_Blocks_Var_Samp_Fields>;
+	variance?: Maybe<Cms_Content_Blocks_Variance_Fields>;
+};
+
+/** aggregate fields of "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Aggregate_Order_By = {
+	avg?: InputMaybe<Cms_Content_Blocks_Avg_Order_By>;
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cms_Content_Blocks_Max_Order_By>;
+	min?: InputMaybe<Cms_Content_Blocks_Min_Order_By>;
+	stddev?: InputMaybe<Cms_Content_Blocks_Stddev_Order_By>;
+	stddev_pop?: InputMaybe<Cms_Content_Blocks_Stddev_Pop_Order_By>;
+	stddev_samp?: InputMaybe<Cms_Content_Blocks_Stddev_Samp_Order_By>;
+	sum?: InputMaybe<Cms_Content_Blocks_Sum_Order_By>;
+	var_pop?: InputMaybe<Cms_Content_Blocks_Var_Pop_Order_By>;
+	var_samp?: InputMaybe<Cms_Content_Blocks_Var_Samp_Order_By>;
+	variance?: InputMaybe<Cms_Content_Blocks_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Blocks_Append_Input = {
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "cms.content_blocks" */
+export type Cms_Content_Blocks_Arr_Rel_Insert_Input = {
+	data: Array<Cms_Content_Blocks_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Cms_Content_Blocks_Avg_Fields = {
+	__typename?: 'cms_content_blocks_avg_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Avg_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_blocks". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Blocks_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+	content?: InputMaybe<Cms_Content_Bool_Exp>;
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp>;
+	content_id?: InputMaybe<Uuid_Comparison_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	position?: InputMaybe<Int_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	variables?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Constraint {
+	/** unique or primary key constraint */
+	ContentBlocksPkey = 'content_blocks_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Cms_Content_Blocks_Delete_At_Path_Input = {
+	variables?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Cms_Content_Blocks_Delete_Elem_Input = {
+	variables?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Cms_Content_Blocks_Delete_Key_Input = {
+	variables?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "cms.content_blocks" */
+export type Cms_Content_Blocks_Inc_Input = {
+	position?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "cms.content_blocks" */
+export type Cms_Content_Blocks_Insert_Input = {
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input>;
+	content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	position?: InputMaybe<Scalars['Int']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Blocks_Max_Fields = {
+	__typename?: 'cms_content_blocks_max_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	position?: Maybe<Scalars['Int']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Max_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Blocks_Min_Fields = {
+	__typename?: 'cms_content_blocks_min_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	position?: Maybe<Scalars['Int']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Min_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "cms.content_blocks" */
+export type Cms_Content_Blocks_Mutation_Response = {
+	__typename?: 'cms_content_blocks_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Blocks>;
+};
+
+/** on conflict condition type for table "cms.content_blocks" */
+export type Cms_Content_Blocks_On_Conflict = {
+	constraint: Cms_Content_Blocks_Constraint;
+	update_columns?: Array<Cms_Content_Blocks_Update_Column>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_blocks". */
+export type Cms_Content_Blocks_Order_By = {
+	cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Order_By>;
+	content?: InputMaybe<Cms_Content_Order_By>;
+	content_block_type?: InputMaybe<Order_By>;
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	position?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+	variables?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_blocks */
+export type Cms_Content_Blocks_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Blocks_Prepend_Input = {
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Select_Column {
+	/** column name */
+	ContentBlockType = 'content_block_type',
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Position = 'position',
+	/** column name */
+	UpdatedAt = 'updated_at',
+	/** column name */
+	Variables = 'variables',
+}
+
+/** input type for updating data in table "cms.content_blocks" */
+export type Cms_Content_Blocks_Set_Input = {
+	content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	position?: InputMaybe<Scalars['Int']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+	variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate stddev on columns */
+export type Cms_Content_Blocks_Stddev_Fields = {
+	__typename?: 'cms_content_blocks_stddev_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Cms_Content_Blocks_Stddev_Pop_Fields = {
+	__typename?: 'cms_content_blocks_stddev_pop_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Pop_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Cms_Content_Blocks_Stddev_Samp_Fields = {
+	__typename?: 'cms_content_blocks_stddev_samp_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Stddev_Samp_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Cms_Content_Blocks_Sum_Fields = {
+	__typename?: 'cms_content_blocks_sum_fields';
+	position?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Sum_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "cms.content_blocks" */
+export enum Cms_Content_Blocks_Update_Column {
+	/** column name */
+	ContentBlockType = 'content_block_type',
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Position = 'position',
+	/** column name */
+	UpdatedAt = 'updated_at',
+	/** column name */
+	Variables = 'variables',
+}
+
+/** aggregate var_pop on columns */
+export type Cms_Content_Blocks_Var_Pop_Fields = {
+	__typename?: 'cms_content_blocks_var_pop_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Var_Pop_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Cms_Content_Blocks_Var_Samp_Fields = {
+	__typename?: 'cms_content_blocks_var_samp_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Var_Samp_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Cms_Content_Blocks_Variance_Fields = {
+	__typename?: 'cms_content_blocks_variance_fields';
+	position?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "cms.content_blocks" */
+export type Cms_Content_Blocks_Variance_Order_By = {
+	position?: InputMaybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "cms.content". All fields are combined with a logical 'AND'. */
 export type Cms_Content_Bool_Exp = {
 	_and?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
 	_not?: InputMaybe<Cms_Content_Bool_Exp>;
 	_or?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
+	content_blocks?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
 	content_type?: InputMaybe<String_Comparison_Exp>;
 	content_width?: InputMaybe<String_Comparison_Exp>;
 	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -652,6 +1054,199 @@ export enum Cms_Content_Constraint {
 	ContentPkey = 'content_pkey',
 }
 
+/**
+ * linking table between content pages and the content_labels
+ *
+ *
+ * columns and relationships of "cms.content_content_labels"
+ *
+ */
+export type Cms_Content_Content_Labels = {
+	__typename?: 'cms_content_content_labels';
+	/** An object relationship */
+	content: Cms_Content;
+	content_id: Scalars['uuid'];
+	/** An object relationship */
+	content_label: Cms_Content_Labels;
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	label_id: Scalars['uuid'];
+	updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate = {
+	__typename?: 'cms_content_content_labels_aggregate';
+	aggregate?: Maybe<Cms_Content_Content_Labels_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Content_Labels>;
+};
+
+/** aggregate fields of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_Fields = {
+	__typename?: 'cms_content_content_labels_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Content_Labels_Max_Fields>;
+	min?: Maybe<Cms_Content_Content_Labels_Min_Fields>;
+};
+
+/** aggregate fields of "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cms_Content_Content_Labels_Max_Order_By>;
+	min?: InputMaybe<Cms_Content_Content_Labels_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Arr_Rel_Insert_Input = {
+	data: Array<Cms_Content_Content_Labels_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_content_labels". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Content_Labels_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
+	content?: InputMaybe<Cms_Content_Bool_Exp>;
+	content_id?: InputMaybe<Uuid_Comparison_Exp>;
+	content_label?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	label_id?: InputMaybe<Uuid_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Constraint {
+	/** unique or primary key constraint */
+	ContentContentLabelsPkey = 'content_content_labels_pkey',
+}
+
+/** input type for inserting data into table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Insert_Input = {
+	content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
+	content_id?: InputMaybe<Scalars['uuid']>;
+	content_label?: InputMaybe<Cms_Content_Labels_Obj_Rel_Insert_Input>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label_id?: InputMaybe<Scalars['uuid']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Content_Labels_Max_Fields = {
+	__typename?: 'cms_content_content_labels_max_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label_id?: Maybe<Scalars['uuid']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Max_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Content_Labels_Min_Fields = {
+	__typename?: 'cms_content_content_labels_min_fields';
+	content_id?: Maybe<Scalars['uuid']>;
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label_id?: Maybe<Scalars['uuid']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Min_Order_By = {
+	content_id?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Mutation_Response = {
+	__typename?: 'cms_content_content_labels_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Content_Labels>;
+};
+
+/** on conflict condition type for table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_On_Conflict = {
+	constraint: Cms_Content_Content_Labels_Constraint;
+	update_columns?: Array<Cms_Content_Content_Labels_Update_Column>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_content_labels". */
+export type Cms_Content_Content_Labels_Order_By = {
+	content?: InputMaybe<Cms_Content_Order_By>;
+	content_id?: InputMaybe<Order_By>;
+	content_label?: InputMaybe<Cms_Content_Labels_Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label_id?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_content_labels */
+export type Cms_Content_Content_Labels_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** select columns of table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Select_Column {
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	LabelId = 'label_id',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "cms.content_content_labels" */
+export type Cms_Content_Content_Labels_Set_Input = {
+	content_id?: InputMaybe<Scalars['uuid']>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label_id?: InputMaybe<Scalars['uuid']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "cms.content_content_labels" */
+export enum Cms_Content_Content_Labels_Update_Column {
+	/** column name */
+	ContentId = 'content_id',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	LabelId = 'label_id',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
 /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
 export type Cms_Content_Delete_At_Path_Input = {
 	user_group_ids?: InputMaybe<Array<Scalars['String']>>;
@@ -669,6 +1264,8 @@ export type Cms_Content_Delete_Key_Input = {
 
 /** input type for inserting data into table "cms.content" */
 export type Cms_Content_Insert_Input = {
+	content_blocks?: InputMaybe<Cms_Content_Blocks_Arr_Rel_Insert_Input>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
 	content_type?: InputMaybe<Scalars['String']>;
 	content_width?: InputMaybe<Scalars['String']>;
 	created_at?: InputMaybe<Scalars['timestamp']>;
@@ -697,6 +1294,251 @@ export type Cms_Content_Insert_Input = {
 	user_group_ids?: InputMaybe<Scalars['jsonb']>;
 	user_profile_id?: InputMaybe<Scalars['uuid']>;
 };
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_Labels = {
+	__typename?: 'cms_content_labels';
+	/** An object relationship */
+	cms_content_type: Lookup_Cms_Content_Type;
+	/** An array relationship */
+	content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** An aggregate relationship */
+	content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	content_type: Lookup_Cms_Content_Type_Enum;
+	created_at: Scalars['timestamp'];
+	id: Scalars['uuid'];
+	label: Scalars['String'];
+	link_to?: Maybe<Scalars['jsonb']>;
+	updated_at: Scalars['timestamp'];
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsContent_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsContent_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "cms.content_labels"
+ *
+ */
+export type Cms_Content_LabelsLink_ToArgs = {
+	path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate = {
+	__typename?: 'cms_content_labels_aggregate';
+	aggregate?: Maybe<Cms_Content_Labels_Aggregate_Fields>;
+	nodes: Array<Cms_Content_Labels>;
+};
+
+/** aggregate fields of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate_Fields = {
+	__typename?: 'cms_content_labels_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Cms_Content_Labels_Max_Fields>;
+	min?: Maybe<Cms_Content_Labels_Min_Fields>;
+};
+
+/** aggregate fields of "cms.content_labels" */
+export type Cms_Content_Labels_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Labels_Append_Input = {
+	link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "cms.content_labels". All fields are combined with a logical 'AND'. */
+export type Cms_Content_Labels_Bool_Exp = {
+	_and?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
+	_not?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+	_or?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum_Comparison_Exp>;
+	created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+	id?: InputMaybe<Uuid_Comparison_Exp>;
+	label?: InputMaybe<String_Comparison_Exp>;
+	link_to?: InputMaybe<Jsonb_Comparison_Exp>;
+	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "cms.content_labels" */
+export enum Cms_Content_Labels_Constraint {
+	/** unique or primary key constraint */
+	ContentLabelsLabelContentTypeKey = 'content_labels_label_content_type_key',
+	/** unique or primary key constraint */
+	ContentLabelsPkey = 'content_labels_pkey',
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Cms_Content_Labels_Delete_At_Path_Input = {
+	link_to?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Cms_Content_Labels_Delete_Elem_Input = {
+	link_to?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Cms_Content_Labels_Delete_Key_Input = {
+	link_to?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "cms.content_labels" */
+export type Cms_Content_Labels_Insert_Input = {
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Obj_Rel_Insert_Input>;
+	content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label?: InputMaybe<Scalars['String']>;
+	link_to?: InputMaybe<Scalars['jsonb']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type Cms_Content_Labels_Max_Fields = {
+	__typename?: 'cms_content_labels_max_fields';
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label?: Maybe<Scalars['String']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type Cms_Content_Labels_Min_Fields = {
+	__typename?: 'cms_content_labels_min_fields';
+	created_at?: Maybe<Scalars['timestamp']>;
+	id?: Maybe<Scalars['uuid']>;
+	label?: Maybe<Scalars['String']>;
+	updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "cms.content_labels" */
+export type Cms_Content_Labels_Mutation_Response = {
+	__typename?: 'cms_content_labels_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Cms_Content_Labels>;
+};
+
+/** input type for inserting object relation for remote table "cms.content_labels" */
+export type Cms_Content_Labels_Obj_Rel_Insert_Input = {
+	data: Cms_Content_Labels_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** on conflict condition type for table "cms.content_labels" */
+export type Cms_Content_Labels_On_Conflict = {
+	constraint: Cms_Content_Labels_Constraint;
+	update_columns?: Array<Cms_Content_Labels_Update_Column>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "cms.content_labels". */
+export type Cms_Content_Labels_Order_By = {
+	cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Order_By>;
+	content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
+	content_type?: InputMaybe<Order_By>;
+	created_at?: InputMaybe<Order_By>;
+	id?: InputMaybe<Order_By>;
+	label?: InputMaybe<Order_By>;
+	link_to?: InputMaybe<Order_By>;
+	updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: cms_content_labels */
+export type Cms_Content_Labels_Pk_Columns_Input = {
+	id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Cms_Content_Labels_Prepend_Input = {
+	link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "cms.content_labels" */
+export enum Cms_Content_Labels_Select_Column {
+	/** column name */
+	ContentType = 'content_type',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Label = 'label',
+	/** column name */
+	LinkTo = 'link_to',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
+
+/** input type for updating data in table "cms.content_labels" */
+export type Cms_Content_Labels_Set_Input = {
+	content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	created_at?: InputMaybe<Scalars['timestamp']>;
+	id?: InputMaybe<Scalars['uuid']>;
+	label?: InputMaybe<Scalars['String']>;
+	link_to?: InputMaybe<Scalars['jsonb']>;
+	updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "cms.content_labels" */
+export enum Cms_Content_Labels_Update_Column {
+	/** column name */
+	ContentType = 'content_type',
+	/** column name */
+	CreatedAt = 'created_at',
+	/** column name */
+	Id = 'id',
+	/** column name */
+	Label = 'label',
+	/** column name */
+	LinkTo = 'link_to',
+	/** column name */
+	UpdatedAt = 'updated_at',
+}
 
 /** aggregate max on columns */
 export type Cms_Content_Max_Fields = {
@@ -759,6 +1601,13 @@ export type Cms_Content_Mutation_Response = {
 	returning: Array<Cms_Content>;
 };
 
+/** input type for inserting object relation for remote table "cms.content" */
+export type Cms_Content_Obj_Rel_Insert_Input = {
+	data: Cms_Content_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
+};
+
 /** on conflict condition type for table "cms.content" */
 export type Cms_Content_On_Conflict = {
 	constraint: Cms_Content_Constraint;
@@ -768,6 +1617,8 @@ export type Cms_Content_On_Conflict = {
 
 /** Ordering options when selecting data from "cms.content". */
 export type Cms_Content_Order_By = {
+	content_blocks_aggregate?: InputMaybe<Cms_Content_Blocks_Aggregate_Order_By>;
+	content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
 	content_type?: InputMaybe<Order_By>;
 	content_width?: InputMaybe<Order_By>;
 	created_at?: InputMaybe<Order_By>;
@@ -1647,6 +2498,10 @@ export type Cp_Maintainer = {
 	/** An object relationship */
 	index?: Maybe<Cp_Index>;
 	information?: Maybe<Array<Maybe<ContentPartner>>>;
+	/** An array relationship */
+	maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
+	/** An aggregate relationship */
+	maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
 	schema_identifier: Scalars['String'];
 	schema_name?: Maybe<Scalars['String']>;
 	/** An object relationship */
@@ -1663,6 +2518,36 @@ export type Cp_Maintainer = {
  */
 export type Cp_MaintainerInformationArgs = {
 	iri?: InputMaybe<Scalars['String']>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
+export type Cp_MaintainerMaintainer_Users_ProfilesArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "cp.maintainer"
+ *
+ */
+export type Cp_MaintainerMaintainer_Users_Profiles_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 };
 
 /** aggregated selection of "cp.maintainer" */
@@ -1695,6 +2580,7 @@ export type Cp_Maintainer_Bool_Exp = {
 	has_index?: InputMaybe<Boolean_Comparison_Exp>;
 	has_space?: InputMaybe<Boolean_Comparison_Exp>;
 	index?: InputMaybe<Cp_Index_Bool_Exp>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 	schema_identifier?: InputMaybe<String_Comparison_Exp>;
 	schema_name?: InputMaybe<String_Comparison_Exp>;
 	space?: InputMaybe<Cp_Space_Bool_Exp>;
@@ -1713,6 +2599,7 @@ export type Cp_Maintainer_Insert_Input = {
 	has_index?: InputMaybe<Scalars['Boolean']>;
 	has_space?: InputMaybe<Scalars['Boolean']>;
 	index?: InputMaybe<Cp_Index_Obj_Rel_Insert_Input>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
 	schema_identifier?: InputMaybe<Scalars['String']>;
 	schema_name?: InputMaybe<Scalars['String']>;
 	space?: InputMaybe<Cp_Space_Obj_Rel_Insert_Input>;
@@ -1766,6 +2653,7 @@ export type Cp_Maintainer_Order_By = {
 	has_index?: InputMaybe<Order_By>;
 	has_space?: InputMaybe<Order_By>;
 	index?: InputMaybe<Cp_Index_Order_By>;
+	maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
 	schema_identifier?: InputMaybe<Order_By>;
 	schema_name?: InputMaybe<Order_By>;
 	space?: InputMaybe<Cp_Space_Order_By>;
@@ -1858,6 +2746,20 @@ export type Cp_Maintainer_Users_Profile_Aggregate_FieldsCountArgs = {
 	distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Aggregate_Order_By = {
+	count?: InputMaybe<Order_By>;
+	max?: InputMaybe<Cp_Maintainer_Users_Profile_Max_Order_By>;
+	min?: InputMaybe<Cp_Maintainer_Users_Profile_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
+	data: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "cp.maintainer_users_profile". All fields are combined with a logical 'AND'. */
 export type Cp_Maintainer_Users_Profile_Bool_Exp = {
 	_and?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Bool_Exp>>;
@@ -1895,12 +2797,26 @@ export type Cp_Maintainer_Users_Profile_Max_Fields = {
 	users_profile_id?: Maybe<Scalars['uuid']>;
 };
 
+/** order by max() on columns of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Max_Order_By = {
+	id?: InputMaybe<Order_By>;
+	maintainer_identifier?: InputMaybe<Order_By>;
+	users_profile_id?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Cp_Maintainer_Users_Profile_Min_Fields = {
 	__typename?: 'cp_maintainer_users_profile_min_fields';
 	id?: Maybe<Scalars['uuid']>;
 	maintainer_identifier?: Maybe<Scalars['String']>;
 	users_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "cp.maintainer_users_profile" */
+export type Cp_Maintainer_Users_Profile_Min_Order_By = {
+	id?: InputMaybe<Order_By>;
+	maintainer_identifier?: InputMaybe<Order_By>;
+	users_profile_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "cp.maintainer_users_profile" */
@@ -2993,6 +3909,314 @@ export enum Lookup_App_Notification_Type_Update_Column {
 }
 
 /**
+ * Graphql enum types for content blocks
+ *
+ *
+ * columns and relationships of "lookup.cms_content_block_type"
+ *
+ */
+export type Lookup_Cms_Content_Block_Type = {
+	__typename?: 'lookup_cms_content_block_type';
+	comment?: Maybe<Scalars['String']>;
+	value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate = {
+	__typename?: 'lookup_cms_content_block_type_aggregate';
+	aggregate?: Maybe<Lookup_Cms_Content_Block_Type_Aggregate_Fields>;
+	nodes: Array<Lookup_Cms_Content_Block_Type>;
+};
+
+/** aggregate fields of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate_Fields = {
+	__typename?: 'lookup_cms_content_block_type_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Lookup_Cms_Content_Block_Type_Max_Fields>;
+	min?: Maybe<Lookup_Cms_Content_Block_Type_Min_Fields>;
+};
+
+/** aggregate fields of "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.cms_content_block_type". All fields are combined with a logical 'AND'. */
+export type Lookup_Cms_Content_Block_Type_Bool_Exp = {
+	_and?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
+	_not?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+	_or?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
+	comment?: InputMaybe<String_Comparison_Exp>;
+	value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Constraint {
+	/** unique or primary key constraint */
+	CmsContentBlockTypePkey = 'cms_content_block_type_pkey',
+}
+
+export enum Lookup_Cms_Content_Block_Type_Enum {
+	Accordions = 'ACCORDIONS',
+	AnchorLinks = 'ANCHOR_LINKS',
+	Buttons = 'BUTTONS',
+	ContentPageMeta = 'CONTENT_PAGE_META',
+	Ctas = 'CTAS',
+	Eventbrite = 'EVENTBRITE',
+	Heading = 'HEADING',
+	Hero = 'HERO',
+	Iframe = 'IFRAME',
+	Image = 'IMAGE',
+	ImageGrid = 'IMAGE_GRID',
+	Intro = 'INTRO',
+	Klaar = 'KLAAR',
+	Links = 'LINKS',
+	LogoGrid = 'LOGO_GRID',
+	MediaGrid = 'MEDIA_GRID',
+	MediaPlayer = 'MEDIA_PLAYER',
+	MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
+	PageOverview = 'PAGE_OVERVIEW',
+	ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
+	Quote = 'QUOTE',
+	RichText = 'RICH_TEXT',
+	RichTextTwoColumns = 'RICH_TEXT_TWO_COLUMNS',
+	Search = 'SEARCH',
+	Spotlight = 'SPOTLIGHT',
+	Subtitle = 'SUBTITLE',
+	Title = 'TITLE',
+	TitleImageText = 'TITLE_IMAGE_TEXT',
+	TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
+	UspGrid = 'USP_GRID',
+	Video = 'VIDEO',
+	VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON',
+}
+
+/** Boolean expression to compare columns of type "lookup_cms_content_block_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp = {
+	_eq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	_in?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
+	_is_null?: InputMaybe<Scalars['Boolean']>;
+	_neq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
+	_nin?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Insert_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Cms_Content_Block_Type_Max_Fields = {
+	__typename?: 'lookup_cms_content_block_type_max_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Cms_Content_Block_Type_Min_Fields = {
+	__typename?: 'lookup_cms_content_block_type_min_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Mutation_Response = {
+	__typename?: 'lookup_cms_content_block_type_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Lookup_Cms_Content_Block_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input = {
+	data: Lookup_Cms_Content_Block_Type_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_On_Conflict = {
+	constraint: Lookup_Cms_Content_Block_Type_Constraint;
+	update_columns?: Array<Lookup_Cms_Content_Block_Type_Update_Column>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.cms_content_block_type". */
+export type Lookup_Cms_Content_Block_Type_Order_By = {
+	comment?: InputMaybe<Order_By>;
+	value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_cms_content_block_type */
+export type Lookup_Cms_Content_Block_Type_Pk_Columns_Input = {
+	value: Scalars['String'];
+};
+
+/** select columns of table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Select_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/** input type for updating data in table "lookup.cms_content_block_type" */
+export type Lookup_Cms_Content_Block_Type_Set_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.cms_content_block_type" */
+export enum Lookup_Cms_Content_Block_Type_Update_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/**
+ * GraphQL enum type for content types, e.g. pages, news, projects.
+ *
+ *
+ * columns and relationships of "lookup.cms_content_type"
+ *
+ */
+export type Lookup_Cms_Content_Type = {
+	__typename?: 'lookup_cms_content_type';
+	comment?: Maybe<Scalars['String']>;
+	value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate = {
+	__typename?: 'lookup_cms_content_type_aggregate';
+	aggregate?: Maybe<Lookup_Cms_Content_Type_Aggregate_Fields>;
+	nodes: Array<Lookup_Cms_Content_Type>;
+};
+
+/** aggregate fields of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate_Fields = {
+	__typename?: 'lookup_cms_content_type_aggregate_fields';
+	count: Scalars['Int'];
+	max?: Maybe<Lookup_Cms_Content_Type_Max_Fields>;
+	min?: Maybe<Lookup_Cms_Content_Type_Min_Fields>;
+};
+
+/** aggregate fields of "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Aggregate_FieldsCountArgs = {
+	columns?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.cms_content_type". All fields are combined with a logical 'AND'. */
+export type Lookup_Cms_Content_Type_Bool_Exp = {
+	_and?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
+	_not?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+	_or?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
+	comment?: InputMaybe<String_Comparison_Exp>;
+	value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Constraint {
+	/** unique or primary key constraint */
+	CmsContentTypePkey = 'cms_content_type_pkey',
+}
+
+export enum Lookup_Cms_Content_Type_Enum {
+	/** Pagina */
+	Pagina = 'PAGINA',
+}
+
+/** Boolean expression to compare columns of type "lookup_cms_content_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Cms_Content_Type_Enum_Comparison_Exp = {
+	_eq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	_in?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
+	_is_null?: InputMaybe<Scalars['Boolean']>;
+	_neq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
+	_nin?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Insert_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Cms_Content_Type_Max_Fields = {
+	__typename?: 'lookup_cms_content_type_max_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Cms_Content_Type_Min_Fields = {
+	__typename?: 'lookup_cms_content_type_min_fields';
+	comment?: Maybe<Scalars['String']>;
+	value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Mutation_Response = {
+	__typename?: 'lookup_cms_content_type_mutation_response';
+	/** number of rows affected by the mutation */
+	affected_rows: Scalars['Int'];
+	/** data from the rows affected by the mutation */
+	returning: Array<Lookup_Cms_Content_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Obj_Rel_Insert_Input = {
+	data: Lookup_Cms_Content_Type_Insert_Input;
+	/** on conflict condition */
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_On_Conflict = {
+	constraint: Lookup_Cms_Content_Type_Constraint;
+	update_columns?: Array<Lookup_Cms_Content_Type_Update_Column>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.cms_content_type". */
+export type Lookup_Cms_Content_Type_Order_By = {
+	comment?: InputMaybe<Order_By>;
+	value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_cms_content_type */
+export type Lookup_Cms_Content_Type_Pk_Columns_Input = {
+	value: Scalars['String'];
+};
+
+/** select columns of table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Select_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/** input type for updating data in table "lookup.cms_content_type" */
+export type Lookup_Cms_Content_Type_Set_Input = {
+	comment?: InputMaybe<Scalars['String']>;
+	value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.cms_content_type" */
+export enum Lookup_Cms_Content_Type_Update_Column {
+	/** column name */
+	Comment = 'comment',
+	/** column name */
+	Value = 'value',
+}
+
+/**
  * de circle of life van een bezoek
  *
  *
@@ -3253,8 +4477,20 @@ export type Mutation_Root = {
 	delete_app_notification_by_pk?: Maybe<App_Notification>;
 	/** delete data from the table: "cms.content" */
 	delete_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** delete data from the table: "cms.content_blocks" */
+	delete_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** delete single row from the table: "cms.content_blocks" */
+	delete_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** delete single row from the table: "cms.content" */
 	delete_cms_content_by_pk?: Maybe<Cms_Content>;
+	/** delete data from the table: "cms.content_content_labels" */
+	delete_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** delete single row from the table: "cms.content_content_labels" */
+	delete_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** delete data from the table: "cms.content_labels" */
+	delete_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** delete single row from the table: "cms.content_labels" */
+	delete_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** delete data from the table: "cms.navigation_element" */
 	delete_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
 	/** delete single row from the table: "cms.navigation_element" */
@@ -3291,6 +4527,14 @@ export type Mutation_Root = {
 	delete_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** delete single row from the table: "lookup.app_notification_type" */
 	delete_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** delete data from the table: "lookup.cms_content_block_type" */
+	delete_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** delete single row from the table: "lookup.cms_content_block_type" */
+	delete_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** delete data from the table: "lookup.cms_content_type" */
+	delete_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** delete single row from the table: "lookup.cms_content_type" */
+	delete_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** delete data from the table: "lookup.cp_visit_status" */
 	delete_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** delete single row from the table: "lookup.cp_visit_status" */
@@ -3361,6 +4605,18 @@ export type Mutation_Root = {
 	insert_app_notification_one?: Maybe<App_Notification>;
 	/** insert data into the table: "cms.content" */
 	insert_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** insert data into the table: "cms.content_blocks" */
+	insert_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_blocks" */
+	insert_cms_content_blocks_one?: Maybe<Cms_Content_Blocks>;
+	/** insert data into the table: "cms.content_content_labels" */
+	insert_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_content_labels" */
+	insert_cms_content_content_labels_one?: Maybe<Cms_Content_Content_Labels>;
+	/** insert data into the table: "cms.content_labels" */
+	insert_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** insert a single row into the table: "cms.content_labels" */
+	insert_cms_content_labels_one?: Maybe<Cms_Content_Labels>;
 	/** insert a single row into the table: "cms.content" */
 	insert_cms_content_one?: Maybe<Cms_Content>;
 	/** insert data into the table: "cms.navigation_element" */
@@ -3399,6 +4655,14 @@ export type Mutation_Root = {
 	insert_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** insert a single row into the table: "lookup.app_notification_type" */
 	insert_lookup_app_notification_type_one?: Maybe<Lookup_App_Notification_Type>;
+	/** insert data into the table: "lookup.cms_content_block_type" */
+	insert_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** insert a single row into the table: "lookup.cms_content_block_type" */
+	insert_lookup_cms_content_block_type_one?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** insert data into the table: "lookup.cms_content_type" */
+	insert_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** insert a single row into the table: "lookup.cms_content_type" */
+	insert_lookup_cms_content_type_one?: Maybe<Lookup_Cms_Content_Type>;
 	/** insert data into the table: "lookup.cp_visit_status" */
 	insert_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** insert a single row into the table: "lookup.cp_visit_status" */
@@ -3469,8 +4733,20 @@ export type Mutation_Root = {
 	update_app_notification_by_pk?: Maybe<App_Notification>;
 	/** update data of the table: "cms.content" */
 	update_cms_content?: Maybe<Cms_Content_Mutation_Response>;
+	/** update data of the table: "cms.content_blocks" */
+	update_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
+	/** update single row of the table: "cms.content_blocks" */
+	update_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** update single row of the table: "cms.content" */
 	update_cms_content_by_pk?: Maybe<Cms_Content>;
+	/** update data of the table: "cms.content_content_labels" */
+	update_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
+	/** update single row of the table: "cms.content_content_labels" */
+	update_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** update data of the table: "cms.content_labels" */
+	update_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
+	/** update single row of the table: "cms.content_labels" */
+	update_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** update data of the table: "cms.navigation_element" */
 	update_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
 	/** update single row of the table: "cms.navigation_element" */
@@ -3507,6 +4783,14 @@ export type Mutation_Root = {
 	update_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
 	/** update single row of the table: "lookup.app_notification_type" */
 	update_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** update data of the table: "lookup.cms_content_block_type" */
+	update_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
+	/** update single row of the table: "lookup.cms_content_block_type" */
+	update_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** update data of the table: "lookup.cms_content_type" */
+	update_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
+	/** update single row of the table: "lookup.cms_content_type" */
+	update_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** update data of the table: "lookup.cp_visit_status" */
 	update_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
 	/** update single row of the table: "lookup.cp_visit_status" */
@@ -3589,7 +4873,37 @@ export type Mutation_RootDelete_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootDelete_Cms_Content_BlocksArgs = {
+	where: Cms_Content_Blocks_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
 export type Mutation_RootDelete_Cms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Content_LabelsArgs = {
+	where: Cms_Content_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_LabelsArgs = {
+	where: Cms_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Cms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -3680,6 +4994,26 @@ export type Mutation_RootDelete_Lookup_App_Notification_TypeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Lookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Block_TypeArgs = {
+	where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_TypeArgs = {
+	where: Lookup_Cms_Content_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -3863,6 +5197,42 @@ export type Mutation_RootInsert_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootInsert_Cms_Content_BlocksArgs = {
+	objects: Array<Cms_Content_Blocks_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Blocks_OneArgs = {
+	object: Cms_Content_Blocks_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Content_LabelsArgs = {
+	objects: Array<Cms_Content_Content_Labels_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Content_Labels_OneArgs = {
+	object: Cms_Content_Content_Labels_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_LabelsArgs = {
+	objects: Array<Cms_Content_Labels_Insert_Input>;
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Cms_Content_Labels_OneArgs = {
+	object: Cms_Content_Labels_Insert_Input;
+	on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
+};
+
+/** mutation root */
 export type Mutation_RootInsert_Cms_Content_OneArgs = {
 	object: Cms_Content_Insert_Input;
 	on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
@@ -3974,6 +5344,30 @@ export type Mutation_RootInsert_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootInsert_Lookup_App_Notification_Type_OneArgs = {
 	object: Lookup_App_Notification_Type_Insert_Input;
 	on_conflict?: InputMaybe<Lookup_App_Notification_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Block_TypeArgs = {
+	objects: Array<Lookup_Cms_Content_Block_Type_Insert_Input>;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Block_Type_OneArgs = {
+	object: Lookup_Cms_Content_Block_Type_Insert_Input;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_TypeArgs = {
+	objects: Array<Lookup_Cms_Content_Type_Insert_Input>;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+};
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cms_Content_Type_OneArgs = {
+	object: Lookup_Cms_Content_Type_Insert_Input;
+	on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
 };
 
 /** mutation root */
@@ -4192,6 +5586,30 @@ export type Mutation_RootUpdate_Cms_ContentArgs = {
 };
 
 /** mutation root */
+export type Mutation_RootUpdate_Cms_Content_BlocksArgs = {
+	_append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
+	_inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
+	_prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
+	where: Cms_Content_Blocks_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Blocks_By_PkArgs = {
+	_append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
+	_inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
+	_prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
+	pk_columns: Cms_Content_Blocks_Pk_Columns_Input;
+};
+
+/** mutation root */
 export type Mutation_RootUpdate_Cms_Content_By_PkArgs = {
 	_append?: InputMaybe<Cms_Content_Append_Input>;
 	_delete_at_path?: InputMaybe<Cms_Content_Delete_At_Path_Input>;
@@ -4200,6 +5618,40 @@ export type Mutation_RootUpdate_Cms_Content_By_PkArgs = {
 	_prepend?: InputMaybe<Cms_Content_Prepend_Input>;
 	_set?: InputMaybe<Cms_Content_Set_Input>;
 	pk_columns: Cms_Content_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Content_LabelsArgs = {
+	_set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
+	where: Cms_Content_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Content_Labels_By_PkArgs = {
+	_set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
+	pk_columns: Cms_Content_Content_Labels_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_LabelsArgs = {
+	_append?: InputMaybe<Cms_Content_Labels_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
+	_prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Labels_Set_Input>;
+	where: Cms_Content_Labels_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Cms_Content_Labels_By_PkArgs = {
+	_append?: InputMaybe<Cms_Content_Labels_Append_Input>;
+	_delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
+	_delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
+	_delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
+	_prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
+	_set?: InputMaybe<Cms_Content_Labels_Set_Input>;
+	pk_columns: Cms_Content_Labels_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -4330,6 +5782,30 @@ export type Mutation_RootUpdate_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
 	_set?: InputMaybe<Lookup_App_Notification_Type_Set_Input>;
 	pk_columns: Lookup_App_Notification_Type_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Block_TypeArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
+	where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Block_Type_By_PkArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
+	pk_columns: Lookup_Cms_Content_Block_Type_Pk_Columns_Input;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_TypeArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
+	where: Lookup_Cms_Content_Type_Bool_Exp;
+};
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cms_Content_Type_By_PkArgs = {
+	_set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
+	pk_columns: Lookup_Cms_Content_Type_Pk_Columns_Input;
 };
 
 /** mutation root */
@@ -5142,6 +6618,8 @@ export type Object_Ie_Inc_Input = {
 export type Object_Ie_Index = {
 	__typename?: 'object_ie_index';
 	document?: Maybe<Scalars['json']>;
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
 };
 
 /** columns and relationships of "object.ie_index" */
@@ -5160,6 +6638,8 @@ export type Object_Ie_Index_Aggregate = {
 export type Object_Ie_Index_Aggregate_Fields = {
 	__typename?: 'object_ie_index_aggregate_fields';
 	count: Scalars['Int'];
+	max?: Maybe<Object_Ie_Index_Max_Fields>;
+	min?: Maybe<Object_Ie_Index_Min_Fields>;
 };
 
 /** aggregate fields of "object.ie_index" */
@@ -5174,17 +6654,39 @@ export type Object_Ie_Index_Bool_Exp = {
 	_not?: InputMaybe<Object_Ie_Index_Bool_Exp>;
 	_or?: InputMaybe<Array<Object_Ie_Index_Bool_Exp>>;
 	document?: InputMaybe<Json_Comparison_Exp>;
+	document_id?: InputMaybe<String_Comparison_Exp>;
+	index_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Object_Ie_Index_Max_Fields = {
+	__typename?: 'object_ie_index_max_fields';
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Object_Ie_Index_Min_Fields = {
+	__typename?: 'object_ie_index_min_fields';
+	document_id?: Maybe<Scalars['String']>;
+	index_id?: Maybe<Scalars['String']>;
 };
 
 /** Ordering options when selecting data from "object.ie_index". */
 export type Object_Ie_Index_Order_By = {
 	document?: InputMaybe<Order_By>;
+	document_id?: InputMaybe<Order_By>;
+	index_id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "object.ie_index" */
 export enum Object_Ie_Index_Select_Column {
 	/** column name */
 	Document = 'document',
+	/** column name */
+	DocumentId = 'document_id',
+	/** column name */
+	IndexId = 'index_id',
 }
 
 /** input type for inserting data into table "object.ie" */
@@ -6184,8 +7686,26 @@ export type Query_Root = {
 	cms_content: Array<Cms_Content>;
 	/** fetch aggregated fields from the table: "cms.content" */
 	cms_content_aggregate: Cms_Content_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" */
+	cms_content_blocks: Array<Cms_Content_Blocks>;
+	/** fetch aggregated fields from the table: "cms.content_blocks" */
+	cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" using primary key columns */
+	cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** fetch data from the table: "cms.content" using primary key columns */
 	cms_content_by_pk?: Maybe<Cms_Content>;
+	/** fetch data from the table: "cms.content_content_labels" */
+	cms_content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_content_labels" */
+	cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_content_labels" using primary key columns */
+	cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** fetch data from the table: "cms.content_labels" */
+	cms_content_labels: Array<Cms_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_labels" */
+	cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_labels" using primary key columns */
+	cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** fetch data from the table: "cms.navigation_element" */
 	cms_navigation_element: Array<Cms_Navigation_Element>;
 	/** fetch aggregated fields from the table: "cms.navigation_element" */
@@ -6241,6 +7761,18 @@ export type Query_Root = {
 	lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
 	/** fetch data from the table: "lookup.app_notification_type" using primary key columns */
 	lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** fetch data from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
+	lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** fetch data from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_type" using primary key columns */
+	lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** fetch data from the table: "lookup.cp_visit_status" */
 	lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
 	/** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -6382,7 +7914,67 @@ export type Query_RootCms_Content_AggregateArgs = {
 	where?: InputMaybe<Cms_Content_Bool_Exp>;
 };
 
+export type Query_RootCms_Content_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
 export type Query_RootCms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Query_RootCms_Content_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Query_RootCms_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Query_RootCms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -6568,6 +8160,46 @@ export type Query_RootLookup_App_Notification_Type_AggregateArgs = {
 };
 
 export type Query_RootLookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Query_RootLookup_Cms_Content_Block_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Query_RootLookup_Cms_Content_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Query_RootLookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -6936,8 +8568,26 @@ export type Subscription_Root = {
 	cms_content: Array<Cms_Content>;
 	/** fetch aggregated fields from the table: "cms.content" */
 	cms_content_aggregate: Cms_Content_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" */
+	cms_content_blocks: Array<Cms_Content_Blocks>;
+	/** fetch aggregated fields from the table: "cms.content_blocks" */
+	cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
+	/** fetch data from the table: "cms.content_blocks" using primary key columns */
+	cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
 	/** fetch data from the table: "cms.content" using primary key columns */
 	cms_content_by_pk?: Maybe<Cms_Content>;
+	/** fetch data from the table: "cms.content_content_labels" */
+	cms_content_content_labels: Array<Cms_Content_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_content_labels" */
+	cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_content_labels" using primary key columns */
+	cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
+	/** fetch data from the table: "cms.content_labels" */
+	cms_content_labels: Array<Cms_Content_Labels>;
+	/** fetch aggregated fields from the table: "cms.content_labels" */
+	cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
+	/** fetch data from the table: "cms.content_labels" using primary key columns */
+	cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
 	/** fetch data from the table: "cms.navigation_element" */
 	cms_navigation_element: Array<Cms_Navigation_Element>;
 	/** fetch aggregated fields from the table: "cms.navigation_element" */
@@ -6992,6 +8642,18 @@ export type Subscription_Root = {
 	lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
 	/** fetch data from the table: "lookup.app_notification_type" using primary key columns */
 	lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+	/** fetch data from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
+	lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
+	lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
+	/** fetch data from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
+	/** fetch aggregated fields from the table: "lookup.cms_content_type" */
+	lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
+	/** fetch data from the table: "lookup.cms_content_type" using primary key columns */
+	lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
 	/** fetch data from the table: "lookup.cp_visit_status" */
 	lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
 	/** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -7130,7 +8792,67 @@ export type Subscription_RootCms_Content_AggregateArgs = {
 	where?: InputMaybe<Cms_Content_Bool_Exp>;
 };
 
+export type Subscription_RootCms_Content_BlocksArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Blocks_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
+	where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Blocks_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
 export type Subscription_RootCms_Content_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Subscription_RootCms_Content_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Content_Labels_By_PkArgs = {
+	id: Scalars['uuid'];
+};
+
+export type Subscription_RootCms_Content_LabelsArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Labels_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
+	where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
+};
+
+export type Subscription_RootCms_Content_Labels_By_PkArgs = {
 	id: Scalars['uuid'];
 };
 
@@ -7311,6 +9033,46 @@ export type Subscription_RootLookup_App_Notification_Type_AggregateArgs = {
 };
 
 export type Subscription_RootLookup_App_Notification_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+	value: Scalars['String'];
+};
+
+export type Subscription_RootLookup_Cms_Content_TypeArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Type_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
+	where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+};
+
+export type Subscription_RootLookup_Cms_Content_Type_By_PkArgs = {
 	value: Scalars['String'];
 };
 
@@ -9764,6 +11526,10 @@ export type Users_Profile = {
 	last_name?: Maybe<Scalars['String']>;
 	mail?: Maybe<Scalars['String']>;
 	/** An array relationship */
+	maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
+	/** An aggregate relationship */
+	maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
+	/** An array relationship */
 	notes: Array<Cp_Visit_Note>;
 	/** An aggregate relationship */
 	notes_aggregate: Cp_Visit_Note_Aggregate;
@@ -9836,6 +11602,36 @@ export type Users_ProfileIdentities_AggregateArgs = {
 	offset?: InputMaybe<Scalars['Int']>;
 	order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
 	where?: InputMaybe<Users_Identity_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileMaintainer_Users_ProfilesArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/**
+ * A user his identifying attributes aka profile information
+ *
+ *
+ * columns and relationships of "users.profile"
+ *
+ */
+export type Users_ProfileMaintainer_Users_Profiles_AggregateArgs = {
+	distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+	limit?: InputMaybe<Scalars['Int']>;
+	offset?: InputMaybe<Scalars['Int']>;
+	order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
+	where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 };
 
 /**
@@ -9965,6 +11761,7 @@ export type Users_Profile_Bool_Exp = {
 	identities?: InputMaybe<Users_Identity_Bool_Exp>;
 	last_name?: InputMaybe<String_Comparison_Exp>;
 	mail?: InputMaybe<String_Comparison_Exp>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
 	notes?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
 	notifications?: InputMaybe<App_Notification_Bool_Exp>;
 	updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -9989,6 +11786,7 @@ export type Users_Profile_Insert_Input = {
 	identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
 	last_name?: InputMaybe<Scalars['String']>;
 	mail?: InputMaybe<Scalars['String']>;
+	maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
 	notes?: InputMaybe<Cp_Visit_Note_Arr_Rel_Insert_Input>;
 	notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
 	updated_at?: InputMaybe<Scalars['timestamp']>;
@@ -10057,6 +11855,7 @@ export type Users_Profile_Order_By = {
 	identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
 	last_name?: InputMaybe<Order_By>;
 	mail?: InputMaybe<Order_By>;
+	maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
 	notes_aggregate?: InputMaybe<Cp_Visit_Note_Aggregate_Order_By>;
 	notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
 	updated_at?: InputMaybe<Order_By>;
@@ -10347,6 +12146,202 @@ export type UpdateCollectionMutation = {
 			updated_at?: any | null;
 		}>;
 	} | null;
+};
+
+export type FindSpaceByCpAdminIdQueryVariables = Exact<{
+	cpAdminId: Scalars['uuid'];
+}>;
+
+export type FindSpaceByCpAdminIdQuery = {
+	__typename?: 'query_root';
+	cp_space: Array<{
+		__typename?: 'cp_space';
+		id: any;
+		schema_image?: string | null;
+		schema_color?: string | null;
+		schema_audience_type: Lookup_Schema_Audience_Type_Enum;
+		schema_description?: string | null;
+		schema_public_access?: boolean | null;
+		schema_service_description?: string | null;
+		is_published?: boolean | null;
+		published_at?: any | null;
+		created_at?: any | null;
+		updated_at?: any | null;
+		schema_maintainer: {
+			__typename?: 'cp_maintainer';
+			schema_name?: string | null;
+			schema_identifier: string;
+			information?: Array<{
+				__typename?: 'ContentPartner';
+				description?: string | null;
+				logo?: { __typename?: 'Logo'; iri: string } | null;
+				primary_site?: {
+					__typename?: 'Site';
+					address?: {
+						__typename?: 'PostalAddress';
+						email?: string | null;
+						locality?: string | null;
+						postal_code?: string | null;
+						street?: string | null;
+						telephone?: string | null;
+						post_office_box_number?: string | null;
+					} | null;
+				} | null;
+			} | null> | null;
+		};
+	}>;
+};
+
+export type FindSpaceByIdQueryVariables = Exact<{
+	id: Scalars['uuid'];
+}>;
+
+export type FindSpaceByIdQuery = {
+	__typename?: 'query_root';
+	cp_space: Array<{
+		__typename?: 'cp_space';
+		id: any;
+		schema_image?: string | null;
+		schema_color?: string | null;
+		schema_audience_type: Lookup_Schema_Audience_Type_Enum;
+		schema_description?: string | null;
+		schema_public_access?: boolean | null;
+		schema_service_description?: string | null;
+		is_published?: boolean | null;
+		published_at?: any | null;
+		created_at?: any | null;
+		updated_at?: any | null;
+		schema_maintainer: {
+			__typename?: 'cp_maintainer';
+			schema_name?: string | null;
+			schema_identifier: string;
+			information?: Array<{
+				__typename?: 'ContentPartner';
+				description?: string | null;
+				logo?: { __typename?: 'Logo'; iri: string } | null;
+				primary_site?: {
+					__typename?: 'Site';
+					address?: {
+						__typename?: 'PostalAddress';
+						email?: string | null;
+						locality?: string | null;
+						postal_code?: string | null;
+						street?: string | null;
+						telephone?: string | null;
+						post_office_box_number?: string | null;
+					} | null;
+				} | null;
+			} | null> | null;
+		};
+	}>;
+};
+
+export type FindSpaceByMaintainerIdentifierQueryVariables = Exact<{
+	slug: Scalars['String'];
+}>;
+
+export type FindSpaceByMaintainerIdentifierQuery = {
+	__typename?: 'query_root';
+	cp_space: Array<{
+		__typename?: 'cp_space';
+		id: any;
+		schema_image?: string | null;
+		schema_color?: string | null;
+		schema_audience_type: Lookup_Schema_Audience_Type_Enum;
+		schema_description?: string | null;
+		schema_public_access?: boolean | null;
+		schema_service_description?: string | null;
+		is_published?: boolean | null;
+		published_at?: any | null;
+		created_at?: any | null;
+		updated_at?: any | null;
+		schema_maintainer: {
+			__typename?: 'cp_maintainer';
+			schema_name?: string | null;
+			schema_identifier: string;
+			information?: Array<{
+				__typename?: 'ContentPartner';
+				description?: string | null;
+				logo?: { __typename?: 'Logo'; iri: string } | null;
+				primary_site?: {
+					__typename?: 'Site';
+					address?: {
+						__typename?: 'PostalAddress';
+						email?: string | null;
+						locality?: string | null;
+						postal_code?: string | null;
+						street?: string | null;
+						telephone?: string | null;
+						post_office_box_number?: string | null;
+					} | null;
+				} | null;
+			} | null> | null;
+		};
+	}>;
+};
+
+export type FindSpacesQueryVariables = Exact<{
+	where: Cp_Space_Bool_Exp;
+	offset: Scalars['Int'];
+	limit: Scalars['Int'];
+	orderBy: Cp_Space_Order_By;
+}>;
+
+export type FindSpacesQuery = {
+	__typename?: 'query_root';
+	cp_space: Array<{
+		__typename?: 'cp_space';
+		id: any;
+		schema_image?: string | null;
+		schema_color?: string | null;
+		schema_audience_type: Lookup_Schema_Audience_Type_Enum;
+		schema_description?: string | null;
+		schema_public_access?: boolean | null;
+		schema_service_description?: string | null;
+		is_published?: boolean | null;
+		published_at?: any | null;
+		created_at?: any | null;
+		updated_at?: any | null;
+		schema_maintainer: {
+			__typename?: 'cp_maintainer';
+			schema_name?: string | null;
+			schema_identifier: string;
+			information?: Array<{
+				__typename?: 'ContentPartner';
+				description?: string | null;
+				logo?: { __typename?: 'Logo'; iri: string } | null;
+				primary_site?: {
+					__typename?: 'Site';
+					address?: {
+						__typename?: 'PostalAddress';
+						email?: string | null;
+						locality?: string | null;
+						postal_code?: string | null;
+						street?: string | null;
+						telephone?: string | null;
+						post_office_box_number?: string | null;
+					} | null;
+				} | null;
+			} | null> | null;
+		};
+	}>;
+	cp_space_aggregate: {
+		__typename?: 'cp_space_aggregate';
+		aggregate?: { __typename?: 'cp_space_aggregate_fields'; count: number } | null;
+	};
+};
+
+export type GetSpaceMaintainerProfilesQueryVariables = Exact<{
+	spaceId?: InputMaybe<Scalars['uuid']>;
+}>;
+
+export type GetSpaceMaintainerProfilesQuery = {
+	__typename?: 'query_root';
+	cp_maintainer_users_profile: Array<{
+		__typename?: 'cp_maintainer_users_profile';
+		users_profile_id: any;
+		profile: { __typename?: 'users_profile'; mail?: string | null };
+	}>;
 };
 
 export const DeleteCollectionDocument = {
@@ -11720,3 +13715,1024 @@ export const UpdateCollectionDocument = {
 		},
 	],
 } as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
+export const FindSpaceByCpAdminIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findSpaceByCpAdminId' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'cpAdminId' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_space' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'schema_maintainer' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: {
+															kind: 'Name',
+															value: 'maintainer_users_profiles',
+														},
+														value: {
+															kind: 'ObjectValue',
+															fields: [
+																{
+																	kind: 'ObjectField',
+																	name: {
+																		kind: 'Name',
+																		value: 'users_profile_id',
+																	},
+																	value: {
+																		kind: 'ObjectValue',
+																		fields: [
+																			{
+																				kind: 'ObjectField',
+																				name: {
+																					kind: 'Name',
+																					value: '_eq',
+																				},
+																				value: {
+																					kind: 'Variable',
+																					name: {
+																						kind: 'Name',
+																						value: 'cpAdminId',
+																					},
+																				},
+																			},
+																		],
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_image' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_color' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_audience_type' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_description' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_public_access' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_service_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_published' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_maintainer' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'information' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'description',
+															},
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'logo' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'iri',
+																		},
+																	},
+																],
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'primary_site',
+															},
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'address',
+																		},
+																		selectionSet: {
+																			kind: 'SelectionSet',
+																			selections: [
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'email',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'locality',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'postal_code',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'street',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'telephone',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'post_office_box_number',
+																					},
+																				},
+																			],
+																		},
+																	},
+																],
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
+export const FindSpaceByIdDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findSpaceById' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_space' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'id' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: '_eq' },
+														value: {
+															kind: 'Variable',
+															name: { kind: 'Name', value: 'id' },
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_image' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_color' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_audience_type' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_description' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_public_access' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_service_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_published' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_maintainer' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'information' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'description',
+															},
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'logo' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'iri',
+																		},
+																	},
+																],
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'primary_site',
+															},
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'address',
+																		},
+																		selectionSet: {
+																			kind: 'SelectionSet',
+																			selections: [
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'email',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'locality',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'postal_code',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'street',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'telephone',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'post_office_box_number',
+																					},
+																				},
+																			],
+																		},
+																	},
+																],
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
+export const FindSpaceByMaintainerIdentifierDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findSpaceByMaintainerIdentifier' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'slug' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_space' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'schema_maintainer' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: {
+															kind: 'Name',
+															value: 'schema_identifier',
+														},
+														value: {
+															kind: 'ObjectValue',
+															fields: [
+																{
+																	kind: 'ObjectField',
+																	name: {
+																		kind: 'Name',
+																		value: '_ilike',
+																	},
+																	value: {
+																		kind: 'Variable',
+																		name: {
+																			kind: 'Name',
+																			value: 'slug',
+																		},
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_image' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_color' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_audience_type' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_description' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_public_access' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_service_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_published' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_maintainer' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'information' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'description',
+															},
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'logo' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'iri',
+																		},
+																	},
+																],
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'primary_site',
+															},
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'address',
+																		},
+																		selectionSet: {
+																			kind: 'SelectionSet',
+																			selections: [
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'email',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'locality',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'postal_code',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'street',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'telephone',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'post_office_box_number',
+																					},
+																				},
+																			],
+																		},
+																	},
+																],
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceByMaintainerIdentifierQueryVariables
+>;
+export const FindSpacesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'findSpaces' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'cp_space_bool_exp' },
+						},
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+					},
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+					type: {
+						kind: 'NonNullType',
+						type: {
+							kind: 'NamedType',
+							name: { kind: 'Name', value: 'cp_space_order_by' },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_space' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'offset' },
+								value: {
+									kind: 'Variable',
+									name: { kind: 'Name', value: 'offset' },
+								},
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'order_by' },
+								value: {
+									kind: 'ListValue',
+									values: [
+										{
+											kind: 'Variable',
+											name: { kind: 'Name', value: 'orderBy' },
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_image' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'schema_color' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_audience_type' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_description' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_public_access' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_service_description' },
+								},
+								{ kind: 'Field', name: { kind: 'Name', value: 'is_published' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'published_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'schema_maintainer' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_name' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_identifier' },
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'information' },
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'description',
+															},
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'logo' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'iri',
+																		},
+																	},
+																],
+															},
+														},
+														{
+															kind: 'Field',
+															name: {
+																kind: 'Name',
+																value: 'primary_site',
+															},
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: {
+																			kind: 'Name',
+																			value: 'address',
+																		},
+																		selectionSet: {
+																			kind: 'SelectionSet',
+																			selections: [
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'email',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'locality',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'postal_code',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'street',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'telephone',
+																					},
+																				},
+																				{
+																					kind: 'Field',
+																					name: {
+																						kind: 'Name',
+																						value: 'post_office_box_number',
+																					},
+																				},
+																			],
+																		},
+																	},
+																],
+															},
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_space_aggregate' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'aggregate' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'count' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
+export const GetSpaceMaintainerProfilesDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getSpaceMaintainerProfiles' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'spaceId' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'uuid' } },
+				},
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'cp_maintainer_users_profile' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'where' },
+								value: {
+									kind: 'ObjectValue',
+									fields: [
+										{
+											kind: 'ObjectField',
+											name: { kind: 'Name', value: 'maintainer' },
+											value: {
+												kind: 'ObjectValue',
+												fields: [
+													{
+														kind: 'ObjectField',
+														name: { kind: 'Name', value: 'space' },
+														value: {
+															kind: 'ObjectValue',
+															fields: [
+																{
+																	kind: 'ObjectField',
+																	name: {
+																		kind: 'Name',
+																		value: 'id',
+																	},
+																	value: {
+																		kind: 'ObjectValue',
+																		fields: [
+																			{
+																				kind: 'ObjectField',
+																				name: {
+																					kind: 'Name',
+																					value: '_eq',
+																				},
+																				value: {
+																					kind: 'Variable',
+																					name: {
+																						kind: 'Name',
+																						value: 'spaceId',
+																					},
+																				},
+																			},
+																		],
+																	},
+																},
+															],
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							},
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'users_profile_id' },
+								},
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'profile' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'mail' },
+											},
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	GetSpaceMaintainerProfilesQuery,
+	GetSpaceMaintainerProfilesQueryVariables
+>;
