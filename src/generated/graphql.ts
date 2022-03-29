@@ -342,7 +342,7 @@ export type App_Notification_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "app.notification" */
 export type App_Notification_Arr_Rel_Insert_Input = {
 	data: Array<App_Notification_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<App_Notification_On_Conflict>;
 };
 
@@ -458,7 +458,7 @@ export type App_Notification_Mutation_Response = {
 	returning: Array<App_Notification>;
 };
 
-/** on conflict condition type for table "app.notification" */
+/** on_conflict condition type for table "app.notification" */
 export type App_Notification_On_Conflict = {
 	constraint: App_Notification_Constraint;
 	update_columns?: Array<App_Notification_Update_Column>;
@@ -759,7 +759,7 @@ export type Cms_Content_Mutation_Response = {
 	returning: Array<Cms_Content>;
 };
 
-/** on conflict condition type for table "cms.content" */
+/** on_conflict condition type for table "cms.content" */
 export type Cms_Content_On_Conflict = {
 	constraint: Cms_Content_Constraint;
 	update_columns?: Array<Cms_Content_Update_Column>;
@@ -1135,7 +1135,7 @@ export type Cms_Navigation_Element_Mutation_Response = {
 	returning: Array<Cms_Navigation_Element>;
 };
 
-/** on conflict condition type for table "cms.navigation_element" */
+/** on_conflict condition type for table "cms.navigation_element" */
 export type Cms_Navigation_Element_On_Conflict = {
 	constraint: Cms_Navigation_Element_Constraint;
 	update_columns?: Array<Cms_Navigation_Element_Update_Column>;
@@ -1423,7 +1423,7 @@ export type Cms_Site_Variables_Mutation_Response = {
 	returning: Array<Cms_Site_Variables>;
 };
 
-/** on conflict condition type for table "cms.site_variables" */
+/** on_conflict condition type for table "cms.site_variables" */
 export type Cms_Site_Variables_On_Conflict = {
 	constraint: Cms_Site_Variables_Constraint;
 	update_columns?: Array<Cms_Site_Variables_Update_Column>;
@@ -1575,11 +1575,11 @@ export type Cp_Index_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.index" */
 export type Cp_Index_Obj_Rel_Insert_Input = {
 	data: Cp_Index_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.index" */
+/** on_conflict condition type for table "cp.index" */
 export type Cp_Index_On_Conflict = {
 	constraint: Cp_Index_Constraint;
 	update_columns?: Array<Cp_Index_Update_Column>;
@@ -1749,11 +1749,11 @@ export type Cp_Maintainer_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.maintainer" */
 export type Cp_Maintainer_Obj_Rel_Insert_Input = {
 	data: Cp_Maintainer_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.maintainer" */
+/** on_conflict condition type for table "cp.maintainer" */
 export type Cp_Maintainer_On_Conflict = {
 	constraint: Cp_Maintainer_Constraint;
 	update_columns?: Array<Cp_Maintainer_Update_Column>;
@@ -1912,7 +1912,7 @@ export type Cp_Maintainer_Users_Profile_Mutation_Response = {
 	returning: Array<Cp_Maintainer_Users_Profile>;
 };
 
-/** on conflict condition type for table "cp.maintainer_users_profile" */
+/** on_conflict condition type for table "cp.maintainer_users_profile" */
 export type Cp_Maintainer_Users_Profile_On_Conflict = {
 	constraint: Cp_Maintainer_Users_Profile_Constraint;
 	update_columns?: Array<Cp_Maintainer_Users_Profile_Update_Column>;
@@ -2127,11 +2127,11 @@ export type Cp_Space_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.space" */
 export type Cp_Space_Obj_Rel_Insert_Input = {
 	data: Cp_Space_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.space" */
+/** on_conflict condition type for table "cp.space" */
 export type Cp_Space_On_Conflict = {
 	constraint: Cp_Space_Constraint;
 	update_columns?: Array<Cp_Space_Update_Column>;
@@ -2361,7 +2361,7 @@ export type Cp_Visit_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit" */
 export type Cp_Visit_Arr_Rel_Insert_Input = {
 	data: Array<Cp_Visit_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
@@ -2540,7 +2540,7 @@ export type Cp_Visit_Note_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit_note" */
 export type Cp_Visit_Note_Arr_Rel_Insert_Input = {
 	data: Array<Cp_Visit_Note_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
 };
 
@@ -2633,7 +2633,7 @@ export type Cp_Visit_Note_Mutation_Response = {
 	returning: Array<Cp_Visit_Note>;
 };
 
-/** on conflict condition type for table "cp.visit_note" */
+/** on_conflict condition type for table "cp.visit_note" */
 export type Cp_Visit_Note_On_Conflict = {
 	constraint: Cp_Visit_Note_Constraint;
 	update_columns?: Array<Cp_Visit_Note_Update_Column>;
@@ -2703,11 +2703,11 @@ export enum Cp_Visit_Note_Update_Column {
 /** input type for inserting object relation for remote table "cp.visit" */
 export type Cp_Visit_Obj_Rel_Insert_Input = {
 	data: Cp_Visit_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.visit" */
+/** on_conflict condition type for table "cp.visit" */
 export type Cp_Visit_On_Conflict = {
 	constraint: Cp_Visit_Constraint;
 	update_columns?: Array<Cp_Visit_Update_Column>;
@@ -2952,7 +2952,7 @@ export type Lookup_App_Notification_Type_Mutation_Response = {
 	returning: Array<Lookup_App_Notification_Type>;
 };
 
-/** on conflict condition type for table "lookup.app_notification_type" */
+/** on_conflict condition type for table "lookup.app_notification_type" */
 export type Lookup_App_Notification_Type_On_Conflict = {
 	constraint: Lookup_App_Notification_Type_Constraint;
 	update_columns?: Array<Lookup_App_Notification_Type_Update_Column>;
@@ -3070,7 +3070,7 @@ export type Lookup_Cp_Visit_Status_Mutation_Response = {
 	returning: Array<Lookup_Cp_Visit_Status>;
 };
 
-/** on conflict condition type for table "lookup.cp_visit_status" */
+/** on_conflict condition type for table "lookup.cp_visit_status" */
 export type Lookup_Cp_Visit_Status_On_Conflict = {
 	constraint: Lookup_Cp_Visit_Status_Constraint;
 	update_columns?: Array<Lookup_Cp_Visit_Status_Update_Column>;
@@ -3204,7 +3204,7 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
 	returning: Array<Lookup_Schema_Audience_Type>;
 };
 
-/** on conflict condition type for table "lookup.schema_audience_type" */
+/** on_conflict condition type for table "lookup.schema_audience_type" */
 export type Lookup_Schema_Audience_Type_On_Conflict = {
 	constraint: Lookup_Schema_Audience_Type_Constraint;
 	update_columns?: Array<Lookup_Schema_Audience_Type_Update_Column>;
@@ -4620,7 +4620,7 @@ export type Object_File_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.file" */
 export type Object_File_Arr_Rel_Insert_Input = {
 	data: Array<Object_File_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Object_File_On_Conflict>;
 };
 
@@ -4728,7 +4728,7 @@ export type Object_File_Mutation_Response = {
 	returning: Array<Object_File>;
 };
 
-/** on conflict condition type for table "object.file" */
+/** on_conflict condition type for table "object.file" */
 export type Object_File_On_Conflict = {
 	constraint: Object_File_Constraint;
 	update_columns?: Array<Object_File_Update_Column>;
@@ -5390,11 +5390,11 @@ export type Object_Ie_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.ie" */
 export type Object_Ie_Obj_Rel_Insert_Input = {
 	data: Object_Ie_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.ie" */
+/** on_conflict condition type for table "object.ie" */
 export type Object_Ie_On_Conflict = {
 	constraint: Object_Ie_Constraint;
 	update_columns?: Array<Object_Ie_Update_Column>;
@@ -5920,7 +5920,7 @@ export type Object_Representation_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.representation" */
 export type Object_Representation_Arr_Rel_Insert_Input = {
 	data: Array<Object_Representation_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
@@ -6065,11 +6065,11 @@ export type Object_Representation_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.representation" */
 export type Object_Representation_Obj_Rel_Insert_Input = {
 	data: Object_Representation_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.representation" */
+/** on_conflict condition type for table "object.representation" */
 export type Object_Representation_On_Conflict = {
 	constraint: Object_Representation_Constraint;
 	update_columns?: Array<Object_Representation_Update_Column>;
@@ -7798,7 +7798,7 @@ export type Sync_Audio_Mutation_Response = {
 	returning: Array<Sync_Audio>;
 };
 
-/** on conflict condition type for table "sync.audio" */
+/** on_conflict condition type for table "sync.audio" */
 export type Sync_Audio_On_Conflict = {
 	constraint: Sync_Audio_Constraint;
 	update_columns?: Array<Sync_Audio_Update_Column>;
@@ -8033,7 +8033,7 @@ export type Sync_Film_Mutation_Response = {
 	returning: Array<Sync_Film>;
 };
 
-/** on conflict condition type for table "sync.film" */
+/** on_conflict condition type for table "sync.film" */
 export type Sync_Film_On_Conflict = {
 	constraint: Sync_Film_Constraint;
 	update_columns?: Array<Sync_Film_Update_Column>;
@@ -8280,7 +8280,7 @@ export type Sync_Video_Mutation_Response = {
 	returning: Array<Sync_Video>;
 };
 
-/** on conflict condition type for table "sync.video" */
+/** on_conflict condition type for table "sync.video" */
 export type Sync_Video_On_Conflict = {
 	constraint: Sync_Video_Constraint;
 	update_columns?: Array<Sync_Video_Update_Column>;
@@ -8491,7 +8491,7 @@ export type Users_Collection_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection" */
 export type Users_Collection_Arr_Rel_Insert_Input = {
 	data: Array<Users_Collection_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
@@ -8567,7 +8567,7 @@ export type Users_Collection_Ie_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection_ie" */
 export type Users_Collection_Ie_Arr_Rel_Insert_Input = {
 	data: Array<Users_Collection_Ie_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
 };
 
@@ -8648,7 +8648,7 @@ export type Users_Collection_Ie_Mutation_Response = {
 	returning: Array<Users_Collection_Ie>;
 };
 
-/** on conflict condition type for table "users.collection_ie" */
+/** on_conflict condition type for table "users.collection_ie" */
 export type Users_Collection_Ie_On_Conflict = {
 	constraint: Users_Collection_Ie_Constraint;
 	update_columns?: Array<Users_Collection_Ie_Update_Column>;
@@ -8767,11 +8767,11 @@ export type Users_Collection_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.collection" */
 export type Users_Collection_Obj_Rel_Insert_Input = {
 	data: Users_Collection_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.collection" */
+/** on_conflict condition type for table "users.collection" */
 export type Users_Collection_On_Conflict = {
 	constraint: Users_Collection_Constraint;
 	update_columns?: Array<Users_Collection_Update_Column>;
@@ -8974,11 +8974,11 @@ export type Users_Group_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.group" */
 export type Users_Group_Obj_Rel_Insert_Input = {
 	data: Users_Group_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Group_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.group" */
+/** on_conflict condition type for table "users.group" */
 export type Users_Group_On_Conflict = {
 	constraint: Users_Group_Constraint;
 	update_columns?: Array<Users_Group_Update_Column>;
@@ -9045,7 +9045,7 @@ export type Users_Group_Permission_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.group_permission" */
 export type Users_Group_Permission_Arr_Rel_Insert_Input = {
 	data: Array<Users_Group_Permission_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Group_Permission_On_Conflict>;
 };
 
@@ -9117,7 +9117,7 @@ export type Users_Group_Permission_Mutation_Response = {
 	returning: Array<Users_Group_Permission>;
 };
 
-/** on conflict condition type for table "users.group_permission" */
+/** on_conflict condition type for table "users.group_permission" */
 export type Users_Group_Permission_On_Conflict = {
 	constraint: Users_Group_Permission_Constraint;
 	update_columns?: Array<Users_Group_Permission_Update_Column>;
@@ -9262,7 +9262,7 @@ export type Users_Identity_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.identity" */
 export type Users_Identity_Arr_Rel_Insert_Input = {
 	data: Array<Users_Identity_Insert_Input>;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Identity_On_Conflict>;
 };
 
@@ -9350,7 +9350,7 @@ export type Users_Identity_Mutation_Response = {
 	returning: Array<Users_Identity>;
 };
 
-/** on conflict condition type for table "users.identity" */
+/** on_conflict condition type for table "users.identity" */
 export type Users_Identity_On_Conflict = {
 	constraint: Users_Identity_Constraint;
 	update_columns?: Array<Users_Identity_Update_Column>;
@@ -9447,7 +9447,7 @@ export type Users_Identity_Provider_Mutation_Response = {
 	returning: Array<Users_Identity_Provider>;
 };
 
-/** on conflict condition type for table "users.identity_provider" */
+/** on_conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
 	constraint: Users_Identity_Provider_Constraint;
 	update_columns?: Array<Users_Identity_Provider_Update_Column>;
@@ -9666,11 +9666,11 @@ export type Users_Permission_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.permission" */
 export type Users_Permission_Obj_Rel_Insert_Input = {
 	data: Users_Permission_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Permission_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.permission" */
+/** on_conflict condition type for table "users.permission" */
 export type Users_Permission_On_Conflict = {
 	constraint: Users_Permission_Constraint;
 	update_columns?: Array<Users_Permission_Update_Column>;
@@ -10033,11 +10033,11 @@ export type Users_Profile_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.profile" */
 export type Users_Profile_Obj_Rel_Insert_Input = {
 	data: Users_Profile_Insert_Input;
-	/** on conflict condition */
+	/** upsert condition */
 	on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.profile" */
+/** on_conflict condition type for table "users.profile" */
 export type Users_Profile_On_Conflict = {
 	constraint: Users_Profile_Constraint;
 	update_columns?: Array<Users_Profile_Update_Column>;
@@ -10187,6 +10187,9 @@ export type FindCollectionObjectsByCollectionIdQuery = {
 			schema_thumbnail_url?: string | null;
 			dcterms_format: string;
 			schema_number_of_pages?: number | null;
+			schema_is_part_of?: any | null;
+			schema_date_published?: any | null;
+			schema_date_created_lower_bound?: any | null;
 		};
 	}>;
 	users_collection_ie_aggregate: {
@@ -10704,6 +10707,24 @@ export const FindCollectionObjectsByCollectionIdDocument = {
 												name: {
 													kind: 'Name',
 													value: 'schema_number_of_pages',
+												},
+											},
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'schema_is_part_of' },
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_date_published',
+												},
+											},
+											{
+												kind: 'Field',
+												name: {
+													kind: 'Name',
+													value: 'schema_date_created_lower_bound',
 												},
 											},
 										],

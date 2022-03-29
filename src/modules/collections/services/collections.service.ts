@@ -39,6 +39,7 @@ export class CollectionsService {
 		if (!gqlIeObject) {
 			return undefined;
 		}
+		console.info(gqlIeObject);
 		return {
 			maintainerId: get(gqlIeObject, 'maintainer.schema_identifier'),
 			maintainerName: get(gqlIeObject, 'maintainer.schema_name'),
@@ -52,6 +53,10 @@ export class CollectionsService {
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
 			thumbnailUrl: get(gqlIeObject, 'schema_thumbnail_url'),
+			series: get(gqlIeObject, 'schema_is_part_of', { serie: [] }).serie,
+			programs: get(gqlIeObject, 'schema_is_part_of', { programma: [] }).programma,
+			datePublished: get(gqlIeObject, 'schema_date_published', null),
+			dateCreatedLowerBound: get(gqlIeObject, 'schema_date_created_lower_bound', null),
 		};
 	}
 

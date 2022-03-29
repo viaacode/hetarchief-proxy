@@ -11,6 +11,9 @@ query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: u
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
+			schema_is_part_of
+			schema_date_published
+			schema_date_created_lower_bound
 		}
 	}
 	users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
