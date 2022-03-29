@@ -5,13 +5,14 @@ import { get, isEmpty } from 'lodash';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, PlayerTicket, Representation } from '../types';
+import { Media, Representation } from '../types';
 
 import {
 	GET_FILE_BY_REPRESENTATION_ID,
 	GET_OBJECT_IE_BY_ID,
 	GET_THUMBNAIL_URL_BY_ID,
 } from './queries.gql';
+import { TicketsService } from './tickets.service';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -19,38 +20,26 @@ import { DataService } from '~modules/data/services/data.service';
 export class MediaService {
 	private logger: Logger = new Logger(MediaService.name, { timestamp: true });
 	private gotInstance: Got;
-	private playerTicketsGotInstance: Got;
-	private ticketServiceMaxAge: number;
 	private mediaServiceUrl: string;
-	private host: string;
 
-	constructor(private configService: ConfigService, protected dataService: DataService) {
+	constructor(
+		private configService: ConfigService,
+		protected dataService: DataService,
+		protected ticketsService: TicketsService
+	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('elasticSearchUrl'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
 
-		this.playerTicketsGotInstance = got.extend({
-			prefixUrl: this.configService.get('ticketServiceUrl'),
-			resolveBodyOnly: true,
-			responseType: 'json',
-			https: {
-				rejectUnauthorized: false,
-				certificate: this.configService.get('ticketServiceCertificate'),
-				key: this.configService.get('ticketServiceKey'),
-				passphrase: this.configService.get('ticketServicePassphrase'),
-			},
-		});
-		this.ticketServiceMaxAge = this.configService.get('ticketServiceMaxAge');
 		this.mediaServiceUrl = this.configService.get('mediaServiceUrl');
-		this.host = this.configService.get('host');
 	}
 
 	public adapt(graphQlObject: any): Media {
 		return {
 			id: get(graphQlObject, 'schema_identifier'),
-			meemooFragmentId: get(graphQlObject, 'meemoo_fragment_id'),
+			meemooIdentifier: get(graphQlObject, 'meemoo_identifier'),
 			premisIdentifier: get(graphQlObject, 'premis_identifier'),
 			premisRelationship: get(graphQlObject, 'premis_relationship'),
 			isPartOf: get(graphQlObject, 'schema_is_part_of'),
@@ -122,7 +111,7 @@ export class MediaService {
 			name: get(representation, 'schema_name'),
 			alternateName: get(representation, 'schema_alternate_name'),
 			description: get(representation, 'schema_description'),
-			meemooFragmentId: get(representation, 'ie_meemoo_fragment_id'),
+			schemaIdentifier: get(representation, 'schema_identifier'),
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
@@ -136,7 +125,7 @@ export class MediaService {
 			return [];
 		}
 		return graphQlFiles.map((file) => ({
-			id: get(file, 'id'),
+			schemaIdentifier: get(file, 'schema_identifier'),
 			name: get(file, 'schema_name'),
 			alternateName: get(file, 'schema_alternate_name'),
 			description: get(file, 'schema_description'),
@@ -196,46 +185,16 @@ export class MediaService {
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
 		const embedUrl = await this.getEmbedUrl(id);
+		const token = await this.ticketsService.getPlayerToken(embedUrl, referer);
 
-		const data = {
-			app: 'OR-*',
-			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: referer || this.host,
-			maxage: this.ticketServiceMaxAge,
-		};
-
-		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			embedUrl,
-			{
-				searchParams: data,
-				resolveBodyOnly: true,
-			}
-		);
-
-		return `${this.mediaServiceUrl}/${embedUrl}?token=${playerTicket.jwt}`;
+		return `${this.mediaServiceUrl}/${embedUrl}?token=${token}`;
 	}
 
 	public async getThumbnailUrl(id: string, referer: string): Promise<string> {
 		const thumbnailPath = await this.getThumbnailPath(id);
+		const token = await this.ticketsService.getThumbnailToken(referer);
 
-		const data = {
-			app: 'OR-*',
-			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: referer || this.host,
-			maxage: this.ticketServiceMaxAge,
-		};
-		// TODO delete log once this works on all envs
-		this.logger.debug(data);
-
-		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			thumbnailPath,
-			{
-				searchParams: data,
-				resolveBodyOnly: true,
-			}
-		);
-
-		return `${this.mediaServiceUrl}/${thumbnailPath}?token=${playerTicket.jwt}`;
+		return `${this.mediaServiceUrl}/${thumbnailPath}?token=${token}`;
 	}
 
 	public async getEmbedUrl(id: string): Promise<string> {

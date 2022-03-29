@@ -116,7 +116,7 @@ export class PlayerTicketsQueryDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
-		description: 'Get the playable url for the file with this representationId',
+		description: 'Get the playable url for the file with this representation schemaIdentifier',
 	})
 	id: string;
 }

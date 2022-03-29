@@ -36,7 +36,7 @@ export interface PlayerTicket {
 }
 
 export interface File {
-	id: string;
+	schemaIdentifier: string;
 	name: string;
 	alternateName: string;
 	description: string;
@@ -50,7 +50,7 @@ export interface Representation {
 	name: string;
 	alternateName: string;
 	description: string;
-	meemooFragmentId: string;
+	schemaIdentifier: string;
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
@@ -94,7 +94,7 @@ export interface Media {
 	alternateName: string;
 	duration: string;
 	license: any;
-	meemooFragmentId: string;
+	meemooIdentifier: string;
 	meemooMediaObjectId: string;
 	dateCreated: string;
 	dateCreatedLowerBound: string;
