@@ -115,7 +115,6 @@ export class MediaService {
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
-			id: get(representation, 'id'),
 			files: this.adaptFiles(representation.premis_includes),
 		}));
 	}
@@ -126,7 +125,6 @@ export class MediaService {
 		}
 		return graphQlFiles.map(
 			(file): MediaFile => ({
-				id: get(file, 'id'),
 				name: get(file, 'schema_name'),
 				alternateName: get(file, 'schema_alternate_name'),
 				description: get(file, 'schema_description'),
@@ -159,7 +157,6 @@ export class MediaService {
 
 	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
-		this.logger.log(esQuery);
 
 		let mediaResponse;
 		try {

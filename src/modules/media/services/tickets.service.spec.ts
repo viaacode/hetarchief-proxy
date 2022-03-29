@@ -1,8 +1,13 @@
+import { CACHE_MANAGER } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Cache } from 'cache-manager';
+import { addHours } from 'date-fns';
 import nock from 'nock';
 
 import { Configuration } from '~config';
+
+import { PlayerTicket } from '../types';
 
 import { TicketsService } from './tickets.service';
 
@@ -21,6 +26,23 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 	}),
 };
 
+const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
+	get: jest.fn(),
+	set: jest.fn(),
+};
+
+const mockPlayerTicket: PlayerTicket = {
+	jwt: 'secret-jwt-token',
+	context: {
+		app: 'OR-*',
+		name: '*/keyframes_all',
+		referer: 'http://localhost:3100',
+		ip: '',
+		fragment: null,
+		expiration: addHours(new Date(), 4).toISOString(),
+	},
+};
+
 describe('TicketsService', () => {
 	let ticketsService: TicketsService;
 
@@ -31,6 +53,10 @@ describe('TicketsService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheManager,
 				},
 			],
 		}).compile();
@@ -47,7 +73,7 @@ describe('TicketsService', () => {
 			nock('http://ticketservice/')
 				.get('/vrt/browse.mp4')
 				.query(true)
-				.reply(200, { jwt: 'secret-jwt-token' });
+				.reply(200, mockPlayerTicket);
 
 			const url = await ticketsService.getPlayerToken('vrt/browse.mp4', 'referer');
 			expect(url).toEqual('secret-jwt-token');
@@ -62,7 +88,7 @@ describe('TicketsService', () => {
 					referer: 'host',
 					maxage: 'ticketServiceMaxAge',
 				})
-				.reply(200, { jwt: 'secret-jwt-token' });
+				.reply(200, mockPlayerTicket);
 			const url = await ticketsService.getPlayerToken('vrt/browse.mp4', undefined);
 			expect(url).toEqual('secret-jwt-token');
 		});
@@ -73,7 +99,7 @@ describe('TicketsService', () => {
 			nock('http://ticketservice/')
 				.get('/*/keyframes_all')
 				.query(true)
-				.reply(200, { jwt: 'secret-jwt-token' });
+				.reply(200, mockPlayerTicket);
 			const url = await ticketsService.getThumbnailToken('referer');
 			expect(url).toEqual('secret-jwt-token');
 		});
@@ -87,7 +113,7 @@ describe('TicketsService', () => {
 					referer: 'host',
 					maxage: 'ticketServiceMaxAge',
 				})
-				.reply(200, { jwt: 'secret-jwt-token' });
+				.reply(200, mockPlayerTicket);
 			const url = await ticketsService.getThumbnailToken(undefined);
 			expect(url).toEqual('secret-jwt-token');
 		});

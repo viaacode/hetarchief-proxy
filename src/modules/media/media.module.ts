@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { MediaController } from './controllers/media.controller';
@@ -9,7 +9,7 @@ import { DataModule } from '~modules/data';
 
 @Module({
 	controllers: [MediaController],
-	imports: [ConfigModule, DataModule],
+	imports: [ConfigModule, DataModule, CacheModule.register()],
 	providers: [MediaService, TicketsService],
 })
 export class MediaModule {}

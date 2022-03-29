@@ -1,5 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cache } from 'cache-manager';
+import { differenceInSeconds } from 'date-fns';
 import got, { Got } from 'got';
 
 import { PlayerTicket } from '../types';
@@ -11,7 +13,10 @@ export class TicketsService {
 	private ticketServiceMaxAge: number;
 	private host: string;
 
-	constructor(private configService: ConfigService) {
+	constructor(
+		private configService: ConfigService,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache
+	) {
 		this.playerTicketsGotInstance = got.extend({
 			prefixUrl: this.configService.get('ticketServiceUrl'),
 			resolveBodyOnly: true,
@@ -27,7 +32,7 @@ export class TicketsService {
 		this.host = this.configService.get('host');
 	}
 
-	public async getPlayerToken(embedUrl: string, referer: string): Promise<string> {
+	protected async getToken(path: string, referer: string): Promise<PlayerTicket> {
 		const data = {
 			app: 'OR-*',
 			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
@@ -36,35 +41,32 @@ export class TicketsService {
 		};
 
 		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			embedUrl,
+			path,
 			{
 				searchParams: data,
 				resolveBodyOnly: true,
 			}
 		);
 
-		return playerTicket.jwt;
+		return playerTicket;
+	}
+
+	public async getPlayerToken(embedUrl: string, referer: string): Promise<string> {
+		// no caching
+		const token = await this.getToken(embedUrl, referer);
+		return token.jwt;
 	}
 
 	public async getThumbnailToken(referer: string): Promise<string> {
 		const thumbnailPath = '*/keyframes_all';
 
-		const data = {
-			app: 'OR-*',
-			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: referer || this.host,
-			maxage: this.ticketServiceMaxAge,
-		};
-		// TODO delete log once this works on all envs
-		this.logger.debug(data);
-		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			thumbnailPath,
-			{
-				searchParams: data,
-				resolveBodyOnly: true,
-			}
-		);
-		this.logger.debug(playerTicket);
-		return playerTicket.jwt;
+		let token: PlayerTicket = await this.cacheManager.get('thumbnailToken');
+		if (!token) {
+			token = await this.getToken(thumbnailPath, referer);
+			const ttl = differenceInSeconds(new Date(token.context.expiration), new Date()) - 60; // 60s margin to get the new token
+			await this.cacheManager.set('thumbnailToken', token, { ttl });
+		}
+
+		return token.jwt;
 	}
 }
