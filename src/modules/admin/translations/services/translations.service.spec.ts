@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { TranslationKey } from '../types';
+
 import { TranslationsService } from './translations.service';
 
 import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
@@ -30,17 +32,30 @@ describe('TranslationsService', () => {
 		expect(translationsService).toBeDefined();
 	});
 
-	describe('getSiteVariable', () => {
+	describe('getTranslations', () => {
 		it('returns translations', async () => {
-			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce({
-				name: 'translations-frontend',
-				value: {
-					key: 'translation',
-				},
-			});
+			mockSiteVariablesService.getSiteVariable
+				.mockResolvedValueOnce({
+					name: 'TRANSLATIONS_FRONTEND',
+					value: {
+						key: 'translation',
+					},
+				})
+				.mockResolvedValueOnce({
+					name: 'TRANSLATIONS_BACKEND',
+					value: {
+						key: 'BE-translation',
+					},
+				});
 			const response = await translationsService.getTranslations();
-			expect(response.name).toEqual('translations-frontend');
-			expect(response.value.key).toEqual('translation');
+			expect(response['frontend-translations']).toEqual({ key: 'translation' });
+			expect(response['backend-translations']).toEqual({ key: 'BE-translation' });
+		});
+
+		it('returns nothing on empty translations', async () => {
+			mockSiteVariablesService.getSiteVariable.mockResolvedValue(undefined);
+			const response = await translationsService.getTranslations();
+			expect(response).toEqual({});
 		});
 	});
 
@@ -49,9 +64,12 @@ describe('TranslationsService', () => {
 			mockSiteVariablesService.updateSiteVariable.mockResolvedValueOnce({
 				affected_rows: 1,
 			});
-			const response = await translationsService.updateTranslations({
-				key: 'new-translation',
-			});
+			const response = await translationsService.updateTranslations(
+				TranslationKey.FRONTEND_TRANSLATIONS,
+				{
+					key: 'new-translation',
+				}
+			);
 			expect(response).toEqual({ affected_rows: 1 });
 		});
 	});

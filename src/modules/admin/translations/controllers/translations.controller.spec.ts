@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { TranslationsService } from '../services/translations.service';
+import { TranslationKey } from '../types';
 
 import { TranslationsController } from './translations.controller';
 
@@ -51,7 +52,8 @@ describe('TranslationsController', () => {
 			mockTranslationsService.updateTranslations.mockResolvedValueOnce({ affected_rows: 1 });
 
 			const response = await translationsController.updateTranslations({
-				key1: 'newTranslation',
+				key: TranslationKey.FRONTEND_TRANSLATIONS,
+				data: { key1: 'newTranslation' },
 			});
 
 			expect(response.affected_rows).toBe(1);

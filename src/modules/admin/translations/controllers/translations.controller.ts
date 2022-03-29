@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { SiteVariable } from '../../site-variables/types';
+import { UpdateTranslationsDto } from '../dto/translations.dto';
 import { TranslationsService } from '../services/translations.service';
 
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -16,14 +16,17 @@ export class TranslationsController {
 	constructor(private translationsService: TranslationsService) {}
 
 	@Get()
-	public async getTranslations(): Promise<SiteVariable> {
+	public async getTranslations(): Promise<Record<string, Record<string, string>>> {
 		return this.translationsService.getTranslations();
 	}
 
 	@Post()
 	public async updateTranslations(
-		@Body() newTranslations: Record<string, string>
+		@Body() newTranslations: UpdateTranslationsDto
 	): Promise<UpdateResponse> {
-		return this.translationsService.updateTranslations(newTranslations);
+		return this.translationsService.updateTranslations(
+			newTranslations.key,
+			newTranslations.data
+		);
 	}
 }
