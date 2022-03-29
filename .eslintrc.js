@@ -17,7 +17,7 @@ module.exports = {
 		'plugin:import/typescript',
 		'plugin:prettier/recommended',
 	],
-	ignorePatterns: ['.eslintrc.js', 'jest*.config.js'],
+	ignorePatterns: ['.eslintrc.js', 'jest*.config.js', 'src/generated/*.ts'],
 	rules: {
 		'@typescript-eslint/interface-name-prefix': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
@@ -38,8 +38,8 @@ module.exports = {
 						pattern: '~*',
 						group: 'parent',
 						position: 'before',
-					}
-				]
+					},
+				],
 			},
 		],
 
