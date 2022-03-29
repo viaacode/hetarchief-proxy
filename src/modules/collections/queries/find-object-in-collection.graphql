@@ -1,5 +1,10 @@
 query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-	users_collection_ie(where: {user_collection_id: {_eq: $collectionId}, ie_schema_identifier: {_eq: $objectSchemaIdentifier}}) {
+	users_collection_ie(
+		where: {
+			user_collection_id: { _eq: $collectionId }
+			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
+		}
+	) {
 		ie {
 			meemoo_identifier
 			schema_identifier
