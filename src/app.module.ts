@@ -17,6 +17,7 @@ import { MediaModule } from '~modules/media';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
 import { TosModule } from '~modules/tos';
+import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
@@ -43,6 +44,7 @@ import { SessionService } from '~shared/services/session.service';
 		CollectionsModule,
 		NotificationsModule,
 		ContentPagesModule,
+		TranslationsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService, ConfigService],

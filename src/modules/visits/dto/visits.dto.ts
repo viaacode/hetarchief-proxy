@@ -26,15 +26,15 @@ export class CreateVisitDto {
 	spaceId: string;
 
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiProperty({
 		type: string,
 		description: 'The requested timeframe by the user',
 	})
-	timeframe: string;
+	timeframe?: string;
 
 	@IsString()
-	@IsOptional()
+	@IsNotEmpty()
 	@ApiProperty({
 		type: string,
 		description: "The reason for this user's visit",
