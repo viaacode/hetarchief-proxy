@@ -31,7 +31,7 @@ export class CreateVisitDto {
 		type: string,
 		description: 'The requested timeframe by the user',
 	})
-	timeframe: string;
+	timeframe?: string;
 
 	@IsString()
 	@IsNotEmpty()

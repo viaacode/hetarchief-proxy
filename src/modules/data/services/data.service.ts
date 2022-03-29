@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
 import got, { Got } from 'got';
 import { DocumentNode } from 'graphql';
-import { GraphQLClient } from 'graphql-request';
 import { print } from 'graphql/language/printer';
 import { keys } from 'lodash';
 
