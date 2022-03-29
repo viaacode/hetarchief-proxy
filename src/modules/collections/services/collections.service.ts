@@ -39,7 +39,7 @@ export class CollectionsService {
 		if (!gqlIeObject) {
 			return undefined;
 		}
-		console.info(gqlIeObject);
+
 		return {
 			maintainerId: get(gqlIeObject, 'maintainer.schema_identifier'),
 			maintainerName: get(gqlIeObject, 'maintainer.schema_name'),
