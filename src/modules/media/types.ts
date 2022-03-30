@@ -20,6 +20,7 @@ export interface QueryBuilderConfig {
 	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
 	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
 	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
+	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
 export interface PlayerTicket {
@@ -120,6 +121,7 @@ export enum SearchFilterField {
 	ERA = 'era',
 	LOCATION = 'location',
 	LANGUAGE = 'language',
+	MEDIUM = 'medium',
 }
 
 export enum Operator {

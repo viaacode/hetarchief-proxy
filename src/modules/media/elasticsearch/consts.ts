@@ -37,6 +37,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	era: 'schema_temporal_coverage',
 	location: 'schema_spatial_coverage',
 	language: 'schema_in_language',
+	medium: 'dcterms_medium',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -79,6 +80,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
 	language: QueryType.TERMS,
+	medium: QueryType.MATCH,
 };
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
@@ -97,4 +99,8 @@ export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 	query: false,
 	format: false,
 	genre: true,
+};
+
+export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
+	medium: 'keyword',
 };

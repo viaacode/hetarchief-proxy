@@ -50,15 +50,6 @@ describe('MediaController', () => {
 		expect(mediaController).toBeDefined();
 	});
 
-	describe('getMedia', () => {
-		it('should return all media items', async () => {
-			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
-			const media = await mediaController.getMedia(null);
-			expect(media.hits.total.value).toEqual(2);
-			expect(media.hits.hits.length).toEqual(2);
-		});
-	});
-
 	describe('getPlayableUrl', () => {
 		it('should return a playable url', async () => {
 			mockMediaService.getPlayableUrl.mockResolvedValueOnce('http://playme');
