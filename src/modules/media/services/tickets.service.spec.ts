@@ -75,8 +75,8 @@ describe('TicketsService', () => {
 				.query(true)
 				.reply(200, mockPlayerTicket);
 
-			const url = await ticketsService.getPlayerToken('vrt/browse.mp4', 'referer');
-			expect(url).toEqual('secret-jwt-token');
+			const token = await ticketsService.getPlayerToken('vrt/browse.mp4', 'referer');
+			expect(token).toEqual('secret-jwt-token');
 		});
 
 		it('uses the fallback referer if none was set', async () => {
@@ -89,8 +89,8 @@ describe('TicketsService', () => {
 					maxage: 'ticketServiceMaxAge',
 				})
 				.reply(200, mockPlayerTicket);
-			const url = await ticketsService.getPlayerToken('vrt/browse.mp4', undefined);
-			expect(url).toEqual('secret-jwt-token');
+			const token = await ticketsService.getPlayerToken('vrt/browse.mp4', undefined);
+			expect(token).toEqual('secret-jwt-token');
 		});
 	});
 
@@ -100,8 +100,8 @@ describe('TicketsService', () => {
 				.get('/*/keyframes_all')
 				.query(true)
 				.reply(200, mockPlayerTicket);
-			const url = await ticketsService.getThumbnailToken('referer');
-			expect(url).toEqual('secret-jwt-token');
+			const token = await ticketsService.getThumbnailToken('referer');
+			expect(token).toEqual('secret-jwt-token');
 		});
 
 		it('uses the fallback referer if none was set', async () => {
@@ -114,8 +114,14 @@ describe('TicketsService', () => {
 					maxage: 'ticketServiceMaxAge',
 				})
 				.reply(200, mockPlayerTicket);
-			const url = await ticketsService.getThumbnailToken(undefined);
-			expect(url).toEqual('secret-jwt-token');
+			const token = await ticketsService.getThumbnailToken(undefined);
+			expect(token).toEqual('secret-jwt-token');
+		});
+
+		it('returns the cached token if available', async () => {
+			mockCacheManager.get.mockResolvedValueOnce(mockPlayerTicket);
+			const token = await ticketsService.getThumbnailToken('referer');
+			expect(token).toEqual('secret-jwt-token');
 		});
 	});
 });

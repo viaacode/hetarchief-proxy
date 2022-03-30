@@ -13,8 +13,11 @@ export class MediaController {
 
 	// TODO comment this endpoint, since users always need to search inside one reading room
 	@Post()
-	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, null);
+	public async getMedia(
+		@Headers('referer') referer: string,
+		@Body() queryDto: MediaQueryDto
+	): Promise<any> {
+		const media = await this.mediaService.findAll(queryDto, null, referer);
 		return media;
 	}
 
@@ -40,18 +43,22 @@ export class MediaController {
 	}
 
 	@Get(':id')
-	public async getMediaById(@Param('id') id: string): Promise<any> {
-		return this.mediaService.findBySchemaIdentifier(id);
+	public async getMediaById(
+		@Headers('referer') referer: string,
+		@Param('id') id: string
+	): Promise<any> {
+		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(
+		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
 		@Param('esIndex')
 		esIndex: string
 	): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, esIndex);
+		const media = await this.mediaService.findAll(queryDto, esIndex, referer);
 		return media;
 	}
 }

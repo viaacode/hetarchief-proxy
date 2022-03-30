@@ -136,6 +136,33 @@ export class MediaService {
 		);
 	}
 
+	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+		// sanity check
+		const nrHits = get(esResponse, 'hits.total.value');
+		if (!nrHits) {
+			return esResponse;
+		}
+		// there are hits
+		esResponse.hits.hits = await Promise.all(
+			esResponse.hits.hits.map(async (hit) => {
+				hit._source.schema_thumbnail_url = await this.resolveThumbnailUrl(
+					hit._source.schema_thumbnail_url,
+					referer
+				);
+				return hit;
+			})
+		);
+		return esResponse;
+	}
+
+	public async resolveThumbnailUrl(path: string, referer: string): Promise<string> {
+		if (!path) {
+			return path;
+		}
+		const token = await this.ticketsService.getThumbnailToken(referer);
+		return `${this.mediaServiceUrl}/${path}?token=${token}`;
+	}
+
 	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
@@ -155,7 +182,11 @@ export class MediaService {
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
+	public async findAll(
+		inputQuery: MediaQueryDto,
+		esIndex: string | null,
+		referer: string
+	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		let mediaResponse;
@@ -170,14 +201,14 @@ export class MediaService {
 			}
 		}
 
-		return mediaResponse;
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 
 	/**
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
 		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
@@ -186,7 +217,9 @@ export class MediaService {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
-		return this.adapt(objectIe[0]);
+		const adapted = this.adapt(objectIe[0]);
+		adapted.thumbnailUrl = await this.resolveThumbnailUrl(adapted.thumbnailUrl, referer);
+		return adapted;
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
@@ -198,9 +231,7 @@ export class MediaService {
 
 	public async getThumbnailUrl(id: string, referer: string): Promise<string> {
 		const thumbnailPath = await this.getThumbnailPath(id);
-		const token = await this.ticketsService.getThumbnailToken(referer);
-
-		return `${this.mediaServiceUrl}/${thumbnailPath}?token=${token}`;
+		return this.resolveThumbnailUrl(thumbnailPath, referer);
 	}
 
 	public async getEmbedUrl(id: string): Promise<string> {

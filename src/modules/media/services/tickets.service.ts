@@ -60,11 +60,11 @@ export class TicketsService {
 	public async getThumbnailToken(referer: string): Promise<string> {
 		const thumbnailPath = '*/keyframes_all';
 
-		let token: PlayerTicket = await this.cacheManager.get('thumbnailToken');
+		let token: PlayerTicket = await this.cacheManager.get(`thumbnailToken-${referer}`);
 		if (!token) {
 			token = await this.getToken(thumbnailPath, referer);
 			const ttl = differenceInSeconds(new Date(token.context.expiration), new Date()) - 60; // 60s margin to get the new token
-			await this.cacheManager.set('thumbnailToken', token, { ttl });
+			await this.cacheManager.set(`thumbnailToken-${referer}`, token, { ttl });
 		}
 
 		return token.jwt;

@@ -44,12 +44,16 @@ const getMockMediaResponse = () => ({
 		},
 		hits: [
 			{
-				_id: '4f1mg9x363',
-				schema_name: 'Op de boerderij',
+				_source: {
+					_id: '4f1mg9x363',
+					schema_name: 'Op de boerderij',
+				},
 			},
 			{
-				_id: '8911p09j1g',
-				schema_name: 'Durf te vragen R002 A0001',
+				_source: {
+					_id: '8911p09j1g',
+					schema_name: 'Durf te vragen R002 A0001',
+				},
 			},
 		],
 	},
@@ -88,10 +92,18 @@ describe('MediaService', () => {
 		expect(mediaService).toBeDefined();
 	});
 
+	describe('adaptESResponse', () => {
+		it('returns the input if no hits were found', async () => {
+			const esResponse = { hist: { total: { value: 0 } } };
+			const result = await mediaService.adaptESResponse(esResponse, 'referer');
+			expect(result).toEqual(esResponse);
+		});
+	});
+
 	describe('findAll', () => {
 		it('returns the es response from the main _search endpoint if no index is specified', async () => {
 			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({}, null);
+			const response = await mediaService.findAll({}, null, 'referer');
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});
@@ -100,7 +112,7 @@ describe('MediaService', () => {
 			nock('http://elasticsearch/')
 				.post('/my-index/_search')
 				.reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({}, 'my-index');
+			const response = await mediaService.findAll({}, 'my-index', 'referer');
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});
@@ -124,7 +136,7 @@ describe('MediaService', () => {
 					error: { type: 'index_not_found_exception' },
 				});
 			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({}, 'my-index');
+			const response = await mediaService.findAll({}, 'my-index', 'referer');
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});
@@ -133,7 +145,7 @@ describe('MediaService', () => {
 			nock('http://elasticsearch/').post('/my-index/_search').reply(500, 'unknown');
 			let error;
 			try {
-				await mediaService.findAll({}, 'my-index');
+				await mediaService.findAll({}, 'my-index', 'referer');
 			} catch (e) {
 				error = e.response;
 			}
@@ -144,7 +156,10 @@ describe('MediaService', () => {
 	describe('findById', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
-			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			const response = await mediaService.findBySchemaIdentifier(
+				mockObjectSchemaIdentifier,
+				'referer'
+			);
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
@@ -159,7 +174,10 @@ describe('MediaService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			const response = await mediaService.findBySchemaIdentifier(
+				mockObjectSchemaIdentifier,
+				'referer'
+			);
 
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toEqual([]);
@@ -170,7 +188,10 @@ describe('MediaService', () => {
 			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+			const response = await mediaService.findBySchemaIdentifier(
+				mockObjectSchemaIdentifier,
+				'referer'
+			);
 
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
@@ -184,7 +205,7 @@ describe('MediaService', () => {
 			});
 			let error;
 			try {
-				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
+				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier, 'referer');
 			} catch (e) {
 				error = e;
 			}
