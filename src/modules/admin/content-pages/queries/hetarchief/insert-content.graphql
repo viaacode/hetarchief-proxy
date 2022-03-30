@@ -1,7 +1,0 @@
-mutation insertContent($contentPage: cms_content_insert_input!) {
-	insert_cms_content(objects: [$contentPage]) {
-		returning {
-			id
-		}
-	}
-}

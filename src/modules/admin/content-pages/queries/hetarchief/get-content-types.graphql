@@ -1,6 +1,0 @@
-query getContentTypes {
-	lookup_cms_content_type {
-		value
-		comment
-	}
-}
