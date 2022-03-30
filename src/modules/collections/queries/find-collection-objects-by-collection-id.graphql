@@ -1,5 +1,18 @@
-query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid, $where: users_collection_ie_bool_exp!, $offset: Int, $limit: Int) {
-	users_collection_ie(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where], collection: {user_profile_id: {_eq: $userProfileId}}}, offset: $offset, limit: $limit) {
+query findCollectionObjectsByCollectionId(
+	$collectionId: uuid
+	$userProfileId: uuid
+	$where: users_collection_ie_bool_exp!
+	$offset: Int
+	$limit: Int
+) {
+	users_collection_ie(
+		where: {
+			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
+			collection: { user_profile_id: { _eq: $userProfileId } }
+		}
+		offset: $offset
+		limit: $limit
+	) {
 		created_at
 		ie {
 			schema_identifier
@@ -13,7 +26,9 @@ query findCollectionObjectsByCollectionId($collectionId: uuid, $userProfileId: u
 			schema_number_of_pages
 		}
 	}
-	users_collection_ie_aggregate(where: {_and: [{user_collection_id: {_eq: $collectionId}}, $where]}) {
+	users_collection_ie_aggregate(
+		where: { _and: [{ user_collection_id: { _eq: $collectionId } }, $where] }
+	) {
 		aggregate {
 			count
 		}
