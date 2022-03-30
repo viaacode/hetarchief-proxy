@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
-import { SpacesQueryDto } from '../dto/spaces.dto';
+import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, Space } from '../types';
 
 import {
@@ -12,6 +12,7 @@ import {
 	GET_SPACE_MAINTAINER_PROFILES,
 } from './queries.gql';
 
+import { UpdateSpaceDocument } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { Recipient } from '~shared/types/types';
@@ -72,6 +73,29 @@ export class SpacesService {
 			createdAt: get(graphQlSpace, 'created_at'),
 			updatedAt: get(graphQlSpace, 'updated_at'),
 		};
+	}
+
+	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
+		const updateKeys = Object.keys(updateSpaceDto);
+		const updateSpace = {
+			...(updateKeys.includes('color') ? { schema_color: updateSpaceDto.color } : {}),
+			...(updateKeys.includes('description')
+				? { schema_description: updateSpaceDto.description }
+				: {}),
+			...(updateKeys.includes('serviceDescription')
+				? { schema_service_description: updateSpaceDto.serviceDescription }
+				: {}),
+			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
+		};
+		const {
+			data: { update_cp_space_by_pk: updatedSpace },
+		} = await this.dataService.execute(UpdateSpaceDocument, { id, updateSpace });
+
+		if (!updatedSpace) {
+			throw new NotFoundException(`Space with id '${id}' not found`);
+		}
+
+		return this.adapt(updatedSpace);
 	}
 
 	public async findAll(

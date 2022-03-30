@@ -83,3 +83,48 @@ export class SpacesQueryDto {
 	})
 	orderDirection? = SortDirection.asc;
 }
+
+export class UpdateSpaceDto {
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The description for this space',
+		default: undefined,
+	})
+	description?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The (background) color for this space',
+		default: undefined,
+		example: '#ffffff',
+	})
+	color?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'The service description for this space. This is shown as additional info when making a visit request',
+		default: undefined,
+	})
+	serviceDescription?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'The url to the image for this space. S3 images only. Will delete the previous from S3 if one was set. If a file is uploaded and image is set, image will be ignored',
+		default: undefined,
+	})
+	image?: string;
+}

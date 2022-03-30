@@ -33,6 +33,13 @@ export const configValidationSchema = Joi.object({
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP: Joi.string().allow(''),
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED: Joi.string().allow(''),
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED: Joi.string().allow(''),
+	ASSET_SERVER_ENDPOINT: Joi.string(),
+	ASSET_SERVER_TOKEN_ENDPOINT: Joi.string(),
+	ASSET_SERVER_TOKEN_SECRET: Joi.string(),
+	ASSET_SERVER_TOKEN_PASSWORD: Joi.string(),
+	ASSET_SERVER_TOKEN_USERNAME: Joi.string(),
+	ASSET_SERVER_BUCKET_NAME: Joi.string(),
+	TEMP_ASSET_FOLDER: Joi.string().allow(''),
 });
 
 export const DEFAULT_CONFIG = {

@@ -1,4 +1,5 @@
 import { ConfigService as NestConfigService } from '@nestjs/config';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 export interface Configuration {
 	environment: string;
@@ -36,6 +37,14 @@ export interface Configuration {
 	campaignMonitorTemplateVisitRequestCp: string;
 	campaignMonitorTemplateVisitApproved: string;
 	campaignMonitorTemplateVisitDenied: string;
+	assetServerEndpoint: string;
+	assetServerTokenEndpoint: string;
+	assetServerTokenSecret: string;
+	assetServerTokenPassword: string;
+	assetServerTokenUsername: string;
+	assetServerBucketName: string;
+	tempAssetFolder: string;
+	multerOptions: MulterOptions;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
