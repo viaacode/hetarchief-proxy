@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
+import { UpdateSpaceDocument } from '../../../generated/graphql';
 import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, Space } from '../types';
 
@@ -10,7 +11,6 @@ import {
 	FIND_SPACE_BY_ID,
 	FIND_SPACES,
 	GET_SPACE_MAINTAINER_PROFILES,
-	UPDATE_SPACE,
 } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -89,7 +89,7 @@ export class SpacesService {
 		};
 		const {
 			data: { update_cp_space_by_pk: updatedSpace },
-		} = await this.dataService.execute(UPDATE_SPACE, { id, updateSpace });
+		} = await this.dataService.execute(UpdateSpaceDocument, { id, updateSpace });
 
 		if (!updatedSpace) {
 			throw new NotFoundException(`Space with id '${id}' not found`);

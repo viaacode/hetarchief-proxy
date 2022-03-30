@@ -101,7 +101,7 @@ const config = (): Configuration => {
 		multerOptions: {
 			dest: getEnvValue('TEMP_ASSET_FOLDER', false) || '/tmp',
 			limits: {
-				fileSize: 200000000,
+				fileSize: 2_000_000, // 2 MB
 			},
 			fileFilter: (req, file, cb) => cb(null, VALID_MIME_TYPES.includes(file.mimetype)),
 		},
