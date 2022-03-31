@@ -71,6 +71,52 @@ describe('SpacesService', () => {
 		});
 	});
 
+	describe('update', () => {
+		it('can update a space', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_space_by_pk: {
+						id: '1',
+					},
+				},
+			});
+			const response = await spacesService.update('1', {
+				color: 'red',
+				description: 'my-space',
+				serviceDescription: 'service description',
+				image: '',
+			});
+			expect(response.id).toEqual('1');
+		});
+
+		it('does not crash when updating not a single value', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_space_by_pk: {
+						id: '1',
+					},
+				},
+			});
+			const response = await spacesService.update('1', {});
+			expect(response.id).toEqual('1');
+		});
+
+		it('throws a notfoundexception if the space was not found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					update_cp_space_by_pk: null,
+				},
+			});
+			let error;
+			try {
+				await spacesService.update('0', {});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual("Space with id '0' not found");
+		});
+	});
+
 	describe('findAll', () => {
 		it('returns a paginated response with all spaces (query undefined)', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
