@@ -4,6 +4,7 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
+import { AssetsService } from '~modules/assets/services/assets.service';
 import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
@@ -12,6 +13,7 @@ const mockSpacesResponse = {
 		{
 			id: '1',
 			name: 'Space Mountain',
+			image: 'http://assets-int.hetarchief.be/hetarchief/SPACE_IMAGE/image.jpg',
 		},
 		{
 			id: '2',
@@ -36,6 +38,12 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findSpaceByCpUserId: jest.fn(),
 	getMaintainerProfiles: jest.fn(),
 	findBySlug: jest.fn(),
+	update: jest.fn(),
+};
+
+const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
+	upload: jest.fn(),
+	delete: jest.fn(),
 };
 
 describe('SpacesController', () => {
@@ -49,6 +57,10 @@ describe('SpacesController', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: AssetsService,
+					useValue: mockAssetsService,
 				},
 			],
 		}).compile();
@@ -95,6 +107,45 @@ describe('SpacesController', () => {
 				message: 'Space with slug "huis-van-alijn" not found',
 				error: 'Not Found',
 			});
+		});
+	});
+
+	describe('updateSpace', () => {
+		it('should update a space', async () => {
+			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			const space = await spacesController.updateSpace('1', {}, null);
+			expect(space.id).toEqual('1');
+		});
+
+		it('can upload an image for a space', async () => {
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			const space = await spacesController.updateSpace(
+				'1',
+				{},
+				{
+					fieldname: 'file',
+					originalname: 'image.jpg',
+					encoding: '7bit',
+					mimetype: 'image/png',
+					size: 6714,
+					filename: 'ee1c7ce7dc5a8b49ca95fc2f62425edc',
+					path: '',
+					buffer: null,
+					stream: null,
+					destination: null,
+				}
+			);
+			expect(space.id).toEqual('1');
+		});
+
+		it('can delete an image when set empty', async () => {
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			const space = await spacesController.updateSpace('1', { image: '' }, null);
+			expect(space.id).toEqual('1');
 		});
 	});
 });
