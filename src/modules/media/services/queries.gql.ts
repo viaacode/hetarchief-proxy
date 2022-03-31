@@ -69,7 +69,7 @@ export const GET_OBJECT_IE_BY_ID = `
 			ebucore_object_type
 			schema_genre
 			premis_is_represented_by {
-        		ie_schema_identifier
+				ie_schema_identifier
 				schema_name
 				schema_alternate_name
 				schema_description

@@ -35,8 +35,8 @@ const mockPlayerTicket: PlayerTicket = {
 	jwt: 'secret-jwt-token',
 	context: {
 		app: 'OR-*',
-		name: '*/keyframes_all',
-		referer: 'http://localhost:3100',
+		name: 'TESTBEELD/keyframes_all',
+		referer: 'http://localhost:3200',
 		ip: '',
 		fragment: null,
 		expiration: addHours(new Date(), 4).toISOString(),
@@ -97,7 +97,7 @@ describe('TicketsService', () => {
 	describe('getThumbnailToken', () => {
 		it('returns a thumbnail token', async () => {
 			nock('http://ticketservice/')
-				.get('/*/keyframes_all')
+				.get('/TESTBEELD/keyframes_all')
 				.query(true)
 				.reply(200, mockPlayerTicket);
 			const token = await ticketsService.getThumbnailToken('referer');
@@ -106,7 +106,7 @@ describe('TicketsService', () => {
 
 		it('uses the fallback referer if none was set', async () => {
 			nock('http://ticketservice/')
-				.get('/*/keyframes_all')
+				.get('/TESTBEELD/keyframes_all')
 				.query({
 					app: 'OR-*',
 					client: '',

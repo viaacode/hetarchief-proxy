@@ -58,7 +58,7 @@ export class TicketsService {
 	}
 
 	public async getThumbnailToken(referer: string): Promise<string> {
-		const thumbnailPath = '*/keyframes_all';
+		const thumbnailPath = 'TESTBEELD/keyframes_all';
 
 		let token: PlayerTicket = await this.cacheManager.get(`thumbnailToken-${referer}`);
 		if (!token) {
