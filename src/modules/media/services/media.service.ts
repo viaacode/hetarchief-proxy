@@ -220,6 +220,28 @@ export class MediaService {
 		});
 	}
 
+	public async getSimilar(schemaIdentifier: string, esIndex: string, limit = 4): Promise<any> {
+		const likeFilter = {
+			_index: esIndex,
+			_id: schemaIdentifier,
+		};
+
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				more_like_this: {
+					fields: ['schema_name', 'schema_description'],
+					like: [likeFilter],
+					min_term_freq: 1,
+					max_query_terms: 12,
+				},
+			},
+		};
+
+		return this.executeQuery(esIndex, esQueryObject);
+	}
+
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
 		const embedUrl = await this.getEmbedUrl(id);
 
