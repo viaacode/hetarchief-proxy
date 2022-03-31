@@ -1,5 +1,12 @@
-mutation updateCollection($collectionId: uuid, $userProfileId: uuid, $collection: users_collection_set_input) {
-	update_users_collection(where: {id: {_eq: $collectionId}, user_profile_id: {_eq: $userProfileId}}, _set: $collection) {
+mutation updateCollection(
+	$collectionId: uuid
+	$userProfileId: uuid
+	$collection: users_collection_set_input
+) {
+	update_users_collection(
+		where: { id: { _eq: $collectionId }, user_profile_id: { _eq: $userProfileId } }
+		_set: $collection
+	) {
 		returning {
 			id
 			name
