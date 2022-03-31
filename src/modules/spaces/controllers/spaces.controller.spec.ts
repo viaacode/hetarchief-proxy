@@ -86,7 +86,7 @@ describe('SpacesController', () => {
 		});
 	});
 
-	describe('getSpaceById', () => {
+	describe('getSpaceBySlug', () => {
 		it('should return a space by slug', async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			const space = await spacesController.getSpaceBySlug('huis-van-alijn');
