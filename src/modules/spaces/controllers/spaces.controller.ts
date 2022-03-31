@@ -46,13 +46,22 @@ export class SpacesController {
 	}
 
 	@Get(':slug')
-	@ApiOperation({
-		description: 'Get a space by slug',
-	})
 	public async getSpaceBySlug(@Param('slug') slug: string): Promise<Space | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
 			throw new NotFoundException(i18n.t(`Space with slug "${slug}" not found`));
+		}
+		return space;
+	}
+
+	@Get(':id')
+	@ApiOperation({
+		description: 'Get a space by slug',
+	})
+	public async getSpaceById(@Param('id', ParseUUIDPipe) id: string): Promise<Space | null> {
+		const space = await this.spacesService.findById(id);
+		if (!space) {
+			throw new NotFoundException(i18n.t(`Space with id "${id}" not found`));
 		}
 		return space;
 	}
