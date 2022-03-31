@@ -53,8 +53,8 @@ export class CollectionsService {
 			numberOfPages: get(gqlIeObject, 'schema_number_of_pages'),
 			termsAvailable: get(gqlIeObject, 'dcterms_available'),
 			thumbnailUrl: get(gqlIeObject, 'schema_thumbnail_url'),
-			series: get(gqlIeObject, 'schema_is_part_of', { serie: [] }).serie,
-			programs: get(gqlIeObject, 'schema_is_part_of', { programma: [] }).programma,
+			series: get(gqlIeObject, 'schema_is_part_of.serie', []),
+			programs: get(gqlIeObject, 'schema_is_part_of.programma', []),
 			datePublished: get(gqlIeObject, 'schema_date_published', null),
 			dateCreatedLowerBound: get(gqlIeObject, 'schema_date_created_lower_bound', null),
 		};
