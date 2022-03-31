@@ -185,7 +185,7 @@ export class SpacesService {
 		const spaceResponse = await this.dataService.execute(
 			FindSpaceByMaintainerIdentifierDocument,
 			{
-				slug,
+				maintainerId: slug,
 			}
 		);
 		if (!spaceResponse.data.cp_space[0]) {
