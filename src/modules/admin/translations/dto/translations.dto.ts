@@ -8,7 +8,8 @@ export class UpdateTranslationsDto {
 		required: true,
 		enum: TranslationKey,
 		description:
-			'The translation set to be updated, possible values: TRANSLATIONS_FRONTEND, TRANSLATIONS_BACKEND',
+			'The translation set to be updated, possible values: ' +
+			Object.values(TranslationKey).join(', '),
 	})
 	@IsEnum(TranslationKey)
 	key: TranslationKey;

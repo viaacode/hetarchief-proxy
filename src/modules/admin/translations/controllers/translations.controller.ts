@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { UpdateTranslationsDto } from '../dto/translations.dto';
 import { TranslationsService } from '../services/translations.service';
@@ -21,6 +21,10 @@ export class TranslationsController {
 	}
 
 	@Post()
+	@ApiOperation({
+		description:
+			'Set translations for the specified key. Careful: this overwrites all existing values.',
+	})
 	public async updateTranslations(
 		@Body() newTranslations: UpdateTranslationsDto
 	): Promise<UpdateResponse> {

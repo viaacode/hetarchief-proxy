@@ -36,13 +36,13 @@ describe('TranslationsService', () => {
 		it('returns translations', async () => {
 			mockSiteVariablesService.getSiteVariable
 				.mockResolvedValueOnce({
-					name: 'TRANSLATIONS_FRONTEND',
+					name: TranslationKey.FRONTEND_TRANSLATIONS,
 					value: {
 						key: 'translation',
 					},
 				})
 				.mockResolvedValueOnce({
-					name: 'TRANSLATIONS_BACKEND',
+					name: TranslationKey.BACKEND_TRANSLATIONS,
 					value: {
 						key: 'BE-translation',
 					},
