@@ -35,6 +35,14 @@ export class MediaController {
 		return this.mediaService.findBySchemaIdentifier(id);
 	}
 
+	@Get(':id/related')
+	public async getRelated(
+		@Param('id') id: string,
+		@Query('meemooIdentifier') meemooIdentifier: string
+	): Promise<any> {
+		return this.mediaService.getRelated(id, meemooIdentifier);
+	}
+
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(

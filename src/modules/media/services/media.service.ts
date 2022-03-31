@@ -1,13 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
 
+import {
+	GetFileByRepresentationSchemaIdentifierDocument,
+	GetObjectIeByIdDocument,
+	GetRelatedObjectsDocument,
+} from '../../../generated/graphql';
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, MediaFile, PlayerTicket, Representation } from '../types';
-
-import { GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, GET_OBJECT_IE_BY_ID } from './queries.gql';
 
 import { DataService } from '~modules/data/services/data.service';
 
@@ -190,13 +194,30 @@ export class MediaService {
 	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
+		} = await this.dataService.execute(GetObjectIeByIdDocument, { schemaIdentifier });
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
 		return this.adapt(objectIe[0]);
+	}
+
+	public async getRelated(
+		schemaIdentifier: string,
+		meemooIdentifier: string
+	): Promise<IPagination<Media>> {
+		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
+			schemaIdentifier,
+			meemooIdentifier,
+		});
+
+		return Pagination<Media>({
+			items: mediaObjects.data.object_ie.map((object: any) => this.adapt(object)),
+			page: 1,
+			size: mediaObjects.data.object_ie.length,
+			total: mediaObjects.data.object_ie.length,
+		});
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
@@ -223,7 +244,7 @@ export class MediaService {
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, { id });
+		} = await this.dataService.execute(GetFileByRepresentationSchemaIdentifierDocument, { id });
 		if (!objectFile[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

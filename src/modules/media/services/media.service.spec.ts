@@ -131,7 +131,7 @@ describe('MediaService', () => {
 		});
 	});
 
-	describe('findById', () => {
+	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
 			const response = await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier);
@@ -183,6 +183,17 @@ describe('MediaService', () => {
 				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
+		});
+	});
+
+	describe('getRelated', () => {
+		it('returns the related objects for a given id and meemooIdentifier', async () => {
+			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const response = await mediaService.getRelated(
+				mockObjectSchemaIdentifier,
+				'8911p09j1g'
+			);
+			expect(response.items.length).toEqual(1);
 		});
 	});
 

@@ -26,6 +26,7 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	findAll: jest.fn(),
 	findBySchemaIdentifier: jest.fn(),
 	getPlayableUrl: jest.fn(),
+	getRelated: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -76,6 +77,15 @@ describe('MediaController', () => {
 			const media = await mediaController.getMediaById('1');
 			expect(media.hits.total.value).toEqual(1);
 			expect(media.hits.hits.length).toEqual(1);
+		});
+	});
+
+	describe('getRelated', () => {
+		it('should get related media items', async () => {
+			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
+			mockMediaService.getRelated.mockResolvedValueOnce(mockResponse);
+			const media = await mediaController.getRelated('1', '8911p09j1g');
+			expect(media.items.length).toEqual(2);
 		});
 	});
 
