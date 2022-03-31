@@ -35,10 +35,10 @@ export class MediaController {
 		return this.mediaService.findBySchemaIdentifier(id);
 	}
 
-	@Get(':id/related')
+	@Get(':id/related/:meemooIdentifier')
 	public async getRelated(
 		@Param('id') id: string,
-		@Query('meemooIdentifier') meemooIdentifier: string
+		@Param('meemooIdentifier') meemooIdentifier: string
 	): Promise<any> {
 		return this.mediaService.getRelated(id, meemooIdentifier);
 	}
