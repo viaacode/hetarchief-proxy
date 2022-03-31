@@ -13,8 +13,8 @@ export class TranslationsService {
 
 	public async getTranslations(): Promise<Record<string, Record<string, string>>> {
 		const [frontendTranslations, backendTranslations] = await Promise.all([
-			this.siteVariablesService.getSiteVariable(TranslationKey['frontend-translations']),
-			this.siteVariablesService.getSiteVariable(TranslationKey['backend-translations']),
+			this.siteVariablesService.getSiteVariable(TranslationKey.FRONTEND_TRANSLATIONS),
+			this.siteVariablesService.getSiteVariable(TranslationKey.BACKEND_TRANSLATIONS),
 		]);
 		return {
 			'frontend-translations': frontendTranslations?.value,
