@@ -113,11 +113,14 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
-				await this.collectionsService.create({
-					is_default: true,
-					user_profile_id: archiefUser.id,
-					name: i18n.t('modules/collections/controllers___default-collection-name'),
-				});
+				await this.collectionsService.create(
+					{
+						is_default: true,
+						user_profile_id: archiefUser.id,
+						name: i18n.t('modules/collections/controllers___default-collection-name'),
+					},
+					null // referer not important here
+				);
 			} else {
 				if (!isEqual(pick(archiefUser, ['firstName', 'lastName', 'email']), userDto)) {
 					// update user

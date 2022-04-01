@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Headers,
 	Logger,
 	Param,
 	ParseUUIDPipe,
@@ -36,11 +37,13 @@ export class CollectionsController {
 
 	@Get()
 	public async getCollections(
+		@Headers('referer') referer: string,
 		@Session() session: Record<string, any>
 	): Promise<IPagination<Collection>> {
 		const userInfo = SessionHelper.getArchiefUserInfo(session);
 		const collections = await this.collectionsService.findCollectionsByUser(
 			userInfo.id,
+			referer,
 			1,
 			1000
 		);
@@ -49,6 +52,7 @@ export class CollectionsController {
 
 	@Get(':collectionId')
 	public async getCollectionObjects(
+		@Headers('referer') referer: string,
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
 		@Query() queryDto: CollectionObjectsQueryDto,
 		@Session() session: Record<string, any>
@@ -57,26 +61,32 @@ export class CollectionsController {
 		const collectionObjects = await this.collectionsService.findObjectsByCollectionId(
 			collectionId,
 			userInfo.id,
-			queryDto
+			queryDto,
+			referer
 		);
 		return collectionObjects;
 	}
 
 	@Post()
 	public async createCollection(
+		@Headers('referer') referer: string,
 		@Body() createCollectionDto: CreateOrUpdateCollectionDto,
 		@Session() session: Record<string, any>
 	): Promise<Collection> {
-		const collection = await this.collectionsService.create({
-			name: createCollectionDto.name,
-			user_profile_id: SessionHelper.getArchiefUserInfo(session).id,
-			is_default: false,
-		});
+		const collection = await this.collectionsService.create(
+			{
+				name: createCollectionDto.name,
+				user_profile_id: SessionHelper.getArchiefUserInfo(session).id,
+				is_default: false,
+			},
+			referer
+		);
 		return collection;
 	}
 
 	@Patch(':collectionId')
 	public async updateCollection(
+		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
 		@Session() session: Record<string, any>
@@ -84,19 +94,22 @@ export class CollectionsController {
 		const collection = await this.collectionsService.update(
 			collectionId,
 			SessionHelper.getArchiefUserInfo(session).id,
-			updateCollectionDto
+			updateCollectionDto,
+			referer
 		);
 		return collection;
 	}
 
 	@Delete(':collectionId')
 	public async deleteCollection(
+		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Session() session: Record<string, any>
 	): Promise<{ status: string }> {
 		const affectedRows = await this.collectionsService.delete(
 			collectionId,
-			SessionHelper.getArchiefUserInfo(session).id
+			SessionHelper.getArchiefUserInfo(session).id,
+			referer
 		);
 		if (affectedRows > 0) {
 			return { status: 'collection has been deleted' };
@@ -107,11 +120,12 @@ export class CollectionsController {
 
 	@Post(':collectionId/objects/:objectId')
 	public async addObjectToCollection(
+		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@Session() session: Record<string, any>
 	): Promise<IeObject> {
-		const collection = await this.collectionsService.findCollectionById(collectionId);
+		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 		const user = SessionHelper.getArchiefUserInfo(session);
 		if (collection.userProfileId !== user.id) {
 			throw new UnauthorizedException('You can only add objects to your own collections');
@@ -119,18 +133,20 @@ export class CollectionsController {
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			collectionId,
-			objectSchemaIdentifier
+			objectSchemaIdentifier,
+			referer
 		);
 		return collectionObject;
 	}
 
 	@Delete(':collectionId/objects/:objectId')
 	public async removeObjectFromCollection(
+		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectId: string,
 		@Session() session: Record<string, any>
 	): Promise<{ status: string }> {
-		const collection = await this.collectionsService.findCollectionById(collectionId);
+		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 		const user = SessionHelper.getArchiefUserInfo(session);
 		if (collection.userProfileId !== user.id) {
 			throw new UnauthorizedException(
@@ -151,6 +167,7 @@ export class CollectionsController {
 
 	@Patch(':oldCollectionId/objects/:objectId/move')
 	public async moveObjectToAnotherCollection(
+		@Headers('referer') referer: string,
 		@Param('oldCollectionId') oldCollectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
@@ -158,8 +175,8 @@ export class CollectionsController {
 	): Promise<IeObject> {
 		// Check user is owner of both collections
 		const [oldCollection, newCollection] = await Promise.all([
-			this.collectionsService.findCollectionById(oldCollectionId),
-			this.collectionsService.findCollectionById(newCollectionId),
+			this.collectionsService.findCollectionById(oldCollectionId, referer),
+			this.collectionsService.findCollectionById(newCollectionId, referer),
 		]);
 		const user = SessionHelper.getArchiefUserInfo(session);
 		if (oldCollection.userProfileId !== user.id) {
@@ -171,7 +188,8 @@ export class CollectionsController {
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			newCollectionId,
-			objectSchemaIdentifier
+			objectSchemaIdentifier,
+			referer
 		);
 		await this.collectionsService.removeObjectFromCollection(
 			oldCollectionId,

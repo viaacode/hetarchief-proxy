@@ -11,5 +11,6 @@ import { DataModule } from '~modules/data';
 	controllers: [MediaController],
 	imports: [ConfigModule, DataModule, CacheModule.register()],
 	providers: [MediaService, TicketsService],
+	exports: [MediaService],
 })
 export class MediaModule {}
