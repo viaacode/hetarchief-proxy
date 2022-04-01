@@ -3,7 +3,7 @@ import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } 
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 
 const IDP = 'idp';
@@ -72,6 +72,17 @@ export class SessionHelper {
 	 */
 	public static setArchiefUserInfo(session: Record<string, any>, user: User): void {
 		SessionHelper.ensureValidSession(session);
+
+		// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
+		user.permissions = [
+			Permission.CAN_READ_ALL_VISIT_REQUESTS,
+			Permission.CAN_READ_CP_VISIT_REQUESTS,
+			Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
+			Permission.CAN_APPROVE_DENY_CP_VISIT_REQUESTS,
+			Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		];
+		// TODO remove until here ----------------------------------------------------------------------------------------
+
 		session[ARCHIEF_USER_INFO_PATH] = user;
 	}
 

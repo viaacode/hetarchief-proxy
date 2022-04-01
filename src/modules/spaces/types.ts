@@ -1,9 +1,12 @@
-import { ContactInfo } from '~shared/types/types';
+import {
+	FindSpaceByCpAdminIdQuery,
+	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdentifierQuery,
+	FindSpacesQuery,
+	Lookup_Schema_Audience_Type_Enum,
+} from '../../generated/graphql';
 
-export enum AudienceType {
-	PUBLIC = 'PUBLIC',
-	PRIVATE = 'PRIVATE',
-}
+import { ContactInfo } from '~shared/types/types';
 
 export enum AccessType {
 	ACTIVE = 'ACTIVE',
@@ -19,7 +22,7 @@ export interface Space {
 	image: string;
 	color: string;
 	logo: string;
-	audienceType: AudienceType;
+	audienceType: Lookup_Schema_Audience_Type_Enum;
 	publicAccess: boolean;
 	contactInfo: ContactInfo;
 	isPublished: boolean;
@@ -27,3 +30,9 @@ export interface Space {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export type GqlSpace =
+	| FindSpaceByIdQuery['cp_space'][0]
+	| FindSpacesQuery['cp_space'][0]
+	| FindSpaceByMaintainerIdentifierQuery['cp_space'][0]
+	| FindSpaceByCpAdminIdQuery['cp_space'][0];

@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { NavigationsModule } from '~modules/admin/navigations';
+import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
@@ -16,6 +17,7 @@ import { MediaModule } from '~modules/media';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
 import { TosModule } from '~modules/tos';
+import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { SessionService } from '~shared/services/session.service';
@@ -41,6 +43,8 @@ import { SessionService } from '~shared/services/session.service';
 		VisitsModule,
 		CollectionsModule,
 		NotificationsModule,
+		TranslationsModule,
+		AdminTranslationsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService, ConfigService],

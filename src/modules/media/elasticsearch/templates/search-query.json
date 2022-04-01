@@ -29,6 +29,7 @@
         "schema_keywords",
         "schema_in_language",
         "dcterms_format",
+        "dcterms_medium",
         "ebucore_object_type",
         "schema_transcript"
       ]
@@ -64,6 +65,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
+        "dcterms_medium",
         "ebucore_object_type",
         "schema_transcript"
       ]
@@ -100,6 +102,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
+        "dcterms_medium",
         "ebucore_object_type",
         "schema_transcript"
       ]
@@ -135,6 +138,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
+        "dcterms_medium",
         "ebucore_object_type",
         "schema_transcript"
       ]
@@ -171,6 +175,7 @@
         "schema_genre",
         "schema_in_language",
         "dcterms_format",
+        "dcterms_medium",
         "ebucore_object_type",
         "schema_transcript"
       ]
