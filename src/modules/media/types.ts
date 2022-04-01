@@ -26,11 +26,11 @@ export interface QueryBuilderConfig {
 export interface PlayerTicket {
 	jwt: string;
 	context: {
-		aud: string;
-		exp: number;
-		sub: string;
 		ip: string;
 		referer: string;
+		app: string;
+		name: string;
+		expiration: string;
 		fragment: {
 			start: string;
 			end: string;
@@ -39,7 +39,6 @@ export interface PlayerTicket {
 }
 
 export interface MediaFile {
-	id: string;
 	name: string;
 	alternateName: string;
 	description: string;
@@ -57,7 +56,6 @@ export interface Representation {
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
-	id: string;
 	files: MediaFile[];
 }
 

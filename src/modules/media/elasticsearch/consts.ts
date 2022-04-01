@@ -102,5 +102,6 @@ export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
+	genre: 'keyword',
 	medium: 'keyword',
 };
