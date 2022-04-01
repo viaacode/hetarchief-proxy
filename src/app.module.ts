@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 
 import { ContentPagesModule } from '~modules/admin/content-pages';
 import { NavigationsModule } from '~modules/admin/navigations';
+import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
@@ -45,6 +46,7 @@ import { SessionService } from '~shared/services/session.service';
 		NotificationsModule,
 		ContentPagesModule,
 		TranslationsModule,
+		AdminTranslationsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, SessionService, ConfigService],

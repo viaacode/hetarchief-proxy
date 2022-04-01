@@ -1,11 +1,9 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
-import { Request } from 'express';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
-import publicIp from 'public-ip';
 
-import { User } from '~modules/users/types';
+import { Permission, User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SpecialPermissionGroups } from '~shared/types/types';
 
@@ -75,6 +73,17 @@ export class SessionHelper {
 	 */
 	public static setArchiefUserInfo(session: Record<string, any>, user: User): void {
 		SessionHelper.ensureValidSession(session);
+
+		// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
+		user.permissions = [
+			Permission.CAN_READ_ALL_VISIT_REQUESTS,
+			Permission.CAN_READ_CP_VISIT_REQUESTS,
+			Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
+			Permission.CAN_APPROVE_DENY_CP_VISIT_REQUESTS,
+			Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		];
+		// TODO remove until here ----------------------------------------------------------------------------------------
+
 		session[ARCHIEF_USER_INFO_PATH] = user;
 	}
 
@@ -105,25 +114,6 @@ export class SessionHelper {
 		)(now);
 
 		return expiresAt.toISOString();
-	}
-
-	public static async getIp(request: Request): Promise<string> {
-		const forwardedFor =
-			request.headers['X-Forwarded-For'] || request.headers['x-forwarded-for'];
-		const ip = Array.isArray(forwardedFor)
-			? forwardedFor[0]
-			: forwardedFor || (request as any).ip;
-
-		if (ip?.includes('::ffff:')) {
-			return ip.replace('::ffff:', '');
-		}
-
-		if (ip === '::1') {
-			// Localhost request (local development) => get external ip of the developer machine
-			return publicIp.v4();
-		}
-
-		return ip;
 	}
 
 	public static getIdpUserInfo(session: Record<string, any>): LdapUser | null {

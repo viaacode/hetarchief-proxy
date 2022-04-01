@@ -1,6 +1,8 @@
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
+import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
+
 export interface Configuration {
 	environment: string;
 	host: string;
@@ -12,7 +14,7 @@ export interface Configuration {
 	graphQlEnableWhitelist: boolean;
 	graphqlUrlAvo: string;
 	graphqlSecretAvo: string;
-	databaseApplicationType: string;
+	databaseApplicationType: AvoOrHetArchief;
 	cookieSecret: string;
 	cookieMaxAge: number;
 	redisConnectionString: string;

@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
 import {
 	GqlOrganisation,
@@ -16,7 +18,8 @@ export class OrganisationsService {
 	private queries: OrganisationQueries;
 
 	constructor(private configService: ConfigService, protected dataService: DataService) {
-		this.queries = ORGANISATION_QUERIES[this.configService.get('avoOrHetArchief')];
+		this.queries =
+			ORGANISATION_QUERIES[getConfig(this.configService, 'databaseApplicationType')];
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {

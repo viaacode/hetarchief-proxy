@@ -2,7 +2,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
-import { ContentPageType } from '~modules/admin/content-pages/content-pages.types';
+import {
+	ContentPageType,
+	ContentPageTypeValues,
+} from '~modules/admin/content-pages/content-pages.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 
 export class ContentLabelsRequestDto {
@@ -10,9 +13,9 @@ export class ContentLabelsRequestDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: `Get labels for this content page type. Options are: [${Object.values(
-			ContentPageType
+			ContentPageTypeValues
 		).join(', ')}]`,
-		default: ContentPageType.PAGINA,
+		default: ContentPageTypeValues.Pagina,
 	})
 	contentType: ContentPageType;
 

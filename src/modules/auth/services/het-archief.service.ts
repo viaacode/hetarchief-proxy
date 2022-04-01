@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { getConfig } from '~config';
+
 import { SamlService } from './saml.service';
 
 @Injectable()
@@ -12,11 +14,14 @@ export class HetArchiefService extends SamlService {
 
 	public async initialize() {
 		return this.init({
-			url: this.configService.get('samlIdpMetaDataEndpoint'),
-			entityId: this.configService.get('samlSpEntityId'),
-			privateKey: this.configService.get('samlSpPrivateKey'),
-			certificate: this.configService.get('samlSpCertificate'),
-			assertEndpoint: `${this.configService.get('host')}/auth/hetarchief/login-callback`,
+			url: getConfig(this.configService, 'samlIdpMetaDataEndpoint'),
+			entityId: getConfig(this.configService, 'samlSpEntityId'),
+			privateKey: getConfig(this.configService, 'samlSpPrivateKey'),
+			certificate: getConfig(this.configService, 'samlSpCertificate'),
+			assertEndpoint: `${getConfig(
+				this.configService,
+				'host'
+			)}/auth/hetarchief/login-callback`,
 		});
 	}
 }

@@ -1,12 +1,18 @@
 import { Avo } from '@viaa/avo2-types';
 
-import { GetContentPageByPathQuery as GetContentPageByPathQueryAvo } from '~generated/graphql-db-types-avo';
-import { GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
+import {
+	GetContentPageByPathQuery as GetContentPageByPathQueryAvo,
+	Lookup_Enum_Content_Types_Enum,
+} from '~generated/graphql-db-types-avo';
+import {
+	GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief,
+	Lookup_Cms_Content_Type_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { Media } from '~modules/media/types';
 
 export enum AvoOrHetArchief {
 	avo = 'avo',
-	hetArchief = 'hetArchief',
+	hetArchief = 'hetarchief',
 }
 
 type ContentPickerTypeAvo =
@@ -122,14 +128,19 @@ export interface ContentPageUser {
 	groupId: string | number;
 }
 
-export enum ContentPageType {
-	NIEUWS_ITEM = 'NIEUWS_ITEM',
-	FAQ_ITEM = 'FAQ_ITEM',
-	SCREENCAST = 'SCREENCAST',
-	PAGINA = 'PAGINA',
-	PROJECT = 'PROJECT',
-	OVERZICHT = 'OVERZICHT',
-}
+export type ContentPageType = Lookup_Cms_Content_Type_Enum | Lookup_Enum_Content_Types_Enum;
+export const ContentPageTypeValues = {
+	...Lookup_Cms_Content_Type_Enum,
+	...Lookup_Enum_Content_Types_Enum,
+};
+
+// TODO add these types to the hetarchief hasura migrations after the database rename
+// NIEUWS_ITEM = 'NIEUWS_ITEM',
+// FAQ_ITEM = 'FAQ_ITEM',
+// SCREENCAST = 'SCREENCAST',
+// PAGINA = 'PAGINA',
+// PROJECT = 'PROJECT',
+// OVERZICHT = 'OVERZICHT',
 
 export interface MediaPlayerPathInfo {
 	getItemExternalIdPath: string;

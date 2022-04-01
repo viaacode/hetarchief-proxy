@@ -1,7 +1,20 @@
-import { Body, Controller, Get, Headers, Logger, Param, Post, Query } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	ForbiddenException,
+	Get,
+	Headers,
+	Logger,
+	Param,
+	Post,
+	Query,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
-import { MediaQueryDto, PlayerTicketsQueryDto } from '../dto/media.dto';
+import { getConfig } from '~config';
+
+import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
@@ -13,13 +26,22 @@ export class MediaController {
 
 	constructor(
 		private mediaService: MediaService,
-		private playerTicketService: PlayerTicketService
+		private playerTicketService: PlayerTicketService,
+		private configService: ConfigService
 	) {}
 
-	// TODO comment this endpoint, since users always need to search inside one reading room
+	// Disabled in production since users always need to search inside one reading room
+	// handy on local environment due to limited test data in a single index
+	// Can be re-enabled in phase2 for cross-bezoekersruimte search
 	@Post()
-	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, null);
+	public async getMedia(
+		@Headers('referer') referer: string,
+		@Body() queryDto: MediaQueryDto
+	): Promise<any> {
+		if (getConfig(this.configService, 'environment') === 'production') {
+			throw new ForbiddenException();
+		}
+		const media = await this.mediaService.findAll(queryDto, null, referer);
 		return media;
 	}
 
@@ -35,19 +57,32 @@ export class MediaController {
 		return url;
 	}
 
+	@Get('thumbnail-ticket')
+	public async getThumbnailUrl(
+		@Headers('referer') referer: string,
+		@Query() thumbnailQuery: ThumbnailQueryDto
+	): Promise<string> {
+		const url = await this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
+		return url;
+	}
+
 	@Get(':id')
-	public async getMediaById(@Param('id') id: string): Promise<any> {
-		return this.mediaService.findBySchemaIdentifier(id);
+	public async getMediaById(
+		@Headers('referer') referer: string,
+		@Param('id') id: string
+	): Promise<any> {
+		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(
+		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
 		@Param('esIndex')
 		esIndex: string
 	): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, esIndex);
+		const media = await this.mediaService.findAll(queryDto, esIndex, referer);
 		return media;
 	}
 }

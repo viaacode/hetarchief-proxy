@@ -1,0 +1,6 @@
+query getThumbnailUrlById($id: String!) {
+	object_ie(where: { schema_identifier: { _eq: $id } }) {
+		schema_identifier
+		schema_thumbnail_url
+	}
+}

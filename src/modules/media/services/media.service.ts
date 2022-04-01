@@ -3,12 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, MediaFile, Representation } from '../types';
 
-import { GET_OBJECT_IE_BY_ID } from './queries.gql';
-
+import {
+	GetObjectBySchemaIdentifierDocument,
+	GetObjectDetailBySchemaIdentifierDocument,
+} from '~generated/graphql-db-types-hetarchief';
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
@@ -16,9 +21,13 @@ export class MediaService {
 	private logger: Logger = new Logger(MediaService.name, { timestamp: true });
 	private gotInstance: Got;
 
-	constructor(private configService: ConfigService, protected dataService: DataService) {
+	constructor(
+		private configService: ConfigService,
+		protected dataService: DataService,
+		protected playerTicketService: PlayerTicketService
+	) {
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('elasticSearchUrl'),
+			prefixUrl: getConfig(this.configService, 'elasticSearchUrl'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
@@ -103,7 +112,6 @@ export class MediaService {
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
-			id: get(representation, 'id'),
 			files: this.adaptFiles(representation.premis_includes),
 		}));
 	}
@@ -114,7 +122,6 @@ export class MediaService {
 		}
 		return graphQlFiles.map(
 			(file): MediaFile => ({
-				id: get(file, 'id'),
 				name: get(file, 'schema_name'),
 				alternateName: get(file, 'schema_alternate_name'),
 				description: get(file, 'schema_description'),
@@ -124,6 +131,26 @@ export class MediaService {
 				embedUrl: get(file, 'schema_embed_url'),
 			})
 		);
+	}
+
+	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+		// sanity check
+		const nrHits = get(esResponse, 'hits.total.value');
+		if (!nrHits) {
+			return esResponse;
+		}
+		// there are hits
+		esResponse.hits.hits = await Promise.all(
+			esResponse.hits.hits.map(async (hit) => {
+				hit._source.schema_thumbnail_url =
+					await this.playerTicketService.resolveThumbnailUrl(
+						hit._source.schema_thumbnail_url,
+						referer
+					);
+				return hit;
+			})
+		);
+		return esResponse;
 	}
 
 	public getSearchEndpoint(esIndex: string | null): string {
@@ -145,9 +172,12 @@ export class MediaService {
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
+	public async findAll(
+		inputQuery: MediaQueryDto,
+		esIndex: string | null,
+		referer: string
+	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
-		this.logger.log(esQuery);
 
 		let mediaResponse;
 		try {
@@ -161,22 +191,29 @@ export class MediaService {
 			}
 		}
 
-		return mediaResponse;
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 
 	/**
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
+		} = await this.dataService.execute(GetObjectDetailBySchemaIdentifierDocument, {
+			schemaIdentifier,
+		});
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
-		return this.adapt(objectIe[0]);
+		const adapted = this.adapt(objectIe[0]);
+		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+			adapted.thumbnailUrl,
+			referer
+		);
+		return adapted;
 	}
 }

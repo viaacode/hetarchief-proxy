@@ -14,6 +14,8 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, pick } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { HetArchiefService } from '../services/het-archief.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
@@ -127,16 +129,6 @@ export class HetArchiefController {
 				}
 			}
 
-			// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
-			archiefUser.permissions = [
-				Permission.CAN_READ_ALL_VISIT_REQUESTS,
-				Permission.CAN_READ_CP_VISIT_REQUESTS,
-				Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
-				Permission.CAN_APPROVE_DENY_CP_VISIT_REQUESTS,
-				Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-			];
-			// TODO remove until here ----------------------------------------------------------------------------------------
-
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			return {
@@ -146,9 +138,10 @@ export class HetArchiefController {
 		} catch (err) {
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${this.configService.get('host')}/auth/hetarchief/login&returnToUrl=${
-						info.returnToUrl
-					}`,
+					url: `${getConfig(
+						this.configService,
+						'host'
+					)}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}

@@ -2,7 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
-import { ContentPageType, SearchDateRange } from '~modules/admin/content-pages/content-pages.types';
+import { Lookup_Cms_Content_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { SearchDateRange } from '~modules/admin/content-pages/content-pages.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -24,9 +25,9 @@ export class ContentPageFiltersDto {
 		type: String,
 		description:
 			'Filter the content pages by content type. Possible options: ' +
-			Object.values(ContentPageType).join(', '),
+			Object.values(Lookup_Cms_Content_Type_Enum).join(', '),
 		required: false,
-		example: [ContentPageType.PAGINA],
+		example: [Lookup_Cms_Content_Type_Enum.Pagina],
 	})
 	contentTypes?: string[];
 

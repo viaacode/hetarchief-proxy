@@ -1,8 +1,11 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
+import { ConfigService } from '@nestjs/config';
 
 import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
+
+import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 const VALID_MIME_TYPES: string[] = ['image/png', 'image/gif', 'image/jpeg', 'image/bmp'];
@@ -44,7 +47,7 @@ const config = (): Configuration => {
 		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		graphqlUrlAvo: getEnvValue('GRAPHQL_URL_AVO', true),
 		graphqlSecretAvo: getEnvValue('GRAPHQL_SECRET_AVO', true),
-		databaseApplicationType: getEnvValue('DATABASE_APPLICATION_TYPE', true),
+		databaseApplicationType: getEnvValue('DATABASE_APPLICATION_TYPE', true) as AvoOrHetArchief,
 		cookieSecret: getEnvValue('COOKIE_SECRET', true),
 		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		redisConnectionString: getEnvValue('REDIS_CONNECTION_STRING', false),
@@ -110,6 +113,10 @@ const config = (): Configuration => {
 		},
 	};
 };
+
+export function getConfig(configService: ConfigService, prop: keyof Configuration) {
+	return configService.get(prop);
+}
 
 export default config;
 

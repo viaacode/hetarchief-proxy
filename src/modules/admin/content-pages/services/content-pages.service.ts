@@ -8,11 +8,14 @@ import { Request } from 'express';
 import { fromPairs, get, isEmpty, keys, set } from 'lodash';
 import moment from 'moment';
 
+import { getConfig } from '~config';
+
 import {
 	AvoOrHetArchief,
 	ContentBlock,
 	ContentPage,
 	ContentPageOverviewResponse,
+	ContentPageType,
 	ContentPageUser,
 	ContentWidth,
 	FetchSearchQueryFunctionAvo,
@@ -44,7 +47,6 @@ import { Organisation } from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SpecialPermissionGroups } from '~shared/types/types';
 
@@ -52,7 +54,9 @@ import { SpecialPermissionGroups } from '~shared/types/types';
 export class ContentPagesService {
 	private logger: Logger = new Logger(ContentPagesService.name, { timestamp: true });
 	private readonly avoOrHetArchief: string;
-	private queries: typeof CONTENT_PAGE_QUERIES['avo'] | typeof CONTENT_PAGE_QUERIES['hetArchief'];
+	private queries:
+		| typeof CONTENT_PAGE_QUERIES[AvoOrHetArchief.avo]
+		| typeof CONTENT_PAGE_QUERIES[AvoOrHetArchief.hetArchief];
 	private fetchSearchQueryAvo: FetchSearchQueryFunctionAvo | null = null;
 
 	constructor(
@@ -61,7 +65,7 @@ export class ContentPagesService {
 		protected playerTicketService: PlayerTicketService,
 		protected organisationsService: OrganisationsService
 	) {
-		this.avoOrHetArchief = this.configService.get('databaseApplicationType');
+		this.avoOrHetArchief = getConfig(this.configService, 'databaseApplicationType');
 		this.queries = CONTENT_PAGE_QUERIES[this.avoOrHetArchief];
 	}
 
@@ -91,7 +95,7 @@ export class ContentPagesService {
 			createdAt: get(gqlContentPage, 'created_at'),
 			updatedAt: get(gqlContentPage, 'updated_at'),
 			isProtected: get(gqlContentPage, 'is_protected'),
-			contentType: get(gqlContentPage, 'content_type'),
+			contentType: get(gqlContentPage, 'content_type') as ContentPageType,
 			contentWidth: get(gqlContentPage, 'content_width') as ContentWidth,
 			owner: this.adaptUser(
 				get(gqlContentPage, 'owner_profile') || get(gqlContentPage, 'profile')
@@ -511,7 +515,6 @@ export class ContentPagesService {
 						if (itemInfo && itemInfo.browse_path) {
 							videoSrc = await this.playerTicketService.getPlayableUrl(
 								itemInfo.browse_path,
-								await SessionHelper.getIp(request),
 								request.header('Referer') || 'http://localhost:3200/'
 							);
 						}
@@ -749,7 +752,6 @@ export class ContentPagesService {
 			return (
 				(await this.playerTicketService.getPlayableUrl(
 					externalId,
-					await SessionHelper.getIp(request),
 					request.header('Referer') || 'http://localhost:8080/'
 				)) || null
 			);
@@ -773,7 +775,6 @@ export class ContentPagesService {
 			return (
 				(await this.playerTicketService.getPlayableUrl(
 					browsePath,
-					await SessionHelper.getIp(request),
 					request.header('Referer') || 'http://localhost:8080/'
 				)) || null
 			);

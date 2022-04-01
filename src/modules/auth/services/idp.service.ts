@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import queryString from 'query-string';
 
+import { getConfig } from '~config';
+
 import { Idp } from '~shared/auth/auth.types';
 
 @Injectable()
@@ -15,7 +17,7 @@ export class IdpService {
 	}
 
 	public getSpecificLogoutUrl(idp: Idp, returnToUrl: string): string {
-		const host = this.configService.get('host');
+		const host = getConfig(this.configService, 'host');
 
 		const url = `${host}/auth/${idp.toLowerCase()}/logout?${queryString.stringify({
 			returnToUrl,
