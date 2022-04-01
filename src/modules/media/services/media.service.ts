@@ -225,10 +225,12 @@ export class MediaService {
 	}
 
 	public async getRelated(
+		maintainerId: string,
 		schemaIdentifier: string,
 		meemooIdentifier: string
 	): Promise<IPagination<Media>> {
 		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
+			maintainerId,
 			schemaIdentifier,
 			meemooIdentifier,
 		});

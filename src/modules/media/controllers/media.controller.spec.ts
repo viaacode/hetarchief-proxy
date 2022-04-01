@@ -114,7 +114,7 @@ describe('MediaController', () => {
 		it('should get related media items', async () => {
 			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
 			mockMediaService.getRelated.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getRelated('1', '8911p09j1g');
+			const media = await mediaController.getRelated('es-index-1', '1', '8911p09j1g');
 			expect(media.items.length).toEqual(2);
 		});
 	});

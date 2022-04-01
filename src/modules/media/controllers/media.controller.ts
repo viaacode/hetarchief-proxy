@@ -66,12 +66,13 @@ export class MediaController {
 		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
-	@Get(':id/related/:meemooIdentifier')
+	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
 	public async getRelated(
-		@Param('id') id: string,
+		@Param('esIndex') esIndex: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string
 	): Promise<any> {
-		return this.mediaService.getRelated(id, meemooIdentifier);
+		return this.mediaService.getRelated(esIndex, schemaIdentifier, meemooIdentifier);
 	}
 
 	@Post(':esIndex')
@@ -79,8 +80,7 @@ export class MediaController {
 	public async getMediaOnIndex(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
-		@Param('esIndex')
-		esIndex: string
+		@Param('esIndex') esIndex: string
 	): Promise<any> {
 		const media = await this.mediaService.findAll(queryDto, esIndex, referer);
 		return media;
