@@ -23,3 +23,7 @@ export interface Recipient {
 	id: string;
 	email: string;
 }
+
+export interface UpdateResponse {
+	affected_rows: number;
+}
