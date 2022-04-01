@@ -127,16 +127,6 @@ export class HetArchiefController {
 				}
 			}
 
-			// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
-			archiefUser.permissions = [
-				Permission.CAN_READ_ALL_VISIT_REQUESTS,
-				Permission.CAN_READ_CP_VISIT_REQUESTS,
-				Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
-				Permission.CAN_APPROVE_DENY_CP_VISIT_REQUESTS,
-				Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-			];
-			// TODO remove until here ----------------------------------------------------------------------------------------
-
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			return {

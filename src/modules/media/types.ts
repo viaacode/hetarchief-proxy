@@ -20,16 +20,17 @@ export interface QueryBuilderConfig {
 	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
 	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
 	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
+	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
 export interface PlayerTicket {
 	jwt: string;
 	context: {
-		aud: string;
-		exp: number;
-		sub: string;
 		ip: string;
 		referer: string;
+		app: string;
+		name: string;
+		expiration: string;
 		fragment: {
 			start: string;
 			end: string;
@@ -38,7 +39,6 @@ export interface PlayerTicket {
 }
 
 export interface MediaFile {
-	id: string;
 	name: string;
 	alternateName: string;
 	description: string;
@@ -56,7 +56,6 @@ export interface Representation {
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
-	id: string;
 	files: MediaFile[];
 }
 
@@ -120,6 +119,7 @@ export enum SearchFilterField {
 	ERA = 'era',
 	LOCATION = 'location',
 	LANGUAGE = 'language',
+	MEDIUM = 'medium',
 }
 
 export enum Operator {

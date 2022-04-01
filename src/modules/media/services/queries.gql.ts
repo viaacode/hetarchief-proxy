@@ -6,6 +6,15 @@ export const GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER = `
 	}
 `;
 
+export const GET_THUMBNAIL_URL_BY_ID = `
+	query objectDetail($id: String!) {
+		object_ie(where: { schema_identifier: { _eq: $id } }) {
+			schema_identifier
+			schema_thumbnail_url
+		}
+  	}
+`;
+
 export const GET_OBJECT_IE_BY_ID = `
 	query objectDetail($schemaIdentifier: String!) {
 		object_ie(where: {schema_identifier: {_eq: $schemaIdentifier}}) {
@@ -60,7 +69,7 @@ export const GET_OBJECT_IE_BY_ID = `
 			ebucore_object_type
 			schema_genre
 			premis_is_represented_by {
-        ie_schema_identifier
+				ie_schema_identifier
 				schema_name
 				schema_alternate_name
 				schema_description

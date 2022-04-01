@@ -225,13 +225,24 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should add filter suffixes when required', () => {
-			const originalConfig = QueryBuilder.getConfig();
-			QueryBuilder.setConfig({
-				...originalConfig,
-				NEEDS_FILTER_SUFFIX: {
-					format: true,
-				},
+			const esQuery = QueryBuilder.build({
+				filters: [
+					{
+						field: SearchFilterField.GENRE,
+						value: 'interview',
+						operator: Operator.CONTAINS,
+					},
+				],
+				size: 10,
+				page: 1,
+				requestedAggs: [SearchFilterField.FORMAT],
 			});
+			expect(esQuery.query.bool.must[0]).toEqual({
+				term: { 'schema_genre.filter': 'interview' },
+			});
+		});
+
+		it('should add agg suffixes when required', () => {
 			const esQuery = QueryBuilder.build({
 				filters: [
 					{
@@ -242,14 +253,12 @@ describe('QueryBuilder', () => {
 				],
 				size: 10,
 				page: 1,
-				requestedAggs: [SearchFilterField.FORMAT],
+				requestedAggs: [SearchFilterField.MEDIUM],
 			});
-			expect(esQuery.aggs).toEqual({
-				dcterms_format: { terms: { field: 'dcterms_format.filter', size: 40 } },
+			expect(esQuery.aggs.dcterms_medium.terms).toEqual({
+				field: 'dcterms_medium.keyword',
+				size: 40,
 			});
-
-			// reset
-			QueryBuilder.setConfig(originalConfig);
 		});
 
 		it('should sort on a given order property', () => {
