@@ -9,20 +9,19 @@ export enum AvoOrHetArchief {
 	hetArchief = 'hetArchief',
 }
 
-export type ContentPickerType =
-	// Avo
+type ContentPickerTypeAvo =
 	| 'COLLECTION'
 	| 'ITEM'
 	| 'BUNDLE'
 	| 'DROPDOWN'
 	| 'SEARCH_QUERY'
-	| 'PROJECTS'
+	| 'PROJECTS';
 
-	// Het archief
-	| 'IE_COLLECTION'
-	| 'IE_OBJECT'
+type ContentPickerTypeHetArchief = 'IE_COLLECTION' | 'IE_OBJECT';
 
-	// Both
+export type ContentPickerType =
+	| ContentPickerTypeAvo
+	| ContentPickerTypeHetArchief
 	| 'CONTENT_PAGE'
 	| 'INTERNAL_LINK'
 	| 'EXTERNAL_LINK'
@@ -95,7 +94,7 @@ export interface ContentPage {
 	createdAt: string;
 	updatedAt: string | null;
 	isProtected: boolean;
-	contentType: string;
+	contentType: ContentPageType;
 	contentWidth: ContentWidth;
 	owner: ContentPageUser;
 	userProfileId: string | null;
@@ -123,13 +122,14 @@ export interface ContentPageUser {
 	groupId: string | number;
 }
 
-export type ContentPageType =
-	| 'NIEUWS_ITEM'
-	| 'FAQ_ITEM'
-	| 'SCREENCAST'
-	| 'PAGINA'
-	| 'PROJECT'
-	| 'OVERZICHT';
+export enum ContentPageType {
+	NIEUWS_ITEM = 'NIEUWS_ITEM',
+	FAQ_ITEM = 'FAQ_ITEM',
+	SCREENCAST = 'SCREENCAST',
+	PAGINA = 'PAGINA',
+	PROJECT = 'PROJECT',
+	OVERZICHT = 'OVERZICHT',
+}
 
 export interface MediaPlayerPathInfo {
 	getItemExternalIdPath: string;

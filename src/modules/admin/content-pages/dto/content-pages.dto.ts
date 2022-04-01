@@ -2,7 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
-import { SearchDateRange } from '~modules/admin/content-pages/content-pages.types';
+import { ContentPageType, SearchDateRange } from '~modules/admin/content-pages/content-pages.types';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class ContentPageFiltersDto {
@@ -18,28 +19,20 @@ export class ContentPageFiltersDto {
 
 	@IsArray()
 	@IsOptional()
-	@Transform((contentTypes) => {
-		if (typeof contentTypes.value == 'string') {
-			return contentTypes.value.split(',');
-		}
-		return contentTypes.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	@ApiPropertyOptional({
 		type: String,
-		description: 'Filter the content pages by content type',
+		description:
+			'Filter the content pages by content type. Possible options: ' +
+			Object.values(ContentPageType).join(', '),
 		required: false,
-		example: ['PAGINA'],
+		example: [ContentPageType.PAGINA],
 	})
 	contentTypes?: string[];
 
 	@IsArray()
 	@IsOptional()
-	@Transform((contentTypes) => {
-		if (typeof contentTypes.value == 'string') {
-			return contentTypes.value.split(',');
-		}
-		return contentTypes.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Filter the content pages by their owner profile ids',
@@ -50,12 +43,7 @@ export class ContentPageFiltersDto {
 
 	@IsArray()
 	@IsOptional()
-	@Transform((contentTypes) => {
-		if (typeof contentTypes.value == 'string') {
-			return contentTypes.value.split(',');
-		}
-		return contentTypes.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Filter the content pages by the owner user group id',
@@ -86,12 +74,7 @@ export class ContentPageFiltersDto {
 
 	@IsBoolean()
 	@IsOptional()
-	@Transform((contentTypes) => {
-		if (typeof contentTypes.value == 'string') {
-			return contentTypes.value.split(',');
-		}
-		return contentTypes.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Filter the content pages by their published status',
@@ -132,12 +115,7 @@ export class ContentPageFiltersDto {
 
 	@IsArray()
 	@IsOptional()
-	@Transform((contentTypes) => {
-		if (typeof contentTypes.value == 'string') {
-			return contentTypes.value.split(',');
-		}
-		return contentTypes.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Filter the content pages by their label ids',
@@ -223,7 +201,7 @@ export class ContentPagesQueryDto {
 			'seo_image_path',
 		],
 	})
-	orderProp? = 'schema_maintainer.schema_name';
+	orderProp? = 'title_lower';
 
 	@IsString()
 	@Type(() => String)
