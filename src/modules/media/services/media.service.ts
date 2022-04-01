@@ -8,43 +8,36 @@ import {
 	GetFileByRepresentationSchemaIdentifierDocument,
 	GetObjectIeByIdDocument,
 	GetRelatedObjectsDocument,
+	GetThumbnailUrlByIdDocument,
+	GetThumbnailUrlByIdQuery,
 } from '../../../generated/graphql';
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, MediaFile, PlayerTicket, Representation } from '../types';
+import { Media, MediaFile, Representation } from '../types';
+
+import { TicketsService } from './tickets.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { GraphQlResponse } from '~modules/data/types';
 
 @Injectable()
 export class MediaService {
 	private logger: Logger = new Logger(MediaService.name, { timestamp: true });
 	private gotInstance: Got;
-	private playerTicketsGotInstance: Got;
-	private ticketServiceMaxAge: number;
 	private mediaServiceUrl: string;
-	private host: string;
 
-	constructor(private configService: ConfigService, protected dataService: DataService) {
+	constructor(
+		private configService: ConfigService,
+		protected dataService: DataService,
+		protected ticketsService: TicketsService
+	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('elasticSearchUrl'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
 
-		this.playerTicketsGotInstance = got.extend({
-			prefixUrl: this.configService.get('ticketServiceUrl'),
-			resolveBodyOnly: true,
-			responseType: 'json',
-			https: {
-				rejectUnauthorized: false,
-				certificate: this.configService.get('ticketServiceCertificate'),
-				key: this.configService.get('ticketServiceKey'),
-				passphrase: this.configService.get('ticketServicePassphrase'),
-			},
-		});
-		this.ticketServiceMaxAge = this.configService.get('ticketServiceMaxAge');
 		this.mediaServiceUrl = this.configService.get('mediaServiceUrl');
-		this.host = this.configService.get('host');
 	}
 
 	public adapt(graphQlObject: any): Media {
@@ -126,7 +119,6 @@ export class MediaService {
 			dctermsFormat: get(representation, 'dcterms_format'),
 			transcript: get(representation, 'schema_transcript'),
 			dateCreated: get(representation, 'schema_date_created'),
-			id: get(representation, 'id'),
 			files: this.adaptFiles(representation.premis_includes),
 		}));
 	}
@@ -137,7 +129,6 @@ export class MediaService {
 		}
 		return graphQlFiles.map(
 			(file): MediaFile => ({
-				id: get(file, 'id'),
 				name: get(file, 'schema_name'),
 				alternateName: get(file, 'schema_alternate_name'),
 				description: get(file, 'schema_description'),
@@ -147,6 +138,33 @@ export class MediaService {
 				embedUrl: get(file, 'schema_embed_url'),
 			})
 		);
+	}
+
+	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+		// sanity check
+		const nrHits = get(esResponse, 'hits.total.value');
+		if (!nrHits) {
+			return esResponse;
+		}
+		// there are hits
+		esResponse.hits.hits = await Promise.all(
+			esResponse.hits.hits.map(async (hit) => {
+				hit._source.schema_thumbnail_url = await this.resolveThumbnailUrl(
+					hit._source.schema_thumbnail_url,
+					referer
+				);
+				return hit;
+			})
+		);
+		return esResponse;
+	}
+
+	public async resolveThumbnailUrl(path: string, referer: string): Promise<string> {
+		if (!path) {
+			return path;
+		}
+		const token = await this.ticketsService.getThumbnailToken(referer);
+		return `${this.mediaServiceUrl}/${path}?token=${token}`;
 	}
 
 	public getSearchEndpoint(esIndex: string | null): string {
@@ -168,9 +186,12 @@ export class MediaService {
 		}
 	}
 
-	public async findAll(inputQuery: MediaQueryDto, esIndex: string | null): Promise<any> {
+	public async findAll(
+		inputQuery: MediaQueryDto,
+		esIndex: string | null,
+		referer: string
+	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
-		this.logger.log(esQuery);
 
 		let mediaResponse;
 		try {
@@ -184,14 +205,14 @@ export class MediaService {
 			}
 		}
 
-		return mediaResponse;
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 
 	/**
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findBySchemaIdentifier(schemaIdentifier: string): Promise<Media> {
+	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
 		} = await this.dataService.execute(GetObjectIeByIdDocument, { schemaIdentifier });
@@ -200,7 +221,9 @@ export class MediaService {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
-		return this.adapt(objectIe[0]);
+		const adapted = this.adapt(objectIe[0]);
+		adapted.thumbnailUrl = await this.resolveThumbnailUrl(adapted.thumbnailUrl, referer);
+		return adapted;
 	}
 
 	public async getRelated(
@@ -244,23 +267,14 @@ export class MediaService {
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
 		const embedUrl = await this.getEmbedUrl(id);
+		const token = await this.ticketsService.getPlayerToken(embedUrl, referer);
 
-		const data = {
-			app: 'OR-*',
-			client: '', // TODO: Wait for reply on ARC-536 and implement resolution
-			referer: referer || this.host,
-			maxage: this.ticketServiceMaxAge,
-		};
+		return `${this.mediaServiceUrl}/${embedUrl}?token=${token}`;
+	}
 
-		const playerTicket: PlayerTicket = await this.playerTicketsGotInstance.get<PlayerTicket>(
-			embedUrl,
-			{
-				searchParams: data,
-				resolveBodyOnly: true,
-			}
-		);
-
-		return `${this.mediaServiceUrl}/${embedUrl}?token=${playerTicket.jwt}`;
+	public async getThumbnailUrl(id: string, referer: string): Promise<string> {
+		const thumbnailPath = await this.getThumbnailPath(id);
+		return this.resolveThumbnailUrl(thumbnailPath, referer);
 	}
 
 	public async getEmbedUrl(id: string): Promise<string> {
@@ -268,9 +282,23 @@ export class MediaService {
 			data: { object_file: objectFile },
 		} = await this.dataService.execute(GetFileByRepresentationSchemaIdentifierDocument, { id });
 		if (!objectFile[0]) {
-			throw new NotFoundException(`Object IE with id '${id}' not found`);
+			throw new NotFoundException(`Object file with representation_id '${id}' not found`);
 		}
 
 		return objectFile[0].schema_embed_url;
+	}
+
+	public async getThumbnailPath(id: string): Promise<string> {
+		const {
+			data: { object_ie: objectIe },
+		}: GraphQlResponse<GetThumbnailUrlByIdQuery> = await this.dataService.execute(
+			GetThumbnailUrlByIdDocument,
+			{ id }
+		);
+		if (!objectIe[0]) {
+			throw new NotFoundException(`Object IE with id '${id}' not found`);
+		}
+
+		return objectIe[0].schema_thumbnail_url;
 	}
 }
