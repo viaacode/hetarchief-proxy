@@ -9,6 +9,7 @@ import {
 	GetObjectIeByIdDocument,
 	GetRelatedObjectsDocument,
 	GetThumbnailUrlByIdDocument,
+	GetThumbnailUrlByIdQuery,
 } from '../../../generated/graphql';
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -17,6 +18,7 @@ import { Media, MediaFile, Representation } from '../types';
 import { TicketsService } from './tickets.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { GraphQlResponse } from '~modules/data/types';
 
 @Injectable()
 export class MediaService {
@@ -243,6 +245,28 @@ export class MediaService {
 		});
 	}
 
+	public async getSimilar(schemaIdentifier: string, esIndex: string, limit = 4): Promise<any> {
+		const likeFilter = {
+			_index: esIndex,
+			_id: schemaIdentifier,
+		};
+
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				more_like_this: {
+					fields: ['schema_name', 'schema_description'],
+					like: [likeFilter],
+					min_term_freq: 1,
+					max_query_terms: 12,
+				},
+			},
+		};
+
+		return this.executeQuery(esIndex, esQueryObject);
+	}
+
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
 		const embedUrl = await this.getEmbedUrl(id);
 		const token = await this.ticketsService.getPlayerToken(embedUrl, referer);
@@ -269,7 +293,10 @@ export class MediaService {
 	public async getThumbnailPath(id: string): Promise<string> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GetThumbnailUrlByIdDocument, { id });
+		}: GraphQlResponse<GetThumbnailUrlByIdQuery> = await this.dataService.execute(
+			GetThumbnailUrlByIdDocument,
+			{ id }
+		);
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

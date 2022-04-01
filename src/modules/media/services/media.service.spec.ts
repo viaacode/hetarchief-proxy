@@ -229,6 +229,17 @@ describe('MediaService', () => {
 		});
 	});
 
+	describe('getSimilar', () => {
+		it('returns similar objects for a given id', async () => {
+			nock('http://elasticsearch/')
+				.post('/my-index/_search')
+				.reply(201, getMockMediaResponse());
+			const response = await mediaService.getSimilar(mockObjectSchemaIdentifier, 'my-index');
+			expect(response.hits.total.value).toBe(2);
+			expect(response.hits.hits.length).toBe(2);
+		});
+	});
+
 	describe('getPlayableUrl', () => {
 		it('returns a playable url', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
