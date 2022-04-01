@@ -3,16 +3,16 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
 import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, Space } from '../types';
+import { AccessType, GqlSpace, Space } from '../types';
 
 import {
-	FIND_SPACE_BY_CP_ADMIN_ID,
-	FIND_SPACE_BY_ID,
-	FIND_SPACES,
-	GET_SPACE_MAINTAINER_PROFILES,
-} from './queries.gql';
-
-import { UpdateSpaceDocument } from '~generated/graphql-db-types-hetarchief';
+	FindSpaceByCpAdminIdDocument,
+	FindSpaceByIdDocument,
+	FindSpaceByMaintainerIdentifierDocument,
+	FindSpacesDocument,
+	GetSpaceMaintainerProfilesDocument,
+	UpdateSpaceDocument,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { Recipient } from '~shared/types/types';
@@ -26,7 +26,7 @@ export class SpacesService {
 	/**
 	 * Adapt a space as returned by a typical graphQl response to our internal space data model
 	 */
-	public adapt(graphQlSpace: any): Space {
+	public adapt(graphQlSpace: GqlSpace): Space {
 		return {
 			id: get(graphQlSpace, 'id'),
 			maintainerId: get(graphQlSpace, 'schema_maintainer.schema_identifier'),
@@ -158,7 +158,7 @@ export class SpacesService {
 		}
 		const where: any = { _and: filterArray };
 
-		const spacesResponse = await this.dataService.execute(FIND_SPACES, {
+		const spacesResponse = await this.dataService.execute(FindSpacesDocument, {
 			where,
 			offset,
 			limit,
@@ -166,7 +166,7 @@ export class SpacesService {
 		});
 
 		return Pagination<Space>({
-			items: spacesResponse.data.cp_space.map((space: any) => this.adapt(space)),
+			items: spacesResponse.data.cp_space.map((space) => this.adapt(space)),
 			page,
 			size,
 			total: spacesResponse.data.cp_space_aggregate.aggregate.count,
@@ -174,7 +174,20 @@ export class SpacesService {
 	}
 
 	public async findById(id: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_ID, { id });
+		const spaceResponse = await this.dataService.execute(FindSpaceByIdDocument, { id });
+		if (!spaceResponse.data.cp_space[0]) {
+			return null;
+		}
+		return this.adapt(spaceResponse.data.cp_space[0]);
+	}
+
+	public async findBySlug(slug: string): Promise<Space | null> {
+		const spaceResponse = await this.dataService.execute(
+			FindSpaceByMaintainerIdentifierDocument,
+			{
+				maintainerId: slug,
+			}
+		);
 		if (!spaceResponse.data.cp_space[0]) {
 			return null;
 		}
@@ -182,7 +195,7 @@ export class SpacesService {
 	}
 
 	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute(FIND_SPACE_BY_CP_ADMIN_ID, {
+		const spaceResponse = await this.dataService.execute(FindSpaceByCpAdminIdDocument, {
 			cpAdminId,
 		});
 		if (!spaceResponse.data.cp_space[0]) {
@@ -192,7 +205,7 @@ export class SpacesService {
 	}
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
-		const profiles = await this.dataService.execute(GET_SPACE_MAINTAINER_PROFILES, {
+		const profiles = await this.dataService.execute(GetSpaceMaintainerProfilesDocument, {
 			spaceId,
 		});
 		return get(profiles, 'data.cp_maintainer_users_profile', []).map((item) => ({

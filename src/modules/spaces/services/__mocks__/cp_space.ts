@@ -1,8 +1,11 @@
-export default {
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { GqlSpace } from '~modules/spaces/types';
+
+export const mockGqlSpace: GqlSpace = {
 	id: '65790f8f-6365-4891-8ce2-4563f360db89',
 	schema_image: null,
 	schema_color: null,
-	schema_audience_type: 'PRIVATE',
+	schema_audience_type: Lookup_Schema_Audience_Type_Enum.Private,
 	schema_description: null,
 	schema_public_access: false,
 	schema_service_description: null,
@@ -15,8 +18,6 @@ export default {
 		schema_identifier: 'OR-rf5kf25',
 		information: [
 			{
-				homepage: 'https://www.vrt.be',
-				label: 'VRT',
 				description:
 					'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 				logo: {
@@ -24,7 +25,6 @@ export default {
 				},
 				primary_site: {
 					address: {
-						contact_type: null,
 						email: null,
 						locality: 'Brussel',
 						postal_code: '1043',

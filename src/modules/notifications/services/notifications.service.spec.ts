@@ -3,11 +3,12 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
-import { AudienceType, Space } from '~modules/spaces/types';
+import { Space } from '~modules/spaces/types';
 import { Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -112,7 +113,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: AudienceType.PUBLIC,
+	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,
