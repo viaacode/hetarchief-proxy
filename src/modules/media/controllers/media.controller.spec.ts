@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MediaService } from '../services/media.service';
@@ -22,6 +23,10 @@ const getMockMediaResponse = () => ({
 	},
 });
 
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn(),
+};
+
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findBySchemaIdentifier: jest.fn(),
@@ -41,6 +46,10 @@ describe('MediaController', () => {
 					provide: MediaService,
 					useValue: mockMediaService,
 				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		}).compile();
 
@@ -52,6 +61,18 @@ describe('MediaController', () => {
 	});
 
 	describe('getMedia', () => {
+		it('should throw a Forbidden exception on production environment', async () => {
+			mockConfigService.get.mockReturnValueOnce('production');
+			let error;
+			try {
+				await mediaController.getMedia('referer', null);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response.message).toEqual('Forbidden');
+			expect(error.response.statusCode).toEqual(403);
+		});
+
 		it('should return all media items', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			const media = await mediaController.getMedia('referer', null);

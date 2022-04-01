@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Headers, Logger, Param, Post, Query } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	ForbiddenException,
+	Get,
+	Headers,
+	Logger,
+	Param,
+	Post,
+	Query,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
@@ -9,14 +20,19 @@ import { MediaService } from '../services/media.service';
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
-	constructor(private mediaService: MediaService) {}
+	constructor(private mediaService: MediaService, private configService: ConfigService) {}
 
-	// TODO comment this endpoint, since users always need to search inside one reading room
+	// Disabled in production since users always need to search inside one reading room
+	// handy on local environment due to limited test data in a single index
+	// Can be re-enabled in phase2 for cross-bezoekersruimte search
 	@Post()
 	public async getMedia(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto
 	): Promise<any> {
+		if (this.configService.get('environment') === 'production') {
+			throw new ForbiddenException();
+		}
 		const media = await this.mediaService.findAll(queryDto, null, referer);
 		return media;
 	}
