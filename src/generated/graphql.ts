@@ -348,7 +348,7 @@ export type App_Notification_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "app.notification" */
 export type App_Notification_Arr_Rel_Insert_Input = {
   data: Array<App_Notification_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<App_Notification_On_Conflict>;
 };
 
@@ -464,7 +464,7 @@ export type App_Notification_Mutation_Response = {
   returning: Array<App_Notification>;
 };
 
-/** on_conflict condition type for table "app.notification" */
+/** on conflict condition type for table "app.notification" */
 export type App_Notification_On_Conflict = {
   constraint: App_Notification_Constraint;
   update_columns?: Array<App_Notification_Update_Column>;
@@ -752,7 +752,7 @@ export type Cms_Content_Blocks_Append_Input = {
 /** input type for inserting array relation for remote table "cms.content_blocks" */
 export type Cms_Content_Blocks_Arr_Rel_Insert_Input = {
   data: Array<Cms_Content_Blocks_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
 };
 
@@ -869,7 +869,7 @@ export type Cms_Content_Blocks_Mutation_Response = {
   returning: Array<Cms_Content_Blocks>;
 };
 
-/** on_conflict condition type for table "cms.content_blocks" */
+/** on conflict condition type for table "cms.content_blocks" */
 export type Cms_Content_Blocks_On_Conflict = {
   constraint: Cms_Content_Blocks_Constraint;
   update_columns?: Array<Cms_Content_Blocks_Update_Column>;
@@ -1120,7 +1120,7 @@ export type Cms_Content_Content_Labels_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cms.content_content_labels" */
 export type Cms_Content_Content_Labels_Arr_Rel_Insert_Input = {
   data: Array<Cms_Content_Content_Labels_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
 };
 
@@ -1202,7 +1202,7 @@ export type Cms_Content_Content_Labels_Mutation_Response = {
   returning: Array<Cms_Content_Content_Labels>;
 };
 
-/** on_conflict condition type for table "cms.content_content_labels" */
+/** on conflict condition type for table "cms.content_content_labels" */
 export type Cms_Content_Content_Labels_On_Conflict = {
   constraint: Cms_Content_Content_Labels_Constraint;
   update_columns?: Array<Cms_Content_Content_Labels_Update_Column>;
@@ -1484,11 +1484,11 @@ export type Cms_Content_Labels_Mutation_Response = {
 /** input type for inserting object relation for remote table "cms.content_labels" */
 export type Cms_Content_Labels_Obj_Rel_Insert_Input = {
   data: Cms_Content_Labels_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cms.content_labels" */
+/** on conflict condition type for table "cms.content_labels" */
 export type Cms_Content_Labels_On_Conflict = {
   constraint: Cms_Content_Labels_Constraint;
   update_columns?: Array<Cms_Content_Labels_Update_Column>;
@@ -1623,11 +1623,11 @@ export type Cms_Content_Mutation_Response = {
 /** input type for inserting object relation for remote table "cms.content" */
 export type Cms_Content_Obj_Rel_Insert_Input = {
   data: Cms_Content_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cms.content" */
+/** on conflict condition type for table "cms.content" */
 export type Cms_Content_On_Conflict = {
   constraint: Cms_Content_Constraint;
   update_columns?: Array<Cms_Content_Update_Column>;
@@ -2007,7 +2007,7 @@ export type Cms_Navigation_Element_Mutation_Response = {
   returning: Array<Cms_Navigation_Element>;
 };
 
-/** on_conflict condition type for table "cms.navigation_element" */
+/** on conflict condition type for table "cms.navigation_element" */
 export type Cms_Navigation_Element_On_Conflict = {
   constraint: Cms_Navigation_Element_Constraint;
   update_columns?: Array<Cms_Navigation_Element_Update_Column>;
@@ -2297,7 +2297,7 @@ export type Cms_Site_Variables_Mutation_Response = {
   returning: Array<Cms_Site_Variables>;
 };
 
-/** on_conflict condition type for table "cms.site_variables" */
+/** on conflict condition type for table "cms.site_variables" */
 export type Cms_Site_Variables_On_Conflict = {
   constraint: Cms_Site_Variables_Constraint;
   update_columns?: Array<Cms_Site_Variables_Update_Column>;
@@ -2450,11 +2450,11 @@ export type Cp_Index_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.index" */
 export type Cp_Index_Obj_Rel_Insert_Input = {
   data: Cp_Index_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cp.index" */
+/** on conflict condition type for table "cp.index" */
 export type Cp_Index_On_Conflict = {
   constraint: Cp_Index_Constraint;
   update_columns?: Array<Cp_Index_Update_Column>;
@@ -2664,11 +2664,11 @@ export type Cp_Maintainer_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.maintainer" */
 export type Cp_Maintainer_Obj_Rel_Insert_Input = {
   data: Cp_Maintainer_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cp.maintainer" */
+/** on conflict condition type for table "cp.maintainer" */
 export type Cp_Maintainer_On_Conflict = {
   constraint: Cp_Maintainer_Constraint;
   update_columns?: Array<Cp_Maintainer_Update_Column>;
@@ -2785,7 +2785,7 @@ export type Cp_Maintainer_Users_Profile_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.maintainer_users_profile" */
 export type Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
   data: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
 };
 
@@ -2857,7 +2857,7 @@ export type Cp_Maintainer_Users_Profile_Mutation_Response = {
   returning: Array<Cp_Maintainer_Users_Profile>;
 };
 
-/** on_conflict condition type for table "cp.maintainer_users_profile" */
+/** on conflict condition type for table "cp.maintainer_users_profile" */
 export type Cp_Maintainer_Users_Profile_On_Conflict = {
   constraint: Cp_Maintainer_Users_Profile_Constraint;
   update_columns?: Array<Cp_Maintainer_Users_Profile_Update_Column>;
@@ -3075,11 +3075,11 @@ export type Cp_Space_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.space" */
 export type Cp_Space_Obj_Rel_Insert_Input = {
   data: Cp_Space_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cp.space" */
+/** on conflict condition type for table "cp.space" */
 export type Cp_Space_On_Conflict = {
   constraint: Cp_Space_Constraint;
   update_columns?: Array<Cp_Space_Update_Column>;
@@ -3314,7 +3314,7 @@ export type Cp_Visit_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit" */
 export type Cp_Visit_Arr_Rel_Insert_Input = {
   data: Array<Cp_Visit_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
@@ -3494,7 +3494,7 @@ export type Cp_Visit_Note_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit_note" */
 export type Cp_Visit_Note_Arr_Rel_Insert_Input = {
   data: Array<Cp_Visit_Note_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
 };
 
@@ -3587,7 +3587,7 @@ export type Cp_Visit_Note_Mutation_Response = {
   returning: Array<Cp_Visit_Note>;
 };
 
-/** on_conflict condition type for table "cp.visit_note" */
+/** on conflict condition type for table "cp.visit_note" */
 export type Cp_Visit_Note_On_Conflict = {
   constraint: Cp_Visit_Note_Constraint;
   update_columns?: Array<Cp_Visit_Note_Update_Column>;
@@ -3657,11 +3657,11 @@ export enum Cp_Visit_Note_Update_Column {
 /** input type for inserting object relation for remote table "cp.visit" */
 export type Cp_Visit_Obj_Rel_Insert_Input = {
   data: Cp_Visit_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
-/** on_conflict condition type for table "cp.visit" */
+/** on conflict condition type for table "cp.visit" */
 export type Cp_Visit_On_Conflict = {
   constraint: Cp_Visit_Constraint;
   update_columns?: Array<Cp_Visit_Update_Column>;
@@ -3907,7 +3907,7 @@ export type Lookup_App_Notification_Type_Mutation_Response = {
   returning: Array<Lookup_App_Notification_Type>;
 };
 
-/** on_conflict condition type for table "lookup.app_notification_type" */
+/** on conflict condition type for table "lookup.app_notification_type" */
 export type Lookup_App_Notification_Type_On_Conflict = {
   constraint: Lookup_App_Notification_Type_Constraint;
   update_columns?: Array<Lookup_App_Notification_Type_Update_Column>;
@@ -4073,11 +4073,11 @@ export type Lookup_Cms_Content_Block_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.cms_content_block_type" */
 export type Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input = {
   data: Lookup_Cms_Content_Block_Type_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
 };
 
-/** on_conflict condition type for table "lookup.cms_content_block_type" */
+/** on conflict condition type for table "lookup.cms_content_block_type" */
 export type Lookup_Cms_Content_Block_Type_On_Conflict = {
   constraint: Lookup_Cms_Content_Block_Type_Constraint;
   update_columns?: Array<Lookup_Cms_Content_Block_Type_Update_Column>;
@@ -4213,11 +4213,11 @@ export type Lookup_Cms_Content_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.cms_content_type" */
 export type Lookup_Cms_Content_Type_Obj_Rel_Insert_Input = {
   data: Lookup_Cms_Content_Type_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
 };
 
-/** on_conflict condition type for table "lookup.cms_content_type" */
+/** on conflict condition type for table "lookup.cms_content_type" */
 export type Lookup_Cms_Content_Type_On_Conflict = {
   constraint: Lookup_Cms_Content_Type_Constraint;
   update_columns?: Array<Lookup_Cms_Content_Type_Update_Column>;
@@ -4336,7 +4336,7 @@ export type Lookup_Cp_Visit_Status_Mutation_Response = {
   returning: Array<Lookup_Cp_Visit_Status>;
 };
 
-/** on_conflict condition type for table "lookup.cp_visit_status" */
+/** on conflict condition type for table "lookup.cp_visit_status" */
 export type Lookup_Cp_Visit_Status_On_Conflict = {
   constraint: Lookup_Cp_Visit_Status_Constraint;
   update_columns?: Array<Lookup_Cp_Visit_Status_Update_Column>;
@@ -4471,7 +4471,7 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
   returning: Array<Lookup_Schema_Audience_Type>;
 };
 
-/** on_conflict condition type for table "lookup.schema_audience_type" */
+/** on conflict condition type for table "lookup.schema_audience_type" */
 export type Lookup_Schema_Audience_Type_On_Conflict = {
   constraint: Lookup_Schema_Audience_Type_Constraint;
   update_columns?: Array<Lookup_Schema_Audience_Type_Update_Column>;
@@ -6332,7 +6332,7 @@ export type Object_File_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.file" */
 export type Object_File_Arr_Rel_Insert_Input = {
   data: Array<Object_File_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Object_File_On_Conflict>;
 };
 
@@ -6440,7 +6440,7 @@ export type Object_File_Mutation_Response = {
   returning: Array<Object_File>;
 };
 
-/** on_conflict condition type for table "object.file" */
+/** on conflict condition type for table "object.file" */
 export type Object_File_On_Conflict = {
   constraint: Object_File_Constraint;
   update_columns?: Array<Object_File_Update_Column>;
@@ -7141,11 +7141,11 @@ export type Object_Ie_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.ie" */
 export type Object_Ie_Obj_Rel_Insert_Input = {
   data: Object_Ie_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
 };
 
-/** on_conflict condition type for table "object.ie" */
+/** on conflict condition type for table "object.ie" */
 export type Object_Ie_On_Conflict = {
   constraint: Object_Ie_Constraint;
   update_columns?: Array<Object_Ie_Update_Column>;
@@ -7674,7 +7674,7 @@ export type Object_Representation_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.representation" */
 export type Object_Representation_Arr_Rel_Insert_Input = {
   data: Array<Object_Representation_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
@@ -7819,11 +7819,11 @@ export type Object_Representation_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.representation" */
 export type Object_Representation_Obj_Rel_Insert_Input = {
   data: Object_Representation_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
-/** on_conflict condition type for table "object.representation" */
+/** on conflict condition type for table "object.representation" */
 export type Object_Representation_On_Conflict = {
   constraint: Object_Representation_Constraint;
   update_columns?: Array<Object_Representation_Update_Column>;
@@ -10014,7 +10014,7 @@ export type Sync_Audio_Mutation_Response = {
   returning: Array<Sync_Audio>;
 };
 
-/** on_conflict condition type for table "sync.audio" */
+/** on conflict condition type for table "sync.audio" */
 export type Sync_Audio_On_Conflict = {
   constraint: Sync_Audio_Constraint;
   update_columns?: Array<Sync_Audio_Update_Column>;
@@ -10251,7 +10251,7 @@ export type Sync_Film_Mutation_Response = {
   returning: Array<Sync_Film>;
 };
 
-/** on_conflict condition type for table "sync.film" */
+/** on conflict condition type for table "sync.film" */
 export type Sync_Film_On_Conflict = {
   constraint: Sync_Film_Constraint;
   update_columns?: Array<Sync_Film_Update_Column>;
@@ -10500,7 +10500,7 @@ export type Sync_Video_Mutation_Response = {
   returning: Array<Sync_Video>;
 };
 
-/** on_conflict condition type for table "sync.video" */
+/** on conflict condition type for table "sync.video" */
 export type Sync_Video_On_Conflict = {
   constraint: Sync_Video_Constraint;
   update_columns?: Array<Sync_Video_Update_Column>;
@@ -10714,7 +10714,7 @@ export type Users_Collection_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection" */
 export type Users_Collection_Arr_Rel_Insert_Input = {
   data: Array<Users_Collection_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
@@ -10791,7 +10791,7 @@ export type Users_Collection_Ie_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection_ie" */
 export type Users_Collection_Ie_Arr_Rel_Insert_Input = {
   data: Array<Users_Collection_Ie_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
 };
 
@@ -10872,7 +10872,7 @@ export type Users_Collection_Ie_Mutation_Response = {
   returning: Array<Users_Collection_Ie>;
 };
 
-/** on_conflict condition type for table "users.collection_ie" */
+/** on conflict condition type for table "users.collection_ie" */
 export type Users_Collection_Ie_On_Conflict = {
   constraint: Users_Collection_Ie_Constraint;
   update_columns?: Array<Users_Collection_Ie_Update_Column>;
@@ -10991,11 +10991,11 @@ export type Users_Collection_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.collection" */
 export type Users_Collection_Obj_Rel_Insert_Input = {
   data: Users_Collection_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
-/** on_conflict condition type for table "users.collection" */
+/** on conflict condition type for table "users.collection" */
 export type Users_Collection_On_Conflict = {
   constraint: Users_Collection_Constraint;
   update_columns?: Array<Users_Collection_Update_Column>;
@@ -11201,11 +11201,11 @@ export type Users_Group_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.group" */
 export type Users_Group_Obj_Rel_Insert_Input = {
   data: Users_Group_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Group_On_Conflict>;
 };
 
-/** on_conflict condition type for table "users.group" */
+/** on conflict condition type for table "users.group" */
 export type Users_Group_On_Conflict = {
   constraint: Users_Group_Constraint;
   update_columns?: Array<Users_Group_Update_Column>;
@@ -11273,7 +11273,7 @@ export type Users_Group_Permission_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.group_permission" */
 export type Users_Group_Permission_Arr_Rel_Insert_Input = {
   data: Array<Users_Group_Permission_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Group_Permission_On_Conflict>;
 };
 
@@ -11345,7 +11345,7 @@ export type Users_Group_Permission_Mutation_Response = {
   returning: Array<Users_Group_Permission>;
 };
 
-/** on_conflict condition type for table "users.group_permission" */
+/** on conflict condition type for table "users.group_permission" */
 export type Users_Group_Permission_On_Conflict = {
   constraint: Users_Group_Permission_Constraint;
   update_columns?: Array<Users_Group_Permission_Update_Column>;
@@ -11491,7 +11491,7 @@ export type Users_Identity_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.identity" */
 export type Users_Identity_Arr_Rel_Insert_Input = {
   data: Array<Users_Identity_Insert_Input>;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Identity_On_Conflict>;
 };
 
@@ -11579,7 +11579,7 @@ export type Users_Identity_Mutation_Response = {
   returning: Array<Users_Identity>;
 };
 
-/** on_conflict condition type for table "users.identity" */
+/** on conflict condition type for table "users.identity" */
 export type Users_Identity_On_Conflict = {
   constraint: Users_Identity_Constraint;
   update_columns?: Array<Users_Identity_Update_Column>;
@@ -11677,7 +11677,7 @@ export type Users_Identity_Provider_Mutation_Response = {
   returning: Array<Users_Identity_Provider>;
 };
 
-/** on_conflict condition type for table "users.identity_provider" */
+/** on conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
   constraint: Users_Identity_Provider_Constraint;
   update_columns?: Array<Users_Identity_Provider_Update_Column>;
@@ -11899,11 +11899,11 @@ export type Users_Permission_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.permission" */
 export type Users_Permission_Obj_Rel_Insert_Input = {
   data: Users_Permission_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Permission_On_Conflict>;
 };
 
-/** on_conflict condition type for table "users.permission" */
+/** on conflict condition type for table "users.permission" */
 export type Users_Permission_On_Conflict = {
   constraint: Users_Permission_Constraint;
   update_columns?: Array<Users_Permission_Update_Column>;
@@ -12315,11 +12315,11 @@ export type Users_Profile_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.profile" */
 export type Users_Profile_Obj_Rel_Insert_Input = {
   data: Users_Profile_Insert_Input;
-  /** upsert condition */
+  /** on conflict condition */
   on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
 };
 
-/** on_conflict condition type for table "users.profile" */
+/** on conflict condition type for table "users.profile" */
 export type Users_Profile_On_Conflict = {
   constraint: Users_Profile_Constraint;
   update_columns?: Array<Users_Profile_Update_Column>;
@@ -12440,7 +12440,7 @@ export type FindCollectionObjectsByCollectionIdQueryVariables = Exact<{
 }>;
 
 
-export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_collection_ie: Array<{ __typename?: 'users_collection_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null } }>, users_collection_ie_aggregate: { __typename?: 'users_collection_ie_aggregate', aggregate?: { __typename?: 'users_collection_ie_aggregate_fields', count: number } | null } };
+export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_collection_ie: Array<{ __typename?: 'users_collection_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null } }>, users_collection_ie_aggregate: { __typename?: 'users_collection_ie_aggregate', aggregate?: { __typename?: 'users_collection_ie_aggregate_fields', count: number } | null } };
 
 export type FindCollectionsByUserQueryVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -12499,6 +12499,44 @@ export type UpdateCollectionMutationVariables = Exact<{
 
 export type UpdateCollectionMutation = { __typename?: 'mutation_root', update_users_collection?: { __typename?: 'users_collection_mutation_response', returning: Array<{ __typename?: 'users_collection', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null }> } | null };
 
+export type FindSpaceByCpAdminIdQueryVariables = Exact<{
+  cpAdminId: Scalars['uuid'];
+}>;
+
+
+export type FindSpaceByCpAdminIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+
+export type FindSpaceByIdQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type FindSpaceByIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+
+export type FindSpaceByMaintainerIdentifierQueryVariables = Exact<{
+  maintainerId: Scalars['String'];
+}>;
+
+
+export type FindSpaceByMaintainerIdentifierQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+
+export type FindSpacesQueryVariables = Exact<{
+  where: Cp_Space_Bool_Exp;
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+  orderBy: Cp_Space_Order_By;
+}>;
+
+
+export type FindSpacesQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }>, cp_space_aggregate: { __typename?: 'cp_space_aggregate', aggregate?: { __typename?: 'cp_space_aggregate_fields', count: number } | null } };
+
+export type GetSpaceMaintainerProfilesQueryVariables = Exact<{
+  spaceId?: InputMaybe<Scalars['uuid']>;
+}>;
+
+
+export type GetSpaceMaintainerProfilesQuery = { __typename?: 'query_root', cp_maintainer_users_profile: Array<{ __typename?: 'cp_maintainer_users_profile', users_profile_id: any, profile: { __typename?: 'users_profile', mail?: string | null } }> };
+
 export type UpdateSpaceMutationVariables = Exact<{
   id: Scalars['uuid'];
   updateSpace: Cp_Space_Set_Input;
@@ -12510,7 +12548,7 @@ export type UpdateSpaceMutation = { __typename?: 'mutation_root', update_cp_spac
 
 export const DeleteCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteCollectionMutation, DeleteCollectionMutationVariables>;
 export const FindCollectionByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}}]}}]}}]} as unknown as DocumentNode<FindCollectionByIdQuery, FindCollectionByIdQueryVariables>;
-export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
+export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
 export const FindCollectionsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_collection_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
 export const FindObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}}]} as unknown as DocumentNode<FindObjectBySchemaIdentifierQuery, FindObjectBySchemaIdentifierQueryVariables>;
 export const FindObjectInCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectInCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
@@ -12518,4 +12556,9 @@ export const InsertCollectionsDocument = {"kind":"Document","definitions":[{"kin
 export const InsertObjectIntoCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertObjectIntoCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertObjectIntoCollectionMutation, InsertObjectIntoCollectionMutationVariables>;
 export const RemoveObjectFromCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeObjectFromCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveObjectFromCollectionMutation, RemoveObjectFromCollectionMutationVariables>;
 export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
+export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
+export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
+export const FindSpaceByMaintainerIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByMaintainerIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByMaintainerIdentifierQuery, FindSpaceByMaintainerIdentifierQueryVariables>;
+export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_order_by"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
+export const GetSpaceMaintainerProfilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSpaceMaintainerProfiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceMaintainerProfilesQuery, GetSpaceMaintainerProfilesQueryVariables>;
 export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cp_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;

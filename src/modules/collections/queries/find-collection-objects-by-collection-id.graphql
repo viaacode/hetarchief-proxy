@@ -24,6 +24,9 @@ query findCollectionObjectsByCollectionId(
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
+			schema_is_part_of
+			schema_date_published
+			schema_date_created_lower_bound
 		}
 	}
 	users_collection_ie_aggregate(
