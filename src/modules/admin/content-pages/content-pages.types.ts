@@ -1,23 +1,7 @@
 import { Avo } from '@viaa/avo2-types';
 
-import {
-	GetContentByIdQuery as GetContentByIdQueryAvo,
-	GetContentPageByPathQuery as GetContentPageByPathQueryAvo,
-	GetContentPageLabelsByTypeAndIdsQuery as GetContentPageLabelsByTypeAndIdsQueryAvo,
-	GetContentPageLabelsByTypeAndLabelsQuery as GetContentPageLabelsByTypeAndLabelsQueryAvo,
-	GetContentPagesQuery as GetContentPagesQueryAvo,
-	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
-	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationAvo,
-} from '~generated/graphql-db-types-avo';
-import {
-	GetContentByIdQuery as GetContentByIdQueryHetArchief,
-	GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief,
-	GetContentPageLabelsByTypeAndIdsQuery as GetContentPageLabelsByTypeAndIdsQueryHetArchief,
-	GetContentPageLabelsByTypeAndLabelsQuery as GetContentPageLabelsByTypeAndLabelsQueryHetArchief,
-	GetContentPagesQuery as GetContentPagesQueryHetArchief,
-	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
-	UpdateContentPagePublishDatesMutation as UpdateContentPagePublishDatesMutationHetArchief,
-} from '~generated/graphql-db-types-hetarchief';
+import { GetContentPageByPathQuery as GetContentPageByPathQueryAvo } from '~generated/graphql-db-types-avo';
+import { GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
 import { Media } from '~modules/media/types';
 
 export enum AvoOrHetArchief {
@@ -96,14 +80,6 @@ export interface Group {
 	label: string;
 }
 
-export interface CmsContentAggregate {
-	aggregate: Aggregate;
-}
-
-export interface Aggregate {
-	count: number;
-}
-
 export interface ContentPage {
 	id: number;
 	thumbnailPath: string | null;
@@ -167,26 +143,9 @@ export interface MediaPlayerPathInfo {
 	setDurationPath: string;
 }
 
-export type ResolvedIeObject = Partial<Media> & {
-	src?: string;
-};
-
 export type MediaItemResponse = Partial<Media> & {
 	count: number;
 };
-
-export interface ContentPageOverviewParams {
-	withBlock: boolean;
-	contentType: string;
-	// Visible tabs in the page overview component for which we should fetch item counts
-	labelIds: number[];
-	// Selected tabs for which we should fetch content page items
-	selectedLabelIds: number[];
-	orderByProp?: string;
-	orderByDirection?: 'asc' | 'desc';
-	offset: number;
-	limit: number;
-}
 
 export interface ContentPageOverviewResponse {
 	pages: ContentPage[];
@@ -198,16 +157,6 @@ export type LabelObj = {
 	label: string;
 	id: number;
 };
-
-export type ContentLabelsRequestBody =
-	| {
-			contentType: string;
-			labelIds: string[];
-	  }
-	| {
-			contentType: string;
-			labels: string[];
-	  };
 
 export interface SearchDateRange {
 	gte: string | '' | undefined;

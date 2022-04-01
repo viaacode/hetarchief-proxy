@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get } from 'lodash';
 
-import { GetOrganisationDocument } from '~generated/graphql-db-types-hetarchief';
 import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
 import {
 	GqlOrganisation,
@@ -17,7 +16,7 @@ export class OrganisationsService {
 	private queries: OrganisationQueries;
 
 	constructor(private configService: ConfigService, protected dataService: DataService) {
-		this.queries = ORGANISATION_QUERIES[configService.get('avoOrHetArchief')];
+		this.queries = ORGANISATION_QUERIES[this.configService.get('avoOrHetArchief')];
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {
@@ -33,7 +32,7 @@ export class OrganisationsService {
 	}
 
 	public async getOrganisation(id: string): Promise<Organisation> {
-		const response = await this.dataService.execute(GetOrganisationDocument, {
+		const response = await this.dataService.execute(this.queries.GetOrganisationDocument, {
 			id,
 		});
 		return this.adapt(

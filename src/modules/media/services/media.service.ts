@@ -15,10 +15,6 @@ import { DataService } from '~modules/data/services/data.service';
 export class MediaService {
 	private logger: Logger = new Logger(MediaService.name, { timestamp: true });
 	private gotInstance: Got;
-	private playerTicketsGotInstance: Got;
-	private ticketServiceMaxAge: number;
-	private mediaServiceUrl: string;
-	private host: string;
 
 	constructor(private configService: ConfigService, protected dataService: DataService) {
 		this.gotInstance = got.extend({
@@ -26,21 +22,6 @@ export class MediaService {
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
-
-		this.playerTicketsGotInstance = got.extend({
-			prefixUrl: this.configService.get('ticketServiceUrl'),
-			resolveBodyOnly: true,
-			responseType: 'json',
-			https: {
-				rejectUnauthorized: false,
-				certificate: this.configService.get('ticketServiceCertificate'),
-				key: this.configService.get('ticketServiceKey'),
-				passphrase: this.configService.get('ticketServicePassphrase'),
-			},
-		});
-		this.ticketServiceMaxAge = this.configService.get('ticketServiceMaxAge');
-		this.mediaServiceUrl = this.configService.get('mediaServiceUrl');
-		this.host = this.configService.get('host');
 	}
 
 	public adapt(graphQlObject: any): Media {

@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { Avo } from '@viaa/avo2-types';
 import { get, intersection } from 'lodash';
 
 import { ContentPage, LabelObj } from '../content-pages.types';
@@ -36,7 +35,7 @@ export class ContentPagesController {
 
 	constructor(private contentPagesService: ContentPagesService) {}
 
-	@Post('/overview')
+	@Post('overview')
 	public async getContentPagesForOverview(
 		@Query() queryDto: ContentPagesQueryDto
 	): Promise<IPagination<ContentPage>> {
