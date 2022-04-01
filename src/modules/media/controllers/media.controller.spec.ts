@@ -27,6 +27,7 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	findBySchemaIdentifier: jest.fn(),
 	getPlayableUrl: jest.fn(),
 	getRelated: jest.fn(),
+	getThumbnailUrl: jest.fn(),
 };
 
 describe('MediaController', () => {
@@ -54,7 +55,7 @@ describe('MediaController', () => {
 	describe('getMedia', () => {
 		it('should return all media items', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
-			const media = await mediaController.getMedia(null);
+			const media = await mediaController.getMedia('referer', null);
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
 		});
@@ -68,13 +69,21 @@ describe('MediaController', () => {
 		});
 	});
 
+	describe('getThumbnailUrl', () => {
+		it('should return a thumbnail url', async () => {
+			mockMediaService.getThumbnailUrl.mockResolvedValueOnce('http://playme');
+			const url = await mediaController.getThumbnailUrl('referer', { id: '1' });
+			expect(url).toEqual('http://playme');
+		});
+	});
+
 	describe('getMediaById', () => {
 		it('should return a media item by id', async () => {
 			const mockResponse = getMockMediaResponse();
 			mockResponse.hits.total.value = 1;
 			mockResponse.hits.hits.shift();
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getMediaById('1');
+			const media = await mediaController.getMediaById('referer', '1');
 			expect(media.hits.total.value).toEqual(1);
 			expect(media.hits.hits.length).toEqual(1);
 		});
@@ -92,7 +101,7 @@ describe('MediaController', () => {
 	describe('getMediaOnIndex', () => {
 		it('should return all media items in a specific index', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
-			const media = await mediaController.getMediaOnIndex(null, 'test-index');
+			const media = await mediaController.getMediaOnIndex('referer', null, 'test-index');
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
 		});

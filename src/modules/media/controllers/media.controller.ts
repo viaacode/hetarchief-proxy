@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Headers, Logger, Param, Post, Query } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
-import { MediaQueryDto, PlayerTicketsQueryDto } from '../dto/media.dto';
+import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
 
 @ApiTags('Media')
@@ -13,8 +13,11 @@ export class MediaController {
 
 	// TODO comment this endpoint, since users always need to search inside one reading room
 	@Post()
-	public async getMedia(@Body() queryDto: MediaQueryDto): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, null);
+	public async getMedia(
+		@Headers('referer') referer: string,
+		@Body() queryDto: MediaQueryDto
+	): Promise<any> {
+		const media = await this.mediaService.findAll(queryDto, null, referer);
 		return media;
 	}
 
@@ -30,9 +33,21 @@ export class MediaController {
 		return url;
 	}
 
+	@Get('thumbnail-ticket')
+	public async getThumbnailUrl(
+		@Headers('referer') referer: string,
+		@Query() thumbnailQuery: ThumbnailQueryDto
+	): Promise<string> {
+		const url = await this.mediaService.getThumbnailUrl(thumbnailQuery.id, referer);
+		return url;
+	}
+
 	@Get(':id')
-	public async getMediaById(@Param('id') id: string): Promise<any> {
-		return this.mediaService.findBySchemaIdentifier(id);
+	public async getMediaById(
+		@Headers('referer') referer: string,
+		@Param('id') id: string
+	): Promise<any> {
+		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
 	@Get(':id/related/:meemooIdentifier')
@@ -46,11 +61,12 @@ export class MediaController {
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(
+		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
 		@Param('esIndex')
 		esIndex: string
 	): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, esIndex);
+		const media = await this.mediaService.findAll(queryDto, esIndex, referer);
 		return media;
 	}
 }
