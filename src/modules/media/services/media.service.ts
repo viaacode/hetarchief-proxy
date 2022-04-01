@@ -1,17 +1,19 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
 
+import {
+	GetFileByRepresentationSchemaIdentifierDocument,
+	GetObjectIeByIdDocument,
+	GetRelatedObjectsDocument,
+	GetThumbnailUrlByIdDocument,
+} from '../../../generated/graphql';
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, MediaFile, Representation } from '../types';
 
-import {
-	GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER,
-	GET_OBJECT_IE_BY_ID,
-	GET_THUMBNAIL_URL_BY_ID,
-} from './queries.gql';
 import { TicketsService } from './tickets.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -211,7 +213,7 @@ export class MediaService {
 	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_OBJECT_IE_BY_ID, { schemaIdentifier });
+		} = await this.dataService.execute(GetObjectIeByIdDocument, { schemaIdentifier });
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
@@ -220,6 +222,25 @@ export class MediaService {
 		const adapted = this.adapt(objectIe[0]);
 		adapted.thumbnailUrl = await this.resolveThumbnailUrl(adapted.thumbnailUrl, referer);
 		return adapted;
+	}
+
+	public async getRelated(
+		maintainerId: string,
+		schemaIdentifier: string,
+		meemooIdentifier: string
+	): Promise<IPagination<Media>> {
+		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
+			maintainerId,
+			schemaIdentifier,
+			meemooIdentifier,
+		});
+
+		return Pagination<Media>({
+			items: mediaObjects.data.object_ie.map((object: any) => this.adapt(object)),
+			page: 1,
+			size: mediaObjects.data.object_ie.length,
+			total: mediaObjects.data.object_ie.length,
+		});
 	}
 
 	public async getPlayableUrl(id: string, referer: string): Promise<string> {
@@ -237,7 +258,7 @@ export class MediaService {
 	public async getEmbedUrl(id: string): Promise<string> {
 		const {
 			data: { object_file: objectFile },
-		} = await this.dataService.execute(GET_FILE_BY_REPRESENTATION_SCHEMA_IDENTIFIER, { id });
+		} = await this.dataService.execute(GetFileByRepresentationSchemaIdentifierDocument, { id });
 		if (!objectFile[0]) {
 			throw new NotFoundException(`Object file with representation_id '${id}' not found`);
 		}
@@ -248,7 +269,7 @@ export class MediaService {
 	public async getThumbnailPath(id: string): Promise<string> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GET_THUMBNAIL_URL_BY_ID, { id });
+		} = await this.dataService.execute(GetThumbnailUrlByIdDocument, { id });
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

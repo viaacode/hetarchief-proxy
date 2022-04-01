@@ -95,6 +95,7 @@ export class SpacesController {
 			// image is empty: delete current image
 			await this.assetsService.delete(space.image);
 		}
+
 		return this.spacesService.update(id, updateSpaceDto);
 	}
 }
