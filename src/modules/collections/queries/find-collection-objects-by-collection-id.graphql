@@ -27,6 +27,13 @@ query findCollectionObjectsByCollectionId(
 			schema_is_part_of
 			schema_date_published
 			schema_date_created_lower_bound
+			maintainer {
+				schema_identifier
+				schema_name
+				space {
+					id
+				}
+			}
 		}
 	}
 	users_collection_ie_aggregate(
