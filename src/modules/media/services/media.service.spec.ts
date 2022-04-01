@@ -221,6 +221,7 @@ describe('MediaService', () => {
 		it('returns the related objects for a given id and meemooIdentifier', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
 			const response = await mediaService.getRelated(
+				'es-index-1',
 				mockObjectSchemaIdentifier,
 				'8911p09j1g'
 			);

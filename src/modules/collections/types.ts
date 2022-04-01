@@ -65,4 +65,8 @@ export interface IeObject {
 	maintainerId: string;
 	maintainerName: string;
 	readingRoomId: string;
+	series: string[];
+	programs: string[];
+	datePublished?: string;
+	dateCreatedLowerBound?: string;
 }

@@ -11,6 +11,7 @@ import {
 	MAX_NUMBER_SEARCH_RESULTS,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
+	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
@@ -37,6 +38,7 @@ export class QueryBuilder {
 		ORDER_MAPPINGS,
 		MULTI_MATCH_FIELDS,
 		MULTI_MATCH_QUERY_MAPPING,
+		NEEDS_AGG_SUFFIX,
 	};
 
 	public static getConfig(): QueryBuilderConfig {
@@ -148,7 +150,7 @@ export class QueryBuilder {
 			occurrenceType,
 			query: {
 				[this.getQueryType(searchFilter, value)]: {
-					[elasticKey + this.suffix(searchFilter.field)]: value,
+					[elasticKey + this.filterSuffix(searchFilter.field)]: value,
 				},
 			},
 		};
@@ -260,7 +262,7 @@ export class QueryBuilder {
 
 			aggs[elasticProperty] = {
 				terms: {
-					field: elasticProperty + this.suffix(aggProperty),
+					field: elasticProperty + this.aggSuffix(aggProperty),
 					size: this.config.NUMBER_OF_FILTER_OPTIONS,
 				},
 			};
@@ -280,7 +282,22 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static suffix(prop: SearchFilterField): string {
+	private static filterSuffix(prop: SearchFilterField): string {
 		return this.config.NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
+	}
+
+	/**
+	 * Some properties in elasticsearch need a ".keyword" or other suffix to work correctly
+	 * This helper function makes it easier to get a suffix if one is required
+	 * eg:
+	 * "dcterms_medium.keyword": {
+	 *   "terms": {
+	 *     "field": "dcterms_medium.keyword"
+	 *   }
+	 * },
+	 * @param prop
+	 */
+	private static aggSuffix(prop: SearchFilterField): string {
+		return this.config.NEEDS_AGG_SUFFIX[prop] ? `.${this.config.NEEDS_AGG_SUFFIX[prop]}` : '';
 	}
 }
