@@ -134,7 +134,7 @@ describe('PlayerTicketService', () => {
 			}
 			expect(error.response).toEqual({
 				error: 'Not Found',
-				message: "Object with id 'unknown-id' not found",
+				message: "Object file with representation_id 'unknown-id' not found",
 				statusCode: 404,
 			});
 		});
@@ -210,35 +210,6 @@ describe('PlayerTicketService', () => {
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
 
 			getThumbnailTokenSpy.mockRestore();
-		});
-	});
-
-	describe('getEmbedUrl', () => {
-		it('returns the embedUrl for an item', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
-			const url = await playerTicketService.getEmbedUrl('vrt-id');
-			expect(url).toEqual('vrt/item-1');
-		});
-
-		it('throws a notfoundexception if the item was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_file: [],
-				},
-			});
-			let error;
-			try {
-				await playerTicketService.getEmbedUrl('unknown-id');
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				error: 'Not Found',
-				message: "Object file with representation_id 'unknown-id' not found",
-				statusCode: 404,
-			});
 		});
 	});
 

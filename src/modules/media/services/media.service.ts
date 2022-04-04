@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
 
@@ -10,8 +11,8 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { Media, MediaFile, Representation } from '../types';
 
 import {
-	GetObjectBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierDocument,
+	GetRelatedObjectsDocument,
 } from '~generated/graphql-db-types-hetarchief';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
@@ -215,5 +216,46 @@ export class MediaService {
 			referer
 		);
 		return adapted;
+	}
+
+	public async getRelated(
+		maintainerId: string,
+		schemaIdentifier: string,
+		meemooIdentifier: string
+	): Promise<IPagination<Media>> {
+		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
+			maintainerId,
+			schemaIdentifier,
+			meemooIdentifier,
+		});
+
+		return Pagination<Media>({
+			items: mediaObjects.data.object_ie.map((object: any) => this.adapt(object)),
+			page: 1,
+			size: mediaObjects.data.object_ie.length,
+			total: mediaObjects.data.object_ie.length,
+		});
+	}
+
+	public async getSimilar(schemaIdentifier: string, esIndex: string, limit = 4): Promise<any> {
+		const likeFilter = {
+			_index: esIndex,
+			_id: schemaIdentifier,
+		};
+
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				more_like_this: {
+					fields: ['schema_name', 'schema_description'],
+					like: [likeFilter],
+					min_term_freq: 1,
+					max_query_terms: 12,
+				},
+			},
+		};
+
+		return this.executeQuery(esIndex, esQueryObject);
 	}
 }

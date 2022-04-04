@@ -74,15 +74,32 @@ export class MediaController {
 		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
+	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
+	public async getRelated(
+		@Param('esIndex') maintainerId: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Param('meemooIdentifier') meemooIdentifier: string
+	): Promise<any> {
+		// We use the esIndex as the maintainerId -- no need to lowercase
+		return this.mediaService.getRelated(maintainerId, schemaIdentifier, meemooIdentifier);
+	}
+
+	@Get(':esIndex/:id/similar')
+	public async getSimilar(
+		@Param('id') id: string,
+		@Param('esIndex') esIndex: string
+	): Promise<any> {
+		return this.mediaService.getSimilar(id, esIndex.toLowerCase());
+	}
+
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
 	public async getMediaOnIndex(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
-		@Param('esIndex')
-		esIndex: string
+		@Param('esIndex') esIndex: string
 	): Promise<any> {
-		const media = await this.mediaService.findAll(queryDto, esIndex, referer);
+		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
 		return media;
 	}
 }

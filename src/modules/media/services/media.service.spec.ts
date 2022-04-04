@@ -8,6 +8,7 @@ import { Configuration } from '~config';
 import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
 
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -27,6 +28,16 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
+	getPlayerToken: jest.fn(),
+	getPlayableUrl: jest.fn(),
+	getEmbedUrl: jest.fn(),
+	resolveThumbnailUrl: jest.fn(),
+	getThumbnailToken: jest.fn(),
+	getThumbnailUrl: jest.fn(),
+	getThumbnailPath: jest.fn(),
 };
 
 const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
@@ -67,6 +78,10 @@ describe('MediaService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
 				},
 			],
 		}).compile();
@@ -143,7 +158,7 @@ describe('MediaService', () => {
 		});
 	});
 
-	describe('findById', () => {
+	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIe);
 			const response = await mediaService.findBySchemaIdentifier(
@@ -204,6 +219,29 @@ describe('MediaService', () => {
 				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
+		});
+	});
+
+	describe('getRelated', () => {
+		it('returns the related objects for a given id and meemooIdentifier', async () => {
+			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			const response = await mediaService.getRelated(
+				'es-index-1',
+				mockObjectSchemaIdentifier,
+				'8911p09j1g'
+			);
+			expect(response.items.length).toEqual(1);
+		});
+	});
+
+	describe('getSimilar', () => {
+		it('returns similar objects for a given id', async () => {
+			nock('http://elasticsearch/')
+				.post('/my-index/_search')
+				.reply(201, getMockMediaResponse());
+			const response = await mediaService.getSimilar(mockObjectSchemaIdentifier, 'my-index');
+			expect(response.hits.total.value).toBe(2);
+			expect(response.hits.hits.length).toBe(2);
 		});
 	});
 });

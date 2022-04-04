@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
+import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { Organisation } from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { DataService } from '~modules/data/services/data.service';
@@ -37,14 +38,8 @@ const mockGqlAvOOrganisation = {
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'elasticSearchUrl') {
-			return 'http://elasticsearch'; // should be a syntactically valid url
-		}
-		if (key === 'ticketServiceUrl') {
-			return 'http://ticketservice';
-		}
-		if (key === 'mediaServiceUrl') {
-			return 'http://mediaservice';
+		if (key === 'databaseApplicationType') {
+			return AvoOrHetArchief.hetArchief;
 		}
 		return key;
 	}),
