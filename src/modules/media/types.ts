@@ -23,21 +23,6 @@ export interface QueryBuilderConfig {
 	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
-export interface PlayerTicket {
-	jwt: string;
-	context: {
-		ip: string;
-		referer: string;
-		app: string;
-		name: string;
-		expiration: string;
-		fragment: {
-			start: string;
-			end: string;
-		};
-	};
-}
-
 export interface MediaFile {
 	name: string;
 	alternateName: string;

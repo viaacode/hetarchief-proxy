@@ -1,0 +1,6 @@
+query getPublicContentPages($where: app_content_bool_exp) {
+	app_content(where: $where) {
+		path
+		updated_at
+	}
+}

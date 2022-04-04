@@ -1,0 +1,31 @@
+query getItemTileById($id: bpchar!) {
+	obj: app_item_meta(where: { external_id: { _eq: $id } }) {
+		created_at
+		duration
+		browse_path
+		thumbnail_path
+		title
+		description
+		issued
+		organisation {
+			name
+			logo_url
+		}
+		type {
+			label
+			id
+		}
+		item_collaterals(where: { description: { _eq: "subtitle" } }) {
+			path
+			description
+			external_id
+		}
+		view_counts_aggregate {
+			aggregate {
+				sum {
+					count
+				}
+			}
+		}
+	}
+}

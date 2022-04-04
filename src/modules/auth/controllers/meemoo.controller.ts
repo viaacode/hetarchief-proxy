@@ -14,6 +14,8 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, pick } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
@@ -133,7 +135,7 @@ export class MeemooController {
 		} catch (err) {
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${this.configService.get('host')}/auth/meemoo/login&returnToUrl=${
+					url: `${getConfig(this.configService, 'host')}/auth/meemoo/login&returnToUrl=${
 						info.returnToUrl
 					}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,

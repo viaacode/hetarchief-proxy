@@ -1,4 +1,4 @@
-query getObjectIeById($schemaIdentifier: String!) {
+query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 	object_ie(where: { schema_identifier: { _eq: $schemaIdentifier } }) {
 		schema_identifier
 		meemoo_identifier

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -20,20 +21,27 @@ const graphQlUserResponse = {
 		permissions: [
 			{
 				permission: {
-					name: 'CREATE_COLLECTION',
+					name: Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
 				},
 			},
 		],
 	},
+	identities: [
+		{
+			identity_provider_name: Idp.HETARCHIEF,
+		},
+	],
 };
 
-const archiefUser = {
+const archiefUser: User = {
 	id: '123',
 	firstName: 'Tom',
 	lastName: 'Testerom',
+	fullName: 'Tom Testerom',
+	idp: Idp.HETARCHIEF,
 	email: 'test@studiohypderdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
-	permissions: ['CREATE_COLLECTION'],
+	permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 };
 
 describe('UsersService', () => {

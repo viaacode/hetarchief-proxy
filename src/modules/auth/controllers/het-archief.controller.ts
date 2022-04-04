@@ -14,6 +14,8 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, pick } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { HetArchiefService } from '../services/het-archief.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
@@ -135,9 +137,10 @@ export class HetArchiefController {
 		} catch (err) {
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${this.configService.get('host')}/auth/hetarchief/login&returnToUrl=${
-						info.returnToUrl
-					}`,
+					url: `${getConfig(
+						this.configService,
+						'host'
+					)}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}

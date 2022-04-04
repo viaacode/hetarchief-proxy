@@ -12,15 +12,23 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
+import { getConfig } from '~config';
+
 import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
+
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 
 @ApiTags('Media')
 @Controller('media')
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
-	constructor(private mediaService: MediaService, private configService: ConfigService) {}
+	constructor(
+		private mediaService: MediaService,
+		private playerTicketService: PlayerTicketService,
+		private configService: ConfigService
+	) {}
 
 	// Disabled in production since users always need to search inside one reading room
 	// handy on local environment due to limited test data in a single index
@@ -30,7 +38,7 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto
 	): Promise<any> {
-		if (this.configService.get('environment') === 'production') {
+		if (getConfig(this.configService, 'environment') === 'production') {
 			throw new ForbiddenException();
 		}
 		const media = await this.mediaService.findAll(queryDto, null, referer);
@@ -42,10 +50,10 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
 	): Promise<string> {
-		const url = await this.mediaService.getPlayableUrl(
-			decodeURIComponent(playerTicketsQuery.id),
-			referer
+		const embedUrl = await this.playerTicketService.getEmbedUrl(
+			decodeURIComponent(playerTicketsQuery.id)
 		);
+		const url = await this.playerTicketService.getPlayableUrl(embedUrl, referer);
 		return url;
 	}
 
@@ -54,7 +62,7 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Query() thumbnailQuery: ThumbnailQueryDto
 	): Promise<string> {
-		const url = await this.mediaService.getThumbnailUrl(thumbnailQuery.id, referer);
+		const url = await this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
 		return url;
 	}
 
