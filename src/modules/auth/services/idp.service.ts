@@ -15,6 +15,11 @@ export class IdpService {
 	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF, Idp.MEEMOO];
 
 	public static MEEMOO_ORGANISATION_ID = 'OR-w66976m';
+	public static SHD_ORGANISATION_ID = 'OR-pv6b877';
+	public static ADMIN_ORGANISATIONS = [
+		IdpService.MEEMOO_ORGANISATION_ID,
+		IdpService.SHD_ORGANISATION_ID,
+	];
 
 	constructor(protected configService: ConfigService, protected spacesService: SpacesService) {}
 
@@ -60,7 +65,7 @@ export class IdpService {
 			return Group.CP_ADMIN;
 		}
 
-		if (maintainerId === IdpService.MEEMOO_ORGANISATION_ID) {
+		if (IdpService.ADMIN_ORGANISATIONS.includes(maintainerId)) {
 			return Group.MEEMOO_ADMIN;
 		}
 
