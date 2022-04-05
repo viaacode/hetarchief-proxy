@@ -11,13 +11,14 @@ const mockDataService = {
 };
 
 const mockUser: User = {
-	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
-	firstName: 'Tom',
-	lastName: 'Testerom',
-	email: 'test@studiohyperdrive.be',
-	acceptedTosAt: '2022-02-21T14:00:00',
-	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	firstName: 'Test',
+	lastName: 'Testers',
+	fullName: 'Test Testers',
+	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 
 describe('NavigationsService', () => {

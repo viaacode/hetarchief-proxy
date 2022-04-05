@@ -2,16 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { CollectionsService } from './collections.service';
 
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
 import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';
-import { MediaService } from '~modules/media/services/media.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
 	resolveThumbnailUrl: jest.fn(),
 };
 
@@ -162,8 +162,8 @@ describe('CollectionsService', () => {
 					useValue: mockDataService,
 				},
 				{
-					provide: MediaService,
-					useValue: mockMediaService,
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
 				},
 			],
 		}).compile();

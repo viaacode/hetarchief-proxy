@@ -1,0 +1,6 @@
+query getContentPageLabelsByTypeAndLabels($contentType: String!, $labels: [String!]!) {
+	app_content_labels(where: { label: { _in: $labels }, content_type: { _eq: $contentType } }) {
+		label
+		id
+	}
+}

@@ -2,6 +2,9 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get, isEmpty, set } from 'lodash';
 
+import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+import { AccessType, GqlSpace, Space } from '../types';
+
 import {
 	FindSpaceByCpAdminIdDocument,
 	FindSpaceByIdDocument,
@@ -9,10 +12,7 @@ import {
 	FindSpacesDocument,
 	GetSpaceMaintainerProfilesDocument,
 	UpdateSpaceDocument,
-} from '../../../generated/graphql';
-import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, GqlSpace, Space } from '../types';
-
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { Recipient } from '~shared/types/types';

@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
-import { Lookup_Schema_Audience_Type_Enum } from '../../../generated/graphql';
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
@@ -74,6 +74,7 @@ const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
+	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],

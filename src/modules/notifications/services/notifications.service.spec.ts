@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addMonths } from 'date-fns';
 
-import { Lookup_Schema_Audience_Type_Enum } from '../../../generated/graphql';
-
 import { NotificationsService } from './notifications.service';
 
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
@@ -68,6 +67,7 @@ const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
+	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],

@@ -7,6 +7,7 @@ import config, { configValidationSchema } from '~config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { ContentPagesModule } from '~modules/admin/content-pages';
 import { NavigationsModule } from '~modules/admin/navigations';
 import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AuthModule } from '~modules/auth';
@@ -43,6 +44,7 @@ import { SessionService } from '~shared/services/session.service';
 		VisitsModule,
 		CollectionsModule,
 		NotificationsModule,
+		ContentPagesModule,
 		TranslationsModule,
 		AdminTranslationsModule,
 	],

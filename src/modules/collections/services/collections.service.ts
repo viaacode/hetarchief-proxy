@@ -3,18 +3,6 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
 
 import {
-	DeleteCollectionDocument,
-	FindCollectionByIdDocument,
-	FindCollectionObjectsByCollectionIdDocument,
-	FindCollectionsByUserDocument,
-	FindObjectBySchemaIdentifierDocument,
-	FindObjectInCollectionDocument,
-	InsertCollectionsDocument,
-	InsertObjectIntoCollectionDocument,
-	RemoveObjectFromCollectionDocument,
-	UpdateCollectionDocument,
-} from '../../../generated/graphql';
-import {
 	Collection,
 	CollectionObjectLink,
 	GqlCollection,
@@ -25,9 +13,21 @@ import {
 	IeObject,
 } from '../types';
 
+import {
+	DeleteCollectionDocument,
+	FindCollectionByIdDocument,
+	FindCollectionObjectsByCollectionIdDocument,
+	FindCollectionsByUserDocument,
+	FindObjectBySchemaIdentifierDocument,
+	FindObjectInCollectionDocument,
+	InsertCollectionsDocument,
+	InsertObjectIntoCollectionDocument,
+	RemoveObjectFromCollectionDocument,
+	UpdateCollectionDocument,
+} from '~generated/graphql-db-types-hetarchief';
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { DataService } from '~modules/data/services/data.service';
-import { MediaService } from '~modules/media/services/media.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -36,7 +36,10 @@ export class CollectionsService {
 	// The current referer header
 	protected referer: string;
 
-	constructor(protected dataService: DataService, protected mediaService: MediaService) {}
+	constructor(
+		protected dataService: DataService,
+		protected playerTicketService: PlayerTicketService
+	) {}
 
 	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
 		if (!gqlIeObject) {
@@ -97,7 +100,7 @@ export class CollectionsService {
 			return undefined;
 		}
 		const objectIe = this.adaptIeObject(get(gqlCollectionObjectLink, 'ie'));
-		const resolvedThumbnailUrl = await this.mediaService.resolveThumbnailUrl(
+		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
 			this.referer
 		);

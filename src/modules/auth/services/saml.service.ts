@@ -5,6 +5,8 @@ import { get } from 'lodash';
 import saml2, { IdentityProvider, ServiceProvider } from 'saml2-js';
 import convert from 'xml-js';
 
+import { getConfig } from '~config';
+
 import { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
 
 import { LdapUser } from '~shared/auth/auth.types';
@@ -21,7 +23,7 @@ export abstract class SamlService {
 
 	public async init(samlConfig: SamlConfig) {
 		const { url, entityId, privateKey, certificate, assertEndpoint } = samlConfig;
-		if (this.configService.get('environment') !== 'production') {
+		if (getConfig(this.configService, 'environment') !== 'production') {
 			this.logger.log('SAML config ', {
 				url,
 				entityId,

@@ -1,0 +1,11 @@
+query getOrganisation($id: String) {
+	cp_maintainer(where: { schema_identifier: { _eq: $id } }) {
+		information {
+			logo {
+				iri
+			}
+		}
+		schema_name
+		schema_identifier
+	}
+}

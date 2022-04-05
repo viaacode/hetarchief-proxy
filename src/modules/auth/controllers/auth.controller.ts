@@ -11,6 +11,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 
+import { getConfig } from '~config';
+
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, LoginResponse } from '../types';
 
@@ -72,14 +74,14 @@ export class AuthController {
 	 */
 	@Get('session')
 	public getSession(@Session() session: Record<string, any>) {
-		if (this.configService.get('environment') !== 'production') {
+		if (getConfig(this.configService, 'environment') !== 'production') {
 			return session;
 		}
 	}
 
 	@Post('session')
 	public postSession(@Session() session: Record<string, any>) {
-		if (this.configService.get('environment') !== 'production') {
+		if (getConfig(this.configService, 'environment') !== 'production') {
 			return session;
 		}
 	}

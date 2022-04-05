@@ -4,8 +4,7 @@ import {
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
 	Lookup_Schema_Audience_Type_Enum,
-} from '../../generated/graphql';
-
+} from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 
 export enum AccessType {

@@ -3,6 +3,7 @@ module.exports = {
 	moduleNameMapper: {
 		'^~config/?(.*)$': ['<rootDir>/config/$1'],
 		'^~modules/?(.*)$': ['<rootDir>/modules/$1'],
+		'^~generated/?(.*)$': ['<rootDir>/generated/$1'],
 		'^~shared/?(.*)$': ['<rootDir>/shared/$1'],
 	},
 	rootDir: 'src',
