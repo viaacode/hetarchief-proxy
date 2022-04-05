@@ -5,7 +5,7 @@ import { differenceInSeconds } from 'date-fns';
 import got, { Got } from 'got';
 import { get } from 'lodash';
 
-import { Configuration, getConfig } from '~config';
+import { getConfig } from '~config';
 
 import { PlayerTicket } from '../player-ticket.types';
 

@@ -1,16 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { get } from 'lodash';
 import queryString from 'query-string';
 
 import { getConfig } from '~config';
 
-import { Idp } from '~shared/auth/auth.types';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { Group } from '~modules/users/types';
+import { Idp, LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {
+	private logger: Logger = new Logger(IdpService.name, { timestamp: true });
 	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF, Idp.MEEMOO];
 
-	constructor(protected configService: ConfigService) {}
+	public static MEEMOO_ORGANISATION_ID = 'OR-w66976m';
+
+	constructor(protected configService: ConfigService, protected spacesService: SpacesService) {}
 
 	public hasSpecificLogoutPage(idp: Idp): boolean {
 		return this.idpsWithSpecificLogoutPage.includes(idp);
@@ -23,5 +29,41 @@ export class IdpService {
 			returnToUrl,
 		})}`;
 		return url;
+	}
+
+	/**
+	 * Flowchart: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/2978447456/Gebruikersgroepen+en+permissies+BZT+versie+1#Functionele-samenvatting
+	 */
+	public async determineUserGroup(ldapUser: LdapUser): Promise<Group> {
+		// permissions check
+		const apps = get(ldapUser, 'attributes.apps', []);
+		if (
+			!apps.includes('hetarchief') &&
+			!apps.includes('admins') // TODO replace by a single value 'hetarchief-beheer' once archief 2.0 is launched
+		) {
+			// no member of hetarchief-beheer
+			// TOP-section of the flowchart
+			// check for kiosk permissions -- otherwise it's a regular user
+			if (get(ldapUser, 'attributes.organizationalstatus', []).includes('kiosk')) {
+				// organization needs to have a space to be a kiosk user
+				const maintainerId = get(ldapUser, 'attributes.o[0]');
+				if (await this.spacesService.findBySlug(maintainerId)) {
+					return Group.KIOSK_VISITOR;
+				}
+			}
+
+			return Group.VISITOR;
+		}
+		// bottom section of the flowchart
+		const maintainerId = get(ldapUser, 'attributes.o[0]');
+		if (maintainerId && (await this.spacesService.findBySlug(maintainerId))) {
+			return Group.CP_ADMIN;
+		}
+
+		if (maintainerId === IdpService.MEEMOO_ORGANISATION_ID) {
+			return Group.MEEMOO_ADMIN;
+		}
+
+		return Group.VISITOR;
 	}
 }

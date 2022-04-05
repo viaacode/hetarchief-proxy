@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { get } from 'lodash';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
-import { GqlPermissionData, GqlUser, User } from '../types';
+import { GqlPermissionData, GqlUser, GroupIdToName, User } from '../types';
 
 import {
 	GET_USER_BY_IDENTITY_ID,
@@ -31,11 +31,17 @@ export class UsersService {
 			lastName: get(graphQlUser, 'last_name'),
 			email: get(graphQlUser, 'mail'),
 			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
+			groupId: get(graphQlUser, 'group_id'),
+			groupName: this.groupIdToName(get(graphQlUser, 'group_id')),
 			permissions: get(graphQlUser, 'group.permissions', []).map(
 				(permData: GqlPermissionData) => permData.permission.name
 			),
 			idp: get(graphQlUser, 'identities[0].identity_provider_name'),
 		};
+	}
+
+	public groupIdToName(groupId: string): string {
+		return GroupIdToName[groupId] || null;
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
@@ -58,6 +64,7 @@ export class UsersService {
 			first_name: createUserDto.firstName,
 			last_name: createUserDto.lastName,
 			mail: createUserDto.email,
+			group_id: createUserDto.groupId,
 		};
 		const {
 			data: { insert_users_profile_one: createdUser },
@@ -82,6 +89,7 @@ export class UsersService {
 			first_name: updateUserDto.firstName,
 			last_name: updateUserDto.lastName,
 			mail: updateUserDto.email,
+			group_id: updateUserDto.groupId,
 		};
 
 		const {
