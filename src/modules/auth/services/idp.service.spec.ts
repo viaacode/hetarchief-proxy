@@ -19,7 +19,7 @@ const getLdapUser = () => ({
 		sn: ['Testerom'],
 		oNickname: ['Testbeeld'],
 		apps: ['hetarchief', 'admin'], // TODO replace by a single value 'hetarchief-beheer' once archief 2.0 is launched
-		organizationalstatus: [''],
+		organizationalStatus: [''],
 		o: [IdpService.MEEMOO_ORGANISATION_ID],
 	},
 	name_id: 'test@studiohyperdrive.be',
@@ -64,7 +64,7 @@ describe('IdpService', () => {
 		it('should assign the Visitor group if user has no archief-beheer, but kiosk and an org id without space', async () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.apps = [];
-			ldapUser.attributes.organizationalstatus = ['kiosk'];
+			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
 			const group = await idpService.determineUserGroup(ldapUser);
 			expect(group).toEqual(Group.VISITOR);
@@ -74,7 +74,7 @@ describe('IdpService', () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce({ id: 'space-1' });
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.apps = [];
-			ldapUser.attributes.organizationalstatus = ['kiosk'];
+			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
 			const group = await idpService.determineUserGroup(ldapUser);
 			expect(group).toEqual(Group.KIOSK_VISITOR);

@@ -49,7 +49,7 @@ export class IdpService {
 			// no member of hetarchief-beheer
 			// TOP-section of the flowchart
 			// check for kiosk permissions -- otherwise it's a regular user
-			if (get(ldapUser, 'attributes.organizationalstatus', []).includes('kiosk')) {
+			if (get(ldapUser, 'attributes.organizationalStatus', []).includes('kiosk')) {
 				// organization needs to have a space to be a kiosk user
 				const maintainerId = get(ldapUser, 'attributes.o[0]');
 				if (await this.spacesService.findBySlug(maintainerId)) {
