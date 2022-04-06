@@ -5,6 +5,7 @@ import flow from 'lodash/fp/flow';
 
 import { Permission, User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const IDP = 'idp';
 const IDP_USER_INFO_PATH = 'idpUserInfo';
@@ -91,6 +92,13 @@ export class SessionHelper {
 			return null;
 		}
 		return session[ARCHIEF_USER_INFO_PATH];
+	}
+
+	public static getUserGroupIds(user: User | null | undefined): number[] {
+		return [
+			...get(user, 'userGroupIds', []),
+			user ? SpecialPermissionGroups.loggedInUsers : SpecialPermissionGroups.loggedOutUsers,
+		];
 	}
 
 	/**

@@ -7,8 +7,8 @@ import { Configuration } from '~config';
 
 import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
-import { TicketsService } from './tickets.service';
 
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -30,9 +30,14 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const mockTicketsService: Partial<Record<keyof TicketsService, jest.SpyInstance>> = {
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
 	getPlayerToken: jest.fn(),
+	getPlayableUrl: jest.fn(),
+	getEmbedUrl: jest.fn(),
+	resolveThumbnailUrl: jest.fn(),
 	getThumbnailToken: jest.fn(),
+	getThumbnailUrl: jest.fn(),
+	getThumbnailPath: jest.fn(),
 };
 
 const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
@@ -75,8 +80,8 @@ describe('MediaService', () => {
 					useValue: mockDataService,
 				},
 				{
-					provide: TicketsService,
-					useValue: mockTicketsService,
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
 				},
 			],
 		}).compile();
@@ -237,88 +242,6 @@ describe('MediaService', () => {
 			const response = await mediaService.getSimilar(mockObjectSchemaIdentifier, 'my-index');
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
-		});
-	});
-
-	describe('getPlayableUrl', () => {
-		it('returns a playable url', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
-			mockTicketsService.getPlayerToken.mockResolvedValueOnce('secret-jwt-token');
-
-			const url = await mediaService.getPlayableUrl('vrt-id', 'referer');
-			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
-		});
-	});
-
-	describe('getThumbnailUrl', () => {
-		it('returns a thumbnail url', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
-			});
-			mockTicketsService.getThumbnailToken.mockResolvedValueOnce('secret-jwt-token');
-
-			const url = await mediaService.getThumbnailUrl('vrt-id', 'referer');
-			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
-		});
-	});
-
-	describe('getEmbedUrl', () => {
-		it('returns the embedUrl for an item', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
-			const url = await mediaService.getEmbedUrl('vrt-id');
-			expect(url).toEqual('vrt/item-1');
-		});
-
-		it('throws a notfoundexception if the item was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_file: [],
-				},
-			});
-			let error;
-			try {
-				await mediaService.getEmbedUrl('unknown-id');
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				error: 'Not Found',
-				message: "Object file with representation_id 'unknown-id' not found",
-				statusCode: 404,
-			});
-		});
-	});
-
-	describe('getThumbnailPath', () => {
-		it('returns the thumbnail url for an item', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
-			});
-			const url = await mediaService.getThumbnailPath('vrt-id');
-			expect(url).toEqual('vrt/item-1');
-		});
-
-		it('throws a notfoundexception if the item was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_ie: [],
-				},
-			});
-			let error;
-			try {
-				await mediaService.getThumbnailPath('unknown-id');
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				error: 'Not Found',
-				message: "Object IE with id 'unknown-id' not found",
-				statusCode: 404,
-			});
 		});
 	});
 });

@@ -13,6 +13,8 @@ import { DocumentNode } from 'graphql';
 import { print } from 'graphql/language/printer';
 import { keys } from 'lodash';
 
+import { getConfig } from '~config';
+
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
@@ -32,21 +34,21 @@ export class DataService {
 	) {
 		if (configService.get('environment') !== 'production') {
 			this.logger.log('GraphQl config: ', {
-				url: this.configService.get('graphQlUrl'),
-				secret: this.configService.get('graphQlSecret'),
-				whitelistEnabled: this.configService.get('graphQlEnableWhitelist'),
+				url: getConfig(this.configService, 'graphQlUrl'),
+				secret: getConfig(this.configService, 'graphQlSecret'),
+				whitelistEnabled: getConfig(this.configService, 'graphQlEnableWhitelist'),
 			});
 		}
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('graphQlUrl'),
+			prefixUrl: getConfig(this.configService, 'graphQlUrl'),
 			headers: {
-				'x-hasura-admin-secret': this.configService.get('graphQlSecret'),
+				'x-hasura-admin-secret': getConfig(this.configService, 'graphQlSecret'),
 			},
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
 
-		this.whitelistEnabled = this.configService.get('graphQlEnableWhitelist');
+		this.whitelistEnabled = getConfig(this.configService, 'graphQlEnableWhitelist');
 
 		const proxyWhitelistPath = path.join(__dirname, '../../../../scripts/proxy-whitelist.json');
 		const clientWhitelistPath = path.join(

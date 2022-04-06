@@ -15,6 +15,7 @@ import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
@@ -113,12 +114,7 @@ export class VisitsQueryDto {
 	@IsOptional()
 	@IsEnum(VisitStatus, { each: true })
 	@IsArray()
-	@Transform((params) => {
-		if (typeof params.value == 'string') {
-			return params.value.split(',');
-		}
-		return params.value;
-	})
+	@Transform(commaSeparatedStringToArray)
 	status?: VisitStatus | VisitStatus[];
 
 	@ApiPropertyOptional({

@@ -1,5 +1,4 @@
-import { Lookup_Schema_Audience_Type_Enum } from '../../../../generated/graphql';
-
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { GqlSpace } from '~modules/spaces/types';
 
 export const mockGqlSpace: GqlSpace = {

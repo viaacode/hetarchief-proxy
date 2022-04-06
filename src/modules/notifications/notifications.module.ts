@@ -1,5 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { NotificationsController } from './controllers/notifications.controller';
 import { NotificationsService } from './services/notifications.service';
@@ -10,7 +10,7 @@ import { VisitsModule } from '~modules/visits';
 
 @Module({
 	controllers: [NotificationsController],
-	imports: [DataModule, forwardRef(() => VisitsModule), ConfigService, CampaignMonitorModule],
+	imports: [DataModule, forwardRef(() => VisitsModule), ConfigModule, CampaignMonitorModule],
 	providers: [NotificationsService, ConfigService],
 	exports: [NotificationsService],
 })
