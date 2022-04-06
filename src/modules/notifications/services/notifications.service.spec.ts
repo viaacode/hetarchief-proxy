@@ -4,8 +4,8 @@ import { addMonths } from 'date-fns';
 import { NotificationsService } from './notifications.service';
 
 import {
-	Lookup_Cp_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
+	Lookup_Cp_Space_Status_Enum as SpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
@@ -128,7 +128,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: Lookup_Cp_Space_Status_Enum.Inactive,
+	status: SpaceStatus.Inactive,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',

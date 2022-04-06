@@ -1,8 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { Lookup_Cp_Space_Status_Enum as SpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { AccessType } from '~modules/spaces/types';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SpacesQueryDto {
@@ -26,6 +28,19 @@ export class SpacesQueryDto {
 		enum: AccessType,
 	})
 	accessType? = undefined;
+
+	@IsArray()
+	@IsEnum(SpaceStatus, { each: true })
+	@IsOptional()
+	@ApiPropertyOptional({
+		isArray: true,
+		description: 'Filter spaces by status',
+		default: undefined,
+		example: SpaceStatus.Active,
+		enum: SpaceStatus,
+	})
+	@Transform(commaSeparatedStringToArray)
+	status?: SpaceStatus[];
 
 	@IsNumber()
 	@Type(() => Number)

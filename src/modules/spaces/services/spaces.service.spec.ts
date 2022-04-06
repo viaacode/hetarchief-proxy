@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
+import { Lookup_Cp_Space_Status_Enum as SpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
 import { Permission, User } from '~modules/users/types';
@@ -289,6 +290,31 @@ describe('SpacesService', () => {
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(20);
 			expect(response.total).toBe(0);
+		});
+
+		it('can filter spaces by their status', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					cp_space: [
+						{
+							id: '1',
+						},
+					],
+					cp_space_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await spacesService.findAll(
+				{ status: [SpaceStatus.Active], page: 1, size: 20 },
+				undefined
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(20);
+			expect(response.total).toBe(100);
 		});
 	});
 

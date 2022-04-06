@@ -102,7 +102,7 @@ export class SpacesService {
 		inputQuery: SpacesQueryDto,
 		userProfileId: string | undefined
 	): Promise<IPagination<Space>> {
-		const { query, accessType, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, accessType, status, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		// Build where object
@@ -156,6 +156,11 @@ export class SpacesService {
 				});
 			}
 		}
+
+		if (status) {
+			filterArray.push({ status: { _in: status } });
+		}
+
 		const where: any = { _and: filterArray };
 
 		const spacesResponse = await this.dataService.execute(FindSpacesDocument, {
