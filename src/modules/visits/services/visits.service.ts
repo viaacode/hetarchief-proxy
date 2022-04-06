@@ -77,32 +77,33 @@ export class VisitsService {
 			return null;
 		}
 		return {
+			createdAt: get(graphQlVisit, 'created_at'),
+			endAt: get(graphQlVisit, 'end_date'),
 			id: get(graphQlVisit, 'id'),
+			note: this.adaptNotes(graphQlVisit.notes),
+			reason: get(graphQlVisit, 'user_reason'),
+			spaceAddress: this.adaptSpaceAddress(
+				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
+			),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
-			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 			spaceMail: get(
 				graphQlVisit,
 				'space.schema_maintainer.information[0].primary_site.address.email'
 			),
-			spaceAddress: this.adaptSpaceAddress(
-				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
-			),
-			userProfileId: get(graphQlVisit, 'user_profile_id'),
-			timeframe: get(graphQlVisit, 'user_timeframe'),
-			reason: get(graphQlVisit, 'user_reason'),
-			status: get(graphQlVisit, 'status'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
+			spaceSlug: get(graphQlVisit, 'space.schema_maintainer.schema_identifier'),
 			startAt: get(graphQlVisit, 'start_date'),
-			endAt: get(graphQlVisit, 'end_date'),
-			note: this.adaptNotes(graphQlVisit.notes),
-			createdAt: get(graphQlVisit, 'created_at'),
+			status: get(graphQlVisit, 'status'),
+			timeframe: get(graphQlVisit, 'user_timeframe'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
-			visitorName: get(graphQlVisit, 'user_profile.full_name'),
-			visitorMail: get(graphQlVisit, 'user_profile.mail'),
-			visitorId: get(graphQlVisit, 'user_profile.id'),
-			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
-			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
 			updatedById: get(graphQlVisit, 'updater.id'),
 			updatedByName: get(graphQlVisit, 'updater.full_name'),
+			userProfileId: get(graphQlVisit, 'user_profile_id'),
+			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
+			visitorId: get(graphQlVisit, 'user_profile.id'),
+			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
+			visitorMail: get(graphQlVisit, 'user_profile.mail'),
+			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 		};
 	}
 

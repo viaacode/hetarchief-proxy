@@ -33,6 +33,7 @@ export const INSERT_VISIT = `
 			space {
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
 						primary_site {
 							address {

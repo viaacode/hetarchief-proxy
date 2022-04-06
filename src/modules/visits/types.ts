@@ -43,26 +43,27 @@ export interface GqlVisit {
 
 export interface Visit {
 	id: string;
-	spaceId: string;
-	spaceName: string;
-	spaceMail: string;
-	spaceAddress?: string;
-	userProfileId: string;
-	timeframe: string;
-	reason: string;
-	status: VisitStatus;
-	startAt: string;
+	createdAt: string;
 	endAt: string;
 	note?: Note;
-	createdAt: string;
+	reason: string;
+	spaceAddress?: string;
+	spaceId: string;
+	spaceMail: string;
+	spaceName: string;
+	spaceSlug: string;
+	startAt: string;
+	status: VisitStatus;
+	timeframe: string;
 	updatedAt: string;
-	visitorName: string;
-	visitorFirstName: string;
-	visitorLastName: string;
-	visitorMail: string;
-	visitorId: string;
 	updatedById: string | null;
 	updatedByName: string | null;
+	userProfileId: string;
+	visitorFirstName: string;
+	visitorId: string;
+	visitorLastName: string;
+	visitorMail: string;
+	visitorName: string;
 }
 
 export interface Note {
