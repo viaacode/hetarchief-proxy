@@ -303,6 +303,12 @@ export class VisitsService {
 			now: new Date().toISOString(),
 		});
 
+		if (!visitResponse.data.cp_visit[0]) {
+			throw new NotFoundException(
+				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
+			);
+		}
+
 		return this.adapt(visitResponse.data.cp_visit[0]);
 	}
 

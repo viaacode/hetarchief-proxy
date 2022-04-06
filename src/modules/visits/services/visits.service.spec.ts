@@ -314,7 +314,7 @@ describe('VisitsService', () => {
 			expect(response.id).toBe(cpVisit.id);
 		});
 
-		it('returns null if the visit was not found', async () => {
+		it('throws a notfoundexception if the visit was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cp_visit: [],
@@ -325,9 +325,21 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
 
-			expect(response).toBeNull();
+			let error;
+
+			try {
+				await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message:
+					"No active visits for user with id 'user-1' for space with maintainer id 'space-1' found",
+				statusCode: 404,
+			});
 		});
 	});
 
