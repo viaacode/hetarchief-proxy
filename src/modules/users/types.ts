@@ -1,6 +1,9 @@
 import { Idp } from '~shared/auth/auth.types';
 
 export enum Permission {
+	/** Spaces */
+	CAN_READ_ALL_SPACES = 'CAN_READ_ALL_SPACES',
+	/** Visit Requests */
 	CAN_READ_ALL_VISIT_REQUESTS = 'CAN_READ_ALL_VISIT_REQUESTS',
 	CAN_APPROVE_DENY_ALL_VISIT_REQUESTS = 'CAN_APPROVE_DENY_ALL_VISIT_REQUESTS',
 	CAN_READ_CP_VISIT_REQUESTS = 'CAN_READ_CP_VISIT_REQUESTS',
