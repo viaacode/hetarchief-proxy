@@ -77,6 +77,7 @@ const mockUser: User = {
 const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -107,8 +108,8 @@ const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description:
-		'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
+	description: null,
+	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
 	serviceDescription: null,
 	image: null,
 	color: null,

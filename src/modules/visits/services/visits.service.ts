@@ -10,7 +10,7 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import { GqlVisit, Note, Visit, VisitSpaceCount, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_ACTIVE_VISIT_BY_USER_AND_SPACE,
@@ -24,6 +24,7 @@ import {
 	UPDATE_VISIT,
 } from './queries.gql';
 
+import { PendingVisitCountForUserBySlugDocument } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -305,6 +306,21 @@ export class VisitsService {
 		return this.adapt(visitResponse.data.cp_visit[0]);
 	}
 
+	public async getPendingVisitCountForUserBySlug(
+		userProfileId: string,
+		slug: string
+	): Promise<VisitSpaceCount> {
+		const result = await this.dataService.execute(PendingVisitCountForUserBySlugDocument, {
+			user: userProfileId,
+			slug,
+		});
+
+		return {
+			count: get(result, 'data.cp_visit_aggregate.aggregate.count', 0),
+			id: get(result, 'data.cp_visit_aggregate.nodes[0].cp_space_id', null),
+		};
+	}
+
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
@@ -313,7 +329,7 @@ export class VisitsService {
 		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
 			{
@@ -324,7 +340,7 @@ export class VisitsService {
 		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndEndedVisitsWithoutNotification() {
+	public async getApprovedAndEndedVisitsWithoutNotification() {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
 			{ now: new Date().toISOString() }

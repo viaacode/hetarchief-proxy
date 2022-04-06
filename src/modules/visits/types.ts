@@ -66,6 +66,11 @@ export interface Visit {
 	visitorName: string;
 }
 
+export interface VisitSpaceCount {
+	count: number;
+	id?: string;
+}
+
 export interface Note {
 	id: string;
 	authorName?: string;

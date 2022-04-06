@@ -54,6 +54,7 @@ const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceSlug: 'or-rf5kf25',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',

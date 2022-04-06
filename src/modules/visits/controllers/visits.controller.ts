@@ -18,7 +18,7 @@ import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.ty
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { Visit, VisitStatus } from '../types';
+import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -99,6 +99,18 @@ export class VisitsController {
 			maintainerOrgId
 		);
 		return activeVisit;
+	}
+
+	@Get('pending-for-space/:slug')
+	public async getPendingVisitCountForUserBySlug(
+		@Param('slug') slug: string,
+		@Session() session: Record<string, any>
+	): Promise<VisitSpaceCount> {
+		const count = await this.visitsService.getPendingVisitCountForUserBySlug(
+			SessionHelper.getArchiefUserInfo(session).id,
+			slug
+		);
+		return count;
 	}
 
 	@Post()
