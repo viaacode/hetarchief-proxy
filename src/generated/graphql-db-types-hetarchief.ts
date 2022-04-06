@@ -348,7 +348,7 @@ export type App_Notification_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "app.notification" */
 export type App_Notification_Arr_Rel_Insert_Input = {
   data: Array<App_Notification_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Notification_On_Conflict>;
 };
 
@@ -464,7 +464,7 @@ export type App_Notification_Mutation_Response = {
   returning: Array<App_Notification>;
 };
 
-/** on conflict condition type for table "app.notification" */
+/** on_conflict condition type for table "app.notification" */
 export type App_Notification_On_Conflict = {
   constraint: App_Notification_Constraint;
   update_columns?: Array<App_Notification_Update_Column>;
@@ -752,7 +752,7 @@ export type Cms_Content_Blocks_Append_Input = {
 /** input type for inserting array relation for remote table "cms.content_blocks" */
 export type Cms_Content_Blocks_Arr_Rel_Insert_Input = {
   data: Array<Cms_Content_Blocks_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
 };
 
@@ -869,7 +869,7 @@ export type Cms_Content_Blocks_Mutation_Response = {
   returning: Array<Cms_Content_Blocks>;
 };
 
-/** on conflict condition type for table "cms.content_blocks" */
+/** on_conflict condition type for table "cms.content_blocks" */
 export type Cms_Content_Blocks_On_Conflict = {
   constraint: Cms_Content_Blocks_Constraint;
   update_columns?: Array<Cms_Content_Blocks_Update_Column>;
@@ -1120,7 +1120,7 @@ export type Cms_Content_Content_Labels_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cms.content_content_labels" */
 export type Cms_Content_Content_Labels_Arr_Rel_Insert_Input = {
   data: Array<Cms_Content_Content_Labels_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
 };
 
@@ -1202,7 +1202,7 @@ export type Cms_Content_Content_Labels_Mutation_Response = {
   returning: Array<Cms_Content_Content_Labels>;
 };
 
-/** on conflict condition type for table "cms.content_content_labels" */
+/** on_conflict condition type for table "cms.content_content_labels" */
 export type Cms_Content_Content_Labels_On_Conflict = {
   constraint: Cms_Content_Content_Labels_Constraint;
   update_columns?: Array<Cms_Content_Content_Labels_Update_Column>;
@@ -1484,11 +1484,11 @@ export type Cms_Content_Labels_Mutation_Response = {
 /** input type for inserting object relation for remote table "cms.content_labels" */
 export type Cms_Content_Labels_Obj_Rel_Insert_Input = {
   data: Cms_Content_Labels_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
 };
 
-/** on conflict condition type for table "cms.content_labels" */
+/** on_conflict condition type for table "cms.content_labels" */
 export type Cms_Content_Labels_On_Conflict = {
   constraint: Cms_Content_Labels_Constraint;
   update_columns?: Array<Cms_Content_Labels_Update_Column>;
@@ -1623,11 +1623,11 @@ export type Cms_Content_Mutation_Response = {
 /** input type for inserting object relation for remote table "cms.content" */
 export type Cms_Content_Obj_Rel_Insert_Input = {
   data: Cms_Content_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
 };
 
-/** on conflict condition type for table "cms.content" */
+/** on_conflict condition type for table "cms.content" */
 export type Cms_Content_On_Conflict = {
   constraint: Cms_Content_Constraint;
   update_columns?: Array<Cms_Content_Update_Column>;
@@ -2007,7 +2007,7 @@ export type Cms_Navigation_Element_Mutation_Response = {
   returning: Array<Cms_Navigation_Element>;
 };
 
-/** on conflict condition type for table "cms.navigation_element" */
+/** on_conflict condition type for table "cms.navigation_element" */
 export type Cms_Navigation_Element_On_Conflict = {
   constraint: Cms_Navigation_Element_Constraint;
   update_columns?: Array<Cms_Navigation_Element_Update_Column>;
@@ -2297,7 +2297,7 @@ export type Cms_Site_Variables_Mutation_Response = {
   returning: Array<Cms_Site_Variables>;
 };
 
-/** on conflict condition type for table "cms.site_variables" */
+/** on_conflict condition type for table "cms.site_variables" */
 export type Cms_Site_Variables_On_Conflict = {
   constraint: Cms_Site_Variables_Constraint;
   update_columns?: Array<Cms_Site_Variables_Update_Column>;
@@ -2450,11 +2450,11 @@ export type Cp_Index_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.index" */
 export type Cp_Index_Obj_Rel_Insert_Input = {
   data: Cp_Index_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.index" */
+/** on_conflict condition type for table "cp.index" */
 export type Cp_Index_On_Conflict = {
   constraint: Cp_Index_Constraint;
   update_columns?: Array<Cp_Index_Update_Column>;
@@ -2664,11 +2664,11 @@ export type Cp_Maintainer_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.maintainer" */
 export type Cp_Maintainer_Obj_Rel_Insert_Input = {
   data: Cp_Maintainer_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.maintainer" */
+/** on_conflict condition type for table "cp.maintainer" */
 export type Cp_Maintainer_On_Conflict = {
   constraint: Cp_Maintainer_Constraint;
   update_columns?: Array<Cp_Maintainer_Update_Column>;
@@ -2785,7 +2785,7 @@ export type Cp_Maintainer_Users_Profile_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.maintainer_users_profile" */
 export type Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
   data: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
 };
 
@@ -2857,7 +2857,7 @@ export type Cp_Maintainer_Users_Profile_Mutation_Response = {
   returning: Array<Cp_Maintainer_Users_Profile>;
 };
 
-/** on conflict condition type for table "cp.maintainer_users_profile" */
+/** on_conflict condition type for table "cp.maintainer_users_profile" */
 export type Cp_Maintainer_Users_Profile_On_Conflict = {
   constraint: Cp_Maintainer_Users_Profile_Constraint;
   update_columns?: Array<Cp_Maintainer_Users_Profile_Update_Column>;
@@ -2916,7 +2916,6 @@ export type Cp_Space = {
   __typename?: 'cp_space';
   created_at?: Maybe<Scalars['timestamp']>;
   id: Scalars['uuid'];
-  is_published?: Maybe<Scalars['Boolean']>;
   published_at?: Maybe<Scalars['timestamp']>;
   schema_audience_type: Lookup_Schema_Audience_Type_Enum;
   schema_color?: Maybe<Scalars['String']>;
@@ -2927,6 +2926,7 @@ export type Cp_Space = {
   schema_maintainer_id: Scalars['String'];
   schema_public_access?: Maybe<Scalars['Boolean']>;
   schema_service_description?: Maybe<Scalars['String']>;
+  status: Lookup_Cp_Space_Status_Enum;
   updated_at?: Maybe<Scalars['timestamp']>;
   /** An array relationship */
   visits: Array<Cp_Visit>;
@@ -2995,7 +2995,6 @@ export type Cp_Space_Bool_Exp = {
   _or?: InputMaybe<Array<Cp_Space_Bool_Exp>>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  is_published?: InputMaybe<Boolean_Comparison_Exp>;
   published_at?: InputMaybe<Timestamp_Comparison_Exp>;
   schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum_Comparison_Exp>;
   schema_color?: InputMaybe<String_Comparison_Exp>;
@@ -3005,6 +3004,7 @@ export type Cp_Space_Bool_Exp = {
   schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
   schema_public_access?: InputMaybe<Boolean_Comparison_Exp>;
   schema_service_description?: InputMaybe<String_Comparison_Exp>;
+  status?: InputMaybe<Lookup_Cp_Space_Status_Enum_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   visits?: InputMaybe<Cp_Visit_Bool_Exp>;
 };
@@ -3021,7 +3021,6 @@ export enum Cp_Space_Constraint {
 export type Cp_Space_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
-  is_published?: InputMaybe<Scalars['Boolean']>;
   published_at?: InputMaybe<Scalars['timestamp']>;
   schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
   schema_color?: InputMaybe<Scalars['String']>;
@@ -3031,6 +3030,7 @@ export type Cp_Space_Insert_Input = {
   schema_maintainer_id?: InputMaybe<Scalars['String']>;
   schema_public_access?: InputMaybe<Scalars['Boolean']>;
   schema_service_description?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Lookup_Cp_Space_Status_Enum>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
   visits?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
 };
@@ -3075,11 +3075,11 @@ export type Cp_Space_Mutation_Response = {
 /** input type for inserting object relation for remote table "cp.space" */
 export type Cp_Space_Obj_Rel_Insert_Input = {
   data: Cp_Space_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.space" */
+/** on_conflict condition type for table "cp.space" */
 export type Cp_Space_On_Conflict = {
   constraint: Cp_Space_Constraint;
   update_columns?: Array<Cp_Space_Update_Column>;
@@ -3090,7 +3090,6 @@ export type Cp_Space_On_Conflict = {
 export type Cp_Space_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  is_published?: InputMaybe<Order_By>;
   published_at?: InputMaybe<Order_By>;
   schema_audience_type?: InputMaybe<Order_By>;
   schema_color?: InputMaybe<Order_By>;
@@ -3100,6 +3099,7 @@ export type Cp_Space_Order_By = {
   schema_maintainer_id?: InputMaybe<Order_By>;
   schema_public_access?: InputMaybe<Order_By>;
   schema_service_description?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   visits_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
 };
@@ -3116,8 +3116,6 @@ export enum Cp_Space_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  IsPublished = 'is_published',
-  /** column name */
   PublishedAt = 'published_at',
   /** column name */
   SchemaAudienceType = 'schema_audience_type',
@@ -3134,6 +3132,8 @@ export enum Cp_Space_Select_Column {
   /** column name */
   SchemaServiceDescription = 'schema_service_description',
   /** column name */
+  Status = 'status',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -3141,7 +3141,6 @@ export enum Cp_Space_Select_Column {
 export type Cp_Space_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
-  is_published?: InputMaybe<Scalars['Boolean']>;
   published_at?: InputMaybe<Scalars['timestamp']>;
   schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
   schema_color?: InputMaybe<Scalars['String']>;
@@ -3150,6 +3149,7 @@ export type Cp_Space_Set_Input = {
   schema_maintainer_id?: InputMaybe<Scalars['String']>;
   schema_public_access?: InputMaybe<Scalars['Boolean']>;
   schema_service_description?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Lookup_Cp_Space_Status_Enum>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
 };
 
@@ -3160,8 +3160,6 @@ export enum Cp_Space_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  IsPublished = 'is_published',
-  /** column name */
   PublishedAt = 'published_at',
   /** column name */
   SchemaAudienceType = 'schema_audience_type',
@@ -3177,6 +3175,8 @@ export enum Cp_Space_Update_Column {
   SchemaPublicAccess = 'schema_public_access',
   /** column name */
   SchemaServiceDescription = 'schema_service_description',
+  /** column name */
+  Status = 'status',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -3314,7 +3314,7 @@ export type Cp_Visit_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit" */
 export type Cp_Visit_Arr_Rel_Insert_Input = {
   data: Array<Cp_Visit_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
@@ -3494,7 +3494,7 @@ export type Cp_Visit_Note_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "cp.visit_note" */
 export type Cp_Visit_Note_Arr_Rel_Insert_Input = {
   data: Array<Cp_Visit_Note_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
 };
 
@@ -3587,7 +3587,7 @@ export type Cp_Visit_Note_Mutation_Response = {
   returning: Array<Cp_Visit_Note>;
 };
 
-/** on conflict condition type for table "cp.visit_note" */
+/** on_conflict condition type for table "cp.visit_note" */
 export type Cp_Visit_Note_On_Conflict = {
   constraint: Cp_Visit_Note_Constraint;
   update_columns?: Array<Cp_Visit_Note_Update_Column>;
@@ -3657,11 +3657,11 @@ export enum Cp_Visit_Note_Update_Column {
 /** input type for inserting object relation for remote table "cp.visit" */
 export type Cp_Visit_Obj_Rel_Insert_Input = {
   data: Cp_Visit_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
 };
 
-/** on conflict condition type for table "cp.visit" */
+/** on_conflict condition type for table "cp.visit" */
 export type Cp_Visit_On_Conflict = {
   constraint: Cp_Visit_Constraint;
   update_columns?: Array<Cp_Visit_Update_Column>;
@@ -3907,7 +3907,7 @@ export type Lookup_App_Notification_Type_Mutation_Response = {
   returning: Array<Lookup_App_Notification_Type>;
 };
 
-/** on conflict condition type for table "lookup.app_notification_type" */
+/** on_conflict condition type for table "lookup.app_notification_type" */
 export type Lookup_App_Notification_Type_On_Conflict = {
   constraint: Lookup_App_Notification_Type_Constraint;
   update_columns?: Array<Lookup_App_Notification_Type_Update_Column>;
@@ -4073,11 +4073,11 @@ export type Lookup_Cms_Content_Block_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.cms_content_block_type" */
 export type Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input = {
   data: Lookup_Cms_Content_Block_Type_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
 };
 
-/** on conflict condition type for table "lookup.cms_content_block_type" */
+/** on_conflict condition type for table "lookup.cms_content_block_type" */
 export type Lookup_Cms_Content_Block_Type_On_Conflict = {
   constraint: Lookup_Cms_Content_Block_Type_Constraint;
   update_columns?: Array<Lookup_Cms_Content_Block_Type_Update_Column>;
@@ -4213,11 +4213,11 @@ export type Lookup_Cms_Content_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.cms_content_type" */
 export type Lookup_Cms_Content_Type_Obj_Rel_Insert_Input = {
   data: Lookup_Cms_Content_Type_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
 };
 
-/** on conflict condition type for table "lookup.cms_content_type" */
+/** on_conflict condition type for table "lookup.cms_content_type" */
 export type Lookup_Cms_Content_Type_On_Conflict = {
   constraint: Lookup_Cms_Content_Type_Constraint;
   update_columns?: Array<Lookup_Cms_Content_Type_Update_Column>;
@@ -4251,6 +4251,143 @@ export type Lookup_Cms_Content_Type_Set_Input = {
 
 /** update columns of table "lookup.cms_content_type" */
 export enum Lookup_Cms_Content_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/**
+ * de circle of life van een space
+ *
+ *
+ * columns and relationships of "lookup.cp_space_status"
+ *
+ */
+export type Lookup_Cp_Space_Status = {
+  __typename?: 'lookup_cp_space_status';
+  comment: Scalars['String'];
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Aggregate = {
+  __typename?: 'lookup_cp_space_status_aggregate';
+  aggregate?: Maybe<Lookup_Cp_Space_Status_Aggregate_Fields>;
+  nodes: Array<Lookup_Cp_Space_Status>;
+};
+
+/** aggregate fields of "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Aggregate_Fields = {
+  __typename?: 'lookup_cp_space_status_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_Cp_Space_Status_Max_Fields>;
+  min?: Maybe<Lookup_Cp_Space_Status_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_Cp_Space_Status_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.cp_space_status". All fields are combined with a logical 'AND'. */
+export type Lookup_Cp_Space_Status_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_Cp_Space_Status_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_Cp_Space_Status_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.cp_space_status" */
+export enum Lookup_Cp_Space_Status_Constraint {
+  /** unique or primary key constraint */
+  CpSpaceStatusPkey = 'cp_space_status_pkey'
+}
+
+export enum Lookup_Cp_Space_Status_Enum {
+  /** De bezoekersruimte is gepubliceerd en zichtbaar voor bezoekers */
+  Active = 'ACTIVE',
+  /** De bezoekersruimte is niet gepubliceerd en niet zichtbaar voor bezoekers */
+  Inactive = 'INACTIVE',
+  /** De bezoekersruimte is opgestart en vindbaar met rechtstreekse link, maar niet vindbaar zoekresultaten of de homepage */
+  Requested = 'REQUESTED'
+}
+
+/** Boolean expression to compare columns of type "lookup_cp_space_status_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Cp_Space_Status_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_Cp_Space_Status_Enum>;
+  _in?: InputMaybe<Array<Lookup_Cp_Space_Status_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_Cp_Space_Status_Enum>;
+  _nin?: InputMaybe<Array<Lookup_Cp_Space_Status_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Cp_Space_Status_Max_Fields = {
+  __typename?: 'lookup_cp_space_status_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Cp_Space_Status_Min_Fields = {
+  __typename?: 'lookup_cp_space_status_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Mutation_Response = {
+  __typename?: 'lookup_cp_space_status_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_Cp_Space_Status>;
+};
+
+/** on_conflict condition type for table "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_On_Conflict = {
+  constraint: Lookup_Cp_Space_Status_Constraint;
+  update_columns?: Array<Lookup_Cp_Space_Status_Update_Column>;
+  where?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.cp_space_status". */
+export type Lookup_Cp_Space_Status_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_cp_space_status */
+export type Lookup_Cp_Space_Status_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.cp_space_status" */
+export enum Lookup_Cp_Space_Status_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.cp_space_status" */
+export type Lookup_Cp_Space_Status_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.cp_space_status" */
+export enum Lookup_Cp_Space_Status_Update_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
@@ -4336,7 +4473,7 @@ export type Lookup_Cp_Visit_Status_Mutation_Response = {
   returning: Array<Lookup_Cp_Visit_Status>;
 };
 
-/** on conflict condition type for table "lookup.cp_visit_status" */
+/** on_conflict condition type for table "lookup.cp_visit_status" */
 export type Lookup_Cp_Visit_Status_On_Conflict = {
   constraint: Lookup_Cp_Visit_Status_Constraint;
   update_columns?: Array<Lookup_Cp_Visit_Status_Update_Column>;
@@ -4471,7 +4608,7 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
   returning: Array<Lookup_Schema_Audience_Type>;
 };
 
-/** on conflict condition type for table "lookup.schema_audience_type" */
+/** on_conflict condition type for table "lookup.schema_audience_type" */
 export type Lookup_Schema_Audience_Type_On_Conflict = {
   constraint: Lookup_Schema_Audience_Type_Constraint;
   update_columns?: Array<Lookup_Schema_Audience_Type_Update_Column>;
@@ -4578,6 +4715,10 @@ export type Mutation_Root = {
   delete_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.cms_content_type" */
   delete_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
+  /** delete data from the table: "lookup.cp_space_status" */
+  delete_lookup_cp_space_status?: Maybe<Lookup_Cp_Space_Status_Mutation_Response>;
+  /** delete single row from the table: "lookup.cp_space_status" */
+  delete_lookup_cp_space_status_by_pk?: Maybe<Lookup_Cp_Space_Status>;
   /** delete data from the table: "lookup.cp_visit_status" */
   delete_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
   /** delete single row from the table: "lookup.cp_visit_status" */
@@ -4706,6 +4847,10 @@ export type Mutation_Root = {
   insert_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.cms_content_type" */
   insert_lookup_cms_content_type_one?: Maybe<Lookup_Cms_Content_Type>;
+  /** insert data into the table: "lookup.cp_space_status" */
+  insert_lookup_cp_space_status?: Maybe<Lookup_Cp_Space_Status_Mutation_Response>;
+  /** insert a single row into the table: "lookup.cp_space_status" */
+  insert_lookup_cp_space_status_one?: Maybe<Lookup_Cp_Space_Status>;
   /** insert data into the table: "lookup.cp_visit_status" */
   insert_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
   /** insert a single row into the table: "lookup.cp_visit_status" */
@@ -4834,6 +4979,10 @@ export type Mutation_Root = {
   update_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
   /** update single row of the table: "lookup.cms_content_type" */
   update_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
+  /** update data of the table: "lookup.cp_space_status" */
+  update_lookup_cp_space_status?: Maybe<Lookup_Cp_Space_Status_Mutation_Response>;
+  /** update single row of the table: "lookup.cp_space_status" */
+  update_lookup_cp_space_status_by_pk?: Maybe<Lookup_Cp_Space_Status>;
   /** update data of the table: "lookup.cp_visit_status" */
   update_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
   /** update single row of the table: "lookup.cp_visit_status" */
@@ -5089,6 +5238,18 @@ export type Mutation_RootDelete_Lookup_Cms_Content_TypeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Lookup_Cms_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cp_Space_StatusArgs = {
+  where: Lookup_Cp_Space_Status_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Cp_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -5507,6 +5668,20 @@ export type Mutation_RootInsert_Lookup_Cms_Content_TypeArgs = {
 export type Mutation_RootInsert_Lookup_Cms_Content_Type_OneArgs = {
   object: Lookup_Cms_Content_Type_Insert_Input;
   on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cp_Space_StatusArgs = {
+  objects: Array<Lookup_Cp_Space_Status_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_Cp_Space_Status_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Cp_Space_Status_OneArgs = {
+  object: Lookup_Cp_Space_Status_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_Cp_Space_Status_On_Conflict>;
 };
 
 
@@ -6013,6 +6188,20 @@ export type Mutation_RootUpdate_Lookup_Cms_Content_Type_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Lookup_Cp_Space_StatusArgs = {
+  _set?: InputMaybe<Lookup_Cp_Space_Status_Set_Input>;
+  where: Lookup_Cp_Space_Status_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Cp_Space_Status_By_PkArgs = {
+  _set?: InputMaybe<Lookup_Cp_Space_Status_Set_Input>;
+  pk_columns: Lookup_Cp_Space_Status_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Lookup_Cp_Visit_StatusArgs = {
   _set?: InputMaybe<Lookup_Cp_Visit_Status_Set_Input>;
   where: Lookup_Cp_Visit_Status_Bool_Exp;
@@ -6332,7 +6521,7 @@ export type Object_File_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.file" */
 export type Object_File_Arr_Rel_Insert_Input = {
   data: Array<Object_File_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_File_On_Conflict>;
 };
 
@@ -6440,7 +6629,7 @@ export type Object_File_Mutation_Response = {
   returning: Array<Object_File>;
 };
 
-/** on conflict condition type for table "object.file" */
+/** on_conflict condition type for table "object.file" */
 export type Object_File_On_Conflict = {
   constraint: Object_File_Constraint;
   update_columns?: Array<Object_File_Update_Column>;
@@ -7141,11 +7330,11 @@ export type Object_Ie_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.ie" */
 export type Object_Ie_Obj_Rel_Insert_Input = {
   data: Object_Ie_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.ie" */
+/** on_conflict condition type for table "object.ie" */
 export type Object_Ie_On_Conflict = {
   constraint: Object_Ie_Constraint;
   update_columns?: Array<Object_Ie_Update_Column>;
@@ -7674,7 +7863,7 @@ export type Object_Representation_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.representation" */
 export type Object_Representation_Arr_Rel_Insert_Input = {
   data: Array<Object_Representation_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
@@ -7819,11 +8008,11 @@ export type Object_Representation_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.representation" */
 export type Object_Representation_Obj_Rel_Insert_Input = {
   data: Object_Representation_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.representation" */
+/** on_conflict condition type for table "object.representation" */
 export type Object_Representation_On_Conflict = {
   constraint: Object_Representation_Constraint;
   update_columns?: Array<Object_Representation_Update_Column>;
@@ -8025,6 +8214,12 @@ export type Query_Root = {
   lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
   /** fetch data from the table: "lookup.cms_content_type" using primary key columns */
   lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
+  /** fetch data from the table: "lookup.cp_space_status" */
+  lookup_cp_space_status: Array<Lookup_Cp_Space_Status>;
+  /** fetch aggregated fields from the table: "lookup.cp_space_status" */
+  lookup_cp_space_status_aggregate: Lookup_Cp_Space_Status_Aggregate;
+  /** fetch data from the table: "lookup.cp_space_status" using primary key columns */
+  lookup_cp_space_status_by_pk?: Maybe<Lookup_Cp_Space_Status>;
   /** fetch data from the table: "lookup.cp_visit_status" */
   lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
   /** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -8501,6 +8696,29 @@ export type Query_RootLookup_Cms_Content_Type_AggregateArgs = {
 
 
 export type Query_RootLookup_Cms_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Query_RootLookup_Cp_Space_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Cp_Space_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Cp_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Cp_Space_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Cp_Space_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Cp_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Cp_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -9008,6 +9226,12 @@ export type Subscription_Root = {
   lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
   /** fetch data from the table: "lookup.cms_content_type" using primary key columns */
   lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
+  /** fetch data from the table: "lookup.cp_space_status" */
+  lookup_cp_space_status: Array<Lookup_Cp_Space_Status>;
+  /** fetch aggregated fields from the table: "lookup.cp_space_status" */
+  lookup_cp_space_status_aggregate: Lookup_Cp_Space_Status_Aggregate;
+  /** fetch data from the table: "lookup.cp_space_status" using primary key columns */
+  lookup_cp_space_status_by_pk?: Maybe<Lookup_Cp_Space_Status>;
   /** fetch data from the table: "lookup.cp_visit_status" */
   lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
   /** fetch aggregated fields from the table: "lookup.cp_visit_status" */
@@ -9475,6 +9699,29 @@ export type Subscription_RootLookup_Cms_Content_Type_AggregateArgs = {
 
 
 export type Subscription_RootLookup_Cms_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Subscription_RootLookup_Cp_Space_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Cp_Space_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Cp_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Cp_Space_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Cp_Space_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Cp_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Cp_Space_Status_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Cp_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -10014,7 +10261,7 @@ export type Sync_Audio_Mutation_Response = {
   returning: Array<Sync_Audio>;
 };
 
-/** on conflict condition type for table "sync.audio" */
+/** on_conflict condition type for table "sync.audio" */
 export type Sync_Audio_On_Conflict = {
   constraint: Sync_Audio_Constraint;
   update_columns?: Array<Sync_Audio_Update_Column>;
@@ -10251,7 +10498,7 @@ export type Sync_Film_Mutation_Response = {
   returning: Array<Sync_Film>;
 };
 
-/** on conflict condition type for table "sync.film" */
+/** on_conflict condition type for table "sync.film" */
 export type Sync_Film_On_Conflict = {
   constraint: Sync_Film_Constraint;
   update_columns?: Array<Sync_Film_Update_Column>;
@@ -10500,7 +10747,7 @@ export type Sync_Video_Mutation_Response = {
   returning: Array<Sync_Video>;
 };
 
-/** on conflict condition type for table "sync.video" */
+/** on_conflict condition type for table "sync.video" */
 export type Sync_Video_On_Conflict = {
   constraint: Sync_Video_Constraint;
   update_columns?: Array<Sync_Video_Update_Column>;
@@ -10714,7 +10961,7 @@ export type Users_Collection_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection" */
 export type Users_Collection_Arr_Rel_Insert_Input = {
   data: Array<Users_Collection_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
@@ -10791,7 +11038,7 @@ export type Users_Collection_Ie_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.collection_ie" */
 export type Users_Collection_Ie_Arr_Rel_Insert_Input = {
   data: Array<Users_Collection_Ie_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
 };
 
@@ -10872,7 +11119,7 @@ export type Users_Collection_Ie_Mutation_Response = {
   returning: Array<Users_Collection_Ie>;
 };
 
-/** on conflict condition type for table "users.collection_ie" */
+/** on_conflict condition type for table "users.collection_ie" */
 export type Users_Collection_Ie_On_Conflict = {
   constraint: Users_Collection_Ie_Constraint;
   update_columns?: Array<Users_Collection_Ie_Update_Column>;
@@ -10991,11 +11238,11 @@ export type Users_Collection_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.collection" */
 export type Users_Collection_Obj_Rel_Insert_Input = {
   data: Users_Collection_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.collection" */
+/** on_conflict condition type for table "users.collection" */
 export type Users_Collection_On_Conflict = {
   constraint: Users_Collection_Constraint;
   update_columns?: Array<Users_Collection_Update_Column>;
@@ -11201,11 +11448,11 @@ export type Users_Group_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.group" */
 export type Users_Group_Obj_Rel_Insert_Input = {
   data: Users_Group_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Group_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.group" */
+/** on_conflict condition type for table "users.group" */
 export type Users_Group_On_Conflict = {
   constraint: Users_Group_Constraint;
   update_columns?: Array<Users_Group_Update_Column>;
@@ -11273,7 +11520,7 @@ export type Users_Group_Permission_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.group_permission" */
 export type Users_Group_Permission_Arr_Rel_Insert_Input = {
   data: Array<Users_Group_Permission_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Group_Permission_On_Conflict>;
 };
 
@@ -11345,7 +11592,7 @@ export type Users_Group_Permission_Mutation_Response = {
   returning: Array<Users_Group_Permission>;
 };
 
-/** on conflict condition type for table "users.group_permission" */
+/** on_conflict condition type for table "users.group_permission" */
 export type Users_Group_Permission_On_Conflict = {
   constraint: Users_Group_Permission_Constraint;
   update_columns?: Array<Users_Group_Permission_Update_Column>;
@@ -11491,7 +11738,7 @@ export type Users_Identity_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.identity" */
 export type Users_Identity_Arr_Rel_Insert_Input = {
   data: Array<Users_Identity_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Identity_On_Conflict>;
 };
 
@@ -11579,7 +11826,7 @@ export type Users_Identity_Mutation_Response = {
   returning: Array<Users_Identity>;
 };
 
-/** on conflict condition type for table "users.identity" */
+/** on_conflict condition type for table "users.identity" */
 export type Users_Identity_On_Conflict = {
   constraint: Users_Identity_Constraint;
   update_columns?: Array<Users_Identity_Update_Column>;
@@ -11677,7 +11924,7 @@ export type Users_Identity_Provider_Mutation_Response = {
   returning: Array<Users_Identity_Provider>;
 };
 
-/** on conflict condition type for table "users.identity_provider" */
+/** on_conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
   constraint: Users_Identity_Provider_Constraint;
   update_columns?: Array<Users_Identity_Provider_Update_Column>;
@@ -11899,11 +12146,11 @@ export type Users_Permission_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.permission" */
 export type Users_Permission_Obj_Rel_Insert_Input = {
   data: Users_Permission_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Permission_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.permission" */
+/** on_conflict condition type for table "users.permission" */
 export type Users_Permission_On_Conflict = {
   constraint: Users_Permission_Constraint;
   update_columns?: Array<Users_Permission_Update_Column>;
@@ -12315,11 +12562,11 @@ export type Users_Profile_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.profile" */
 export type Users_Profile_Obj_Rel_Insert_Input = {
   data: Users_Profile_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.profile" */
+/** on_conflict condition type for table "users.profile" */
 export type Users_Profile_On_Conflict = {
   constraint: Users_Profile_Constraint;
   update_columns?: Array<Users_Profile_Update_Column>;
@@ -12617,21 +12864,21 @@ export type FindSpaceByCpAdminIdQueryVariables = Exact<{
 }>;
 
 
-export type FindSpaceByCpAdminIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByCpAdminIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Cp_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpaceByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindSpaceByIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Cp_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpaceByMaintainerIdentifierQueryVariables = Exact<{
   maintainerId: Scalars['String'];
 }>;
 
 
-export type FindSpaceByMaintainerIdentifierQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByMaintainerIdentifierQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Cp_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpacesQueryVariables = Exact<{
   where: Cp_Space_Bool_Exp;
@@ -12641,7 +12888,7 @@ export type FindSpacesQueryVariables = Exact<{
 }>;
 
 
-export type FindSpacesQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }>, cp_space_aggregate: { __typename?: 'cp_space_aggregate', aggregate?: { __typename?: 'cp_space_aggregate_fields', count: number } | null } };
+export type FindSpacesQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Cp_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }>, cp_space_aggregate: { __typename?: 'cp_space_aggregate', aggregate?: { __typename?: 'cp_space_aggregate_fields', count: number } | null } };
 
 export type GetSpaceMaintainerProfilesQueryVariables = Exact<{
   spaceId?: InputMaybe<Scalars['uuid']>;
@@ -12656,7 +12903,7 @@ export type UpdateSpaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSpaceMutation = { __typename?: 'mutation_root', update_cp_space_by_pk?: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } | null };
+export type UpdateSpaceMutation = { __typename?: 'mutation_root', update_cp_space_by_pk?: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Cp_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } | null };
 
 
 export const GetContentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentByIdQuery, GetContentByIdQueryVariables>;
@@ -12683,9 +12930,9 @@ export const RemoveObjectFromCollectionDocument = {"kind":"Document","definition
 export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
 export const GetObjectDetailBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifierQuery, GetObjectDetailBySchemaIdentifierQueryVariables>;
 export const GetRelatedObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getRelatedObjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRelatedObjectsQuery, GetRelatedObjectsQueryVariables>;
-export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
-export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
-export const FindSpaceByMaintainerIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByMaintainerIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByMaintainerIdentifierQuery, FindSpaceByMaintainerIdentifierQueryVariables>;
-export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_order_by"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
+export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
+export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
+export const FindSpaceByMaintainerIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByMaintainerIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByMaintainerIdentifierQuery, FindSpaceByMaintainerIdentifierQueryVariables>;
+export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_order_by"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
 export const GetSpaceMaintainerProfilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSpaceMaintainerProfiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceMaintainerProfilesQuery, GetSpaceMaintainerProfilesQueryVariables>;
-export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cp_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;
+export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cp_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;

@@ -62,7 +62,7 @@ export class SpacesQueryDto {
 			'schema_description',
 			'schema_public_access',
 			'schema_service_description',
-			'is_published',
+			'status',
 			'published_at',
 			'created_at',
 			'updated_at',

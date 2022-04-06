@@ -3,7 +3,10 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
-import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	Lookup_Cp_Space_Status_Enum,
+	Lookup_Schema_Audience_Type_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
@@ -125,7 +128,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	isPublished: false,
+	status: Lookup_Cp_Space_Status_Enum.Inactive,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',

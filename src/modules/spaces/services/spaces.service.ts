@@ -68,7 +68,7 @@ export class SpacesService {
 					),
 				},
 			},
-			isPublished: get(graphQlSpace, 'is_published'),
+			status: get(graphQlSpace, 'status'),
 			publishedAt: get(graphQlSpace, 'published_at'),
 			createdAt: get(graphQlSpace, 'created_at'),
 			updatedAt: get(graphQlSpace, 'updated_at'),
