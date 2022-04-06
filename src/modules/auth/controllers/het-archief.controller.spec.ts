@@ -11,6 +11,7 @@ import { HetArchiefController } from './het-archief.controller';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const hetArchiefLoginUrl = 'http://localhost:3200';
 const hetArchiefLogoutUrl = 'http://localhost:3200';
@@ -105,7 +106,9 @@ describe('HetArchiefController', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		hetArchiefController = module.get<HetArchiefController>(HetArchiefController);
 		configService = module.get<ConfigService>(ConfigService);

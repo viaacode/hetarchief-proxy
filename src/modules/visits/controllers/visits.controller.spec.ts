@@ -14,6 +14,7 @@ import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import i18n from '~shared/i18n';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
@@ -152,7 +153,9 @@ describe('VisitsController', () => {
 					useValue: mockSpacesService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		visitsController = module.get<VisitsController>(VisitsController);
 	});

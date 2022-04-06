@@ -8,6 +8,8 @@ import { AssetFileType } from '../types';
 
 import { AssetsService } from './assets.service';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'assetServerTokenEndpoint') {
@@ -61,7 +63,9 @@ describe('AssetsService', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		assetsService = module.get<AssetsService>(AssetsService);
 	});

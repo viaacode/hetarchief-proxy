@@ -5,6 +5,7 @@ import { Cache } from 'cache-manager';
 import { TranslationsService } from './translations.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -36,7 +37,9 @@ describe('TranslationsService', () => {
 					useValue: mockCacheManager,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		translationsService = module.get<TranslationsService>(TranslationsService);
 	});
