@@ -60,9 +60,9 @@ export enum Group {
 	CP_ADMIN = 'c56d95aa-e918-47ca-b102-486c9449fc4a',
 }
 
-export enum GroupIdToName {
-	'04150e6e-b779-4125-84e5-6ee6fc580757' = 'KIOSK_VISITOR',
-	'0b281484-76cd-45a9-b6ce-68a0ea7f4b26' = 'MEEMOO_ADMIN',
-	'0213c8d4-f459-45ef-8bbc-96268ab56d01' = 'VISITOR',
-	'c56d95aa-e918-47ca-b102-486c9449fc4a' = 'CP_ADMIN',
-}
+export const GroupIdToName = {
+	[Group.KIOSK_VISITOR]: 'KIOSK_VISITOR',
+	[Group.MEEMOO_ADMIN]: 'MEEMOO_ADMIN',
+	[Group.VISITOR]: 'VISITOR',
+	[Group.CP_ADMIN]: 'CP_ADMIN',
+};
