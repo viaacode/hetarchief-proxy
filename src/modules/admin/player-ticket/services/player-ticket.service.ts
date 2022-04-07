@@ -1,4 +1,11 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	CACHE_MANAGER,
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { differenceInSeconds } from 'date-fns';
@@ -74,14 +81,21 @@ export class PlayerTicketService {
 	public async getThumbnailToken(referer: string): Promise<string> {
 		const thumbnailPath = 'TESTBEELD/keyframes_all';
 
-		let token: PlayerTicket = await this.cacheManager.get(`thumbnailToken-${referer}`);
-		if (!token) {
-			token = await this.getToken(thumbnailPath, referer);
-			const ttl = differenceInSeconds(new Date(token.context.expiration), new Date()) - 60; // 60s margin to get the new token
-			await this.cacheManager.set(`thumbnailToken-${referer}`, token, { ttl });
+		const options = {
+			ttl: (token) =>
+				differenceInSeconds(new Date(token.context.expiration), new Date()) - 60, // 60s margin to get the new token
+		};
+		try {
+			const token = await this.cacheManager.wrap(
+				`thumbnailToken-${referer}`,
+				() => this.getToken(thumbnailPath, referer),
+				options
+			);
+			return token.jwt;
+		} catch (err) {
+			this.logger.error(`Error getting token: ${err.message}`);
+			throw new InternalServerErrorException('Could not get a thumbnail token');
 		}
-
-		return token.jwt;
 	}
 
 	public async getPlayableUrl(embedUrl: string, referer: string): Promise<string> {

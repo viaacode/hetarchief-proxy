@@ -2,12 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { CollectionsService } from './collections.service';
 
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
 import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
+	resolveThumbnailUrl: jest.fn(),
 };
 
 const mockGqlCollection1 = {
@@ -156,6 +161,10 @@ describe('CollectionsService', () => {
 					provide: DataService,
 					useValue: mockDataService,
 				},
+				{
+					provide: PlayerTicketService,
+					useValue: mockPlayerTicketService,
+				},
 			],
 		}).compile();
 
@@ -176,8 +185,8 @@ describe('CollectionsService', () => {
 			expect(adapted).toBeUndefined();
 		});
 
-		it('can adapt a graphql collection response to our collection interface', () => {
-			const adapted = collectionsService.adaptCollection(mockGqlCollection);
+		it('can adapt a graphql collection response to our collection interface', async () => {
+			const adapted = await collectionsService.adaptCollection(mockGqlCollection, 'referer');
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlCollection.id);
 			expect(adapted.name).toEqual(mockGqlCollection.name);
@@ -187,14 +196,15 @@ describe('CollectionsService', () => {
 			);
 		});
 
-		it('can adapt an undefined collection object', () => {
-			const adapted = collectionsService.adaptCollection(undefined);
+		it('can adapt an undefined collection object', async () => {
+			const adapted = await collectionsService.adaptCollection(undefined, 'referer');
 			expect(adapted).toBeUndefined();
 		});
 
-		it('can adapt a graphql collection object response to our object interface', () => {
-			const adapted = collectionsService.adaptCollectionObjectLink(
-				mockGqlCollectionObjectLink
+		it('can adapt a graphql collection object response to our object interface', async () => {
+			const adapted = await collectionsService.adaptCollectionObjectLink(
+				mockGqlCollectionObjectLink,
+				'referer'
 			);
 			// test some sample keys
 			expect(adapted.schemaIdentifier).toEqual(
@@ -212,8 +222,11 @@ describe('CollectionsService', () => {
 			);
 		});
 
-		it('can adapt an undefined collection object link', () => {
-			const adapted = collectionsService.adaptCollectionObjectLink(undefined);
+		it('can adapt an undefined collection object link', async () => {
+			const adapted = await collectionsService.adaptCollectionObjectLink(
+				undefined,
+				'referer'
+			);
 			expect(adapted).toBeUndefined();
 		});
 	});
@@ -222,7 +235,8 @@ describe('CollectionsService', () => {
 		it('returns a paginated response with all collections for a user', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionsResult);
 			const response = await collectionsService.findCollectionsByUser(
-				mockGqlCollectionsResult.data.users_collection[0].user_profile_id
+				mockGqlCollectionsResult.data.users_collection[0].user_profile_id,
+				'referer'
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.page).toBe(1);
@@ -235,7 +249,8 @@ describe('CollectionsService', () => {
 		it('should return once collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResult);
 			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.data.users_collection[0].id
+				mockGqlCollectionResult.data.users_collection[0].id,
+				'referer'
 			);
 			expect(response.id).toBe(mockGqlCollectionResult.data.users_collection[0].id);
 		});
@@ -243,7 +258,8 @@ describe('CollectionsService', () => {
 		it('should return undefined if collection does not exist', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResultEmpty);
 			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.data.users_collection[0].id
+				mockGqlCollectionResult.data.users_collection[0].id,
+				'referer'
 			);
 			expect(response).toBeUndefined();
 		});
@@ -255,7 +271,8 @@ describe('CollectionsService', () => {
 			const response = await collectionsService.findObjectsByCollectionId(
 				mockGqlCollection1.id,
 				mockUser.id,
-				{}
+				{},
+				'referer'
 			);
 			expect(response.items[0].schemaIdentifier).toBe(
 				mockGqlCollectionObjectsResult.data.users_collection_ie[0].ie.schema_identifier
@@ -270,7 +287,12 @@ describe('CollectionsService', () => {
 			});
 			let error;
 			try {
-				await collectionsService.findObjectsByCollectionId('unknown-id', mockUser.id, {});
+				await collectionsService.findObjectsByCollectionId(
+					'unknown-id',
+					mockUser.id,
+					{},
+					'referer'
+				);
 			} catch (e) {
 				error = e;
 			}
@@ -286,7 +308,8 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
 			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
-				mockCollectionObject.schemaIdentifier
+				mockCollectionObject.schemaIdentifier,
+				'referer'
 			);
 			expect(response.schemaIdentifier).toBe(mockCollectionObject.schemaIdentifier);
 		});
@@ -303,7 +326,7 @@ describe('CollectionsService', () => {
 			});
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockCollection } = mockGqlCollection1;
-			const response = await collectionsService.create(mockCollection);
+			const response = await collectionsService.create(mockCollection, 'referer');
 			expect(response.id).toBe(mockGqlCollection1.id);
 		});
 	});
@@ -320,7 +343,12 @@ describe('CollectionsService', () => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, user_profile_id, ...mockCollection } =
 				mockGqlCollection1;
-			const response = await collectionsService.update(id, user_profile_id, mockCollection);
+			const response = await collectionsService.update(
+				id,
+				user_profile_id,
+				mockCollection,
+				'referer'
+			);
 			expect(response.id).toBe(mockGqlCollection1.id);
 		});
 	});
@@ -383,7 +411,8 @@ describe('CollectionsService', () => {
 
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.ie.schema_identifier
+				mockGqlCollectionObjectLink.ie.schema_identifier,
+				'referer'
 			);
 			expect(response.schemaIdentifier).toBe(
 				mockGqlCollectionObjectLink.ie.schema_identifier
@@ -401,7 +430,8 @@ describe('CollectionsService', () => {
 			try {
 				await collectionsService.addObjectToCollection(
 					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier
+					mockGqlCollectionObjectLink.ie.schema_identifier,
+					'referer'
 				);
 			} catch (e) {
 				error = e;
@@ -426,7 +456,8 @@ describe('CollectionsService', () => {
 			try {
 				await collectionsService.addObjectToCollection(
 					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier
+					mockGqlCollectionObjectLink.ie.schema_identifier,
+					'referer'
 				);
 			} catch (e) {
 				error = e;

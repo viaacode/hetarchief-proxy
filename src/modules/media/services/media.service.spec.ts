@@ -100,7 +100,7 @@ describe('MediaService', () => {
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { total: { value: 0 } } };
-			const result = await mediaService.adaptESResponse(esResponse, 'referer');
+			const result = await mediaService.adaptESResponse(esResponse);
 			expect(result).toEqual(esResponse);
 		});
 	});
@@ -228,7 +228,8 @@ describe('MediaService', () => {
 			const response = await mediaService.getRelated(
 				'es-index-1',
 				mockObjectSchemaIdentifier,
-				'8911p09j1g'
+				'8911p09j1g',
+				'referer'
 			);
 			expect(response.items.length).toEqual(1);
 		});
@@ -239,7 +240,11 @@ describe('MediaService', () => {
 			nock('http://elasticsearch/')
 				.post('/my-index/_search')
 				.reply(201, getMockMediaResponse());
-			const response = await mediaService.getSimilar(mockObjectSchemaIdentifier, 'my-index');
+			const response = await mediaService.getSimilar(
+				mockObjectSchemaIdentifier,
+				'my-index',
+				'referer'
+			);
 			expect(response.hits.total.value).toBe(2);
 			expect(response.hits.hits.length).toBe(2);
 		});

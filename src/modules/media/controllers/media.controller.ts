@@ -76,20 +76,27 @@ export class MediaController {
 
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
 	public async getRelated(
+		@Headers('referer') referer: string,
 		@Param('esIndex') maintainerId: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string
 	): Promise<any> {
 		// We use the esIndex as the maintainerId -- no need to lowercase
-		return this.mediaService.getRelated(maintainerId, schemaIdentifier, meemooIdentifier);
+		return this.mediaService.getRelated(
+			maintainerId,
+			schemaIdentifier,
+			meemooIdentifier,
+			referer
+		);
 	}
 
 	@Get(':esIndex/:id/similar')
 	public async getSimilar(
+		@Headers('referer') referer: string,
 		@Param('id') id: string,
 		@Param('esIndex') esIndex: string
 	): Promise<any> {
-		return this.mediaService.getSimilar(id, esIndex.toLowerCase());
+		return this.mediaService.getSimilar(id, esIndex.toLowerCase(), referer);
 	}
 
 	@Post(':esIndex')
