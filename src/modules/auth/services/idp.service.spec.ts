@@ -1,6 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Configuration } from '~config';
+
 import { IdpService } from './idp.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -8,6 +10,17 @@ import { Group } from '~modules/users/types';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findBySlug: jest.fn(),
+};
+
+const meemooAdminOrganizationIds = ['OR-w66976m'];
+
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: keyof Configuration): any => {
+		if (key === 'meemooAdminOrganizationIds') {
+			return meemooAdminOrganizationIds;
+		}
+		return key;
+	}),
 };
 
 const getLdapUser = () => ({
@@ -20,7 +33,7 @@ const getLdapUser = () => ({
 		oNickname: ['Testbeeld'],
 		apps: ['hetarchief', 'admin'], // TODO replace by a single value 'hetarchief-beheer' once archief 2.0 is launched
 		organizationalStatus: [''],
-		o: [IdpService.MEEMOO_ORGANISATION_ID],
+		o: meemooAdminOrganizationIds,
 	},
 	name_id: 'test@studiohyperdrive.be',
 	session_index: 'session-index',
@@ -35,7 +48,10 @@ describe('IdpService', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				IdpService,
-				ConfigService,
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
@@ -100,7 +116,7 @@ describe('IdpService', () => {
 
 		it('should assign the Meemoo Admin group if user has archief-beheer and the Meemoo Organization', async () => {
 			const ldapUser = getLdapUser();
-			ldapUser.attributes.o = [IdpService.MEEMOO_ORGANISATION_ID];
+			ldapUser.attributes.o = meemooAdminOrganizationIds;
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);

@@ -14,14 +14,11 @@ export class IdpService {
 	private logger: Logger = new Logger(IdpService.name, { timestamp: true });
 	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF, Idp.MEEMOO];
 
-	public static MEEMOO_ORGANISATION_ID = 'OR-w66976m';
-	public static SHD_ORGANISATION_ID = 'OR-pv6b877';
-	public static ADMIN_ORGANISATIONS = [
-		IdpService.MEEMOO_ORGANISATION_ID,
-		IdpService.SHD_ORGANISATION_ID,
-	];
+	protected meemooAdminOrganizationIds: string[];
 
-	constructor(protected configService: ConfigService, protected spacesService: SpacesService) {}
+	constructor(protected configService: ConfigService, protected spacesService: SpacesService) {
+		this.meemooAdminOrganizationIds = getConfig(configService, 'meemooAdminOrganizationIds');
+	}
 
 	public hasSpecificLogoutPage(idp: Idp): boolean {
 		return this.idpsWithSpecificLogoutPage.includes(idp);
@@ -52,7 +49,7 @@ export class IdpService {
 				return Group.CP_ADMIN;
 			}
 
-			if (IdpService.ADMIN_ORGANISATIONS.includes(maintainerId)) {
+			if (this.meemooAdminOrganizationIds.includes(maintainerId)) {
 				return Group.MEEMOO_ADMIN;
 			}
 
