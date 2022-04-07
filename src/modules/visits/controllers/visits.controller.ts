@@ -13,7 +13,7 @@ import {
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
@@ -41,6 +41,10 @@ export class VisitsController {
 	) {}
 
 	@Get()
+	@ApiOperation({
+		description:
+			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
+	})
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: User
@@ -69,6 +73,9 @@ export class VisitsController {
 	}
 
 	@Get('personal')
+	@ApiOperation({
+		description: 'Get Visits endpoint for Visitors.',
+	})
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: User
