@@ -18,7 +18,11 @@ ENV NODE_ENV production
 
 EXPOSE 3100
 USER root
-RUN apk add bash libcap curl && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node
+RUN apk add bash libcap curl && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node &&\
+  apk add tzdata && \
+  cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
+  echo "Europe/Brussels" >  /etc/timezone &&\
+  apk del tzdata
 
 WORKDIR /app
 RUN chown -R node:0 /app
