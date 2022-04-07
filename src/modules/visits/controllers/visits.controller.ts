@@ -22,7 +22,8 @@ import { Visit, VisitStatus } from '../types';
 
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Permission, User } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -47,15 +48,13 @@ export class VisitsController {
 	})
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
-		@SessionUser() user: User
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		const has = (name: Permission) => user.permissions.includes(name);
-
-		if (has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
+		if (user.has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
 			const visits = await this.visitsService.findAll(queryDto, {});
 			return visits;
-		} else if (has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
-			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.id);
+		} else if (user.has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
+			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
 
 			if (!cpSpace) {
 				throw new NotFoundException(
@@ -78,10 +77,12 @@ export class VisitsController {
 	})
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
-		@SessionUser() user: User
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		if (user.permissions.includes(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, { userProfileId: user.id });
+		if (user.has(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)) {
+			const visits = await this.visitsService.findAll(queryDto, {
+				userProfileId: user.getId(),
+			});
 			return visits;
 		}
 
