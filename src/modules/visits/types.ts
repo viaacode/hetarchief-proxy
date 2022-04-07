@@ -52,6 +52,10 @@ export interface Visit {
 	spaceMail: string;
 	spaceName: string;
 	spaceSlug: string;
+	spaceColor?: string;
+	spaceImage?: string;
+	spaceLogo?: string;
+	spaceInfo?: string;
 	startAt: string;
 	status: VisitStatus;
 	timeframe: string;
