@@ -9,7 +9,7 @@ import { IdpService } from './services/idp.service';
 import { MeemooService } from './services/meemoo.service';
 
 import { CollectionsModule } from '~modules/collections';
-import { DataModule } from '~modules/data';
+import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 
 export const archiefServiceFactory = {
@@ -34,7 +34,7 @@ export const meemooServiceFactory = {
 
 @Module({
 	controllers: [AuthController, HetArchiefController, MeemooController],
-	imports: [ConfigModule, DataModule, UsersModule, CollectionsModule],
+	imports: [ConfigModule, UsersModule, CollectionsModule, SpacesModule],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService],
 })
 export class AuthModule {}

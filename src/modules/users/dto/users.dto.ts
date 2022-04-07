@@ -11,6 +11,10 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	email: string;
+
+	@IsString()
+	@IsNotEmpty()
+	groupId: string;
 }
 
 export class UpdateUserDto {
@@ -23,6 +27,10 @@ export class UpdateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	email: string;
+
+	@IsString()
+	@IsNotEmpty()
+	groupId: string;
 }
 
 export class UpdateAcceptedTosDto {

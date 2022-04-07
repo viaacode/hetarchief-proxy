@@ -10,11 +10,12 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
 	description:
@@ -88,6 +89,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 
@@ -137,7 +140,9 @@ describe('NotificationsController', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		notificationsController = module.get<NotificationsController>(NotificationsController);
 

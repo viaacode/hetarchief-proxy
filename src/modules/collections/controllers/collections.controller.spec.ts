@@ -6,9 +6,10 @@ import { CollectionsService } from '../services/collections.service';
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCollectionsResponse: IPagination<Collection> = {
 	items: [
@@ -65,6 +66,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 
@@ -94,7 +97,9 @@ describe('CollectionsController', () => {
 					useValue: mockCollectionsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
 

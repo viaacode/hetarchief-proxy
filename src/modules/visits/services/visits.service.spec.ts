@@ -6,6 +6,7 @@ import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
 import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -74,7 +75,9 @@ describe('VisitsService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		visitsService = module.get<VisitsService>(VisitsService);
 	});
