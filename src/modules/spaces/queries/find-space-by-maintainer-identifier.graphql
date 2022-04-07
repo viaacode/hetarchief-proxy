@@ -1,5 +1,5 @@
 query findSpaceByMaintainerIdentifier($maintainerId: String!) {
-	cp_space(where: { schema_maintainer: { schema_identifier: { _ilike: $maintainerId } } }) {
+	cp_space(where: { schema_maintainer_id: { _ilike: $maintainerId } }) {
 		id
 		schema_image
 		schema_color
