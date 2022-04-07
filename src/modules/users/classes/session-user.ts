@@ -8,7 +8,12 @@ export class SessionUserEntity {
 
 	public constructor(user: User) {
 		this.id = get(user, 'id');
-		this.permissions = get(user, 'permissions', []);
+		// can be archief-user or avo-user, where permissions are stored differently
+		// merge them into 1 unified array
+		this.permissions = [
+			...get(user, 'permissions', []),
+			...get(user, 'profile.permissions', []),
+		];
 	}
 
 	public getId(): string {
