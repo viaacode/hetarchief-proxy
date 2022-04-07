@@ -56,6 +56,8 @@ export interface Visit {
 	spaceImage?: string;
 	spaceLogo?: string;
 	spaceInfo?: string;
+	spaceDescription?: string;
+	spaceServiceDescription?: string;
 	startAt: string;
 	status: VisitStatus;
 	timeframe: string;

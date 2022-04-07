@@ -97,6 +97,8 @@ export class VisitsService {
 			spaceImage: get(graphQlVisit, 'space.schema_maintainer.schema_image'),
 			spaceLogo: get(graphQlVisit, 'space.schema_maintainer.information[0].logo.iri'),
 			spaceInfo: get(graphQlVisit, 'space.schema_maintainer.information[0].description'),
+			spaceDescription: get(graphQlVisit, 'space.schema_description'),
+			spaceServiceDescription: get(graphQlVisit, 'space.schema_service_description'),
 			startAt: get(graphQlVisit, 'start_date'),
 			status: get(graphQlVisit, 'status'),
 			timeframe: get(graphQlVisit, 'user_timeframe'),
