@@ -6,7 +6,7 @@ import { Configuration } from '~config';
 import { ContentPagesController } from '~modules/admin/content-pages/controllers/content-pages.controller';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
@@ -18,6 +18,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 

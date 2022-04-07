@@ -6,7 +6,7 @@ import { SpacesService } from './spaces.service';
 
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -17,6 +17,8 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };

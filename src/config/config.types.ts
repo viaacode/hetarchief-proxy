@@ -47,6 +47,7 @@ export interface Configuration {
 	assetServerBucketName: string;
 	tempAssetFolder: string;
 	multerOptions: MulterOptions;
+	meemooAdminOrganizationIds: string[];
 }
 
 export type ConfigService = NestConfigService<Configuration>;

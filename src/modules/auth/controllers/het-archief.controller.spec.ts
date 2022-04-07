@@ -5,11 +5,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Configuration } from '~config';
 
 import { HetArchiefService } from '../services/het-archief.service';
+import { IdpService } from '../services/idp.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -32,6 +34,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
+	groupId: Group.CP_ADMIN,
 };
 
 const samlResponse = {
@@ -59,6 +62,10 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
 	create: jest.fn(),
+};
+
+const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
+	determineUserGroup: jest.fn(),
 };
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -104,6 +111,10 @@ describe('HetArchiefController', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: IdpService,
+					useValue: mockIdpService,
 				},
 			],
 		})
@@ -152,6 +163,7 @@ describe('HetArchiefController', () => {
 		it('should redirect after successful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
 			const result = await hetArchiefController.loginCallback({}, samlResponse);
 
@@ -170,6 +182,8 @@ describe('HetArchiefController', () => {
 			};
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+
 			const result = await hetArchiefController.loginCallback(
 				{},
 				samlResponseWithNullRelayState
@@ -180,6 +194,7 @@ describe('HetArchiefController', () => {
 		it('should create an authorized user that is not yet in the database', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
 			const result = await hetArchiefController.loginCallback({}, samlResponse);
@@ -193,7 +208,7 @@ describe('HetArchiefController', () => {
 			mockUsersService.createUserWithIdp.mockClear();
 		});
 
-		it('should update an authorized user that is was changed in ldap', async () => {
+		it('should update an authorized user that was changed in ldap', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
 				...archiefUser,
@@ -223,27 +238,6 @@ describe('HetArchiefController', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('Test error handling');
-		});
-
-		it('should throw an unauthorized exception if the user has no access to the archief app', async () => {
-			const ldapNoAccess = {
-				attributes: {
-					...ldapUser.attributes,
-				},
-			};
-			ldapNoAccess.attributes.apps = [];
-			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
-			let error;
-			try {
-				await hetArchiefController.loginCallback({}, samlResponse);
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				statusCode: HttpStatus.UNAUTHORIZED,
-				error: 'Unauthorized',
-				message: `User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`,
-			});
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {

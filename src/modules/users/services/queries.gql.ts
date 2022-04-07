@@ -6,6 +6,7 @@ export const GET_USER_BY_IDENTITY_ID = `
 			last_name
 			mail
 			accepted_tos_at
+			group_id
 			group {
 				permissions(order_by: { permission: { name: asc }}) {
 					permission {
@@ -28,6 +29,7 @@ export const INSERT_USER = `
 			last_name
 			mail
 			accepted_tos_at
+			group_id
 			group {
 				permissions {
 					permission {
@@ -58,6 +60,7 @@ export const UPDATE_USER = `
 			last_name
 			mail
 			accepted_tos_at
+			group_id
 			group {
 				permissions {
 					permission {

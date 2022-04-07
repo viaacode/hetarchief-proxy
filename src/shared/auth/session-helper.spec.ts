@@ -1,7 +1,7 @@
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -33,6 +33,8 @@ const mockArchiefUser: User = {
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
