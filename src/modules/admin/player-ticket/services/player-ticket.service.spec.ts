@@ -7,6 +7,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { PlayerTicket } from '~modules/admin/player-ticket/player-ticket.types';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
@@ -23,7 +24,7 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 			return 'http://mediaservice';
 		}
 		if (key === 'databaseApplicationType') {
-			return 'hetArchief';
+			return AvoOrHetArchief.hetArchief;
 		}
 		return key;
 	}),
@@ -120,6 +121,15 @@ describe('PlayerTicketService', () => {
 			expect(url).toEqual('vrt/item-1');
 		});
 
+		it('returns the embedUrl for an avo item', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
+			});
+			mockConfigService.get.mockResolvedValueOnce(AvoOrHetArchief.avo);
+			const url = await playerTicketService.getEmbedUrl('vrt-id');
+			expect(url).toEqual('vrt/item-1');
+		});
+
 		it('throws a not found exception if the item was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
@@ -208,6 +218,18 @@ describe('PlayerTicketService', () => {
 
 			const url = await playerTicketService.getThumbnailUrl('vrt-id', 'referer');
 			expect(url).toEqual('http://mediaservice/vrt/item-1?token=secret-jwt-token');
+
+			getThumbnailTokenSpy.mockRestore();
+		});
+	});
+
+	describe('resolveThumbnailUrl', () => {
+		it('does not get a token for an invalid path', async () => {
+			const getThumbnailTokenSpy = jest.spyOn(playerTicketService, 'getThumbnailToken');
+
+			const url = await playerTicketService.resolveThumbnailUrl('', 'referer');
+			expect(url).toEqual('');
+			expect(getThumbnailTokenSpy).not.toBeCalled();
 
 			getThumbnailTokenSpy.mockRestore();
 		});
