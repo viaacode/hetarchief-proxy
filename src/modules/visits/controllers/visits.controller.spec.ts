@@ -10,6 +10,7 @@ import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-he
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -171,10 +172,13 @@ describe('VisitsController', () => {
 		it('should return all visits for meemoo admin', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 
-			const visits = await visitsController.getVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -183,10 +187,13 @@ describe('VisitsController', () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(mockSpace);
 
-			const visits = await visitsController.getVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -197,10 +204,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getVisits(null, {
-					...mockUser,
-					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
-				});
+				await visitsController.getVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -217,10 +227,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getVisits(null, {
-					...mockUser,
-					permissions: [],
-				});
+				await visitsController.getVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -237,10 +250,13 @@ describe('VisitsController', () => {
 		it('should return all visits for a user', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 
-			const visits = await visitsController.getPersonalVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getPersonalVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -250,10 +266,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getPersonalVisits(null, {
-					...mockUser,
-					permissions: [],
-				});
+				await visitsController.getPersonalVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}

@@ -1,11 +1,11 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { User } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 export const SessionUser = createParamDecorator(
-	(data: unknown, ctx: ExecutionContext): User | null => {
+	(data: unknown, ctx: ExecutionContext): SessionUserEntity | null => {
 		const request = ctx.switchToHttp().getRequest();
-		return SessionHelper.getArchiefUserInfo(request.session);
+		return new SessionUserEntity(SessionHelper.getArchiefUserInfo(request.session));
 	}
 );
