@@ -138,10 +138,10 @@ export class DataService {
 	/**
 	 * execute a (GraphQl) query
 	 */
-	public async execute(
+	public async execute<T>(
 		query: string | DocumentNode,
 		variables: { [varName: string]: any } = {}
-	): Promise<GraphQlResponse> {
+	): Promise<GraphQlResponse<T>> {
 		try {
 			const queryData = {
 				query: typeof query === 'string' ? query : print(query),

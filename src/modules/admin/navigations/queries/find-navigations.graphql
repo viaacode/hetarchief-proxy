@@ -1,0 +1,13 @@
+query findNavigation {
+	cms_navigation_element(distinct_on: placement, order_by: { placement: asc }) {
+		id
+		description
+		placement
+		tooltip
+	}
+	cms_navigation_element_aggregate(distinct_on: placement) {
+		aggregate {
+			count
+		}
+	}
+}

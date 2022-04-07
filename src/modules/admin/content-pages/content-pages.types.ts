@@ -59,9 +59,6 @@ export interface ContentPageLabel {
 	label: string;
 	content_type: ContentPageType;
 	link_to: PickerItem | null;
-	created_at: string;
-	updated_at: string;
-	content_content_labels: ContentPageLabelLink[];
 }
 
 export interface ContentPageLabelLink {
@@ -116,9 +113,10 @@ export type GqlContentBlock =
 	| GetContentPageByPathQueryHetArchief['cms_content'][0]['content_blocks'][0]
 	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];
 
-export type GqlUser =
-	| GetContentPageByPathQueryAvo['app_content'][0]['profile']
-	| GetContentPageByPathQueryHetArchief['cms_content'][0]['owner_profile'];
+export type GqlAvoUser = GetContentPageByPathQueryAvo['app_content'][0]['profile'];
+export type GqlHetArchiefUser =
+	GetContentPageByPathQueryHetArchief['cms_content'][0]['owner_profile'];
+export type GqlUser = GqlAvoUser | GqlHetArchiefUser;
 
 export interface ContentPageUser {
 	id: string;

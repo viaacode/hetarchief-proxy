@@ -1,0 +1,25 @@
+mutation updateNotification(
+	$notificationId: uuid
+	$userProfileId: uuid
+	$notification: app_notification_set_input
+) {
+	update_app_notification(
+		where: { id: { _eq: $notificationId }, recipient: { _eq: $userProfileId } }
+		_set: $notification
+	) {
+		returning {
+			id
+			description
+			title
+			status
+			type
+			recipient
+			visit_id
+			created_at
+			updated_at
+			visit {
+				cp_space_id
+			}
+		}
+	}
+}

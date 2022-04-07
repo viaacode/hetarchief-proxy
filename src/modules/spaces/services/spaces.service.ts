@@ -7,10 +7,15 @@ import { AccessType, GqlSpace, Space } from '../types';
 
 import {
 	FindSpaceByCpAdminIdDocument,
+	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
+	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdentifierDocument,
+	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesDocument,
+	FindSpacesQuery,
 	GetSpaceMaintainerProfilesDocument,
+	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceDocument,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
@@ -27,44 +32,29 @@ export class SpacesService {
 	 * Adapt a space as returned by a typical graphQl response to our internal space data model
 	 */
 	public adapt(graphQlSpace: GqlSpace): Space {
+		/* istanbul ignore next */
+		const information = graphQlSpace?.schema_maintainer?.information?.[0];
+		/* istanbul ignore next */
 		return {
-			id: get(graphQlSpace, 'id'),
-			maintainerId: get(graphQlSpace, 'schema_maintainer.schema_identifier'),
-			name: get(graphQlSpace, 'schema_maintainer.schema_name'),
-			info: get(graphQlSpace, 'schema_maintainer.information[0].description'),
-			description: get(graphQlSpace, 'schema_description'),
-			serviceDescription: get(graphQlSpace, 'schema_service_description'),
-			image: get(graphQlSpace, 'schema_image'),
-			color: get(graphQlSpace, 'schema_color'),
-			logo: get(graphQlSpace, 'schema_maintainer.information[0].logo.iri'),
-			audienceType: get(graphQlSpace, 'schema_audience_type'),
-			publicAccess: get(graphQlSpace, 'schema_public_access'),
+			id: graphQlSpace?.id,
+			maintainerId: graphQlSpace?.schema_maintainer?.schema_identifier,
+			name: graphQlSpace?.schema_maintainer?.schema_name,
+			info: information?.description,
+			description: graphQlSpace?.schema_description,
+			serviceDescription: graphQlSpace?.schema_service_description,
+			image: graphQlSpace?.schema_image,
+			color: graphQlSpace?.schema_color,
+			logo: information?.logo?.iri,
+			audienceType: graphQlSpace?.schema_audience_type,
+			publicAccess: graphQlSpace?.schema_public_access,
 			contactInfo: {
-				email: get(
-					graphQlSpace,
-					'schema_maintainer.information[0].primary_site.address.email'
-				),
-				telephone: get(
-					graphQlSpace,
-					'schema_maintainer.information[0].primary_site.address.telephone'
-				),
+				email: information?.primary_site?.address?.email,
+				telephone: information?.primary_site?.address?.telephone,
 				address: {
-					street: get(
-						graphQlSpace,
-						'schema_maintainer.information[0].primary_site.address.street'
-					),
-					postalCode: get(
-						graphQlSpace,
-						'schema_maintainer.information[0].primary_site.address.postal_code'
-					),
-					locality: get(
-						graphQlSpace,
-						'schema_maintainer.information[0].primary_site.address.locality'
-					),
-					postOfficeBoxNumber: get(
-						graphQlSpace,
-						'schema_maintainer.information[0].primary_site.address.post_office_box_number'
-					),
+					street: information?.primary_site?.address?.street,
+					postalCode: information?.primary_site?.address?.postal_code,
+					locality: information?.primary_site?.address?.locality,
+					postOfficeBoxNumber: information?.primary_site?.address?.post_office_box_number,
 				},
 			},
 			isPublished: get(graphQlSpace, 'is_published'),
@@ -157,7 +147,7 @@ export class SpacesService {
 		}
 		const where: any = { _and: filterArray };
 
-		const spacesResponse = await this.dataService.execute(FindSpacesDocument, {
+		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(FindSpacesDocument, {
 			where,
 			offset,
 			limit,
@@ -173,7 +163,10 @@ export class SpacesService {
 	}
 
 	public async findById(id: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute(FindSpaceByIdDocument, { id });
+		const spaceResponse = await this.dataService.execute<FindSpaceByIdQuery>(
+			FindSpaceByIdDocument,
+			{ id }
+		);
 		if (!spaceResponse.data.cp_space[0]) {
 			return null;
 		}
@@ -181,7 +174,7 @@ export class SpacesService {
 	}
 
 	public async findBySlug(slug: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute(
+		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdentifierQuery>(
 			FindSpaceByMaintainerIdentifierDocument,
 			{
 				maintainerId: slug,
@@ -194,9 +187,12 @@ export class SpacesService {
 	}
 
 	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute(FindSpaceByCpAdminIdDocument, {
-			cpAdminId,
-		});
+		const spaceResponse = await this.dataService.execute<FindSpaceByCpAdminIdQuery>(
+			FindSpaceByCpAdminIdDocument,
+			{
+				cpAdminId,
+			}
+		);
 		if (!spaceResponse.data.cp_space[0]) {
 			return null;
 		}
@@ -204,9 +200,12 @@ export class SpacesService {
 	}
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
-		const profiles = await this.dataService.execute(GetSpaceMaintainerProfilesDocument, {
-			spaceId,
-		});
+		const profiles = await this.dataService.execute<GetSpaceMaintainerProfilesQuery>(
+			GetSpaceMaintainerProfilesDocument,
+			{
+				spaceId,
+			}
+		);
 		return get(profiles, 'data.cp_maintainer_users_profile', []).map((item) => ({
 			id: item.users_profile_id,
 			email: item.profile.mail,

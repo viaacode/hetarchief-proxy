@@ -2,8 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Tos } from '../types';
 
+import {
+	GetTosLastUpdatedAtDocument,
+	GetTosLastUpdatedAtQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
-import { GET_TOS_LAST_UPDATED_AT } from '~modules/tos/services/queries.gql';
 
 @Injectable()
 export class TosService {
@@ -12,7 +15,7 @@ export class TosService {
 	/**
 	 * Adapt a tos as returned by a typical graphQl response to our internal tos data model
 	 */
-	public adapt(gqlTosValue: string): Tos {
+	public adapt(gqlTosValue: GetTosLastUpdatedAtQuery['cms_site_variables_by_pk']['value']): Tos {
 		return {
 			updatedAt: gqlTosValue,
 		};
@@ -21,7 +24,7 @@ export class TosService {
 	public async getTosLastUpdatedAt(): Promise<Tos> {
 		const {
 			data: { cms_site_variables_by_pk: cmsSiteVariable },
-		} = await this.dataService.execute(GET_TOS_LAST_UPDATED_AT);
+		} = await this.dataService.execute<GetTosLastUpdatedAtQuery>(GetTosLastUpdatedAtDocument);
 
 		const gqlTosValue = cmsSiteVariable?.value;
 		if (!gqlTosValue) {

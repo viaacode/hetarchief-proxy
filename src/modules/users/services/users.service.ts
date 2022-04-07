@@ -1,16 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { get } from 'lodash';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
-import { GqlPermissionData, GqlUser, GroupIdToName, User } from '../types';
+import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../types';
 
 import {
-	GET_USER_BY_IDENTITY_ID,
-	INSERT_USER,
-	INSERT_USER_IDENTITY,
-	UPDATE_USER,
-} from './queries.gql';
-
+	GetUserByIdentityIdDocument,
+	GetUserByIdentityIdQuery,
+	InsertUserDocument,
+	InsertUserIdentityDocument,
+	InsertUserIdentityMutation,
+	InsertUserMutation,
+	UpdateUserProfileDocument,
+	UpdateUserProfileMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { Idp } from '~shared/auth/auth.types';
 
@@ -24,19 +26,21 @@ export class UsersService {
 		if (!graphQlUser) {
 			return null;
 		}
+
+		/* istanbul ignore next */
 		return {
-			id: get(graphQlUser, 'id'),
-			fullName: get(graphQlUser, 'full_name'),
-			firstName: get(graphQlUser, 'first_name'),
-			lastName: get(graphQlUser, 'last_name'),
-			email: get(graphQlUser, 'mail'),
-			acceptedTosAt: get(graphQlUser, 'accepted_tos_at'),
-			groupId: get(graphQlUser, 'group_id'),
-			groupName: this.groupIdToName(get(graphQlUser, 'group_id')),
-			permissions: get(graphQlUser, 'group.permissions', []).map(
-				(permData: GqlPermissionData) => permData.permission.name
+			id: graphQlUser?.id,
+			fullName: graphQlUser?.full_name,
+			firstName: graphQlUser?.first_name,
+			lastName: graphQlUser?.last_name,
+			email: graphQlUser?.mail,
+			acceptedTosAt: graphQlUser?.accepted_tos_at,
+			groupId: graphQlUser?.group_id,
+			groupName: this.groupIdToName(graphQlUser?.group_id),
+			permissions: (graphQlUser?.group?.permissions || []).map(
+				(permData: GqlPermissionData) => permData.permission.name as Permission
 			),
-			idp: get(graphQlUser, 'identities[0].identity_provider_name'),
+			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 		};
 	}
 
@@ -45,9 +49,12 @@ export class UsersService {
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
-		const userResponse = await this.dataService.execute(GET_USER_BY_IDENTITY_ID, {
-			identityId,
-		});
+		const userResponse = await this.dataService.execute<GetUserByIdentityIdQuery>(
+			GetUserByIdentityIdDocument,
+			{
+				identityId,
+			}
+		);
 		if (!userResponse.data.users_profile[0]) {
 			return null;
 		}
@@ -68,7 +75,7 @@ export class UsersService {
 		};
 		const {
 			data: { insert_users_profile_one: createdUser },
-		} = await this.dataService.execute(INSERT_USER, { newUser });
+		} = await this.dataService.execute<InsertUserMutation>(InsertUserDocument, { newUser });
 		this.logger.debug(`user ${createdUser.id} created`);
 
 		// Link the user with the identity
@@ -78,10 +85,19 @@ export class UsersService {
 			identity_provider_name: idp,
 			profile_id: createdUser.id,
 		};
-		await this.dataService.execute(INSERT_USER_IDENTITY, { newUserIdentity });
+		await this.dataService.execute<InsertUserIdentityMutation>(InsertUserIdentityDocument, {
+			newUserIdentity,
+		});
 		this.logger.debug(`user ${createdUser.id} linked with idp '${idp}'`);
 
-		return this.adapt(createdUser);
+		return this.adapt({
+			...createdUser,
+			identities: [
+				{
+					identity_provider_name: idp,
+				},
+			],
+		});
 	}
 
 	public async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
@@ -94,7 +110,10 @@ export class UsersService {
 
 		const {
 			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
+		} = await this.dataService.execute<UpdateUserProfileMutation>(UpdateUserProfileDocument, {
+			id,
+			updateUser,
+		});
 
 		return this.adapt(updatedUser);
 	}
@@ -109,7 +128,10 @@ export class UsersService {
 
 		const {
 			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute(UPDATE_USER, { id, updateUser });
+		} = await this.dataService.execute<UpdateUserProfileMutation>(UpdateUserProfileDocument, {
+			id,
+			updateUser,
+		});
 
 		return this.adapt(updatedUser);
 	}

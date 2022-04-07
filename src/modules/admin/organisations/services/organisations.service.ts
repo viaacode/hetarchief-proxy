@@ -6,6 +6,8 @@ import { getConfig } from '~config';
 
 import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
 import {
+	GqlAvoOrganisation,
+	GqlHetArchiefOrganisation,
 	GqlOrganisation,
 	Organisation,
 	OrganisationQueries,
@@ -26,11 +28,15 @@ export class OrganisationsService {
 		if (!gqlOrganisation) {
 			return null;
 		}
+		const avoOrganisation = gqlOrganisation as GqlAvoOrganisation;
+		const hetArchiefOrganisation = gqlOrganisation as GqlHetArchiefOrganisation;
+
+		/* istanbul ignore next */
 		return {
-			id: get(gqlOrganisation, 'schema_identifier') || get(gqlOrganisation, 'or_id'),
-			name: get(gqlOrganisation, 'schema_name') || get(gqlOrganisation, 'name'),
+			id: hetArchiefOrganisation?.schema_identifier || avoOrganisation?.or_id,
+			name: hetArchiefOrganisation?.schema_name || avoOrganisation?.name,
 			logo_url:
-				get(gqlOrganisation, 'information.logo.iri') || get(gqlOrganisation, 'logo_url'),
+				hetArchiefOrganisation?.information?.[0]?.logo?.iri || avoOrganisation?.logo_url,
 		};
 	}
 
