@@ -186,7 +186,7 @@ describe('CollectionsService', () => {
 		});
 
 		it('can adapt a graphql collection response to our collection interface', async () => {
-			const adapted = await collectionsService.adaptCollection(mockGqlCollection);
+			const adapted = await collectionsService.adaptCollection(mockGqlCollection, 'referer');
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlCollection.id);
 			expect(adapted.name).toEqual(mockGqlCollection.name);
@@ -197,13 +197,14 @@ describe('CollectionsService', () => {
 		});
 
 		it('can adapt an undefined collection object', async () => {
-			const adapted = await collectionsService.adaptCollection(undefined);
+			const adapted = await collectionsService.adaptCollection(undefined, 'referer');
 			expect(adapted).toBeUndefined();
 		});
 
 		it('can adapt a graphql collection object response to our object interface', async () => {
 			const adapted = await collectionsService.adaptCollectionObjectLink(
-				mockGqlCollectionObjectLink
+				mockGqlCollectionObjectLink,
+				'referer'
 			);
 			// test some sample keys
 			expect(adapted.schemaIdentifier).toEqual(
@@ -222,7 +223,10 @@ describe('CollectionsService', () => {
 		});
 
 		it('can adapt an undefined collection object link', async () => {
-			const adapted = await collectionsService.adaptCollectionObjectLink(undefined);
+			const adapted = await collectionsService.adaptCollectionObjectLink(
+				undefined,
+				'referer'
+			);
 			expect(adapted).toBeUndefined();
 		});
 	});
@@ -304,7 +308,8 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
 			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
 				mockGqlCollection1.id,
-				mockCollectionObject.schemaIdentifier
+				mockCollectionObject.schemaIdentifier,
+				'referer'
 			);
 			expect(response.schemaIdentifier).toBe(mockCollectionObject.schemaIdentifier);
 		});
@@ -358,7 +363,7 @@ describe('CollectionsService', () => {
 				},
 			});
 			const { id, user_profile_id } = mockGqlCollection1;
-			const affectedRows = await collectionsService.delete(id, user_profile_id, 'referer');
+			const affectedRows = await collectionsService.delete(id, user_profile_id);
 			expect(affectedRows).toBe(1);
 		});
 
@@ -371,11 +376,7 @@ describe('CollectionsService', () => {
 				},
 			});
 			const { user_profile_id } = mockGqlCollection1;
-			const affectedRows = await collectionsService.delete(
-				'unknown-id',
-				user_profile_id,
-				'referer'
-			);
+			const affectedRows = await collectionsService.delete('unknown-id', user_profile_id);
 			expect(affectedRows).toBe(0);
 		});
 	});

@@ -172,7 +172,6 @@ describe('CollectionsController', () => {
 			mockCollectionsService.delete.mockResolvedValueOnce(1);
 
 			const response = await collectionsController.deleteCollection(
-				'referer',
 				mockCollectionsResponse.items[0].id,
 				{}
 			);
@@ -183,7 +182,6 @@ describe('CollectionsController', () => {
 			mockCollectionsService.delete.mockResolvedValueOnce(0);
 
 			const response = await collectionsController.deleteCollection(
-				'referer',
 				mockCollectionsResponse.items[0].id,
 				{}
 			);

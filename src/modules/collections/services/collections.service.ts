@@ -33,8 +33,6 @@ import { PaginationHelper } from '~shared/helpers/pagination';
 @Injectable()
 export class CollectionsService {
 	private logger: Logger = new Logger(CollectionsService.name, { timestamp: true });
-	// The current referer header
-	protected referer: string;
 
 	constructor(
 		protected dataService: DataService,
@@ -70,7 +68,8 @@ export class CollectionsService {
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
 	public async adaptCollection(
-		gqlCollection: GqlCollection | undefined
+		gqlCollection: GqlCollection | undefined,
+		referer: string
 	): Promise<Collection | undefined> {
 		if (!gqlCollection) {
 			return undefined;
@@ -86,7 +85,7 @@ export class CollectionsService {
 			objects: await Promise.all(
 				(gqlCollection as GqlCollectionWithObjects).ies
 					? (gqlCollection as GqlCollectionWithObjects).ies.map((object) =>
-							this.adaptCollectionObjectLink(object)
+							this.adaptCollectionObjectLink(object, referer)
 					  )
 					: []
 			),
@@ -94,7 +93,8 @@ export class CollectionsService {
 	}
 
 	public async adaptCollectionObjectLink(
-		gqlCollectionObjectLink: CollectionObjectLink | undefined
+		gqlCollectionObjectLink: CollectionObjectLink | undefined,
+		referer: string
 	): Promise<IeObject | undefined> {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
@@ -102,7 +102,7 @@ export class CollectionsService {
 		const objectIe = this.adaptIeObject(get(gqlCollectionObjectLink, 'ie'));
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
-			this.referer
+			referer
 		);
 		return {
 			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
@@ -117,8 +117,6 @@ export class CollectionsService {
 		page = 1,
 		size = 1000
 	): Promise<IPagination<Collection>> {
-		this.referer = referer;
-
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const collectionsResponse = await this.dataService.execute(FindCollectionsByUserDocument, {
 			userProfileId,
@@ -129,7 +127,7 @@ export class CollectionsService {
 		return Pagination<Collection>({
 			items: await Promise.all(
 				collectionsResponse.data.users_collection.map((collection: any) =>
-					this.adaptCollection(collection)
+					this.adaptCollection(collection, referer)
 				)
 			),
 			page,
@@ -139,13 +137,11 @@ export class CollectionsService {
 	}
 
 	public async findCollectionById(collectionId: string, referer: string): Promise<Collection> {
-		this.referer = referer;
-
 		const collectionResponse = await this.dataService.execute(FindCollectionByIdDocument, {
 			collectionId,
 		});
 
-		return this.adaptCollection(collectionResponse.data.users_collection[0]);
+		return this.adaptCollection(collectionResponse.data.users_collection[0], referer);
 	}
 
 	public async findObjectsByCollectionId(
@@ -154,8 +150,6 @@ export class CollectionsService {
 		queryDto: CollectionObjectsQueryDto,
 		referer: string
 	): Promise<IPagination<IeObject>> {
-		this.referer = referer;
-
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const where = { ie: { schema_name: { _ilike: query } } };
@@ -176,7 +170,7 @@ export class CollectionsService {
 		return {
 			items: await Promise.all(
 				collectionObjectsResponse.data.users_collection_ie.map((collectionObject) =>
-					this.adaptCollectionObjectLink(collectionObject)
+					this.adaptCollectionObjectLink(collectionObject, referer)
 				)
 			),
 			page,
@@ -187,15 +181,13 @@ export class CollectionsService {
 	}
 
 	public async create(collection: GqlCreateCollection, referer: string): Promise<Collection> {
-		this.referer = referer;
-
 		const response = await this.dataService.execute(InsertCollectionsDocument, {
 			object: collection,
 		});
 		const createdCollection = response.data.insert_users_collection.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
-		return this.adaptCollection(createdCollection);
+		return this.adaptCollection(createdCollection, referer);
 	}
 
 	public async update(
@@ -204,8 +196,6 @@ export class CollectionsService {
 		collection: GqlUpdateCollection,
 		referer: string
 	): Promise<Collection> {
-		this.referer = referer;
-
 		const response = await this.dataService.execute(UpdateCollectionDocument, {
 			collectionId,
 			userProfileId,
@@ -215,16 +205,10 @@ export class CollectionsService {
 		const updatedCollection = response.data.update_users_collection.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
-		return this.adaptCollection(updatedCollection);
+		return this.adaptCollection(updatedCollection, referer);
 	}
 
-	public async delete(
-		collectionId: string,
-		userProfileId: string,
-		referer: string
-	): Promise<number> {
-		this.referer = referer;
-
+	public async delete(collectionId: string, userProfileId: string): Promise<number> {
 		const response = await this.dataService.execute(DeleteCollectionDocument, {
 			collectionId,
 			userProfileId,
@@ -236,7 +220,8 @@ export class CollectionsService {
 
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
-		objectSchemaIdentifier: string
+		objectSchemaIdentifier: string,
+		referer: string
 	): Promise<IeObject | null> {
 		const response = await this.dataService.execute(FindObjectInCollectionDocument, {
 			collectionId,
@@ -245,7 +230,7 @@ export class CollectionsService {
 		const foundObject = response.data.users_collection_ie[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
-		return this.adaptCollectionObjectLink(foundObject);
+		return this.adaptCollectionObjectLink(foundObject, referer);
 	}
 
 	public async findObjectBySchemaIdentifier(
@@ -265,11 +250,10 @@ export class CollectionsService {
 		objectSchemaIdentifier: string,
 		referer: string
 	): Promise<IeObject> {
-		this.referer = referer;
-
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
-			objectSchemaIdentifier
+			objectSchemaIdentifier,
+			referer
 		);
 		if (collectionObject) {
 			throw new BadRequestException({
@@ -293,7 +277,7 @@ export class CollectionsService {
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
-		return this.adaptCollectionObjectLink(createdObject);
+		return this.adaptCollectionObjectLink(createdObject, referer);
 	}
 
 	public async removeObjectFromCollection(

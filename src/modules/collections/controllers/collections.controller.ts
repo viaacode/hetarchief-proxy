@@ -102,14 +102,12 @@ export class CollectionsController {
 
 	@Delete(':collectionId')
 	public async deleteCollection(
-		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Session() session: Record<string, any>
 	): Promise<{ status: string }> {
 		const affectedRows = await this.collectionsService.delete(
 			collectionId,
-			SessionHelper.getArchiefUserInfo(session).id,
-			referer
+			SessionHelper.getArchiefUserInfo(session).id
 		);
 		if (affectedRows > 0) {
 			return { status: 'collection has been deleted' };
