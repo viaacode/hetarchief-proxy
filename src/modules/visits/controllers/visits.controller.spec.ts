@@ -238,29 +238,6 @@ describe('VisitsController', () => {
 				error: 'Not Found',
 			});
 		});
-
-		it('should throw an unauthorized error for regular visitors', async () => {
-			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-
-			let error;
-			try {
-				await visitsController.getVisits(
-					null,
-					new SessionUserEntity({
-						...mockUser,
-						permissions: [],
-					})
-				);
-			} catch (err) {
-				error = err;
-			}
-
-			expect(error?.response).toEqual({
-				error: 'Unauthorized',
-				message: 'You do not have the right permissions to call this route',
-				statusCode: 401,
-			});
-		});
 	});
 
 	describe('getPersonalVisits', () => {
@@ -276,29 +253,6 @@ describe('VisitsController', () => {
 			);
 
 			expect(visits).toEqual(mockVisitsResponse);
-		});
-
-		it('should throw an error if user does not have the correct permission', async () => {
-			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-
-			let error;
-			try {
-				await visitsController.getPersonalVisits(
-					null,
-					new SessionUserEntity({
-						...mockUser,
-						permissions: [],
-					})
-				);
-			} catch (err) {
-				error = err;
-			}
-
-			expect(error.response).toEqual({
-				statusCode: 401,
-				message: 'You do not have the right permissions to call this route',
-				error: 'Unauthorized',
-			});
 		});
 	});
 
@@ -356,26 +310,6 @@ describe('VisitsController', () => {
 			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
-		});
-
-		it('should throw an exception when creating a new visit without permission', async () => {
-			let error;
-			try {
-				await visitsController.createVisit(
-					{
-						spaceId: 'space-1',
-						timeframe: 'asap',
-						acceptedTos: true,
-					},
-					new SessionUserEntity({ ...mockUser, permissions: [] })
-				);
-			} catch (e) {
-				error = e;
-			}
-
-			expect(error.message).toEqual(
-				'You do not have the right permissions to call this route'
-			);
 		});
 
 		it('should throw an error if you try to create a new visit without accepting tos', async () => {
@@ -439,25 +373,6 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit1);
 			sessionHelperSpy.mockRestore();
 			mockNotificationsService.create.mockClear();
-		});
-
-		it('should throw an exception when updating a visit without permission', async () => {
-			let error;
-			try {
-				await visitsController.update(
-					'space-1',
-					{
-						status: VisitStatus.APPROVED,
-					},
-					new SessionUserEntity({ ...mockUser, permissions: [] })
-				);
-			} catch (e) {
-				error = e;
-			}
-
-			expect(error.message).toEqual(
-				'You do not have the right permissions to call this route'
-			);
 		});
 
 		it('should throw an exception when a visitor tries to update another ones visit', async () => {

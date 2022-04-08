@@ -99,6 +99,11 @@ describe('VisitsService', () => {
 			expect(adapted.userProfileId).toEqual('b6080152-b1e4-4094-b1ad-0f0112a00113');
 			expect(adapted.status).toEqual('PENDING');
 		});
+
+		it('returns null on invalid input', () => {
+			const adapted = visitsService.adapt(null);
+			expect(adapted).toBeNull();
+		});
 	});
 
 	describe('findAll', () => {

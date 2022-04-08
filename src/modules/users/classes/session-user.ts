@@ -1,8 +1,11 @@
+import { Logger } from '@nestjs/common';
 import { get } from 'lodash';
 
 import { Permission, User } from '../types';
 
 export class SessionUserEntity {
+	private logger = new Logger(SessionUserEntity.name, { timestamp: true });
+
 	protected id: string;
 	protected firstName: string;
 	protected lastName: string;
@@ -37,6 +40,18 @@ export class SessionUserEntity {
 	}
 
 	public hasAny(permissions: Permission[]): boolean {
+		if (permissions.length === 0) {
+			return true;
+		}
+
 		return permissions.some((permission) => this.has(permission));
+	}
+
+	public hasAll(permissions: Permission[]): boolean {
+		if (permissions.length === 0) {
+			return true;
+		}
+
+		return !permissions.some((permission) => !this.has(permission));
 	}
 }

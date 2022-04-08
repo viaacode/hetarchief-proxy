@@ -25,6 +25,8 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
+import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
@@ -46,6 +48,10 @@ export class VisitsController {
 		description:
 			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
 	})
+	@RequireAnyPermissions(
+		Permission.CAN_READ_ALL_VISIT_REQUESTS,
+		Permission.CAN_READ_CP_VISIT_REQUESTS
+	)
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -53,42 +59,33 @@ export class VisitsController {
 		if (user.has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
 			const visits = await this.visitsService.findAll(queryDto, {});
 			return visits;
-		} else if (user.has(Permission.CAN_READ_CP_VISIT_REQUESTS)) {
-			const cpSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
+		}
+		// CP_VISIT_REQUESTS (user has any of these permissions as enforced by guard)
+		const cpSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
 
-			if (!cpSpace) {
-				throw new NotFoundException(
-					i18n.t('The current user does not seem to be linked to a cp space.')
-				);
-			}
-
-			const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: cpSpace.id });
-			return visits;
-		} else {
-			throw new UnauthorizedException(
-				i18n.t('You do not have the right permissions to call this route')
+		if (!cpSpace) {
+			throw new NotFoundException(
+				i18n.t('The current user does not seem to be linked to a cp space.')
 			);
 		}
+
+		const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: cpSpace.id });
+		return visits;
 	}
 
 	@Get('personal')
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
+	@RequirePermissions(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		if (user.has(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, {
-				userProfileId: user.getId(),
-			});
-			return visits;
-		}
-
-		throw new UnauthorizedException(
-			i18n.t('You do not have the right permissions to call this route')
-		);
+		const visits = await this.visitsService.findAll(queryDto, {
+			userProfileId: user.getId(),
+		});
+		return visits;
 	}
 
 	@Get(':id')
@@ -125,16 +122,11 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Create a Visit request. Requires the CAN_CREATE_VISIT_REQUEST permission.',
 	})
+	@RequirePermissions(Permission.CAN_CREATE_VISIT_REQUEST)
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
-		if (!user.has(Permission.CAN_CREATE_VISIT_REQUEST)) {
-			throw new UnauthorizedException(
-				i18n.t('You do not have the right permissions to call this route')
-			);
-		}
-
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				i18n.t(
@@ -157,22 +149,15 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Update a Visit request.',
 	})
+	@RequireAnyPermissions(
+		Permission.CAN_UPDATE_VISIT_REQUEST,
+		Permission.CAN_CANCEL_OWN_VISIT_REQUEST
+	)
 	public async update(
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
-		if (
-			!user.hasAny([
-				Permission.CAN_UPDATE_VISIT_REQUEST,
-				Permission.CAN_CANCEL_OWN_VISIT_REQUEST,
-			])
-		) {
-			throw new UnauthorizedException(
-				i18n.t('You do not have the right permissions to call this route')
-			);
-		}
-
 		if (
 			user.has(Permission.CAN_CANCEL_OWN_VISIT_REQUEST) &&
 			user.hasNot(Permission.CAN_UPDATE_VISIT_REQUEST)

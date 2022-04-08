@@ -18,9 +18,12 @@ import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/
 import { MediaService } from '../services/media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { Permission } from '~modules/users/types';
+import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 
 @ApiTags('Media')
 @Controller('media')
+@RequirePermissions(Permission.CAN_SEARCH_OBJECTS)
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
