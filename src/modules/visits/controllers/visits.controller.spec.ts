@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
 import { VisitsService } from '../services/visits.service';
-import { Visit, VisitStatus } from '../types';
+import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
@@ -21,6 +21,7 @@ const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceSlug: 'or-rf5kf25',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
@@ -50,6 +51,7 @@ const mockVisit2: Visit = {
 	id: '40f3f893-ba4f-4bc8-a871-0d492172134d',
 	spaceId: '24ddc913-3e03-42ea-9bd1-ba486401bc30',
 	spaceName: 'Huis van Alijn',
+	spaceSlug: 'or-hva456',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
@@ -89,8 +91,8 @@ const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description:
-		'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
+	description: null,
+	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
 	serviceDescription: null,
 	image: null,
 	color: null,
@@ -113,12 +115,18 @@ const mockSpace: Space = {
 	updatedAt: '2022-01-13T13:10:14.41978',
 };
 
+const mockCount: VisitSpaceCount = {
+	count: 1,
+	id: '123-456-789',
+};
+
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	getActiveVisitForUserAndSpace: jest.fn(),
+	getPendingVisitCountForUserBySlug: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -305,6 +313,16 @@ describe('VisitsController', () => {
 				archiefUserInfo: { id: 'user-1' },
 			});
 			expect(visit).toEqual(mockVisit1);
+		});
+	});
+
+	describe('getPendingVisitCountForUserBySlug', () => {
+		it('should return a count of the pending visits for the current user in a given space', async () => {
+			mockVisitsService.getPendingVisitCountForUserBySlug.mockResolvedValueOnce(mockCount);
+			const visit = await visitsController.getPendingVisitCountForUserBySlug('space-1', {
+				archiefUserInfo: { id: 'user-1' },
+			});
+			expect(visit).toEqual(mockCount);
 		});
 	});
 
