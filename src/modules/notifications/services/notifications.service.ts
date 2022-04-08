@@ -59,7 +59,7 @@ export class NotificationsService {
 			createdAt: gqlNotification?.created_at,
 			updatedAt: gqlNotification?.updated_at,
 			type: gqlNotification?.type as NotificationType,
-			readingRoomId: gqlNotification?.visit?.cp_space_id,
+			readingRoomId: gqlNotification?.visit?.space?.schema_maintainer?.schema_identifier,
 		};
 	}
 

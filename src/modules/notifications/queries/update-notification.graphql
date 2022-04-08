@@ -19,6 +19,11 @@ mutation updateNotification(
 			updated_at
 			visit {
 				cp_space_id
+				space {
+					schema_maintainer {
+						schema_identifier
+					}
+				}
 			}
 		}
 	}
