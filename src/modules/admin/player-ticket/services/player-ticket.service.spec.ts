@@ -35,8 +35,7 @@ const mockDataService = {
 };
 
 const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	get: jest.fn(),
-	set: jest.fn(),
+	wrap: jest.fn(),
 };
 
 const mockPlayerTicket: PlayerTicket = {
@@ -182,28 +181,26 @@ describe('PlayerTicketService', () => {
 				.get('/TESTBEELD/keyframes_all')
 				.query(true)
 				.reply(200, mockPlayerTicket);
+
+			mockCacheManager.wrap.mockImplementationOnce(async (key, fn, options) => {
+				const ticket = await fn();
+				await options.ttl(ticket);
+				return ticket;
+			});
 			const token = await playerTicketService.getThumbnailToken('referer');
 			expect(token).toEqual('secret-jwt-token');
 		});
 
-		it('uses the fallback referer if none was set', async () => {
-			nock('http://ticketservice/')
-				.get('/TESTBEELD/keyframes_all')
-				.query({
-					app: 'OR-*',
-					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
-				})
-				.reply(200, mockPlayerTicket);
-			const token = await playerTicketService.getThumbnailToken(undefined);
-			expect(token).toEqual('secret-jwt-token');
-		});
-
-		it('returns the cached token if available', async () => {
-			mockCacheManager.get.mockResolvedValueOnce(mockPlayerTicket);
-			const token = await playerTicketService.getThumbnailToken('referer');
-			expect(token).toEqual('secret-jwt-token');
+		it('throws an InternalServerErrorException on error', async () => {
+			mockCacheManager.wrap.mockRejectedValueOnce('error');
+			let error;
+			try {
+				await playerTicketService.getThumbnailToken('referer');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.name).toEqual('InternalServerErrorException');
+			expect(error.message).toEqual('Could not get a thumbnail token');
 		});
 	});
 

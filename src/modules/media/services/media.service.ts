@@ -221,7 +221,8 @@ export class MediaService {
 	public async getRelated(
 		maintainerId: string,
 		schemaIdentifier: string,
-		meemooIdentifier: string
+		meemooIdentifier: string,
+		referer: string
 	): Promise<IPagination<Media>> {
 		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
 			maintainerId,
@@ -229,15 +230,31 @@ export class MediaService {
 			meemooIdentifier,
 		});
 
+		const adaptedItems = await Promise.all(
+			mediaObjects.data.object_ie.map(async (object: any) => {
+				const adapted = this.adapt(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer
+				);
+				return adapted;
+			})
+		);
+
 		return Pagination<Media>({
-			items: mediaObjects.data.object_ie.map((object: any) => this.adapt(object)),
+			items: adaptedItems,
 			page: 1,
 			size: mediaObjects.data.object_ie.length,
 			total: mediaObjects.data.object_ie.length,
 		});
 	}
 
-	public async getSimilar(schemaIdentifier: string, esIndex: string, limit = 4): Promise<any> {
+	public async getSimilar(
+		schemaIdentifier: string,
+		esIndex: string,
+		referer: string,
+		limit = 4
+	): Promise<any> {
 		const likeFilter = {
 			_index: esIndex,
 			_id: schemaIdentifier,
@@ -256,6 +273,7 @@ export class MediaService {
 			},
 		};
 
-		return this.executeQuery(esIndex, esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 }
