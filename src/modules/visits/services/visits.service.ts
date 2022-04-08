@@ -10,7 +10,7 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import { GqlVisit, Note, Visit, VisitSpaceCount, VisitStatus, VisitTimeframe } from '../types';
 
 import {
 	FIND_ACTIVE_VISIT_BY_USER_AND_SPACE,
@@ -24,6 +24,7 @@ import {
 	UPDATE_VISIT,
 } from './queries.gql';
 
+import { PendingVisitCountForUserBySlugDocument } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -77,32 +78,39 @@ export class VisitsService {
 			return null;
 		}
 		return {
+			createdAt: get(graphQlVisit, 'created_at'),
+			endAt: get(graphQlVisit, 'end_date'),
 			id: get(graphQlVisit, 'id'),
+			note: this.adaptNotes(graphQlVisit.notes),
+			reason: get(graphQlVisit, 'user_reason'),
+			spaceAddress: this.adaptSpaceAddress(
+				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
+			),
 			spaceId: get(graphQlVisit, 'cp_space_id'),
-			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
 			spaceMail: get(
 				graphQlVisit,
 				'space.schema_maintainer.information[0].primary_site.address.email'
 			),
-			spaceAddress: this.adaptSpaceAddress(
-				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
-			),
-			userProfileId: get(graphQlVisit, 'user_profile_id'),
-			timeframe: get(graphQlVisit, 'user_timeframe'),
-			reason: get(graphQlVisit, 'user_reason'),
-			status: get(graphQlVisit, 'status'),
+			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
+			spaceSlug: get(graphQlVisit, 'space.schema_maintainer.schema_identifier'),
+			spaceColor: get(graphQlVisit, 'space.schema_maintainer.schema_color'),
+			spaceImage: get(graphQlVisit, 'space.schema_maintainer.schema_image'),
+			spaceLogo: get(graphQlVisit, 'space.schema_maintainer.information[0].logo.iri'),
+			spaceInfo: get(graphQlVisit, 'space.schema_maintainer.information[0].description'),
+			spaceDescription: get(graphQlVisit, 'space.schema_description'),
+			spaceServiceDescription: get(graphQlVisit, 'space.schema_service_description'),
 			startAt: get(graphQlVisit, 'start_date'),
-			endAt: get(graphQlVisit, 'end_date'),
-			note: this.adaptNotes(graphQlVisit.notes),
-			createdAt: get(graphQlVisit, 'created_at'),
+			status: get(graphQlVisit, 'status'),
+			timeframe: get(graphQlVisit, 'user_timeframe'),
 			updatedAt: get(graphQlVisit, 'updated_at'),
-			visitorName: get(graphQlVisit, 'user_profile.full_name'),
-			visitorMail: get(graphQlVisit, 'user_profile.mail'),
-			visitorId: get(graphQlVisit, 'user_profile.id'),
-			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
-			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
 			updatedById: get(graphQlVisit, 'updater.id'),
 			updatedByName: get(graphQlVisit, 'updater.full_name'),
+			userProfileId: get(graphQlVisit, 'user_profile_id'),
+			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
+			visitorId: get(graphQlVisit, 'user_profile.id'),
+			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
+			visitorMail: get(graphQlVisit, 'user_profile.mail'),
+			visitorName: get(graphQlVisit, 'user_profile.full_name'),
 		};
 	}
 
@@ -301,7 +309,28 @@ export class VisitsService {
 			now: new Date().toISOString(),
 		});
 
+		if (!visitResponse.data.cp_visit[0]) {
+			throw new NotFoundException(
+				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
+			);
+		}
+
 		return this.adapt(visitResponse.data.cp_visit[0]);
+	}
+
+	public async getPendingVisitCountForUserBySlug(
+		userProfileId: string,
+		slug: string
+	): Promise<VisitSpaceCount> {
+		const result = await this.dataService.execute(PendingVisitCountForUserBySlugDocument, {
+			user: userProfileId,
+			slug,
+		});
+
+		return {
+			count: get(result, 'data.cp_visit_aggregate.aggregate.count', 0),
+			id: get(result, 'data.cp_visit_aggregate.nodes[0].cp_space_id', null),
+		};
 	}
 
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
@@ -312,7 +341,7 @@ export class VisitsService {
 		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
 			{
@@ -323,7 +352,7 @@ export class VisitsService {
 		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndEndedVisitsWithoutNotification() {
+	public async getApprovedAndEndedVisitsWithoutNotification() {
 		const visitsResponse = await this.dataService.execute(
 			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
 			{ now: new Date().toISOString() }

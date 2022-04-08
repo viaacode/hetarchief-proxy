@@ -31,15 +31,33 @@ export const INSERT_VISIT = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
+						description
+						logo {
+							iri
+						}
 						primary_site {
 							address {
 								email
 								locality
 								postal_code
 								street
+								telephone
+								post_office_box_number
 							}
 						}
 					}
@@ -82,15 +100,33 @@ export const UPDATE_VISIT = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
+						description
+						logo {
+							iri
+						}
 						primary_site {
 							address {
 								email
 								locality
 								postal_code
 								street
+								telephone
+								post_office_box_number
 							}
 						}
 					}
@@ -129,15 +165,33 @@ export const FIND_VISITS = `
 				id
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
+						description
+						logo {
+							iri
+						}
 						primary_site {
 							address {
 								email
 								locality
 								postal_code
 								street
+								telephone
+								post_office_box_number
 							}
 						}
 					}
@@ -189,15 +243,33 @@ export const FIND_VISIT_BY_ID = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
+						description
+						logo {
+							iri
+						}
 						primary_site {
 							address {
 								email
 								locality
 								postal_code
 								street
+								telephone
+								post_office_box_number
 							}
 						}
 					}
@@ -209,7 +281,7 @@ export const FIND_VISIT_BY_ID = `
 
 export const FIND_ACTIVE_VISIT_BY_USER_AND_SPACE = `
 	query findActiveVisitByUserAndSpace($userProfileId: uuid, $maintainerOrgId: String, $now: timestamp) {
-		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}, space: {schema_maintainer_id: {_eq: $maintainerOrgId}}}) {
+		cp_visit(where: {user_profile_id: {_eq: $userProfileId}, status: {_eq: "APPROVED"}, start_date: {_lte: $now}, end_date: {_gte: $now}, space: {schema_maintainer_id: {_ilike: $maintainerOrgId}}}) {
 			id
 			cp_space_id
 			user_profile_id
@@ -238,14 +310,33 @@ export const FIND_ACTIVE_VISIT_BY_USER_AND_SPACE = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
+						description
+						logo {
+							iri
+						}
 						primary_site {
 							address {
+								email
 								locality
 								postal_code
 								street
+								telephone
+								post_office_box_number
 							}
 						}
 					}
@@ -281,16 +372,35 @@ export const FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						description
+						logo {
+							iri
 						}
-					  }
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+								telephone
+								post_office_box_number
+							}
+						}
 					}
 				}
 			}
@@ -316,16 +426,35 @@ export const FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						description
+						logo {
+							iri
 						}
-					  }
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+								telephone
+								post_office_box_number
+							}
+						}
 					}
 				}
 			}
@@ -351,16 +480,35 @@ export const FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION = `
 				full_name
 			}
 			space {
+				id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				is_published
+				published_at
+				created_at
+				updated_at
 				schema_maintainer {
 					schema_name
+					schema_identifier
 					information {
-					  primary_site {
-						address {
-						  locality
-						  postal_code
-						  street
+						description
+						logo {
+							iri
 						}
-					  }
+						primary_site {
+							address {
+								email
+								locality
+								postal_code
+								street
+								telephone
+								post_office_box_number
+							}
+						}
 					}
 				}
 			}

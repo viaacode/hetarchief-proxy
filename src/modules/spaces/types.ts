@@ -16,6 +16,7 @@ export interface Space {
 	id: string;
 	maintainerId: string;
 	name: string;
+	info: string;
 	description: string;
 	serviceDescription: string;
 	image: string;

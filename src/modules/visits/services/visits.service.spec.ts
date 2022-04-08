@@ -23,9 +23,25 @@ const getDefaultVisitsResponse = () => ({
 	},
 });
 
+const getDefaultVisitAggregateResponse = () => ({
+	data: {
+		cp_visit_aggregate: {
+			aggregate: {
+				count: 1,
+			},
+			nodes: [
+				{
+					cp_space_id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+				},
+			],
+		},
+	},
+});
+
 const mockVisit: Visit = {
 	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -301,7 +317,7 @@ describe('VisitsService', () => {
 			expect(response.id).toBe(cpVisit.id);
 		});
 
-		it('returns null if the visit was not found', async () => {
+		it('throws a notfoundexception if the visit was not found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
 					cp_visit: [],
@@ -312,9 +328,32 @@ describe('VisitsService', () => {
 					},
 				},
 			});
-			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
 
-			expect(response).toBeNull();
+			let error;
+
+			try {
+				await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message:
+					"No active visits for user with id 'user-1' for space with maintainer id 'space-1' found",
+				statusCode: 404,
+			});
+		});
+	});
+
+	describe('getPendingVisitCountForUserBySlug', () => {
+		it('returns the count of the pending visits for the current user in a given space', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitAggregateResponse());
+			const response = await visitsService.getPendingVisitCountForUserBySlug(
+				'user-1',
+				'space-1'
+			);
+			expect(response.count).toBe(1);
 		});
 	});
 
