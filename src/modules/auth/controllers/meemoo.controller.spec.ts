@@ -13,6 +13,7 @@ import { CollectionsService } from '~modules/collections/services/collections.se
 import { UsersService } from '~modules/users/services/users.service';
 import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const meemooLoginUrl = 'http://localhost:3200';
 const meemooLogoutUrl = 'http://localhost:3200';
@@ -116,7 +117,9 @@ describe('MeemooController', () => {
 					useValue: mockIdpService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		meemooController = module.get<MeemooController>(MeemooController);
 		configService = module.get<ConfigService>(ConfigService);

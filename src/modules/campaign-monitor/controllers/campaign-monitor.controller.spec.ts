@@ -7,6 +7,8 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
 		send: jest.fn(),
@@ -33,7 +35,9 @@ describe('CampaignMonitorController', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		campaignMonitorController =
 			module.get<CampaignMonitorController>(CampaignMonitorController);

@@ -8,6 +8,7 @@ import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
@@ -38,7 +39,9 @@ describe('SpacesService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		spacesService = module.get<SpacesService>(SpacesService);
 	});

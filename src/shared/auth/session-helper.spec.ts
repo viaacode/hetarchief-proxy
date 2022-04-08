@@ -4,6 +4,7 @@ import flow from 'lodash/fp/flow';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',
@@ -39,6 +40,10 @@ const mockArchiefUser: User = {
 };
 
 describe('SessionHelper', () => {
+	beforeAll(() => {
+		SessionHelper.setLogger(new TestingLogger());
+	});
+
 	describe('ensureValidSession', () => {
 		it('should throw an exception if an invalid session is passed', () => {
 			let exception;

@@ -8,6 +8,7 @@ import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSpacesResponse = {
 	items: [
@@ -67,7 +68,9 @@ describe('SpacesController', () => {
 					useValue: mockAssetsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		spacesController = module.get<SpacesController>(SpacesController);
 	});

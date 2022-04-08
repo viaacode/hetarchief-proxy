@@ -10,6 +10,7 @@ import { AuthController } from './auth.controller';
 
 import { SpacesModule } from '~modules/spaces';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,
@@ -29,7 +30,9 @@ describe('AuthController', () => {
 			controllers: [AuthController],
 			imports: [ConfigModule, SpacesModule],
 			providers: [IdpService],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		authController = module.get<AuthController>(AuthController);
 	});

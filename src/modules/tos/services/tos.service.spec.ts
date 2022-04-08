@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TosService } from './tos.service';
 
 import { DataService } from '~modules/data/services/data.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -22,7 +23,9 @@ describe('TosService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		tosService = module.get<TosService>(TosService);
 	});

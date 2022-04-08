@@ -5,6 +5,7 @@ import { UsersService } from './users.service';
 import { DataService } from '~modules/data/services/data.service';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -59,7 +60,9 @@ describe('UsersService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		usersService = module.get<UsersService>(UsersService);
 	});

@@ -9,6 +9,7 @@ import { Template } from '../types';
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -67,7 +68,9 @@ describe('CampaignMonitorService', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
 	});

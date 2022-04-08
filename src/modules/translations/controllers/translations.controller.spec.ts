@@ -4,6 +4,8 @@ import { TranslationsService } from '../services/translations.service';
 
 import { TranslationsController } from './translations.controller';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
 	getTranslations: jest.fn(),
 };
@@ -26,7 +28,9 @@ describe('TranslationsController', () => {
 					useValue: mockTranslationsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		translationsController = module.get<TranslationsController>(TranslationsController);
 	});
