@@ -8,6 +8,9 @@ export const configValidationSchema = Joi.object({
 	GRAPHQL_URL: Joi.string().required(),
 	GRAPHQL_SECRET: Joi.string().allow(''),
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
+	GRAPHQL_URL_AVO: Joi.string().required(),
+	GRAPHQL_SECRET_AVO: Joi.string().required(),
+	DATABASE_APPLICATION_TYPE: Joi.string().valid('hetarchief', 'avo').required(),
 	COOKIE_SECRET: Joi.string(),
 	COOKIE_MAX_AGE: Joi.number().default(86400000),
 	REDIS_CONNECTION_STRING: Joi.string().allow(''),
@@ -37,6 +40,7 @@ export const configValidationSchema = Joi.object({
 	ASSET_SERVER_TOKEN_USERNAME: Joi.string(),
 	ASSET_SERVER_BUCKET_NAME: Joi.string(),
 	TEMP_ASSET_FOLDER: Joi.string().allow(''),
+	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
 });
 
 export const DEFAULT_CONFIG = {

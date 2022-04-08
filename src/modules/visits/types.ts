@@ -1,3 +1,14 @@
+import {
+	FindActiveVisitByUserAndSpaceQuery,
+	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	FindApprovedEndedVisitsWithoutNotificationQuery,
+	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindVisitByIdQuery,
+	FindVisitsQuery,
+	InsertVisitMutation,
+	UpdateVisitMutation,
+} from '~generated/graphql-db-types-hetarchief';
+
 export enum VisitStatus {
 	PENDING = 'PENDING',
 	APPROVED = 'APPROVED',
@@ -11,58 +22,62 @@ export enum VisitTimeframe {
 	FUTURE = 'FUTURE',
 }
 
-export interface GqlProfile {
-	full_name: string;
-	first_name: string;
-	last_name: string;
-	mail: string;
-	id: string;
-}
+export type GqlNote = InsertVisitMutation['insert_cp_visit_one']['notes'][0];
 
-export interface GqlVisit {
-	id: string;
-	cp_space_id: string;
-	user_profile_id: string;
-	user_reason: string;
-	user_timeframe: string;
-	status: VisitStatus;
+export type GqlVisitWithNotes =
+	| InsertVisitMutation['insert_cp_visit_one']
+	| FindVisitsQuery['cp_visit'][0]
+	| FindVisitByIdQuery['cp_visit'][0]
+	| FindActiveVisitByUserAndSpaceQuery['cp_visit'][0]
+	| UpdateVisitMutation['update_cp_visit_by_pk'];
+
+export type GqlVisit =
+	| GqlVisitWithNotes
+	| FindApprovedStartedVisitsWithoutNotificationQuery['cp_visit'][0]
+	| FindApprovedAlmostEndedVisitsWithoutNotificationQuery['cp_visit'][0]
+	| FindApprovedEndedVisitsWithoutNotificationQuery['cp_visit'][0];
+
+export interface GqlUpdateVisit {
 	start_date: string;
 	end_date: string;
-	notes: any[];
-	created_at: string;
-	updated_at: string;
-	user_profile: Partial<GqlProfile>;
-	space: {
-		schema_maintainer: {
-			schema_name: string;
-		};
-	};
-	updater: Partial<GqlProfile>;
+	status: VisitStatus;
 	updated_by?: string;
 }
 
 export interface Visit {
 	id: string;
-	spaceId: string;
-	spaceName: string;
-	spaceMail: string;
-	spaceAddress?: string;
-	userProfileId: string;
-	timeframe: string;
-	reason: string;
-	status: VisitStatus;
-	startAt: string;
+	createdAt: string;
 	endAt: string;
 	note?: Note;
-	createdAt: string;
+	reason: string;
+	spaceAddress?: string;
+	spaceId: string;
+	spaceMail: string;
+	spaceName: string;
+	spaceSlug: string;
+	spaceColor?: string;
+	spaceImage?: string;
+	spaceLogo?: string;
+	spaceInfo?: string;
+	spaceDescription?: string;
+	spaceServiceDescription?: string;
+	startAt: string;
+	status: VisitStatus;
+	timeframe: string;
 	updatedAt: string;
+	updatedById: string | null;
+	updatedByName: string | null;
+	userProfileId: string;
+	visitorId: string;
+	visitorMail: string;
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
-	visitorMail: string;
-	visitorId: string;
-	updatedById: string | null;
-	updatedByName: string | null;
+}
+
+export interface VisitSpaceCount {
+	count: number;
+	id?: string;
 }
 
 export interface Note {
@@ -70,5 +85,4 @@ export interface Note {
 	authorName?: string;
 	note: string;
 	createdAt: string;
-	updatedAt: string;
 }

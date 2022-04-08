@@ -1,0 +1,16 @@
+query pendingVisitCountForUserBySlug($user: uuid = "", $slug: String = "") {
+	cp_visit_aggregate(
+		where: {
+			user_profile_id: { _eq: $user }
+			status: { _eq: "PENDING" }
+			space: { schema_maintainer_id: { _ilike: $slug } }
+		}
+	) {
+		aggregate {
+			count
+		}
+		nodes {
+			cp_space_id
+		}
+	}
+}

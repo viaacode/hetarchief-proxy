@@ -1,3 +1,8 @@
+import {
+	InsertNotificationsMutation,
+	UpdateNotificationMutation,
+} from '~generated/graphql-db-types-hetarchief';
+
 export enum NotificationStatus {
 	UNREAD = 'UNREAD',
 	READ = 'READ',
@@ -25,20 +30,23 @@ export interface Notification {
 	readingRoomId: string;
 }
 
-export interface GqlNotification {
-	description: string;
-	title: string;
-	id: string;
-	status: NotificationStatus;
-	recipient?: string;
-	visit_id: string;
-	created_at: string;
-	updated_at: string;
-	type: NotificationType;
-	visit?: {
-		cp_visit_id?: string;
-	};
-}
+export type GqlNotification =
+	| UpdateNotificationMutation['update_app_notification']['returning'][0]
+	| InsertNotificationsMutation['insert_app_notification']['returning'][0];
+// {
+// 	description: string;
+// 	title: string;
+// 	id: string;
+// 	status: NotificationStatus;
+// 	recipient?: string;
+// 	visit_id: string;
+// 	created_at: string;
+// 	updated_at: string;
+// 	type: NotificationType;
+// 	visit?: {
+// 		cp_visit_id?: string;
+// 	};
+// }
 
 export interface GqlCreateOrUpdateNotification {
 	description: string;

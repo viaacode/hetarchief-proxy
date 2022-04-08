@@ -1,19 +1,26 @@
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { InternalServerErrorException, Logger, LoggerService } from '@nestjs/common';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
 import { Permission, User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const IDP = 'idp';
 const IDP_USER_INFO_PATH = 'idpUserInfo';
 export const ARCHIEF_USER_INFO_PATH = 'archiefUserInfo';
 
 export class SessionHelper {
+	private static logger: LoggerService = new Logger(SessionHelper.name);
+
+	public static setLogger(newLogger: LoggerService): void {
+		SessionHelper.logger = newLogger;
+	}
+
 	public static ensureValidSession(session: Record<string, any>) {
 		if (!session) {
-			Logger.error('Failed to set Idp user info, no session was found');
+			SessionHelper.logger.error('Failed to set Idp user info, no session was found');
 			throw new InternalServerErrorException();
 		}
 	}
@@ -91,6 +98,13 @@ export class SessionHelper {
 			return null;
 		}
 		return session[ARCHIEF_USER_INFO_PATH];
+	}
+
+	public static getUserGroupIds(user: User | null | undefined): number[] {
+		return [
+			...get(user, 'userGroupIds', []),
+			user ? SpecialPermissionGroups.loggedInUsers : SpecialPermissionGroups.loggedOutUsers,
+		];
 	}
 
 	/**

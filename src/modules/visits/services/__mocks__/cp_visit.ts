@@ -1,29 +1,60 @@
-import { VisitStatus } from '~modules/visits/types';
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { GqlVisit } from '~modules/visits/types';
 
-export default {
-	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
-	cp_space_id: '65790f8f-6365-4891-8ce2-4563f360db89',
-	user_profile_id: 'b6080152-b1e4-4094-b1ad-0f0112a00113',
-	user_reason: 'Masterproef onderzoek',
-	user_timeframe: 'Alle weekends tem juni',
-	status: VisitStatus.PENDING,
+export const mockCpVisit: GqlVisit = {
+	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+	cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+	user_profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+	user_profile: {
+		id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+		full_name: 'Ineke van Dams',
+		first_name: 'Ineke',
+		last_name: 'van Dams',
+		mail: 'ineke.vandam@meemoo.be',
+	},
+	user_reason: 'voor mijn onderzoek en studie',
+	user_timeframe: 'meteen',
+	status: 'PENDING',
 	start_date: null,
 	end_date: null,
-	notes: [
-		{
-			id: 'bfad12ea-f637-49e3-9352-8f657cc5da80',
-			profile: {
-				full_name: 'Ineke cp_admin',
-			},
-			note: 'CST is verplicht',
-			created_at: '2022-02-28T15:50:07.581279',
+	notes: [],
+	created_at: '2022-03-18T08:32:57.256264',
+	updated_at: '2022-03-18T08:32:57.256264',
+	space: {
+		id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+		schema_image: null,
+		schema_color: null,
+		schema_audience_type: Lookup_Schema_Audience_Type_Enum.Private,
+		schema_description: null,
+		schema_public_access: false,
+		schema_service_description: null,
+		is_published: false,
+		published_at: null,
+		created_at: '2022-01-19T10:25:51.320763',
+		updated_at: '2022-01-19T10:25:51.320763',
+		schema_maintainer: {
+			schema_name: 'BRUZZ',
+			schema_identifier: 'OR-d79593p',
+			information: [
+				{
+					description:
+						'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
+					logo: {
+						iri: 'https://assets.viaa.be/images/OR-d79593p',
+					},
+					primary_site: {
+						address: {
+							email: null,
+							locality: 'Elsene',
+							postal_code: '1050',
+							street: 'Eugène Flageyplein 18',
+							telephone: null,
+							post_office_box_number: null,
+						},
+					},
+				},
+			],
 		},
-	],
-	created_at: '2022-02-10T14:38:09.144894',
-	updated_at: '2022-02-10T14:38:09.144894',
-	user_profile: {
-		full_name: 'Tom Testerom',
-		mail: 'tom@studiohyperdrive.be',
-		id: '98a95599-9082-4636-ace0-0569dd654bed',
 	},
+	updater: null,
 };

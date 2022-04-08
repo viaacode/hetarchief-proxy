@@ -5,6 +5,8 @@ import { Tos } from '../types';
 
 import { TosController } from './tos.controller';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 const mockTosResponse: Tos = {
 	updatedAt: '1997-01-01T00:00:00.000Z',
 };
@@ -28,7 +30,9 @@ describe('TosController', () => {
 					useValue: mockTosService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		tosController = module.get<TosController>(TosController);
 	});

@@ -1,0 +1,65 @@
+query getContentPagesWithBlocks(
+	$where: cms_content_bool_exp
+	$offset: Int = 0
+	$limit: Int = 10
+	$orderBy: [cms_content_order_by!] = {}
+	$labelIds: [uuid!] = []
+	$orUserGroupIds: [cms_content_content_labels_bool_exp!] = {}
+) {
+	cms_content(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+		content_type
+		created_at
+		depublish_at
+		description
+		seo_description
+		meta_description
+		id
+		thumbnail_path
+		is_protected
+		is_public
+		path
+		user_profile_id
+		owner_profile {
+			first_name
+			last_name
+			group {
+				id
+				label
+			}
+		}
+		publish_at
+		published_at
+		title
+		updated_at
+		content_content_labels {
+			content_label {
+				id
+				label
+				link_to
+			}
+		}
+		content_blocks(order_by: { position: asc }) {
+			content_block_type
+			content_id
+			created_at
+			id
+			position
+			updated_at
+			variables
+			content_block_type
+		}
+	}
+	cms_content_aggregate(where: $where) {
+		aggregate {
+			count
+		}
+	}
+	cms_content_labels(where: { id: { _in: $labelIds } }) {
+		id
+		content_content_labels_aggregate(where: { _or: $orUserGroupIds }) {
+			aggregate {
+				count
+			}
+		}
+	}
+}

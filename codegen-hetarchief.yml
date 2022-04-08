@@ -1,0 +1,14 @@
+overwrite: true
+schema: ${GRAPHQL_URL}
+documents:
+  - "./src/**/*.graphql"
+  # avo specific types are generated using a separate codegen config file, otherwise we have naming conflicts between the queries
+  - "!./src/modules/admin/content-pages/queries/avo/**.graphql"
+  - "!./src/modules/admin/player-ticket/queries/avo/**.graphql"
+  - "!./src/modules/admin/organisations/queries/avo/**.graphql"
+generates:
+  src/generated/graphql-db-types-hetarchief.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node

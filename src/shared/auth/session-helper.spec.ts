@@ -1,9 +1,10 @@
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',
@@ -29,13 +30,20 @@ const mockArchiefUser: User = {
 	id: 'c59492f7-a317-4dd6-b1ff-5cd2a3ea042d',
 	firstName: 'Tom',
 	lastName: 'Testerom',
+	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 
 describe('SessionHelper', () => {
+	beforeAll(() => {
+		SessionHelper.setLogger(new TestingLogger());
+	});
+
 	describe('ensureValidSession', () => {
 		it('should throw an exception if an invalid session is passed', () => {
 			let exception;

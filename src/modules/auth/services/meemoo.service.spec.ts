@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { MeemooService } from './meemoo.service';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 describe('MeemooService', () => {
 	let meemooService: MeemooService;
 	let configService: ConfigService;
@@ -20,7 +22,9 @@ describe('MeemooService', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [archiefServiceFactory, ConfigService],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		meemooService = module.get<MeemooService>(MeemooService);
 		configService = module.get<ConfigService>(ConfigService);

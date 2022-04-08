@@ -7,6 +7,7 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "allowJs": false,
     "target": "es2017",
     "sourceMap": true,
     "noEmit": true,
@@ -15,6 +16,7 @@
       "~config": ["src/config"],
       "~config/*": ["src/config/*"],
       "~modules/*": ["src/modules/*"],
+      "~generated/*": ["src/generated/*"],
       "~shared": ["src/shared"],
       "~shared/*": ["src/shared/*"]
     },

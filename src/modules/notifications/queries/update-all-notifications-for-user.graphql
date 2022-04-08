@@ -1,0 +1,8 @@
+mutation updateAllNotificationsForUser(
+	$userProfileId: uuid
+	$notification: app_notification_set_input
+) {
+	update_app_notification(where: { recipient: { _eq: $userProfileId } }, _set: $notification) {
+		affected_rows
+	}
+}

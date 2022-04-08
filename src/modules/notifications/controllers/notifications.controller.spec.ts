@@ -10,11 +10,12 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
 	description:
@@ -54,6 +55,7 @@ const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceSlug: 'or-rf5kf25',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
@@ -72,7 +74,6 @@ const mockVisit: Visit = {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
 		note: 'test note',
 		createdAt: '2022-01-24T17:21:58.937169+00:00',
-		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
@@ -83,10 +84,13 @@ const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
+	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
-	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
+	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -135,7 +139,9 @@ describe('NotificationsController', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		notificationsController = module.get<NotificationsController>(NotificationsController);
 

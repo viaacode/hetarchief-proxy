@@ -4,13 +4,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
+import { IdpService } from '../services/idp.service';
 import { MeemooService } from '../services/meemoo.service';
 
 import { MeemooController } from './meemoo.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const meemooLoginUrl = 'http://localhost:3200';
 const meemooLogoutUrl = 'http://localhost:3200';
@@ -31,6 +34,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
+	groupId: Group.CP_ADMIN,
 };
 
 const samlResponse = {
@@ -58,6 +62,10 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
 	create: jest.fn(),
+};
+
+const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
+	determineUserGroup: jest.fn(),
 };
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -104,8 +112,14 @@ describe('MeemooController', () => {
 					provide: ConfigService,
 					useValue: mockConfigService,
 				},
+				{
+					provide: IdpService,
+					useValue: mockIdpService,
+				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		meemooController = module.get<MeemooController>(MeemooController);
 		configService = module.get<ConfigService>(ConfigService);
@@ -149,6 +163,7 @@ describe('MeemooController', () => {
 		it('should redirect after successful login with a known user', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
 			const result = await meemooController.loginCallback({}, samlResponse);
 
@@ -167,6 +182,7 @@ describe('MeemooController', () => {
 			};
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
 			const result = await meemooController.loginCallback({}, samlResponseWithNullRelayState);
 			expect(result.url).toBeUndefined();
@@ -175,6 +191,7 @@ describe('MeemooController', () => {
 		it('should create an authorized user that is not yet in the database', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
 			const result = await meemooController.loginCallback({}, samlResponse);
@@ -188,12 +205,13 @@ describe('MeemooController', () => {
 			mockUsersService.createUserWithIdp.mockClear();
 		});
 
-		it('should update an authorized user that is was changed in ldap', async () => {
+		it('should update an authorized user that was changed in ldap', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
 				...archiefUser,
 				firstName: 'Tom2',
 			});
+			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
 			const result = await meemooController.loginCallback({}, samlResponse);
@@ -218,27 +236,6 @@ describe('MeemooController', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('Test error handling');
-		});
-
-		it('should throw an unauthorized exception if the user has no access to the archief app', async () => {
-			const ldapNoAccess = {
-				attributes: {
-					...ldapUser.attributes,
-				},
-			};
-			ldapNoAccess.attributes.apps = [];
-			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapNoAccess);
-			let error;
-			try {
-				await meemooController.loginCallback({}, samlResponse);
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				statusCode: HttpStatus.UNAUTHORIZED,
-				error: 'Unauthorized',
-				message: `User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`,
-			});
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {

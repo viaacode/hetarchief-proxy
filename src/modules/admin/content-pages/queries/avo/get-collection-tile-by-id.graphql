@@ -1,0 +1,23 @@
+query getCollectionTileById($id: uuid!) {
+	obj: app_collections(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
+		created_at
+		title
+		thumbnail_path
+		type {
+			label
+			id
+		}
+		collection_fragments_aggregate {
+			aggregate {
+				count
+			}
+		}
+		view_counts_aggregate {
+			aggregate {
+				sum {
+					count
+				}
+			}
+		}
+	}
+}

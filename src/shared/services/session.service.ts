@@ -7,6 +7,8 @@ import session from 'express-session';
 import { createClient, RedisClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
+import { getConfig } from '~config';
+
 const FileStore = SessionFileStore(session);
 
 @Injectable()
@@ -35,10 +37,10 @@ export class SessionService {
 	 * Returns the session config for the express session middleware
 	 */
 	public async getSessionConfig(): Promise<session.SessionOptions> {
-		const environment = this.configService.get('environment');
-		const cookieSecret = this.configService.get('cookieSecret');
-		const cookieMaxAge = this.configService.get('cookieMaxAge');
-		const redisConnectionString = this.configService.get('redisConnectionString');
+		const environment = getConfig(this.configService, 'environment');
+		const cookieSecret = getConfig(this.configService, 'cookieSecret');
+		const cookieMaxAge = getConfig(this.configService, 'cookieMaxAge');
+		const redisConnectionString = getConfig(this.configService, 'redisConnectionString');
 
 		const isProduction = environment !== 'local' && environment !== 'test';
 
@@ -80,7 +82,8 @@ export class SessionService {
 			sessionConfig.store = new redisStore({ client: redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
-		} else {
+		} else if (process.platform !== 'win32') {
+			// Windows doesn't handle multithreaded file access very well
 			sessionConfig.store = new FileStore({});
 			this.logger.log('isDevelopment: File Store ready');
 		}

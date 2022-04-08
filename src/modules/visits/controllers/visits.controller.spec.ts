@@ -1,24 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
-import { Lookup_Schema_Audience_Type_Enum } from '../../../generated/graphql';
 import { VisitsService } from '../services/visits.service';
-import { Visit, VisitStatus } from '../types';
+import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
+import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
-import { Permission, User } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import i18n from '~shared/i18n';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
+	spaceSlug: 'or-rf5kf25',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
@@ -37,7 +40,6 @@ const mockVisit1: Visit = {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
 		note: 'test note',
 		createdAt: '2022-01-24T17:21:58.937169+00:00',
-		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
@@ -48,6 +50,7 @@ const mockVisit2: Visit = {
 	id: '40f3f893-ba4f-4bc8-a871-0d492172134d',
 	spaceId: '24ddc913-3e03-42ea-9bd1-ba486401bc30',
 	spaceName: 'Huis van Alijn',
+	spaceSlug: 'or-hva456',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
@@ -74,8 +77,11 @@ const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
+	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
@@ -84,8 +90,8 @@ const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description:
-		'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
+	description: null,
+	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
 	serviceDescription: null,
 	image: null,
 	color: null,
@@ -108,12 +114,18 @@ const mockSpace: Space = {
 	updatedAt: '2022-01-13T13:10:14.41978',
 };
 
+const mockCount: VisitSpaceCount = {
+	count: 1,
+	id: '123-456-789',
+};
+
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	getActiveVisitForUserAndSpace: jest.fn(),
+	getPendingVisitCountForUserBySlug: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -151,7 +163,9 @@ describe('VisitsController', () => {
 					useValue: mockSpacesService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		visitsController = module.get<VisitsController>(VisitsController);
 	});
@@ -170,10 +184,13 @@ describe('VisitsController', () => {
 		it('should return all visits for meemoo admin', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 
-			const visits = await visitsController.getVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -182,10 +199,13 @@ describe('VisitsController', () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(mockSpace);
 
-			const visits = await visitsController.getVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -196,10 +216,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getVisits(null, {
-					...mockUser,
-					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
-				});
+				await visitsController.getVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -216,10 +239,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getVisits(null, {
-					...mockUser,
-					permissions: [],
-				});
+				await visitsController.getVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -236,10 +262,13 @@ describe('VisitsController', () => {
 		it('should return all visits for a user', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 
-			const visits = await visitsController.getPersonalVisits(null, {
-				...mockUser,
-				permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
-			});
+			const visits = await visitsController.getPersonalVisits(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+				})
+			);
 
 			expect(visits).toEqual(mockVisitsResponse);
 		});
@@ -249,10 +278,13 @@ describe('VisitsController', () => {
 
 			let error;
 			try {
-				await visitsController.getPersonalVisits(null, {
-					...mockUser,
-					permissions: [],
-				});
+				await visitsController.getPersonalVisits(
+					null,
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [],
+					})
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -280,6 +312,16 @@ describe('VisitsController', () => {
 				archiefUserInfo: { id: 'user-1' },
 			});
 			expect(visit).toEqual(mockVisit1);
+		});
+	});
+
+	describe('getPendingVisitCountForUserBySlug', () => {
+		it('should return a count of the pending visits for the current user in a given space', async () => {
+			mockVisitsService.getPendingVisitCountForUserBySlug.mockResolvedValueOnce(mockCount);
+			const visit = await visitsController.getPendingVisitCountForUserBySlug('space-1', {
+				archiefUserInfo: { id: 'user-1' },
+			});
+			expect(visit).toEqual(mockCount);
 		});
 	});
 

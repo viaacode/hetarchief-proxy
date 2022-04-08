@@ -4,6 +4,8 @@ import { UsersService } from '../services/users.service';
 
 import { UsersController } from './users.controller';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 const mockUserResponse = {
 	id: '123',
 	firstName: 'Tom',
@@ -33,7 +35,9 @@ describe('UsersController', () => {
 					useValue: mockUsersService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		usersController = module.get<UsersController>(UsersController);
 	});
