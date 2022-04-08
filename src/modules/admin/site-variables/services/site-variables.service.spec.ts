@@ -41,9 +41,10 @@ describe('SiteVariablesService', () => {
 					},
 				},
 			});
-			const response = await siteVariablesService.getSiteVariable('variable-name');
-			expect(response.name).toEqual('variable-name');
-			expect(response.value.key).toEqual('value');
+			const response = await siteVariablesService.getSiteVariable<Record<string, string>>(
+				'variable-name'
+			);
+			expect(response.key).toEqual('value');
 		});
 	});
 

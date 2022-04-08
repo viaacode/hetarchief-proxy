@@ -1,32 +1,32 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { get } from 'lodash';
 
 import { Translations } from '../types';
 
-import { GET_SITE_VARIABLES_BY_NAME } from './queries.gql';
+import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
+import { TranslationKey } from '~modules/admin/translations/types';
 
-import { DataService } from '~modules/data/services/data.service';
 @Injectable()
 export class TranslationsService {
 	private logger: Logger = new Logger(TranslationsService.name, { timestamp: true });
 
 	constructor(
-		private dataService: DataService,
+		private siteVariablesService: SiteVariablesService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {}
 
 	public async getTranslations(): Promise<Translations> {
-		let translations: Translations = await this.cacheManager.get('translations');
+		const translations = await this.cacheManager.wrap(
+			TranslationKey.FRONTEND_TRANSLATIONS,
+			() =>
+				this.siteVariablesService.getSiteVariable<Translations>(
+					TranslationKey.FRONTEND_TRANSLATIONS
+				),
+			// cache for 1h
+			{ ttl: 3600 }
+		);
 		if (!translations) {
-			const response = await this.dataService.execute(GET_SITE_VARIABLES_BY_NAME, {
-				name: 'TRANSLATIONS_FRONTEND',
-			});
-			translations = get(response, 'data.cms_site_variables[0].value');
-			if (!translations) {
-				throw new NotFoundException('No translations have been set in the database');
-			}
-			await this.cacheManager.set('translations', translations, { ttl: 3600 }); // cache for 1h
+			throw new NotFoundException('No translations have been set in the database');
 		}
 
 		return translations;

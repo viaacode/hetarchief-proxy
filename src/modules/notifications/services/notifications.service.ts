@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get } from 'lodash';
 
 import {
 	GqlCreateNotificationsForReadingRoom,
@@ -12,12 +11,15 @@ import {
 } from '../types';
 
 import {
-	FIND_NOTIFICATIONS_BY_USER,
-	INSERT_NOTIFICATIONS,
-	UPDATE_ALL_NOTIFICATION_FOR_USER,
-	UPDATE_NOTIFICATION,
-} from './queries.gql';
-
+	FindNotificationsByUserDocument,
+	FindNotificationsByUserQuery,
+	InsertNotificationsDocument,
+	InsertNotificationsMutation,
+	UpdateAllNotificationsForUserDocument,
+	UpdateAllNotificationsForUserMutation,
+	UpdateNotificationDocument,
+	UpdateNotificationMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { Template } from '~modules/campaign-monitor/types';
 import { DataService } from '~modules/data/services/data.service';
@@ -47,16 +49,17 @@ export class NotificationsService {
 		if (!gqlNotification) {
 			return undefined;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(gqlNotification, 'id'),
-			description: get(gqlNotification, 'description'),
-			title: get(gqlNotification, 'title'),
-			status: get(gqlNotification, 'status'),
-			visitId: get(gqlNotification, 'visit_id'),
-			createdAt: get(gqlNotification, 'created_at'),
-			updatedAt: get(gqlNotification, 'updated_at'),
-			type: get(gqlNotification, 'type'),
-			readingRoomId: get(gqlNotification, 'visit.cp_space_id'),
+			id: gqlNotification?.id,
+			description: gqlNotification?.description,
+			title: gqlNotification?.title,
+			status: gqlNotification?.status as NotificationStatus,
+			visitId: gqlNotification?.visit_id,
+			createdAt: gqlNotification?.created_at,
+			updatedAt: gqlNotification?.updated_at,
+			type: gqlNotification?.type as NotificationType,
+			readingRoomId: gqlNotification?.visit?.space?.schema_maintainer?.schema_identifier,
 		};
 	}
 
@@ -67,12 +70,15 @@ export class NotificationsService {
 		size
 	): Promise<IPagination<Notification>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const notificationsResponse = await this.dataService.execute(FIND_NOTIFICATIONS_BY_USER, {
-			userProfileId,
-			moreRecentThan,
-			offset,
-			limit,
-		});
+		const notificationsResponse = await this.dataService.execute<FindNotificationsByUserQuery>(
+			FindNotificationsByUserDocument,
+			{
+				userProfileId,
+				moreRecentThan,
+				offset,
+				limit,
+			}
+		);
 
 		return Pagination<Notification>({
 			items: notificationsResponse.data.app_notification.map((notification: any) =>
@@ -87,9 +93,12 @@ export class NotificationsService {
 	public async create(
 		notifications: Partial<GqlCreateOrUpdateNotification>[]
 	): Promise<Notification[]> {
-		const response = await this.dataService.execute(INSERT_NOTIFICATIONS, {
-			objects: notifications,
-		});
+		const response = await this.dataService.execute<InsertNotificationsMutation>(
+			InsertNotificationsDocument,
+			{
+				objects: notifications,
+			}
+		);
 		const createdNotifications = response.data.insert_app_notification.returning;
 		this.logger.debug(`${createdNotifications.length} notifications created`);
 
@@ -118,11 +127,14 @@ export class NotificationsService {
 		userProfileId: string,
 		notification: Partial<GqlCreateOrUpdateNotification>
 	): Promise<Notification> {
-		const response = await this.dataService.execute(UPDATE_NOTIFICATION, {
-			notificationId,
-			userProfileId,
-			notification,
-		});
+		const response = await this.dataService.execute<UpdateNotificationMutation>(
+			UpdateNotificationDocument,
+			{
+				notificationId,
+				userProfileId,
+				notification,
+			}
+		);
 
 		const updatedNotification = response.data.update_app_notification.returning[0];
 		if (!updatedNotification) {
@@ -139,12 +151,15 @@ export class NotificationsService {
 		userProfileId: string,
 		notification: Partial<GqlCreateOrUpdateNotification>
 	): Promise<number> {
-		const response = await this.dataService.execute(UPDATE_ALL_NOTIFICATION_FOR_USER, {
-			userProfileId,
-			notification,
-		});
+		const response = await this.dataService.execute<UpdateAllNotificationsForUserMutation>(
+			UpdateAllNotificationsForUserDocument,
+			{
+				userProfileId,
+				notification,
+			}
+		);
 
-		const affectedRows = response.data.update_app_notification.affectedRows;
+		const affectedRows = response.data.update_app_notification.affected_rows;
 		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
 
 		return affectedRows;

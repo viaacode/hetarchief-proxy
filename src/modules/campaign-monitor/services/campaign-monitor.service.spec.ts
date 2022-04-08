@@ -44,7 +44,6 @@ const getMockVisit = (): Visit => ({
 		note: 'Visit is limited to max. 2h',
 		authorName: 'Ad Ministrator',
 		createdAt: '2022-03-01T16:00:00',
-		updatedAt: '2022-03-01T16:00:00',
 	},
 	createdAt: '2022-02-01T10:00:00',
 	updatedAt: '2022-02-01T10:00:00',

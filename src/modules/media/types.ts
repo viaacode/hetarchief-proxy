@@ -1,5 +1,6 @@
 import { QueryType } from './elasticsearch/consts';
 
+import { GetRelatedObjectsQuery } from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 
 export enum MediaFormat {
@@ -22,6 +23,8 @@ export interface QueryBuilderConfig {
 	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
 	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
+
+export type GqlIeObject = GetRelatedObjectsQuery['object_ie'][0];
 
 export interface MediaFile {
 	name: string;
@@ -70,14 +73,14 @@ export interface Media {
 	actor: any;
 	contributor: any;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	// spatial: string;
+	// temporal: string;
 	keywords: string;
 	genre: string;
 	dctermsFormat: string;
 	inLanguage: string;
 	thumbnailUrl: string;
-	embedUrl: string;
+	// embedUrl: string;
 	alternateName: string;
 	duration: string;
 	license: any;

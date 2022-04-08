@@ -13,6 +13,7 @@ export interface Address {
 	locality: string;
 	postOfficeBoxNumber: string;
 }
+
 export interface ContactInfo {
 	email: string;
 	telephone: string;

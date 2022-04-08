@@ -14,13 +14,16 @@ import {
 	AvoOrHetArchief,
 	ContentBlock,
 	ContentPage,
+	ContentPageLabel,
 	ContentPageOverviewResponse,
 	ContentPageType,
 	ContentPageUser,
 	ContentWidth,
 	FetchSearchQueryFunctionAvo,
+	GqlAvoUser,
 	GqlContentBlock,
 	GqlContentPage,
+	GqlHetArchiefUser,
 	GqlUser,
 	LabelObj,
 	MediaItemResponse,
@@ -80,30 +83,46 @@ export class ContentPagesService {
 		if (!gqlContentPage) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(gqlContentPage, 'id'),
-			thumbnailPath: get(gqlContentPage, 'thumbnail_path'),
-			title: get(gqlContentPage, 'title'),
-			description: get(gqlContentPage, 'description'),
-			seoDescription: get(gqlContentPage, 'seo_description'),
-			metaDescription: get(gqlContentPage, 'meta_description'),
-			path: get(gqlContentPage, 'path'),
-			isPublic: get(gqlContentPage, 'is_public'),
-			publishedAt: get(gqlContentPage, 'published_at'),
-			publishAt: get(gqlContentPage, 'publish_at'),
-			depublishAt: get(gqlContentPage, 'depublish_at'),
-			createdAt: get(gqlContentPage, 'created_at'),
-			updatedAt: get(gqlContentPage, 'updated_at'),
-			isProtected: get(gqlContentPage, 'is_protected'),
-			contentType: get(gqlContentPage, 'content_type') as ContentPageType,
-			contentWidth: get(gqlContentPage, 'content_width') as ContentWidth,
+			id: gqlContentPage?.id,
+			thumbnailPath: gqlContentPage?.thumbnail_path,
+			title: gqlContentPage?.title,
+			description: gqlContentPage?.description,
+			seoDescription: gqlContentPage?.seo_description,
+			metaDescription: gqlContentPage?.meta_description,
+			path: gqlContentPage?.path,
+			isPublic: gqlContentPage?.is_public,
+			publishedAt: gqlContentPage?.published_at,
+			publishAt: gqlContentPage?.publish_at,
+			depublishAt: gqlContentPage?.depublish_at,
+			createdAt: gqlContentPage?.created_at,
+			updatedAt: gqlContentPage?.updated_at,
+			isProtected: gqlContentPage?.is_protected,
+			contentType: gqlContentPage?.content_type as ContentPageType,
+			contentWidth: gqlContentPage?.content_width as ContentWidth,
 			owner: this.adaptUser(
-				get(gqlContentPage, 'owner_profile') || get(gqlContentPage, 'profile')
+				(gqlContentPage as any)?.owner_profile || (gqlContentPage as any)?.profile
 			),
-			userProfileId: get(gqlContentPage, 'user_profile_id'),
-			userGroupIds: get(gqlContentPage, 'user_group_ids'),
-			contentBlocks: get(gqlContentPage, 'content_blocks', []).map(this.adaptContentBlock),
-			labels: get(gqlContentPage, 'labels'),
+			userProfileId: gqlContentPage?.user_profile_id,
+			userGroupIds: gqlContentPage?.user_group_ids,
+			contentBlocks: (
+				(gqlContentPage as any)?.content_blocks ||
+				(gqlContentPage as any)?.contentBlockssBycontentId ||
+				[]
+			).map(this.adaptContentBlock),
+			labels: (gqlContentPage?.content_content_labels || []).flatMap(
+				(labelLink): ContentPageLabel[] => {
+					return labelLink.map(
+						(labelObj): ContentPageLabel => ({
+							id: labelObj?.content_label?.id,
+							content_type: gqlContentPage?.content_type as ContentPageType,
+							label: labelObj?.content_label?.label,
+							link_to: labelObj?.content_label?.link_to,
+						})
+					);
+				}
+			),
 		};
 	}
 
@@ -111,13 +130,14 @@ export class ContentPagesService {
 		if (!contentBlock) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(contentBlock, 'id'),
-			blockType: get(contentBlock, 'blockType'),
-			createdAt: get(contentBlock, 'created_at'),
-			updatedAt: get(contentBlock, 'updated_at'),
-			position: get(contentBlock, 'position'),
-			variables: get(contentBlock, 'variables'),
+			id: contentBlock?.id,
+			blockType: contentBlock?.content_block_type,
+			createdAt: contentBlock?.created_at,
+			updatedAt: contentBlock?.updated_at,
+			position: contentBlock?.position,
+			variables: contentBlock?.variables,
 		};
 	}
 
@@ -127,14 +147,15 @@ export class ContentPagesService {
 		}
 		const mergedUser = {
 			gqlUser,
-			...get(gqlUser, 'user', {}),
-		};
+			...(gqlUser as GqlAvoUser)?.user,
+		} as unknown as GqlHetArchiefUser & GqlAvoUser & GqlAvoUser['user'];
+		/* istanbul ignore next */
 		return {
-			id: get(mergedUser, 'id'),
-			fullName: get(mergedUser, 'first_name') + ' ' + get(mergedUser, 'last_name'),
-			firstName: get(mergedUser, 'first_name'),
-			lastName: get(mergedUser, 'last_name'),
-			groupId: get(mergedUser, 'role.id') || get(mergedUser, 'group.id'),
+			id: mergedUser?.id,
+			fullName: mergedUser?.first_name + ' ' + mergedUser?.last_name,
+			firstName: mergedUser?.first_name,
+			lastName: mergedUser?.last_name,
+			groupId: mergedUser?.role.id || mergedUser?.group.id,
 		};
 	}
 

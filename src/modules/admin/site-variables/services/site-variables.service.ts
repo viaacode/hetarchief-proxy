@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SiteVariable } from '../types';
-
-import { GET_SITE_VARIABLES_BY_NAME, UPDATE_SITE_VARIABLE_BY_NAME } from './queries.gql';
-
+import {
+	GetSiteVariableByNameDocument,
+	GetSiteVariableByNameQuery,
+	UpdateSiteVariableByNameDocument,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { UpdateResponse } from '~shared/types/types';
 
@@ -13,10 +14,15 @@ export class SiteVariablesService {
 
 	constructor(private dataService: DataService) {}
 
-	public async getSiteVariable(variable: string): Promise<SiteVariable> {
+	public async getSiteVariable<T>(variable: string): Promise<T> {
 		const {
-			data: { cms_site_variables_by_pk: value },
-		} = await this.dataService.execute(GET_SITE_VARIABLES_BY_NAME, { name: variable });
+			data: {
+				cms_site_variables_by_pk: { value },
+			},
+		} = await this.dataService.execute<GetSiteVariableByNameQuery>(
+			GetSiteVariableByNameDocument,
+			{ name: variable }
+		);
 
 		return value;
 	}
@@ -24,7 +30,7 @@ export class SiteVariablesService {
 	public async updateSiteVariable(variable: string, value: any): Promise<UpdateResponse> {
 		const {
 			data: { update_cms_site_variables: response },
-		} = await this.dataService.execute(UPDATE_SITE_VARIABLE_BY_NAME, {
+		} = await this.dataService.execute(UpdateSiteVariableByNameDocument, {
 			name: variable,
 			data: { value },
 		});

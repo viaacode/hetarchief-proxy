@@ -4,21 +4,26 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Configuration } from '~config';
 
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
-import { Organisation } from '~modules/admin/organisations/organisations.types';
+import {
+	GqlHetArchiefOrganisation,
+	Organisation,
+} from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { DataService } from '~modules/data/services/data.service';
 
-const mockGqlHetArchiefOrganisation = {
+const mockGqlHetArchiefOrganisation: { data: { cp_maintainer: GqlHetArchiefOrganisation[] } } = {
 	data: {
 		cp_maintainer: [
 			{
-				information: {
-					logo: {
-						iri: 'http://meemoo.be/some-url',
+				information: [
+					{
+						logo: {
+							iri: 'https://assets.viaa.be/images/OR-2f7jt01',
+						},
 					},
-				},
-				schema_name: 'VRT',
-				schema_identifier: 'or-639k481',
+				],
+				schema_name: 'KAAP',
+				schema_identifier: 'OR-2f7jt01',
 			},
 		],
 	},
@@ -85,7 +90,7 @@ describe('OrganisationsService', () => {
 				'or-639k481'
 			);
 			expect(organisation.logo_url).toEqual(
-				mockGqlHetArchiefOrganisation.data.cp_maintainer[0].information.logo.iri
+				mockGqlHetArchiefOrganisation.data.cp_maintainer[0].information[0].logo.iri
 			);
 		});
 
