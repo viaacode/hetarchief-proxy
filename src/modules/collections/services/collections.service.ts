@@ -25,6 +25,7 @@ import {
 	RemoveObjectFromCollectionDocument,
 	UpdateCollectionDocument,
 } from '~generated/graphql-db-types-hetarchief';
+import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -33,7 +34,10 @@ import { PaginationHelper } from '~shared/helpers/pagination';
 export class CollectionsService {
 	private logger: Logger = new Logger(CollectionsService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		protected playerTicketService: PlayerTicketService
+	) {}
 
 	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
 		if (!gqlIeObject) {
@@ -63,10 +67,14 @@ export class CollectionsService {
 	/**
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
-	public adaptCollection(gqlCollection: GqlCollection | undefined): Collection | undefined {
+	public async adaptCollection(
+		gqlCollection: GqlCollection | undefined,
+		referer: string
+	): Promise<Collection | undefined> {
 		if (!gqlCollection) {
 			return undefined;
 		}
+
 		return {
 			id: gqlCollection.id,
 			name: gqlCollection.name,
@@ -74,28 +82,38 @@ export class CollectionsService {
 			createdAt: gqlCollection.created_at,
 			updatedAt: gqlCollection.updated_at,
 			isDefault: gqlCollection.is_default,
-			objects: (gqlCollection as GqlCollectionWithObjects).ies?.map(
-				this.adaptCollectionObjectLink
+			objects: await Promise.all(
+				(gqlCollection as GqlCollectionWithObjects).ies
+					? (gqlCollection as GqlCollectionWithObjects).ies.map((object) =>
+							this.adaptCollectionObjectLink(object, referer)
+					  )
+					: []
 			),
 		};
 	}
 
-	public adaptCollectionObjectLink = (
-		gqlCollectionObjectLink: CollectionObjectLink | undefined
-	): IeObject | undefined => {
+	public async adaptCollectionObjectLink(
+		gqlCollectionObjectLink: CollectionObjectLink | undefined,
+		referer: string
+	): Promise<IeObject | undefined> {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
 		}
-		const func = this.adaptIeObject;
-		const objectIe = func(get(gqlCollectionObjectLink, 'ie'));
+		const objectIe = this.adaptIeObject(get(gqlCollectionObjectLink, 'ie'));
+		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+			objectIe.thumbnailUrl,
+			referer
+		);
 		return {
 			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
 			...objectIe,
+			thumbnailUrl: resolvedThumbnailUrl,
 		};
-	};
+	}
 
 	public async findCollectionsByUser(
 		userProfileId: string,
+		referer: string,
 		page = 1,
 		size = 1000
 	): Promise<IPagination<Collection>> {
@@ -107,8 +125,10 @@ export class CollectionsService {
 		});
 
 		return Pagination<Collection>({
-			items: collectionsResponse.data.users_collection.map((collection: any) =>
-				this.adaptCollection(collection)
+			items: await Promise.all(
+				collectionsResponse.data.users_collection.map((collection: any) =>
+					this.adaptCollection(collection, referer)
+				)
 			),
 			page,
 			size,
@@ -116,18 +136,19 @@ export class CollectionsService {
 		});
 	}
 
-	public async findCollectionById(collectionId: string): Promise<Collection> {
+	public async findCollectionById(collectionId: string, referer: string): Promise<Collection> {
 		const collectionResponse = await this.dataService.execute(FindCollectionByIdDocument, {
 			collectionId,
 		});
 
-		return this.adaptCollection(collectionResponse.data.users_collection[0]);
+		return this.adaptCollection(collectionResponse.data.users_collection[0], referer);
 	}
 
 	public async findObjectsByCollectionId(
 		collectionId: string,
 		userProfileId: string,
-		queryDto: CollectionObjectsQueryDto
+		queryDto: CollectionObjectsQueryDto,
+		referer: string
 	): Promise<IPagination<IeObject>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -147,8 +168,10 @@ export class CollectionsService {
 		}
 		const total = collectionObjectsResponse.data.users_collection_ie_aggregate.aggregate.count;
 		return {
-			items: collectionObjectsResponse.data.users_collection_ie.map(
-				this.adaptCollectionObjectLink
+			items: await Promise.all(
+				collectionObjectsResponse.data.users_collection_ie.map((collectionObject) =>
+					this.adaptCollectionObjectLink(collectionObject, referer)
+				)
 			),
 			page,
 			size,
@@ -157,20 +180,21 @@ export class CollectionsService {
 		};
 	}
 
-	public async create(collection: GqlCreateCollection): Promise<Collection> {
+	public async create(collection: GqlCreateCollection, referer: string): Promise<Collection> {
 		const response = await this.dataService.execute(InsertCollectionsDocument, {
 			object: collection,
 		});
 		const createdCollection = response.data.insert_users_collection.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
-		return this.adaptCollection(createdCollection);
+		return this.adaptCollection(createdCollection, referer);
 	}
 
 	public async update(
 		collectionId: string,
 		userProfileId: string,
-		collection: GqlUpdateCollection
+		collection: GqlUpdateCollection,
+		referer: string
 	): Promise<Collection> {
 		const response = await this.dataService.execute(UpdateCollectionDocument, {
 			collectionId,
@@ -181,7 +205,7 @@ export class CollectionsService {
 		const updatedCollection = response.data.update_users_collection.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
-		return this.adaptCollection(updatedCollection);
+		return this.adaptCollection(updatedCollection, referer);
 	}
 
 	public async delete(collectionId: string, userProfileId: string): Promise<number> {
@@ -196,7 +220,8 @@ export class CollectionsService {
 
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
-		objectSchemaIdentifier: string
+		objectSchemaIdentifier: string,
+		referer: string
 	): Promise<IeObject | null> {
 		const response = await this.dataService.execute(FindObjectInCollectionDocument, {
 			collectionId,
@@ -205,7 +230,7 @@ export class CollectionsService {
 		const foundObject = response.data.users_collection_ie[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
-		return this.adaptCollectionObjectLink(foundObject);
+		return this.adaptCollectionObjectLink(foundObject, referer);
 	}
 
 	public async findObjectBySchemaIdentifier(
@@ -222,11 +247,13 @@ export class CollectionsService {
 
 	public async addObjectToCollection(
 		collectionId: string,
-		objectSchemaIdentifier: string
+		objectSchemaIdentifier: string,
+		referer: string
 	): Promise<IeObject> {
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
-			objectSchemaIdentifier
+			objectSchemaIdentifier,
+			referer
 		);
 		if (collectionObject) {
 			throw new BadRequestException({
@@ -250,10 +277,10 @@ export class CollectionsService {
 		const createdObject = response.data.insert_users_collection_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
-		return this.adaptCollectionObjectLink(createdObject);
+		return this.adaptCollectionObjectLink(createdObject, referer);
 	}
 
-	async removeObjectFromCollection(
+	public async removeObjectFromCollection(
 		collectionId: string,
 		objectSchemaIdentifier: string,
 		userProfileId: string
