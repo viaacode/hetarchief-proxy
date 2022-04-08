@@ -22,7 +22,7 @@ const getDefaultVisitsResponse = () => ({
 	},
 });
 
-const getDefaultVisitAggregateRespons = () => ({
+const getDefaultVisitAggregateResponse = () => ({
 	data: {
 		cp_visit_aggregate: {
 			aggregate: {
@@ -345,7 +345,7 @@ describe('VisitsService', () => {
 
 	describe('getPendingVisitCountForUserBySlug', () => {
 		it('returns the count of the pending visits for the current user in a given space', async () => {
-			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitAggregateRespons());
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitAggregateResponse());
 			const response = await visitsService.getPendingVisitCountForUserBySlug(
 				'user-1',
 				'space-1'
