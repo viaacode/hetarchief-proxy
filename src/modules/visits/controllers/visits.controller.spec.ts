@@ -80,7 +80,11 @@ const mockUser: User = {
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+	permissions: [
+		Permission.CAN_READ_ALL_VISIT_REQUESTS,
+		Permission.CAN_CREATE_VISIT_REQUEST,
+		Permission.CAN_UPDATE_VISIT_REQUEST,
+	],
 	idp: Idp.HETARCHIEF,
 };
 
@@ -323,7 +327,7 @@ describe('VisitsController', () => {
 					timeframe: 'asap',
 					acceptedTos: true,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);
@@ -331,6 +335,26 @@ describe('VisitsController', () => {
 			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
+		});
+
+		it('should throw an exception when creating a new visit without permission', async () => {
+			let error;
+			try {
+				await visitsController.createVisit(
+					{
+						spaceId: 'space-1',
+						timeframe: 'asap',
+						acceptedTos: true,
+					},
+					new SessionUserEntity({ ...mockUser, permissions: [] })
+				);
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toEqual(
+				'You do not have the right permissions to call this route'
+			);
 		});
 
 		it('should throw an error if you try to create a new visit without accepting tos', async () => {
@@ -354,7 +378,7 @@ describe('VisitsController', () => {
 						timeframe: 'asap',
 						acceptedTos: false,
 					},
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (err) {
 				error = err;
@@ -388,12 +412,71 @@ describe('VisitsController', () => {
 					endAt: addHours(new Date(), 2).toISOString(),
 					status: VisitStatus.APPROVED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);
 			sessionHelperSpy.mockRestore();
 			mockNotificationsService.create.mockClear();
+		});
+
+		it('should throw an exception when updating a visit without permission', async () => {
+			let error;
+			try {
+				await visitsController.update(
+					'space-1',
+					{
+						status: VisitStatus.APPROVED,
+					},
+					new SessionUserEntity({ ...mockUser, permissions: [] })
+				);
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toEqual(
+				'You do not have the right permissions to call this route'
+			);
+		});
+
+		it('should throw an exception when a visitor tries to update another ones visit', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			let error;
+			try {
+				await visitsController.update(
+					'space-1',
+					{
+						status: VisitStatus.CANCELLED_BY_VISITOR,
+					},
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [Permission.CAN_CANCEL_OWN_VISIT_REQUEST],
+					})
+				);
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toEqual(
+				'You do not have the right permissions to call this route'
+			);
+		});
+
+		it('a visitor can cancel his own visit requests', async () => {
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			const visit = await visitsController.update(
+				'space-1',
+				{
+					status: VisitStatus.CANCELLED_BY_VISITOR,
+				},
+				new SessionUserEntity({
+					...mockUser,
+					id: mockVisit1.userProfileId,
+					permissions: [Permission.CAN_CANCEL_OWN_VISIT_REQUEST],
+				})
+			);
+			expect(visit).toEqual(mockVisit1);
 		});
 
 		it('should update a visit status: approved', async () => {
@@ -408,7 +491,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.APPROVED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(1);
@@ -428,7 +511,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.DENIED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
@@ -448,7 +531,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);

@@ -110,10 +110,19 @@ export class VisitsController {
 	}
 
 	@Post()
+	@ApiOperation({
+		description: 'Create a Visit request. Requires the CAN_CREATE_VISIT_REQUEST permission.',
+	})
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
+		if (!user.has(Permission.CAN_CREATE_VISIT_REQUEST)) {
+			throw new UnauthorizedException(
+				i18n.t('You do not have the right permissions to call this route')
+			);
+		}
+
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				i18n.t(
@@ -121,10 +130,9 @@ export class VisitsController {
 				)
 			);
 		}
-		const user = SessionHelper.getArchiefUserInfo(session);
 
 		// Create visit request
-		const visit = await this.visitsService.create(createVisitDto, user.id);
+		const visit = await this.visitsService.create(createVisitDto, user.getId());
 
 		// Send notifications
 		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
@@ -134,13 +142,45 @@ export class VisitsController {
 	}
 
 	@Patch(':id')
+	@ApiOperation({
+		description: 'Update a Visit request.',
+	})
 	public async update(
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
-		const user = SessionHelper.getArchiefUserInfo(session);
-		const visit = await this.visitsService.update(id, updateVisitDto, user.id);
+		if (
+			!user.hasAny([
+				Permission.CAN_UPDATE_VISIT_REQUEST,
+				Permission.CAN_CANCEL_OWN_VISIT_REQUEST,
+			])
+		) {
+			throw new UnauthorizedException(
+				i18n.t('You do not have the right permissions to call this route')
+			);
+		}
+
+		if (
+			user.has(Permission.CAN_CANCEL_OWN_VISIT_REQUEST) &&
+			user.hasNot(Permission.CAN_UPDATE_VISIT_REQUEST)
+		) {
+			const visit = await this.visitsService.findById(id);
+			if (
+				visit.userProfileId !== user.getId() ||
+				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
+			) {
+				throw new UnauthorizedException(
+					i18n.t('You do not have the right permissions to call this route')
+				);
+			}
+
+			// user can only update status, not anything else
+			updateVisitDto = {
+				status: VisitStatus.CANCELLED_BY_VISITOR,
+			};
+		}
+		const visit = await this.visitsService.update(id, updateVisitDto, user.getId());
 
 		if (updateVisitDto.status) {
 			// Status was updated

@@ -22,7 +22,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { Template } from '~modules/campaign-monitor/types';
 import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
-import { User } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -156,7 +156,7 @@ export class NotificationsService {
 	public async onCreateVisit(
 		visit: Visit,
 		recipients: Recipient[],
-		user: User
+		user: SessionUserEntity
 	): Promise<Notification[]> {
 		const newVisitRequestEmail = visit.spaceMail || recipients[0]?.email;
 
@@ -165,7 +165,7 @@ export class NotificationsService {
 				{
 					title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
 					description: i18n.t('{{name}} wil je leeszaal bezoeken', {
-						name: user.firstName + ' ' + user.lastName,
+						name: user.getFullName(),
 					}),
 					visit_id: visit.id,
 					type: NotificationType.NEW_VISIT_REQUEST,
