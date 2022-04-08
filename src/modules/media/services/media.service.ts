@@ -22,7 +22,6 @@ import { DataService } from '~modules/data/services/data.service';
 export class MediaService {
 	private logger: Logger = new Logger(MediaService.name, { timestamp: true });
 	private gotInstance: Got;
-	private referer: string;
 
 	constructor(
 		private configService: ConfigService,
@@ -133,7 +132,7 @@ export class MediaService {
 		);
 	}
 
-	public async adaptESResponse(esResponse: any): Promise<any> {
+	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
 		// sanity check
 		const nrHits = get(esResponse, 'hits.total.value');
 		if (!nrHits) {
@@ -145,7 +144,7 @@ export class MediaService {
 				hit._source.schema_thumbnail_url =
 					await this.playerTicketService.resolveThumbnailUrl(
 						hit._source.schema_thumbnail_url,
-						this.referer
+						referer
 					);
 				return hit;
 			})
@@ -177,8 +176,6 @@ export class MediaService {
 		esIndex: string | null,
 		referer: string
 	): Promise<any> {
-		this.referer = referer;
-
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		let mediaResponse;
@@ -193,7 +190,7 @@ export class MediaService {
 			}
 		}
 
-		return this.adaptESResponse(mediaResponse);
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 
 	/**
@@ -259,8 +256,6 @@ export class MediaService {
 		referer: string,
 		limit = 4
 	): Promise<any> {
-		this.referer = referer;
-
 		const likeFilter = {
 			_index: esIndex,
 			_id: schemaIdentifier,
@@ -280,6 +275,6 @@ export class MediaService {
 		};
 
 		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
-		return this.adaptESResponse(mediaResponse);
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 }

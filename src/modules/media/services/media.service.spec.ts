@@ -103,7 +103,7 @@ describe('MediaService', () => {
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { total: { value: 0 } } };
-			const result = await mediaService.adaptESResponse(esResponse);
+			const result = await mediaService.adaptESResponse(esResponse, 'referer');
 			expect(result).toEqual(esResponse);
 		});
 	});
