@@ -6,6 +6,7 @@ import { MediaService } from '../services/media.service';
 import { MediaController } from './media.controller';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -63,7 +64,9 @@ describe('MediaController', () => {
 					useValue: mockPlayerTicketService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		mediaController = module.get<MediaController>(MediaController);
 	});

@@ -13,6 +13,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockGqlNotification1 = {
 	description:
@@ -159,7 +160,9 @@ describe('NotificationsService', () => {
 					useValue: mockCampaignMonitorService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		notificationsService = module.get<NotificationsService>(NotificationsService);
 	});

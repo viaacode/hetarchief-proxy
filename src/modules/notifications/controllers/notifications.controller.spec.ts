@@ -15,6 +15,7 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
 	description:
@@ -138,7 +139,9 @@ describe('NotificationsController', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		notificationsController = module.get<NotificationsController>(NotificationsController);
 

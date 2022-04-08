@@ -10,6 +10,8 @@ import { QueryOrigin } from '../types';
 import { DataPermissionsService } from './data-permissions.service';
 import { DataService } from './data.service';
 
+import { TestingLogger } from '~shared/logging/test-logger';
+
 jest.mock('fs-extra');
 
 const mockedFse = fse as any;
@@ -57,7 +59,9 @@ describe('DataService - no whitelist', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		dataService = module.get<DataService>(DataService);
 		configService = module.get<ConfigService>(ConfigService);

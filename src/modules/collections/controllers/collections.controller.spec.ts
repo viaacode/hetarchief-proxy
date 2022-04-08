@@ -9,6 +9,7 @@ import { Collection } from '~modules/collections/types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCollectionsResponse: IPagination<Collection> = {
 	items: [
@@ -96,7 +97,9 @@ describe('CollectionsController', () => {
 					useValue: mockCollectionsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
 
