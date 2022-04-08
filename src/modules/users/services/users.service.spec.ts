@@ -3,8 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -17,6 +18,7 @@ const graphQlUserResponse = {
 	last_name: 'Testerom',
 	mail: 'test@studiohypderdrive.be',
 	accepted_tos_at: '2022-02-21T14:00:00',
+	group_id: 'c56d95aa-e918-47ca-b102-486c9449fc4a',
 	group: {
 		permissions: [
 			{
@@ -41,6 +43,8 @@ const archiefUser: User = {
 	idp: Idp.HETARCHIEF,
 	email: 'test@studiohypderdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 };
 
@@ -56,7 +60,9 @@ describe('UsersService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		usersService = module.get<UsersService>(UsersService);
 	});
@@ -106,7 +112,12 @@ describe('UsersService', () => {
 				.mockReturnValueOnce({}); // insert idp
 
 			const result = await usersService.createUserWithIdp(
-				{ firstName: 'Tom', lastName: 'Testerom', email: 'test@studiohypderdrive.be' },
+				{
+					firstName: 'Tom',
+					lastName: 'Testerom',
+					email: 'test@studiohypderdrive.be',
+					groupId: Group.CP_ADMIN,
+				},
 				Idp.HETARCHIEF,
 				'idp-1'
 			);
@@ -125,6 +136,7 @@ describe('UsersService', () => {
 				firstName: 'Tom',
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
+				groupId: Group.CP_ADMIN,
 			});
 			expect(result).toEqual(archiefUser);
 		});

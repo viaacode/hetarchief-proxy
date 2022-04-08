@@ -111,6 +111,9 @@ const config = (): Configuration => {
 			},
 			fileFilter: (req, file, cb) => cb(null, VALID_MIME_TYPES.includes(file.mimetype)),
 		},
+		meemooAdminOrganizationIds: (getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '')
+			.split(',')
+			.map((orgId) => orgId.trim()),
 	};
 };
 

@@ -5,8 +5,10 @@ import { SpacesService } from '../services/spaces.service';
 import { SpacesController } from './spaces.controller';
 
 import { AssetsService } from '~modules/assets/services/assets.service';
-import { Permission, User } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSpacesResponse = {
 	items: [
@@ -29,6 +31,8 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
@@ -64,7 +68,9 @@ describe('SpacesController', () => {
 					useValue: mockAssetsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		spacesController = module.get<SpacesController>(SpacesController);
 	});
@@ -76,13 +82,13 @@ describe('SpacesController', () => {
 	describe('getSpaces', () => {
 		it('should return all spaces', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
-			const spaces = await spacesController.getSpaces(null, mockUser);
+			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(mockUser));
 			expect(spaces.items.length).toEqual(2);
 		});
 
 		it('should return all spaces if no user is logged in', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
-			const spaces = await spacesController.getSpaces(null, undefined);
+			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(undefined));
 			expect(spaces.items.length).toEqual(2);
 		});
 	});

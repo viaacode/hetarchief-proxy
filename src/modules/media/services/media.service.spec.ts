@@ -10,6 +10,7 @@ import { MediaService } from './media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -84,7 +85,9 @@ describe('MediaService', () => {
 					useValue: mockPlayerTicketService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		mediaService = module.get<MediaService>(MediaService);
 	});

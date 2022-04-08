@@ -1,4 +1,4 @@
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { InternalServerErrorException, Logger, LoggerService } from '@nestjs/common';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
@@ -12,9 +12,15 @@ const IDP_USER_INFO_PATH = 'idpUserInfo';
 export const ARCHIEF_USER_INFO_PATH = 'archiefUserInfo';
 
 export class SessionHelper {
+	private static logger: LoggerService = new Logger(SessionHelper.name);
+
+	public static setLogger(newLogger: LoggerService): void {
+		SessionHelper.logger = newLogger;
+	}
+
 	public static ensureValidSession(session: Record<string, any>) {
 		if (!session) {
-			Logger.error('Failed to set Idp user info, no session was found');
+			SessionHelper.logger.error('Failed to set Idp user info, no session was found');
 			throw new InternalServerErrorException();
 		}
 	}

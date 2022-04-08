@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NavigationsService } from './navigations.service';
 
 import { DataService } from '~modules/data/services/data.service';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 const mockDataService = {
@@ -18,6 +18,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 

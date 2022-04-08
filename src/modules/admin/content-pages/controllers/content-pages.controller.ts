@@ -21,6 +21,7 @@ import { ContentLabelsRequestDto } from '~modules/admin/content-pages/dto/conten
 import { ContentPagesQueryDto } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { ResolveMediaGridBlocksDto } from '~modules/admin/content-pages/dto/resolve-media-grid-blocks.dto';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -135,11 +136,10 @@ export class ContentPagesController {
 	@UseGuards(LoggedInGuard)
 	async resolveMediaGridBlocks(
 		body: ResolveMediaGridBlocksDto,
-		@SessionUser() user,
+		@SessionUser() user: SessionUserEntity,
 		@Req() request
 	): Promise<any[]> {
-		const permissions = get(user, 'profile.permissions') || get(user, 'permissions');
-		if (!permissions.includes(Permission.SEARCH)) {
+		if (user.has(Permission.SEARCH)) {
 			throw new UnauthorizedException(
 				'You do not have the required permission for this route'
 			);
