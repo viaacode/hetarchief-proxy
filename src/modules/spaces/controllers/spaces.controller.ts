@@ -22,6 +22,7 @@ import { Space } from '../types';
 
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
@@ -39,9 +40,9 @@ export class SpacesController {
 	})
 	public async getSpaces(
 		@Query() queryDto: SpacesQueryDto,
-		@SessionUser() user
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Space>> {
-		const spaces = await this.spacesService.findAll(queryDto, user?.id);
+		const spaces = await this.spacesService.findAll(queryDto, user.getId());
 		return spaces;
 	}
 
