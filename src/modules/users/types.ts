@@ -49,7 +49,7 @@ export enum Group {
 	CP_ADMIN = 'c56d95aa-e918-47ca-b102-486c9449fc4a',
 }
 
-export const GroupIdToName = {
+export const GroupIdToName: Record<Group, string> = {
 	[Group.KIOSK_VISITOR]: 'KIOSK_VISITOR',
 	[Group.MEEMOO_ADMIN]: 'MEEMOO_ADMIN',
 	[Group.VISITOR]: 'VISITOR',

@@ -222,6 +222,21 @@ describe('CollectionsService', () => {
 			);
 		});
 
+		it('can adapt a graphql collection response without objects to our collection interface', async () => {
+			const adapted = await collectionsService.adaptCollection(
+				{
+					...mockGqlCollection,
+					ies: [],
+				},
+				'referer'
+			);
+			// test some sample keys
+			expect(adapted.id).toEqual(mockGqlCollection.id);
+			expect(adapted.name).toEqual(mockGqlCollection.name);
+			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
+			expect(adapted.objects).toHaveLength(0);
+		});
+
 		it('can adapt an undefined collection object', async () => {
 			const adapted = await collectionsService.adaptCollection(undefined, 'referer');
 			expect(adapted).toBeUndefined();

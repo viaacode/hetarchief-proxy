@@ -5,7 +5,8 @@ import { UsersService } from './users.service';
 import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
-import { Group, Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { mockCpVisit } from '~modules/visits/services/__mocks__/cp_visit';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -61,6 +62,16 @@ describe('UsersService', () => {
 			const result = usersService.adapt(mockUserResponse.data.users_profile[0]);
 			expect(result).toBeDefined();
 			expect(result.email).toBeDefined();
+		});
+	});
+
+	describe('groupIdToName', () => {
+		it('should return group id', () => {
+			expect(usersService.groupIdToName(Group.MEEMOO_ADMIN)).toEqual('MEEMOO_ADMIN');
+		});
+
+		it('should return null if invalid group id', () => {
+			expect(usersService.groupIdToName('invalid' as unknown as Group)).toBeNull();
 		});
 	});
 

@@ -86,6 +86,7 @@ export class CollectionsService {
 			return undefined;
 		}
 
+		/* istanbul ignore next */
 		return {
 			id: gqlCollection.id,
 			name: gqlCollection.name,

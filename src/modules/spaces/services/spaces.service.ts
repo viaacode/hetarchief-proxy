@@ -151,7 +151,7 @@ export class SpacesService {
 			}
 		}
 		const where: FindSpacesQueryVariables['where'] =
-			filterArray?.length > 0 ? { _and: filterArray } : {};
+			filterArray.length > 0 ? { _and: filterArray } : {};
 
 		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(FindSpacesDocument, {
 			where,

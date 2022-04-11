@@ -47,6 +47,8 @@ export class OrganisationsService {
 		>(this.queries.GetOrganisationDocument, {
 			id,
 		});
+
+		/* istanbul ignore next */
 		return this.adapt(
 			(response?.data as GetOrganisationQueryHetArchief)?.maintainer_content_partner?.[0] ||
 				(response?.data as GetOrganisationQueryAvo)?.shared_organisations?.[0]
