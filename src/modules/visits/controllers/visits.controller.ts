@@ -9,7 +9,6 @@ import {
 	Patch,
 	Post,
 	Query,
-	Session,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
@@ -24,7 +23,6 @@ import { NotificationsService } from '~modules/notifications/services/notificati
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -100,10 +98,10 @@ export class VisitsController {
 	// TODO permissions?
 	public async getActiveVisitForUserAndSpace(
 		@Param('maintainerOrgId') maintainerOrgId: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
-			SessionHelper.getArchiefUserInfo(session).id,
+			user.getId(),
 			maintainerOrgId
 		);
 		return activeVisit;
@@ -113,10 +111,10 @@ export class VisitsController {
 	// TODO permissions?
 	public async getPendingVisitCountForUserBySlug(
 		@Param('slug') slug: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<VisitSpaceCount> {
 		const count = await this.visitsService.getPendingVisitCountForUserBySlug(
-			SessionHelper.getArchiefUserInfo(session).id,
+			user.getId(),
 			slug
 		);
 		return count;

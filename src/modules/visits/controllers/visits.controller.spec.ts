@@ -267,9 +267,10 @@ describe('VisitsController', () => {
 	describe('getActiveVisitForUserAndSpace', () => {
 		it('should return the active visit for the current user', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
-			const visit = await visitsController.getActiveVisitForUserAndSpace('space-1', {
-				archiefUserInfo: { id: 'user-1' },
-			});
+			const visit = await visitsController.getActiveVisitForUserAndSpace(
+				'space-1',
+				new SessionUserEntity(mockUser)
+			);
 			expect(visit).toEqual(mockVisit1);
 		});
 	});
@@ -277,9 +278,10 @@ describe('VisitsController', () => {
 	describe('getPendingVisitCountForUserBySlug', () => {
 		it('should return a count of the pending visits for the current user in a given space', async () => {
 			mockVisitsService.getPendingVisitCountForUserBySlug.mockResolvedValueOnce(mockCount);
-			const visit = await visitsController.getPendingVisitCountForUserBySlug('space-1', {
-				archiefUserInfo: { id: 'user-1' },
-			});
+			const visit = await visitsController.getPendingVisitCountForUserBySlug(
+				'space-1',
+				new SessionUserEntity(mockUser)
+			);
 			expect(visit).toEqual(mockCount);
 		});
 	});

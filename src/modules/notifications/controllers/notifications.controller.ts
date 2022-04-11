@@ -1,14 +1,4 @@
-import {
-	Controller,
-	Get,
-	Headers,
-	Param,
-	Patch,
-	Post,
-	Query,
-	Session,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Headers, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
@@ -23,9 +13,10 @@ import {
 
 import { NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
-import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
@@ -42,11 +33,10 @@ export class NotificationsController {
 	@Get()
 	public async getNotifications(
 		@Query() queryDto: NotificationsQueryDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Notification>> {
-		const userInfo = SessionHelper.getArchiefUserInfo(session);
 		const notifications = await this.notificationsService.findNotificationsByUser(
-			userInfo.id,
+			user.getId(),
 			addMonths(new Date(), -1).toISOString(),
 			queryDto.page,
 			queryDto.size
@@ -58,25 +48,22 @@ export class NotificationsController {
 	@Patch(':notificationId/mark-as-read')
 	public async markAsRead(
 		@Param('notificationId') notificationId: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Notification> {
-		const notification = await this.notificationsService.update(
-			notificationId,
-			SessionHelper.getArchiefUserInfo(session).id,
-			{ status: NotificationStatus.READ }
-		);
+		const notification = await this.notificationsService.update(notificationId, user.getId(), {
+			status: NotificationStatus.READ,
+		});
 		return notification;
 	}
 
 	@UseGuards(LoggedInGuard)
 	@Patch('mark-as-read')
 	public async markAllAsRead(
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string; total: number }> {
-		const amountUpdated = await this.notificationsService.updateAll(
-			SessionHelper.getArchiefUserInfo(session).id,
-			{ status: NotificationStatus.READ }
-		);
+		const amountUpdated = await this.notificationsService.updateAll(user.getId(), {
+			status: NotificationStatus.READ,
+		});
 		return { status: `updated ${amountUpdated} notifications`, total: amountUpdated };
 	}
 
