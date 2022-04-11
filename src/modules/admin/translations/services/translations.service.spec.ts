@@ -6,6 +6,7 @@ import { TranslationsService } from './translations.service';
 
 import { UpdateSiteVariableByNameMutation } from '~generated/graphql-db-types-hetarchief';
 import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
+import { UpdateResponse } from '~shared/types/types';
 
 const mockSiteVariablesService = {
 	getSiteVariable: jest.fn(),
@@ -58,10 +59,8 @@ describe('TranslationsService', () => {
 
 	describe('updateSiteVariable', () => {
 		it('can update the translations', async () => {
-			const mockData: UpdateSiteVariableByNameMutation = {
-				update_app_config: {
-					affected_rows: 1,
-				},
+			const mockData: UpdateResponse = {
+				affectedRows: 1,
 			};
 			mockSiteVariablesService.updateSiteVariable.mockResolvedValueOnce(mockData);
 			const response = await translationsService.updateTranslations(
@@ -70,7 +69,7 @@ describe('TranslationsService', () => {
 					key: 'new-translation',
 				}
 			);
-			expect(response).toEqual({ affected_rows: 1 });
+			expect(response).toEqual({ affectedRows: 1 });
 		});
 	});
 });

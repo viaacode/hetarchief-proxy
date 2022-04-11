@@ -7,6 +7,7 @@ import { VisitsService } from './visits.service';
 import {
 	FindVisitsQuery,
 	InsertVisitMutation,
+	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
@@ -28,9 +29,9 @@ const getDefaultVisitsResponse = (): { data: FindVisitsQuery } => ({
 	},
 });
 
-const getDefaultVisitAggregateResponse = () => ({
+const getDefaultVisitAggregateResponse = (): { data: PendingVisitCountForUserBySlugQuery } => ({
 	data: {
-		cp_visit_aggregate: {
+		maintainer_visitor_space_request_aggregate: {
 			aggregate: {
 				count: 1,
 			},

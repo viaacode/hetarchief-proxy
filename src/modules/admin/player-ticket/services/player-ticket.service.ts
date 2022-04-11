@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { differenceInSeconds } from 'date-fns';
 import got, { Got } from 'got';
-import { get } from 'lodash';
 
 import { getConfig } from '~config';
 

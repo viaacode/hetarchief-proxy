@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { get } from 'lodash';
 
 import { getConfig } from '~config';
 
-import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from 'dist/generated/graphql-db-types-hetarchief';
 import { GetOrganisationQuery as GetOrganisationQueryAvo } from '~generated/graphql-db-types-avo';
+import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
 import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
 import {
 	GqlAvoOrganisation,

@@ -27,14 +27,7 @@ export type GqlCollection =
 	| InsertCollectionsMutation['insert_users_folder']['returning'][0]
 	| UpdateCollectionMutation['update_users_folder']['returning'][0];
 
-export interface GqlCreateCollection {
-	name: string;
-	is_default: boolean;
-	user_profile_id: string;
-	created_at?: string;
-	updated_at?: string;
-	id?: string;
-}
+export type GqlCreateCollection = InsertCollectionsMutation['insert_users_folder']['returning'][0];
 
 export interface GqlUpdateCollection {
 	name?: string;
@@ -46,7 +39,7 @@ export interface GqlUpdateCollection {
 export type CollectionObjectLink =
 	| FindObjectInCollectionQuery['users_folder_ie'][0]
 	| FindCollectionsByUserQuery['users_folder'][0]['ies'][0]
-	| InsertObjectIntoCollectionMutation['insert_users_folder_ie']
+	| InsertObjectIntoCollectionMutation['insert_users_folder_ie']['returning'][0]
 	| FindCollectionObjectsByCollectionIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];

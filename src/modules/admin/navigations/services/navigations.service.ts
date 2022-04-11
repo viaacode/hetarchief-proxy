@@ -77,7 +77,9 @@ export class NavigationsService {
 		navigationsQueryDto: NavigationsQueryDto
 	): Promise<IPagination<Navigation>> {
 		const { placement } = navigationsQueryDto;
-		let navigationsResponse: GraphQlResponse;
+		let navigationsResponse: GraphQlResponse<
+			FindNavigationByPlacementQuery | FindAllNavigationItemsQuery
+		>;
 		if (placement) {
 			navigationsResponse = await this.dataService.execute<FindNavigationByPlacementQuery>(
 				FindNavigationByPlacementDocument,
@@ -92,10 +94,10 @@ export class NavigationsService {
 		}
 
 		return Pagination<Navigation>({
-			items: navigationsResponse.data.cms_navigation_element,
+			items: navigationsResponse.data.app_navigation,
 			page: 1,
-			size: navigationsResponse.data.cms_navigation_element_aggregate.aggregate.count,
-			total: navigationsResponse.data.cms_navigation_element_aggregate.aggregate.count,
+			size: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
+			total: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
 		});
 	}
 

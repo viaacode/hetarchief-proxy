@@ -29,9 +29,7 @@ export class SiteVariablesService {
 	}
 
 	public async updateSiteVariable(variable: string, value: any): Promise<UpdateResponse> {
-		const {
-			data: { update_app_config: response },
-		} = await this.dataService.execute<UpdateSiteVariableByNameMutation>(
+		const response = await this.dataService.execute<UpdateSiteVariableByNameMutation>(
 			UpdateSiteVariableByNameDocument,
 			{
 				name: variable,
@@ -39,6 +37,9 @@ export class SiteVariablesService {
 			}
 		);
 
-		return response;
+		/* istanbul ignore next */
+		return {
+			affectedRows: response?.data?.update_app_config?.affected_rows,
+		};
 	}
 }

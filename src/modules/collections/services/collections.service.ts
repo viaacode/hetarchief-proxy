@@ -7,7 +7,6 @@ import {
 	CollectionObjectLink,
 	GqlCollection,
 	GqlCollectionWithObjects,
-	GqlCreateCollection,
 	GqlObject,
 	GqlUpdateCollection,
 	IeObject,
@@ -28,6 +27,7 @@ import {
 	FindObjectInCollectionQuery,
 	InsertCollectionsDocument,
 	InsertCollectionsMutation,
+	InsertCollectionsMutationVariables,
 	InsertObjectIntoCollectionDocument,
 	InsertObjectIntoCollectionMutation,
 	RemoveObjectFromCollectionDocument,
@@ -110,7 +110,9 @@ export class CollectionsService {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
 		}
-		const objectIe = this.adaptIeObject(get(gqlCollectionObjectLink, 'ie'));
+
+		/* istanbul ignore next */
+		const objectIe = this.adaptIeObject(gqlCollectionObjectLink?.ie as GqlObject);
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
 			referer
@@ -181,7 +183,7 @@ export class CollectionsService {
 					limit,
 				}
 			);
-		if (!collectionObjectsResponse.data.users_folder_ie) {
+		if (!collectionObjectsResponse.data.users_folder_ie[0]) {
 			throw new NotFoundException();
 		}
 		const total = collectionObjectsResponse.data.users_folder_ie_aggregate.aggregate.count;
@@ -198,7 +200,10 @@ export class CollectionsService {
 		};
 	}
 
-	public async create(collection: GqlCreateCollection, referer: string): Promise<Collection> {
+	public async create(
+		collection: InsertCollectionsMutationVariables['object'],
+		referer: string
+	): Promise<Collection> {
 		const response = await this.dataService.execute<InsertCollectionsMutation>(
 			InsertCollectionsDocument,
 			{
@@ -257,7 +262,9 @@ export class CollectionsService {
 				objectSchemaIdentifier,
 			}
 		);
-		const foundObject = response.data.users_folder_ie[0];
+
+		/* istanbul ignore next */
+		const foundObject = response?.data?.users_folder_ie?.[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject, referer);

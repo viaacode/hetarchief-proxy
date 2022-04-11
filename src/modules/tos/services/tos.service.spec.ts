@@ -47,11 +47,9 @@ describe('TosService', () => {
 
 	describe('Find last updated date for TOS', () => {
 		it('returns a single tos', async () => {
-			const mockData: { data: GetTosLastUpdatedAtQuery } = {
-				data: {
-					app_config_by_pk: {
-						value: updatedAtIsoDate,
-					},
+			const mockData: GetTosLastUpdatedAtQuery = {
+				app_config_by_pk: {
+					value: updatedAtIsoDate,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });

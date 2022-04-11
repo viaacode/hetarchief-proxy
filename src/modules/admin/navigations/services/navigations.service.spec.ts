@@ -178,7 +178,7 @@ describe('NavigationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await navigationsService.deleteElement('1');
-			expect(response.affectedRows).toBe('1');
+			expect(response.affectedRows).toBe(1);
 		});
 	});
 

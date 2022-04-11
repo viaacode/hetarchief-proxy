@@ -53,11 +53,9 @@ describe('SiteVariablesService', () => {
 
 	describe('updateSiteVariable', () => {
 		it('can update the value for a site variable', async () => {
-			const mockData: { data: UpdateSiteVariableByNameMutation } = {
-				data: {
-					update_app_config: {
-						affected_rows: 1,
-					},
+			const mockData: UpdateSiteVariableByNameMutation = {
+				update_app_config: {
+					affected_rows: 1,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
@@ -65,7 +63,7 @@ describe('SiteVariablesService', () => {
 				'variable-name',
 				'new-value'
 			);
-			expect(response).toEqual({ affected_rows: 1 });
+			expect(response).toEqual({ affectedRows: 1 });
 		});
 	});
 });

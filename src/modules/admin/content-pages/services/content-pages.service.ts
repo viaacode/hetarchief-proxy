@@ -249,15 +249,28 @@ export class ContentPagesService {
 			).map(this.adaptContentPage),
 			page,
 			size,
-			total: get(contentPagesResponse, 'data.cms_content_aggregate.aggregate.count', 0),
+			total:
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content_aggregate
+					.aggregate.count ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+					?.app_content_page_aggregate.aggregate.count ||
+				0,
 		});
 		return {
 			...paginatedResponse,
 			labelCounts: fromPairs(
-				get(contentPagesResponse, 'data.cms_content_labels', []).map(
-					(labelInfo: any): [number, number] => [
-						get(labelInfo, 'id'),
-						get(labelInfo, 'content_content_labels_aggregate.aggregate.count'),
+				(
+					(contentPagesResponse?.data as GetContentPagesQueryAvo).app_content_labels ||
+					(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+						.app_content_label ||
+					[]
+				).map(
+					(
+						labelInfo: GetContentPagesQueryAvo['app_content_labels'][0] &
+							GetContentPagesQueryHetArchief['app_content_label'][0]
+					): [number, number] => [
+						labelInfo?.id,
+						labelInfo?.content_content_labels_aggregate?.aggregate?.count,
 					]
 				)
 			),
