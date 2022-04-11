@@ -89,12 +89,18 @@ export class VisitsController {
 	}
 
 	@Get(':id')
+	@RequireAnyPermissions(
+		Permission.CAN_READ_ALL_VISIT_REQUESTS,
+		Permission.CAN_READ_CP_VISIT_REQUESTS,
+		Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS
+	)
 	public async getVisitById(@Param('id') id: string): Promise<Visit> {
 		const visit = await this.visitsService.findById(id);
 		return visit;
 	}
 
 	@Get('active-for-space/:maintainerOrgId')
+	// TODO permissions?
 	public async getActiveVisitForUserAndSpace(
 		@Param('maintainerOrgId') maintainerOrgId: string,
 		@Session() session: Record<string, any>
@@ -107,6 +113,7 @@ export class VisitsController {
 	}
 
 	@Get('pending-for-space/:slug')
+	// TODO permissions?
 	public async getPendingVisitCountForUserBySlug(
 		@Param('slug') slug: string,
 		@Session() session: Record<string, any>

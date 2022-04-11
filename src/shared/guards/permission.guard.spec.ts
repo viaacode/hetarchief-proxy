@@ -43,7 +43,7 @@ describe('PermissionGuard', () => {
 		expect(canActivate).toBe(true);
 	});
 
-	it('Should not allow access when the user has not all required permissions', async () => {
+	it('Should NOT allow access when the user has not all required permissions', async () => {
 		mockReflector.get
 			.mockReturnValueOnce([])
 			.mockReturnValueOnce([Permission.SEARCH, Permission.CAN_SEARCH_OBJECTS]); // trigger the handler option as alternative
