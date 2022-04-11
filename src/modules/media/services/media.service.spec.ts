@@ -8,6 +8,7 @@ import { Configuration } from '~config';
 import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
 
+import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -206,11 +207,10 @@ describe('MediaService', () => {
 		});
 
 		it('throws a notfoundexception if the object was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_ie: [],
-				},
-			});
+			const mockData: GetObjectDetailBySchemaIdentifierQuery = {
+				object_ie: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier, 'referer');

@@ -41,6 +41,7 @@ import {
 	InsertVisitDocument,
 	InsertVisitMutation,
 	PendingVisitCountForUserBySlugDocument,
+	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitDocument,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -355,14 +356,18 @@ export class VisitsService {
 		userProfileId: string,
 		slug: string
 	): Promise<VisitSpaceCount> {
-		const result = await this.dataService.execute(PendingVisitCountForUserBySlugDocument, {
-			user: userProfileId,
-			slug,
-		});
+		const result = await this.dataService.execute<PendingVisitCountForUserBySlugQuery>(
+			PendingVisitCountForUserBySlugDocument,
+			{
+				user: userProfileId,
+				slug,
+			}
+		);
 
+		/* istanbul ignore next */
 		return {
-			count: get(result, 'data.cp_visit_aggregate.aggregate.count', 0),
-			id: get(result, 'data.cp_visit_aggregate.nodes[0].cp_space_id', null),
+			count: result?.data?.maintainer_visitor_space_request_aggregate?.aggregate?.count || 0,
+			id: result?.data?.maintainer_visitor_space_request_aggregate?.nodes?.[0]?.cp_space_id,
 		};
 	}
 

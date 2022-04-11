@@ -2,10 +2,14 @@ import { Avo } from '@viaa/avo2-types';
 
 import {
 	GetContentPageByPathQuery as GetContentPageByPathQueryAvo,
+	GetContentPagesQuery as GetContentPagesQueryAvo,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
 	Lookup_Enum_Content_Types_Enum,
 } from '~generated/graphql-db-types-avo';
 import {
 	GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief,
+	GetContentPagesQuery as GetContentPagesQueryHetArchief,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
 	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { Media } from '~modules/media/types';
@@ -108,7 +112,11 @@ export interface ContentPage {
 
 export type GqlContentPage =
 	| GetContentPageByPathQueryAvo['app_content'][0]
-	| GetContentPageByPathQueryHetArchief['app_content_page'][0];
+	| GetContentPageByPathQueryHetArchief['app_content_page'][0]
+	| GetContentPagesQueryAvo['app_content'][0]
+	| GetContentPagesQueryHetArchief['app_content_page'][0]
+	| GetContentPagesWithBlocksQueryAvo['app_content'][0]
+	| GetContentPagesWithBlocksQueryHetArchief['app_content_page'][0];
 export type GqlContentBlock =
 	| GetContentPageByPathQueryHetArchief['app_content_page'][0]['content_blocks'][0]
 	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];

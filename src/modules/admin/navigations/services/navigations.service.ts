@@ -13,6 +13,7 @@ import {
 	FindNavigationByIdDocument,
 	FindNavigationByIdQuery,
 	FindNavigationByPlacementDocument,
+	FindNavigationByPlacementQuery,
 	InsertNavigationDocument,
 	InsertNavigationMutation,
 	UpdateNavigationByIdDocument,
@@ -78,7 +79,7 @@ export class NavigationsService {
 		const { placement } = navigationsQueryDto;
 		let navigationsResponse: GraphQlResponse;
 		if (placement) {
-			navigationsResponse = await this.dataService.execute(
+			navigationsResponse = await this.dataService.execute<FindNavigationByPlacementQuery>(
 				FindNavigationByPlacementDocument,
 				{
 					placement,

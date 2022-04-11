@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { TosService } from './tos.service';
 
+import { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -46,24 +47,24 @@ describe('TosService', () => {
 
 	describe('Find last updated date for TOS', () => {
 		it('returns a single tos', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
+			const mockData: { data: GetTosLastUpdatedAtQuery } = {
 				data: {
-					cms_site_variables_by_pk: {
+					app_config_by_pk: {
 						value: updatedAtIsoDate,
 					},
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const response = await tosService.getTosLastUpdatedAt();
 			expect(response.updatedAt).toEqual(updatedAtIsoDate);
 		});
 
 		it('throws a notfoundexception if no data was found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cms_site_variables_by_pk: null,
-				},
-			});
+			const mockData: GetTosLastUpdatedAtQuery = {
+				app_config_by_pk: null,
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await tosService.getTosLastUpdatedAt();

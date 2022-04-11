@@ -27,6 +27,8 @@ query getContentPageByPath($path: String!) {
 		title
 		updated_at
 		user_group_ids
+		content_width
+		user_group_ids
 		content_content_labels {
 			content_label {
 				id

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
+import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { Group, Permission, User } from '~modules/users/types';
@@ -73,11 +74,10 @@ describe('UsersService', () => {
 		});
 
 		it('throws a notfoundexception if the user was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					users_profile: [],
-				},
-			});
+			const mockData: GetUserByIdentityIdQuery = {
+				users_profile: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const user = await usersService.getUserByIdentityId('unknown-id');
 

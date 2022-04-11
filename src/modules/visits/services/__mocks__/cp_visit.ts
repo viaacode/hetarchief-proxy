@@ -31,7 +31,7 @@ export const mockCpVisit: GqlVisit = {
 		schema_description: null,
 		schema_public_access: false,
 		schema_service_description: null,
-		status: Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive,
+		status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
 		published_at: null,
 		created_at: '2022-01-19T10:25:51.320763',
 		updated_at: '2022-01-19T10:25:51.320763',

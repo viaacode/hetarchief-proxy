@@ -4,6 +4,8 @@ import { NavigationsService } from '../services/navigations.service';
 
 import { NavigationsController } from './navigations.controller';
 
+import { DeleteNavigationMutation } from '~generated/graphql-db-types-hetarchief';
+
 const mockNavigationsResponse = {
 	items: [
 		{
@@ -108,7 +110,10 @@ describe('NavigationsController', () => {
 
 	describe('deleteNavigationElement', () => {
 		it('should delete a navigation', async () => {
-			mockNavigationsService.deleteElement.mockResolvedValueOnce({ affectedRows: 1 });
+			const mockData: DeleteNavigationMutation = {
+				delete_app_navigation: { affected_rows: 1 },
+			};
+			mockNavigationsService.deleteElement.mockResolvedValueOnce(mockData);
 			const navigation = await navigationsController.deleteNavigationElement('navigation-1');
 			expect(navigation).toEqual({ affectedRows: 1 });
 		});

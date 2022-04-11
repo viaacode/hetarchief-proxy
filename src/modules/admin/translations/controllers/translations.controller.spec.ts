@@ -5,6 +5,8 @@ import { TranslationKey } from '../types';
 
 import { TranslationsController } from './translations.controller';
 
+import { UpdateSiteVariableByNameMutation } from '~generated/graphql-db-types-hetarchief';
+
 const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
 	getTranslations: jest.fn(),
 	updateTranslations: jest.fn(),
@@ -49,7 +51,10 @@ describe('TranslationsController', () => {
 
 	describe('updateTranslations', () => {
 		it('should update the translations', async () => {
-			mockTranslationsService.updateTranslations.mockResolvedValueOnce({ affected_rows: 1 });
+			const mockData: UpdateSiteVariableByNameMutation = {
+				update_app_config: { affected_rows: 1 },
+			};
+			mockTranslationsService.updateTranslations.mockResolvedValueOnce(mockData);
 
 			const response = await translationsController.updateTranslations({
 				key: TranslationKey.FRONTEND_TRANSLATIONS,

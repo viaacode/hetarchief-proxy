@@ -242,7 +242,11 @@ export class ContentPagesService {
 		);
 
 		const paginatedResponse = Pagination<ContentPage>({
-			items: get(contentPagesResponse, 'data.app_content', []).map(this.adaptContentPage),
+			items: (
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)?.app_content_page ||
+				[]
+			).map(this.adaptContentPage),
 			page,
 			size,
 			total: get(contentPagesResponse, 'data.cms_content_aggregate.aggregate.count', 0),

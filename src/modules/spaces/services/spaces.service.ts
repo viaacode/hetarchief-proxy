@@ -18,6 +18,7 @@ import {
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceDocument,
+	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -78,8 +79,11 @@ export class SpacesService {
 			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
 		};
 		const {
-			data: { update_cp_space_by_pk: updatedSpace },
-		} = await this.dataService.execute(UpdateSpaceDocument, { id, updateSpace });
+			data: { update_maintainer_visitor_space_by_pk: updatedSpace },
+		} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
+			id,
+			updateSpace,
+		});
 
 		if (!updatedSpace) {
 			throw new NotFoundException(`Space with id '${id}' not found`);
@@ -208,7 +212,9 @@ export class SpacesService {
 				spaceId,
 			}
 		);
-		return get(profiles, 'data.cp_maintainer_users_profile', []).map((item) => ({
+
+		/* istanbul ignore next */
+		return (profiles?.data?.maintainer_users_profile || []).map((item) => ({
 			id: item.users_profile_id,
 			email: item.profile.mail,
 		}));

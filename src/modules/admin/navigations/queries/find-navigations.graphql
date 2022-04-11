@@ -4,6 +4,7 @@ query findNavigation {
 		description
 		placement
 		tooltip
+		user_group_ids
 	}
 	app_navigation_aggregate(distinct_on: placement) {
 		aggregate {

@@ -4,6 +4,7 @@ import { TranslationKey } from '../types';
 
 import { TranslationsService } from './translations.service';
 
+import { UpdateSiteVariableByNameMutation } from '~generated/graphql-db-types-hetarchief';
 import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
 
 const mockSiteVariablesService = {
@@ -34,13 +35,15 @@ describe('TranslationsService', () => {
 
 	describe('getTranslations', () => {
 		it('returns translations', async () => {
+			const mockData1 = {
+				key: 'translation',
+			};
+			const mockData2 = {
+				key: 'BE-translation',
+			};
 			mockSiteVariablesService.getSiteVariable
-				.mockResolvedValueOnce({
-					key: 'translation',
-				})
-				.mockResolvedValueOnce({
-					key: 'BE-translation',
-				});
+				.mockResolvedValueOnce(mockData1)
+				.mockResolvedValueOnce(mockData2);
 			const response = await translationsService.getTranslations();
 			expect(response['frontend-translations']).toEqual({ key: 'translation' });
 			expect(response['backend-translations']).toEqual({ key: 'BE-translation' });
@@ -55,9 +58,12 @@ describe('TranslationsService', () => {
 
 	describe('updateSiteVariable', () => {
 		it('can update the translations', async () => {
-			mockSiteVariablesService.updateSiteVariable.mockResolvedValueOnce({
-				affected_rows: 1,
-			});
+			const mockData: UpdateSiteVariableByNameMutation = {
+				update_app_config: {
+					affected_rows: 1,
+				},
+			};
+			mockSiteVariablesService.updateSiteVariable.mockResolvedValueOnce(mockData);
 			const response = await translationsService.updateTranslations(
 				TranslationKey.FRONTEND_TRANSLATIONS,
 				{

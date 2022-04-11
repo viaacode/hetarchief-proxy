@@ -12,6 +12,7 @@ import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
 	GetObjectDetailBySchemaIdentifierDocument,
+	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -198,9 +199,12 @@ export class MediaService {
 	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
-		});
+		} = await this.dataService.execute<GetObjectDetailBySchemaIdentifierQuery>(
+			GetObjectDetailBySchemaIdentifierDocument,
+			{
+				schemaIdentifier,
+			}
+		);
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);

@@ -3,7 +3,13 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
-import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	InsertNotificationsMutation,
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
+	Lookup_Schema_Audience_Type_Enum,
+	UpdateAllNotificationsForUserMutation,
+	UpdateNotificationMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
@@ -149,7 +155,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	isPublished: false,
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
@@ -223,13 +229,12 @@ describe('NotificationsService', () => {
 
 	describe('create', () => {
 		it('can create a new notification', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					insert_app_notification: {
-						returning: [mockGqlNotification1],
-					},
+			const mockData: InsertNotificationsMutation = {
+				insert_app_notification: {
+					returning: [mockGqlNotification1],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const response = await notificationsService.create([
@@ -355,13 +360,12 @@ describe('NotificationsService', () => {
 
 	describe('update', () => {
 		it('should update a notification', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						returning: [mockGqlNotification1],
-					},
+			const mockData: UpdateNotificationMutation = {
+				update_app_notification: {
+					returning: [mockGqlNotification1],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const response = await notificationsService.update(
@@ -373,13 +377,12 @@ describe('NotificationsService', () => {
 		});
 
 		it('should not update a notification if you are not the recipient', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						returning: [],
-					},
+			const mockData: UpdateNotificationMutation = {
+				update_app_notification: {
+					returning: [],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			let error;
@@ -402,13 +405,12 @@ describe('NotificationsService', () => {
 
 	describe('updateAll', () => {
 		it('can update all notifications of a specific user', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						affected_rows: 5,
-					},
+			const mockData: UpdateAllNotificationsForUserMutation = {
+				update_app_notification: {
+					affected_rows: 5,
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(

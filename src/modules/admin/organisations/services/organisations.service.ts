@@ -4,6 +4,8 @@ import { get } from 'lodash';
 
 import { getConfig } from '~config';
 
+import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from 'dist/generated/graphql-db-types-hetarchief';
+import { GetOrganisationQuery as GetOrganisationQueryAvo } from '~generated/graphql-db-types-avo';
 import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
 import {
 	GqlAvoOrganisation,
@@ -41,11 +43,14 @@ export class OrganisationsService {
 	}
 
 	public async getOrganisation(id: string): Promise<Organisation> {
-		const response = await this.dataService.execute(this.queries.GetOrganisationDocument, {
+		const response = await this.dataService.execute<
+			GetOrganisationQueryAvo | GetOrganisationQueryHetArchief
+		>(this.queries.GetOrganisationDocument, {
 			id,
 		});
 		return this.adapt(
-			get(response, 'data.cp_maintainer[0]') || get(response, 'data.shared_organisations[0]')
+			(response?.data as GetOrganisationQueryHetArchief)?.maintainer_content_partner?.[0] ||
+				(response?.data as GetOrganisationQueryAvo)?.shared_organisations?.[0]
 		);
 	}
 }

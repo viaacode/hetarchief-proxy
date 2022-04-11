@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
+import { GetOrganisationQuery } from '~generated/graphql-db-types-avo';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import {
 	GqlHetArchiefOrganisation,
@@ -105,11 +106,10 @@ describe('OrganisationsService', () => {
 		});
 
 		it('should return null if the organisations was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					shared_organisations: [],
-				},
-			});
+			const mockData: GetOrganisationQuery = {
+				shared_organisations: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const organisation: Organisation = await organisationsService.getOrganisation(
 				'or-639k481'
 			);
