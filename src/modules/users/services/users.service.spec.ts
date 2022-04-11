@@ -23,7 +23,7 @@ const graphQlUserResponse = {
 		permissions: [
 			{
 				permission: {
-					name: Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+					name: Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
 				},
 			},
 		],
@@ -45,7 +45,7 @@ const archiefUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+	permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 };
 
 describe('UsersService', () => {

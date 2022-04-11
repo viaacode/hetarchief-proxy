@@ -48,15 +48,12 @@ export class VisitsController {
 		description:
 			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
 	})
-	@RequireAnyPermissions(
-		Permission.CAN_READ_ALL_VISIT_REQUESTS,
-		Permission.CAN_READ_CP_VISIT_REQUESTS
-	)
+	@RequireAnyPermissions(Permission.READ_ALL_VISIT_REQUESTS, Permission.READ_CP_VISIT_REQUESTS)
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		if (user.has(Permission.CAN_READ_ALL_VISIT_REQUESTS)) {
+		if (user.has(Permission.READ_ALL_VISIT_REQUESTS)) {
 			const visits = await this.visitsService.findAll(queryDto, {});
 			return visits;
 		}
@@ -77,7 +74,7 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
-	@RequirePermissions(Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS)
+	@RequirePermissions(Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS)
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -90,9 +87,9 @@ export class VisitsController {
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.CAN_READ_ALL_VISIT_REQUESTS,
-		Permission.CAN_READ_CP_VISIT_REQUESTS,
-		Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS
+		Permission.READ_ALL_VISIT_REQUESTS,
+		Permission.READ_CP_VISIT_REQUESTS,
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
 	public async getVisitById(@Param('id') id: string): Promise<Visit> {
 		const visit = await this.visitsService.findById(id);
@@ -127,9 +124,9 @@ export class VisitsController {
 
 	@Post()
 	@ApiOperation({
-		description: 'Create a Visit request. Requires the CAN_CREATE_VISIT_REQUEST permission.',
+		description: 'Create a Visit request. Requires the CREATE_VISIT_REQUEST permission.',
 	})
-	@RequirePermissions(Permission.CAN_CREATE_VISIT_REQUEST)
+	@RequirePermissions(Permission.CREATE_VISIT_REQUEST)
 	public async createVisit(
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
@@ -156,18 +153,15 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Update a Visit request.',
 	})
-	@RequireAnyPermissions(
-		Permission.CAN_UPDATE_VISIT_REQUEST,
-		Permission.CAN_CANCEL_OWN_VISIT_REQUEST
-	)
+	@RequireAnyPermissions(Permission.UPDATE_VISIT_REQUEST, Permission.CANCEL_OWN_VISIT_REQUEST)
 	public async update(
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
 		if (
-			user.has(Permission.CAN_CANCEL_OWN_VISIT_REQUEST) &&
-			user.hasNot(Permission.CAN_UPDATE_VISIT_REQUEST)
+			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
+			user.hasNot(Permission.UPDATE_VISIT_REQUEST)
 		) {
 			const visit = await this.visitsService.findById(id);
 			if (

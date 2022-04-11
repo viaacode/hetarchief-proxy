@@ -84,9 +84,9 @@ const mockUser: User = {
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [
-		Permission.CAN_READ_ALL_VISIT_REQUESTS,
-		Permission.CAN_CREATE_VISIT_REQUEST,
-		Permission.CAN_UPDATE_VISIT_REQUEST,
+		Permission.READ_ALL_VISIT_REQUESTS,
+		Permission.CREATE_VISIT_REQUEST,
+		Permission.UPDATE_VISIT_REQUEST,
 	],
 	idp: Idp.HETARCHIEF,
 };
@@ -193,7 +193,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+					permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 				})
 			);
 
@@ -208,7 +208,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+					permissions: [Permission.READ_CP_VISIT_REQUESTS],
 				})
 			);
 
@@ -225,7 +225,7 @@ describe('VisitsController', () => {
 					null,
 					new SessionUserEntity({
 						...mockUser,
-						permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+						permissions: [Permission.READ_CP_VISIT_REQUESTS],
 					})
 				);
 			} catch (err) {
@@ -248,7 +248,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 				})
 			);
 
@@ -386,7 +386,7 @@ describe('VisitsController', () => {
 					},
 					new SessionUserEntity({
 						...mockUser,
-						permissions: [Permission.CAN_CANCEL_OWN_VISIT_REQUEST],
+						permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
 					})
 				);
 			} catch (e) {
@@ -409,7 +409,7 @@ describe('VisitsController', () => {
 				new SessionUserEntity({
 					...mockUser,
 					id: mockVisit1.userProfileId,
-					permissions: [Permission.CAN_CANCEL_OWN_VISIT_REQUEST],
+					permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
 				})
 			);
 			expect(visit).toEqual(mockVisit1);

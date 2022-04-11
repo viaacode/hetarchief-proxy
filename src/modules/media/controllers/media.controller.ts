@@ -23,7 +23,7 @@ import { RequirePermissions } from '~shared/decorators/require-permissions.decor
 
 @ApiTags('Media')
 @Controller('media')
-@RequirePermissions(Permission.CAN_SEARCH_OBJECTS)
+@RequirePermissions(Permission.SEARCH_OBJECTS)
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
