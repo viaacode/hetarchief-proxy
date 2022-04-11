@@ -1,0 +1,21 @@
+mutation insertUser($newUser: users_profile_insert_input!) {
+	insert_users_profile_one(object: $newUser) {
+		id
+		first_name
+		last_name
+		full_name
+		mail
+		accepted_tos_at
+		group_id
+		group {
+			permissions {
+				permission {
+					name
+				}
+			}
+		}
+		identities {
+			identity_provider_name
+		}
+	}
+}

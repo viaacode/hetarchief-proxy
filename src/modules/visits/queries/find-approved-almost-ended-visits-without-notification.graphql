@@ -1,0 +1,64 @@
+query findApprovedAlmostEndedVisitsWithoutNotification($warningDate: timestamp, $now: timestamp) {
+	cp_visit(
+		where: {
+			status: { _eq: "APPROVED" }
+			end_date: { _lt: $warningDate, _gt: $now }
+			_not: { notifications: { type: { _eq: "ACCESS_PERIOD_READING_ROOM_END_WARNING" } } }
+		}
+	) {
+		id
+		cp_space_id
+		user_profile_id
+		user_profile {
+			id
+			full_name
+			first_name
+			last_name
+			mail
+		}
+		user_reason
+		user_timeframe
+		status
+		start_date
+		end_date
+		created_at
+		updated_at
+		updater {
+			id
+			full_name
+		}
+		space {
+			id
+			schema_image
+			schema_color
+			schema_audience_type
+			schema_description
+			schema_public_access
+			schema_service_description
+			is_published
+			published_at
+			created_at
+			updated_at
+			schema_maintainer {
+				schema_name
+				schema_identifier
+				information {
+					description
+					logo {
+						iri
+					}
+					primary_site {
+						address {
+							email
+							locality
+							postal_code
+							street
+							telephone
+							post_office_box_number
+						}
+					}
+				}
+			}
+		}
+	}
+}

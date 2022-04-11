@@ -36,16 +36,10 @@ describe('TranslationsService', () => {
 		it('returns translations', async () => {
 			mockSiteVariablesService.getSiteVariable
 				.mockResolvedValueOnce({
-					name: TranslationKey.FRONTEND_TRANSLATIONS,
-					value: {
-						key: 'translation',
-					},
+					key: 'translation',
 				})
 				.mockResolvedValueOnce({
-					name: TranslationKey.BACKEND_TRANSLATIONS,
-					value: {
-						key: 'BE-translation',
-					},
+					key: 'BE-translation',
 				});
 			const response = await translationsService.getTranslations();
 			expect(response['frontend-translations']).toEqual({ key: 'translation' });

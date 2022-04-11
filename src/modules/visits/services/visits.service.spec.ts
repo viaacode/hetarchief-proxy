@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
-import cpVisit from './__mocks__/cp_visit';
+import { mockCpVisit } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import { DataService } from '~modules/data/services/data.service';
@@ -14,7 +14,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 const getDefaultVisitsResponse = () => ({
 	data: {
-		cp_visit: [cpVisit],
+		cp_visit: [mockCpVisit],
 		cp_visit_aggregate: {
 			aggregate: {
 				count: 100,
@@ -39,8 +39,8 @@ const getDefaultVisitAggregateResponse = () => ({
 });
 
 const mockVisit: Visit = {
-	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
-	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	id: mockCpVisit.id,
+	spaceId: mockCpVisit.cp_space_id,
 	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
@@ -92,12 +92,18 @@ describe('VisitsService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our visit interface', () => {
-			const adapted = visitsService.adapt(cpVisit);
+			const adapted = visitsService.adapt(mockCpVisit);
 			// test some sample keys
-			expect(adapted.id).toEqual('20be1bf7-aa5d-42a7-914b-3e530b04f371');
-			expect(adapted.spaceId).toEqual('65790f8f-6365-4891-8ce2-4563f360db89');
-			expect(adapted.userProfileId).toEqual('b6080152-b1e4-4094-b1ad-0f0112a00113');
-			expect(adapted.status).toEqual('PENDING');
+			expect(adapted.id).toEqual(mockCpVisit.id);
+			expect(adapted.spaceId).toEqual(mockCpVisit.cp_space_id);
+			expect(adapted.userProfileId).toEqual(mockCpVisit.user_profile_id);
+			expect(adapted.status).toEqual(mockCpVisit.status);
+		});
+
+		it('should return null when the visit does not exist', () => {
+			const adapted = visitsService.adapt(undefined);
+			// test some sample keys
+			expect(adapted).toBeNull();
 		});
 
 		it('returns null on invalid input', () => {
@@ -292,7 +298,7 @@ describe('VisitsService', () => {
 		it('returns a single visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findById('1');
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
@@ -319,7 +325,7 @@ describe('VisitsService', () => {
 		it('returns the active visit for the given user and space', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
@@ -416,13 +422,13 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					startAt: new Date().toISOString(),
 					endAt: addHours(new Date(), 2).toISOString(),
@@ -430,7 +436,7 @@ describe('VisitsService', () => {
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 			findVisitSpy.mockRestore();
 		});
 
@@ -440,19 +446,19 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					status: VisitStatus.APPROVED,
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
 		it('throws an error when you update to an invalid status', async () => {
@@ -500,7 +506,7 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
@@ -515,14 +521,14 @@ describe('VisitsService', () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					note: 'Test note',
 				},
 				mockUserProfileId
 			);
 
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 			findVisitSpy.mockRestore();
 		});
 	});
@@ -573,7 +579,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 
@@ -584,7 +590,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 
@@ -595,7 +601,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 });

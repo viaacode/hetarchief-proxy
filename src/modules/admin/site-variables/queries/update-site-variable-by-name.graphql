@@ -1,0 +1,5 @@
+mutation updateSiteVariableByName($name: String!, $data: cms_site_variables_set_input!) {
+	update_cms_site_variables(where: { name: { _eq: $name } }, _set: $data) {
+		affected_rows
+	}
+}

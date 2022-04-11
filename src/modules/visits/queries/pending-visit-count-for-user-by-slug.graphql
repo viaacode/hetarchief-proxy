@@ -1,4 +1,4 @@
-query PendingVisitCountForUserBySlug($user: uuid, $slug: String) {
+query pendingVisitCountForUserBySlug($user: uuid = "", $slug: String = "") {
 	cp_visit_aggregate(
 		where: {
 			user_profile_id: { _eq: $user }

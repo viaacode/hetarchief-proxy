@@ -1,3 +1,8 @@
+import {
+	GetUserByIdentityIdQuery,
+	InsertUserMutation,
+	UpdateUserProfileMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { Idp } from '~shared/auth/auth.types';
 
 export enum Permission {
@@ -22,26 +27,10 @@ export enum Permission {
 	SEARCH = 'SEARCH',
 }
 
-export interface GqlUser {
-	id: string;
-	full_name: string;
-	first_name: string;
-	last_name: string;
-	mail: string;
-	accepted_tos_at?: string;
-	group: GqlUserGroup;
-	identities: {
-		identity_provider_name: string;
-	}[];
-}
-
-export interface GqlUserGroup {
-	permissions: {
-		permission: {
-			name: string;
-		};
-	}[];
-}
+export type GqlUser =
+	| GetUserByIdentityIdQuery['users_profile'][0]
+	| InsertUserMutation['insert_users_profile_one']
+	| UpdateUserProfileMutation['update_users_profile_by_pk'];
 
 export interface User {
 	id: string;
