@@ -1,5 +1,5 @@
 query getSpaceMaintainerProfiles($spaceId: uuid) {
-	cp_maintainer_users_profile(where: { maintainer: { space: { id: { _eq: $spaceId } } } }) {
+	maintainer_users_profile(where: { maintainer: { visitor_space: { id: { _eq: $spaceId } } } }) {
 		users_profile_id
 		profile {
 			mail

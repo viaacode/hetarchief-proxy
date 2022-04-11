@@ -1,5 +1,5 @@
-mutation insertNavigation($navigationItem: cms_navigation_element_insert_input!) {
-	insert_cms_navigation_element_one(object: $navigationItem) {
+mutation insertNavigation($navigationItem: app_navigation_insert_input!) {
+	insert_app_navigation_one(object: $navigationItem) {
 		id
 		created_at
 		description

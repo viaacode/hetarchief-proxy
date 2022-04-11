@@ -1,5 +1,5 @@
 query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-	users_collection_ie(
+	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $collectionId }
 			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
@@ -21,7 +21,7 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 			maintainer {
 				schema_identifier
 				schema_name
-				space {
+				visitor_space {
 					id
 				}
 			}

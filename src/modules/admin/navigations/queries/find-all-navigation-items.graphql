@@ -1,5 +1,5 @@
 query findAllNavigationItems {
-	cms_navigation_element(order_by: { placement: asc, position: asc }) {
+	app_navigation(order_by: { placement: asc, position: asc }) {
 		content_path
 		content_type
 		link_target

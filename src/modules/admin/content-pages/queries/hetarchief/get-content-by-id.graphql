@@ -1,5 +1,5 @@
 query getContentById($id: uuid!) {
-	cms_content(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
+	app_content_page(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
 		content_type
 		content_width
 		created_at

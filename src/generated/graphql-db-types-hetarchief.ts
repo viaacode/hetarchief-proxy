@@ -291,6 +291,1810 @@ export type _Text_Comparison_Exp = {
 };
 
 /**
+ * Sitebrede variabelen zoals vertalingen
+ *
+ *
+ * columns and relationships of "app.config"
+ *
+ */
+export type App_Config = {
+  __typename?: 'app_config';
+  created_at: Scalars['timestamp'];
+  name: Scalars['String'];
+  updated_at: Scalars['timestamp'];
+  value: Scalars['jsonb'];
+};
+
+
+/**
+ * Sitebrede variabelen zoals vertalingen
+ *
+ *
+ * columns and relationships of "app.config"
+ *
+ */
+export type App_ConfigValueArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.config" */
+export type App_Config_Aggregate = {
+  __typename?: 'app_config_aggregate';
+  aggregate?: Maybe<App_Config_Aggregate_Fields>;
+  nodes: Array<App_Config>;
+};
+
+/** aggregate fields of "app.config" */
+export type App_Config_Aggregate_Fields = {
+  __typename?: 'app_config_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Config_Max_Fields>;
+  min?: Maybe<App_Config_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.config" */
+export type App_Config_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Config_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Config_Append_Input = {
+  value?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "app.config". All fields are combined with a logical 'AND'. */
+export type App_Config_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Config_Bool_Exp>>;
+  _not?: InputMaybe<App_Config_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Config_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  value?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.config" */
+export enum App_Config_Constraint {
+  /** unique or primary key constraint */
+  SiteVariablesPkey = 'site_variables_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Config_Delete_At_Path_Input = {
+  value?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Config_Delete_Elem_Input = {
+  value?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Config_Delete_Key_Input = {
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "app.config" */
+export type App_Config_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  value?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type App_Config_Max_Fields = {
+  __typename?: 'app_config_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type App_Config_Min_Fields = {
+  __typename?: 'app_config_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "app.config" */
+export type App_Config_Mutation_Response = {
+  __typename?: 'app_config_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Config>;
+};
+
+/** on conflict condition type for table "app.config" */
+export type App_Config_On_Conflict = {
+  constraint: App_Config_Constraint;
+  update_columns?: Array<App_Config_Update_Column>;
+  where?: InputMaybe<App_Config_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.config". */
+export type App_Config_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_config */
+export type App_Config_Pk_Columns_Input = {
+  name: Scalars['String'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Config_Prepend_Input = {
+  value?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.config" */
+export enum App_Config_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "app.config" */
+export type App_Config_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  value?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** update columns of table "app.config" */
+export enum App_Config_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
+
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "app.content_block"
+ *
+ */
+export type App_Content_Block = {
+  __typename?: 'app_content_block';
+  /** An object relationship */
+  cms_content_block_type: Lookup_App_Content_Block_Type;
+  /** An object relationship */
+  content: App_Content_Page;
+  content_block_type: Lookup_App_Content_Block_Type_Enum;
+  content_id: Scalars['uuid'];
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  position: Scalars['Int'];
+  updated_at: Scalars['timestamp'];
+  variables?: Maybe<Scalars['jsonb']>;
+};
+
+
+/**
+ * information for the blocks out of which the content pages are build
+ *
+ *
+ * columns and relationships of "app.content_block"
+ *
+ */
+export type App_Content_BlockVariablesArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.content_block" */
+export type App_Content_Block_Aggregate = {
+  __typename?: 'app_content_block_aggregate';
+  aggregate?: Maybe<App_Content_Block_Aggregate_Fields>;
+  nodes: Array<App_Content_Block>;
+};
+
+/** aggregate fields of "app.content_block" */
+export type App_Content_Block_Aggregate_Fields = {
+  __typename?: 'app_content_block_aggregate_fields';
+  avg?: Maybe<App_Content_Block_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<App_Content_Block_Max_Fields>;
+  min?: Maybe<App_Content_Block_Min_Fields>;
+  stddev?: Maybe<App_Content_Block_Stddev_Fields>;
+  stddev_pop?: Maybe<App_Content_Block_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<App_Content_Block_Stddev_Samp_Fields>;
+  sum?: Maybe<App_Content_Block_Sum_Fields>;
+  var_pop?: Maybe<App_Content_Block_Var_Pop_Fields>;
+  var_samp?: Maybe<App_Content_Block_Var_Samp_Fields>;
+  variance?: Maybe<App_Content_Block_Variance_Fields>;
+};
+
+
+/** aggregate fields of "app.content_block" */
+export type App_Content_Block_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "app.content_block" */
+export type App_Content_Block_Aggregate_Order_By = {
+  avg?: InputMaybe<App_Content_Block_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Content_Block_Max_Order_By>;
+  min?: InputMaybe<App_Content_Block_Min_Order_By>;
+  stddev?: InputMaybe<App_Content_Block_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<App_Content_Block_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<App_Content_Block_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<App_Content_Block_Sum_Order_By>;
+  var_pop?: InputMaybe<App_Content_Block_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<App_Content_Block_Var_Samp_Order_By>;
+  variance?: InputMaybe<App_Content_Block_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Block_Append_Input = {
+  variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "app.content_block" */
+export type App_Content_Block_Arr_Rel_Insert_Input = {
+  data: Array<App_Content_Block_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<App_Content_Block_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type App_Content_Block_Avg_Fields = {
+  __typename?: 'app_content_block_avg_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "app.content_block" */
+export type App_Content_Block_Avg_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "app.content_block". All fields are combined with a logical 'AND'. */
+export type App_Content_Block_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Content_Block_Bool_Exp>>;
+  _not?: InputMaybe<App_Content_Block_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Content_Block_Bool_Exp>>;
+  cms_content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
+  content?: InputMaybe<App_Content_Page_Bool_Exp>;
+  content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Enum_Comparison_Exp>;
+  content_id?: InputMaybe<Uuid_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  position?: InputMaybe<Int_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  variables?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.content_block" */
+export enum App_Content_Block_Constraint {
+  /** unique or primary key constraint */
+  ContentBlocksPkey = 'content_blocks_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Content_Block_Delete_At_Path_Input = {
+  variables?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Content_Block_Delete_Elem_Input = {
+  variables?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Content_Block_Delete_Key_Input = {
+  variables?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "app.content_block" */
+export type App_Content_Block_Inc_Input = {
+  position?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "app.content_block" */
+export type App_Content_Block_Insert_Input = {
+  cms_content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Obj_Rel_Insert_Input>;
+  content?: InputMaybe<App_Content_Page_Obj_Rel_Insert_Input>;
+  content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Enum>;
+  content_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  position?: InputMaybe<Scalars['Int']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type App_Content_Block_Max_Fields = {
+  __typename?: 'app_content_block_max_fields';
+  content_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  position?: Maybe<Scalars['Int']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "app.content_block" */
+export type App_Content_Block_Max_Order_By = {
+  content_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Content_Block_Min_Fields = {
+  __typename?: 'app_content_block_min_fields';
+  content_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  position?: Maybe<Scalars['Int']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "app.content_block" */
+export type App_Content_Block_Min_Order_By = {
+  content_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.content_block" */
+export type App_Content_Block_Mutation_Response = {
+  __typename?: 'app_content_block_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Content_Block>;
+};
+
+/** on conflict condition type for table "app.content_block" */
+export type App_Content_Block_On_Conflict = {
+  constraint: App_Content_Block_Constraint;
+  update_columns?: Array<App_Content_Block_Update_Column>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.content_block". */
+export type App_Content_Block_Order_By = {
+  cms_content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Order_By>;
+  content?: InputMaybe<App_Content_Page_Order_By>;
+  content_block_type?: InputMaybe<Order_By>;
+  content_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  variables?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_content_block */
+export type App_Content_Block_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Block_Prepend_Input = {
+  variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.content_block" */
+export enum App_Content_Block_Select_Column {
+  /** column name */
+  ContentBlockType = 'content_block_type',
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Variables = 'variables'
+}
+
+/** input type for updating data in table "app.content_block" */
+export type App_Content_Block_Set_Input = {
+  content_block_type?: InputMaybe<Lookup_App_Content_Block_Type_Enum>;
+  content_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  position?: InputMaybe<Scalars['Int']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  variables?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate stddev on columns */
+export type App_Content_Block_Stddev_Fields = {
+  __typename?: 'app_content_block_stddev_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "app.content_block" */
+export type App_Content_Block_Stddev_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type App_Content_Block_Stddev_Pop_Fields = {
+  __typename?: 'app_content_block_stddev_pop_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "app.content_block" */
+export type App_Content_Block_Stddev_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type App_Content_Block_Stddev_Samp_Fields = {
+  __typename?: 'app_content_block_stddev_samp_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "app.content_block" */
+export type App_Content_Block_Stddev_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type App_Content_Block_Sum_Fields = {
+  __typename?: 'app_content_block_sum_fields';
+  position?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "app.content_block" */
+export type App_Content_Block_Sum_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "app.content_block" */
+export enum App_Content_Block_Update_Column {
+  /** column name */
+  ContentBlockType = 'content_block_type',
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Variables = 'variables'
+}
+
+/** aggregate var_pop on columns */
+export type App_Content_Block_Var_Pop_Fields = {
+  __typename?: 'app_content_block_var_pop_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "app.content_block" */
+export type App_Content_Block_Var_Pop_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type App_Content_Block_Var_Samp_Fields = {
+  __typename?: 'app_content_block_var_samp_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "app.content_block" */
+export type App_Content_Block_Var_Samp_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type App_Content_Block_Variance_Fields = {
+  __typename?: 'app_content_block_variance_fields';
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "app.content_block" */
+export type App_Content_Block_Variance_Order_By = {
+  position?: InputMaybe<Order_By>;
+};
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "app.content_label"
+ *
+ */
+export type App_Content_Label = {
+  __typename?: 'app_content_label';
+  /** An object relationship */
+  cms_content_type: Lookup_App_Content_Type;
+  /** An array relationship */
+  content_content_labels: Array<App_Content_Page_Content_Label>;
+  /** An aggregate relationship */
+  content_content_labels_aggregate: App_Content_Page_Content_Label_Aggregate;
+  content_type: Lookup_App_Content_Type_Enum;
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  label: Scalars['String'];
+  link_to?: Maybe<Scalars['jsonb']>;
+  updated_at: Scalars['timestamp'];
+};
+
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "app.content_label"
+ *
+ */
+export type App_Content_LabelContent_Content_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "app.content_label"
+ *
+ */
+export type App_Content_LabelContent_Content_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+/**
+ * labels to marks certain content pages and group them together
+ *
+ *
+ * columns and relationships of "app.content_label"
+ *
+ */
+export type App_Content_LabelLink_ToArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.content_label" */
+export type App_Content_Label_Aggregate = {
+  __typename?: 'app_content_label_aggregate';
+  aggregate?: Maybe<App_Content_Label_Aggregate_Fields>;
+  nodes: Array<App_Content_Label>;
+};
+
+/** aggregate fields of "app.content_label" */
+export type App_Content_Label_Aggregate_Fields = {
+  __typename?: 'app_content_label_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Content_Label_Max_Fields>;
+  min?: Maybe<App_Content_Label_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.content_label" */
+export type App_Content_Label_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Content_Label_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Label_Append_Input = {
+  link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "app.content_label". All fields are combined with a logical 'AND'. */
+export type App_Content_Label_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Content_Label_Bool_Exp>>;
+  _not?: InputMaybe<App_Content_Label_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Content_Label_Bool_Exp>>;
+  cms_content_type?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
+  content_content_labels?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+  content_type?: InputMaybe<Lookup_App_Content_Type_Enum_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  label?: InputMaybe<String_Comparison_Exp>;
+  link_to?: InputMaybe<Jsonb_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.content_label" */
+export enum App_Content_Label_Constraint {
+  /** unique or primary key constraint */
+  ContentLabelsLabelContentTypeKey = 'content_labels_label_content_type_key',
+  /** unique or primary key constraint */
+  ContentLabelsPkey = 'content_labels_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Content_Label_Delete_At_Path_Input = {
+  link_to?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Content_Label_Delete_Elem_Input = {
+  link_to?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Content_Label_Delete_Key_Input = {
+  link_to?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "app.content_label" */
+export type App_Content_Label_Insert_Input = {
+  cms_content_type?: InputMaybe<Lookup_App_Content_Type_Obj_Rel_Insert_Input>;
+  content_content_labels?: InputMaybe<App_Content_Page_Content_Label_Arr_Rel_Insert_Input>;
+  content_type?: InputMaybe<Lookup_App_Content_Type_Enum>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label?: InputMaybe<Scalars['String']>;
+  link_to?: InputMaybe<Scalars['jsonb']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type App_Content_Label_Max_Fields = {
+  __typename?: 'app_content_label_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  label?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type App_Content_Label_Min_Fields = {
+  __typename?: 'app_content_label_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  label?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "app.content_label" */
+export type App_Content_Label_Mutation_Response = {
+  __typename?: 'app_content_label_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Content_Label>;
+};
+
+/** input type for inserting object relation for remote table "app.content_label" */
+export type App_Content_Label_Obj_Rel_Insert_Input = {
+  data: App_Content_Label_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<App_Content_Label_On_Conflict>;
+};
+
+/** on conflict condition type for table "app.content_label" */
+export type App_Content_Label_On_Conflict = {
+  constraint: App_Content_Label_Constraint;
+  update_columns?: Array<App_Content_Label_Update_Column>;
+  where?: InputMaybe<App_Content_Label_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.content_label". */
+export type App_Content_Label_Order_By = {
+  cms_content_type?: InputMaybe<Lookup_App_Content_Type_Order_By>;
+  content_content_labels_aggregate?: InputMaybe<App_Content_Page_Content_Label_Aggregate_Order_By>;
+  content_type?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  label?: InputMaybe<Order_By>;
+  link_to?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_content_label */
+export type App_Content_Label_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Label_Prepend_Input = {
+  link_to?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.content_label" */
+export enum App_Content_Label_Select_Column {
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Label = 'label',
+  /** column name */
+  LinkTo = 'link_to',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "app.content_label" */
+export type App_Content_Label_Set_Input = {
+  content_type?: InputMaybe<Lookup_App_Content_Type_Enum>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label?: InputMaybe<Scalars['String']>;
+  link_to?: InputMaybe<Scalars['jsonb']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "app.content_label" */
+export enum App_Content_Label_Update_Column {
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Label = 'label',
+  /** column name */
+  LinkTo = 'link_to',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_Page = {
+  __typename?: 'app_content_page';
+  /** An array relationship */
+  content_blocks: Array<App_Content_Block>;
+  /** An aggregate relationship */
+  content_blocks_aggregate: App_Content_Block_Aggregate;
+  /** An array relationship */
+  content_content_labels: Array<App_Content_Page_Content_Label>;
+  /** An aggregate relationship */
+  content_content_labels_aggregate: App_Content_Page_Content_Label_Aggregate;
+  content_type: Scalars['String'];
+  content_width: Scalars['String'];
+  created_at: Scalars['timestamp'];
+  depublish_at?: Maybe<Scalars['timestamp']>;
+  description?: Maybe<Scalars['String']>;
+  header_path?: Maybe<Scalars['String']>;
+  id: Scalars['uuid'];
+  is_deleted: Scalars['Boolean'];
+  is_protected: Scalars['Boolean'];
+  is_public?: Maybe<Scalars['Boolean']>;
+  meta_description?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  owner_profile?: Maybe<Users_Profile>;
+  /** slug van de pagina */
+  path?: Maybe<Scalars['String']>;
+  publish_at?: Maybe<Scalars['timestamp']>;
+  published_at?: Maybe<Scalars['timestamp']>;
+  seo_description?: Maybe<Scalars['String']>;
+  seo_image_path?: Maybe<Scalars['String']>;
+  seo_keywords?: Maybe<Scalars['String']>;
+  seo_title?: Maybe<Scalars['String']>;
+  thumbnail_path?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamp']>;
+  updated_by_profile_id?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  updater_profile?: Maybe<Users_Profile>;
+  user_group_ids?: Maybe<Scalars['jsonb']>;
+  user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageContent_BlocksArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageContent_Blocks_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageContent_Content_LabelsArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageContent_Content_Labels_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageUser_Group_IdsArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.content_page" */
+export type App_Content_Page_Aggregate = {
+  __typename?: 'app_content_page_aggregate';
+  aggregate?: Maybe<App_Content_Page_Aggregate_Fields>;
+  nodes: Array<App_Content_Page>;
+};
+
+/** aggregate fields of "app.content_page" */
+export type App_Content_Page_Aggregate_Fields = {
+  __typename?: 'app_content_page_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Content_Page_Max_Fields>;
+  min?: Maybe<App_Content_Page_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.content_page" */
+export type App_Content_Page_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Page_Append_Input = {
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "app.content_page". All fields are combined with a logical 'AND'. */
+export type App_Content_Page_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Content_Page_Bool_Exp>>;
+  _not?: InputMaybe<App_Content_Page_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Content_Page_Bool_Exp>>;
+  content_blocks?: InputMaybe<App_Content_Block_Bool_Exp>;
+  content_content_labels?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+  content_type?: InputMaybe<String_Comparison_Exp>;
+  content_width?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  depublish_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
+  header_path?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  is_deleted?: InputMaybe<Boolean_Comparison_Exp>;
+  is_protected?: InputMaybe<Boolean_Comparison_Exp>;
+  is_public?: InputMaybe<Boolean_Comparison_Exp>;
+  meta_description?: InputMaybe<String_Comparison_Exp>;
+  owner_profile?: InputMaybe<Users_Profile_Bool_Exp>;
+  path?: InputMaybe<String_Comparison_Exp>;
+  publish_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  published_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  seo_description?: InputMaybe<String_Comparison_Exp>;
+  seo_image_path?: InputMaybe<String_Comparison_Exp>;
+  seo_keywords?: InputMaybe<String_Comparison_Exp>;
+  seo_title?: InputMaybe<String_Comparison_Exp>;
+  thumbnail_path?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  updated_by_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updater_profile?: InputMaybe<Users_Profile_Bool_Exp>;
+  user_group_ids?: InputMaybe<Jsonb_Comparison_Exp>;
+  user_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.content_page" */
+export enum App_Content_Page_Constraint {
+  /** unique or primary key constraint */
+  ContentIdKey = 'content_id_key',
+  /** unique or primary key constraint */
+  ContentPathKey = 'content_path_key',
+  /** unique or primary key constraint */
+  ContentPkey = 'content_pkey'
+}
+
+/**
+ * linking table between content pages and the content_labels
+ *
+ *
+ * columns and relationships of "app.content_page_content_label"
+ *
+ */
+export type App_Content_Page_Content_Label = {
+  __typename?: 'app_content_page_content_label';
+  /** An object relationship */
+  content: App_Content_Page;
+  content_id: Scalars['uuid'];
+  /** An object relationship */
+  content_label: App_Content_Label;
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  label_id: Scalars['uuid'];
+  updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Aggregate = {
+  __typename?: 'app_content_page_content_label_aggregate';
+  aggregate?: Maybe<App_Content_Page_Content_Label_Aggregate_Fields>;
+  nodes: Array<App_Content_Page_Content_Label>;
+};
+
+/** aggregate fields of "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Aggregate_Fields = {
+  __typename?: 'app_content_page_content_label_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Content_Page_Content_Label_Max_Fields>;
+  min?: Maybe<App_Content_Page_Content_Label_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Content_Page_Content_Label_Max_Order_By>;
+  min?: InputMaybe<App_Content_Page_Content_Label_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Arr_Rel_Insert_Input = {
+  data: Array<App_Content_Page_Content_Label_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<App_Content_Page_Content_Label_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "app.content_page_content_label". All fields are combined with a logical 'AND'. */
+export type App_Content_Page_Content_Label_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp>>;
+  _not?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp>>;
+  content?: InputMaybe<App_Content_Page_Bool_Exp>;
+  content_id?: InputMaybe<Uuid_Comparison_Exp>;
+  content_label?: InputMaybe<App_Content_Label_Bool_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  label_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.content_page_content_label" */
+export enum App_Content_Page_Content_Label_Constraint {
+  /** unique or primary key constraint */
+  ContentContentLabelsPkey = 'content_content_labels_pkey'
+}
+
+/** input type for inserting data into table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Insert_Input = {
+  content?: InputMaybe<App_Content_Page_Obj_Rel_Insert_Input>;
+  content_id?: InputMaybe<Scalars['uuid']>;
+  content_label?: InputMaybe<App_Content_Label_Obj_Rel_Insert_Input>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label_id?: InputMaybe<Scalars['uuid']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type App_Content_Page_Content_Label_Max_Fields = {
+  __typename?: 'app_content_page_content_label_max_fields';
+  content_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  label_id?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by max() on columns of table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Max_Order_By = {
+  content_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  label_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type App_Content_Page_Content_Label_Min_Fields = {
+  __typename?: 'app_content_page_content_label_min_fields';
+  content_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  label_id?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** order by min() on columns of table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Min_Order_By = {
+  content_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  label_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Mutation_Response = {
+  __typename?: 'app_content_page_content_label_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Content_Page_Content_Label>;
+};
+
+/** on conflict condition type for table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_On_Conflict = {
+  constraint: App_Content_Page_Content_Label_Constraint;
+  update_columns?: Array<App_Content_Page_Content_Label_Update_Column>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.content_page_content_label". */
+export type App_Content_Page_Content_Label_Order_By = {
+  content?: InputMaybe<App_Content_Page_Order_By>;
+  content_id?: InputMaybe<Order_By>;
+  content_label?: InputMaybe<App_Content_Label_Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  label_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_content_page_content_label */
+export type App_Content_Page_Content_Label_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "app.content_page_content_label" */
+export enum App_Content_Page_Content_Label_Select_Column {
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LabelId = 'label_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "app.content_page_content_label" */
+export type App_Content_Page_Content_Label_Set_Input = {
+  content_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label_id?: InputMaybe<Scalars['uuid']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "app.content_page_content_label" */
+export enum App_Content_Page_Content_Label_Update_Column {
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LabelId = 'label_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Content_Page_Delete_At_Path_Input = {
+  user_group_ids?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Content_Page_Delete_Elem_Input = {
+  user_group_ids?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Content_Page_Delete_Key_Input = {
+  user_group_ids?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "app.content_page" */
+export type App_Content_Page_Insert_Input = {
+  content_blocks?: InputMaybe<App_Content_Block_Arr_Rel_Insert_Input>;
+  content_content_labels?: InputMaybe<App_Content_Page_Content_Label_Arr_Rel_Insert_Input>;
+  content_type?: InputMaybe<Scalars['String']>;
+  content_width?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  depublish_at?: InputMaybe<Scalars['timestamp']>;
+  description?: InputMaybe<Scalars['String']>;
+  header_path?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']>;
+  is_protected?: InputMaybe<Scalars['Boolean']>;
+  is_public?: InputMaybe<Scalars['Boolean']>;
+  meta_description?: InputMaybe<Scalars['String']>;
+  owner_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  /** slug van de pagina */
+  path?: InputMaybe<Scalars['String']>;
+  publish_at?: InputMaybe<Scalars['timestamp']>;
+  published_at?: InputMaybe<Scalars['timestamp']>;
+  seo_description?: InputMaybe<Scalars['String']>;
+  seo_image_path?: InputMaybe<Scalars['String']>;
+  seo_keywords?: InputMaybe<Scalars['String']>;
+  seo_title?: InputMaybe<Scalars['String']>;
+  thumbnail_path?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  updated_by_profile_id?: InputMaybe<Scalars['uuid']>;
+  updater_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+  user_profile_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type App_Content_Page_Max_Fields = {
+  __typename?: 'app_content_page_max_fields';
+  content_type?: Maybe<Scalars['String']>;
+  content_width?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  depublish_at?: Maybe<Scalars['timestamp']>;
+  description?: Maybe<Scalars['String']>;
+  header_path?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  meta_description?: Maybe<Scalars['String']>;
+  /** slug van de pagina */
+  path?: Maybe<Scalars['String']>;
+  publish_at?: Maybe<Scalars['timestamp']>;
+  published_at?: Maybe<Scalars['timestamp']>;
+  seo_description?: Maybe<Scalars['String']>;
+  seo_image_path?: Maybe<Scalars['String']>;
+  seo_keywords?: Maybe<Scalars['String']>;
+  seo_title?: Maybe<Scalars['String']>;
+  thumbnail_path?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  updated_by_profile_id?: Maybe<Scalars['uuid']>;
+  user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate min on columns */
+export type App_Content_Page_Min_Fields = {
+  __typename?: 'app_content_page_min_fields';
+  content_type?: Maybe<Scalars['String']>;
+  content_width?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  depublish_at?: Maybe<Scalars['timestamp']>;
+  description?: Maybe<Scalars['String']>;
+  header_path?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  meta_description?: Maybe<Scalars['String']>;
+  /** slug van de pagina */
+  path?: Maybe<Scalars['String']>;
+  publish_at?: Maybe<Scalars['timestamp']>;
+  published_at?: Maybe<Scalars['timestamp']>;
+  seo_description?: Maybe<Scalars['String']>;
+  seo_image_path?: Maybe<Scalars['String']>;
+  seo_keywords?: Maybe<Scalars['String']>;
+  seo_title?: Maybe<Scalars['String']>;
+  thumbnail_path?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  updated_by_profile_id?: Maybe<Scalars['uuid']>;
+  user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** response of any mutation on the table "app.content_page" */
+export type App_Content_Page_Mutation_Response = {
+  __typename?: 'app_content_page_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Content_Page>;
+};
+
+/** input type for inserting object relation for remote table "app.content_page" */
+export type App_Content_Page_Obj_Rel_Insert_Input = {
+  data: App_Content_Page_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
+};
+
+/** on conflict condition type for table "app.content_page" */
+export type App_Content_Page_On_Conflict = {
+  constraint: App_Content_Page_Constraint;
+  update_columns?: Array<App_Content_Page_Update_Column>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.content_page". */
+export type App_Content_Page_Order_By = {
+  content_blocks_aggregate?: InputMaybe<App_Content_Block_Aggregate_Order_By>;
+  content_content_labels_aggregate?: InputMaybe<App_Content_Page_Content_Label_Aggregate_Order_By>;
+  content_type?: InputMaybe<Order_By>;
+  content_width?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  depublish_at?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  header_path?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  is_deleted?: InputMaybe<Order_By>;
+  is_protected?: InputMaybe<Order_By>;
+  is_public?: InputMaybe<Order_By>;
+  meta_description?: InputMaybe<Order_By>;
+  owner_profile?: InputMaybe<Users_Profile_Order_By>;
+  path?: InputMaybe<Order_By>;
+  publish_at?: InputMaybe<Order_By>;
+  published_at?: InputMaybe<Order_By>;
+  seo_description?: InputMaybe<Order_By>;
+  seo_image_path?: InputMaybe<Order_By>;
+  seo_keywords?: InputMaybe<Order_By>;
+  seo_title?: InputMaybe<Order_By>;
+  thumbnail_path?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by_profile_id?: InputMaybe<Order_By>;
+  updater_profile?: InputMaybe<Users_Profile_Order_By>;
+  user_group_ids?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_content_page */
+export type App_Content_Page_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Content_Page_Prepend_Input = {
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.content_page" */
+export enum App_Content_Page_Select_Column {
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  ContentWidth = 'content_width',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DepublishAt = 'depublish_at',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  HeaderPath = 'header_path',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDeleted = 'is_deleted',
+  /** column name */
+  IsProtected = 'is_protected',
+  /** column name */
+  IsPublic = 'is_public',
+  /** column name */
+  MetaDescription = 'meta_description',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  PublishAt = 'publish_at',
+  /** column name */
+  PublishedAt = 'published_at',
+  /** column name */
+  SeoDescription = 'seo_description',
+  /** column name */
+  SeoImagePath = 'seo_image_path',
+  /** column name */
+  SeoKeywords = 'seo_keywords',
+  /** column name */
+  SeoTitle = 'seo_title',
+  /** column name */
+  ThumbnailPath = 'thumbnail_path',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UpdatedByProfileId = 'updated_by_profile_id',
+  /** column name */
+  UserGroupIds = 'user_group_ids',
+  /** column name */
+  UserProfileId = 'user_profile_id'
+}
+
+/** input type for updating data in table "app.content_page" */
+export type App_Content_Page_Set_Input = {
+  content_type?: InputMaybe<Scalars['String']>;
+  content_width?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  depublish_at?: InputMaybe<Scalars['timestamp']>;
+  description?: InputMaybe<Scalars['String']>;
+  header_path?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']>;
+  is_protected?: InputMaybe<Scalars['Boolean']>;
+  is_public?: InputMaybe<Scalars['Boolean']>;
+  meta_description?: InputMaybe<Scalars['String']>;
+  /** slug van de pagina */
+  path?: InputMaybe<Scalars['String']>;
+  publish_at?: InputMaybe<Scalars['timestamp']>;
+  published_at?: InputMaybe<Scalars['timestamp']>;
+  seo_description?: InputMaybe<Scalars['String']>;
+  seo_image_path?: InputMaybe<Scalars['String']>;
+  seo_keywords?: InputMaybe<Scalars['String']>;
+  seo_title?: InputMaybe<Scalars['String']>;
+  thumbnail_path?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  updated_by_profile_id?: InputMaybe<Scalars['uuid']>;
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+  user_profile_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** update columns of table "app.content_page" */
+export enum App_Content_Page_Update_Column {
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  ContentWidth = 'content_width',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DepublishAt = 'depublish_at',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  HeaderPath = 'header_path',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsDeleted = 'is_deleted',
+  /** column name */
+  IsProtected = 'is_protected',
+  /** column name */
+  IsPublic = 'is_public',
+  /** column name */
+  MetaDescription = 'meta_description',
+  /** column name */
+  Path = 'path',
+  /** column name */
+  PublishAt = 'publish_at',
+  /** column name */
+  PublishedAt = 'published_at',
+  /** column name */
+  SeoDescription = 'seo_description',
+  /** column name */
+  SeoImagePath = 'seo_image_path',
+  /** column name */
+  SeoKeywords = 'seo_keywords',
+  /** column name */
+  SeoTitle = 'seo_title',
+  /** column name */
+  ThumbnailPath = 'thumbnail_path',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UpdatedByProfileId = 'updated_by_profile_id',
+  /** column name */
+  UserGroupIds = 'user_group_ids',
+  /** column name */
+  UserProfileId = 'user_profile_id'
+}
+
+/** columns and relationships of "app.navigation" */
+export type App_Navigation = {
+  __typename?: 'app_navigation';
+  /** id van de gelinkte content block pagina */
+  content_id?: Maybe<Scalars['uuid']>;
+  content_path: Scalars['String'];
+  content_type: Scalars['String'];
+  created_at: Scalars['timestamptz'];
+  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
+  description?: Maybe<Scalars['String']>;
+  icon_name: Scalars['String'];
+  id: Scalars['uuid'];
+  label: Scalars['String'];
+  /** open in new tab of in zelfde tab */
+  link_target?: Maybe<Scalars['String']>;
+  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
+  placement: Scalars['String'];
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position: Scalars['Int'];
+  tooltip?: Maybe<Scalars['String']>;
+  updated_at: Scalars['timestamptz'];
+  user_group_ids?: Maybe<Scalars['jsonb']>;
+};
+
+
+/** columns and relationships of "app.navigation" */
+export type App_NavigationUser_Group_IdsArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.navigation" */
+export type App_Navigation_Aggregate = {
+  __typename?: 'app_navigation_aggregate';
+  aggregate?: Maybe<App_Navigation_Aggregate_Fields>;
+  nodes: Array<App_Navigation>;
+};
+
+/** aggregate fields of "app.navigation" */
+export type App_Navigation_Aggregate_Fields = {
+  __typename?: 'app_navigation_aggregate_fields';
+  avg?: Maybe<App_Navigation_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<App_Navigation_Max_Fields>;
+  min?: Maybe<App_Navigation_Min_Fields>;
+  stddev?: Maybe<App_Navigation_Stddev_Fields>;
+  stddev_pop?: Maybe<App_Navigation_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<App_Navigation_Stddev_Samp_Fields>;
+  sum?: Maybe<App_Navigation_Sum_Fields>;
+  var_pop?: Maybe<App_Navigation_Var_Pop_Fields>;
+  var_samp?: Maybe<App_Navigation_Var_Samp_Fields>;
+  variance?: Maybe<App_Navigation_Variance_Fields>;
+};
+
+
+/** aggregate fields of "app.navigation" */
+export type App_Navigation_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Navigation_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Navigation_Append_Input = {
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate avg on columns */
+export type App_Navigation_Avg_Fields = {
+  __typename?: 'app_navigation_avg_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "app.navigation". All fields are combined with a logical 'AND'. */
+export type App_Navigation_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Navigation_Bool_Exp>>;
+  _not?: InputMaybe<App_Navigation_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Navigation_Bool_Exp>>;
+  content_id?: InputMaybe<Uuid_Comparison_Exp>;
+  content_path?: InputMaybe<String_Comparison_Exp>;
+  content_type?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
+  icon_name?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  label?: InputMaybe<String_Comparison_Exp>;
+  link_target?: InputMaybe<String_Comparison_Exp>;
+  placement?: InputMaybe<String_Comparison_Exp>;
+  position?: InputMaybe<Int_Comparison_Exp>;
+  tooltip?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user_group_ids?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.navigation" */
+export enum App_Navigation_Constraint {
+  /** unique or primary key constraint */
+  NavigationElementPkey = 'navigation_element_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Navigation_Delete_At_Path_Input = {
+  user_group_ids?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Navigation_Delete_Elem_Input = {
+  user_group_ids?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Navigation_Delete_Key_Input = {
+  user_group_ids?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for incrementing numeric columns in table "app.navigation" */
+export type App_Navigation_Inc_Input = {
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "app.navigation" */
+export type App_Navigation_Insert_Input = {
+  /** id van de gelinkte content block pagina */
+  content_id?: InputMaybe<Scalars['uuid']>;
+  content_path?: InputMaybe<Scalars['String']>;
+  content_type?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
+  description?: InputMaybe<Scalars['String']>;
+  icon_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label?: InputMaybe<Scalars['String']>;
+  /** open in new tab of in zelfde tab */
+  link_target?: InputMaybe<Scalars['String']>;
+  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
+  placement?: InputMaybe<Scalars['String']>;
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: InputMaybe<Scalars['Int']>;
+  tooltip?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type App_Navigation_Max_Fields = {
+  __typename?: 'app_navigation_max_fields';
+  /** id van de gelinkte content block pagina */
+  content_id?: Maybe<Scalars['uuid']>;
+  content_path?: Maybe<Scalars['String']>;
+  content_type?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
+  description?: Maybe<Scalars['String']>;
+  icon_name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  label?: Maybe<Scalars['String']>;
+  /** open in new tab of in zelfde tab */
+  link_target?: Maybe<Scalars['String']>;
+  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
+  placement?: Maybe<Scalars['String']>;
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Int']>;
+  tooltip?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type App_Navigation_Min_Fields = {
+  __typename?: 'app_navigation_min_fields';
+  /** id van de gelinkte content block pagina */
+  content_id?: Maybe<Scalars['uuid']>;
+  content_path?: Maybe<Scalars['String']>;
+  content_type?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
+  description?: Maybe<Scalars['String']>;
+  icon_name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  label?: Maybe<Scalars['String']>;
+  /** open in new tab of in zelfde tab */
+  link_target?: Maybe<Scalars['String']>;
+  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
+  placement?: Maybe<Scalars['String']>;
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Int']>;
+  tooltip?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "app.navigation" */
+export type App_Navigation_Mutation_Response = {
+  __typename?: 'app_navigation_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Navigation>;
+};
+
+/** on conflict condition type for table "app.navigation" */
+export type App_Navigation_On_Conflict = {
+  constraint: App_Navigation_Constraint;
+  update_columns?: Array<App_Navigation_Update_Column>;
+  where?: InputMaybe<App_Navigation_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.navigation". */
+export type App_Navigation_Order_By = {
+  content_id?: InputMaybe<Order_By>;
+  content_path?: InputMaybe<Order_By>;
+  content_type?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  icon_name?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  label?: InputMaybe<Order_By>;
+  link_target?: InputMaybe<Order_By>;
+  placement?: InputMaybe<Order_By>;
+  position?: InputMaybe<Order_By>;
+  tooltip?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user_group_ids?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_navigation */
+export type App_Navigation_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Navigation_Prepend_Input = {
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.navigation" */
+export enum App_Navigation_Select_Column {
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  ContentPath = 'content_path',
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  IconName = 'icon_name',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Label = 'label',
+  /** column name */
+  LinkTarget = 'link_target',
+  /** column name */
+  Placement = 'placement',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  Tooltip = 'tooltip',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserGroupIds = 'user_group_ids'
+}
+
+/** input type for updating data in table "app.navigation" */
+export type App_Navigation_Set_Input = {
+  /** id van de gelinkte content block pagina */
+  content_id?: InputMaybe<Scalars['uuid']>;
+  content_path?: InputMaybe<Scalars['String']>;
+  content_type?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
+  description?: InputMaybe<Scalars['String']>;
+  icon_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  label?: InputMaybe<Scalars['String']>;
+  /** open in new tab of in zelfde tab */
+  link_target?: InputMaybe<Scalars['String']>;
+  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
+  placement?: InputMaybe<Scalars['String']>;
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: InputMaybe<Scalars['Int']>;
+  tooltip?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+  user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate stddev on columns */
+export type App_Navigation_Stddev_Fields = {
+  __typename?: 'app_navigation_stddev_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type App_Navigation_Stddev_Pop_Fields = {
+  __typename?: 'app_navigation_stddev_pop_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type App_Navigation_Stddev_Samp_Fields = {
+  __typename?: 'app_navigation_stddev_samp_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type App_Navigation_Sum_Fields = {
+  __typename?: 'app_navigation_sum_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Int']>;
+};
+
+/** update columns of table "app.navigation" */
+export enum App_Navigation_Update_Column {
+  /** column name */
+  ContentId = 'content_id',
+  /** column name */
+  ContentPath = 'content_path',
+  /** column name */
+  ContentType = 'content_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  IconName = 'icon_name',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Label = 'label',
+  /** column name */
+  LinkTarget = 'link_target',
+  /** column name */
+  Placement = 'placement',
+  /** column name */
+  Position = 'position',
+  /** column name */
+  Tooltip = 'tooltip',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserGroupIds = 'user_group_ids'
+}
+
+/** aggregate var_pop on columns */
+export type App_Navigation_Var_Pop_Fields = {
+  __typename?: 'app_navigation_var_pop_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type App_Navigation_Var_Samp_Fields = {
+  __typename?: 'app_navigation_var_samp_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type App_Navigation_Variance_Fields = {
+  __typename?: 'app_navigation_variance_fields';
+  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
+  position?: Maybe<Scalars['Float']>;
+};
+
+/**
  * Meldingen voor eindgebruikers over bepaalde activiteit
  *
  *
@@ -302,18 +2106,18 @@ export type App_Notification = {
   created_at: Scalars['timestamptz'];
   description: Scalars['String'];
   id: Scalars['uuid'];
-  /** An object relationship */
-  profile: Users_Profile;
   /** Profile id van de bedoelde ontvanger */
   recipient: Scalars['uuid'];
+  /** An object relationship */
+  recipient_profile: Users_Profile;
   status: Scalars['String'];
   title: Scalars['String'];
   type: Scalars['String'];
   updated_at: Scalars['timestamp'];
-  /** An object relationship */
-  visit?: Maybe<Cp_Visit>;
   /** Indien de melding een bezoek(aanvraag) betreft */
   visit_id?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request>;
 };
 
 /** aggregated selection of "app.notification" */
@@ -360,14 +2164,14 @@ export type App_Notification_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  profile?: InputMaybe<Users_Profile_Bool_Exp>;
   recipient?: InputMaybe<Uuid_Comparison_Exp>;
+  recipient_profile?: InputMaybe<Users_Profile_Bool_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   type?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  visit?: InputMaybe<Cp_Visit_Bool_Exp>;
   visit_id?: InputMaybe<Uuid_Comparison_Exp>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "app.notification" */
@@ -381,16 +2185,16 @@ export type App_Notification_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
-  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
   /** Profile id van de bedoelde ontvanger */
   recipient?: InputMaybe<Scalars['uuid']>;
+  recipient_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
   status?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
-  visit?: InputMaybe<Cp_Visit_Obj_Rel_Insert_Input>;
   /** Indien de melding een bezoek(aanvraag) betreft */
   visit_id?: InputMaybe<Scalars['uuid']>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -476,14 +2280,14 @@ export type App_Notification_Order_By = {
   created_at?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  profile?: InputMaybe<Users_Profile_Order_By>;
   recipient?: InputMaybe<Order_By>;
+  recipient_profile?: InputMaybe<Users_Profile_Order_By>;
   status?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  visit?: InputMaybe<Cp_Visit_Order_By>;
   visit_id?: InputMaybe<Order_By>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Order_By>;
 };
 
 /** primary key columns input for table: app_notification */
@@ -550,3222 +2354,6 @@ export enum App_Notification_Update_Column {
   VisitId = 'visit_id'
 }
 
-/** columns and relationships of "cms.content" */
-export type Cms_Content = {
-  __typename?: 'cms_content';
-  /** An array relationship */
-  content_blocks: Array<Cms_Content_Blocks>;
-  /** An aggregate relationship */
-  content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
-  /** An array relationship */
-  content_content_labels: Array<Cms_Content_Content_Labels>;
-  /** An aggregate relationship */
-  content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
-  content_type: Scalars['String'];
-  content_width: Scalars['String'];
-  created_at: Scalars['timestamp'];
-  depublish_at?: Maybe<Scalars['timestamp']>;
-  description?: Maybe<Scalars['String']>;
-  header_path?: Maybe<Scalars['String']>;
-  id: Scalars['uuid'];
-  is_deleted: Scalars['Boolean'];
-  is_protected: Scalars['Boolean'];
-  is_public?: Maybe<Scalars['Boolean']>;
-  meta_description?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  owner_profile?: Maybe<Users_Profile>;
-  /** slug van de pagina */
-  path?: Maybe<Scalars['String']>;
-  publish_at?: Maybe<Scalars['timestamp']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  seo_description?: Maybe<Scalars['String']>;
-  seo_image_path?: Maybe<Scalars['String']>;
-  seo_keywords?: Maybe<Scalars['String']>;
-  seo_title?: Maybe<Scalars['String']>;
-  thumbnail_path?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  updated_at?: Maybe<Scalars['timestamp']>;
-  updated_by_profile_id?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  updater_profile?: Maybe<Users_Profile>;
-  user_group_ids?: Maybe<Scalars['jsonb']>;
-  user_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-
-/** columns and relationships of "cms.content" */
-export type Cms_ContentContent_BlocksArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-};
-
-
-/** columns and relationships of "cms.content" */
-export type Cms_ContentContent_Blocks_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-};
-
-
-/** columns and relationships of "cms.content" */
-export type Cms_ContentContent_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-/** columns and relationships of "cms.content" */
-export type Cms_ContentContent_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-/** columns and relationships of "cms.content" */
-export type Cms_ContentUser_Group_IdsArgs = {
-  path?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregated selection of "cms.content" */
-export type Cms_Content_Aggregate = {
-  __typename?: 'cms_content_aggregate';
-  aggregate?: Maybe<Cms_Content_Aggregate_Fields>;
-  nodes: Array<Cms_Content>;
-};
-
-/** aggregate fields of "cms.content" */
-export type Cms_Content_Aggregate_Fields = {
-  __typename?: 'cms_content_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Content_Max_Fields>;
-  min?: Maybe<Cms_Content_Min_Fields>;
-};
-
-
-/** aggregate fields of "cms.content" */
-export type Cms_Content_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Content_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Append_Input = {
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/**
- * information for the blocks out of which the content pages are build
- *
- *
- * columns and relationships of "cms.content_blocks"
- *
- */
-export type Cms_Content_Blocks = {
-  __typename?: 'cms_content_blocks';
-  /** An object relationship */
-  cms_content_block_type: Lookup_Cms_Content_Block_Type;
-  /** An object relationship */
-  content: Cms_Content;
-  content_block_type: Lookup_Cms_Content_Block_Type_Enum;
-  content_id: Scalars['uuid'];
-  created_at: Scalars['timestamp'];
-  id: Scalars['uuid'];
-  position: Scalars['Int'];
-  updated_at: Scalars['timestamp'];
-  variables?: Maybe<Scalars['jsonb']>;
-};
-
-
-/**
- * information for the blocks out of which the content pages are build
- *
- *
- * columns and relationships of "cms.content_blocks"
- *
- */
-export type Cms_Content_BlocksVariablesArgs = {
-  path?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregated selection of "cms.content_blocks" */
-export type Cms_Content_Blocks_Aggregate = {
-  __typename?: 'cms_content_blocks_aggregate';
-  aggregate?: Maybe<Cms_Content_Blocks_Aggregate_Fields>;
-  nodes: Array<Cms_Content_Blocks>;
-};
-
-/** aggregate fields of "cms.content_blocks" */
-export type Cms_Content_Blocks_Aggregate_Fields = {
-  __typename?: 'cms_content_blocks_aggregate_fields';
-  avg?: Maybe<Cms_Content_Blocks_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Content_Blocks_Max_Fields>;
-  min?: Maybe<Cms_Content_Blocks_Min_Fields>;
-  stddev?: Maybe<Cms_Content_Blocks_Stddev_Fields>;
-  stddev_pop?: Maybe<Cms_Content_Blocks_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Cms_Content_Blocks_Stddev_Samp_Fields>;
-  sum?: Maybe<Cms_Content_Blocks_Sum_Fields>;
-  var_pop?: Maybe<Cms_Content_Blocks_Var_Pop_Fields>;
-  var_samp?: Maybe<Cms_Content_Blocks_Var_Samp_Fields>;
-  variance?: Maybe<Cms_Content_Blocks_Variance_Fields>;
-};
-
-
-/** aggregate fields of "cms.content_blocks" */
-export type Cms_Content_Blocks_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Aggregate_Order_By = {
-  avg?: InputMaybe<Cms_Content_Blocks_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Cms_Content_Blocks_Max_Order_By>;
-  min?: InputMaybe<Cms_Content_Blocks_Min_Order_By>;
-  stddev?: InputMaybe<Cms_Content_Blocks_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Cms_Content_Blocks_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Cms_Content_Blocks_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Cms_Content_Blocks_Sum_Order_By>;
-  var_pop?: InputMaybe<Cms_Content_Blocks_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Cms_Content_Blocks_Var_Samp_Order_By>;
-  variance?: InputMaybe<Cms_Content_Blocks_Variance_Order_By>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Blocks_Append_Input = {
-  variables?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** input type for inserting array relation for remote table "cms.content_blocks" */
-export type Cms_Content_Blocks_Arr_Rel_Insert_Input = {
-  data: Array<Cms_Content_Blocks_Insert_Input>;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Cms_Content_Blocks_Avg_Fields = {
-  __typename?: 'cms_content_blocks_avg_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Avg_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "cms.content_blocks". All fields are combined with a logical 'AND'. */
-export type Cms_Content_Blocks_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Content_Blocks_Bool_Exp>>;
-  cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
-  content?: InputMaybe<Cms_Content_Bool_Exp>;
-  content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp>;
-  content_id?: InputMaybe<Uuid_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  position?: InputMaybe<Int_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  variables?: InputMaybe<Jsonb_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.content_blocks" */
-export enum Cms_Content_Blocks_Constraint {
-  /** unique or primary key constraint */
-  ContentBlocksPkey = 'content_blocks_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Cms_Content_Blocks_Delete_At_Path_Input = {
-  variables?: InputMaybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Cms_Content_Blocks_Delete_Elem_Input = {
-  variables?: InputMaybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Cms_Content_Blocks_Delete_Key_Input = {
-  variables?: InputMaybe<Scalars['String']>;
-};
-
-/** input type for incrementing numeric columns in table "cms.content_blocks" */
-export type Cms_Content_Blocks_Inc_Input = {
-  position?: InputMaybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "cms.content_blocks" */
-export type Cms_Content_Blocks_Insert_Input = {
-  cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input>;
-  content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
-  content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
-  content_id?: InputMaybe<Scalars['uuid']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  position?: InputMaybe<Scalars['Int']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  variables?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate max on columns */
-export type Cms_Content_Blocks_Max_Fields = {
-  __typename?: 'cms_content_blocks_max_fields';
-  content_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  position?: Maybe<Scalars['Int']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** order by max() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Max_Order_By = {
-  content_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  position?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Cms_Content_Blocks_Min_Fields = {
-  __typename?: 'cms_content_blocks_min_fields';
-  content_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  position?: Maybe<Scalars['Int']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** order by min() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Min_Order_By = {
-  content_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  position?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "cms.content_blocks" */
-export type Cms_Content_Blocks_Mutation_Response = {
-  __typename?: 'cms_content_blocks_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Content_Blocks>;
-};
-
-/** on conflict condition type for table "cms.content_blocks" */
-export type Cms_Content_Blocks_On_Conflict = {
-  constraint: Cms_Content_Blocks_Constraint;
-  update_columns?: Array<Cms_Content_Blocks_Update_Column>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.content_blocks". */
-export type Cms_Content_Blocks_Order_By = {
-  cms_content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Order_By>;
-  content?: InputMaybe<Cms_Content_Order_By>;
-  content_block_type?: InputMaybe<Order_By>;
-  content_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  position?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  variables?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_content_blocks */
-export type Cms_Content_Blocks_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Blocks_Prepend_Input = {
-  variables?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "cms.content_blocks" */
-export enum Cms_Content_Blocks_Select_Column {
-  /** column name */
-  ContentBlockType = 'content_block_type',
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Position = 'position',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Variables = 'variables'
-}
-
-/** input type for updating data in table "cms.content_blocks" */
-export type Cms_Content_Blocks_Set_Input = {
-  content_block_type?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
-  content_id?: InputMaybe<Scalars['uuid']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  position?: InputMaybe<Scalars['Int']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  variables?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate stddev on columns */
-export type Cms_Content_Blocks_Stddev_Fields = {
-  __typename?: 'cms_content_blocks_stddev_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Stddev_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Cms_Content_Blocks_Stddev_Pop_Fields = {
-  __typename?: 'cms_content_blocks_stddev_pop_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Stddev_Pop_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Cms_Content_Blocks_Stddev_Samp_Fields = {
-  __typename?: 'cms_content_blocks_stddev_samp_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Stddev_Samp_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** aggregate sum on columns */
-export type Cms_Content_Blocks_Sum_Fields = {
-  __typename?: 'cms_content_blocks_sum_fields';
-  position?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Sum_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** update columns of table "cms.content_blocks" */
-export enum Cms_Content_Blocks_Update_Column {
-  /** column name */
-  ContentBlockType = 'content_block_type',
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Position = 'position',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Variables = 'variables'
-}
-
-/** aggregate var_pop on columns */
-export type Cms_Content_Blocks_Var_Pop_Fields = {
-  __typename?: 'cms_content_blocks_var_pop_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Var_Pop_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Cms_Content_Blocks_Var_Samp_Fields = {
-  __typename?: 'cms_content_blocks_var_samp_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Var_Samp_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Cms_Content_Blocks_Variance_Fields = {
-  __typename?: 'cms_content_blocks_variance_fields';
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "cms.content_blocks" */
-export type Cms_Content_Blocks_Variance_Order_By = {
-  position?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "cms.content". All fields are combined with a logical 'AND'. */
-export type Cms_Content_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Content_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Content_Bool_Exp>>;
-  content_blocks?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-  content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-  content_type?: InputMaybe<String_Comparison_Exp>;
-  content_width?: InputMaybe<String_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  depublish_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  description?: InputMaybe<String_Comparison_Exp>;
-  header_path?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  is_deleted?: InputMaybe<Boolean_Comparison_Exp>;
-  is_protected?: InputMaybe<Boolean_Comparison_Exp>;
-  is_public?: InputMaybe<Boolean_Comparison_Exp>;
-  meta_description?: InputMaybe<String_Comparison_Exp>;
-  owner_profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  path?: InputMaybe<String_Comparison_Exp>;
-  publish_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  published_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  seo_description?: InputMaybe<String_Comparison_Exp>;
-  seo_image_path?: InputMaybe<String_Comparison_Exp>;
-  seo_keywords?: InputMaybe<String_Comparison_Exp>;
-  seo_title?: InputMaybe<String_Comparison_Exp>;
-  thumbnail_path?: InputMaybe<String_Comparison_Exp>;
-  title?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  updated_by_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-  updater_profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  user_group_ids?: InputMaybe<Jsonb_Comparison_Exp>;
-  user_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.content" */
-export enum Cms_Content_Constraint {
-  /** unique or primary key constraint */
-  ContentIdKey = 'content_id_key',
-  /** unique or primary key constraint */
-  ContentPathKey = 'content_path_key',
-  /** unique or primary key constraint */
-  ContentPkey = 'content_pkey'
-}
-
-/**
- * linking table between content pages and the content_labels
- *
- *
- * columns and relationships of "cms.content_content_labels"
- *
- */
-export type Cms_Content_Content_Labels = {
-  __typename?: 'cms_content_content_labels';
-  /** An object relationship */
-  content: Cms_Content;
-  content_id: Scalars['uuid'];
-  /** An object relationship */
-  content_label: Cms_Content_Labels;
-  created_at: Scalars['timestamp'];
-  id: Scalars['uuid'];
-  label_id: Scalars['uuid'];
-  updated_at: Scalars['timestamp'];
-};
-
-/** aggregated selection of "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Aggregate = {
-  __typename?: 'cms_content_content_labels_aggregate';
-  aggregate?: Maybe<Cms_Content_Content_Labels_Aggregate_Fields>;
-  nodes: Array<Cms_Content_Content_Labels>;
-};
-
-/** aggregate fields of "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Aggregate_Fields = {
-  __typename?: 'cms_content_content_labels_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Content_Content_Labels_Max_Fields>;
-  min?: Maybe<Cms_Content_Content_Labels_Min_Fields>;
-};
-
-
-/** aggregate fields of "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Cms_Content_Content_Labels_Max_Order_By>;
-  min?: InputMaybe<Cms_Content_Content_Labels_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Arr_Rel_Insert_Input = {
-  data: Array<Cms_Content_Content_Labels_Insert_Input>;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "cms.content_content_labels". All fields are combined with a logical 'AND'. */
-export type Cms_Content_Content_Labels_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp>>;
-  content?: InputMaybe<Cms_Content_Bool_Exp>;
-  content_id?: InputMaybe<Uuid_Comparison_Exp>;
-  content_label?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  label_id?: InputMaybe<Uuid_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.content_content_labels" */
-export enum Cms_Content_Content_Labels_Constraint {
-  /** unique or primary key constraint */
-  ContentContentLabelsPkey = 'content_content_labels_pkey'
-}
-
-/** input type for inserting data into table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Insert_Input = {
-  content?: InputMaybe<Cms_Content_Obj_Rel_Insert_Input>;
-  content_id?: InputMaybe<Scalars['uuid']>;
-  content_label?: InputMaybe<Cms_Content_Labels_Obj_Rel_Insert_Input>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label_id?: InputMaybe<Scalars['uuid']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** aggregate max on columns */
-export type Cms_Content_Content_Labels_Max_Fields = {
-  __typename?: 'cms_content_content_labels_max_fields';
-  content_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  label_id?: Maybe<Scalars['uuid']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** order by max() on columns of table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Max_Order_By = {
-  content_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  label_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Cms_Content_Content_Labels_Min_Fields = {
-  __typename?: 'cms_content_content_labels_min_fields';
-  content_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  label_id?: Maybe<Scalars['uuid']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** order by min() on columns of table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Min_Order_By = {
-  content_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  label_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Mutation_Response = {
-  __typename?: 'cms_content_content_labels_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Content_Content_Labels>;
-};
-
-/** on conflict condition type for table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_On_Conflict = {
-  constraint: Cms_Content_Content_Labels_Constraint;
-  update_columns?: Array<Cms_Content_Content_Labels_Update_Column>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.content_content_labels". */
-export type Cms_Content_Content_Labels_Order_By = {
-  content?: InputMaybe<Cms_Content_Order_By>;
-  content_id?: InputMaybe<Order_By>;
-  content_label?: InputMaybe<Cms_Content_Labels_Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  label_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_content_content_labels */
-export type Cms_Content_Content_Labels_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "cms.content_content_labels" */
-export enum Cms_Content_Content_Labels_Select_Column {
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LabelId = 'label_id',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "cms.content_content_labels" */
-export type Cms_Content_Content_Labels_Set_Input = {
-  content_id?: InputMaybe<Scalars['uuid']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label_id?: InputMaybe<Scalars['uuid']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** update columns of table "cms.content_content_labels" */
-export enum Cms_Content_Content_Labels_Update_Column {
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LabelId = 'label_id',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Cms_Content_Delete_At_Path_Input = {
-  user_group_ids?: InputMaybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Cms_Content_Delete_Elem_Input = {
-  user_group_ids?: InputMaybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Cms_Content_Delete_Key_Input = {
-  user_group_ids?: InputMaybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "cms.content" */
-export type Cms_Content_Insert_Input = {
-  content_blocks?: InputMaybe<Cms_Content_Blocks_Arr_Rel_Insert_Input>;
-  content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
-  content_type?: InputMaybe<Scalars['String']>;
-  content_width?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  depublish_at?: InputMaybe<Scalars['timestamp']>;
-  description?: InputMaybe<Scalars['String']>;
-  header_path?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  is_deleted?: InputMaybe<Scalars['Boolean']>;
-  is_protected?: InputMaybe<Scalars['Boolean']>;
-  is_public?: InputMaybe<Scalars['Boolean']>;
-  meta_description?: InputMaybe<Scalars['String']>;
-  owner_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  /** slug van de pagina */
-  path?: InputMaybe<Scalars['String']>;
-  publish_at?: InputMaybe<Scalars['timestamp']>;
-  published_at?: InputMaybe<Scalars['timestamp']>;
-  seo_description?: InputMaybe<Scalars['String']>;
-  seo_image_path?: InputMaybe<Scalars['String']>;
-  seo_keywords?: InputMaybe<Scalars['String']>;
-  seo_title?: InputMaybe<Scalars['String']>;
-  thumbnail_path?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  updated_by_profile_id?: InputMaybe<Scalars['uuid']>;
-  updater_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-  user_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/**
- * labels to marks certain content pages and group them together
- *
- *
- * columns and relationships of "cms.content_labels"
- *
- */
-export type Cms_Content_Labels = {
-  __typename?: 'cms_content_labels';
-  /** An object relationship */
-  cms_content_type: Lookup_Cms_Content_Type;
-  /** An array relationship */
-  content_content_labels: Array<Cms_Content_Content_Labels>;
-  /** An aggregate relationship */
-  content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
-  content_type: Lookup_Cms_Content_Type_Enum;
-  created_at: Scalars['timestamp'];
-  id: Scalars['uuid'];
-  label: Scalars['String'];
-  link_to?: Maybe<Scalars['jsonb']>;
-  updated_at: Scalars['timestamp'];
-};
-
-
-/**
- * labels to marks certain content pages and group them together
- *
- *
- * columns and relationships of "cms.content_labels"
- *
- */
-export type Cms_Content_LabelsContent_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-/**
- * labels to marks certain content pages and group them together
- *
- *
- * columns and relationships of "cms.content_labels"
- *
- */
-export type Cms_Content_LabelsContent_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-/**
- * labels to marks certain content pages and group them together
- *
- *
- * columns and relationships of "cms.content_labels"
- *
- */
-export type Cms_Content_LabelsLink_ToArgs = {
-  path?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregated selection of "cms.content_labels" */
-export type Cms_Content_Labels_Aggregate = {
-  __typename?: 'cms_content_labels_aggregate';
-  aggregate?: Maybe<Cms_Content_Labels_Aggregate_Fields>;
-  nodes: Array<Cms_Content_Labels>;
-};
-
-/** aggregate fields of "cms.content_labels" */
-export type Cms_Content_Labels_Aggregate_Fields = {
-  __typename?: 'cms_content_labels_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Content_Labels_Max_Fields>;
-  min?: Maybe<Cms_Content_Labels_Min_Fields>;
-};
-
-
-/** aggregate fields of "cms.content_labels" */
-export type Cms_Content_Labels_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Labels_Append_Input = {
-  link_to?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** Boolean expression to filter rows from the table "cms.content_labels". All fields are combined with a logical 'AND'. */
-export type Cms_Content_Labels_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Content_Labels_Bool_Exp>>;
-  cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
-  content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-  content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  label?: InputMaybe<String_Comparison_Exp>;
-  link_to?: InputMaybe<Jsonb_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.content_labels" */
-export enum Cms_Content_Labels_Constraint {
-  /** unique or primary key constraint */
-  ContentLabelsLabelContentTypeKey = 'content_labels_label_content_type_key',
-  /** unique or primary key constraint */
-  ContentLabelsPkey = 'content_labels_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Cms_Content_Labels_Delete_At_Path_Input = {
-  link_to?: InputMaybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Cms_Content_Labels_Delete_Elem_Input = {
-  link_to?: InputMaybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Cms_Content_Labels_Delete_Key_Input = {
-  link_to?: InputMaybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "cms.content_labels" */
-export type Cms_Content_Labels_Insert_Input = {
-  cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Obj_Rel_Insert_Input>;
-  content_content_labels?: InputMaybe<Cms_Content_Content_Labels_Arr_Rel_Insert_Input>;
-  content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label?: InputMaybe<Scalars['String']>;
-  link_to?: InputMaybe<Scalars['jsonb']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** aggregate max on columns */
-export type Cms_Content_Labels_Max_Fields = {
-  __typename?: 'cms_content_labels_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  label?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** aggregate min on columns */
-export type Cms_Content_Labels_Min_Fields = {
-  __typename?: 'cms_content_labels_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  label?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** response of any mutation on the table "cms.content_labels" */
-export type Cms_Content_Labels_Mutation_Response = {
-  __typename?: 'cms_content_labels_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Content_Labels>;
-};
-
-/** input type for inserting object relation for remote table "cms.content_labels" */
-export type Cms_Content_Labels_Obj_Rel_Insert_Input = {
-  data: Cms_Content_Labels_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
-};
-
-/** on conflict condition type for table "cms.content_labels" */
-export type Cms_Content_Labels_On_Conflict = {
-  constraint: Cms_Content_Labels_Constraint;
-  update_columns?: Array<Cms_Content_Labels_Update_Column>;
-  where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.content_labels". */
-export type Cms_Content_Labels_Order_By = {
-  cms_content_type?: InputMaybe<Lookup_Cms_Content_Type_Order_By>;
-  content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
-  content_type?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  label?: InputMaybe<Order_By>;
-  link_to?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_content_labels */
-export type Cms_Content_Labels_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Labels_Prepend_Input = {
-  link_to?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "cms.content_labels" */
-export enum Cms_Content_Labels_Select_Column {
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Label = 'label',
-  /** column name */
-  LinkTo = 'link_to',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "cms.content_labels" */
-export type Cms_Content_Labels_Set_Input = {
-  content_type?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label?: InputMaybe<Scalars['String']>;
-  link_to?: InputMaybe<Scalars['jsonb']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** update columns of table "cms.content_labels" */
-export enum Cms_Content_Labels_Update_Column {
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Label = 'label',
-  /** column name */
-  LinkTo = 'link_to',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** aggregate max on columns */
-export type Cms_Content_Max_Fields = {
-  __typename?: 'cms_content_max_fields';
-  content_type?: Maybe<Scalars['String']>;
-  content_width?: Maybe<Scalars['String']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  depublish_at?: Maybe<Scalars['timestamp']>;
-  description?: Maybe<Scalars['String']>;
-  header_path?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  meta_description?: Maybe<Scalars['String']>;
-  /** slug van de pagina */
-  path?: Maybe<Scalars['String']>;
-  publish_at?: Maybe<Scalars['timestamp']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  seo_description?: Maybe<Scalars['String']>;
-  seo_image_path?: Maybe<Scalars['String']>;
-  seo_keywords?: Maybe<Scalars['String']>;
-  seo_title?: Maybe<Scalars['String']>;
-  thumbnail_path?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  updated_by_profile_id?: Maybe<Scalars['uuid']>;
-  user_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** aggregate min on columns */
-export type Cms_Content_Min_Fields = {
-  __typename?: 'cms_content_min_fields';
-  content_type?: Maybe<Scalars['String']>;
-  content_width?: Maybe<Scalars['String']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  depublish_at?: Maybe<Scalars['timestamp']>;
-  description?: Maybe<Scalars['String']>;
-  header_path?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  meta_description?: Maybe<Scalars['String']>;
-  /** slug van de pagina */
-  path?: Maybe<Scalars['String']>;
-  publish_at?: Maybe<Scalars['timestamp']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  seo_description?: Maybe<Scalars['String']>;
-  seo_image_path?: Maybe<Scalars['String']>;
-  seo_keywords?: Maybe<Scalars['String']>;
-  seo_title?: Maybe<Scalars['String']>;
-  thumbnail_path?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  updated_by_profile_id?: Maybe<Scalars['uuid']>;
-  user_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** response of any mutation on the table "cms.content" */
-export type Cms_Content_Mutation_Response = {
-  __typename?: 'cms_content_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Content>;
-};
-
-/** input type for inserting object relation for remote table "cms.content" */
-export type Cms_Content_Obj_Rel_Insert_Input = {
-  data: Cms_Content_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
-};
-
-/** on conflict condition type for table "cms.content" */
-export type Cms_Content_On_Conflict = {
-  constraint: Cms_Content_Constraint;
-  update_columns?: Array<Cms_Content_Update_Column>;
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.content". */
-export type Cms_Content_Order_By = {
-  content_blocks_aggregate?: InputMaybe<Cms_Content_Blocks_Aggregate_Order_By>;
-  content_content_labels_aggregate?: InputMaybe<Cms_Content_Content_Labels_Aggregate_Order_By>;
-  content_type?: InputMaybe<Order_By>;
-  content_width?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  depublish_at?: InputMaybe<Order_By>;
-  description?: InputMaybe<Order_By>;
-  header_path?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  is_deleted?: InputMaybe<Order_By>;
-  is_protected?: InputMaybe<Order_By>;
-  is_public?: InputMaybe<Order_By>;
-  meta_description?: InputMaybe<Order_By>;
-  owner_profile?: InputMaybe<Users_Profile_Order_By>;
-  path?: InputMaybe<Order_By>;
-  publish_at?: InputMaybe<Order_By>;
-  published_at?: InputMaybe<Order_By>;
-  seo_description?: InputMaybe<Order_By>;
-  seo_image_path?: InputMaybe<Order_By>;
-  seo_keywords?: InputMaybe<Order_By>;
-  seo_title?: InputMaybe<Order_By>;
-  thumbnail_path?: InputMaybe<Order_By>;
-  title?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  updated_by_profile_id?: InputMaybe<Order_By>;
-  updater_profile?: InputMaybe<Users_Profile_Order_By>;
-  user_group_ids?: InputMaybe<Order_By>;
-  user_profile_id?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_content */
-export type Cms_Content_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Content_Prepend_Input = {
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "cms.content" */
-export enum Cms_Content_Select_Column {
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  ContentWidth = 'content_width',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  DepublishAt = 'depublish_at',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  HeaderPath = 'header_path',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsDeleted = 'is_deleted',
-  /** column name */
-  IsProtected = 'is_protected',
-  /** column name */
-  IsPublic = 'is_public',
-  /** column name */
-  MetaDescription = 'meta_description',
-  /** column name */
-  Path = 'path',
-  /** column name */
-  PublishAt = 'publish_at',
-  /** column name */
-  PublishedAt = 'published_at',
-  /** column name */
-  SeoDescription = 'seo_description',
-  /** column name */
-  SeoImagePath = 'seo_image_path',
-  /** column name */
-  SeoKeywords = 'seo_keywords',
-  /** column name */
-  SeoTitle = 'seo_title',
-  /** column name */
-  ThumbnailPath = 'thumbnail_path',
-  /** column name */
-  Title = 'title',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UpdatedByProfileId = 'updated_by_profile_id',
-  /** column name */
-  UserGroupIds = 'user_group_ids',
-  /** column name */
-  UserProfileId = 'user_profile_id'
-}
-
-/** input type for updating data in table "cms.content" */
-export type Cms_Content_Set_Input = {
-  content_type?: InputMaybe<Scalars['String']>;
-  content_width?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  depublish_at?: InputMaybe<Scalars['timestamp']>;
-  description?: InputMaybe<Scalars['String']>;
-  header_path?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  is_deleted?: InputMaybe<Scalars['Boolean']>;
-  is_protected?: InputMaybe<Scalars['Boolean']>;
-  is_public?: InputMaybe<Scalars['Boolean']>;
-  meta_description?: InputMaybe<Scalars['String']>;
-  /** slug van de pagina */
-  path?: InputMaybe<Scalars['String']>;
-  publish_at?: InputMaybe<Scalars['timestamp']>;
-  published_at?: InputMaybe<Scalars['timestamp']>;
-  seo_description?: InputMaybe<Scalars['String']>;
-  seo_image_path?: InputMaybe<Scalars['String']>;
-  seo_keywords?: InputMaybe<Scalars['String']>;
-  seo_title?: InputMaybe<Scalars['String']>;
-  thumbnail_path?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  updated_by_profile_id?: InputMaybe<Scalars['uuid']>;
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-  user_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** update columns of table "cms.content" */
-export enum Cms_Content_Update_Column {
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  ContentWidth = 'content_width',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  DepublishAt = 'depublish_at',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  HeaderPath = 'header_path',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsDeleted = 'is_deleted',
-  /** column name */
-  IsProtected = 'is_protected',
-  /** column name */
-  IsPublic = 'is_public',
-  /** column name */
-  MetaDescription = 'meta_description',
-  /** column name */
-  Path = 'path',
-  /** column name */
-  PublishAt = 'publish_at',
-  /** column name */
-  PublishedAt = 'published_at',
-  /** column name */
-  SeoDescription = 'seo_description',
-  /** column name */
-  SeoImagePath = 'seo_image_path',
-  /** column name */
-  SeoKeywords = 'seo_keywords',
-  /** column name */
-  SeoTitle = 'seo_title',
-  /** column name */
-  ThumbnailPath = 'thumbnail_path',
-  /** column name */
-  Title = 'title',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UpdatedByProfileId = 'updated_by_profile_id',
-  /** column name */
-  UserGroupIds = 'user_group_ids',
-  /** column name */
-  UserProfileId = 'user_profile_id'
-}
-
-/** columns and relationships of "cms.navigation_element" */
-export type Cms_Navigation_Element = {
-  __typename?: 'cms_navigation_element';
-  /** id van de gelinkte content block pagina */
-  content_id?: Maybe<Scalars['uuid']>;
-  content_path: Scalars['String'];
-  content_type: Scalars['String'];
-  created_at: Scalars['timestamptz'];
-  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
-  description?: Maybe<Scalars['String']>;
-  icon_name: Scalars['String'];
-  id: Scalars['uuid'];
-  label: Scalars['String'];
-  /** open in new tab of in zelfde tab */
-  link_target?: Maybe<Scalars['String']>;
-  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
-  placement: Scalars['String'];
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position: Scalars['Int'];
-  tooltip?: Maybe<Scalars['String']>;
-  updated_at: Scalars['timestamptz'];
-  user_group_ids?: Maybe<Scalars['jsonb']>;
-};
-
-
-/** columns and relationships of "cms.navigation_element" */
-export type Cms_Navigation_ElementUser_Group_IdsArgs = {
-  path?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregated selection of "cms.navigation_element" */
-export type Cms_Navigation_Element_Aggregate = {
-  __typename?: 'cms_navigation_element_aggregate';
-  aggregate?: Maybe<Cms_Navigation_Element_Aggregate_Fields>;
-  nodes: Array<Cms_Navigation_Element>;
-};
-
-/** aggregate fields of "cms.navigation_element" */
-export type Cms_Navigation_Element_Aggregate_Fields = {
-  __typename?: 'cms_navigation_element_aggregate_fields';
-  avg?: Maybe<Cms_Navigation_Element_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Navigation_Element_Max_Fields>;
-  min?: Maybe<Cms_Navigation_Element_Min_Fields>;
-  stddev?: Maybe<Cms_Navigation_Element_Stddev_Fields>;
-  stddev_pop?: Maybe<Cms_Navigation_Element_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Cms_Navigation_Element_Stddev_Samp_Fields>;
-  sum?: Maybe<Cms_Navigation_Element_Sum_Fields>;
-  var_pop?: Maybe<Cms_Navigation_Element_Var_Pop_Fields>;
-  var_samp?: Maybe<Cms_Navigation_Element_Var_Samp_Fields>;
-  variance?: Maybe<Cms_Navigation_Element_Variance_Fields>;
-};
-
-
-/** aggregate fields of "cms.navigation_element" */
-export type Cms_Navigation_Element_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Navigation_Element_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Navigation_Element_Append_Input = {
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate avg on columns */
-export type Cms_Navigation_Element_Avg_Fields = {
-  __typename?: 'cms_navigation_element_avg_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** Boolean expression to filter rows from the table "cms.navigation_element". All fields are combined with a logical 'AND'. */
-export type Cms_Navigation_Element_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Navigation_Element_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Navigation_Element_Bool_Exp>>;
-  content_id?: InputMaybe<Uuid_Comparison_Exp>;
-  content_path?: InputMaybe<String_Comparison_Exp>;
-  content_type?: InputMaybe<String_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  description?: InputMaybe<String_Comparison_Exp>;
-  icon_name?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  label?: InputMaybe<String_Comparison_Exp>;
-  link_target?: InputMaybe<String_Comparison_Exp>;
-  placement?: InputMaybe<String_Comparison_Exp>;
-  position?: InputMaybe<Int_Comparison_Exp>;
-  tooltip?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  user_group_ids?: InputMaybe<Jsonb_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.navigation_element" */
-export enum Cms_Navigation_Element_Constraint {
-  /** unique or primary key constraint */
-  NavigationElementPkey = 'navigation_element_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Cms_Navigation_Element_Delete_At_Path_Input = {
-  user_group_ids?: InputMaybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Cms_Navigation_Element_Delete_Elem_Input = {
-  user_group_ids?: InputMaybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Cms_Navigation_Element_Delete_Key_Input = {
-  user_group_ids?: InputMaybe<Scalars['String']>;
-};
-
-/** input type for incrementing numeric columns in table "cms.navigation_element" */
-export type Cms_Navigation_Element_Inc_Input = {
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: InputMaybe<Scalars['Int']>;
-};
-
-/** input type for inserting data into table "cms.navigation_element" */
-export type Cms_Navigation_Element_Insert_Input = {
-  /** id van de gelinkte content block pagina */
-  content_id?: InputMaybe<Scalars['uuid']>;
-  content_path?: InputMaybe<Scalars['String']>;
-  content_type?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['timestamptz']>;
-  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
-  description?: InputMaybe<Scalars['String']>;
-  icon_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label?: InputMaybe<Scalars['String']>;
-  /** open in new tab of in zelfde tab */
-  link_target?: InputMaybe<Scalars['String']>;
-  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
-  placement?: InputMaybe<Scalars['String']>;
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: InputMaybe<Scalars['Int']>;
-  tooltip?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']>;
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate max on columns */
-export type Cms_Navigation_Element_Max_Fields = {
-  __typename?: 'cms_navigation_element_max_fields';
-  /** id van de gelinkte content block pagina */
-  content_id?: Maybe<Scalars['uuid']>;
-  content_path?: Maybe<Scalars['String']>;
-  content_type?: Maybe<Scalars['String']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
-  description?: Maybe<Scalars['String']>;
-  icon_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  label?: Maybe<Scalars['String']>;
-  /** open in new tab of in zelfde tab */
-  link_target?: Maybe<Scalars['String']>;
-  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
-  placement?: Maybe<Scalars['String']>;
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Int']>;
-  tooltip?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregate min on columns */
-export type Cms_Navigation_Element_Min_Fields = {
-  __typename?: 'cms_navigation_element_min_fields';
-  /** id van de gelinkte content block pagina */
-  content_id?: Maybe<Scalars['uuid']>;
-  content_path?: Maybe<Scalars['String']>;
-  content_type?: Maybe<Scalars['String']>;
-  created_at?: Maybe<Scalars['timestamptz']>;
-  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
-  description?: Maybe<Scalars['String']>;
-  icon_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['uuid']>;
-  label?: Maybe<Scalars['String']>;
-  /** open in new tab of in zelfde tab */
-  link_target?: Maybe<Scalars['String']>;
-  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
-  placement?: Maybe<Scalars['String']>;
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Int']>;
-  tooltip?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** response of any mutation on the table "cms.navigation_element" */
-export type Cms_Navigation_Element_Mutation_Response = {
-  __typename?: 'cms_navigation_element_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Navigation_Element>;
-};
-
-/** on conflict condition type for table "cms.navigation_element" */
-export type Cms_Navigation_Element_On_Conflict = {
-  constraint: Cms_Navigation_Element_Constraint;
-  update_columns?: Array<Cms_Navigation_Element_Update_Column>;
-  where?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.navigation_element". */
-export type Cms_Navigation_Element_Order_By = {
-  content_id?: InputMaybe<Order_By>;
-  content_path?: InputMaybe<Order_By>;
-  content_type?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  description?: InputMaybe<Order_By>;
-  icon_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  label?: InputMaybe<Order_By>;
-  link_target?: InputMaybe<Order_By>;
-  placement?: InputMaybe<Order_By>;
-  position?: InputMaybe<Order_By>;
-  tooltip?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  user_group_ids?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_navigation_element */
-export type Cms_Navigation_Element_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Navigation_Element_Prepend_Input = {
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "cms.navigation_element" */
-export enum Cms_Navigation_Element_Select_Column {
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  ContentPath = 'content_path',
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  IconName = 'icon_name',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Label = 'label',
-  /** column name */
-  LinkTarget = 'link_target',
-  /** column name */
-  Placement = 'placement',
-  /** column name */
-  Position = 'position',
-  /** column name */
-  Tooltip = 'tooltip',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UserGroupIds = 'user_group_ids'
-}
-
-/** input type for updating data in table "cms.navigation_element" */
-export type Cms_Navigation_Element_Set_Input = {
-  /** id van de gelinkte content block pagina */
-  content_id?: InputMaybe<Scalars['uuid']>;
-  content_path?: InputMaybe<Scalars['String']>;
-  content_type?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['timestamptz']>;
-  /** beschrijving van het navigatie item. enkel zichtbaar voor beheerders */
-  description?: InputMaybe<Scalars['String']>;
-  icon_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  label?: InputMaybe<Scalars['String']>;
-  /** open in new tab of in zelfde tab */
-  link_target?: InputMaybe<Scalars['String']>;
-  /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
-  placement?: InputMaybe<Scalars['String']>;
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: InputMaybe<Scalars['Int']>;
-  tooltip?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']>;
-  user_group_ids?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate stddev on columns */
-export type Cms_Navigation_Element_Stddev_Fields = {
-  __typename?: 'cms_navigation_element_stddev_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Cms_Navigation_Element_Stddev_Pop_Fields = {
-  __typename?: 'cms_navigation_element_stddev_pop_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Cms_Navigation_Element_Stddev_Samp_Fields = {
-  __typename?: 'cms_navigation_element_stddev_samp_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate sum on columns */
-export type Cms_Navigation_Element_Sum_Fields = {
-  __typename?: 'cms_navigation_element_sum_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Int']>;
-};
-
-/** update columns of table "cms.navigation_element" */
-export enum Cms_Navigation_Element_Update_Column {
-  /** column name */
-  ContentId = 'content_id',
-  /** column name */
-  ContentPath = 'content_path',
-  /** column name */
-  ContentType = 'content_type',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Description = 'description',
-  /** column name */
-  IconName = 'icon_name',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Label = 'label',
-  /** column name */
-  LinkTarget = 'link_target',
-  /** column name */
-  Placement = 'placement',
-  /** column name */
-  Position = 'position',
-  /** column name */
-  Tooltip = 'tooltip',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UserGroupIds = 'user_group_ids'
-}
-
-/** aggregate var_pop on columns */
-export type Cms_Navigation_Element_Var_Pop_Fields = {
-  __typename?: 'cms_navigation_element_var_pop_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type Cms_Navigation_Element_Var_Samp_Fields = {
-  __typename?: 'cms_navigation_element_var_samp_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type Cms_Navigation_Element_Variance_Fields = {
-  __typename?: 'cms_navigation_element_variance_fields';
-  /** volgorde van de links in de navigatie balk 0, 1, 2, 3 */
-  position?: Maybe<Scalars['Float']>;
-};
-
-/**
- * Sitebrede variabelen zoals vertalingen
- *
- *
- * columns and relationships of "cms.site_variables"
- *
- */
-export type Cms_Site_Variables = {
-  __typename?: 'cms_site_variables';
-  created_at: Scalars['timestamp'];
-  name: Scalars['String'];
-  updated_at: Scalars['timestamp'];
-  value: Scalars['jsonb'];
-};
-
-
-/**
- * Sitebrede variabelen zoals vertalingen
- *
- *
- * columns and relationships of "cms.site_variables"
- *
- */
-export type Cms_Site_VariablesValueArgs = {
-  path?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregated selection of "cms.site_variables" */
-export type Cms_Site_Variables_Aggregate = {
-  __typename?: 'cms_site_variables_aggregate';
-  aggregate?: Maybe<Cms_Site_Variables_Aggregate_Fields>;
-  nodes: Array<Cms_Site_Variables>;
-};
-
-/** aggregate fields of "cms.site_variables" */
-export type Cms_Site_Variables_Aggregate_Fields = {
-  __typename?: 'cms_site_variables_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cms_Site_Variables_Max_Fields>;
-  min?: Maybe<Cms_Site_Variables_Min_Fields>;
-};
-
-
-/** aggregate fields of "cms.site_variables" */
-export type Cms_Site_Variables_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cms_Site_Variables_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** append existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Site_Variables_Append_Input = {
-  value?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** Boolean expression to filter rows from the table "cms.site_variables". All fields are combined with a logical 'AND'. */
-export type Cms_Site_Variables_Bool_Exp = {
-  _and?: InputMaybe<Array<Cms_Site_Variables_Bool_Exp>>;
-  _not?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-  _or?: InputMaybe<Array<Cms_Site_Variables_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  name?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  value?: InputMaybe<Jsonb_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cms.site_variables" */
-export enum Cms_Site_Variables_Constraint {
-  /** unique or primary key constraint */
-  SiteVariablesPkey = 'site_variables_pkey'
-}
-
-/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
-export type Cms_Site_Variables_Delete_At_Path_Input = {
-  value?: InputMaybe<Array<Scalars['String']>>;
-};
-
-/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
-export type Cms_Site_Variables_Delete_Elem_Input = {
-  value?: InputMaybe<Scalars['Int']>;
-};
-
-/** delete key/value pair or string element. key/value pairs are matched based on their key value */
-export type Cms_Site_Variables_Delete_Key_Input = {
-  value?: InputMaybe<Scalars['String']>;
-};
-
-/** input type for inserting data into table "cms.site_variables" */
-export type Cms_Site_Variables_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  name?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  value?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** aggregate max on columns */
-export type Cms_Site_Variables_Max_Fields = {
-  __typename?: 'cms_site_variables_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** aggregate min on columns */
-export type Cms_Site_Variables_Min_Fields = {
-  __typename?: 'cms_site_variables_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** response of any mutation on the table "cms.site_variables" */
-export type Cms_Site_Variables_Mutation_Response = {
-  __typename?: 'cms_site_variables_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cms_Site_Variables>;
-};
-
-/** on conflict condition type for table "cms.site_variables" */
-export type Cms_Site_Variables_On_Conflict = {
-  constraint: Cms_Site_Variables_Constraint;
-  update_columns?: Array<Cms_Site_Variables_Update_Column>;
-  where?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cms.site_variables". */
-export type Cms_Site_Variables_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  value?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cms_site_variables */
-export type Cms_Site_Variables_Pk_Columns_Input = {
-  name: Scalars['String'];
-};
-
-/** prepend existing jsonb value of filtered columns with new jsonb value */
-export type Cms_Site_Variables_Prepend_Input = {
-  value?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** select columns of table "cms.site_variables" */
-export enum Cms_Site_Variables_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Value = 'value'
-}
-
-/** input type for updating data in table "cms.site_variables" */
-export type Cms_Site_Variables_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  name?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  value?: InputMaybe<Scalars['jsonb']>;
-};
-
-/** update columns of table "cms.site_variables" */
-export enum Cms_Site_Variables_Update_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Name = 'name',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Value = 'value'
-}
-
-/**
- * Informatie over de zoekindex per CP
- *
- *
- * columns and relationships of "cp.index"
- *
- */
-export type Cp_Index = {
-  __typename?: 'cp_index';
-  created_at: Scalars['timestamp'];
-  /** An object relationship */
-  schema_maintainer: Cp_Maintainer;
-  schema_maintainer_id: Scalars['String'];
-  schema_name?: Maybe<Scalars['String']>;
-  updated_at: Scalars['timestamp'];
-};
-
-/** aggregated selection of "cp.index" */
-export type Cp_Index_Aggregate = {
-  __typename?: 'cp_index_aggregate';
-  aggregate?: Maybe<Cp_Index_Aggregate_Fields>;
-  nodes: Array<Cp_Index>;
-};
-
-/** aggregate fields of "cp.index" */
-export type Cp_Index_Aggregate_Fields = {
-  __typename?: 'cp_index_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Index_Max_Fields>;
-  min?: Maybe<Cp_Index_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.index" */
-export type Cp_Index_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Index_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "cp.index". All fields are combined with a logical 'AND'. */
-export type Cp_Index_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Index_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Index_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Index_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-  schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
-  schema_name?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.index" */
-export enum Cp_Index_Constraint {
-  /** unique or primary key constraint */
-  IndexPkey = 'index_pkey'
-}
-
-/** input type for inserting data into table "cp.index" */
-export type Cp_Index_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Obj_Rel_Insert_Input>;
-  schema_maintainer_id?: InputMaybe<Scalars['String']>;
-  schema_name?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** aggregate max on columns */
-export type Cp_Index_Max_Fields = {
-  __typename?: 'cp_index_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  schema_maintainer_id?: Maybe<Scalars['String']>;
-  schema_name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** aggregate min on columns */
-export type Cp_Index_Min_Fields = {
-  __typename?: 'cp_index_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  schema_maintainer_id?: Maybe<Scalars['String']>;
-  schema_name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** response of any mutation on the table "cp.index" */
-export type Cp_Index_Mutation_Response = {
-  __typename?: 'cp_index_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Index>;
-};
-
-/** input type for inserting object relation for remote table "cp.index" */
-export type Cp_Index_Obj_Rel_Insert_Input = {
-  data: Cp_Index_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
-};
-
-/** on conflict condition type for table "cp.index" */
-export type Cp_Index_On_Conflict = {
-  constraint: Cp_Index_Constraint;
-  update_columns?: Array<Cp_Index_Update_Column>;
-  where?: InputMaybe<Cp_Index_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.index". */
-export type Cp_Index_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Order_By>;
-  schema_maintainer_id?: InputMaybe<Order_By>;
-  schema_name?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cp_index */
-export type Cp_Index_Pk_Columns_Input = {
-  schema_maintainer_id: Scalars['String'];
-};
-
-/** select columns of table "cp.index" */
-export enum Cp_Index_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  SchemaMaintainerId = 'schema_maintainer_id',
-  /** column name */
-  SchemaName = 'schema_name',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "cp.index" */
-export type Cp_Index_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  schema_maintainer_id?: InputMaybe<Scalars['String']>;
-  schema_name?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** update columns of table "cp.index" */
-export enum Cp_Index_Update_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  SchemaMaintainerId = 'schema_maintainer_id',
-  /** column name */
-  SchemaName = 'schema_name',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_Maintainer = {
-  __typename?: 'cp_maintainer';
-  created_at: Scalars['timestamp'];
-  has_index: Scalars['Boolean'];
-  has_space: Scalars['Boolean'];
-  /** An object relationship */
-  index?: Maybe<Cp_Index>;
-  information?: Maybe<Array<Maybe<ContentPartner>>>;
-  /** An array relationship */
-  maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
-  /** An aggregate relationship */
-  maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
-  schema_identifier: Scalars['String'];
-  schema_name?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  space?: Maybe<Cp_Space>;
-  updated_at: Scalars['timestamp'];
-};
-
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerInformationArgs = {
-  iri?: InputMaybe<Scalars['String']>;
-};
-
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerMaintainer_Users_ProfilesArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-/**
- * Informatie over de organisatie die content beheert en aanbiedt, aka CP
- *
- *
- * columns and relationships of "cp.maintainer"
- *
- */
-export type Cp_MaintainerMaintainer_Users_Profiles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-/** aggregated selection of "cp.maintainer" */
-export type Cp_Maintainer_Aggregate = {
-  __typename?: 'cp_maintainer_aggregate';
-  aggregate?: Maybe<Cp_Maintainer_Aggregate_Fields>;
-  nodes: Array<Cp_Maintainer>;
-};
-
-/** aggregate fields of "cp.maintainer" */
-export type Cp_Maintainer_Aggregate_Fields = {
-  __typename?: 'cp_maintainer_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Maintainer_Max_Fields>;
-  min?: Maybe<Cp_Maintainer_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.maintainer" */
-export type Cp_Maintainer_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Maintainer_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "cp.maintainer". All fields are combined with a logical 'AND'. */
-export type Cp_Maintainer_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Maintainer_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Maintainer_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  has_index?: InputMaybe<Boolean_Comparison_Exp>;
-  has_space?: InputMaybe<Boolean_Comparison_Exp>;
-  index?: InputMaybe<Cp_Index_Bool_Exp>;
-  maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-  schema_identifier?: InputMaybe<String_Comparison_Exp>;
-  schema_name?: InputMaybe<String_Comparison_Exp>;
-  space?: InputMaybe<Cp_Space_Bool_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.maintainer" */
-export enum Cp_Maintainer_Constraint {
-  /** unique or primary key constraint */
-  MaintainerPkey = 'maintainer_pkey'
-}
-
-/** input type for inserting data into table "cp.maintainer" */
-export type Cp_Maintainer_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  has_index?: InputMaybe<Scalars['Boolean']>;
-  has_space?: InputMaybe<Scalars['Boolean']>;
-  index?: InputMaybe<Cp_Index_Obj_Rel_Insert_Input>;
-  maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
-  schema_identifier?: InputMaybe<Scalars['String']>;
-  schema_name?: InputMaybe<Scalars['String']>;
-  space?: InputMaybe<Cp_Space_Obj_Rel_Insert_Input>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** aggregate max on columns */
-export type Cp_Maintainer_Max_Fields = {
-  __typename?: 'cp_maintainer_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  schema_identifier?: Maybe<Scalars['String']>;
-  schema_name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** aggregate min on columns */
-export type Cp_Maintainer_Min_Fields = {
-  __typename?: 'cp_maintainer_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  schema_identifier?: Maybe<Scalars['String']>;
-  schema_name?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** response of any mutation on the table "cp.maintainer" */
-export type Cp_Maintainer_Mutation_Response = {
-  __typename?: 'cp_maintainer_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Maintainer>;
-};
-
-/** input type for inserting object relation for remote table "cp.maintainer" */
-export type Cp_Maintainer_Obj_Rel_Insert_Input = {
-  data: Cp_Maintainer_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
-};
-
-/** on conflict condition type for table "cp.maintainer" */
-export type Cp_Maintainer_On_Conflict = {
-  constraint: Cp_Maintainer_Constraint;
-  update_columns?: Array<Cp_Maintainer_Update_Column>;
-  where?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.maintainer". */
-export type Cp_Maintainer_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  has_index?: InputMaybe<Order_By>;
-  has_space?: InputMaybe<Order_By>;
-  index?: InputMaybe<Cp_Index_Order_By>;
-  maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
-  schema_identifier?: InputMaybe<Order_By>;
-  schema_name?: InputMaybe<Order_By>;
-  space?: InputMaybe<Cp_Space_Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cp_maintainer */
-export type Cp_Maintainer_Pk_Columns_Input = {
-  schema_identifier: Scalars['String'];
-};
-
-/** select columns of table "cp.maintainer" */
-export enum Cp_Maintainer_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  HasIndex = 'has_index',
-  /** column name */
-  HasSpace = 'has_space',
-  /** column name */
-  SchemaIdentifier = 'schema_identifier',
-  /** column name */
-  SchemaName = 'schema_name',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "cp.maintainer" */
-export type Cp_Maintainer_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  has_index?: InputMaybe<Scalars['Boolean']>;
-  has_space?: InputMaybe<Scalars['Boolean']>;
-  schema_identifier?: InputMaybe<Scalars['String']>;
-  schema_name?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** update columns of table "cp.maintainer" */
-export enum Cp_Maintainer_Update_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  HasIndex = 'has_index',
-  /** column name */
-  HasSpace = 'has_space',
-  /** column name */
-  SchemaIdentifier = 'schema_identifier',
-  /** column name */
-  SchemaName = 'schema_name',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/**
- * The user profiles that will manage this reading room
- *
- *
- * columns and relationships of "cp.maintainer_users_profile"
- *
- */
-export type Cp_Maintainer_Users_Profile = {
-  __typename?: 'cp_maintainer_users_profile';
-  id: Scalars['uuid'];
-  /** An object relationship */
-  maintainer: Cp_Maintainer;
-  maintainer_identifier: Scalars['String'];
-  /** An object relationship */
-  profile: Users_Profile;
-  users_profile_id: Scalars['uuid'];
-};
-
-/** aggregated selection of "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Aggregate = {
-  __typename?: 'cp_maintainer_users_profile_aggregate';
-  aggregate?: Maybe<Cp_Maintainer_Users_Profile_Aggregate_Fields>;
-  nodes: Array<Cp_Maintainer_Users_Profile>;
-};
-
-/** aggregate fields of "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Aggregate_Fields = {
-  __typename?: 'cp_maintainer_users_profile_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Maintainer_Users_Profile_Max_Fields>;
-  min?: Maybe<Cp_Maintainer_Users_Profile_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Cp_Maintainer_Users_Profile_Max_Order_By>;
-  min?: InputMaybe<Cp_Maintainer_Users_Profile_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
-  data: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "cp.maintainer_users_profile". All fields are combined with a logical 'AND'. */
-export type Cp_Maintainer_Users_Profile_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Bool_Exp>>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  maintainer?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-  maintainer_identifier?: InputMaybe<String_Comparison_Exp>;
-  profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  users_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.maintainer_users_profile" */
-export enum Cp_Maintainer_Users_Profile_Constraint {
-  /** unique or primary key constraint */
-  MaintainerUsersProfileMaintainerIdentifierUsersProfilKey = 'maintainer_users_profile_maintainer_identifier_users_profil_key',
-  /** unique or primary key constraint */
-  MaintainerUsersProfilePkey = 'maintainer_users_profile_pkey'
-}
-
-/** input type for inserting data into table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Insert_Input = {
-  id?: InputMaybe<Scalars['uuid']>;
-  maintainer?: InputMaybe<Cp_Maintainer_Obj_Rel_Insert_Input>;
-  maintainer_identifier?: InputMaybe<Scalars['String']>;
-  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  users_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** aggregate max on columns */
-export type Cp_Maintainer_Users_Profile_Max_Fields = {
-  __typename?: 'cp_maintainer_users_profile_max_fields';
-  id?: Maybe<Scalars['uuid']>;
-  maintainer_identifier?: Maybe<Scalars['String']>;
-  users_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by max() on columns of table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Max_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Cp_Maintainer_Users_Profile_Min_Fields = {
-  __typename?: 'cp_maintainer_users_profile_min_fields';
-  id?: Maybe<Scalars['uuid']>;
-  maintainer_identifier?: Maybe<Scalars['String']>;
-  users_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by min() on columns of table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Min_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Mutation_Response = {
-  __typename?: 'cp_maintainer_users_profile_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Maintainer_Users_Profile>;
-};
-
-/** on conflict condition type for table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_On_Conflict = {
-  constraint: Cp_Maintainer_Users_Profile_Constraint;
-  update_columns?: Array<Cp_Maintainer_Users_Profile_Update_Column>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.maintainer_users_profile". */
-export type Cp_Maintainer_Users_Profile_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer?: InputMaybe<Cp_Maintainer_Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  profile?: InputMaybe<Users_Profile_Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cp_maintainer_users_profile */
-export type Cp_Maintainer_Users_Profile_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "cp.maintainer_users_profile" */
-export enum Cp_Maintainer_Users_Profile_Select_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MaintainerIdentifier = 'maintainer_identifier',
-  /** column name */
-  UsersProfileId = 'users_profile_id'
-}
-
-/** input type for updating data in table "cp.maintainer_users_profile" */
-export type Cp_Maintainer_Users_Profile_Set_Input = {
-  id?: InputMaybe<Scalars['uuid']>;
-  maintainer_identifier?: InputMaybe<Scalars['String']>;
-  users_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** update columns of table "cp.maintainer_users_profile" */
-export enum Cp_Maintainer_Users_Profile_Update_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MaintainerIdentifier = 'maintainer_identifier',
-  /** column name */
-  UsersProfileId = 'users_profile_id'
-}
-
-/**
- * Bezoekersruimte aka leeszaal van een CP
- *
- *
- * columns and relationships of "cp.space"
- *
- */
-export type Cp_Space = {
-  __typename?: 'cp_space';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id: Scalars['uuid'];
-  is_published?: Maybe<Scalars['Boolean']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  schema_audience_type: Lookup_Schema_Audience_Type_Enum;
-  schema_color?: Maybe<Scalars['String']>;
-  schema_description?: Maybe<Scalars['String']>;
-  schema_image?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  schema_maintainer: Cp_Maintainer;
-  schema_maintainer_id: Scalars['String'];
-  schema_public_access?: Maybe<Scalars['Boolean']>;
-  schema_service_description?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  /** An array relationship */
-  visits: Array<Cp_Visit>;
-  /** An aggregate relationship */
-  visits_aggregate: Cp_Visit_Aggregate;
-};
-
-
-/**
- * Bezoekersruimte aka leeszaal van een CP
- *
- *
- * columns and relationships of "cp.space"
- *
- */
-export type Cp_SpaceVisitsArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-
-/**
- * Bezoekersruimte aka leeszaal van een CP
- *
- *
- * columns and relationships of "cp.space"
- *
- */
-export type Cp_SpaceVisits_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-/** aggregated selection of "cp.space" */
-export type Cp_Space_Aggregate = {
-  __typename?: 'cp_space_aggregate';
-  aggregate?: Maybe<Cp_Space_Aggregate_Fields>;
-  nodes: Array<Cp_Space>;
-};
-
-/** aggregate fields of "cp.space" */
-export type Cp_Space_Aggregate_Fields = {
-  __typename?: 'cp_space_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Space_Max_Fields>;
-  min?: Maybe<Cp_Space_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.space" */
-export type Cp_Space_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Space_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "cp.space". All fields are combined with a logical 'AND'. */
-export type Cp_Space_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Space_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Space_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Space_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  is_published?: InputMaybe<Boolean_Comparison_Exp>;
-  published_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum_Comparison_Exp>;
-  schema_color?: InputMaybe<String_Comparison_Exp>;
-  schema_description?: InputMaybe<String_Comparison_Exp>;
-  schema_image?: InputMaybe<String_Comparison_Exp>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-  schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
-  schema_public_access?: InputMaybe<Boolean_Comparison_Exp>;
-  schema_service_description?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  visits?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.space" */
-export enum Cp_Space_Constraint {
-  /** unique or primary key constraint */
-  SpacePkey = 'space_pkey',
-  /** unique or primary key constraint */
-  SpaceSchemaMaintainerIdKey = 'space_schema_maintainer_id_key'
-}
-
-/** input type for inserting data into table "cp.space" */
-export type Cp_Space_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  is_published?: InputMaybe<Scalars['Boolean']>;
-  published_at?: InputMaybe<Scalars['timestamp']>;
-  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
-  schema_color?: InputMaybe<Scalars['String']>;
-  schema_description?: InputMaybe<Scalars['String']>;
-  schema_image?: InputMaybe<Scalars['String']>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Obj_Rel_Insert_Input>;
-  schema_maintainer_id?: InputMaybe<Scalars['String']>;
-  schema_public_access?: InputMaybe<Scalars['Boolean']>;
-  schema_service_description?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  visits?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
-};
-
-/** aggregate max on columns */
-export type Cp_Space_Max_Fields = {
-  __typename?: 'cp_space_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  schema_color?: Maybe<Scalars['String']>;
-  schema_description?: Maybe<Scalars['String']>;
-  schema_image?: Maybe<Scalars['String']>;
-  schema_maintainer_id?: Maybe<Scalars['String']>;
-  schema_service_description?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** aggregate min on columns */
-export type Cp_Space_Min_Fields = {
-  __typename?: 'cp_space_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  published_at?: Maybe<Scalars['timestamp']>;
-  schema_color?: Maybe<Scalars['String']>;
-  schema_description?: Maybe<Scalars['String']>;
-  schema_image?: Maybe<Scalars['String']>;
-  schema_maintainer_id?: Maybe<Scalars['String']>;
-  schema_service_description?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-};
-
-/** response of any mutation on the table "cp.space" */
-export type Cp_Space_Mutation_Response = {
-  __typename?: 'cp_space_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Space>;
-};
-
-/** input type for inserting object relation for remote table "cp.space" */
-export type Cp_Space_Obj_Rel_Insert_Input = {
-  data: Cp_Space_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
-};
-
-/** on conflict condition type for table "cp.space" */
-export type Cp_Space_On_Conflict = {
-  constraint: Cp_Space_Constraint;
-  update_columns?: Array<Cp_Space_Update_Column>;
-  where?: InputMaybe<Cp_Space_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.space". */
-export type Cp_Space_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  is_published?: InputMaybe<Order_By>;
-  published_at?: InputMaybe<Order_By>;
-  schema_audience_type?: InputMaybe<Order_By>;
-  schema_color?: InputMaybe<Order_By>;
-  schema_description?: InputMaybe<Order_By>;
-  schema_image?: InputMaybe<Order_By>;
-  schema_maintainer?: InputMaybe<Cp_Maintainer_Order_By>;
-  schema_maintainer_id?: InputMaybe<Order_By>;
-  schema_public_access?: InputMaybe<Order_By>;
-  schema_service_description?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  visits_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
-};
-
-/** primary key columns input for table: cp_space */
-export type Cp_Space_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "cp.space" */
-export enum Cp_Space_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsPublished = 'is_published',
-  /** column name */
-  PublishedAt = 'published_at',
-  /** column name */
-  SchemaAudienceType = 'schema_audience_type',
-  /** column name */
-  SchemaColor = 'schema_color',
-  /** column name */
-  SchemaDescription = 'schema_description',
-  /** column name */
-  SchemaImage = 'schema_image',
-  /** column name */
-  SchemaMaintainerId = 'schema_maintainer_id',
-  /** column name */
-  SchemaPublicAccess = 'schema_public_access',
-  /** column name */
-  SchemaServiceDescription = 'schema_service_description',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/** input type for updating data in table "cp.space" */
-export type Cp_Space_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  is_published?: InputMaybe<Scalars['Boolean']>;
-  published_at?: InputMaybe<Scalars['timestamp']>;
-  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
-  schema_color?: InputMaybe<Scalars['String']>;
-  schema_description?: InputMaybe<Scalars['String']>;
-  schema_image?: InputMaybe<Scalars['String']>;
-  schema_maintainer_id?: InputMaybe<Scalars['String']>;
-  schema_public_access?: InputMaybe<Scalars['Boolean']>;
-  schema_service_description?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-};
-
-/** update columns of table "cp.space" */
-export enum Cp_Space_Update_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IsPublished = 'is_published',
-  /** column name */
-  PublishedAt = 'published_at',
-  /** column name */
-  SchemaAudienceType = 'schema_audience_type',
-  /** column name */
-  SchemaColor = 'schema_color',
-  /** column name */
-  SchemaDescription = 'schema_description',
-  /** column name */
-  SchemaImage = 'schema_image',
-  /** column name */
-  SchemaMaintainerId = 'schema_maintainer_id',
-  /** column name */
-  SchemaPublicAccess = 'schema_public_access',
-  /** column name */
-  SchemaServiceDescription = 'schema_service_description',
-  /** column name */
-  UpdatedAt = 'updated_at'
-}
-
-/**
- * Bezoekaanvragen van gebruikers
- *
- *
- * columns and relationships of "cp.visit"
- *
- */
-export type Cp_Visit = {
-  __typename?: 'cp_visit';
-  cp_space_id: Scalars['uuid'];
-  created_at: Scalars['timestamp'];
-  end_date?: Maybe<Scalars['timestamp']>;
-  id: Scalars['uuid'];
-  /** An array relationship */
-  notes: Array<Cp_Visit_Note>;
-  /** An aggregate relationship */
-  notes_aggregate: Cp_Visit_Note_Aggregate;
-  /** An array relationship */
-  notifications: Array<App_Notification>;
-  /** An aggregate relationship */
-  notifications_aggregate: App_Notification_Aggregate;
-  /** An object relationship */
-  space: Cp_Space;
-  start_date?: Maybe<Scalars['timestamp']>;
-  status: Scalars['String'];
-  updated_at: Scalars['timestamp'];
-  updated_by?: Maybe<Scalars['uuid']>;
-  /** An object relationship */
-  updater?: Maybe<Users_Profile>;
-  user_accepted_tos?: Maybe<Scalars['Boolean']>;
-  /** An object relationship */
-  user_profile: Users_Profile;
-  user_profile_id: Scalars['uuid'];
-  user_reason?: Maybe<Scalars['String']>;
-  user_timeframe?: Maybe<Scalars['String']>;
-};
-
-
-/**
- * Bezoekaanvragen van gebruikers
- *
- *
- * columns and relationships of "cp.visit"
- *
- */
-export type Cp_VisitNotesArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-/**
- * Bezoekaanvragen van gebruikers
- *
- *
- * columns and relationships of "cp.visit"
- *
- */
-export type Cp_VisitNotes_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-/**
- * Bezoekaanvragen van gebruikers
- *
- *
- * columns and relationships of "cp.visit"
- *
- */
-export type Cp_VisitNotificationsArgs = {
-  distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<App_Notification_Order_By>>;
-  where?: InputMaybe<App_Notification_Bool_Exp>;
-};
-
-
-/**
- * Bezoekaanvragen van gebruikers
- *
- *
- * columns and relationships of "cp.visit"
- *
- */
-export type Cp_VisitNotifications_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<App_Notification_Order_By>>;
-  where?: InputMaybe<App_Notification_Bool_Exp>;
-};
-
-/** aggregated selection of "cp.visit" */
-export type Cp_Visit_Aggregate = {
-  __typename?: 'cp_visit_aggregate';
-  aggregate?: Maybe<Cp_Visit_Aggregate_Fields>;
-  nodes: Array<Cp_Visit>;
-};
-
-/** aggregate fields of "cp.visit" */
-export type Cp_Visit_Aggregate_Fields = {
-  __typename?: 'cp_visit_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Visit_Max_Fields>;
-  min?: Maybe<Cp_Visit_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.visit" */
-export type Cp_Visit_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "cp.visit" */
-export type Cp_Visit_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Cp_Visit_Max_Order_By>;
-  min?: InputMaybe<Cp_Visit_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "cp.visit" */
-export type Cp_Visit_Arr_Rel_Insert_Input = {
-  data: Array<Cp_Visit_Insert_Input>;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "cp.visit". All fields are combined with a logical 'AND'. */
-export type Cp_Visit_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Visit_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Visit_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Visit_Bool_Exp>>;
-  cp_space_id?: InputMaybe<Uuid_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  end_date?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  notes?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-  notifications?: InputMaybe<App_Notification_Bool_Exp>;
-  space?: InputMaybe<Cp_Space_Bool_Exp>;
-  start_date?: InputMaybe<Timestamp_Comparison_Exp>;
-  status?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  updated_by?: InputMaybe<Uuid_Comparison_Exp>;
-  updater?: InputMaybe<Users_Profile_Bool_Exp>;
-  user_accepted_tos?: InputMaybe<Boolean_Comparison_Exp>;
-  user_profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  user_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-  user_reason?: InputMaybe<String_Comparison_Exp>;
-  user_timeframe?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.visit" */
-export enum Cp_Visit_Constraint {
-  /** unique or primary key constraint */
-  VisitPkey = 'visit_pkey'
-}
-
-/** input type for inserting data into table "cp.visit" */
-export type Cp_Visit_Insert_Input = {
-  cp_space_id?: InputMaybe<Scalars['uuid']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  end_date?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  notes?: InputMaybe<Cp_Visit_Note_Arr_Rel_Insert_Input>;
-  notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
-  space?: InputMaybe<Cp_Space_Obj_Rel_Insert_Input>;
-  start_date?: InputMaybe<Scalars['timestamp']>;
-  status?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  updated_by?: InputMaybe<Scalars['uuid']>;
-  updater?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  user_accepted_tos?: InputMaybe<Scalars['Boolean']>;
-  user_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  user_profile_id?: InputMaybe<Scalars['uuid']>;
-  user_reason?: InputMaybe<Scalars['String']>;
-  user_timeframe?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type Cp_Visit_Max_Fields = {
-  __typename?: 'cp_visit_max_fields';
-  cp_space_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  end_date?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  start_date?: Maybe<Scalars['timestamp']>;
-  status?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  updated_by?: Maybe<Scalars['uuid']>;
-  user_profile_id?: Maybe<Scalars['uuid']>;
-  user_reason?: Maybe<Scalars['String']>;
-  user_timeframe?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "cp.visit" */
-export type Cp_Visit_Max_Order_By = {
-  cp_space_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  end_date?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  start_date?: InputMaybe<Order_By>;
-  status?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  updated_by?: InputMaybe<Order_By>;
-  user_profile_id?: InputMaybe<Order_By>;
-  user_reason?: InputMaybe<Order_By>;
-  user_timeframe?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Cp_Visit_Min_Fields = {
-  __typename?: 'cp_visit_min_fields';
-  cp_space_id?: Maybe<Scalars['uuid']>;
-  created_at?: Maybe<Scalars['timestamp']>;
-  end_date?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  start_date?: Maybe<Scalars['timestamp']>;
-  status?: Maybe<Scalars['String']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  updated_by?: Maybe<Scalars['uuid']>;
-  user_profile_id?: Maybe<Scalars['uuid']>;
-  user_reason?: Maybe<Scalars['String']>;
-  user_timeframe?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "cp.visit" */
-export type Cp_Visit_Min_Order_By = {
-  cp_space_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  end_date?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  start_date?: InputMaybe<Order_By>;
-  status?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  updated_by?: InputMaybe<Order_By>;
-  user_profile_id?: InputMaybe<Order_By>;
-  user_reason?: InputMaybe<Order_By>;
-  user_timeframe?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "cp.visit" */
-export type Cp_Visit_Mutation_Response = {
-  __typename?: 'cp_visit_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Visit>;
-};
-
-/**
- * Notities en bemerkingen van een beheerder tijdens de levensduur van een bezoek, van aanvraag tot afronding
- *
- *
- * columns and relationships of "cp.visit_note"
- *
- */
-export type Cp_Visit_Note = {
-  __typename?: 'cp_visit_note';
-  created_at: Scalars['timestamp'];
-  id: Scalars['uuid'];
-  note: Scalars['String'];
-  /** An object relationship */
-  profile?: Maybe<Users_Profile>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: Maybe<Scalars['uuid']>;
-  updated_at: Scalars['timestamp'];
-  /** An object relationship */
-  visit: Cp_Visit;
-  visit_id: Scalars['uuid'];
-};
-
-/** aggregated selection of "cp.visit_note" */
-export type Cp_Visit_Note_Aggregate = {
-  __typename?: 'cp_visit_note_aggregate';
-  aggregate?: Maybe<Cp_Visit_Note_Aggregate_Fields>;
-  nodes: Array<Cp_Visit_Note>;
-};
-
-/** aggregate fields of "cp.visit_note" */
-export type Cp_Visit_Note_Aggregate_Fields = {
-  __typename?: 'cp_visit_note_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Cp_Visit_Note_Max_Fields>;
-  min?: Maybe<Cp_Visit_Note_Min_Fields>;
-};
-
-
-/** aggregate fields of "cp.visit_note" */
-export type Cp_Visit_Note_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "cp.visit_note" */
-export type Cp_Visit_Note_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Cp_Visit_Note_Max_Order_By>;
-  min?: InputMaybe<Cp_Visit_Note_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "cp.visit_note" */
-export type Cp_Visit_Note_Arr_Rel_Insert_Input = {
-  data: Array<Cp_Visit_Note_Insert_Input>;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "cp.visit_note". All fields are combined with a logical 'AND'. */
-export type Cp_Visit_Note_Bool_Exp = {
-  _and?: InputMaybe<Array<Cp_Visit_Note_Bool_Exp>>;
-  _not?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-  _or?: InputMaybe<Array<Cp_Visit_Note_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  note?: InputMaybe<String_Comparison_Exp>;
-  profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  visit?: InputMaybe<Cp_Visit_Bool_Exp>;
-  visit_id?: InputMaybe<Uuid_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "cp.visit_note" */
-export enum Cp_Visit_Note_Constraint {
-  /** unique or primary key constraint */
-  VisitNotePkey = 'visit_note_pkey'
-}
-
-/** input type for inserting data into table "cp.visit_note" */
-export type Cp_Visit_Note_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  note?: InputMaybe<Scalars['String']>;
-  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: InputMaybe<Scalars['uuid']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  visit?: InputMaybe<Cp_Visit_Obj_Rel_Insert_Input>;
-  visit_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** aggregate max on columns */
-export type Cp_Visit_Note_Max_Fields = {
-  __typename?: 'cp_visit_note_max_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: Maybe<Scalars['uuid']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  visit_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by max() on columns of table "cp.visit_note" */
-export type Cp_Visit_Note_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  note?: InputMaybe<Order_By>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  visit_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Cp_Visit_Note_Min_Fields = {
-  __typename?: 'cp_visit_note_min_fields';
-  created_at?: Maybe<Scalars['timestamp']>;
-  id?: Maybe<Scalars['uuid']>;
-  note?: Maybe<Scalars['String']>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: Maybe<Scalars['uuid']>;
-  updated_at?: Maybe<Scalars['timestamp']>;
-  visit_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by min() on columns of table "cp.visit_note" */
-export type Cp_Visit_Note_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  note?: InputMaybe<Order_By>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  visit_id?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "cp.visit_note" */
-export type Cp_Visit_Note_Mutation_Response = {
-  __typename?: 'cp_visit_note_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Cp_Visit_Note>;
-};
-
-/** on conflict condition type for table "cp.visit_note" */
-export type Cp_Visit_Note_On_Conflict = {
-  constraint: Cp_Visit_Note_Constraint;
-  update_columns?: Array<Cp_Visit_Note_Update_Column>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.visit_note". */
-export type Cp_Visit_Note_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  note?: InputMaybe<Order_By>;
-  profile?: InputMaybe<Users_Profile_Order_By>;
-  profile_id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  visit?: InputMaybe<Cp_Visit_Order_By>;
-  visit_id?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cp_visit_note */
-export type Cp_Visit_Note_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "cp.visit_note" */
-export enum Cp_Visit_Note_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Note = 'note',
-  /** column name */
-  ProfileId = 'profile_id',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  VisitId = 'visit_id'
-}
-
-/** input type for updating data in table "cp.visit_note" */
-export type Cp_Visit_Note_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  note?: InputMaybe<Scalars['String']>;
-  /** Degene die de notitie heeft gemaakt */
-  profile_id?: InputMaybe<Scalars['uuid']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  visit_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** update columns of table "cp.visit_note" */
-export enum Cp_Visit_Note_Update_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Note = 'note',
-  /** column name */
-  ProfileId = 'profile_id',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  VisitId = 'visit_id'
-}
-
-/** input type for inserting object relation for remote table "cp.visit" */
-export type Cp_Visit_Obj_Rel_Insert_Input = {
-  data: Cp_Visit_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
-};
-
-/** on conflict condition type for table "cp.visit" */
-export type Cp_Visit_On_Conflict = {
-  constraint: Cp_Visit_Constraint;
-  update_columns?: Array<Cp_Visit_Update_Column>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "cp.visit". */
-export type Cp_Visit_Order_By = {
-  cp_space_id?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  end_date?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  notes_aggregate?: InputMaybe<Cp_Visit_Note_Aggregate_Order_By>;
-  notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
-  space?: InputMaybe<Cp_Space_Order_By>;
-  start_date?: InputMaybe<Order_By>;
-  status?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  updated_by?: InputMaybe<Order_By>;
-  updater?: InputMaybe<Users_Profile_Order_By>;
-  user_accepted_tos?: InputMaybe<Order_By>;
-  user_profile?: InputMaybe<Users_Profile_Order_By>;
-  user_profile_id?: InputMaybe<Order_By>;
-  user_reason?: InputMaybe<Order_By>;
-  user_timeframe?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: cp_visit */
-export type Cp_Visit_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "cp.visit" */
-export enum Cp_Visit_Select_Column {
-  /** column name */
-  CpSpaceId = 'cp_space_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EndDate = 'end_date',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  StartDate = 'start_date',
-  /** column name */
-  Status = 'status',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UpdatedBy = 'updated_by',
-  /** column name */
-  UserAcceptedTos = 'user_accepted_tos',
-  /** column name */
-  UserProfileId = 'user_profile_id',
-  /** column name */
-  UserReason = 'user_reason',
-  /** column name */
-  UserTimeframe = 'user_timeframe'
-}
-
-/** input type for updating data in table "cp.visit" */
-export type Cp_Visit_Set_Input = {
-  cp_space_id?: InputMaybe<Scalars['uuid']>;
-  created_at?: InputMaybe<Scalars['timestamp']>;
-  end_date?: InputMaybe<Scalars['timestamp']>;
-  id?: InputMaybe<Scalars['uuid']>;
-  start_date?: InputMaybe<Scalars['timestamp']>;
-  status?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['timestamp']>;
-  updated_by?: InputMaybe<Scalars['uuid']>;
-  user_accepted_tos?: InputMaybe<Scalars['Boolean']>;
-  user_profile_id?: InputMaybe<Scalars['uuid']>;
-  user_reason?: InputMaybe<Scalars['String']>;
-  user_timeframe?: InputMaybe<Scalars['String']>;
-};
-
-/** update columns of table "cp.visit" */
-export enum Cp_Visit_Update_Column {
-  /** column name */
-  CpSpaceId = 'cp_space_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EndDate = 'end_date',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  StartDate = 'start_date',
-  /** column name */
-  Status = 'status',
-  /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  UpdatedBy = 'updated_by',
-  /** column name */
-  UserAcceptedTos = 'user_accepted_tos',
-  /** column name */
-  UserProfileId = 'user_profile_id',
-  /** column name */
-  UserReason = 'user_reason',
-  /** column name */
-  UserTimeframe = 'user_timeframe'
-}
-
 /** Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'. */
 export type Date_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['date']>;
@@ -3827,6 +2415,316 @@ export type Jsonb_Comparison_Exp = {
   _neq?: InputMaybe<Scalars['jsonb']>;
   _nin?: InputMaybe<Array<Scalars['jsonb']>>;
 };
+
+/**
+ * Graphql enum types for content blocks
+ *
+ *
+ * columns and relationships of "lookup.app_content_block_type"
+ *
+ */
+export type Lookup_App_Content_Block_Type = {
+  __typename?: 'lookup_app_content_block_type';
+  comment?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Aggregate = {
+  __typename?: 'lookup_app_content_block_type_aggregate';
+  aggregate?: Maybe<Lookup_App_Content_Block_Type_Aggregate_Fields>;
+  nodes: Array<Lookup_App_Content_Block_Type>;
+};
+
+/** aggregate fields of "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Aggregate_Fields = {
+  __typename?: 'lookup_app_content_block_type_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_App_Content_Block_Type_Max_Fields>;
+  min?: Maybe<Lookup_App_Content_Block_Type_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.app_content_block_type". All fields are combined with a logical 'AND'. */
+export type Lookup_App_Content_Block_Type_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_App_Content_Block_Type_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_App_Content_Block_Type_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.app_content_block_type" */
+export enum Lookup_App_Content_Block_Type_Constraint {
+  /** unique or primary key constraint */
+  CmsContentBlockTypePkey = 'cms_content_block_type_pkey'
+}
+
+export enum Lookup_App_Content_Block_Type_Enum {
+  Accordions = 'ACCORDIONS',
+  AnchorLinks = 'ANCHOR_LINKS',
+  Buttons = 'BUTTONS',
+  ContentPageMeta = 'CONTENT_PAGE_META',
+  Ctas = 'CTAS',
+  Eventbrite = 'EVENTBRITE',
+  Heading = 'HEADING',
+  Hero = 'HERO',
+  Iframe = 'IFRAME',
+  Image = 'IMAGE',
+  ImageGrid = 'IMAGE_GRID',
+  Intro = 'INTRO',
+  Klaar = 'KLAAR',
+  Links = 'LINKS',
+  LogoGrid = 'LOGO_GRID',
+  MediaGrid = 'MEDIA_GRID',
+  MediaPlayer = 'MEDIA_PLAYER',
+  MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
+  PageOverview = 'PAGE_OVERVIEW',
+  ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
+  Quote = 'QUOTE',
+  RichText = 'RICH_TEXT',
+  RichTextTwoColumns = 'RICH_TEXT_TWO_COLUMNS',
+  Search = 'SEARCH',
+  Spotlight = 'SPOTLIGHT',
+  Subtitle = 'SUBTITLE',
+  Title = 'TITLE',
+  TitleImageText = 'TITLE_IMAGE_TEXT',
+  TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
+  UspGrid = 'USP_GRID',
+  Video = 'VIDEO',
+  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON'
+}
+
+/** Boolean expression to compare columns of type "lookup_app_content_block_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_App_Content_Block_Type_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_App_Content_Block_Type_Enum>;
+  _in?: InputMaybe<Array<Lookup_App_Content_Block_Type_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_App_Content_Block_Type_Enum>;
+  _nin?: InputMaybe<Array<Lookup_App_Content_Block_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_App_Content_Block_Type_Max_Fields = {
+  __typename?: 'lookup_app_content_block_type_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_App_Content_Block_Type_Min_Fields = {
+  __typename?: 'lookup_app_content_block_type_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Mutation_Response = {
+  __typename?: 'lookup_app_content_block_type_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_App_Content_Block_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Obj_Rel_Insert_Input = {
+  data: Lookup_App_Content_Block_Type_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Lookup_App_Content_Block_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_On_Conflict = {
+  constraint: Lookup_App_Content_Block_Type_Constraint;
+  update_columns?: Array<Lookup_App_Content_Block_Type_Update_Column>;
+  where?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.app_content_block_type". */
+export type Lookup_App_Content_Block_Type_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_app_content_block_type */
+export type Lookup_App_Content_Block_Type_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.app_content_block_type" */
+export enum Lookup_App_Content_Block_Type_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.app_content_block_type" */
+export type Lookup_App_Content_Block_Type_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.app_content_block_type" */
+export enum Lookup_App_Content_Block_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/**
+ * GraphQL enum type for content types, e.g. pages, news, projects.
+ *
+ *
+ * columns and relationships of "lookup.app_content_type"
+ *
+ */
+export type Lookup_App_Content_Type = {
+  __typename?: 'lookup_app_content_type';
+  comment?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Aggregate = {
+  __typename?: 'lookup_app_content_type_aggregate';
+  aggregate?: Maybe<Lookup_App_Content_Type_Aggregate_Fields>;
+  nodes: Array<Lookup_App_Content_Type>;
+};
+
+/** aggregate fields of "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Aggregate_Fields = {
+  __typename?: 'lookup_app_content_type_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_App_Content_Type_Max_Fields>;
+  min?: Maybe<Lookup_App_Content_Type_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_App_Content_Type_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.app_content_type". All fields are combined with a logical 'AND'. */
+export type Lookup_App_Content_Type_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_App_Content_Type_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_App_Content_Type_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.app_content_type" */
+export enum Lookup_App_Content_Type_Constraint {
+  /** unique or primary key constraint */
+  CmsContentTypePkey = 'cms_content_type_pkey'
+}
+
+export enum Lookup_App_Content_Type_Enum {
+  /** Pagina */
+  Pagina = 'PAGINA'
+}
+
+/** Boolean expression to compare columns of type "lookup_app_content_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_App_Content_Type_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_App_Content_Type_Enum>;
+  _in?: InputMaybe<Array<Lookup_App_Content_Type_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_App_Content_Type_Enum>;
+  _nin?: InputMaybe<Array<Lookup_App_Content_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_App_Content_Type_Max_Fields = {
+  __typename?: 'lookup_app_content_type_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_App_Content_Type_Min_Fields = {
+  __typename?: 'lookup_app_content_type_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Mutation_Response = {
+  __typename?: 'lookup_app_content_type_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_App_Content_Type>;
+};
+
+/** input type for inserting object relation for remote table "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Obj_Rel_Insert_Input = {
+  data: Lookup_App_Content_Type_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Lookup_App_Content_Type_On_Conflict>;
+};
+
+/** on conflict condition type for table "lookup.app_content_type" */
+export type Lookup_App_Content_Type_On_Conflict = {
+  constraint: Lookup_App_Content_Type_Constraint;
+  update_columns?: Array<Lookup_App_Content_Type_Update_Column>;
+  where?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.app_content_type". */
+export type Lookup_App_Content_Type_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_app_content_type */
+export type Lookup_App_Content_Type_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.app_content_type" */
+export enum Lookup_App_Content_Type_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.app_content_type" */
+export type Lookup_App_Content_Type_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.app_content_type" */
+export enum Lookup_App_Content_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
 
 /**
  * Types van notificaties aan eindgebruikers
@@ -3948,428 +2846,255 @@ export enum Lookup_App_Notification_Type_Update_Column {
 }
 
 /**
- * Graphql enum types for content blocks
- *
- *
- * columns and relationships of "lookup.cms_content_block_type"
- *
- */
-export type Lookup_Cms_Content_Block_Type = {
-  __typename?: 'lookup_cms_content_block_type';
-  comment?: Maybe<Scalars['String']>;
-  value: Scalars['String'];
-};
-
-/** aggregated selection of "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Aggregate = {
-  __typename?: 'lookup_cms_content_block_type_aggregate';
-  aggregate?: Maybe<Lookup_Cms_Content_Block_Type_Aggregate_Fields>;
-  nodes: Array<Lookup_Cms_Content_Block_Type>;
-};
-
-/** aggregate fields of "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Aggregate_Fields = {
-  __typename?: 'lookup_cms_content_block_type_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Lookup_Cms_Content_Block_Type_Max_Fields>;
-  min?: Maybe<Lookup_Cms_Content_Block_Type_Min_Fields>;
-};
-
-
-/** aggregate fields of "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "lookup.cms_content_block_type". All fields are combined with a logical 'AND'. */
-export type Lookup_Cms_Content_Block_Type_Bool_Exp = {
-  _and?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
-  _not?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
-  _or?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Bool_Exp>>;
-  comment?: InputMaybe<String_Comparison_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "lookup.cms_content_block_type" */
-export enum Lookup_Cms_Content_Block_Type_Constraint {
-  /** unique or primary key constraint */
-  CmsContentBlockTypePkey = 'cms_content_block_type_pkey'
-}
-
-export enum Lookup_Cms_Content_Block_Type_Enum {
-  Accordions = 'ACCORDIONS',
-  AnchorLinks = 'ANCHOR_LINKS',
-  Buttons = 'BUTTONS',
-  ContentPageMeta = 'CONTENT_PAGE_META',
-  Ctas = 'CTAS',
-  Eventbrite = 'EVENTBRITE',
-  Heading = 'HEADING',
-  Hero = 'HERO',
-  Iframe = 'IFRAME',
-  Image = 'IMAGE',
-  ImageGrid = 'IMAGE_GRID',
-  Intro = 'INTRO',
-  Klaar = 'KLAAR',
-  Links = 'LINKS',
-  LogoGrid = 'LOGO_GRID',
-  MediaGrid = 'MEDIA_GRID',
-  MediaPlayer = 'MEDIA_PLAYER',
-  MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
-  PageOverview = 'PAGE_OVERVIEW',
-  ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
-  Quote = 'QUOTE',
-  RichText = 'RICH_TEXT',
-  RichTextTwoColumns = 'RICH_TEXT_TWO_COLUMNS',
-  Search = 'SEARCH',
-  Spotlight = 'SPOTLIGHT',
-  Subtitle = 'SUBTITLE',
-  Title = 'TITLE',
-  TitleImageText = 'TITLE_IMAGE_TEXT',
-  TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
-  UspGrid = 'USP_GRID',
-  Video = 'VIDEO',
-  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON'
-}
-
-/** Boolean expression to compare columns of type "lookup_cms_content_block_type_enum". All fields are combined with logical 'AND'. */
-export type Lookup_Cms_Content_Block_Type_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
-  _in?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']>;
-  _neq?: InputMaybe<Lookup_Cms_Content_Block_Type_Enum>;
-  _nin?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Enum>>;
-};
-
-/** input type for inserting data into table "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Insert_Input = {
-  comment?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type Lookup_Cms_Content_Block_Type_Max_Fields = {
-  __typename?: 'lookup_cms_content_block_type_max_fields';
-  comment?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-/** aggregate min on columns */
-export type Lookup_Cms_Content_Block_Type_Min_Fields = {
-  __typename?: 'lookup_cms_content_block_type_min_fields';
-  comment?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-/** response of any mutation on the table "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Mutation_Response = {
-  __typename?: 'lookup_cms_content_block_type_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Lookup_Cms_Content_Block_Type>;
-};
-
-/** input type for inserting object relation for remote table "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Obj_Rel_Insert_Input = {
-  data: Lookup_Cms_Content_Block_Type_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
-};
-
-/** on conflict condition type for table "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_On_Conflict = {
-  constraint: Lookup_Cms_Content_Block_Type_Constraint;
-  update_columns?: Array<Lookup_Cms_Content_Block_Type_Update_Column>;
-  where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "lookup.cms_content_block_type". */
-export type Lookup_Cms_Content_Block_Type_Order_By = {
-  comment?: InputMaybe<Order_By>;
-  value?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: lookup_cms_content_block_type */
-export type Lookup_Cms_Content_Block_Type_Pk_Columns_Input = {
-  value: Scalars['String'];
-};
-
-/** select columns of table "lookup.cms_content_block_type" */
-export enum Lookup_Cms_Content_Block_Type_Select_Column {
-  /** column name */
-  Comment = 'comment',
-  /** column name */
-  Value = 'value'
-}
-
-/** input type for updating data in table "lookup.cms_content_block_type" */
-export type Lookup_Cms_Content_Block_Type_Set_Input = {
-  comment?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
-};
-
-/** update columns of table "lookup.cms_content_block_type" */
-export enum Lookup_Cms_Content_Block_Type_Update_Column {
-  /** column name */
-  Comment = 'comment',
-  /** column name */
-  Value = 'value'
-}
-
-/**
- * GraphQL enum type for content types, e.g. pages, news, projects.
- *
- *
- * columns and relationships of "lookup.cms_content_type"
- *
- */
-export type Lookup_Cms_Content_Type = {
-  __typename?: 'lookup_cms_content_type';
-  comment?: Maybe<Scalars['String']>;
-  value: Scalars['String'];
-};
-
-/** aggregated selection of "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Aggregate = {
-  __typename?: 'lookup_cms_content_type_aggregate';
-  aggregate?: Maybe<Lookup_Cms_Content_Type_Aggregate_Fields>;
-  nodes: Array<Lookup_Cms_Content_Type>;
-};
-
-/** aggregate fields of "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Aggregate_Fields = {
-  __typename?: 'lookup_cms_content_type_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Lookup_Cms_Content_Type_Max_Fields>;
-  min?: Maybe<Lookup_Cms_Content_Type_Min_Fields>;
-};
-
-
-/** aggregate fields of "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** Boolean expression to filter rows from the table "lookup.cms_content_type". All fields are combined with a logical 'AND'. */
-export type Lookup_Cms_Content_Type_Bool_Exp = {
-  _and?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
-  _not?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
-  _or?: InputMaybe<Array<Lookup_Cms_Content_Type_Bool_Exp>>;
-  comment?: InputMaybe<String_Comparison_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "lookup.cms_content_type" */
-export enum Lookup_Cms_Content_Type_Constraint {
-  /** unique or primary key constraint */
-  CmsContentTypePkey = 'cms_content_type_pkey'
-}
-
-export enum Lookup_Cms_Content_Type_Enum {
-  /** Pagina */
-  Pagina = 'PAGINA'
-}
-
-/** Boolean expression to compare columns of type "lookup_cms_content_type_enum". All fields are combined with logical 'AND'. */
-export type Lookup_Cms_Content_Type_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
-  _in?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']>;
-  _neq?: InputMaybe<Lookup_Cms_Content_Type_Enum>;
-  _nin?: InputMaybe<Array<Lookup_Cms_Content_Type_Enum>>;
-};
-
-/** input type for inserting data into table "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Insert_Input = {
-  comment?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregate max on columns */
-export type Lookup_Cms_Content_Type_Max_Fields = {
-  __typename?: 'lookup_cms_content_type_max_fields';
-  comment?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-/** aggregate min on columns */
-export type Lookup_Cms_Content_Type_Min_Fields = {
-  __typename?: 'lookup_cms_content_type_min_fields';
-  comment?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-/** response of any mutation on the table "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Mutation_Response = {
-  __typename?: 'lookup_cms_content_type_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Lookup_Cms_Content_Type>;
-};
-
-/** input type for inserting object relation for remote table "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Obj_Rel_Insert_Input = {
-  data: Lookup_Cms_Content_Type_Insert_Input;
-  /** on conflict condition */
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
-};
-
-/** on conflict condition type for table "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_On_Conflict = {
-  constraint: Lookup_Cms_Content_Type_Constraint;
-  update_columns?: Array<Lookup_Cms_Content_Type_Update_Column>;
-  where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "lookup.cms_content_type". */
-export type Lookup_Cms_Content_Type_Order_By = {
-  comment?: InputMaybe<Order_By>;
-  value?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: lookup_cms_content_type */
-export type Lookup_Cms_Content_Type_Pk_Columns_Input = {
-  value: Scalars['String'];
-};
-
-/** select columns of table "lookup.cms_content_type" */
-export enum Lookup_Cms_Content_Type_Select_Column {
-  /** column name */
-  Comment = 'comment',
-  /** column name */
-  Value = 'value'
-}
-
-/** input type for updating data in table "lookup.cms_content_type" */
-export type Lookup_Cms_Content_Type_Set_Input = {
-  comment?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
-};
-
-/** update columns of table "lookup.cms_content_type" */
-export enum Lookup_Cms_Content_Type_Update_Column {
-  /** column name */
-  Comment = 'comment',
-  /** column name */
-  Value = 'value'
-}
-
-/**
  * de circle of life van een bezoek
  *
  *
- * columns and relationships of "lookup.cp_visit_status"
+ * columns and relationships of "lookup.maintainer_visitor_space_request_status"
  *
  */
-export type Lookup_Cp_Visit_Status = {
-  __typename?: 'lookup_cp_visit_status';
+export type Lookup_Maintainer_Visitor_Space_Request_Status = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status';
   comment: Scalars['String'];
   value: Scalars['String'];
 };
 
-/** aggregated selection of "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Aggregate = {
-  __typename?: 'lookup_cp_visit_status_aggregate';
-  aggregate?: Maybe<Lookup_Cp_Visit_Status_Aggregate_Fields>;
-  nodes: Array<Lookup_Cp_Visit_Status>;
+/** aggregated selection of "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_aggregate';
+  aggregate?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate_Fields>;
+  nodes: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
 };
 
-/** aggregate fields of "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Aggregate_Fields = {
-  __typename?: 'lookup_cp_visit_status_aggregate_fields';
+/** aggregate fields of "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_aggregate_fields';
   count: Scalars['Int'];
-  max?: Maybe<Lookup_Cp_Visit_Status_Max_Fields>;
-  min?: Maybe<Lookup_Cp_Visit_Status_Min_Fields>;
+  max?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Max_Fields>;
+  min?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Min_Fields>;
 };
 
 
-/** aggregate fields of "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Lookup_Cp_Visit_Status_Select_Column>>;
+/** aggregate fields of "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** Boolean expression to filter rows from the table "lookup.cp_visit_status". All fields are combined with a logical 'AND'. */
-export type Lookup_Cp_Visit_Status_Bool_Exp = {
-  _and?: InputMaybe<Array<Lookup_Cp_Visit_Status_Bool_Exp>>;
-  _not?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
-  _or?: InputMaybe<Array<Lookup_Cp_Visit_Status_Bool_Exp>>;
+/** Boolean expression to filter rows from the table "lookup.maintainer_visitor_space_request_status". All fields are combined with a logical 'AND'. */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>>;
   comment?: InputMaybe<String_Comparison_Exp>;
   value?: InputMaybe<String_Comparison_Exp>;
 };
 
-/** unique or primary key constraints on table "lookup.cp_visit_status" */
-export enum Lookup_Cp_Visit_Status_Constraint {
+/** unique or primary key constraints on table "lookup.maintainer_visitor_space_request_status" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Status_Constraint {
   /** unique or primary key constraint */
   CpVisitStatusPkey = 'cp_visit_status_pkey'
 }
 
-/** input type for inserting data into table "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Insert_Input = {
+/** input type for inserting data into table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input = {
   comment?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
-export type Lookup_Cp_Visit_Status_Max_Fields = {
-  __typename?: 'lookup_cp_visit_status_max_fields';
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Max_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_max_fields';
   comment?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
 };
 
 /** aggregate min on columns */
-export type Lookup_Cp_Visit_Status_Min_Fields = {
-  __typename?: 'lookup_cp_visit_status_min_fields';
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Min_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_min_fields';
   comment?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
 };
 
-/** response of any mutation on the table "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Mutation_Response = {
-  __typename?: 'lookup_cp_visit_status_mutation_response';
+/** response of any mutation on the table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_mutation_response';
   /** number of rows affected by the mutation */
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
-  returning: Array<Lookup_Cp_Visit_Status>;
+  returning: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
 };
 
-/** on conflict condition type for table "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_On_Conflict = {
-  constraint: Lookup_Cp_Visit_Status_Constraint;
-  update_columns?: Array<Lookup_Cp_Visit_Status_Update_Column>;
-  where?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
+/** on conflict condition type for table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict = {
+  constraint: Lookup_Maintainer_Visitor_Space_Request_Status_Constraint;
+  update_columns?: Array<Lookup_Maintainer_Visitor_Space_Request_Status_Update_Column>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
 };
 
-/** Ordering options when selecting data from "lookup.cp_visit_status". */
-export type Lookup_Cp_Visit_Status_Order_By = {
+/** Ordering options when selecting data from "lookup.maintainer_visitor_space_request_status". */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Order_By = {
   comment?: InputMaybe<Order_By>;
   value?: InputMaybe<Order_By>;
 };
 
-/** primary key columns input for table: lookup_cp_visit_status */
-export type Lookup_Cp_Visit_Status_Pk_Columns_Input = {
+/** primary key columns input for table: lookup_maintainer_visitor_space_request_status */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Pk_Columns_Input = {
   value: Scalars['String'];
 };
 
-/** select columns of table "lookup.cp_visit_status" */
-export enum Lookup_Cp_Visit_Status_Select_Column {
+/** select columns of table "lookup.maintainer_visitor_space_request_status" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
   Value = 'value'
 }
 
-/** input type for updating data in table "lookup.cp_visit_status" */
-export type Lookup_Cp_Visit_Status_Set_Input = {
+/** input type for updating data in table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input = {
   comment?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
-/** update columns of table "lookup.cp_visit_status" */
-export enum Lookup_Cp_Visit_Status_Update_Column {
+/** update columns of table "lookup.maintainer_visitor_space_request_status" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Status_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/**
+ * Enum waardes voor de status van een bezoekersruimte
+ *
+ *
+ * columns and relationships of "lookup.maintainer_visitor_space_status"
+ *
+ */
+export type Lookup_Maintainer_Visitor_Space_Status = {
+  __typename?: 'lookup_maintainer_visitor_space_status';
+  comment?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Aggregate = {
+  __typename?: 'lookup_maintainer_visitor_space_status_aggregate';
+  aggregate?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Aggregate_Fields>;
+  nodes: Array<Lookup_Maintainer_Visitor_Space_Status>;
+};
+
+/** aggregate fields of "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Aggregate_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_status_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Max_Fields>;
+  min?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.maintainer_visitor_space_status". All fields are combined with a logical 'AND'. */
+export type Lookup_Maintainer_Visitor_Space_Status_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.maintainer_visitor_space_status" */
+export enum Lookup_Maintainer_Visitor_Space_Status_Constraint {
+  /** unique or primary key constraint */
+  MaintainerVisitorSpaceStatusPkey = 'maintainer_visitor_space_status_pkey'
+}
+
+export enum Lookup_Maintainer_Visitor_Space_Status_Enum {
+  /** De bezoekersruimte is gepubliceerd en zichtbaar voor bezoekers */
+  Active = 'ACTIVE',
+  /** De bezoekersruimte is niet gepubliceerd en niet zichtbaar voor bezoekers */
+  Inactive = 'INACTIVE',
+  /** De bezoekersruimte is opgestart en vindbaar met rechtstreekse link, maar niet vindbaar zoekresultaten of de homepage */
+  Requested = 'REQUESTED'
+}
+
+/** Boolean expression to compare columns of type "lookup_maintainer_visitor_space_status_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Maintainer_Visitor_Space_Status_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum>;
+  _in?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum>;
+  _nin?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Maintainer_Visitor_Space_Status_Max_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_status_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Maintainer_Visitor_Space_Status_Min_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_status_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Mutation_Response = {
+  __typename?: 'lookup_maintainer_visitor_space_status_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_Maintainer_Visitor_Space_Status>;
+};
+
+/** on conflict condition type for table "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_On_Conflict = {
+  constraint: Lookup_Maintainer_Visitor_Space_Status_Constraint;
+  update_columns?: Array<Lookup_Maintainer_Visitor_Space_Status_Update_Column>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.maintainer_visitor_space_status". */
+export type Lookup_Maintainer_Visitor_Space_Status_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_maintainer_visitor_space_status */
+export type Lookup_Maintainer_Visitor_Space_Status_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.maintainer_visitor_space_status" */
+export enum Lookup_Maintainer_Visitor_Space_Status_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.maintainer_visitor_space_status" */
+export type Lookup_Maintainer_Visitor_Space_Status_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.maintainer_visitor_space_status" */
+export enum Lookup_Maintainer_Visitor_Space_Status_Update_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
@@ -4511,81 +3236,1497 @@ export enum Lookup_Schema_Audience_Type_Update_Column {
   Value = 'value'
 }
 
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "maintainer.content_partner"
+ *
+ */
+export type Maintainer_Content_Partner = {
+  __typename?: 'maintainer_content_partner';
+  created_at: Scalars['timestamp'];
+  has_index: Scalars['Boolean'];
+  has_space: Scalars['Boolean'];
+  /** An object relationship */
+  index?: Maybe<Maintainer_Index>;
+  information?: Maybe<Array<Maybe<ContentPartner>>>;
+  /** An array relationship */
+  maintainer_users_profiles: Array<Maintainer_Users_Profile>;
+  /** An aggregate relationship */
+  maintainer_users_profiles_aggregate: Maintainer_Users_Profile_Aggregate;
+  schema_identifier: Scalars['String'];
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at: Scalars['timestamp'];
+  /** An object relationship */
+  visitor_space?: Maybe<Maintainer_Visitor_Space>;
+};
+
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "maintainer.content_partner"
+ *
+ */
+export type Maintainer_Content_PartnerInformationArgs = {
+  iri?: InputMaybe<Scalars['String']>;
+};
+
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "maintainer.content_partner"
+ *
+ */
+export type Maintainer_Content_PartnerMaintainer_Users_ProfilesArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+
+/**
+ * Informatie over de organisatie die content beheert en aanbiedt, aka CP
+ *
+ *
+ * columns and relationships of "maintainer.content_partner"
+ *
+ */
+export type Maintainer_Content_PartnerMaintainer_Users_Profiles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/** aggregated selection of "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Aggregate = {
+  __typename?: 'maintainer_content_partner_aggregate';
+  aggregate?: Maybe<Maintainer_Content_Partner_Aggregate_Fields>;
+  nodes: Array<Maintainer_Content_Partner>;
+};
+
+/** aggregate fields of "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Aggregate_Fields = {
+  __typename?: 'maintainer_content_partner_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Content_Partner_Max_Fields>;
+  min?: Maybe<Maintainer_Content_Partner_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Content_Partner_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.content_partner". All fields are combined with a logical 'AND'. */
+export type Maintainer_Content_Partner_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Content_Partner_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Content_Partner_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  has_index?: InputMaybe<Boolean_Comparison_Exp>;
+  has_space?: InputMaybe<Boolean_Comparison_Exp>;
+  index?: InputMaybe<Maintainer_Index_Bool_Exp>;
+  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+  schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.content_partner" */
+export enum Maintainer_Content_Partner_Constraint {
+  /** unique or primary key constraint */
+  MaintainerPkey = 'maintainer_pkey'
+}
+
+/** input type for inserting data into table "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  has_index?: InputMaybe<Scalars['Boolean']>;
+  has_space?: InputMaybe<Scalars['Boolean']>;
+  index?: InputMaybe<Maintainer_Index_Obj_Rel_Insert_Input>;
+  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Obj_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Content_Partner_Max_Fields = {
+  __typename?: 'maintainer_content_partner_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Content_Partner_Min_Fields = {
+  __typename?: 'maintainer_content_partner_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Mutation_Response = {
+  __typename?: 'maintainer_content_partner_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Content_Partner>;
+};
+
+/** input type for inserting object relation for remote table "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Obj_Rel_Insert_Input = {
+  data: Maintainer_Content_Partner_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Content_Partner_On_Conflict>;
+};
+
+/** on conflict condition type for table "maintainer.content_partner" */
+export type Maintainer_Content_Partner_On_Conflict = {
+  constraint: Maintainer_Content_Partner_Constraint;
+  update_columns?: Array<Maintainer_Content_Partner_Update_Column>;
+  where?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.content_partner". */
+export type Maintainer_Content_Partner_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  has_index?: InputMaybe<Order_By>;
+  has_space?: InputMaybe<Order_By>;
+  index?: InputMaybe<Maintainer_Index_Order_By>;
+  maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Order_By>;
+  schema_identifier?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Order_By>;
+};
+
+/** primary key columns input for table: maintainer_content_partner */
+export type Maintainer_Content_Partner_Pk_Columns_Input = {
+  schema_identifier: Scalars['String'];
+};
+
+/** select columns of table "maintainer.content_partner" */
+export enum Maintainer_Content_Partner_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HasIndex = 'has_index',
+  /** column name */
+  HasSpace = 'has_space',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "maintainer.content_partner" */
+export type Maintainer_Content_Partner_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  has_index?: InputMaybe<Scalars['Boolean']>;
+  has_space?: InputMaybe<Scalars['Boolean']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "maintainer.content_partner" */
+export enum Maintainer_Content_Partner_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HasIndex = 'has_index',
+  /** column name */
+  HasSpace = 'has_space',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/**
+ * Informatie over de zoekindex per CP
+ *
+ *
+ * columns and relationships of "maintainer.index"
+ *
+ */
+export type Maintainer_Index = {
+  __typename?: 'maintainer_index';
+  /** An object relationship */
+  content_partner: Maintainer_Content_Partner;
+  created_at: Scalars['timestamp'];
+  schema_maintainer_id: Scalars['String'];
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "maintainer.index" */
+export type Maintainer_Index_Aggregate = {
+  __typename?: 'maintainer_index_aggregate';
+  aggregate?: Maybe<Maintainer_Index_Aggregate_Fields>;
+  nodes: Array<Maintainer_Index>;
+};
+
+/** aggregate fields of "maintainer.index" */
+export type Maintainer_Index_Aggregate_Fields = {
+  __typename?: 'maintainer_index_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Index_Max_Fields>;
+  min?: Maybe<Maintainer_Index_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.index" */
+export type Maintainer_Index_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.index". All fields are combined with a logical 'AND'. */
+export type Maintainer_Index_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Index_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Index_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Index_Bool_Exp>>;
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.index" */
+export enum Maintainer_Index_Constraint {
+  /** unique or primary key constraint */
+  IndexPkey = 'index_pkey'
+}
+
+/** input type for inserting data into table "maintainer.index" */
+export type Maintainer_Index_Insert_Input = {
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  schema_maintainer_id?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Index_Max_Fields = {
+  __typename?: 'maintainer_index_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  schema_maintainer_id?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Index_Min_Fields = {
+  __typename?: 'maintainer_index_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  schema_maintainer_id?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "maintainer.index" */
+export type Maintainer_Index_Mutation_Response = {
+  __typename?: 'maintainer_index_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Index>;
+};
+
+/** input type for inserting object relation for remote table "maintainer.index" */
+export type Maintainer_Index_Obj_Rel_Insert_Input = {
+  data: Maintainer_Index_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Index_On_Conflict>;
+};
+
+/** on conflict condition type for table "maintainer.index" */
+export type Maintainer_Index_On_Conflict = {
+  constraint: Maintainer_Index_Constraint;
+  update_columns?: Array<Maintainer_Index_Update_Column>;
+  where?: InputMaybe<Maintainer_Index_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.index". */
+export type Maintainer_Index_Order_By = {
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  schema_maintainer_id?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: maintainer_index */
+export type Maintainer_Index_Pk_Columns_Input = {
+  schema_maintainer_id: Scalars['String'];
+};
+
+/** select columns of table "maintainer.index" */
+export enum Maintainer_Index_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaMaintainerId = 'schema_maintainer_id',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "maintainer.index" */
+export type Maintainer_Index_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  schema_maintainer_id?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "maintainer.index" */
+export enum Maintainer_Index_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaMaintainerId = 'schema_maintainer_id',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/**
+ * The user profiles that will manage this reading room
+ *
+ *
+ * columns and relationships of "maintainer.users_profile"
+ *
+ */
+export type Maintainer_Users_Profile = {
+  __typename?: 'maintainer_users_profile';
+  id: Scalars['uuid'];
+  /** An object relationship */
+  maintainer: Maintainer_Content_Partner;
+  maintainer_identifier: Scalars['String'];
+  /** An object relationship */
+  profile: Users_Profile;
+  users_profile_id: Scalars['uuid'];
+};
+
+/** aggregated selection of "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Aggregate = {
+  __typename?: 'maintainer_users_profile_aggregate';
+  aggregate?: Maybe<Maintainer_Users_Profile_Aggregate_Fields>;
+  nodes: Array<Maintainer_Users_Profile>;
+};
+
+/** aggregate fields of "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Aggregate_Fields = {
+  __typename?: 'maintainer_users_profile_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Users_Profile_Max_Fields>;
+  min?: Maybe<Maintainer_Users_Profile_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Maintainer_Users_Profile_Max_Order_By>;
+  min?: InputMaybe<Maintainer_Users_Profile_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
+  data: Array<Maintainer_Users_Profile_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.users_profile". All fields are combined with a logical 'AND'. */
+export type Maintainer_Users_Profile_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Users_Profile_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Users_Profile_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+  maintainer_identifier?: InputMaybe<String_Comparison_Exp>;
+  profile?: InputMaybe<Users_Profile_Bool_Exp>;
+  users_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.users_profile" */
+export enum Maintainer_Users_Profile_Constraint {
+  /** unique or primary key constraint */
+  MaintainerUsersProfileMaintainerIdentifierUsersProfilKey = 'maintainer_users_profile_maintainer_identifier_users_profil_key',
+  /** unique or primary key constraint */
+  MaintainerUsersProfilePkey = 'maintainer_users_profile_pkey'
+}
+
+/** input type for inserting data into table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
+  maintainer_identifier?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  users_profile_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Users_Profile_Max_Fields = {
+  __typename?: 'maintainer_users_profile_max_fields';
+  id?: Maybe<Scalars['uuid']>;
+  maintainer_identifier?: Maybe<Scalars['String']>;
+  users_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Max_Order_By = {
+  id?: InputMaybe<Order_By>;
+  maintainer_identifier?: InputMaybe<Order_By>;
+  users_profile_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Users_Profile_Min_Fields = {
+  __typename?: 'maintainer_users_profile_min_fields';
+  id?: Maybe<Scalars['uuid']>;
+  maintainer_identifier?: Maybe<Scalars['String']>;
+  users_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Min_Order_By = {
+  id?: InputMaybe<Order_By>;
+  maintainer_identifier?: InputMaybe<Order_By>;
+  users_profile_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Mutation_Response = {
+  __typename?: 'maintainer_users_profile_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Users_Profile>;
+};
+
+/** on conflict condition type for table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_On_Conflict = {
+  constraint: Maintainer_Users_Profile_Constraint;
+  update_columns?: Array<Maintainer_Users_Profile_Update_Column>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.users_profile". */
+export type Maintainer_Users_Profile_Order_By = {
+  id?: InputMaybe<Order_By>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Order_By>;
+  maintainer_identifier?: InputMaybe<Order_By>;
+  profile?: InputMaybe<Users_Profile_Order_By>;
+  users_profile_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: maintainer_users_profile */
+export type Maintainer_Users_Profile_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "maintainer.users_profile" */
+export enum Maintainer_Users_Profile_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaintainerIdentifier = 'maintainer_identifier',
+  /** column name */
+  UsersProfileId = 'users_profile_id'
+}
+
+/** input type for updating data in table "maintainer.users_profile" */
+export type Maintainer_Users_Profile_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']>;
+  maintainer_identifier?: InputMaybe<Scalars['String']>;
+  users_profile_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** update columns of table "maintainer.users_profile" */
+export enum Maintainer_Users_Profile_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  MaintainerIdentifier = 'maintainer_identifier',
+  /** column name */
+  UsersProfileId = 'users_profile_id'
+}
+
+/**
+ * Bezoekersruimte aka leeszaal van een CP
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space"
+ *
+ */
+export type Maintainer_Visitor_Space = {
+  __typename?: 'maintainer_visitor_space';
+  /** An object relationship */
+  content_partner: Maintainer_Content_Partner;
+  created_at?: Maybe<Scalars['timestamp']>;
+  id: Scalars['uuid'];
+  published_at?: Maybe<Scalars['timestamp']>;
+  schema_audience_type: Lookup_Schema_Audience_Type_Enum;
+  schema_color?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  schema_image?: Maybe<Scalars['String']>;
+  schema_maintainer_id: Scalars['String'];
+  schema_public_access?: Maybe<Scalars['Boolean']>;
+  schema_service_description?: Maybe<Scalars['String']>;
+  status: Lookup_Maintainer_Visitor_Space_Status_Enum;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  /** An array relationship */
+  visitor_space_requests: Array<Maintainer_Visitor_Space_Request>;
+  /** An aggregate relationship */
+  visitor_space_requests_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
+};
+
+
+/**
+ * Bezoekersruimte aka leeszaal van een CP
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space"
+ *
+ */
+export type Maintainer_Visitor_SpaceVisitor_Space_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+/**
+ * Bezoekersruimte aka leeszaal van een CP
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space"
+ *
+ */
+export type Maintainer_Visitor_SpaceVisitor_Space_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+/** aggregated selection of "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Aggregate = {
+  __typename?: 'maintainer_visitor_space_aggregate';
+  aggregate?: Maybe<Maintainer_Visitor_Space_Aggregate_Fields>;
+  nodes: Array<Maintainer_Visitor_Space>;
+};
+
+/** aggregate fields of "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Aggregate_Fields = {
+  __typename?: 'maintainer_visitor_space_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Visitor_Space_Max_Fields>;
+  min?: Maybe<Maintainer_Visitor_Space_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.visitor_space". All fields are combined with a logical 'AND'. */
+export type Maintainer_Visitor_Space_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Visitor_Space_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Visitor_Space_Bool_Exp>>;
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  published_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum_Comparison_Exp>;
+  schema_color?: InputMaybe<String_Comparison_Exp>;
+  schema_description?: InputMaybe<String_Comparison_Exp>;
+  schema_image?: InputMaybe<String_Comparison_Exp>;
+  schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
+  schema_public_access?: InputMaybe<Boolean_Comparison_Exp>;
+  schema_service_description?: InputMaybe<String_Comparison_Exp>;
+  status?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.visitor_space" */
+export enum Maintainer_Visitor_Space_Constraint {
+  /** unique or primary key constraint */
+  SpacePkey = 'space_pkey',
+  /** unique or primary key constraint */
+  SpaceSchemaMaintainerIdKey = 'space_schema_maintainer_id_key'
+}
+
+/** input type for inserting data into table "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Insert_Input = {
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  published_at?: InputMaybe<Scalars['timestamp']>;
+  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
+  schema_color?: InputMaybe<Scalars['String']>;
+  schema_description?: InputMaybe<Scalars['String']>;
+  schema_image?: InputMaybe<Scalars['String']>;
+  schema_maintainer_id?: InputMaybe<Scalars['String']>;
+  schema_public_access?: InputMaybe<Scalars['Boolean']>;
+  schema_service_description?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Visitor_Space_Max_Fields = {
+  __typename?: 'maintainer_visitor_space_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  published_at?: Maybe<Scalars['timestamp']>;
+  schema_color?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  schema_image?: Maybe<Scalars['String']>;
+  schema_maintainer_id?: Maybe<Scalars['String']>;
+  schema_service_description?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Visitor_Space_Min_Fields = {
+  __typename?: 'maintainer_visitor_space_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  published_at?: Maybe<Scalars['timestamp']>;
+  schema_color?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  schema_image?: Maybe<Scalars['String']>;
+  schema_maintainer_id?: Maybe<Scalars['String']>;
+  schema_service_description?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Mutation_Response = {
+  __typename?: 'maintainer_visitor_space_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Visitor_Space>;
+};
+
+/** input type for inserting object relation for remote table "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Obj_Rel_Insert_Input = {
+  data: Maintainer_Visitor_Space_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_On_Conflict>;
+};
+
+/** on conflict condition type for table "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_On_Conflict = {
+  constraint: Maintainer_Visitor_Space_Constraint;
+  update_columns?: Array<Maintainer_Visitor_Space_Update_Column>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.visitor_space". */
+export type Maintainer_Visitor_Space_Order_By = {
+  content_partner?: InputMaybe<Maintainer_Content_Partner_Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  published_at?: InputMaybe<Order_By>;
+  schema_audience_type?: InputMaybe<Order_By>;
+  schema_color?: InputMaybe<Order_By>;
+  schema_description?: InputMaybe<Order_By>;
+  schema_image?: InputMaybe<Order_By>;
+  schema_maintainer_id?: InputMaybe<Order_By>;
+  schema_public_access?: InputMaybe<Order_By>;
+  schema_service_description?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  visitor_space_requests_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: maintainer_visitor_space */
+export type Maintainer_Visitor_Space_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/**
+ * Bezoekaanvragen van gebruikers
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request"
+ *
+ */
+export type Maintainer_Visitor_Space_Request = {
+  __typename?: 'maintainer_visitor_space_request';
+  cp_space_id: Scalars['uuid'];
+  created_at: Scalars['timestamp'];
+  end_date?: Maybe<Scalars['timestamp']>;
+  id: Scalars['uuid'];
+  /** An object relationship */
+  last_updated_by?: Maybe<Users_Profile>;
+  /** An array relationship */
+  notifications: Array<App_Notification>;
+  /** An aggregate relationship */
+  notifications_aggregate: App_Notification_Aggregate;
+  /** An object relationship */
+  requested_by: Users_Profile;
+  start_date?: Maybe<Scalars['timestamp']>;
+  status: Scalars['String'];
+  updated_at: Scalars['timestamp'];
+  updated_by?: Maybe<Scalars['uuid']>;
+  user_accepted_tos?: Maybe<Scalars['Boolean']>;
+  user_profile_id: Scalars['uuid'];
+  user_reason?: Maybe<Scalars['String']>;
+  user_timeframe?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  visitor_space: Maintainer_Visitor_Space;
+  /** An array relationship */
+  visitor_space_request_notes: Array<Maintainer_Visitor_Space_Request_Note>;
+  /** An aggregate relationship */
+  visitor_space_request_notes_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
+};
+
+
+/**
+ * Bezoekaanvragen van gebruikers
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request"
+ *
+ */
+export type Maintainer_Visitor_Space_RequestNotificationsArgs = {
+  distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Notification_Order_By>>;
+  where?: InputMaybe<App_Notification_Bool_Exp>;
+};
+
+
+/**
+ * Bezoekaanvragen van gebruikers
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request"
+ *
+ */
+export type Maintainer_Visitor_Space_RequestNotifications_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Notification_Order_By>>;
+  where?: InputMaybe<App_Notification_Bool_Exp>;
+};
+
+
+/**
+ * Bezoekaanvragen van gebruikers
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request"
+ *
+ */
+export type Maintainer_Visitor_Space_RequestVisitor_Space_Request_NotesArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+
+/**
+ * Bezoekaanvragen van gebruikers
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request"
+ *
+ */
+export type Maintainer_Visitor_Space_RequestVisitor_Space_Request_Notes_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+/** aggregated selection of "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Aggregate = {
+  __typename?: 'maintainer_visitor_space_request_aggregate';
+  aggregate?: Maybe<Maintainer_Visitor_Space_Request_Aggregate_Fields>;
+  nodes: Array<Maintainer_Visitor_Space_Request>;
+};
+
+/** aggregate fields of "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Aggregate_Fields = {
+  __typename?: 'maintainer_visitor_space_request_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Visitor_Space_Request_Max_Fields>;
+  min?: Maybe<Maintainer_Visitor_Space_Request_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Maintainer_Visitor_Space_Request_Max_Order_By>;
+  min?: InputMaybe<Maintainer_Visitor_Space_Request_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input = {
+  data: Array<Maintainer_Visitor_Space_Request_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.visitor_space_request". All fields are combined with a logical 'AND'. */
+export type Maintainer_Visitor_Space_Request_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Bool_Exp>>;
+  cp_space_id?: InputMaybe<Uuid_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  end_date?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  last_updated_by?: InputMaybe<Users_Profile_Bool_Exp>;
+  notifications?: InputMaybe<App_Notification_Bool_Exp>;
+  requested_by?: InputMaybe<Users_Profile_Bool_Exp>;
+  start_date?: InputMaybe<Timestamp_Comparison_Exp>;
+  status?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  updated_by?: InputMaybe<Uuid_Comparison_Exp>;
+  user_accepted_tos?: InputMaybe<Boolean_Comparison_Exp>;
+  user_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+  user_reason?: InputMaybe<String_Comparison_Exp>;
+  user_timeframe?: InputMaybe<String_Comparison_Exp>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+  visitor_space_request_notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.visitor_space_request" */
+export enum Maintainer_Visitor_Space_Request_Constraint {
+  /** unique or primary key constraint */
+  VisitPkey = 'visit_pkey'
+}
+
+/** input type for inserting data into table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Insert_Input = {
+  cp_space_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  end_date?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  last_updated_by?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
+  requested_by?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  start_date?: InputMaybe<Scalars['timestamp']>;
+  status?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  updated_by?: InputMaybe<Scalars['uuid']>;
+  user_accepted_tos?: InputMaybe<Scalars['Boolean']>;
+  user_profile_id?: InputMaybe<Scalars['uuid']>;
+  user_reason?: InputMaybe<Scalars['String']>;
+  user_timeframe?: InputMaybe<Scalars['String']>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Obj_Rel_Insert_Input>;
+  visitor_space_request_notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Visitor_Space_Request_Max_Fields = {
+  __typename?: 'maintainer_visitor_space_request_max_fields';
+  cp_space_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  end_date?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  start_date?: Maybe<Scalars['timestamp']>;
+  status?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  updated_by?: Maybe<Scalars['uuid']>;
+  user_profile_id?: Maybe<Scalars['uuid']>;
+  user_reason?: Maybe<Scalars['String']>;
+  user_timeframe?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Max_Order_By = {
+  cp_space_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  end_date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_date?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
+  user_reason?: InputMaybe<Order_By>;
+  user_timeframe?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Visitor_Space_Request_Min_Fields = {
+  __typename?: 'maintainer_visitor_space_request_min_fields';
+  cp_space_id?: Maybe<Scalars['uuid']>;
+  created_at?: Maybe<Scalars['timestamp']>;
+  end_date?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  start_date?: Maybe<Scalars['timestamp']>;
+  status?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  updated_by?: Maybe<Scalars['uuid']>;
+  user_profile_id?: Maybe<Scalars['uuid']>;
+  user_reason?: Maybe<Scalars['String']>;
+  user_timeframe?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Min_Order_By = {
+  cp_space_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  end_date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_date?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
+  user_reason?: InputMaybe<Order_By>;
+  user_timeframe?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Mutation_Response = {
+  __typename?: 'maintainer_visitor_space_request_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Visitor_Space_Request>;
+};
+
+/**
+ * Notities en bemerkingen van een beheerder tijdens de levensduur van een bezoek, van aanvraag tot afronding
+ *
+ *
+ * columns and relationships of "maintainer.visitor_space_request_note"
+ *
+ */
+export type Maintainer_Visitor_Space_Request_Note = {
+  __typename?: 'maintainer_visitor_space_request_note';
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  note: Scalars['String'];
+  /** An object relationship */
+  profile?: Maybe<Users_Profile>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: Maybe<Scalars['uuid']>;
+  updated_at: Scalars['timestamp'];
+  /** An object relationship */
+  visit: Maintainer_Visitor_Space_Request;
+  visit_id: Scalars['uuid'];
+};
+
+/** aggregated selection of "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Aggregate = {
+  __typename?: 'maintainer_visitor_space_request_note_aggregate';
+  aggregate?: Maybe<Maintainer_Visitor_Space_Request_Note_Aggregate_Fields>;
+  nodes: Array<Maintainer_Visitor_Space_Request_Note>;
+};
+
+/** aggregate fields of "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Aggregate_Fields = {
+  __typename?: 'maintainer_visitor_space_request_note_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Visitor_Space_Request_Note_Max_Fields>;
+  min?: Maybe<Maintainer_Visitor_Space_Request_Note_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Max_Order_By>;
+  min?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Arr_Rel_Insert_Input = {
+  data: Array<Maintainer_Visitor_Space_Request_Note_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Note_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.visitor_space_request_note". All fields are combined with a logical 'AND'. */
+export type Maintainer_Visitor_Space_Request_Note_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  note?: InputMaybe<String_Comparison_Exp>;
+  profile?: InputMaybe<Users_Profile_Bool_Exp>;
+  profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  visit?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+  visit_id?: InputMaybe<Uuid_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.visitor_space_request_note" */
+export enum Maintainer_Visitor_Space_Request_Note_Constraint {
+  /** unique or primary key constraint */
+  VisitNotePkey = 'visit_note_pkey'
+}
+
+/** input type for inserting data into table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  note?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  visit?: InputMaybe<Maintainer_Visitor_Space_Request_Obj_Rel_Insert_Input>;
+  visit_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Visitor_Space_Request_Note_Max_Fields = {
+  __typename?: 'maintainer_visitor_space_request_note_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  visit_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by max() on columns of table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  visit_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Visitor_Space_Request_Note_Min_Fields = {
+  __typename?: 'maintainer_visitor_space_request_note_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  note?: Maybe<Scalars['String']>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: Maybe<Scalars['uuid']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+  visit_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  visit_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Mutation_Response = {
+  __typename?: 'maintainer_visitor_space_request_note_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Visitor_Space_Request_Note>;
+};
+
+/** on conflict condition type for table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_On_Conflict = {
+  constraint: Maintainer_Visitor_Space_Request_Note_Constraint;
+  update_columns?: Array<Maintainer_Visitor_Space_Request_Note_Update_Column>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.visitor_space_request_note". */
+export type Maintainer_Visitor_Space_Request_Note_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  note?: InputMaybe<Order_By>;
+  profile?: InputMaybe<Users_Profile_Order_By>;
+  profile_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  visit?: InputMaybe<Maintainer_Visitor_Space_Request_Order_By>;
+  visit_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: maintainer_visitor_space_request_note */
+export type Maintainer_Visitor_Space_Request_Note_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "maintainer.visitor_space_request_note" */
+export enum Maintainer_Visitor_Space_Request_Note_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VisitId = 'visit_id'
+}
+
+/** input type for updating data in table "maintainer.visitor_space_request_note" */
+export type Maintainer_Visitor_Space_Request_Note_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  note?: InputMaybe<Scalars['String']>;
+  /** Degene die de notitie heeft gemaakt */
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  visit_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** update columns of table "maintainer.visitor_space_request_note" */
+export enum Maintainer_Visitor_Space_Request_Note_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Note = 'note',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  VisitId = 'visit_id'
+}
+
+/** input type for inserting object relation for remote table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Obj_Rel_Insert_Input = {
+  data: Maintainer_Visitor_Space_Request_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
+};
+
+/** on conflict condition type for table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_On_Conflict = {
+  constraint: Maintainer_Visitor_Space_Request_Constraint;
+  update_columns?: Array<Maintainer_Visitor_Space_Request_Update_Column>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.visitor_space_request". */
+export type Maintainer_Visitor_Space_Request_Order_By = {
+  cp_space_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  end_date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_updated_by?: InputMaybe<Users_Profile_Order_By>;
+  notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
+  requested_by?: InputMaybe<Users_Profile_Order_By>;
+  start_date?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by?: InputMaybe<Order_By>;
+  user_accepted_tos?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
+  user_reason?: InputMaybe<Order_By>;
+  user_timeframe?: InputMaybe<Order_By>;
+  visitor_space?: InputMaybe<Maintainer_Visitor_Space_Order_By>;
+  visitor_space_request_notes_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: maintainer_visitor_space_request */
+export type Maintainer_Visitor_Space_Request_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "maintainer.visitor_space_request" */
+export enum Maintainer_Visitor_Space_Request_Select_Column {
+  /** column name */
+  CpSpaceId = 'cp_space_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndDate = 'end_date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  StartDate = 'start_date',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UpdatedBy = 'updated_by',
+  /** column name */
+  UserAcceptedTos = 'user_accepted_tos',
+  /** column name */
+  UserProfileId = 'user_profile_id',
+  /** column name */
+  UserReason = 'user_reason',
+  /** column name */
+  UserTimeframe = 'user_timeframe'
+}
+
+/** input type for updating data in table "maintainer.visitor_space_request" */
+export type Maintainer_Visitor_Space_Request_Set_Input = {
+  cp_space_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  end_date?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  start_date?: InputMaybe<Scalars['timestamp']>;
+  status?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+  updated_by?: InputMaybe<Scalars['uuid']>;
+  user_accepted_tos?: InputMaybe<Scalars['Boolean']>;
+  user_profile_id?: InputMaybe<Scalars['uuid']>;
+  user_reason?: InputMaybe<Scalars['String']>;
+  user_timeframe?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "maintainer.visitor_space_request" */
+export enum Maintainer_Visitor_Space_Request_Update_Column {
+  /** column name */
+  CpSpaceId = 'cp_space_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EndDate = 'end_date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  StartDate = 'start_date',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UpdatedBy = 'updated_by',
+  /** column name */
+  UserAcceptedTos = 'user_accepted_tos',
+  /** column name */
+  UserProfileId = 'user_profile_id',
+  /** column name */
+  UserReason = 'user_reason',
+  /** column name */
+  UserTimeframe = 'user_timeframe'
+}
+
+/** select columns of table "maintainer.visitor_space" */
+export enum Maintainer_Visitor_Space_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PublishedAt = 'published_at',
+  /** column name */
+  SchemaAudienceType = 'schema_audience_type',
+  /** column name */
+  SchemaColor = 'schema_color',
+  /** column name */
+  SchemaDescription = 'schema_description',
+  /** column name */
+  SchemaImage = 'schema_image',
+  /** column name */
+  SchemaMaintainerId = 'schema_maintainer_id',
+  /** column name */
+  SchemaPublicAccess = 'schema_public_access',
+  /** column name */
+  SchemaServiceDescription = 'schema_service_description',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "maintainer.visitor_space" */
+export type Maintainer_Visitor_Space_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  published_at?: InputMaybe<Scalars['timestamp']>;
+  schema_audience_type?: InputMaybe<Lookup_Schema_Audience_Type_Enum>;
+  schema_color?: InputMaybe<Scalars['String']>;
+  schema_description?: InputMaybe<Scalars['String']>;
+  schema_image?: InputMaybe<Scalars['String']>;
+  schema_maintainer_id?: InputMaybe<Scalars['String']>;
+  schema_public_access?: InputMaybe<Scalars['Boolean']>;
+  schema_service_description?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "maintainer.visitor_space" */
+export enum Maintainer_Visitor_Space_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PublishedAt = 'published_at',
+  /** column name */
+  SchemaAudienceType = 'schema_audience_type',
+  /** column name */
+  SchemaColor = 'schema_color',
+  /** column name */
+  SchemaDescription = 'schema_description',
+  /** column name */
+  SchemaImage = 'schema_image',
+  /** column name */
+  SchemaMaintainerId = 'schema_maintainer_id',
+  /** column name */
+  SchemaPublicAccess = 'schema_public_access',
+  /** column name */
+  SchemaServiceDescription = 'schema_service_description',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
+  /** delete data from the table: "app.config" */
+  delete_app_config?: Maybe<App_Config_Mutation_Response>;
+  /** delete single row from the table: "app.config" */
+  delete_app_config_by_pk?: Maybe<App_Config>;
+  /** delete data from the table: "app.content_block" */
+  delete_app_content_block?: Maybe<App_Content_Block_Mutation_Response>;
+  /** delete single row from the table: "app.content_block" */
+  delete_app_content_block_by_pk?: Maybe<App_Content_Block>;
+  /** delete data from the table: "app.content_label" */
+  delete_app_content_label?: Maybe<App_Content_Label_Mutation_Response>;
+  /** delete single row from the table: "app.content_label" */
+  delete_app_content_label_by_pk?: Maybe<App_Content_Label>;
+  /** delete data from the table: "app.content_page" */
+  delete_app_content_page?: Maybe<App_Content_Page_Mutation_Response>;
+  /** delete single row from the table: "app.content_page" */
+  delete_app_content_page_by_pk?: Maybe<App_Content_Page>;
+  /** delete data from the table: "app.content_page_content_label" */
+  delete_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
+  /** delete single row from the table: "app.content_page_content_label" */
+  delete_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** delete data from the table: "app.navigation" */
+  delete_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
+  /** delete single row from the table: "app.navigation" */
+  delete_app_navigation_by_pk?: Maybe<App_Navigation>;
   /** delete data from the table: "app.notification" */
   delete_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** delete single row from the table: "app.notification" */
   delete_app_notification_by_pk?: Maybe<App_Notification>;
-  /** delete data from the table: "cms.content" */
-  delete_cms_content?: Maybe<Cms_Content_Mutation_Response>;
-  /** delete data from the table: "cms.content_blocks" */
-  delete_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
-  /** delete single row from the table: "cms.content_blocks" */
-  delete_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
-  /** delete single row from the table: "cms.content" */
-  delete_cms_content_by_pk?: Maybe<Cms_Content>;
-  /** delete data from the table: "cms.content_content_labels" */
-  delete_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
-  /** delete single row from the table: "cms.content_content_labels" */
-  delete_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
-  /** delete data from the table: "cms.content_labels" */
-  delete_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
-  /** delete single row from the table: "cms.content_labels" */
-  delete_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
-  /** delete data from the table: "cms.navigation_element" */
-  delete_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
-  /** delete single row from the table: "cms.navigation_element" */
-  delete_cms_navigation_element_by_pk?: Maybe<Cms_Navigation_Element>;
-  /** delete data from the table: "cms.site_variables" */
-  delete_cms_site_variables?: Maybe<Cms_Site_Variables_Mutation_Response>;
-  /** delete single row from the table: "cms.site_variables" */
-  delete_cms_site_variables_by_pk?: Maybe<Cms_Site_Variables>;
-  /** delete data from the table: "cp.index" */
-  delete_cp_index?: Maybe<Cp_Index_Mutation_Response>;
-  /** delete single row from the table: "cp.index" */
-  delete_cp_index_by_pk?: Maybe<Cp_Index>;
-  /** delete data from the table: "cp.maintainer" */
-  delete_cp_maintainer?: Maybe<Cp_Maintainer_Mutation_Response>;
-  /** delete single row from the table: "cp.maintainer" */
-  delete_cp_maintainer_by_pk?: Maybe<Cp_Maintainer>;
-  /** delete data from the table: "cp.maintainer_users_profile" */
-  delete_cp_maintainer_users_profile?: Maybe<Cp_Maintainer_Users_Profile_Mutation_Response>;
-  /** delete single row from the table: "cp.maintainer_users_profile" */
-  delete_cp_maintainer_users_profile_by_pk?: Maybe<Cp_Maintainer_Users_Profile>;
-  /** delete data from the table: "cp.space" */
-  delete_cp_space?: Maybe<Cp_Space_Mutation_Response>;
-  /** delete single row from the table: "cp.space" */
-  delete_cp_space_by_pk?: Maybe<Cp_Space>;
-  /** delete data from the table: "cp.visit" */
-  delete_cp_visit?: Maybe<Cp_Visit_Mutation_Response>;
-  /** delete single row from the table: "cp.visit" */
-  delete_cp_visit_by_pk?: Maybe<Cp_Visit>;
-  /** delete data from the table: "cp.visit_note" */
-  delete_cp_visit_note?: Maybe<Cp_Visit_Note_Mutation_Response>;
-  /** delete single row from the table: "cp.visit_note" */
-  delete_cp_visit_note_by_pk?: Maybe<Cp_Visit_Note>;
+  /** delete data from the table: "lookup.app_content_block_type" */
+  delete_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
+  /** delete single row from the table: "lookup.app_content_block_type" */
+  delete_lookup_app_content_block_type_by_pk?: Maybe<Lookup_App_Content_Block_Type>;
+  /** delete data from the table: "lookup.app_content_type" */
+  delete_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
+  /** delete single row from the table: "lookup.app_content_type" */
+  delete_lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
   /** delete data from the table: "lookup.app_notification_type" */
   delete_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_notification_type" */
   delete_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
-  /** delete data from the table: "lookup.cms_content_block_type" */
-  delete_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
-  /** delete single row from the table: "lookup.cms_content_block_type" */
-  delete_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
-  /** delete data from the table: "lookup.cms_content_type" */
-  delete_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
-  /** delete single row from the table: "lookup.cms_content_type" */
-  delete_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
-  /** delete data from the table: "lookup.cp_visit_status" */
-  delete_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
-  /** delete single row from the table: "lookup.cp_visit_status" */
-  delete_lookup_cp_visit_status_by_pk?: Maybe<Lookup_Cp_Visit_Status>;
+  /** delete data from the table: "lookup.maintainer_visitor_space_request_status" */
+  delete_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
+  /** delete single row from the table: "lookup.maintainer_visitor_space_request_status" */
+  delete_lookup_maintainer_visitor_space_request_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** delete data from the table: "lookup.maintainer_visitor_space_status" */
+  delete_lookup_maintainer_visitor_space_status?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Mutation_Response>;
+  /** delete single row from the table: "lookup.maintainer_visitor_space_status" */
+  delete_lookup_maintainer_visitor_space_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Status>;
   /** delete data from the table: "lookup.schema_audience_type" */
   delete_lookup_schema_audience_type?: Maybe<Lookup_Schema_Audience_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.schema_audience_type" */
   delete_lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** delete data from the table: "maintainer.content_partner" */
+  delete_maintainer_content_partner?: Maybe<Maintainer_Content_Partner_Mutation_Response>;
+  /** delete single row from the table: "maintainer.content_partner" */
+  delete_maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** delete data from the table: "maintainer.index" */
+  delete_maintainer_index?: Maybe<Maintainer_Index_Mutation_Response>;
+  /** delete single row from the table: "maintainer.index" */
+  delete_maintainer_index_by_pk?: Maybe<Maintainer_Index>;
+  /** delete data from the table: "maintainer.users_profile" */
+  delete_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
+  /** delete single row from the table: "maintainer.users_profile" */
+  delete_maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
+  /** delete data from the table: "maintainer.visitor_space" */
+  delete_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
+  /** delete single row from the table: "maintainer.visitor_space" */
+  delete_maintainer_visitor_space_by_pk?: Maybe<Maintainer_Visitor_Space>;
+  /** delete data from the table: "maintainer.visitor_space_request" */
+  delete_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
+  /** delete single row from the table: "maintainer.visitor_space_request" */
+  delete_maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** delete data from the table: "maintainer.visitor_space_request_note" */
+  delete_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
+  /** delete single row from the table: "maintainer.visitor_space_request_note" */
+  delete_maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** delete data from the table: "object.file" */
   delete_object_file?: Maybe<Object_File_Mutation_Response>;
   /** delete single row from the table: "object.file" */
@@ -4610,14 +4751,14 @@ export type Mutation_Root = {
   delete_sync_video?: Maybe<Sync_Video_Mutation_Response>;
   /** delete single row from the table: "sync.video" */
   delete_sync_video_by_pk?: Maybe<Sync_Video>;
-  /** delete data from the table: "users.collection" */
-  delete_users_collection?: Maybe<Users_Collection_Mutation_Response>;
-  /** delete single row from the table: "users.collection" */
-  delete_users_collection_by_pk?: Maybe<Users_Collection>;
-  /** delete data from the table: "users.collection_ie" */
-  delete_users_collection_ie?: Maybe<Users_Collection_Ie_Mutation_Response>;
-  /** delete single row from the table: "users.collection_ie" */
-  delete_users_collection_ie_by_pk?: Maybe<Users_Collection_Ie>;
+  /** delete data from the table: "users.folder" */
+  delete_users_folder?: Maybe<Users_Folder_Mutation_Response>;
+  /** delete single row from the table: "users.folder" */
+  delete_users_folder_by_pk?: Maybe<Users_Folder>;
+  /** delete data from the table: "users.folder_ie" */
+  delete_users_folder_ie?: Maybe<Users_Folder_Ie_Mutation_Response>;
+  /** delete single row from the table: "users.folder_ie" */
+  delete_users_folder_ie_by_pk?: Maybe<Users_Folder_Ie>;
   /** delete data from the table: "users.group" */
   delete_users_group?: Maybe<Users_Group_Mutation_Response>;
   /** delete single row from the table: "users.group" */
@@ -4642,78 +4783,82 @@ export type Mutation_Root = {
   delete_users_profile?: Maybe<Users_Profile_Mutation_Response>;
   /** delete single row from the table: "users.profile" */
   delete_users_profile_by_pk?: Maybe<Users_Profile>;
+  /** insert data into the table: "app.config" */
+  insert_app_config?: Maybe<App_Config_Mutation_Response>;
+  /** insert a single row into the table: "app.config" */
+  insert_app_config_one?: Maybe<App_Config>;
+  /** insert data into the table: "app.content_block" */
+  insert_app_content_block?: Maybe<App_Content_Block_Mutation_Response>;
+  /** insert a single row into the table: "app.content_block" */
+  insert_app_content_block_one?: Maybe<App_Content_Block>;
+  /** insert data into the table: "app.content_label" */
+  insert_app_content_label?: Maybe<App_Content_Label_Mutation_Response>;
+  /** insert a single row into the table: "app.content_label" */
+  insert_app_content_label_one?: Maybe<App_Content_Label>;
+  /** insert data into the table: "app.content_page" */
+  insert_app_content_page?: Maybe<App_Content_Page_Mutation_Response>;
+  /** insert data into the table: "app.content_page_content_label" */
+  insert_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
+  /** insert a single row into the table: "app.content_page_content_label" */
+  insert_app_content_page_content_label_one?: Maybe<App_Content_Page_Content_Label>;
+  /** insert a single row into the table: "app.content_page" */
+  insert_app_content_page_one?: Maybe<App_Content_Page>;
+  /** insert data into the table: "app.navigation" */
+  insert_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
+  /** insert a single row into the table: "app.navigation" */
+  insert_app_navigation_one?: Maybe<App_Navigation>;
   /** insert data into the table: "app.notification" */
   insert_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** insert a single row into the table: "app.notification" */
   insert_app_notification_one?: Maybe<App_Notification>;
-  /** insert data into the table: "cms.content" */
-  insert_cms_content?: Maybe<Cms_Content_Mutation_Response>;
-  /** insert data into the table: "cms.content_blocks" */
-  insert_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
-  /** insert a single row into the table: "cms.content_blocks" */
-  insert_cms_content_blocks_one?: Maybe<Cms_Content_Blocks>;
-  /** insert data into the table: "cms.content_content_labels" */
-  insert_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
-  /** insert a single row into the table: "cms.content_content_labels" */
-  insert_cms_content_content_labels_one?: Maybe<Cms_Content_Content_Labels>;
-  /** insert data into the table: "cms.content_labels" */
-  insert_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
-  /** insert a single row into the table: "cms.content_labels" */
-  insert_cms_content_labels_one?: Maybe<Cms_Content_Labels>;
-  /** insert a single row into the table: "cms.content" */
-  insert_cms_content_one?: Maybe<Cms_Content>;
-  /** insert data into the table: "cms.navigation_element" */
-  insert_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
-  /** insert a single row into the table: "cms.navigation_element" */
-  insert_cms_navigation_element_one?: Maybe<Cms_Navigation_Element>;
-  /** insert data into the table: "cms.site_variables" */
-  insert_cms_site_variables?: Maybe<Cms_Site_Variables_Mutation_Response>;
-  /** insert a single row into the table: "cms.site_variables" */
-  insert_cms_site_variables_one?: Maybe<Cms_Site_Variables>;
-  /** insert data into the table: "cp.index" */
-  insert_cp_index?: Maybe<Cp_Index_Mutation_Response>;
-  /** insert a single row into the table: "cp.index" */
-  insert_cp_index_one?: Maybe<Cp_Index>;
-  /** insert data into the table: "cp.maintainer" */
-  insert_cp_maintainer?: Maybe<Cp_Maintainer_Mutation_Response>;
-  /** insert a single row into the table: "cp.maintainer" */
-  insert_cp_maintainer_one?: Maybe<Cp_Maintainer>;
-  /** insert data into the table: "cp.maintainer_users_profile" */
-  insert_cp_maintainer_users_profile?: Maybe<Cp_Maintainer_Users_Profile_Mutation_Response>;
-  /** insert a single row into the table: "cp.maintainer_users_profile" */
-  insert_cp_maintainer_users_profile_one?: Maybe<Cp_Maintainer_Users_Profile>;
-  /** insert data into the table: "cp.space" */
-  insert_cp_space?: Maybe<Cp_Space_Mutation_Response>;
-  /** insert a single row into the table: "cp.space" */
-  insert_cp_space_one?: Maybe<Cp_Space>;
-  /** insert data into the table: "cp.visit" */
-  insert_cp_visit?: Maybe<Cp_Visit_Mutation_Response>;
-  /** insert data into the table: "cp.visit_note" */
-  insert_cp_visit_note?: Maybe<Cp_Visit_Note_Mutation_Response>;
-  /** insert a single row into the table: "cp.visit_note" */
-  insert_cp_visit_note_one?: Maybe<Cp_Visit_Note>;
-  /** insert a single row into the table: "cp.visit" */
-  insert_cp_visit_one?: Maybe<Cp_Visit>;
+  /** insert data into the table: "lookup.app_content_block_type" */
+  insert_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
+  /** insert a single row into the table: "lookup.app_content_block_type" */
+  insert_lookup_app_content_block_type_one?: Maybe<Lookup_App_Content_Block_Type>;
+  /** insert data into the table: "lookup.app_content_type" */
+  insert_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
+  /** insert a single row into the table: "lookup.app_content_type" */
+  insert_lookup_app_content_type_one?: Maybe<Lookup_App_Content_Type>;
   /** insert data into the table: "lookup.app_notification_type" */
   insert_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_notification_type" */
   insert_lookup_app_notification_type_one?: Maybe<Lookup_App_Notification_Type>;
-  /** insert data into the table: "lookup.cms_content_block_type" */
-  insert_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
-  /** insert a single row into the table: "lookup.cms_content_block_type" */
-  insert_lookup_cms_content_block_type_one?: Maybe<Lookup_Cms_Content_Block_Type>;
-  /** insert data into the table: "lookup.cms_content_type" */
-  insert_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
-  /** insert a single row into the table: "lookup.cms_content_type" */
-  insert_lookup_cms_content_type_one?: Maybe<Lookup_Cms_Content_Type>;
-  /** insert data into the table: "lookup.cp_visit_status" */
-  insert_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
-  /** insert a single row into the table: "lookup.cp_visit_status" */
-  insert_lookup_cp_visit_status_one?: Maybe<Lookup_Cp_Visit_Status>;
+  /** insert data into the table: "lookup.maintainer_visitor_space_request_status" */
+  insert_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
+  /** insert a single row into the table: "lookup.maintainer_visitor_space_request_status" */
+  insert_lookup_maintainer_visitor_space_request_status_one?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** insert data into the table: "lookup.maintainer_visitor_space_status" */
+  insert_lookup_maintainer_visitor_space_status?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Mutation_Response>;
+  /** insert a single row into the table: "lookup.maintainer_visitor_space_status" */
+  insert_lookup_maintainer_visitor_space_status_one?: Maybe<Lookup_Maintainer_Visitor_Space_Status>;
   /** insert data into the table: "lookup.schema_audience_type" */
   insert_lookup_schema_audience_type?: Maybe<Lookup_Schema_Audience_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.schema_audience_type" */
   insert_lookup_schema_audience_type_one?: Maybe<Lookup_Schema_Audience_Type>;
+  /** insert data into the table: "maintainer.content_partner" */
+  insert_maintainer_content_partner?: Maybe<Maintainer_Content_Partner_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.content_partner" */
+  insert_maintainer_content_partner_one?: Maybe<Maintainer_Content_Partner>;
+  /** insert data into the table: "maintainer.index" */
+  insert_maintainer_index?: Maybe<Maintainer_Index_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.index" */
+  insert_maintainer_index_one?: Maybe<Maintainer_Index>;
+  /** insert data into the table: "maintainer.users_profile" */
+  insert_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.users_profile" */
+  insert_maintainer_users_profile_one?: Maybe<Maintainer_Users_Profile>;
+  /** insert data into the table: "maintainer.visitor_space" */
+  insert_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.visitor_space" */
+  insert_maintainer_visitor_space_one?: Maybe<Maintainer_Visitor_Space>;
+  /** insert data into the table: "maintainer.visitor_space_request" */
+  insert_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
+  /** insert data into the table: "maintainer.visitor_space_request_note" */
+  insert_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.visitor_space_request_note" */
+  insert_maintainer_visitor_space_request_note_one?: Maybe<Maintainer_Visitor_Space_Request_Note>;
+  /** insert a single row into the table: "maintainer.visitor_space_request" */
+  insert_maintainer_visitor_space_request_one?: Maybe<Maintainer_Visitor_Space_Request>;
   /** insert data into the table: "object.file" */
   insert_object_file?: Maybe<Object_File_Mutation_Response>;
   /** insert a single row into the table: "object.file" */
@@ -4738,14 +4883,14 @@ export type Mutation_Root = {
   insert_sync_video?: Maybe<Sync_Video_Mutation_Response>;
   /** insert a single row into the table: "sync.video" */
   insert_sync_video_one?: Maybe<Sync_Video>;
-  /** insert data into the table: "users.collection" */
-  insert_users_collection?: Maybe<Users_Collection_Mutation_Response>;
-  /** insert data into the table: "users.collection_ie" */
-  insert_users_collection_ie?: Maybe<Users_Collection_Ie_Mutation_Response>;
-  /** insert a single row into the table: "users.collection_ie" */
-  insert_users_collection_ie_one?: Maybe<Users_Collection_Ie>;
-  /** insert a single row into the table: "users.collection" */
-  insert_users_collection_one?: Maybe<Users_Collection>;
+  /** insert data into the table: "users.folder" */
+  insert_users_folder?: Maybe<Users_Folder_Mutation_Response>;
+  /** insert data into the table: "users.folder_ie" */
+  insert_users_folder_ie?: Maybe<Users_Folder_Ie_Mutation_Response>;
+  /** insert a single row into the table: "users.folder_ie" */
+  insert_users_folder_ie_one?: Maybe<Users_Folder_Ie>;
+  /** insert a single row into the table: "users.folder" */
+  insert_users_folder_one?: Maybe<Users_Folder>;
   /** insert data into the table: "users.group" */
   insert_users_group?: Maybe<Users_Group_Mutation_Response>;
   /** insert a single row into the table: "users.group" */
@@ -4770,78 +4915,82 @@ export type Mutation_Root = {
   insert_users_profile?: Maybe<Users_Profile_Mutation_Response>;
   /** insert a single row into the table: "users.profile" */
   insert_users_profile_one?: Maybe<Users_Profile>;
+  /** update data of the table: "app.config" */
+  update_app_config?: Maybe<App_Config_Mutation_Response>;
+  /** update single row of the table: "app.config" */
+  update_app_config_by_pk?: Maybe<App_Config>;
+  /** update data of the table: "app.content_block" */
+  update_app_content_block?: Maybe<App_Content_Block_Mutation_Response>;
+  /** update single row of the table: "app.content_block" */
+  update_app_content_block_by_pk?: Maybe<App_Content_Block>;
+  /** update data of the table: "app.content_label" */
+  update_app_content_label?: Maybe<App_Content_Label_Mutation_Response>;
+  /** update single row of the table: "app.content_label" */
+  update_app_content_label_by_pk?: Maybe<App_Content_Label>;
+  /** update data of the table: "app.content_page" */
+  update_app_content_page?: Maybe<App_Content_Page_Mutation_Response>;
+  /** update single row of the table: "app.content_page" */
+  update_app_content_page_by_pk?: Maybe<App_Content_Page>;
+  /** update data of the table: "app.content_page_content_label" */
+  update_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
+  /** update single row of the table: "app.content_page_content_label" */
+  update_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** update data of the table: "app.navigation" */
+  update_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
+  /** update single row of the table: "app.navigation" */
+  update_app_navigation_by_pk?: Maybe<App_Navigation>;
   /** update data of the table: "app.notification" */
   update_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** update single row of the table: "app.notification" */
   update_app_notification_by_pk?: Maybe<App_Notification>;
-  /** update data of the table: "cms.content" */
-  update_cms_content?: Maybe<Cms_Content_Mutation_Response>;
-  /** update data of the table: "cms.content_blocks" */
-  update_cms_content_blocks?: Maybe<Cms_Content_Blocks_Mutation_Response>;
-  /** update single row of the table: "cms.content_blocks" */
-  update_cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
-  /** update single row of the table: "cms.content" */
-  update_cms_content_by_pk?: Maybe<Cms_Content>;
-  /** update data of the table: "cms.content_content_labels" */
-  update_cms_content_content_labels?: Maybe<Cms_Content_Content_Labels_Mutation_Response>;
-  /** update single row of the table: "cms.content_content_labels" */
-  update_cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
-  /** update data of the table: "cms.content_labels" */
-  update_cms_content_labels?: Maybe<Cms_Content_Labels_Mutation_Response>;
-  /** update single row of the table: "cms.content_labels" */
-  update_cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
-  /** update data of the table: "cms.navigation_element" */
-  update_cms_navigation_element?: Maybe<Cms_Navigation_Element_Mutation_Response>;
-  /** update single row of the table: "cms.navigation_element" */
-  update_cms_navigation_element_by_pk?: Maybe<Cms_Navigation_Element>;
-  /** update data of the table: "cms.site_variables" */
-  update_cms_site_variables?: Maybe<Cms_Site_Variables_Mutation_Response>;
-  /** update single row of the table: "cms.site_variables" */
-  update_cms_site_variables_by_pk?: Maybe<Cms_Site_Variables>;
-  /** update data of the table: "cp.index" */
-  update_cp_index?: Maybe<Cp_Index_Mutation_Response>;
-  /** update single row of the table: "cp.index" */
-  update_cp_index_by_pk?: Maybe<Cp_Index>;
-  /** update data of the table: "cp.maintainer" */
-  update_cp_maintainer?: Maybe<Cp_Maintainer_Mutation_Response>;
-  /** update single row of the table: "cp.maintainer" */
-  update_cp_maintainer_by_pk?: Maybe<Cp_Maintainer>;
-  /** update data of the table: "cp.maintainer_users_profile" */
-  update_cp_maintainer_users_profile?: Maybe<Cp_Maintainer_Users_Profile_Mutation_Response>;
-  /** update single row of the table: "cp.maintainer_users_profile" */
-  update_cp_maintainer_users_profile_by_pk?: Maybe<Cp_Maintainer_Users_Profile>;
-  /** update data of the table: "cp.space" */
-  update_cp_space?: Maybe<Cp_Space_Mutation_Response>;
-  /** update single row of the table: "cp.space" */
-  update_cp_space_by_pk?: Maybe<Cp_Space>;
-  /** update data of the table: "cp.visit" */
-  update_cp_visit?: Maybe<Cp_Visit_Mutation_Response>;
-  /** update single row of the table: "cp.visit" */
-  update_cp_visit_by_pk?: Maybe<Cp_Visit>;
-  /** update data of the table: "cp.visit_note" */
-  update_cp_visit_note?: Maybe<Cp_Visit_Note_Mutation_Response>;
-  /** update single row of the table: "cp.visit_note" */
-  update_cp_visit_note_by_pk?: Maybe<Cp_Visit_Note>;
+  /** update data of the table: "lookup.app_content_block_type" */
+  update_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
+  /** update single row of the table: "lookup.app_content_block_type" */
+  update_lookup_app_content_block_type_by_pk?: Maybe<Lookup_App_Content_Block_Type>;
+  /** update data of the table: "lookup.app_content_type" */
+  update_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
+  /** update single row of the table: "lookup.app_content_type" */
+  update_lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
   /** update data of the table: "lookup.app_notification_type" */
   update_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_notification_type" */
   update_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
-  /** update data of the table: "lookup.cms_content_block_type" */
-  update_lookup_cms_content_block_type?: Maybe<Lookup_Cms_Content_Block_Type_Mutation_Response>;
-  /** update single row of the table: "lookup.cms_content_block_type" */
-  update_lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
-  /** update data of the table: "lookup.cms_content_type" */
-  update_lookup_cms_content_type?: Maybe<Lookup_Cms_Content_Type_Mutation_Response>;
-  /** update single row of the table: "lookup.cms_content_type" */
-  update_lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
-  /** update data of the table: "lookup.cp_visit_status" */
-  update_lookup_cp_visit_status?: Maybe<Lookup_Cp_Visit_Status_Mutation_Response>;
-  /** update single row of the table: "lookup.cp_visit_status" */
-  update_lookup_cp_visit_status_by_pk?: Maybe<Lookup_Cp_Visit_Status>;
+  /** update data of the table: "lookup.maintainer_visitor_space_request_status" */
+  update_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
+  /** update single row of the table: "lookup.maintainer_visitor_space_request_status" */
+  update_lookup_maintainer_visitor_space_request_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** update data of the table: "lookup.maintainer_visitor_space_status" */
+  update_lookup_maintainer_visitor_space_status?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Mutation_Response>;
+  /** update single row of the table: "lookup.maintainer_visitor_space_status" */
+  update_lookup_maintainer_visitor_space_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Status>;
   /** update data of the table: "lookup.schema_audience_type" */
   update_lookup_schema_audience_type?: Maybe<Lookup_Schema_Audience_Type_Mutation_Response>;
   /** update single row of the table: "lookup.schema_audience_type" */
   update_lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** update data of the table: "maintainer.content_partner" */
+  update_maintainer_content_partner?: Maybe<Maintainer_Content_Partner_Mutation_Response>;
+  /** update single row of the table: "maintainer.content_partner" */
+  update_maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** update data of the table: "maintainer.index" */
+  update_maintainer_index?: Maybe<Maintainer_Index_Mutation_Response>;
+  /** update single row of the table: "maintainer.index" */
+  update_maintainer_index_by_pk?: Maybe<Maintainer_Index>;
+  /** update data of the table: "maintainer.users_profile" */
+  update_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
+  /** update single row of the table: "maintainer.users_profile" */
+  update_maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
+  /** update data of the table: "maintainer.visitor_space" */
+  update_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
+  /** update single row of the table: "maintainer.visitor_space" */
+  update_maintainer_visitor_space_by_pk?: Maybe<Maintainer_Visitor_Space>;
+  /** update data of the table: "maintainer.visitor_space_request" */
+  update_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
+  /** update single row of the table: "maintainer.visitor_space_request" */
+  update_maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** update data of the table: "maintainer.visitor_space_request_note" */
+  update_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
+  /** update single row of the table: "maintainer.visitor_space_request_note" */
+  update_maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** update data of the table: "object.file" */
   update_object_file?: Maybe<Object_File_Mutation_Response>;
   /** update single row of the table: "object.file" */
@@ -4866,14 +5015,14 @@ export type Mutation_Root = {
   update_sync_video?: Maybe<Sync_Video_Mutation_Response>;
   /** update single row of the table: "sync.video" */
   update_sync_video_by_pk?: Maybe<Sync_Video>;
-  /** update data of the table: "users.collection" */
-  update_users_collection?: Maybe<Users_Collection_Mutation_Response>;
-  /** update single row of the table: "users.collection" */
-  update_users_collection_by_pk?: Maybe<Users_Collection>;
-  /** update data of the table: "users.collection_ie" */
-  update_users_collection_ie?: Maybe<Users_Collection_Ie_Mutation_Response>;
-  /** update single row of the table: "users.collection_ie" */
-  update_users_collection_ie_by_pk?: Maybe<Users_Collection_Ie>;
+  /** update data of the table: "users.folder" */
+  update_users_folder?: Maybe<Users_Folder_Mutation_Response>;
+  /** update single row of the table: "users.folder" */
+  update_users_folder_by_pk?: Maybe<Users_Folder>;
+  /** update data of the table: "users.folder_ie" */
+  update_users_folder_ie?: Maybe<Users_Folder_Ie_Mutation_Response>;
+  /** update single row of the table: "users.folder_ie" */
+  update_users_folder_ie_by_pk?: Maybe<Users_Folder_Ie>;
   /** update data of the table: "users.group" */
   update_users_group?: Maybe<Users_Group_Mutation_Response>;
   /** update single row of the table: "users.group" */
@@ -4902,6 +5051,78 @@ export type Mutation_Root = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_App_ConfigArgs = {
+  where: App_Config_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Config_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_BlockArgs = {
+  where: App_Content_Block_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_Block_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_LabelArgs = {
+  where: App_Content_Label_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_PageArgs = {
+  where: App_Content_Page_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_Page_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_Page_Content_LabelArgs = {
+  where: App_Content_Page_Content_Label_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_NavigationArgs = {
+  where: App_Navigation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Navigation_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_App_NotificationArgs = {
   where: App_Notification_Bool_Exp;
 };
@@ -4914,146 +5135,26 @@ export type Mutation_RootDelete_App_Notification_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootDelete_Cms_ContentArgs = {
-  where: Cms_Content_Bool_Exp;
+export type Mutation_RootDelete_Lookup_App_Content_Block_TypeArgs = {
+  where: Lookup_App_Content_Block_Type_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Cms_Content_BlocksArgs = {
-  where: Cms_Content_Blocks_Bool_Exp;
+export type Mutation_RootDelete_Lookup_App_Content_Block_Type_By_PkArgs = {
+  value: Scalars['String'];
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Cms_Content_Blocks_By_PkArgs = {
-  id: Scalars['uuid'];
+export type Mutation_RootDelete_Lookup_App_Content_TypeArgs = {
+  where: Lookup_App_Content_Type_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Cms_Content_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Content_Content_LabelsArgs = {
-  where: Cms_Content_Content_Labels_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Content_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Content_LabelsArgs = {
-  where: Cms_Content_Labels_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Navigation_ElementArgs = {
-  where: Cms_Navigation_Element_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Navigation_Element_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Site_VariablesArgs = {
-  where: Cms_Site_Variables_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cms_Site_Variables_By_PkArgs = {
-  name: Scalars['String'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_IndexArgs = {
-  where: Cp_Index_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Index_By_PkArgs = {
-  schema_maintainer_id: Scalars['String'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_MaintainerArgs = {
-  where: Cp_Maintainer_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Maintainer_By_PkArgs = {
-  schema_identifier: Scalars['String'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Maintainer_Users_ProfileArgs = {
-  where: Cp_Maintainer_Users_Profile_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Maintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_SpaceArgs = {
-  where: Cp_Space_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Space_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_VisitArgs = {
-  where: Cp_Visit_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Visit_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Visit_NoteArgs = {
-  where: Cp_Visit_Note_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Cp_Visit_Note_By_PkArgs = {
-  id: Scalars['uuid'];
+export type Mutation_RootDelete_Lookup_App_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
 };
 
 
@@ -5070,37 +5171,25 @@ export type Mutation_RootDelete_Lookup_App_Notification_Type_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootDelete_Lookup_Cms_Content_Block_TypeArgs = {
-  where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  where: Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Lookup_Cms_Content_Block_Type_By_PkArgs = {
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_Request_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Lookup_Cms_Content_TypeArgs = {
-  where: Lookup_Cms_Content_Type_Bool_Exp;
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_StatusArgs = {
+  where: Lookup_Maintainer_Visitor_Space_Status_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Lookup_Cms_Content_Type_By_PkArgs = {
-  value: Scalars['String'];
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Lookup_Cp_Visit_StatusArgs = {
-  where: Lookup_Cp_Visit_Status_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Lookup_Cp_Visit_Status_By_PkArgs = {
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -5114,6 +5203,78 @@ export type Mutation_RootDelete_Lookup_Schema_Audience_TypeArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Lookup_Schema_Audience_Type_By_PkArgs = {
   value: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Content_PartnerArgs = {
+  where: Maintainer_Content_Partner_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Content_Partner_By_PkArgs = {
+  schema_identifier: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_IndexArgs = {
+  where: Maintainer_Index_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Index_By_PkArgs = {
+  schema_maintainer_id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Users_ProfileArgs = {
+  where: Maintainer_Users_Profile_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Users_Profile_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_SpaceArgs = {
+  where: Maintainer_Visitor_Space_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_RequestArgs = {
+  where: Maintainer_Visitor_Space_Request_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_NoteArgs = {
+  where: Maintainer_Visitor_Space_Request_Note_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_Note_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -5190,25 +5351,25 @@ export type Mutation_RootDelete_Sync_Video_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootDelete_Users_CollectionArgs = {
-  where: Users_Collection_Bool_Exp;
+export type Mutation_RootDelete_Users_FolderArgs = {
+  where: Users_Folder_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Users_Collection_By_PkArgs = {
+export type Mutation_RootDelete_Users_Folder_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Users_Collection_IeArgs = {
-  where: Users_Collection_Ie_Bool_Exp;
+export type Mutation_RootDelete_Users_Folder_IeArgs = {
+  where: Users_Folder_Ie_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootDelete_Users_Collection_Ie_By_PkArgs = {
+export type Mutation_RootDelete_Users_Folder_Ie_By_PkArgs = {
   ie_schema_identifier: Scalars['String'];
   user_collection_id: Scalars['uuid'];
 };
@@ -5287,6 +5448,90 @@ export type Mutation_RootDelete_Users_Profile_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_App_ConfigArgs = {
+  objects: Array<App_Config_Insert_Input>;
+  on_conflict?: InputMaybe<App_Config_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Config_OneArgs = {
+  object: App_Config_Insert_Input;
+  on_conflict?: InputMaybe<App_Config_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_BlockArgs = {
+  objects: Array<App_Content_Block_Insert_Input>;
+  on_conflict?: InputMaybe<App_Content_Block_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_Block_OneArgs = {
+  object: App_Content_Block_Insert_Input;
+  on_conflict?: InputMaybe<App_Content_Block_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_LabelArgs = {
+  objects: Array<App_Content_Label_Insert_Input>;
+  on_conflict?: InputMaybe<App_Content_Label_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_Label_OneArgs = {
+  object: App_Content_Label_Insert_Input;
+  on_conflict?: InputMaybe<App_Content_Label_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_PageArgs = {
+  objects: Array<App_Content_Page_Insert_Input>;
+  on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_Page_Content_LabelArgs = {
+  objects: Array<App_Content_Page_Content_Label_Insert_Input>;
+  on_conflict?: InputMaybe<App_Content_Page_Content_Label_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_Page_Content_Label_OneArgs = {
+  object: App_Content_Page_Content_Label_Insert_Input;
+  on_conflict?: InputMaybe<App_Content_Page_Content_Label_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Content_Page_OneArgs = {
+  object: App_Content_Page_Insert_Input;
+  on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_NavigationArgs = {
+  objects: Array<App_Navigation_Insert_Input>;
+  on_conflict?: InputMaybe<App_Navigation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Navigation_OneArgs = {
+  object: App_Navigation_Insert_Input;
+  on_conflict?: InputMaybe<App_Navigation_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_App_NotificationArgs = {
   objects: Array<App_Notification_Insert_Input>;
   on_conflict?: InputMaybe<App_Notification_On_Conflict>;
@@ -5301,170 +5546,30 @@ export type Mutation_RootInsert_App_Notification_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootInsert_Cms_ContentArgs = {
-  objects: Array<Cms_Content_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
+export type Mutation_RootInsert_Lookup_App_Content_Block_TypeArgs = {
+  objects: Array<Lookup_App_Content_Block_Type_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_App_Content_Block_Type_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Cms_Content_BlocksArgs = {
-  objects: Array<Cms_Content_Blocks_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+export type Mutation_RootInsert_Lookup_App_Content_Block_Type_OneArgs = {
+  object: Lookup_App_Content_Block_Type_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_App_Content_Block_Type_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Cms_Content_Blocks_OneArgs = {
-  object: Cms_Content_Blocks_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Content_Blocks_On_Conflict>;
+export type Mutation_RootInsert_Lookup_App_Content_TypeArgs = {
+  objects: Array<Lookup_App_Content_Type_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_App_Content_Type_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Cms_Content_Content_LabelsArgs = {
-  objects: Array<Cms_Content_Content_Labels_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Content_Content_Labels_OneArgs = {
-  object: Cms_Content_Content_Labels_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Content_Content_Labels_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Content_LabelsArgs = {
-  objects: Array<Cms_Content_Labels_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Content_Labels_OneArgs = {
-  object: Cms_Content_Labels_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Content_Labels_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Content_OneArgs = {
-  object: Cms_Content_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Content_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Navigation_ElementArgs = {
-  objects: Array<Cms_Navigation_Element_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Navigation_Element_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Navigation_Element_OneArgs = {
-  object: Cms_Navigation_Element_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Navigation_Element_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Site_VariablesArgs = {
-  objects: Array<Cms_Site_Variables_Insert_Input>;
-  on_conflict?: InputMaybe<Cms_Site_Variables_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cms_Site_Variables_OneArgs = {
-  object: Cms_Site_Variables_Insert_Input;
-  on_conflict?: InputMaybe<Cms_Site_Variables_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_IndexArgs = {
-  objects: Array<Cp_Index_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Index_OneArgs = {
-  object: Cp_Index_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Index_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_MaintainerArgs = {
-  objects: Array<Cp_Maintainer_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Maintainer_OneArgs = {
-  object: Cp_Maintainer_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Maintainer_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Maintainer_Users_ProfileArgs = {
-  objects: Array<Cp_Maintainer_Users_Profile_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Maintainer_Users_Profile_OneArgs = {
-  object: Cp_Maintainer_Users_Profile_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Maintainer_Users_Profile_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_SpaceArgs = {
-  objects: Array<Cp_Space_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Space_OneArgs = {
-  object: Cp_Space_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Space_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_VisitArgs = {
-  objects: Array<Cp_Visit_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Visit_NoteArgs = {
-  objects: Array<Cp_Visit_Note_Insert_Input>;
-  on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Visit_Note_OneArgs = {
-  object: Cp_Visit_Note_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Visit_Note_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Cp_Visit_OneArgs = {
-  object: Cp_Visit_Insert_Input;
-  on_conflict?: InputMaybe<Cp_Visit_On_Conflict>;
+export type Mutation_RootInsert_Lookup_App_Content_Type_OneArgs = {
+  object: Lookup_App_Content_Type_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_App_Content_Type_On_Conflict>;
 };
 
 
@@ -5483,44 +5588,30 @@ export type Mutation_RootInsert_Lookup_App_Notification_Type_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootInsert_Lookup_Cms_Content_Block_TypeArgs = {
-  objects: Array<Lookup_Cms_Content_Block_Type_Insert_Input>;
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  objects: Array<Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Lookup_Cms_Content_Block_Type_OneArgs = {
-  object: Lookup_Cms_Content_Block_Type_Insert_Input;
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Block_Type_On_Conflict>;
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_Request_Status_OneArgs = {
+  object: Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Lookup_Cms_Content_TypeArgs = {
-  objects: Array<Lookup_Cms_Content_Type_Insert_Input>;
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_StatusArgs = {
+  objects: Array<Lookup_Maintainer_Visitor_Space_Status_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Lookup_Cms_Content_Type_OneArgs = {
-  object: Lookup_Cms_Content_Type_Insert_Input;
-  on_conflict?: InputMaybe<Lookup_Cms_Content_Type_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Lookup_Cp_Visit_StatusArgs = {
-  objects: Array<Lookup_Cp_Visit_Status_Insert_Input>;
-  on_conflict?: InputMaybe<Lookup_Cp_Visit_Status_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Lookup_Cp_Visit_Status_OneArgs = {
-  object: Lookup_Cp_Visit_Status_Insert_Input;
-  on_conflict?: InputMaybe<Lookup_Cp_Visit_Status_On_Conflict>;
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_Status_OneArgs = {
+  object: Lookup_Maintainer_Visitor_Space_Status_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_On_Conflict>;
 };
 
 
@@ -5535,6 +5626,90 @@ export type Mutation_RootInsert_Lookup_Schema_Audience_TypeArgs = {
 export type Mutation_RootInsert_Lookup_Schema_Audience_Type_OneArgs = {
   object: Lookup_Schema_Audience_Type_Insert_Input;
   on_conflict?: InputMaybe<Lookup_Schema_Audience_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Content_PartnerArgs = {
+  objects: Array<Maintainer_Content_Partner_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Content_Partner_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Content_Partner_OneArgs = {
+  object: Maintainer_Content_Partner_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Content_Partner_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_IndexArgs = {
+  objects: Array<Maintainer_Index_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Index_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Index_OneArgs = {
+  object: Maintainer_Index_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Index_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Users_ProfileArgs = {
+  objects: Array<Maintainer_Users_Profile_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Users_Profile_OneArgs = {
+  object: Maintainer_Users_Profile_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_SpaceArgs = {
+  objects: Array<Maintainer_Visitor_Space_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_OneArgs = {
+  object: Maintainer_Visitor_Space_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_RequestArgs = {
+  objects: Array<Maintainer_Visitor_Space_Request_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_NoteArgs = {
+  objects: Array<Maintainer_Visitor_Space_Request_Note_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Note_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_Note_OneArgs = {
+  object: Maintainer_Visitor_Space_Request_Note_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Note_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_OneArgs = {
+  object: Maintainer_Visitor_Space_Request_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
 };
 
 
@@ -5623,30 +5798,30 @@ export type Mutation_RootInsert_Sync_Video_OneArgs = {
 
 
 /** mutation root */
-export type Mutation_RootInsert_Users_CollectionArgs = {
-  objects: Array<Users_Collection_Insert_Input>;
-  on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
+export type Mutation_RootInsert_Users_FolderArgs = {
+  objects: Array<Users_Folder_Insert_Input>;
+  on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Users_Collection_IeArgs = {
-  objects: Array<Users_Collection_Ie_Insert_Input>;
-  on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
+export type Mutation_RootInsert_Users_Folder_IeArgs = {
+  objects: Array<Users_Folder_Ie_Insert_Input>;
+  on_conflict?: InputMaybe<Users_Folder_Ie_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Users_Collection_Ie_OneArgs = {
-  object: Users_Collection_Ie_Insert_Input;
-  on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
+export type Mutation_RootInsert_Users_Folder_Ie_OneArgs = {
+  object: Users_Folder_Ie_Insert_Input;
+  on_conflict?: InputMaybe<Users_Folder_Ie_On_Conflict>;
 };
 
 
 /** mutation root */
-export type Mutation_RootInsert_Users_Collection_OneArgs = {
-  object: Users_Collection_Insert_Input;
-  on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
+export type Mutation_RootInsert_Users_Folder_OneArgs = {
+  object: Users_Folder_Insert_Input;
+  on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
 
@@ -5735,6 +5910,144 @@ export type Mutation_RootInsert_Users_Profile_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_App_ConfigArgs = {
+  _append?: InputMaybe<App_Config_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Config_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Config_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Config_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Config_Prepend_Input>;
+  _set?: InputMaybe<App_Config_Set_Input>;
+  where: App_Config_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Config_By_PkArgs = {
+  _append?: InputMaybe<App_Config_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Config_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Config_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Config_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Config_Prepend_Input>;
+  _set?: InputMaybe<App_Config_Set_Input>;
+  pk_columns: App_Config_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_BlockArgs = {
+  _append?: InputMaybe<App_Content_Block_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Block_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Block_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Block_Delete_Key_Input>;
+  _inc?: InputMaybe<App_Content_Block_Inc_Input>;
+  _prepend?: InputMaybe<App_Content_Block_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Block_Set_Input>;
+  where: App_Content_Block_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_Block_By_PkArgs = {
+  _append?: InputMaybe<App_Content_Block_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Block_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Block_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Block_Delete_Key_Input>;
+  _inc?: InputMaybe<App_Content_Block_Inc_Input>;
+  _prepend?: InputMaybe<App_Content_Block_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Block_Set_Input>;
+  pk_columns: App_Content_Block_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_LabelArgs = {
+  _append?: InputMaybe<App_Content_Label_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Label_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Label_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Label_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Content_Label_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Label_Set_Input>;
+  where: App_Content_Label_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_Label_By_PkArgs = {
+  _append?: InputMaybe<App_Content_Label_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Label_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Label_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Label_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Content_Label_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Label_Set_Input>;
+  pk_columns: App_Content_Label_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_PageArgs = {
+  _append?: InputMaybe<App_Content_Page_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Page_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Page_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Page_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Content_Page_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Page_Set_Input>;
+  where: App_Content_Page_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_Page_By_PkArgs = {
+  _append?: InputMaybe<App_Content_Page_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Content_Page_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Content_Page_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Content_Page_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Content_Page_Prepend_Input>;
+  _set?: InputMaybe<App_Content_Page_Set_Input>;
+  pk_columns: App_Content_Page_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_Page_Content_LabelArgs = {
+  _set?: InputMaybe<App_Content_Page_Content_Label_Set_Input>;
+  where: App_Content_Page_Content_Label_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Content_Page_Content_Label_By_PkArgs = {
+  _set?: InputMaybe<App_Content_Page_Content_Label_Set_Input>;
+  pk_columns: App_Content_Page_Content_Label_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_NavigationArgs = {
+  _append?: InputMaybe<App_Navigation_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Navigation_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Navigation_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Navigation_Delete_Key_Input>;
+  _inc?: InputMaybe<App_Navigation_Inc_Input>;
+  _prepend?: InputMaybe<App_Navigation_Prepend_Input>;
+  _set?: InputMaybe<App_Navigation_Set_Input>;
+  where: App_Navigation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Navigation_By_PkArgs = {
+  _append?: InputMaybe<App_Navigation_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Navigation_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Navigation_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Navigation_Delete_Key_Input>;
+  _inc?: InputMaybe<App_Navigation_Inc_Input>;
+  _prepend?: InputMaybe<App_Navigation_Prepend_Input>;
+  _set?: InputMaybe<App_Navigation_Set_Input>;
+  pk_columns: App_Navigation_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_App_NotificationArgs = {
   _set?: InputMaybe<App_Notification_Set_Input>;
   where: App_Notification_Bool_Exp;
@@ -5749,224 +6062,30 @@ export type Mutation_RootUpdate_App_Notification_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Cms_ContentArgs = {
-  _append?: InputMaybe<Cms_Content_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Content_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Set_Input>;
-  where: Cms_Content_Bool_Exp;
+export type Mutation_RootUpdate_Lookup_App_Content_Block_TypeArgs = {
+  _set?: InputMaybe<Lookup_App_Content_Block_Type_Set_Input>;
+  where: Lookup_App_Content_Block_Type_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Cms_Content_BlocksArgs = {
-  _append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
-  _inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
-  _prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
-  where: Cms_Content_Blocks_Bool_Exp;
+export type Mutation_RootUpdate_Lookup_App_Content_Block_Type_By_PkArgs = {
+  _set?: InputMaybe<Lookup_App_Content_Block_Type_Set_Input>;
+  pk_columns: Lookup_App_Content_Block_Type_Pk_Columns_Input;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Cms_Content_Blocks_By_PkArgs = {
-  _append?: InputMaybe<Cms_Content_Blocks_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Blocks_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Blocks_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Blocks_Delete_Key_Input>;
-  _inc?: InputMaybe<Cms_Content_Blocks_Inc_Input>;
-  _prepend?: InputMaybe<Cms_Content_Blocks_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Blocks_Set_Input>;
-  pk_columns: Cms_Content_Blocks_Pk_Columns_Input;
+export type Mutation_RootUpdate_Lookup_App_Content_TypeArgs = {
+  _set?: InputMaybe<Lookup_App_Content_Type_Set_Input>;
+  where: Lookup_App_Content_Type_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Cms_Content_By_PkArgs = {
-  _append?: InputMaybe<Cms_Content_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Content_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Set_Input>;
-  pk_columns: Cms_Content_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Content_Content_LabelsArgs = {
-  _set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
-  where: Cms_Content_Content_Labels_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Content_Content_Labels_By_PkArgs = {
-  _set?: InputMaybe<Cms_Content_Content_Labels_Set_Input>;
-  pk_columns: Cms_Content_Content_Labels_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Content_LabelsArgs = {
-  _append?: InputMaybe<Cms_Content_Labels_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Labels_Set_Input>;
-  where: Cms_Content_Labels_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Content_Labels_By_PkArgs = {
-  _append?: InputMaybe<Cms_Content_Labels_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Content_Labels_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Content_Labels_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Content_Labels_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Content_Labels_Prepend_Input>;
-  _set?: InputMaybe<Cms_Content_Labels_Set_Input>;
-  pk_columns: Cms_Content_Labels_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Navigation_ElementArgs = {
-  _append?: InputMaybe<Cms_Navigation_Element_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Navigation_Element_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Navigation_Element_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Navigation_Element_Delete_Key_Input>;
-  _inc?: InputMaybe<Cms_Navigation_Element_Inc_Input>;
-  _prepend?: InputMaybe<Cms_Navigation_Element_Prepend_Input>;
-  _set?: InputMaybe<Cms_Navigation_Element_Set_Input>;
-  where: Cms_Navigation_Element_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Navigation_Element_By_PkArgs = {
-  _append?: InputMaybe<Cms_Navigation_Element_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Navigation_Element_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Navigation_Element_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Navigation_Element_Delete_Key_Input>;
-  _inc?: InputMaybe<Cms_Navigation_Element_Inc_Input>;
-  _prepend?: InputMaybe<Cms_Navigation_Element_Prepend_Input>;
-  _set?: InputMaybe<Cms_Navigation_Element_Set_Input>;
-  pk_columns: Cms_Navigation_Element_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Site_VariablesArgs = {
-  _append?: InputMaybe<Cms_Site_Variables_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Site_Variables_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Site_Variables_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Site_Variables_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Site_Variables_Prepend_Input>;
-  _set?: InputMaybe<Cms_Site_Variables_Set_Input>;
-  where: Cms_Site_Variables_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cms_Site_Variables_By_PkArgs = {
-  _append?: InputMaybe<Cms_Site_Variables_Append_Input>;
-  _delete_at_path?: InputMaybe<Cms_Site_Variables_Delete_At_Path_Input>;
-  _delete_elem?: InputMaybe<Cms_Site_Variables_Delete_Elem_Input>;
-  _delete_key?: InputMaybe<Cms_Site_Variables_Delete_Key_Input>;
-  _prepend?: InputMaybe<Cms_Site_Variables_Prepend_Input>;
-  _set?: InputMaybe<Cms_Site_Variables_Set_Input>;
-  pk_columns: Cms_Site_Variables_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_IndexArgs = {
-  _set?: InputMaybe<Cp_Index_Set_Input>;
-  where: Cp_Index_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Index_By_PkArgs = {
-  _set?: InputMaybe<Cp_Index_Set_Input>;
-  pk_columns: Cp_Index_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_MaintainerArgs = {
-  _set?: InputMaybe<Cp_Maintainer_Set_Input>;
-  where: Cp_Maintainer_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Maintainer_By_PkArgs = {
-  _set?: InputMaybe<Cp_Maintainer_Set_Input>;
-  pk_columns: Cp_Maintainer_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Maintainer_Users_ProfileArgs = {
-  _set?: InputMaybe<Cp_Maintainer_Users_Profile_Set_Input>;
-  where: Cp_Maintainer_Users_Profile_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Maintainer_Users_Profile_By_PkArgs = {
-  _set?: InputMaybe<Cp_Maintainer_Users_Profile_Set_Input>;
-  pk_columns: Cp_Maintainer_Users_Profile_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_SpaceArgs = {
-  _set?: InputMaybe<Cp_Space_Set_Input>;
-  where: Cp_Space_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Space_By_PkArgs = {
-  _set?: InputMaybe<Cp_Space_Set_Input>;
-  pk_columns: Cp_Space_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_VisitArgs = {
-  _set?: InputMaybe<Cp_Visit_Set_Input>;
-  where: Cp_Visit_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Visit_By_PkArgs = {
-  _set?: InputMaybe<Cp_Visit_Set_Input>;
-  pk_columns: Cp_Visit_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Visit_NoteArgs = {
-  _set?: InputMaybe<Cp_Visit_Note_Set_Input>;
-  where: Cp_Visit_Note_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Cp_Visit_Note_By_PkArgs = {
-  _set?: InputMaybe<Cp_Visit_Note_Set_Input>;
-  pk_columns: Cp_Visit_Note_Pk_Columns_Input;
+export type Mutation_RootUpdate_Lookup_App_Content_Type_By_PkArgs = {
+  _set?: InputMaybe<Lookup_App_Content_Type_Set_Input>;
+  pk_columns: Lookup_App_Content_Type_Pk_Columns_Input;
 };
 
 
@@ -5985,44 +6104,30 @@ export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Lookup_Cms_Content_Block_TypeArgs = {
-  _set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
-  where: Lookup_Cms_Content_Block_Type_Bool_Exp;
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input>;
+  where: Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Lookup_Cms_Content_Block_Type_By_PkArgs = {
-  _set?: InputMaybe<Lookup_Cms_Content_Block_Type_Set_Input>;
-  pk_columns: Lookup_Cms_Content_Block_Type_Pk_Columns_Input;
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_Status_By_PkArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input>;
+  pk_columns: Lookup_Maintainer_Visitor_Space_Request_Status_Pk_Columns_Input;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Lookup_Cms_Content_TypeArgs = {
-  _set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
-  where: Lookup_Cms_Content_Type_Bool_Exp;
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_StatusArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Set_Input>;
+  where: Lookup_Maintainer_Visitor_Space_Status_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Lookup_Cms_Content_Type_By_PkArgs = {
-  _set?: InputMaybe<Lookup_Cms_Content_Type_Set_Input>;
-  pk_columns: Lookup_Cms_Content_Type_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Lookup_Cp_Visit_StatusArgs = {
-  _set?: InputMaybe<Lookup_Cp_Visit_Status_Set_Input>;
-  where: Lookup_Cp_Visit_Status_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Lookup_Cp_Visit_Status_By_PkArgs = {
-  _set?: InputMaybe<Lookup_Cp_Visit_Status_Set_Input>;
-  pk_columns: Lookup_Cp_Visit_Status_Pk_Columns_Input;
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Status_By_PkArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Set_Input>;
+  pk_columns: Lookup_Maintainer_Visitor_Space_Status_Pk_Columns_Input;
 };
 
 
@@ -6037,6 +6142,90 @@ export type Mutation_RootUpdate_Lookup_Schema_Audience_TypeArgs = {
 export type Mutation_RootUpdate_Lookup_Schema_Audience_Type_By_PkArgs = {
   _set?: InputMaybe<Lookup_Schema_Audience_Type_Set_Input>;
   pk_columns: Lookup_Schema_Audience_Type_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Content_PartnerArgs = {
+  _set?: InputMaybe<Maintainer_Content_Partner_Set_Input>;
+  where: Maintainer_Content_Partner_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Content_Partner_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Content_Partner_Set_Input>;
+  pk_columns: Maintainer_Content_Partner_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_IndexArgs = {
+  _set?: InputMaybe<Maintainer_Index_Set_Input>;
+  where: Maintainer_Index_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Index_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Index_Set_Input>;
+  pk_columns: Maintainer_Index_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Users_ProfileArgs = {
+  _set?: InputMaybe<Maintainer_Users_Profile_Set_Input>;
+  where: Maintainer_Users_Profile_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Users_Profile_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Users_Profile_Set_Input>;
+  pk_columns: Maintainer_Users_Profile_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_SpaceArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Set_Input>;
+  where: Maintainer_Visitor_Space_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Set_Input>;
+  pk_columns: Maintainer_Visitor_Space_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_RequestArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Set_Input>;
+  where: Maintainer_Visitor_Space_Request_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Set_Input>;
+  pk_columns: Maintainer_Visitor_Space_Request_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_NoteArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Set_Input>;
+  where: Maintainer_Visitor_Space_Request_Note_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_Note_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Set_Input>;
+  pk_columns: Maintainer_Visitor_Space_Request_Note_Pk_Columns_Input;
 };
 
 
@@ -6167,30 +6356,30 @@ export type Mutation_RootUpdate_Sync_Video_By_PkArgs = {
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Users_CollectionArgs = {
-  _set?: InputMaybe<Users_Collection_Set_Input>;
-  where: Users_Collection_Bool_Exp;
+export type Mutation_RootUpdate_Users_FolderArgs = {
+  _set?: InputMaybe<Users_Folder_Set_Input>;
+  where: Users_Folder_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Users_Collection_By_PkArgs = {
-  _set?: InputMaybe<Users_Collection_Set_Input>;
-  pk_columns: Users_Collection_Pk_Columns_Input;
+export type Mutation_RootUpdate_Users_Folder_By_PkArgs = {
+  _set?: InputMaybe<Users_Folder_Set_Input>;
+  pk_columns: Users_Folder_Pk_Columns_Input;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Users_Collection_IeArgs = {
-  _set?: InputMaybe<Users_Collection_Ie_Set_Input>;
-  where: Users_Collection_Ie_Bool_Exp;
+export type Mutation_RootUpdate_Users_Folder_IeArgs = {
+  _set?: InputMaybe<Users_Folder_Ie_Set_Input>;
+  where: Users_Folder_Ie_Bool_Exp;
 };
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Users_Collection_Ie_By_PkArgs = {
-  _set?: InputMaybe<Users_Collection_Ie_Set_Input>;
-  pk_columns: Users_Collection_Ie_Pk_Columns_Input;
+export type Mutation_RootUpdate_Users_Folder_Ie_By_PkArgs = {
+  _set?: InputMaybe<Users_Folder_Ie_Set_Input>;
+  pk_columns: Users_Folder_Ie_Pk_Columns_Input;
 };
 
 
@@ -6533,8 +6722,12 @@ export type Object_Ie = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  ies: Array<Users_Folder_Ie>;
+  /** An aggregate relationship */
+  ies_aggregate: Users_Folder_Ie_Aggregate;
   /** An object relationship */
-  maintainer?: Maybe<Cp_Maintainer>;
+  maintainer?: Maybe<Maintainer_Content_Partner>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier: Scalars['String'];
   meemoo_media_object_id?: Maybe<Scalars['String']>;
@@ -6611,6 +6804,26 @@ export type Object_Ie = {
   /** Een URL naar een thumbnail of placeholder voor de IE */
   schema_thumbnail_url?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "object.ie" */
+export type Object_IeIesArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
+};
+
+
+/** columns and relationships of "object.ie" */
+export type Object_IeIes_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
@@ -6748,7 +6961,8 @@ export type Object_Ie_Bool_Exp = {
   dcterms_issued?: InputMaybe<String_Comparison_Exp>;
   dcterms_medium?: InputMaybe<String_Comparison_Exp>;
   ebucore_object_type?: InputMaybe<String_Comparison_Exp>;
-  maintainer?: InputMaybe<Cp_Maintainer_Bool_Exp>;
+  ies?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
   meemoo_identifier?: InputMaybe<String_Comparison_Exp>;
   meemoo_media_object_id?: InputMaybe<String_Comparison_Exp>;
   meemoofilm_base?: InputMaybe<String_Comparison_Exp>;
@@ -6950,7 +7164,8 @@ export type Object_Ie_Insert_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
-  maintainer?: InputMaybe<Cp_Maintainer_Obj_Rel_Insert_Input>;
+  ies?: InputMaybe<Users_Folder_Ie_Arr_Rel_Insert_Input>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier?: InputMaybe<Scalars['String']>;
   meemoo_media_object_id?: InputMaybe<Scalars['String']>;
@@ -7160,7 +7375,8 @@ export type Object_Ie_Order_By = {
   dcterms_issued?: InputMaybe<Order_By>;
   dcterms_medium?: InputMaybe<Order_By>;
   ebucore_object_type?: InputMaybe<Order_By>;
-  maintainer?: InputMaybe<Cp_Maintainer_Order_By>;
+  ies_aggregate?: InputMaybe<Users_Folder_Ie_Aggregate_Order_By>;
+  maintainer?: InputMaybe<Maintainer_Content_Partner_Order_By>;
   meemoo_identifier?: InputMaybe<Order_By>;
   meemoo_media_object_id?: InputMaybe<Order_By>;
   meemoofilm_base?: InputMaybe<Order_By>;
@@ -7928,115 +8144,121 @@ export enum Order_By {
 
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "app.config" */
+  app_config: Array<App_Config>;
+  /** fetch aggregated fields from the table: "app.config" */
+  app_config_aggregate: App_Config_Aggregate;
+  /** fetch data from the table: "app.config" using primary key columns */
+  app_config_by_pk?: Maybe<App_Config>;
+  /** fetch data from the table: "app.content_block" */
+  app_content_block: Array<App_Content_Block>;
+  /** fetch aggregated fields from the table: "app.content_block" */
+  app_content_block_aggregate: App_Content_Block_Aggregate;
+  /** fetch data from the table: "app.content_block" using primary key columns */
+  app_content_block_by_pk?: Maybe<App_Content_Block>;
+  /** fetch data from the table: "app.content_label" */
+  app_content_label: Array<App_Content_Label>;
+  /** fetch aggregated fields from the table: "app.content_label" */
+  app_content_label_aggregate: App_Content_Label_Aggregate;
+  /** fetch data from the table: "app.content_label" using primary key columns */
+  app_content_label_by_pk?: Maybe<App_Content_Label>;
+  /** fetch data from the table: "app.content_page" */
+  app_content_page: Array<App_Content_Page>;
+  /** fetch aggregated fields from the table: "app.content_page" */
+  app_content_page_aggregate: App_Content_Page_Aggregate;
+  /** fetch data from the table: "app.content_page" using primary key columns */
+  app_content_page_by_pk?: Maybe<App_Content_Page>;
+  /** fetch data from the table: "app.content_page_content_label" */
+  app_content_page_content_label: Array<App_Content_Page_Content_Label>;
+  /** fetch aggregated fields from the table: "app.content_page_content_label" */
+  app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
+  /** fetch data from the table: "app.content_page_content_label" using primary key columns */
+  app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.navigation" */
+  app_navigation: Array<App_Navigation>;
+  /** fetch aggregated fields from the table: "app.navigation" */
+  app_navigation_aggregate: App_Navigation_Aggregate;
+  /** fetch data from the table: "app.navigation" using primary key columns */
+  app_navigation_by_pk?: Maybe<App_Navigation>;
   /** fetch data from the table: "app.notification" */
   app_notification: Array<App_Notification>;
   /** fetch aggregated fields from the table: "app.notification" */
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
-  /** fetch data from the table: "cms.content" */
-  cms_content: Array<Cms_Content>;
-  /** fetch aggregated fields from the table: "cms.content" */
-  cms_content_aggregate: Cms_Content_Aggregate;
-  /** fetch data from the table: "cms.content_blocks" */
-  cms_content_blocks: Array<Cms_Content_Blocks>;
-  /** fetch aggregated fields from the table: "cms.content_blocks" */
-  cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
-  /** fetch data from the table: "cms.content_blocks" using primary key columns */
-  cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
-  /** fetch data from the table: "cms.content" using primary key columns */
-  cms_content_by_pk?: Maybe<Cms_Content>;
-  /** fetch data from the table: "cms.content_content_labels" */
-  cms_content_content_labels: Array<Cms_Content_Content_Labels>;
-  /** fetch aggregated fields from the table: "cms.content_content_labels" */
-  cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
-  /** fetch data from the table: "cms.content_content_labels" using primary key columns */
-  cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
-  /** fetch data from the table: "cms.content_labels" */
-  cms_content_labels: Array<Cms_Content_Labels>;
-  /** fetch aggregated fields from the table: "cms.content_labels" */
-  cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
-  /** fetch data from the table: "cms.content_labels" using primary key columns */
-  cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
-  /** fetch data from the table: "cms.navigation_element" */
-  cms_navigation_element: Array<Cms_Navigation_Element>;
-  /** fetch aggregated fields from the table: "cms.navigation_element" */
-  cms_navigation_element_aggregate: Cms_Navigation_Element_Aggregate;
-  /** fetch data from the table: "cms.navigation_element" using primary key columns */
-  cms_navigation_element_by_pk?: Maybe<Cms_Navigation_Element>;
-  /** fetch data from the table: "cms.site_variables" */
-  cms_site_variables: Array<Cms_Site_Variables>;
-  /** fetch aggregated fields from the table: "cms.site_variables" */
-  cms_site_variables_aggregate: Cms_Site_Variables_Aggregate;
-  /** fetch data from the table: "cms.site_variables" using primary key columns */
-  cms_site_variables_by_pk?: Maybe<Cms_Site_Variables>;
   contentpartners?: Maybe<Array<Maybe<ContentPartner>>>;
-  /** fetch data from the table: "cp.index" */
-  cp_index: Array<Cp_Index>;
-  /** fetch aggregated fields from the table: "cp.index" */
-  cp_index_aggregate: Cp_Index_Aggregate;
-  /** fetch data from the table: "cp.index" using primary key columns */
-  cp_index_by_pk?: Maybe<Cp_Index>;
-  /** fetch data from the table: "cp.maintainer" */
-  cp_maintainer: Array<Cp_Maintainer>;
-  /** fetch aggregated fields from the table: "cp.maintainer" */
-  cp_maintainer_aggregate: Cp_Maintainer_Aggregate;
-  /** fetch data from the table: "cp.maintainer" using primary key columns */
-  cp_maintainer_by_pk?: Maybe<Cp_Maintainer>;
-  /** fetch data from the table: "cp.maintainer_users_profile" */
-  cp_maintainer_users_profile: Array<Cp_Maintainer_Users_Profile>;
-  /** fetch aggregated fields from the table: "cp.maintainer_users_profile" */
-  cp_maintainer_users_profile_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
-  /** fetch data from the table: "cp.maintainer_users_profile" using primary key columns */
-  cp_maintainer_users_profile_by_pk?: Maybe<Cp_Maintainer_Users_Profile>;
-  /** fetch data from the table: "cp.space" */
-  cp_space: Array<Cp_Space>;
-  /** fetch aggregated fields from the table: "cp.space" */
-  cp_space_aggregate: Cp_Space_Aggregate;
-  /** fetch data from the table: "cp.space" using primary key columns */
-  cp_space_by_pk?: Maybe<Cp_Space>;
-  /** fetch data from the table: "cp.visit" */
-  cp_visit: Array<Cp_Visit>;
-  /** fetch aggregated fields from the table: "cp.visit" */
-  cp_visit_aggregate: Cp_Visit_Aggregate;
-  /** fetch data from the table: "cp.visit" using primary key columns */
-  cp_visit_by_pk?: Maybe<Cp_Visit>;
-  /** fetch data from the table: "cp.visit_note" */
-  cp_visit_note: Array<Cp_Visit_Note>;
-  /** fetch aggregated fields from the table: "cp.visit_note" */
-  cp_visit_note_aggregate: Cp_Visit_Note_Aggregate;
-  /** fetch data from the table: "cp.visit_note" using primary key columns */
-  cp_visit_note_by_pk?: Maybe<Cp_Visit_Note>;
+  /** fetch data from the table: "lookup.app_content_block_type" */
+  lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
+  lookup_app_content_block_type_aggregate: Lookup_App_Content_Block_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_content_block_type" using primary key columns */
+  lookup_app_content_block_type_by_pk?: Maybe<Lookup_App_Content_Block_Type>;
+  /** fetch data from the table: "lookup.app_content_type" */
+  lookup_app_content_type: Array<Lookup_App_Content_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_content_type" */
+  lookup_app_content_type_aggregate: Lookup_App_Content_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_content_type" using primary key columns */
+  lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
   /** fetch data from the table: "lookup.app_notification_type" */
   lookup_app_notification_type: Array<Lookup_App_Notification_Type>;
   /** fetch aggregated fields from the table: "lookup.app_notification_type" */
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
-  /** fetch data from the table: "lookup.cms_content_block_type" */
-  lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
-  /** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
-  lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
-  /** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
-  lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
-  /** fetch data from the table: "lookup.cms_content_type" */
-  lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
-  /** fetch aggregated fields from the table: "lookup.cms_content_type" */
-  lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
-  /** fetch data from the table: "lookup.cms_content_type" using primary key columns */
-  lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
-  /** fetch data from the table: "lookup.cp_visit_status" */
-  lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
-  /** fetch aggregated fields from the table: "lookup.cp_visit_status" */
-  lookup_cp_visit_status_aggregate: Lookup_Cp_Visit_Status_Aggregate;
-  /** fetch data from the table: "lookup.cp_visit_status" using primary key columns */
-  lookup_cp_visit_status_by_pk?: Maybe<Lookup_Cp_Visit_Status>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" */
+  lookup_maintainer_visitor_space_request_status: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_status" */
+  lookup_maintainer_visitor_space_request_status_aggregate: Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" using primary key columns */
+  lookup_maintainer_visitor_space_request_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_status" */
+  lookup_maintainer_visitor_space_status: Array<Lookup_Maintainer_Visitor_Space_Status>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_status" */
+  lookup_maintainer_visitor_space_status_aggregate: Lookup_Maintainer_Visitor_Space_Status_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_status" using primary key columns */
+  lookup_maintainer_visitor_space_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Status>;
   /** fetch data from the table: "lookup.schema_audience_type" */
   lookup_schema_audience_type: Array<Lookup_Schema_Audience_Type>;
   /** fetch aggregated fields from the table: "lookup.schema_audience_type" */
   lookup_schema_audience_type_aggregate: Lookup_Schema_Audience_Type_Aggregate;
   /** fetch data from the table: "lookup.schema_audience_type" using primary key columns */
   lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** fetch data from the table: "maintainer.content_partner" */
+  maintainer_content_partner: Array<Maintainer_Content_Partner>;
+  /** fetch aggregated fields from the table: "maintainer.content_partner" */
+  maintainer_content_partner_aggregate: Maintainer_Content_Partner_Aggregate;
+  /** fetch data from the table: "maintainer.content_partner" using primary key columns */
+  maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** fetch data from the table: "maintainer.index" */
+  maintainer_index: Array<Maintainer_Index>;
+  /** fetch aggregated fields from the table: "maintainer.index" */
+  maintainer_index_aggregate: Maintainer_Index_Aggregate;
+  /** fetch data from the table: "maintainer.index" using primary key columns */
+  maintainer_index_by_pk?: Maybe<Maintainer_Index>;
+  /** fetch data from the table: "maintainer.users_profile" */
+  maintainer_users_profile: Array<Maintainer_Users_Profile>;
+  /** fetch aggregated fields from the table: "maintainer.users_profile" */
+  maintainer_users_profile_aggregate: Maintainer_Users_Profile_Aggregate;
+  /** fetch data from the table: "maintainer.users_profile" using primary key columns */
+  maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
+  /** fetch data from the table: "maintainer.visitor_space" */
+  maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space" */
+  maintainer_visitor_space_aggregate: Maintainer_Visitor_Space_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space" using primary key columns */
+  maintainer_visitor_space_by_pk?: Maybe<Maintainer_Visitor_Space>;
+  /** fetch data from the table: "maintainer.visitor_space_request" */
+  maintainer_visitor_space_request: Array<Maintainer_Visitor_Space_Request>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request" */
+  maintainer_visitor_space_request_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request" using primary key columns */
+  maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** fetch data from the table: "maintainer.visitor_space_request_note" */
+  maintainer_visitor_space_request_note: Array<Maintainer_Visitor_Space_Request_Note>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request_note" */
+  maintainer_visitor_space_request_note_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request_note" using primary key columns */
+  maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** fetch data from the table: "object.file" */
   object_file: Array<Object_File>;
   /** fetch aggregated fields from the table: "object.file" */
@@ -8080,18 +8302,18 @@ export type Query_Root = {
   sync_video_aggregate: Sync_Video_Aggregate;
   /** fetch data from the table: "sync.video" using primary key columns */
   sync_video_by_pk?: Maybe<Sync_Video>;
-  /** fetch data from the table: "users.collection" */
-  users_collection: Array<Users_Collection>;
-  /** fetch aggregated fields from the table: "users.collection" */
-  users_collection_aggregate: Users_Collection_Aggregate;
-  /** fetch data from the table: "users.collection" using primary key columns */
-  users_collection_by_pk?: Maybe<Users_Collection>;
-  /** fetch data from the table: "users.collection_ie" */
-  users_collection_ie: Array<Users_Collection_Ie>;
-  /** fetch aggregated fields from the table: "users.collection_ie" */
-  users_collection_ie_aggregate: Users_Collection_Ie_Aggregate;
-  /** fetch data from the table: "users.collection_ie" using primary key columns */
-  users_collection_ie_by_pk?: Maybe<Users_Collection_Ie>;
+  /** fetch data from the table: "users.folder" */
+  users_folder: Array<Users_Folder>;
+  /** fetch aggregated fields from the table: "users.folder" */
+  users_folder_aggregate: Users_Folder_Aggregate;
+  /** fetch data from the table: "users.folder" using primary key columns */
+  users_folder_by_pk?: Maybe<Users_Folder>;
+  /** fetch data from the table: "users.folder_ie" */
+  users_folder_ie: Array<Users_Folder_Ie>;
+  /** fetch aggregated fields from the table: "users.folder_ie" */
+  users_folder_ie_aggregate: Users_Folder_Ie_Aggregate;
+  /** fetch data from the table: "users.folder_ie" using primary key columns */
+  users_folder_ie_by_pk?: Maybe<Users_Folder_Ie>;
   /** fetch data from the table: "users.group" */
   users_group: Array<Users_Group>;
   /** fetch aggregated fields from the table: "users.group" */
@@ -8131,6 +8353,144 @@ export type Query_Root = {
 };
 
 
+export type Query_RootApp_ConfigArgs = {
+  distinct_on?: InputMaybe<Array<App_Config_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Config_Order_By>>;
+  where?: InputMaybe<App_Config_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Config_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Config_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Config_Order_By>>;
+  where?: InputMaybe<App_Config_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Config_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+export type Query_RootApp_Content_BlockArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Block_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Block_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_Content_LabelArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Label_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Label_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Label_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_Content_PageArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Page_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Page_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_Content_Page_Content_LabelArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Page_Content_Label_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_NavigationArgs = {
+  distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Navigation_Order_By>>;
+  where?: InputMaybe<App_Navigation_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Navigation_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Navigation_Order_By>>;
+  where?: InputMaybe<App_Navigation_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Navigation_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootApp_NotificationArgs = {
   distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -8154,285 +8514,55 @@ export type Query_RootApp_Notification_By_PkArgs = {
 };
 
 
-export type Query_RootCms_ContentArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_BlocksArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Blocks_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Blocks_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCms_Content_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCms_Content_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCms_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCms_Navigation_ElementArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Navigation_Element_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Navigation_Element_Order_By>>;
-  where?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Navigation_Element_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Navigation_Element_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Navigation_Element_Order_By>>;
-  where?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Navigation_Element_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCms_Site_VariablesArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Site_Variables_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Site_Variables_Order_By>>;
-  where?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Site_Variables_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Site_Variables_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Site_Variables_Order_By>>;
-  where?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-};
-
-
-export type Query_RootCms_Site_Variables_By_PkArgs = {
-  name: Scalars['String'];
-};
-
-
 export type Query_RootContentpartnersArgs = {
   id?: InputMaybe<Scalars['String']>;
   iri?: InputMaybe<Scalars['String']>;
 };
 
 
-export type Query_RootCp_IndexArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Index_Select_Column>>;
+export type Query_RootLookup_App_Content_Block_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Index_Order_By>>;
-  where?: InputMaybe<Cp_Index_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Block_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
 };
 
 
-export type Query_RootCp_Index_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Index_Select_Column>>;
+export type Query_RootLookup_App_Content_Block_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Index_Order_By>>;
-  where?: InputMaybe<Cp_Index_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Block_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
 };
 
 
-export type Query_RootCp_Index_By_PkArgs = {
-  schema_maintainer_id: Scalars['String'];
+export type Query_RootLookup_App_Content_Block_Type_By_PkArgs = {
+  value: Scalars['String'];
 };
 
 
-export type Query_RootCp_MaintainerArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Select_Column>>;
+export type Query_RootLookup_App_Content_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
 };
 
 
-export type Query_RootCp_Maintainer_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Select_Column>>;
+export type Query_RootLookup_App_Content_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
 };
 
 
-export type Query_RootCp_Maintainer_By_PkArgs = {
-  schema_identifier: Scalars['String'];
-};
-
-
-export type Query_RootCp_Maintainer_Users_ProfileArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Maintainer_Users_Profile_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Maintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCp_SpaceArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Space_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Space_Order_By>>;
-  where?: InputMaybe<Cp_Space_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Space_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Space_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Space_Order_By>>;
-  where?: InputMaybe<Cp_Space_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Space_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCp_VisitArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Visit_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Visit_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Query_RootCp_Visit_NoteArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Visit_Note_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-export type Query_RootCp_Visit_Note_By_PkArgs = {
-  id: Scalars['uuid'];
+export type Query_RootLookup_App_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
 };
 
 
@@ -8459,71 +8589,48 @@ export type Query_RootLookup_App_Notification_Type_By_PkArgs = {
 };
 
 
-export type Query_RootLookup_Cms_Content_Block_TypeArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
 };
 
 
-export type Query_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
 };
 
 
-export type Query_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
 
-export type Query_RootLookup_Cms_Content_TypeArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+export type Query_RootLookup_Maintainer_Visitor_Space_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
 };
 
 
-export type Query_RootLookup_Cms_Content_Type_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+export type Query_RootLookup_Maintainer_Visitor_Space_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
 };
 
 
-export type Query_RootLookup_Cms_Content_Type_By_PkArgs = {
-  value: Scalars['String'];
-};
-
-
-export type Query_RootLookup_Cp_Visit_StatusArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cp_Visit_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cp_Visit_Status_Order_By>>;
-  where?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
-};
-
-
-export type Query_RootLookup_Cp_Visit_Status_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cp_Visit_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cp_Visit_Status_Order_By>>;
-  where?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
-};
-
-
-export type Query_RootLookup_Cp_Visit_Status_By_PkArgs = {
+export type Query_RootLookup_Maintainer_Visitor_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -8548,6 +8655,144 @@ export type Query_RootLookup_Schema_Audience_Type_AggregateArgs = {
 
 export type Query_RootLookup_Schema_Audience_Type_By_PkArgs = {
   value: Scalars['String'];
+};
+
+
+export type Query_RootMaintainer_Content_PartnerArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Content_Partner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Content_Partner_Order_By>>;
+  where?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Content_Partner_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Content_Partner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Content_Partner_Order_By>>;
+  where?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Content_Partner_By_PkArgs = {
+  schema_identifier: Scalars['String'];
+};
+
+
+export type Query_RootMaintainer_IndexArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Index_Order_By>>;
+  where?: InputMaybe<Maintainer_Index_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Index_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Index_Order_By>>;
+  where?: InputMaybe<Maintainer_Index_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Index_By_PkArgs = {
+  schema_maintainer_id: Scalars['String'];
+};
+
+
+export type Query_RootMaintainer_Users_ProfileArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Users_Profile_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Users_Profile_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootMaintainer_Visitor_SpaceArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_RequestArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_NoteArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_Note_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_Note_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -8726,48 +8971,48 @@ export type Query_RootSync_Video_By_PkArgs = {
 };
 
 
-export type Query_RootUsers_CollectionArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+export type Query_RootUsers_FolderArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
-export type Query_RootUsers_Collection_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+export type Query_RootUsers_Folder_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
-export type Query_RootUsers_Collection_By_PkArgs = {
+export type Query_RootUsers_Folder_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
 
-export type Query_RootUsers_Collection_IeArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Query_RootUsers_Folder_IeArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
-export type Query_RootUsers_Collection_Ie_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Query_RootUsers_Folder_Ie_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
-export type Query_RootUsers_Collection_Ie_By_PkArgs = {
+export type Query_RootUsers_Folder_Ie_By_PkArgs = {
   ie_schema_identifier: Scalars['String'];
   user_collection_id: Scalars['uuid'];
 };
@@ -8912,114 +9157,120 @@ export type Query_RootUsers_Profile_By_PkArgs = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "app.config" */
+  app_config: Array<App_Config>;
+  /** fetch aggregated fields from the table: "app.config" */
+  app_config_aggregate: App_Config_Aggregate;
+  /** fetch data from the table: "app.config" using primary key columns */
+  app_config_by_pk?: Maybe<App_Config>;
+  /** fetch data from the table: "app.content_block" */
+  app_content_block: Array<App_Content_Block>;
+  /** fetch aggregated fields from the table: "app.content_block" */
+  app_content_block_aggregate: App_Content_Block_Aggregate;
+  /** fetch data from the table: "app.content_block" using primary key columns */
+  app_content_block_by_pk?: Maybe<App_Content_Block>;
+  /** fetch data from the table: "app.content_label" */
+  app_content_label: Array<App_Content_Label>;
+  /** fetch aggregated fields from the table: "app.content_label" */
+  app_content_label_aggregate: App_Content_Label_Aggregate;
+  /** fetch data from the table: "app.content_label" using primary key columns */
+  app_content_label_by_pk?: Maybe<App_Content_Label>;
+  /** fetch data from the table: "app.content_page" */
+  app_content_page: Array<App_Content_Page>;
+  /** fetch aggregated fields from the table: "app.content_page" */
+  app_content_page_aggregate: App_Content_Page_Aggregate;
+  /** fetch data from the table: "app.content_page" using primary key columns */
+  app_content_page_by_pk?: Maybe<App_Content_Page>;
+  /** fetch data from the table: "app.content_page_content_label" */
+  app_content_page_content_label: Array<App_Content_Page_Content_Label>;
+  /** fetch aggregated fields from the table: "app.content_page_content_label" */
+  app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
+  /** fetch data from the table: "app.content_page_content_label" using primary key columns */
+  app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.navigation" */
+  app_navigation: Array<App_Navigation>;
+  /** fetch aggregated fields from the table: "app.navigation" */
+  app_navigation_aggregate: App_Navigation_Aggregate;
+  /** fetch data from the table: "app.navigation" using primary key columns */
+  app_navigation_by_pk?: Maybe<App_Navigation>;
   /** fetch data from the table: "app.notification" */
   app_notification: Array<App_Notification>;
   /** fetch aggregated fields from the table: "app.notification" */
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
-  /** fetch data from the table: "cms.content" */
-  cms_content: Array<Cms_Content>;
-  /** fetch aggregated fields from the table: "cms.content" */
-  cms_content_aggregate: Cms_Content_Aggregate;
-  /** fetch data from the table: "cms.content_blocks" */
-  cms_content_blocks: Array<Cms_Content_Blocks>;
-  /** fetch aggregated fields from the table: "cms.content_blocks" */
-  cms_content_blocks_aggregate: Cms_Content_Blocks_Aggregate;
-  /** fetch data from the table: "cms.content_blocks" using primary key columns */
-  cms_content_blocks_by_pk?: Maybe<Cms_Content_Blocks>;
-  /** fetch data from the table: "cms.content" using primary key columns */
-  cms_content_by_pk?: Maybe<Cms_Content>;
-  /** fetch data from the table: "cms.content_content_labels" */
-  cms_content_content_labels: Array<Cms_Content_Content_Labels>;
-  /** fetch aggregated fields from the table: "cms.content_content_labels" */
-  cms_content_content_labels_aggregate: Cms_Content_Content_Labels_Aggregate;
-  /** fetch data from the table: "cms.content_content_labels" using primary key columns */
-  cms_content_content_labels_by_pk?: Maybe<Cms_Content_Content_Labels>;
-  /** fetch data from the table: "cms.content_labels" */
-  cms_content_labels: Array<Cms_Content_Labels>;
-  /** fetch aggregated fields from the table: "cms.content_labels" */
-  cms_content_labels_aggregate: Cms_Content_Labels_Aggregate;
-  /** fetch data from the table: "cms.content_labels" using primary key columns */
-  cms_content_labels_by_pk?: Maybe<Cms_Content_Labels>;
-  /** fetch data from the table: "cms.navigation_element" */
-  cms_navigation_element: Array<Cms_Navigation_Element>;
-  /** fetch aggregated fields from the table: "cms.navigation_element" */
-  cms_navigation_element_aggregate: Cms_Navigation_Element_Aggregate;
-  /** fetch data from the table: "cms.navigation_element" using primary key columns */
-  cms_navigation_element_by_pk?: Maybe<Cms_Navigation_Element>;
-  /** fetch data from the table: "cms.site_variables" */
-  cms_site_variables: Array<Cms_Site_Variables>;
-  /** fetch aggregated fields from the table: "cms.site_variables" */
-  cms_site_variables_aggregate: Cms_Site_Variables_Aggregate;
-  /** fetch data from the table: "cms.site_variables" using primary key columns */
-  cms_site_variables_by_pk?: Maybe<Cms_Site_Variables>;
-  /** fetch data from the table: "cp.index" */
-  cp_index: Array<Cp_Index>;
-  /** fetch aggregated fields from the table: "cp.index" */
-  cp_index_aggregate: Cp_Index_Aggregate;
-  /** fetch data from the table: "cp.index" using primary key columns */
-  cp_index_by_pk?: Maybe<Cp_Index>;
-  /** fetch data from the table: "cp.maintainer" */
-  cp_maintainer: Array<Cp_Maintainer>;
-  /** fetch aggregated fields from the table: "cp.maintainer" */
-  cp_maintainer_aggregate: Cp_Maintainer_Aggregate;
-  /** fetch data from the table: "cp.maintainer" using primary key columns */
-  cp_maintainer_by_pk?: Maybe<Cp_Maintainer>;
-  /** fetch data from the table: "cp.maintainer_users_profile" */
-  cp_maintainer_users_profile: Array<Cp_Maintainer_Users_Profile>;
-  /** fetch aggregated fields from the table: "cp.maintainer_users_profile" */
-  cp_maintainer_users_profile_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
-  /** fetch data from the table: "cp.maintainer_users_profile" using primary key columns */
-  cp_maintainer_users_profile_by_pk?: Maybe<Cp_Maintainer_Users_Profile>;
-  /** fetch data from the table: "cp.space" */
-  cp_space: Array<Cp_Space>;
-  /** fetch aggregated fields from the table: "cp.space" */
-  cp_space_aggregate: Cp_Space_Aggregate;
-  /** fetch data from the table: "cp.space" using primary key columns */
-  cp_space_by_pk?: Maybe<Cp_Space>;
-  /** fetch data from the table: "cp.visit" */
-  cp_visit: Array<Cp_Visit>;
-  /** fetch aggregated fields from the table: "cp.visit" */
-  cp_visit_aggregate: Cp_Visit_Aggregate;
-  /** fetch data from the table: "cp.visit" using primary key columns */
-  cp_visit_by_pk?: Maybe<Cp_Visit>;
-  /** fetch data from the table: "cp.visit_note" */
-  cp_visit_note: Array<Cp_Visit_Note>;
-  /** fetch aggregated fields from the table: "cp.visit_note" */
-  cp_visit_note_aggregate: Cp_Visit_Note_Aggregate;
-  /** fetch data from the table: "cp.visit_note" using primary key columns */
-  cp_visit_note_by_pk?: Maybe<Cp_Visit_Note>;
+  /** fetch data from the table: "lookup.app_content_block_type" */
+  lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
+  lookup_app_content_block_type_aggregate: Lookup_App_Content_Block_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_content_block_type" using primary key columns */
+  lookup_app_content_block_type_by_pk?: Maybe<Lookup_App_Content_Block_Type>;
+  /** fetch data from the table: "lookup.app_content_type" */
+  lookup_app_content_type: Array<Lookup_App_Content_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_content_type" */
+  lookup_app_content_type_aggregate: Lookup_App_Content_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_content_type" using primary key columns */
+  lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
   /** fetch data from the table: "lookup.app_notification_type" */
   lookup_app_notification_type: Array<Lookup_App_Notification_Type>;
   /** fetch aggregated fields from the table: "lookup.app_notification_type" */
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
-  /** fetch data from the table: "lookup.cms_content_block_type" */
-  lookup_cms_content_block_type: Array<Lookup_Cms_Content_Block_Type>;
-  /** fetch aggregated fields from the table: "lookup.cms_content_block_type" */
-  lookup_cms_content_block_type_aggregate: Lookup_Cms_Content_Block_Type_Aggregate;
-  /** fetch data from the table: "lookup.cms_content_block_type" using primary key columns */
-  lookup_cms_content_block_type_by_pk?: Maybe<Lookup_Cms_Content_Block_Type>;
-  /** fetch data from the table: "lookup.cms_content_type" */
-  lookup_cms_content_type: Array<Lookup_Cms_Content_Type>;
-  /** fetch aggregated fields from the table: "lookup.cms_content_type" */
-  lookup_cms_content_type_aggregate: Lookup_Cms_Content_Type_Aggregate;
-  /** fetch data from the table: "lookup.cms_content_type" using primary key columns */
-  lookup_cms_content_type_by_pk?: Maybe<Lookup_Cms_Content_Type>;
-  /** fetch data from the table: "lookup.cp_visit_status" */
-  lookup_cp_visit_status: Array<Lookup_Cp_Visit_Status>;
-  /** fetch aggregated fields from the table: "lookup.cp_visit_status" */
-  lookup_cp_visit_status_aggregate: Lookup_Cp_Visit_Status_Aggregate;
-  /** fetch data from the table: "lookup.cp_visit_status" using primary key columns */
-  lookup_cp_visit_status_by_pk?: Maybe<Lookup_Cp_Visit_Status>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" */
+  lookup_maintainer_visitor_space_request_status: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_status" */
+  lookup_maintainer_visitor_space_request_status_aggregate: Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" using primary key columns */
+  lookup_maintainer_visitor_space_request_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_status" */
+  lookup_maintainer_visitor_space_status: Array<Lookup_Maintainer_Visitor_Space_Status>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_status" */
+  lookup_maintainer_visitor_space_status_aggregate: Lookup_Maintainer_Visitor_Space_Status_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_status" using primary key columns */
+  lookup_maintainer_visitor_space_status_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Status>;
   /** fetch data from the table: "lookup.schema_audience_type" */
   lookup_schema_audience_type: Array<Lookup_Schema_Audience_Type>;
   /** fetch aggregated fields from the table: "lookup.schema_audience_type" */
   lookup_schema_audience_type_aggregate: Lookup_Schema_Audience_Type_Aggregate;
   /** fetch data from the table: "lookup.schema_audience_type" using primary key columns */
   lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
+  /** fetch data from the table: "maintainer.content_partner" */
+  maintainer_content_partner: Array<Maintainer_Content_Partner>;
+  /** fetch aggregated fields from the table: "maintainer.content_partner" */
+  maintainer_content_partner_aggregate: Maintainer_Content_Partner_Aggregate;
+  /** fetch data from the table: "maintainer.content_partner" using primary key columns */
+  maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** fetch data from the table: "maintainer.index" */
+  maintainer_index: Array<Maintainer_Index>;
+  /** fetch aggregated fields from the table: "maintainer.index" */
+  maintainer_index_aggregate: Maintainer_Index_Aggregate;
+  /** fetch data from the table: "maintainer.index" using primary key columns */
+  maintainer_index_by_pk?: Maybe<Maintainer_Index>;
+  /** fetch data from the table: "maintainer.users_profile" */
+  maintainer_users_profile: Array<Maintainer_Users_Profile>;
+  /** fetch aggregated fields from the table: "maintainer.users_profile" */
+  maintainer_users_profile_aggregate: Maintainer_Users_Profile_Aggregate;
+  /** fetch data from the table: "maintainer.users_profile" using primary key columns */
+  maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
+  /** fetch data from the table: "maintainer.visitor_space" */
+  maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space" */
+  maintainer_visitor_space_aggregate: Maintainer_Visitor_Space_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space" using primary key columns */
+  maintainer_visitor_space_by_pk?: Maybe<Maintainer_Visitor_Space>;
+  /** fetch data from the table: "maintainer.visitor_space_request" */
+  maintainer_visitor_space_request: Array<Maintainer_Visitor_Space_Request>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request" */
+  maintainer_visitor_space_request_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request" using primary key columns */
+  maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** fetch data from the table: "maintainer.visitor_space_request_note" */
+  maintainer_visitor_space_request_note: Array<Maintainer_Visitor_Space_Request_Note>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request_note" */
+  maintainer_visitor_space_request_note_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request_note" using primary key columns */
+  maintainer_visitor_space_request_note_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Note>;
   /** fetch data from the table: "object.file" */
   object_file: Array<Object_File>;
   /** fetch aggregated fields from the table: "object.file" */
@@ -9060,18 +9311,18 @@ export type Subscription_Root = {
   sync_video_aggregate: Sync_Video_Aggregate;
   /** fetch data from the table: "sync.video" using primary key columns */
   sync_video_by_pk?: Maybe<Sync_Video>;
-  /** fetch data from the table: "users.collection" */
-  users_collection: Array<Users_Collection>;
-  /** fetch aggregated fields from the table: "users.collection" */
-  users_collection_aggregate: Users_Collection_Aggregate;
-  /** fetch data from the table: "users.collection" using primary key columns */
-  users_collection_by_pk?: Maybe<Users_Collection>;
-  /** fetch data from the table: "users.collection_ie" */
-  users_collection_ie: Array<Users_Collection_Ie>;
-  /** fetch aggregated fields from the table: "users.collection_ie" */
-  users_collection_ie_aggregate: Users_Collection_Ie_Aggregate;
-  /** fetch data from the table: "users.collection_ie" using primary key columns */
-  users_collection_ie_by_pk?: Maybe<Users_Collection_Ie>;
+  /** fetch data from the table: "users.folder" */
+  users_folder: Array<Users_Folder>;
+  /** fetch aggregated fields from the table: "users.folder" */
+  users_folder_aggregate: Users_Folder_Aggregate;
+  /** fetch data from the table: "users.folder" using primary key columns */
+  users_folder_by_pk?: Maybe<Users_Folder>;
+  /** fetch data from the table: "users.folder_ie" */
+  users_folder_ie: Array<Users_Folder_Ie>;
+  /** fetch aggregated fields from the table: "users.folder_ie" */
+  users_folder_ie_aggregate: Users_Folder_Ie_Aggregate;
+  /** fetch data from the table: "users.folder_ie" using primary key columns */
+  users_folder_ie_by_pk?: Maybe<Users_Folder_Ie>;
   /** fetch data from the table: "users.group" */
   users_group: Array<Users_Group>;
   /** fetch aggregated fields from the table: "users.group" */
@@ -9111,6 +9362,144 @@ export type Subscription_Root = {
 };
 
 
+export type Subscription_RootApp_ConfigArgs = {
+  distinct_on?: InputMaybe<Array<App_Config_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Config_Order_By>>;
+  where?: InputMaybe<App_Config_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Config_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Config_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Config_Order_By>>;
+  where?: InputMaybe<App_Config_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Config_By_PkArgs = {
+  name: Scalars['String'];
+};
+
+
+export type Subscription_RootApp_Content_BlockArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Block_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Block_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Block_Order_By>>;
+  where?: InputMaybe<App_Content_Block_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Block_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_Content_LabelArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Label_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Label_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Label_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_Content_PageArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Page_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Page_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_Content_Page_Content_LabelArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Page_Content_Label_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Content_Label_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Content_Label_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Content_Label_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_NavigationArgs = {
+  distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Navigation_Order_By>>;
+  where?: InputMaybe<App_Navigation_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Navigation_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Navigation_Order_By>>;
+  where?: InputMaybe<App_Navigation_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Navigation_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootApp_NotificationArgs = {
   distinct_on?: InputMaybe<Array<App_Notification_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -9134,279 +9523,49 @@ export type Subscription_RootApp_Notification_By_PkArgs = {
 };
 
 
-export type Subscription_RootCms_ContentArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+export type Subscription_RootLookup_App_Content_Block_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Block_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
 };
 
 
-export type Subscription_RootCms_Content_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Select_Column>>;
+export type Subscription_RootLookup_App_Content_Block_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Order_By>>;
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Block_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Block_Type_Bool_Exp>;
 };
 
 
-export type Subscription_RootCms_Content_BlocksArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+export type Subscription_RootLookup_App_Content_Block_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Subscription_RootLookup_App_Content_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
 };
 
 
-export type Subscription_RootCms_Content_Blocks_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Blocks_Select_Column>>;
+export type Subscription_RootLookup_App_Content_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Content_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Blocks_Order_By>>;
-  where?: InputMaybe<Cms_Content_Blocks_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_App_Content_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Content_Type_Bool_Exp>;
 };
 
 
-export type Subscription_RootCms_Content_Blocks_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCms_Content_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCms_Content_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Content_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Content_Labels_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Content_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCms_Content_LabelsArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Content_Labels_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Content_Labels_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Content_Labels_Order_By>>;
-  where?: InputMaybe<Cms_Content_Labels_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Content_Labels_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCms_Navigation_ElementArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Navigation_Element_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Navigation_Element_Order_By>>;
-  where?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Navigation_Element_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Navigation_Element_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Navigation_Element_Order_By>>;
-  where?: InputMaybe<Cms_Navigation_Element_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Navigation_Element_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCms_Site_VariablesArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Site_Variables_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Site_Variables_Order_By>>;
-  where?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Site_Variables_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cms_Site_Variables_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cms_Site_Variables_Order_By>>;
-  where?: InputMaybe<Cms_Site_Variables_Bool_Exp>;
-};
-
-
-export type Subscription_RootCms_Site_Variables_By_PkArgs = {
-  name: Scalars['String'];
-};
-
-
-export type Subscription_RootCp_IndexArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Index_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Index_Order_By>>;
-  where?: InputMaybe<Cp_Index_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Index_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Index_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Index_Order_By>>;
-  where?: InputMaybe<Cp_Index_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Index_By_PkArgs = {
-  schema_maintainer_id: Scalars['String'];
-};
-
-
-export type Subscription_RootCp_MaintainerArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Maintainer_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Maintainer_By_PkArgs = {
-  schema_identifier: Scalars['String'];
-};
-
-
-export type Subscription_RootCp_Maintainer_Users_ProfileArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Maintainer_Users_Profile_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Maintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCp_SpaceArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Space_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Space_Order_By>>;
-  where?: InputMaybe<Cp_Space_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Space_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Space_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Space_Order_By>>;
-  where?: InputMaybe<Cp_Space_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Space_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCp_VisitArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Visit_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Visit_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootCp_Visit_NoteArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Visit_Note_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
-};
-
-
-export type Subscription_RootCp_Visit_Note_By_PkArgs = {
-  id: Scalars['uuid'];
+export type Subscription_RootLookup_App_Content_Type_By_PkArgs = {
+  value: Scalars['String'];
 };
 
 
@@ -9433,71 +9592,48 @@ export type Subscription_RootLookup_App_Notification_Type_By_PkArgs = {
 };
 
 
-export type Subscription_RootLookup_Cms_Content_Block_TypeArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
 };
 
 
-export type Subscription_RootLookup_Cms_Content_Block_Type_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Select_Column>>;
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Block_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Block_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
 };
 
 
-export type Subscription_RootLookup_Cms_Content_Block_Type_By_PkArgs = {
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
 
-export type Subscription_RootLookup_Cms_Content_TypeArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+export type Subscription_RootLookup_Maintainer_Visitor_Space_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
 };
 
 
-export type Subscription_RootLookup_Cms_Content_Type_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cms_Content_Type_Select_Column>>;
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cms_Content_Type_Order_By>>;
-  where?: InputMaybe<Lookup_Cms_Content_Type_Bool_Exp>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
 };
 
 
-export type Subscription_RootLookup_Cms_Content_Type_By_PkArgs = {
-  value: Scalars['String'];
-};
-
-
-export type Subscription_RootLookup_Cp_Visit_StatusArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cp_Visit_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cp_Visit_Status_Order_By>>;
-  where?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
-};
-
-
-export type Subscription_RootLookup_Cp_Visit_Status_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lookup_Cp_Visit_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Lookup_Cp_Visit_Status_Order_By>>;
-  where?: InputMaybe<Lookup_Cp_Visit_Status_Bool_Exp>;
-};
-
-
-export type Subscription_RootLookup_Cp_Visit_Status_By_PkArgs = {
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Status_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -9522,6 +9658,144 @@ export type Subscription_RootLookup_Schema_Audience_Type_AggregateArgs = {
 
 export type Subscription_RootLookup_Schema_Audience_Type_By_PkArgs = {
   value: Scalars['String'];
+};
+
+
+export type Subscription_RootMaintainer_Content_PartnerArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Content_Partner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Content_Partner_Order_By>>;
+  where?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Content_Partner_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Content_Partner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Content_Partner_Order_By>>;
+  where?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Content_Partner_By_PkArgs = {
+  schema_identifier: Scalars['String'];
+};
+
+
+export type Subscription_RootMaintainer_IndexArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Index_Order_By>>;
+  where?: InputMaybe<Maintainer_Index_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Index_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Index_Order_By>>;
+  where?: InputMaybe<Maintainer_Index_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Index_By_PkArgs = {
+  schema_maintainer_id: Scalars['String'];
+};
+
+
+export type Subscription_RootMaintainer_Users_ProfileArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Users_Profile_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Users_Profile_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootMaintainer_Visitor_SpaceArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_RequestArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_NoteArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_Note_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_Note_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -9681,48 +9955,48 @@ export type Subscription_RootSync_Video_By_PkArgs = {
 };
 
 
-export type Subscription_RootUsers_CollectionArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+export type Subscription_RootUsers_FolderArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
-export type Subscription_RootUsers_Collection_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+export type Subscription_RootUsers_Folder_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
-export type Subscription_RootUsers_Collection_By_PkArgs = {
+export type Subscription_RootUsers_Folder_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
 
-export type Subscription_RootUsers_Collection_IeArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Subscription_RootUsers_Folder_IeArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
-export type Subscription_RootUsers_Collection_Ie_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Subscription_RootUsers_Folder_Ie_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
-export type Subscription_RootUsers_Collection_Ie_By_PkArgs = {
+export type Subscription_RootUsers_Folder_Ie_By_PkArgs = {
   ie_schema_identifier: Scalars['String'];
   user_collection_id: Scalars['uuid'];
 };
@@ -10631,17 +10905,17 @@ export type Timestamptz_Comparison_Exp = {
  * Verzamelingen van items aangemaakt door gebruikers zoals favorieten
  *
  *
- * columns and relationships of "users.collection"
+ * columns and relationships of "users.folder"
  *
  */
-export type Users_Collection = {
-  __typename?: 'users_collection';
+export type Users_Folder = {
+  __typename?: 'users_folder';
   created_at: Scalars['timestamp'];
   id: Scalars['uuid'];
   /** An array relationship */
-  ies: Array<Users_Collection_Ie>;
+  ies: Array<Users_Folder_Ie>;
   /** An aggregate relationship */
-  ies_aggregate: Users_Collection_Ie_Aggregate;
+  ies_aggregate: Users_Folder_Ie_Aggregate;
   is_default?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamp']>;
@@ -10655,15 +10929,15 @@ export type Users_Collection = {
  * Verzamelingen van items aangemaakt door gebruikers zoals favorieten
  *
  *
- * columns and relationships of "users.collection"
+ * columns and relationships of "users.folder"
  *
  */
-export type Users_CollectionIesArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Users_FolderIesArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
 
@@ -10671,61 +10945,61 @@ export type Users_CollectionIesArgs = {
  * Verzamelingen van items aangemaakt door gebruikers zoals favorieten
  *
  *
- * columns and relationships of "users.collection"
+ * columns and relationships of "users.folder"
  *
  */
-export type Users_CollectionIes_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+export type Users_FolderIes_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Ie_Order_By>>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Ie_Order_By>>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
-/** aggregated selection of "users.collection" */
-export type Users_Collection_Aggregate = {
-  __typename?: 'users_collection_aggregate';
-  aggregate?: Maybe<Users_Collection_Aggregate_Fields>;
-  nodes: Array<Users_Collection>;
+/** aggregated selection of "users.folder" */
+export type Users_Folder_Aggregate = {
+  __typename?: 'users_folder_aggregate';
+  aggregate?: Maybe<Users_Folder_Aggregate_Fields>;
+  nodes: Array<Users_Folder>;
 };
 
-/** aggregate fields of "users.collection" */
-export type Users_Collection_Aggregate_Fields = {
-  __typename?: 'users_collection_aggregate_fields';
+/** aggregate fields of "users.folder" */
+export type Users_Folder_Aggregate_Fields = {
+  __typename?: 'users_folder_aggregate_fields';
   count: Scalars['Int'];
-  max?: Maybe<Users_Collection_Max_Fields>;
-  min?: Maybe<Users_Collection_Min_Fields>;
+  max?: Maybe<Users_Folder_Max_Fields>;
+  min?: Maybe<Users_Folder_Min_Fields>;
 };
 
 
-/** aggregate fields of "users.collection" */
-export type Users_Collection_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Users_Collection_Select_Column>>;
+/** aggregate fields of "users.folder" */
+export type Users_Folder_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Users_Folder_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "users.collection" */
-export type Users_Collection_Aggregate_Order_By = {
+/** order by aggregate values of table "users.folder" */
+export type Users_Folder_Aggregate_Order_By = {
   count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Users_Collection_Max_Order_By>;
-  min?: InputMaybe<Users_Collection_Min_Order_By>;
+  max?: InputMaybe<Users_Folder_Max_Order_By>;
+  min?: InputMaybe<Users_Folder_Min_Order_By>;
 };
 
-/** input type for inserting array relation for remote table "users.collection" */
-export type Users_Collection_Arr_Rel_Insert_Input = {
-  data: Array<Users_Collection_Insert_Input>;
+/** input type for inserting array relation for remote table "users.folder" */
+export type Users_Folder_Arr_Rel_Insert_Input = {
+  data: Array<Users_Folder_Insert_Input>;
   /** on conflict condition */
-  on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
+  on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
-/** Boolean expression to filter rows from the table "users.collection". All fields are combined with a logical 'AND'. */
-export type Users_Collection_Bool_Exp = {
-  _and?: InputMaybe<Array<Users_Collection_Bool_Exp>>;
-  _not?: InputMaybe<Users_Collection_Bool_Exp>;
-  _or?: InputMaybe<Array<Users_Collection_Bool_Exp>>;
+/** Boolean expression to filter rows from the table "users.folder". All fields are combined with a logical 'AND'. */
+export type Users_Folder_Bool_Exp = {
+  _and?: InputMaybe<Array<Users_Folder_Bool_Exp>>;
+  _not?: InputMaybe<Users_Folder_Bool_Exp>;
+  _or?: InputMaybe<Array<Users_Folder_Bool_Exp>>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  ies?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+  ies?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
   is_default?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -10733,8 +11007,8 @@ export type Users_Collection_Bool_Exp = {
   user_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
-/** unique or primary key constraints on table "users.collection" */
-export enum Users_Collection_Constraint {
+/** unique or primary key constraints on table "users.folder" */
+export enum Users_Folder_Constraint {
   /** unique or primary key constraint */
   CollectionPkey = 'collection_pkey'
 }
@@ -10743,13 +11017,13 @@ export enum Users_Collection_Constraint {
  * Koppeltabel tussen user collections en object ie
  *
  *
- * columns and relationships of "users.collection_ie"
+ * columns and relationships of "users.folder_ie"
  *
  */
-export type Users_Collection_Ie = {
-  __typename?: 'users_collection_ie';
+export type Users_Folder_Ie = {
+  __typename?: 'users_folder_ie';
   /** An object relationship */
-  collection: Users_Collection;
+  collection: Users_Folder;
   created_at: Scalars['timestamp'];
   /** An object relationship */
   ie: Object_Ie;
@@ -10759,48 +11033,48 @@ export type Users_Collection_Ie = {
   user_collection_id: Scalars['uuid'];
 };
 
-/** aggregated selection of "users.collection_ie" */
-export type Users_Collection_Ie_Aggregate = {
-  __typename?: 'users_collection_ie_aggregate';
-  aggregate?: Maybe<Users_Collection_Ie_Aggregate_Fields>;
-  nodes: Array<Users_Collection_Ie>;
+/** aggregated selection of "users.folder_ie" */
+export type Users_Folder_Ie_Aggregate = {
+  __typename?: 'users_folder_ie_aggregate';
+  aggregate?: Maybe<Users_Folder_Ie_Aggregate_Fields>;
+  nodes: Array<Users_Folder_Ie>;
 };
 
-/** aggregate fields of "users.collection_ie" */
-export type Users_Collection_Ie_Aggregate_Fields = {
-  __typename?: 'users_collection_ie_aggregate_fields';
+/** aggregate fields of "users.folder_ie" */
+export type Users_Folder_Ie_Aggregate_Fields = {
+  __typename?: 'users_folder_ie_aggregate_fields';
   count: Scalars['Int'];
-  max?: Maybe<Users_Collection_Ie_Max_Fields>;
-  min?: Maybe<Users_Collection_Ie_Min_Fields>;
+  max?: Maybe<Users_Folder_Ie_Max_Fields>;
+  min?: Maybe<Users_Folder_Ie_Min_Fields>;
 };
 
 
-/** aggregate fields of "users.collection_ie" */
-export type Users_Collection_Ie_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Users_Collection_Ie_Select_Column>>;
+/** aggregate fields of "users.folder_ie" */
+export type Users_Folder_Ie_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Users_Folder_Ie_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "users.collection_ie" */
-export type Users_Collection_Ie_Aggregate_Order_By = {
+/** order by aggregate values of table "users.folder_ie" */
+export type Users_Folder_Ie_Aggregate_Order_By = {
   count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Users_Collection_Ie_Max_Order_By>;
-  min?: InputMaybe<Users_Collection_Ie_Min_Order_By>;
+  max?: InputMaybe<Users_Folder_Ie_Max_Order_By>;
+  min?: InputMaybe<Users_Folder_Ie_Min_Order_By>;
 };
 
-/** input type for inserting array relation for remote table "users.collection_ie" */
-export type Users_Collection_Ie_Arr_Rel_Insert_Input = {
-  data: Array<Users_Collection_Ie_Insert_Input>;
+/** input type for inserting array relation for remote table "users.folder_ie" */
+export type Users_Folder_Ie_Arr_Rel_Insert_Input = {
+  data: Array<Users_Folder_Ie_Insert_Input>;
   /** on conflict condition */
-  on_conflict?: InputMaybe<Users_Collection_Ie_On_Conflict>;
+  on_conflict?: InputMaybe<Users_Folder_Ie_On_Conflict>;
 };
 
-/** Boolean expression to filter rows from the table "users.collection_ie". All fields are combined with a logical 'AND'. */
-export type Users_Collection_Ie_Bool_Exp = {
-  _and?: InputMaybe<Array<Users_Collection_Ie_Bool_Exp>>;
-  _not?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
-  _or?: InputMaybe<Array<Users_Collection_Ie_Bool_Exp>>;
-  collection?: InputMaybe<Users_Collection_Bool_Exp>;
+/** Boolean expression to filter rows from the table "users.folder_ie". All fields are combined with a logical 'AND'. */
+export type Users_Folder_Ie_Bool_Exp = {
+  _and?: InputMaybe<Array<Users_Folder_Ie_Bool_Exp>>;
+  _not?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
+  _or?: InputMaybe<Array<Users_Folder_Ie_Bool_Exp>>;
+  collection?: InputMaybe<Users_Folder_Bool_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   ie?: InputMaybe<Object_Ie_Bool_Exp>;
   ie_schema_identifier?: InputMaybe<String_Comparison_Exp>;
@@ -10808,15 +11082,15 @@ export type Users_Collection_Ie_Bool_Exp = {
   user_collection_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
-/** unique or primary key constraints on table "users.collection_ie" */
-export enum Users_Collection_Ie_Constraint {
+/** unique or primary key constraints on table "users.folder_ie" */
+export enum Users_Folder_Ie_Constraint {
   /** unique or primary key constraint */
   CollectionItemPkey = 'collection_item_pkey'
 }
 
-/** input type for inserting data into table "users.collection_ie" */
-export type Users_Collection_Ie_Insert_Input = {
-  collection?: InputMaybe<Users_Collection_Obj_Rel_Insert_Input>;
+/** input type for inserting data into table "users.folder_ie" */
+export type Users_Folder_Ie_Insert_Input = {
+  collection?: InputMaybe<Users_Folder_Obj_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamp']>;
   ie?: InputMaybe<Object_Ie_Obj_Rel_Insert_Input>;
   /** de fragment id van de ie */
@@ -10826,8 +11100,8 @@ export type Users_Collection_Ie_Insert_Input = {
 };
 
 /** aggregate max on columns */
-export type Users_Collection_Ie_Max_Fields = {
-  __typename?: 'users_collection_ie_max_fields';
+export type Users_Folder_Ie_Max_Fields = {
+  __typename?: 'users_folder_ie_max_fields';
   created_at?: Maybe<Scalars['timestamp']>;
   /** de fragment id van de ie */
   ie_schema_identifier?: Maybe<Scalars['String']>;
@@ -10835,8 +11109,8 @@ export type Users_Collection_Ie_Max_Fields = {
   user_collection_id?: Maybe<Scalars['uuid']>;
 };
 
-/** order by max() on columns of table "users.collection_ie" */
-export type Users_Collection_Ie_Max_Order_By = {
+/** order by max() on columns of table "users.folder_ie" */
+export type Users_Folder_Ie_Max_Order_By = {
   created_at?: InputMaybe<Order_By>;
   /** de fragment id van de ie */
   ie_schema_identifier?: InputMaybe<Order_By>;
@@ -10845,8 +11119,8 @@ export type Users_Collection_Ie_Max_Order_By = {
 };
 
 /** aggregate min on columns */
-export type Users_Collection_Ie_Min_Fields = {
-  __typename?: 'users_collection_ie_min_fields';
+export type Users_Folder_Ie_Min_Fields = {
+  __typename?: 'users_folder_ie_min_fields';
   created_at?: Maybe<Scalars['timestamp']>;
   /** de fragment id van de ie */
   ie_schema_identifier?: Maybe<Scalars['String']>;
@@ -10854,8 +11128,8 @@ export type Users_Collection_Ie_Min_Fields = {
   user_collection_id?: Maybe<Scalars['uuid']>;
 };
 
-/** order by min() on columns of table "users.collection_ie" */
-export type Users_Collection_Ie_Min_Order_By = {
+/** order by min() on columns of table "users.folder_ie" */
+export type Users_Folder_Ie_Min_Order_By = {
   created_at?: InputMaybe<Order_By>;
   /** de fragment id van de ie */
   ie_schema_identifier?: InputMaybe<Order_By>;
@@ -10863,25 +11137,25 @@ export type Users_Collection_Ie_Min_Order_By = {
   user_collection_id?: InputMaybe<Order_By>;
 };
 
-/** response of any mutation on the table "users.collection_ie" */
-export type Users_Collection_Ie_Mutation_Response = {
-  __typename?: 'users_collection_ie_mutation_response';
+/** response of any mutation on the table "users.folder_ie" */
+export type Users_Folder_Ie_Mutation_Response = {
+  __typename?: 'users_folder_ie_mutation_response';
   /** number of rows affected by the mutation */
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
-  returning: Array<Users_Collection_Ie>;
+  returning: Array<Users_Folder_Ie>;
 };
 
-/** on conflict condition type for table "users.collection_ie" */
-export type Users_Collection_Ie_On_Conflict = {
-  constraint: Users_Collection_Ie_Constraint;
-  update_columns?: Array<Users_Collection_Ie_Update_Column>;
-  where?: InputMaybe<Users_Collection_Ie_Bool_Exp>;
+/** on conflict condition type for table "users.folder_ie" */
+export type Users_Folder_Ie_On_Conflict = {
+  constraint: Users_Folder_Ie_Constraint;
+  update_columns?: Array<Users_Folder_Ie_Update_Column>;
+  where?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
 };
 
-/** Ordering options when selecting data from "users.collection_ie". */
-export type Users_Collection_Ie_Order_By = {
-  collection?: InputMaybe<Users_Collection_Order_By>;
+/** Ordering options when selecting data from "users.folder_ie". */
+export type Users_Folder_Ie_Order_By = {
+  collection?: InputMaybe<Users_Folder_Order_By>;
   created_at?: InputMaybe<Order_By>;
   ie?: InputMaybe<Object_Ie_Order_By>;
   ie_schema_identifier?: InputMaybe<Order_By>;
@@ -10889,15 +11163,15 @@ export type Users_Collection_Ie_Order_By = {
   user_collection_id?: InputMaybe<Order_By>;
 };
 
-/** primary key columns input for table: users_collection_ie */
-export type Users_Collection_Ie_Pk_Columns_Input = {
+/** primary key columns input for table: users_folder_ie */
+export type Users_Folder_Ie_Pk_Columns_Input = {
   /** de fragment id van de ie */
   ie_schema_identifier: Scalars['String'];
   user_collection_id: Scalars['uuid'];
 };
 
-/** select columns of table "users.collection_ie" */
-export enum Users_Collection_Ie_Select_Column {
+/** select columns of table "users.folder_ie" */
+export enum Users_Folder_Ie_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -10908,8 +11182,8 @@ export enum Users_Collection_Ie_Select_Column {
   UserCollectionId = 'user_collection_id'
 }
 
-/** input type for updating data in table "users.collection_ie" */
-export type Users_Collection_Ie_Set_Input = {
+/** input type for updating data in table "users.folder_ie" */
+export type Users_Folder_Ie_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   /** de fragment id van de ie */
   ie_schema_identifier?: InputMaybe<Scalars['String']>;
@@ -10917,8 +11191,8 @@ export type Users_Collection_Ie_Set_Input = {
   user_collection_id?: InputMaybe<Scalars['uuid']>;
 };
 
-/** update columns of table "users.collection_ie" */
-export enum Users_Collection_Ie_Update_Column {
+/** update columns of table "users.folder_ie" */
+export enum Users_Folder_Ie_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -10929,11 +11203,11 @@ export enum Users_Collection_Ie_Update_Column {
   UserCollectionId = 'user_collection_id'
 }
 
-/** input type for inserting data into table "users.collection" */
-export type Users_Collection_Insert_Input = {
+/** input type for inserting data into table "users.folder" */
+export type Users_Folder_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
-  ies?: InputMaybe<Users_Collection_Ie_Arr_Rel_Insert_Input>;
+  ies?: InputMaybe<Users_Folder_Ie_Arr_Rel_Insert_Input>;
   is_default?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
@@ -10942,8 +11216,8 @@ export type Users_Collection_Insert_Input = {
 };
 
 /** aggregate max on columns */
-export type Users_Collection_Max_Fields = {
-  __typename?: 'users_collection_max_fields';
+export type Users_Folder_Max_Fields = {
+  __typename?: 'users_folder_max_fields';
   created_at?: Maybe<Scalars['timestamp']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
@@ -10951,8 +11225,8 @@ export type Users_Collection_Max_Fields = {
   user_profile_id?: Maybe<Scalars['uuid']>;
 };
 
-/** order by max() on columns of table "users.collection" */
-export type Users_Collection_Max_Order_By = {
+/** order by max() on columns of table "users.folder" */
+export type Users_Folder_Max_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
@@ -10961,8 +11235,8 @@ export type Users_Collection_Max_Order_By = {
 };
 
 /** aggregate min on columns */
-export type Users_Collection_Min_Fields = {
-  __typename?: 'users_collection_min_fields';
+export type Users_Folder_Min_Fields = {
+  __typename?: 'users_folder_min_fields';
   created_at?: Maybe<Scalars['timestamp']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
@@ -10970,8 +11244,8 @@ export type Users_Collection_Min_Fields = {
   user_profile_id?: Maybe<Scalars['uuid']>;
 };
 
-/** order by min() on columns of table "users.collection" */
-export type Users_Collection_Min_Order_By = {
+/** order by min() on columns of table "users.folder" */
+export type Users_Folder_Min_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
@@ -10979,34 +11253,34 @@ export type Users_Collection_Min_Order_By = {
   user_profile_id?: InputMaybe<Order_By>;
 };
 
-/** response of any mutation on the table "users.collection" */
-export type Users_Collection_Mutation_Response = {
-  __typename?: 'users_collection_mutation_response';
+/** response of any mutation on the table "users.folder" */
+export type Users_Folder_Mutation_Response = {
+  __typename?: 'users_folder_mutation_response';
   /** number of rows affected by the mutation */
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
-  returning: Array<Users_Collection>;
+  returning: Array<Users_Folder>;
 };
 
-/** input type for inserting object relation for remote table "users.collection" */
-export type Users_Collection_Obj_Rel_Insert_Input = {
-  data: Users_Collection_Insert_Input;
+/** input type for inserting object relation for remote table "users.folder" */
+export type Users_Folder_Obj_Rel_Insert_Input = {
+  data: Users_Folder_Insert_Input;
   /** on conflict condition */
-  on_conflict?: InputMaybe<Users_Collection_On_Conflict>;
+  on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.collection" */
-export type Users_Collection_On_Conflict = {
-  constraint: Users_Collection_Constraint;
-  update_columns?: Array<Users_Collection_Update_Column>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+/** on conflict condition type for table "users.folder" */
+export type Users_Folder_On_Conflict = {
+  constraint: Users_Folder_Constraint;
+  update_columns?: Array<Users_Folder_Update_Column>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
-/** Ordering options when selecting data from "users.collection". */
-export type Users_Collection_Order_By = {
+/** Ordering options when selecting data from "users.folder". */
+export type Users_Folder_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  ies_aggregate?: InputMaybe<Users_Collection_Ie_Aggregate_Order_By>;
+  ies_aggregate?: InputMaybe<Users_Folder_Ie_Aggregate_Order_By>;
   is_default?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
@@ -11014,13 +11288,13 @@ export type Users_Collection_Order_By = {
   user_profile_id?: InputMaybe<Order_By>;
 };
 
-/** primary key columns input for table: users_collection */
-export type Users_Collection_Pk_Columns_Input = {
+/** primary key columns input for table: users_folder */
+export type Users_Folder_Pk_Columns_Input = {
   id: Scalars['uuid'];
 };
 
-/** select columns of table "users.collection" */
-export enum Users_Collection_Select_Column {
+/** select columns of table "users.folder" */
+export enum Users_Folder_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -11035,8 +11309,8 @@ export enum Users_Collection_Select_Column {
   UserProfileId = 'user_profile_id'
 }
 
-/** input type for updating data in table "users.collection" */
-export type Users_Collection_Set_Input = {
+/** input type for updating data in table "users.folder" */
+export type Users_Folder_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
   is_default?: InputMaybe<Scalars['Boolean']>;
@@ -11045,8 +11319,8 @@ export type Users_Collection_Set_Input = {
   user_profile_id?: InputMaybe<Scalars['uuid']>;
 };
 
-/** update columns of table "users.collection" */
-export enum Users_Collection_Update_Column {
+/** update columns of table "users.folder" */
+export enum Users_Folder_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -11979,9 +12253,9 @@ export type Users_Profile = {
   __typename?: 'users_profile';
   accepted_tos_at?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
-  collections: Array<Users_Collection>;
+  collections: Array<Users_Folder>;
   /** An aggregate relationship */
-  collections_aggregate: Users_Collection_Aggregate;
+  collections_aggregate: Users_Folder_Aggregate;
   created_at?: Maybe<Scalars['timestamp']>;
   first_name?: Maybe<Scalars['String']>;
   /** A computed field, executes function "users.user_profile_full_name" */
@@ -11997,22 +12271,22 @@ export type Users_Profile = {
   last_name?: Maybe<Scalars['String']>;
   mail?: Maybe<Scalars['String']>;
   /** An array relationship */
-  maintainer_users_profiles: Array<Cp_Maintainer_Users_Profile>;
+  maintainer_users_profiles: Array<Maintainer_Users_Profile>;
   /** An aggregate relationship */
-  maintainer_users_profiles_aggregate: Cp_Maintainer_Users_Profile_Aggregate;
+  maintainer_users_profiles_aggregate: Maintainer_Users_Profile_Aggregate;
   /** An array relationship */
-  notes: Array<Cp_Visit_Note>;
+  notes: Array<Maintainer_Visitor_Space_Request_Note>;
   /** An aggregate relationship */
-  notes_aggregate: Cp_Visit_Note_Aggregate;
+  notes_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
   /** An array relationship */
   notifications: Array<App_Notification>;
   /** An aggregate relationship */
   notifications_aggregate: App_Notification_Aggregate;
   updated_at?: Maybe<Scalars['timestamp']>;
   /** An array relationship */
-  visits: Array<Cp_Visit>;
+  visitor_space_requests: Array<Maintainer_Visitor_Space_Request>;
   /** An aggregate relationship */
-  visits_aggregate: Cp_Visit_Aggregate;
+  visitor_space_requests_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
 };
 
 
@@ -12024,11 +12298,11 @@ export type Users_Profile = {
  *
  */
 export type Users_ProfileCollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
@@ -12040,11 +12314,11 @@ export type Users_ProfileCollectionsArgs = {
  *
  */
 export type Users_ProfileCollections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Collection_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Users_Collection_Order_By>>;
-  where?: InputMaybe<Users_Collection_Bool_Exp>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
 };
 
 
@@ -12088,11 +12362,11 @@ export type Users_ProfileIdentities_AggregateArgs = {
  *
  */
 export type Users_ProfileMaintainer_Users_ProfilesArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
 };
 
 
@@ -12104,11 +12378,11 @@ export type Users_ProfileMaintainer_Users_ProfilesArgs = {
  *
  */
 export type Users_ProfileMaintainer_Users_Profiles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
+  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
 };
 
 
@@ -12120,11 +12394,11 @@ export type Users_ProfileMaintainer_Users_Profiles_AggregateArgs = {
  *
  */
 export type Users_ProfileNotesArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
 };
 
 
@@ -12136,11 +12410,11 @@ export type Users_ProfileNotesArgs = {
  *
  */
 export type Users_ProfileNotes_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Note_Select_Column>>;
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Note_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Note_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
 };
 
 
@@ -12183,12 +12457,12 @@ export type Users_ProfileNotifications_AggregateArgs = {
  * columns and relationships of "users.profile"
  *
  */
-export type Users_ProfileVisitsArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
+export type Users_ProfileVisitor_Space_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
 };
 
 
@@ -12199,12 +12473,12 @@ export type Users_ProfileVisitsArgs = {
  * columns and relationships of "users.profile"
  *
  */
-export type Users_ProfileVisits_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Cp_Visit_Select_Column>>;
+export type Users_ProfileVisitor_Space_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Cp_Visit_Order_By>>;
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
 };
 
 /** aggregated selection of "users.profile" */
@@ -12235,7 +12509,7 @@ export type Users_Profile_Bool_Exp = {
   _not?: InputMaybe<Users_Profile_Bool_Exp>;
   _or?: InputMaybe<Array<Users_Profile_Bool_Exp>>;
   accepted_tos_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  collections?: InputMaybe<Users_Collection_Bool_Exp>;
+  collections?: InputMaybe<Users_Folder_Bool_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   first_name?: InputMaybe<String_Comparison_Exp>;
   full_name?: InputMaybe<String_Comparison_Exp>;
@@ -12245,11 +12519,11 @@ export type Users_Profile_Bool_Exp = {
   identities?: InputMaybe<Users_Identity_Bool_Exp>;
   last_name?: InputMaybe<String_Comparison_Exp>;
   mail?: InputMaybe<String_Comparison_Exp>;
-  maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Bool_Exp>;
-  notes?: InputMaybe<Cp_Visit_Note_Bool_Exp>;
+  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
+  notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
   notifications?: InputMaybe<App_Notification_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  visits?: InputMaybe<Cp_Visit_Bool_Exp>;
+  visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "users.profile" */
@@ -12261,7 +12535,7 @@ export enum Users_Profile_Constraint {
 /** input type for inserting data into table "users.profile" */
 export type Users_Profile_Insert_Input = {
   accepted_tos_at?: InputMaybe<Scalars['timestamptz']>;
-  collections?: InputMaybe<Users_Collection_Arr_Rel_Insert_Input>;
+  collections?: InputMaybe<Users_Folder_Arr_Rel_Insert_Input>;
   created_at?: InputMaybe<Scalars['timestamp']>;
   first_name?: InputMaybe<Scalars['String']>;
   group?: InputMaybe<Users_Group_Obj_Rel_Insert_Input>;
@@ -12270,11 +12544,11 @@ export type Users_Profile_Insert_Input = {
   identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
-  maintainer_users_profiles?: InputMaybe<Cp_Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
-  notes?: InputMaybe<Cp_Visit_Note_Arr_Rel_Insert_Input>;
+  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
+  notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
-  visits?: InputMaybe<Cp_Visit_Arr_Rel_Insert_Input>;
+  visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -12329,7 +12603,7 @@ export type Users_Profile_On_Conflict = {
 /** Ordering options when selecting data from "users.profile". */
 export type Users_Profile_Order_By = {
   accepted_tos_at?: InputMaybe<Order_By>;
-  collections_aggregate?: InputMaybe<Users_Collection_Aggregate_Order_By>;
+  collections_aggregate?: InputMaybe<Users_Folder_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   first_name?: InputMaybe<Order_By>;
   full_name?: InputMaybe<Order_By>;
@@ -12339,11 +12613,11 @@ export type Users_Profile_Order_By = {
   identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
   last_name?: InputMaybe<Order_By>;
   mail?: InputMaybe<Order_By>;
-  maintainer_users_profiles_aggregate?: InputMaybe<Cp_Maintainer_Users_Profile_Aggregate_Order_By>;
-  notes_aggregate?: InputMaybe<Cp_Visit_Note_Aggregate_Order_By>;
+  maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Order_By>;
+  notes_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  visits_aggregate?: InputMaybe<Cp_Visit_Aggregate_Order_By>;
+  visitor_space_requests_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: users_profile */
@@ -12421,61 +12695,61 @@ export type GetContentByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetContentByIdQuery = { __typename?: 'query_root', cms_content: Array<{ __typename?: 'cms_content', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, maintainer_users_profiles: Array<{ __typename?: 'cp_maintainer_users_profile', maintainer: { __typename?: 'cp_maintainer', schema_identifier: string, schema_name?: string | null, information?: Array<{ __typename?: 'ContentPartner', logo?: { __typename?: 'Logo', iri: string } | null } | null> | null } }>, group?: { __typename?: 'users_group', label: string, id: any } | null } | null, content_content_labels: Array<{ __typename?: 'cms_content_content_labels', content_label: { __typename?: 'cms_content_labels', label: string, id: any, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'cms_content_blocks', content_block_type: Lookup_Cms_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
+export type GetContentByIdQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, information?: Array<{ __typename?: 'ContentPartner', logo?: { __typename?: 'Logo', iri: string } | null } | null> | null } }>, group?: { __typename?: 'users_group', label: string, id: any } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', label: string, id: any, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
 
 export type GetContentPageByPathQueryVariables = Exact<{
   path: Scalars['String'];
 }>;
 
 
-export type GetContentPageByPathQuery = { __typename?: 'query_root', cms_content: Array<{ __typename?: 'cms_content', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'cms_content_content_labels', content_label: { __typename?: 'cms_content_labels', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'cms_content_blocks', content_block_type: Lookup_Cms_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
+export type GetContentPageByPathQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
 
 export type GetContentPageLabelsByTypeAndIdsQueryVariables = Exact<{
-  contentType: Lookup_Cms_Content_Type_Enum;
+  contentType: Lookup_App_Content_Type_Enum;
   labelIds: Array<Scalars['uuid']> | Scalars['uuid'];
 }>;
 
 
-export type GetContentPageLabelsByTypeAndIdsQuery = { __typename?: 'query_root', cms_content_labels: Array<{ __typename?: 'cms_content_labels', label: string, id: any }> };
+export type GetContentPageLabelsByTypeAndIdsQuery = { __typename?: 'query_root', app_content_label: Array<{ __typename?: 'app_content_label', label: string, id: any }> };
 
 export type GetContentPageLabelsByTypeAndLabelsQueryVariables = Exact<{
-  contentType: Lookup_Cms_Content_Type_Enum;
+  contentType: Lookup_App_Content_Type_Enum;
   labels: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetContentPageLabelsByTypeAndLabelsQuery = { __typename?: 'query_root', cms_content_labels: Array<{ __typename?: 'cms_content_labels', label: string, id: any }> };
+export type GetContentPageLabelsByTypeAndLabelsQuery = { __typename?: 'query_root', app_content_label: Array<{ __typename?: 'app_content_label', label: string, id: any }> };
 
 export type GetContentPagesWithBlocksQueryVariables = Exact<{
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
   offset?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+  orderBy?: InputMaybe<Array<App_Content_Page_Order_By> | App_Content_Page_Order_By>;
   labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
-  orUserGroupIds?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp> | Cms_Content_Content_Labels_Bool_Exp>;
+  orUserGroupIds?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp> | App_Content_Page_Content_Label_Bool_Exp>;
 }>;
 
 
-export type GetContentPagesWithBlocksQuery = { __typename?: 'query_root', cms_content: Array<{ __typename?: 'cms_content', content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'cms_content_content_labels', content_label: { __typename?: 'cms_content_labels', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'cms_content_blocks', content_block_type: Lookup_Cms_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }>, cms_content_aggregate: { __typename?: 'cms_content_aggregate', aggregate?: { __typename?: 'cms_content_aggregate_fields', count: number } | null }, cms_content_labels: Array<{ __typename?: 'cms_content_labels', id: any, content_content_labels_aggregate: { __typename?: 'cms_content_content_labels_aggregate', aggregate?: { __typename?: 'cms_content_content_labels_aggregate_fields', count: number } | null } }> };
+export type GetContentPagesWithBlocksQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }>, app_content_page_aggregate: { __typename?: 'app_content_page_aggregate', aggregate?: { __typename?: 'app_content_page_aggregate_fields', count: number } | null }, app_content_label: Array<{ __typename?: 'app_content_label', id: any, content_content_labels_aggregate: { __typename?: 'app_content_page_content_label_aggregate', aggregate?: { __typename?: 'app_content_page_content_label_aggregate_fields', count: number } | null } }> };
 
 export type GetContentPagesQueryVariables = Exact<{
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
   offset?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<Cms_Content_Order_By> | Cms_Content_Order_By>;
+  orderBy?: InputMaybe<Array<App_Content_Page_Order_By> | App_Content_Page_Order_By>;
   labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
-  orUserGroupIds?: InputMaybe<Array<Cms_Content_Content_Labels_Bool_Exp> | Cms_Content_Content_Labels_Bool_Exp>;
+  orUserGroupIds?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp> | App_Content_Page_Content_Label_Bool_Exp>;
 }>;
 
 
-export type GetContentPagesQuery = { __typename?: 'query_root', cms_content: Array<{ __typename?: 'cms_content', id: any, content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'cms_content_content_labels', content_label: { __typename?: 'cms_content_labels', id: any, label: string, link_to?: any | null } }> }>, cms_content_aggregate: { __typename?: 'cms_content_aggregate', aggregate?: { __typename?: 'cms_content_aggregate_fields', count: number } | null }, cms_content_labels: Array<{ __typename?: 'cms_content_labels', id: any, content_content_labels_aggregate: { __typename?: 'cms_content_content_labels_aggregate', aggregate?: { __typename?: 'cms_content_content_labels_aggregate_fields', count: number } | null } }> };
+export type GetContentPagesQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', id: any, content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }> }>, app_content_page_aggregate: { __typename?: 'app_content_page_aggregate', aggregate?: { __typename?: 'app_content_page_aggregate_fields', count: number } | null }, app_content_label: Array<{ __typename?: 'app_content_label', id: any, content_content_labels_aggregate: { __typename?: 'app_content_page_content_label_aggregate', aggregate?: { __typename?: 'app_content_page_content_label_aggregate_fields', count: number } | null } }> };
 
 export type GetPublicContentPagesQueryVariables = Exact<{
-  where?: InputMaybe<Cms_Content_Bool_Exp>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
 }>;
 
 
-export type GetPublicContentPagesQuery = { __typename?: 'query_root', cms_content: Array<{ __typename?: 'cms_content', path?: string | null, updated_at?: any | null }> };
+export type GetPublicContentPagesQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', path?: string | null, updated_at?: any | null }> };
 
 export type UpdateContentPagePublishDatesMutationVariables = Exact<{
   now?: InputMaybe<Scalars['timestamp']>;
@@ -12483,60 +12757,60 @@ export type UpdateContentPagePublishDatesMutationVariables = Exact<{
 }>;
 
 
-export type UpdateContentPagePublishDatesMutation = { __typename?: 'mutation_root', publish_content_pages?: { __typename?: 'cms_content_mutation_response', affected_rows: number } | null, unpublish_content_pages?: { __typename?: 'cms_content_mutation_response', affected_rows: number } | null };
+export type UpdateContentPagePublishDatesMutation = { __typename?: 'mutation_root', publish_content_pages?: { __typename?: 'app_content_page_mutation_response', affected_rows: number } | null, unpublish_content_pages?: { __typename?: 'app_content_page_mutation_response', affected_rows: number } | null };
 
 export type DeleteNavigationMutationVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type DeleteNavigationMutation = { __typename?: 'mutation_root', delete_cms_navigation_element?: { __typename?: 'cms_navigation_element_mutation_response', affected_rows: number } | null };
+export type DeleteNavigationMutation = { __typename?: 'mutation_root', delete_app_navigation?: { __typename?: 'app_navigation_mutation_response', affected_rows: number } | null };
 
 export type FindAllNavigationItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindAllNavigationItemsQuery = { __typename?: 'query_root', cms_navigation_element: Array<{ __typename?: 'cms_navigation_element', content_path: string, content_type: string, link_target?: string | null, placement: string, position: number, id: any, icon_name: string, user_group_ids?: any | null, label: string, updated_at: any, description?: string | null, created_at: any, content_id?: any | null, tooltip?: string | null }> };
+export type FindAllNavigationItemsQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', content_path: string, content_type: string, link_target?: string | null, placement: string, position: number, id: any, icon_name: string, user_group_ids?: any | null, label: string, updated_at: any, description?: string | null, created_at: any, content_id?: any | null, tooltip?: string | null }> };
 
 export type FindNavigationByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindNavigationByIdQuery = { __typename?: 'query_root', cms_navigation_element: Array<{ __typename?: 'cms_navigation_element', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }> };
+export type FindNavigationByIdQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }> };
 
 export type FindNavigationByPlacementQueryVariables = Exact<{
   placement: Scalars['String'];
 }>;
 
 
-export type FindNavigationByPlacementQuery = { __typename?: 'query_root', cms_navigation_element: Array<{ __typename?: 'cms_navigation_element', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }>, cms_navigation_element_aggregate: { __typename?: 'cms_navigation_element_aggregate', aggregate?: { __typename?: 'cms_navigation_element_aggregate_fields', count: number } | null } };
+export type FindNavigationByPlacementQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }>, app_navigation_aggregate: { __typename?: 'app_navigation_aggregate', aggregate?: { __typename?: 'app_navigation_aggregate_fields', count: number } | null } };
 
 export type FindNavigationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindNavigationQuery = { __typename?: 'query_root', cms_navigation_element: Array<{ __typename?: 'cms_navigation_element', id: any, description?: string | null, placement: string, tooltip?: string | null }>, cms_navigation_element_aggregate: { __typename?: 'cms_navigation_element_aggregate', aggregate?: { __typename?: 'cms_navigation_element_aggregate_fields', count: number } | null } };
+export type FindNavigationQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, description?: string | null, placement: string, tooltip?: string | null }>, app_navigation_aggregate: { __typename?: 'app_navigation_aggregate', aggregate?: { __typename?: 'app_navigation_aggregate_fields', count: number } | null } };
 
 export type InsertNavigationMutationVariables = Exact<{
-  navigationItem: Cms_Navigation_Element_Insert_Input;
+  navigationItem: App_Navigation_Insert_Input;
 }>;
 
 
-export type InsertNavigationMutation = { __typename?: 'mutation_root', insert_cms_navigation_element_one?: { __typename?: 'cms_navigation_element', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
+export type InsertNavigationMutation = { __typename?: 'mutation_root', insert_app_navigation_one?: { __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
 
 export type UpdateNavigationByIdMutationVariables = Exact<{
   id: Scalars['uuid'];
-  navigationItem: Cms_Navigation_Element_Set_Input;
+  navigationItem: App_Navigation_Set_Input;
 }>;
 
 
-export type UpdateNavigationByIdMutation = { __typename?: 'mutation_root', update_cms_navigation_element_by_pk?: { __typename?: 'cms_navigation_element', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
+export type UpdateNavigationByIdMutation = { __typename?: 'mutation_root', update_app_navigation_by_pk?: { __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
 
 export type GetOrganisationQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetOrganisationQuery = { __typename?: 'query_root', cp_maintainer: Array<{ __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', logo?: { __typename?: 'Logo', iri: string } | null } | null> | null }> };
+export type GetOrganisationQuery = { __typename?: 'query_root', maintainer_content_partner: Array<{ __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', logo?: { __typename?: 'Logo', iri: string } | null } | null> | null }> };
 
 export type GetFileByRepresentationSchemaIdentifierQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -12557,15 +12831,15 @@ export type GetSiteVariableByNameQueryVariables = Exact<{
 }>;
 
 
-export type GetSiteVariableByNameQuery = { __typename?: 'query_root', cms_site_variables_by_pk?: { __typename?: 'cms_site_variables', name: string, value: any } | null };
+export type GetSiteVariableByNameQuery = { __typename?: 'query_root', app_config_by_pk?: { __typename?: 'app_config', name: string, value: any } | null };
 
 export type UpdateSiteVariableByNameMutationVariables = Exact<{
   name: Scalars['String'];
-  data: Cms_Site_Variables_Set_Input;
+  data: App_Config_Set_Input;
 }>;
 
 
-export type UpdateSiteVariableByNameMutation = { __typename?: 'mutation_root', update_cms_site_variables?: { __typename?: 'cms_site_variables_mutation_response', affected_rows: number } | null };
+export type UpdateSiteVariableByNameMutation = { __typename?: 'mutation_root', update_app_config?: { __typename?: 'app_config_mutation_response', affected_rows: number } | null };
 
 export type DeleteCollectionMutationVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
@@ -12573,25 +12847,25 @@ export type DeleteCollectionMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCollectionMutation = { __typename?: 'mutation_root', delete_users_collection?: { __typename?: 'users_collection_mutation_response', affected_rows: number } | null };
+export type DeleteCollectionMutation = { __typename?: 'mutation_root', delete_users_folder?: { __typename?: 'users_folder_mutation_response', affected_rows: number } | null };
 
 export type FindCollectionByIdQueryVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
 }>;
 
 
-export type FindCollectionByIdQuery = { __typename?: 'query_root', users_collection: Array<{ __typename?: 'users_collection', created_at: any, id: any, is_default?: boolean | null, name?: string | null, updated_at?: any | null, user_profile_id: any }> };
+export type FindCollectionByIdQuery = { __typename?: 'query_root', users_folder: Array<{ __typename?: 'users_folder', created_at: any, id: any, is_default?: boolean | null, name?: string | null, updated_at?: any | null, user_profile_id: any }> };
 
 export type FindCollectionObjectsByCollectionIdQueryVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
   userProfileId?: InputMaybe<Scalars['uuid']>;
-  where: Users_Collection_Ie_Bool_Exp;
+  where: Users_Folder_Ie_Bool_Exp;
   offset?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_collection_ie: Array<{ __typename?: 'users_collection_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'cp_maintainer', schema_identifier: string, schema_name?: string | null, space?: { __typename?: 'cp_space', id: any } | null } | null } }>, users_collection_ie_aggregate: { __typename?: 'users_collection_ie_aggregate', aggregate?: { __typename?: 'users_collection_ie_aggregate_fields', count: number } | null } };
+export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any } | null } | null } }>, users_folder_ie_aggregate: { __typename?: 'users_folder_ie_aggregate', aggregate?: { __typename?: 'users_folder_ie_aggregate_fields', count: number } | null } };
 
 export type FindCollectionsByUserQueryVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -12600,21 +12874,21 @@ export type FindCollectionsByUserQueryVariables = Exact<{
 }>;
 
 
-export type FindCollectionsByUserQuery = { __typename?: 'query_root', users_collection: Array<{ __typename?: 'users_collection', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null, ies: Array<{ __typename?: 'users_collection_ie', ie: { __typename?: 'object_ie', schema_identifier: string } }> }>, users_collection_aggregate: { __typename?: 'users_collection_aggregate', aggregate?: { __typename?: 'users_collection_aggregate_fields', count: number } | null } };
+export type FindCollectionsByUserQuery = { __typename?: 'query_root', users_folder: Array<{ __typename?: 'users_folder', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null, ies: Array<{ __typename?: 'users_folder_ie', ie: { __typename?: 'object_ie', schema_identifier: string } }> }>, users_folder_aggregate: { __typename?: 'users_folder_aggregate', aggregate?: { __typename?: 'users_folder_aggregate_fields', count: number } | null } };
 
 export type GetObjectBySchemaIdentifierQueryVariables = Exact<{
   objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'cp_maintainer', schema_identifier: string, schema_name?: string | null, space?: { __typename?: 'cp_space', id: any } | null } | null }> };
+export type GetObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any } | null } | null }> };
 
 export type FindObjectBySchemaIdentifierQueryVariables = Exact<{
   objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type FindObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'cp_maintainer', schema_identifier: string, schema_name?: string | null, space?: { __typename?: 'cp_space', id: any } | null } | null }> };
+export type FindObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any } | null } | null }> };
 
 export type FindObjectInCollectionQueryVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
@@ -12622,14 +12896,14 @@ export type FindObjectInCollectionQueryVariables = Exact<{
 }>;
 
 
-export type FindObjectInCollectionQuery = { __typename?: 'query_root', users_collection_ie: Array<{ __typename?: 'users_collection_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'cp_maintainer', schema_identifier: string, schema_name?: string | null, space?: { __typename?: 'cp_space', id: any } | null } | null } }> };
+export type FindObjectInCollectionQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any } | null } | null } }> };
 
 export type InsertCollectionsMutationVariables = Exact<{
-  object: Users_Collection_Insert_Input;
+  object: Users_Folder_Insert_Input;
 }>;
 
 
-export type InsertCollectionsMutation = { __typename?: 'mutation_root', insert_users_collection?: { __typename?: 'users_collection_mutation_response', returning: Array<{ __typename?: 'users_collection', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null }> } | null };
+export type InsertCollectionsMutation = { __typename?: 'mutation_root', insert_users_folder?: { __typename?: 'users_folder_mutation_response', returning: Array<{ __typename?: 'users_folder', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null }> } | null };
 
 export type InsertObjectIntoCollectionMutationVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
@@ -12637,7 +12911,7 @@ export type InsertObjectIntoCollectionMutationVariables = Exact<{
 }>;
 
 
-export type InsertObjectIntoCollectionMutation = { __typename?: 'mutation_root', insert_users_collection_ie?: { __typename?: 'users_collection_ie_mutation_response', returning: Array<{ __typename?: 'users_collection_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, dcterms_format: string, dcterms_available?: any | null, schema_creator?: any | null, schema_description?: string | null, schema_name: string, schema_maintainer_id?: string | null, schema_number_of_pages?: number | null } }> } | null };
+export type InsertObjectIntoCollectionMutation = { __typename?: 'mutation_root', insert_users_folder_ie?: { __typename?: 'users_folder_ie_mutation_response', returning: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, dcterms_format: string, dcterms_available?: any | null, schema_creator?: any | null, schema_description?: string | null, schema_name: string, schema_maintainer_id?: string | null, schema_number_of_pages?: number | null } }> } | null };
 
 export type RemoveObjectFromCollectionMutationVariables = Exact<{
   objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
@@ -12646,23 +12920,23 @@ export type RemoveObjectFromCollectionMutationVariables = Exact<{
 }>;
 
 
-export type RemoveObjectFromCollectionMutation = { __typename?: 'mutation_root', delete_users_collection_ie?: { __typename?: 'users_collection_ie_mutation_response', affected_rows: number } | null };
+export type RemoveObjectFromCollectionMutation = { __typename?: 'mutation_root', delete_users_folder_ie?: { __typename?: 'users_folder_ie_mutation_response', affected_rows: number } | null };
 
 export type UpdateCollectionMutationVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
   userProfileId?: InputMaybe<Scalars['uuid']>;
-  collection?: InputMaybe<Users_Collection_Set_Input>;
+  collection?: InputMaybe<Users_Folder_Set_Input>;
 }>;
 
 
-export type UpdateCollectionMutation = { __typename?: 'mutation_root', update_users_collection?: { __typename?: 'users_collection_mutation_response', returning: Array<{ __typename?: 'users_collection', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null }> } | null };
+export type UpdateCollectionMutation = { __typename?: 'mutation_root', update_users_folder?: { __typename?: 'users_folder_mutation_response', returning: Array<{ __typename?: 'users_folder', id: any, name?: string | null, user_profile_id: any, is_default?: boolean | null, created_at: any, updated_at?: any | null }> } | null };
 
 export type GetObjectDetailBySchemaIdentifierQueryVariables = Exact<{
   schemaIdentifier: Scalars['String'];
 }>;
 
 
-export type GetObjectDetailBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, premis_identifier?: any | null, premis_relationship?: string | null, schema_is_part_of?: any | null, schema_part_of_archive?: any | null, schema_part_of_episode?: any | null, schema_part_of_season?: any | null, schema_part_of_series?: any | null, schema_copyright_holder?: string | null, schema_copyright_notice?: string | null, schema_duration_in_seconds?: number | null, schema_number_of_pages?: number | null, schema_date_published?: any | null, dcterms_available?: any | null, schema_name: string, schema_description?: string | null, schema_abstract?: string | null, schema_creator?: any | null, schema_actor?: any | null, schema_contributor?: any | null, schema_publisher?: any | null, schema_temporal_coverage?: any | null, schema_spatial_coverage?: any | null, schema_keywords?: any | null, dcterms_format: string, schema_in_language?: any | null, schema_thumbnail_url?: string | null, schema_alternate_name?: string | null, schema_duration?: any | null, schema_license?: any | null, meemoo_media_object_id?: string | null, schema_date_created?: any | null, schema_date_created_lower_bound?: any | null, ebucore_object_type?: string | null, schema_genre?: any | null, schema_maintainer?: Array<{ __typename?: 'ContentPartner', id: string, label?: string | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null, premis_is_represented_by: Array<{ __typename?: 'object_representation', ie_schema_identifier: string, schema_name: string, schema_alternate_name?: string | null, schema_description?: string | null, dcterms_format: string, schema_transcript?: string | null, schema_date_created?: any | null, premis_includes: Array<{ __typename?: 'object_file', schema_name?: string | null, schema_alternate_name?: string | null, schema_description?: string | null, representation_schema_identifier: string, ebucore_media_type: string, ebucore_is_media_fragment_of?: string | null, schema_embed_url?: string | null }> }> }> };
+export type GetObjectDetailBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, premis_identifier?: any | null, premis_relationship?: string | null, schema_is_part_of?: any | null, schema_part_of_archive?: any | null, schema_part_of_episode?: any | null, schema_part_of_season?: any | null, schema_part_of_series?: any | null, schema_copyright_holder?: string | null, schema_copyright_notice?: string | null, schema_duration_in_seconds?: number | null, schema_number_of_pages?: number | null, schema_date_published?: any | null, dcterms_available?: any | null, schema_name: string, schema_description?: string | null, schema_abstract?: string | null, schema_creator?: any | null, schema_actor?: any | null, schema_contributor?: any | null, schema_publisher?: any | null, schema_temporal_coverage?: any | null, schema_spatial_coverage?: any | null, schema_keywords?: any | null, dcterms_format: string, schema_in_language?: any | null, schema_thumbnail_url?: string | null, schema_alternate_name?: string | null, schema_duration?: any | null, schema_license?: any | null, meemoo_media_object_id?: string | null, schema_date_created?: any | null, schema_date_created_lower_bound?: any | null, ebucore_object_type?: string | null, schema_genre?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, information?: Array<{ __typename?: 'ContentPartner', primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } | null, premis_is_represented_by: Array<{ __typename?: 'object_representation', ie_schema_identifier: string, schema_name: string, schema_alternate_name?: string | null, schema_description?: string | null, dcterms_format: string, schema_transcript?: string | null, schema_date_created?: any | null, premis_includes: Array<{ __typename?: 'object_file', schema_name?: string | null, schema_alternate_name?: string | null, schema_description?: string | null, representation_schema_identifier: string, ebucore_media_type: string, ebucore_is_media_fragment_of?: string | null, schema_embed_url?: string | null }> }> }> };
 
 export type GetRelatedObjectsQueryVariables = Exact<{
   schemaIdentifier: Scalars['String'];
@@ -12671,7 +12945,7 @@ export type GetRelatedObjectsQueryVariables = Exact<{
 }>;
 
 
-export type GetRelatedObjectsQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, premis_identifier?: any | null, premis_relationship?: string | null, schema_is_part_of?: any | null, schema_part_of_archive?: any | null, schema_part_of_episode?: any | null, schema_part_of_season?: any | null, schema_part_of_series?: any | null, schema_copyright_holder?: string | null, schema_copyright_notice?: string | null, schema_duration_in_seconds?: number | null, schema_number_of_pages?: number | null, schema_date_published?: any | null, dcterms_available?: any | null, schema_name: string, schema_description?: string | null, schema_abstract?: string | null, schema_creator?: any | null, schema_actor?: any | null, schema_contributor?: any | null, schema_publisher?: any | null, schema_temporal_coverage?: any | null, schema_spatial_coverage?: any | null, schema_keywords?: any | null, dcterms_format: string, schema_in_language?: any | null, schema_thumbnail_url?: string | null, schema_alternate_name?: string | null, schema_duration?: any | null, schema_license?: any | null, meemoo_media_object_id?: string | null, schema_date_created?: any | null, schema_date_created_lower_bound?: any | null, ebucore_object_type?: string | null, schema_genre?: any | null, schema_maintainer?: Array<{ __typename?: 'ContentPartner', id: string, label?: string | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null, premis_is_represented_by: Array<{ __typename?: 'object_representation', ie_schema_identifier: string, schema_name: string, schema_alternate_name?: string | null, schema_description?: string | null, dcterms_format: string, schema_transcript?: string | null, schema_date_created?: any | null, premis_includes: Array<{ __typename?: 'object_file', schema_name?: string | null, schema_alternate_name?: string | null, schema_description?: string | null, representation_schema_identifier: string, ebucore_media_type: string, ebucore_is_media_fragment_of?: string | null, schema_embed_url?: string | null }> }> }> };
+export type GetRelatedObjectsQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, premis_identifier?: any | null, premis_relationship?: string | null, schema_is_part_of?: any | null, schema_part_of_archive?: any | null, schema_part_of_episode?: any | null, schema_part_of_season?: any | null, schema_part_of_series?: any | null, schema_copyright_holder?: string | null, schema_copyright_notice?: string | null, schema_duration_in_seconds?: number | null, schema_number_of_pages?: number | null, schema_date_published?: any | null, dcterms_available?: any | null, schema_name: string, schema_description?: string | null, schema_abstract?: string | null, schema_creator?: any | null, schema_actor?: any | null, schema_contributor?: any | null, schema_publisher?: any | null, schema_temporal_coverage?: any | null, schema_spatial_coverage?: any | null, schema_keywords?: any | null, dcterms_format: string, schema_in_language?: any | null, schema_thumbnail_url?: string | null, schema_alternate_name?: string | null, schema_duration?: any | null, schema_license?: any | null, meemoo_media_object_id?: string | null, schema_date_created?: any | null, schema_date_created_lower_bound?: any | null, ebucore_object_type?: string | null, schema_genre?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, information?: Array<{ __typename?: 'ContentPartner', primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } | null, premis_is_represented_by: Array<{ __typename?: 'object_representation', ie_schema_identifier: string, schema_name: string, schema_alternate_name?: string | null, schema_description?: string | null, dcterms_format: string, schema_transcript?: string | null, schema_date_created?: any | null, premis_includes: Array<{ __typename?: 'object_file', schema_name?: string | null, schema_alternate_name?: string | null, schema_description?: string | null, representation_schema_identifier: string, ebucore_media_type: string, ebucore_is_media_fragment_of?: string | null, schema_embed_url?: string | null }> }> }> };
 
 export type FindNotificationsByUserQueryVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -12681,14 +12955,14 @@ export type FindNotificationsByUserQueryVariables = Exact<{
 }>;
 
 
-export type FindNotificationsByUserQuery = { __typename?: 'query_root', app_notification: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visit?: { __typename?: 'cp_visit', cp_space_id: any, space: { __typename?: 'cp_space', schema_maintainer: { __typename?: 'cp_maintainer', schema_identifier: string } } } | null }>, app_notification_aggregate: { __typename?: 'app_notification_aggregate', aggregate?: { __typename?: 'app_notification_aggregate_fields', count: number } | null } };
+export type FindNotificationsByUserQuery = { __typename?: 'query_root', app_notification: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visitor_space_request?: { __typename?: 'maintainer_visitor_space_request', id: any, visitor_space: { __typename?: 'maintainer_visitor_space', content_partner: { __typename?: 'maintainer_content_partner', schema_identifier: string } } } | null }>, app_notification_aggregate: { __typename?: 'app_notification_aggregate', aggregate?: { __typename?: 'app_notification_aggregate_fields', count: number } | null } };
 
 export type InsertNotificationsMutationVariables = Exact<{
   objects: Array<App_Notification_Insert_Input> | App_Notification_Insert_Input;
 }>;
 
 
-export type InsertNotificationsMutation = { __typename?: 'mutation_root', insert_app_notification?: { __typename?: 'app_notification_mutation_response', returning: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visit?: { __typename?: 'cp_visit', cp_space_id: any, space: { __typename?: 'cp_space', schema_maintainer: { __typename?: 'cp_maintainer', schema_identifier: string } } } | null }> } | null };
+export type InsertNotificationsMutation = { __typename?: 'mutation_root', insert_app_notification?: { __typename?: 'app_notification_mutation_response', returning: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visitor_space_request?: { __typename?: 'maintainer_visitor_space_request', cp_space_id: any, visitor_space: { __typename?: 'maintainer_visitor_space', content_partner: { __typename?: 'maintainer_content_partner', schema_identifier: string } } } | null }> } | null };
 
 export type UpdateAllNotificationsForUserMutationVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -12705,58 +12979,58 @@ export type UpdateNotificationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateNotificationMutation = { __typename?: 'mutation_root', update_app_notification?: { __typename?: 'app_notification_mutation_response', returning: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visit?: { __typename?: 'cp_visit', cp_space_id: any, space: { __typename?: 'cp_space', schema_maintainer: { __typename?: 'cp_maintainer', schema_identifier: string } } } | null }> } | null };
+export type UpdateNotificationMutation = { __typename?: 'mutation_root', update_app_notification?: { __typename?: 'app_notification_mutation_response', returning: Array<{ __typename?: 'app_notification', id: any, description: string, title: string, status: string, type: string, recipient: any, visit_id?: any | null, created_at: any, updated_at: any, visitor_space_request?: { __typename?: 'maintainer_visitor_space_request', cp_space_id: any, visitor_space: { __typename?: 'maintainer_visitor_space', content_partner: { __typename?: 'maintainer_content_partner', schema_identifier: string } } } | null }> } | null };
 
 export type FindSpaceByCpAdminIdQueryVariables = Exact<{
   cpAdminId: Scalars['uuid'];
 }>;
 
 
-export type FindSpaceByCpAdminIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByCpAdminIdQuery = { __typename?: 'query_root', maintainer_visitor_space: Array<{ __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpaceByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindSpaceByIdQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByIdQuery = { __typename?: 'query_root', maintainer_visitor_space: Array<{ __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpaceByMaintainerIdentifierQueryVariables = Exact<{
   maintainerId: Scalars['String'];
 }>;
 
 
-export type FindSpaceByMaintainerIdentifierQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
+export type FindSpaceByMaintainerIdentifierQuery = { __typename?: 'query_root', maintainer_visitor_space: Array<{ __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }> };
 
 export type FindSpacesQueryVariables = Exact<{
-  where: Cp_Space_Bool_Exp;
+  where: Maintainer_Visitor_Space_Bool_Exp;
   offset: Scalars['Int'];
   limit: Scalars['Int'];
-  orderBy: Cp_Space_Order_By;
+  orderBy: Maintainer_Visitor_Space_Order_By;
 }>;
 
 
-export type FindSpacesQuery = { __typename?: 'query_root', cp_space: Array<{ __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }>, cp_space_aggregate: { __typename?: 'cp_space_aggregate', aggregate?: { __typename?: 'cp_space_aggregate_fields', count: number } | null } };
+export type FindSpacesQuery = { __typename?: 'query_root', maintainer_visitor_space: Array<{ __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }>, maintainer_visitor_space_aggregate: { __typename?: 'maintainer_visitor_space_aggregate', aggregate?: { __typename?: 'maintainer_visitor_space_aggregate_fields', count: number } | null } };
 
 export type GetSpaceMaintainerProfilesQueryVariables = Exact<{
   spaceId?: InputMaybe<Scalars['uuid']>;
 }>;
 
 
-export type GetSpaceMaintainerProfilesQuery = { __typename?: 'query_root', cp_maintainer_users_profile: Array<{ __typename?: 'cp_maintainer_users_profile', users_profile_id: any, profile: { __typename?: 'users_profile', mail?: string | null } }> };
+export type GetSpaceMaintainerProfilesQuery = { __typename?: 'query_root', maintainer_users_profile: Array<{ __typename?: 'maintainer_users_profile', users_profile_id: any, profile: { __typename?: 'users_profile', mail?: string | null } }> };
 
 export type UpdateSpaceMutationVariables = Exact<{
   id: Scalars['uuid'];
-  updateSpace: Cp_Space_Set_Input;
+  updateSpace: Maintainer_Visitor_Space_Set_Input;
 }>;
 
 
-export type UpdateSpaceMutation = { __typename?: 'mutation_root', update_cp_space_by_pk?: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } | null };
+export type UpdateSpaceMutation = { __typename?: 'mutation_root', update_maintainer_visitor_space_by_pk?: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } | null };
 
 export type GetTosLastUpdatedAtQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTosLastUpdatedAtQuery = { __typename?: 'query_root', cms_site_variables_by_pk?: { __typename?: 'cms_site_variables', value: any } | null };
+export type GetTosLastUpdatedAtQuery = { __typename?: 'query_root', app_config_by_pk?: { __typename?: 'app_config', value: any } | null };
 
 export type GetUserByIdentityIdQueryVariables = Exact<{
   identityId: Scalars['uuid'];
@@ -12794,7 +13068,7 @@ export type FindActiveVisitByUserAndSpaceQueryVariables = Exact<{
 }>;
 
 
-export type FindActiveVisitByUserAndSpaceQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, notes: Array<{ __typename?: 'cp_visit_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
+export type FindActiveVisitByUserAndSpaceQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
 
 export type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables = Exact<{
   warningDate?: InputMaybe<Scalars['timestamp']>;
@@ -12802,38 +13076,38 @@ export type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables = Exa
 }>;
 
 
-export type FindApprovedAlmostEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
+export type FindApprovedAlmostEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
 
 export type FindApprovedEndedVisitsWithoutNotificationQueryVariables = Exact<{
   now?: InputMaybe<Scalars['timestamp']>;
 }>;
 
 
-export type FindApprovedEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
+export type FindApprovedEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
 
 export type FindApprovedStartedVisitsWithoutNotificationQueryVariables = Exact<{
   now?: InputMaybe<Scalars['timestamp']>;
 }>;
 
 
-export type FindApprovedStartedVisitsWithoutNotificationQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
+export type FindApprovedStartedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
 
 export type FindVisitByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindVisitByIdQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, notes: Array<{ __typename?: 'cp_visit_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
+export type FindVisitByIdQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } }> };
 
 export type FindVisitsQueryVariables = Exact<{
-  where?: InputMaybe<Cp_Visit_Bool_Exp>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
   offset: Scalars['Int'];
   limit: Scalars['Int'];
-  orderBy?: Cp_Visit_Order_By;
+  orderBy?: Maintainer_Visitor_Space_Request_Order_By;
 }>;
 
 
-export type FindVisitsQuery = { __typename?: 'query_root', cp_visit: Array<{ __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, notes: Array<{ __typename?: 'cp_visit_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null }>, cp_visit_aggregate: { __typename?: 'cp_visit_aggregate', aggregate?: { __typename?: 'cp_visit_aggregate_fields', count: number } | null } };
+export type FindVisitsQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null }>, maintainer_visitor_space_request_aggregate: { __typename?: 'maintainer_visitor_space_request_aggregate', aggregate?: { __typename?: 'maintainer_visitor_space_request_aggregate_fields', count: number } | null } };
 
 export type InsertNoteMutationVariables = Exact<{
   visitId: Scalars['uuid'];
@@ -12842,14 +13116,14 @@ export type InsertNoteMutationVariables = Exact<{
 }>;
 
 
-export type InsertNoteMutation = { __typename?: 'mutation_root', insert_cp_visit_note_one?: { __typename?: 'cp_visit_note', id: any } | null };
+export type InsertNoteMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_note_one?: { __typename?: 'maintainer_visitor_space_request_note', id: any } | null };
 
 export type InsertVisitMutationVariables = Exact<{
-  newVisit: Cp_Visit_Insert_Input;
+  newVisit: Maintainer_Visitor_Space_Request_Insert_Input;
 }>;
 
 
-export type InsertVisitMutation = { __typename?: 'mutation_root', insert_cp_visit_one?: { __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, notes: Array<{ __typename?: 'cp_visit_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } } | null };
+export type InsertVisitMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_one?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } } | null };
 
 export type PendingVisitCountForUserBySlugQueryVariables = Exact<{
   user?: InputMaybe<Scalars['uuid']>;
@@ -12857,72 +13131,72 @@ export type PendingVisitCountForUserBySlugQueryVariables = Exact<{
 }>;
 
 
-export type PendingVisitCountForUserBySlugQuery = { __typename?: 'query_root', cp_visit_aggregate: { __typename?: 'cp_visit_aggregate', aggregate?: { __typename?: 'cp_visit_aggregate_fields', count: number } | null, nodes: Array<{ __typename?: 'cp_visit', cp_space_id: any }> } };
+export type PendingVisitCountForUserBySlugQuery = { __typename?: 'query_root', maintainer_visitor_space_request_aggregate: { __typename?: 'maintainer_visitor_space_request_aggregate', aggregate?: { __typename?: 'maintainer_visitor_space_request_aggregate_fields', count: number } | null, nodes: Array<{ __typename?: 'maintainer_visitor_space_request', cp_space_id: any }> } };
 
 export type UpdateVisitMutationVariables = Exact<{
   id: Scalars['uuid'];
-  updateVisit: Cp_Visit_Set_Input;
+  updateVisit: Maintainer_Visitor_Space_Request_Set_Input;
 }>;
 
 
-export type UpdateVisitMutation = { __typename?: 'mutation_root', update_cp_visit_by_pk?: { __typename?: 'cp_visit', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, user_profile: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, notes: Array<{ __typename?: 'cp_visit_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, updater?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, space: { __typename?: 'cp_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, is_published?: boolean | null, published_at?: any | null, created_at?: any | null, updated_at?: any | null, schema_maintainer: { __typename?: 'cp_maintainer', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } } | null };
+export type UpdateVisitMutation = { __typename?: 'mutation_root', update_maintainer_visitor_space_request_by_pk?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: Array<{ __typename?: 'ContentPartner', description?: string | null, logo?: { __typename?: 'Logo', iri: string } | null, primary_site?: { __typename?: 'Site', address?: { __typename?: 'PostalAddress', email?: string | null, locality?: string | null, postal_code?: string | null, street?: string | null, telephone?: string | null, post_office_box_number?: string | null } | null } | null } | null> | null } } } | null };
 
 
-export const GetContentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentByIdQuery, GetContentByIdQueryVariables>;
-export const GetContentPageByPathDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageByPath"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"path"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"path"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"path"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPageByPathQuery, GetContentPageByPathQueryVariables>;
-export const GetContentPageLabelsByTypeAndIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_cms_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndIdsQuery, GetContentPageLabelsByTypeAndIdsQueryVariables>;
-export const GetContentPageLabelsByTypeAndLabelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndLabels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_cms_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labels"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"label"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labels"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndLabelsQuery, GetContentPageLabelsByTypeAndLabelsQueryVariables>;
-export const GetContentPagesWithBlocksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPagesWithBlocks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_content_labels_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_content_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_content_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesWithBlocksQuery, GetContentPagesWithBlocksQueryVariables>;
-export const GetContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_content_labels_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_content_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_content_labels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesQuery, GetContentPagesQueryVariables>;
-export const GetPublicContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPublicContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_content_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]} as unknown as DocumentNode<GetPublicContentPagesQuery, GetPublicContentPagesQueryVariables>;
-export const UpdateContentPagePublishDatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateContentPagePublishDates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"publish_content_pages"},"name":{"kind":"Name","value":"update_cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"unpublish_content_pages"},"name":{"kind":"Name","value":"update_cms_content"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateContentPagePublishDatesMutation, UpdateContentPagePublishDatesMutationVariables>;
-export const DeleteNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_cms_navigation_element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteNavigationMutation, DeleteNavigationMutationVariables>;
-export const FindAllNavigationItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllNavigationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}},{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindAllNavigationItemsQuery, FindAllNavigationItemsQueryVariables>;
-export const FindNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindNavigationByIdQuery, FindNavigationByIdQueryVariables>;
-export const FindNavigationByPlacementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationByPlacement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"placement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationByPlacementQuery, FindNavigationByPlacementQueryVariables>;
-export const FindNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cms_navigation_element_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationQuery, FindNavigationQueryVariables>;
-export const InsertNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_navigation_element_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_cms_navigation_element_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<InsertNavigationMutation, InsertNavigationMutationVariables>;
-export const UpdateNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_navigation_element_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cms_navigation_element_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<UpdateNavigationByIdMutation, UpdateNavigationByIdMutationVariables>;
-export const GetOrganisationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_maintainer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationQuery, GetOrganisationQueryVariables>;
+export const GetContentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentByIdQuery, GetContentByIdQueryVariables>;
+export const GetContentPageByPathDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageByPath"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"path"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"path"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"path"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPageByPathQuery, GetContentPageByPathQueryVariables>;
+export const GetContentPageLabelsByTypeAndIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndIdsQuery, GetContentPageLabelsByTypeAndIdsQueryVariables>;
+export const GetContentPageLabelsByTypeAndLabelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndLabels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labels"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"label"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labels"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndLabelsQuery, GetContentPageLabelsByTypeAndLabelsQueryVariables>;
+export const GetContentPagesWithBlocksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPagesWithBlocks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_content_label_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_page_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesWithBlocksQuery, GetContentPagesWithBlocksQueryVariables>;
+export const GetContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_content_label_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_page_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesQuery, GetContentPagesQueryVariables>;
+export const GetPublicContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPublicContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]} as unknown as DocumentNode<GetPublicContentPagesQuery, GetPublicContentPagesQueryVariables>;
+export const UpdateContentPagePublishDatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateContentPagePublishDates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"publish_content_pages"},"name":{"kind":"Name","value":"update_app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"unpublish_content_pages"},"name":{"kind":"Name","value":"update_app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateContentPagePublishDatesMutation, UpdateContentPagePublishDatesMutationVariables>;
+export const DeleteNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteNavigationMutation, DeleteNavigationMutationVariables>;
+export const FindAllNavigationItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllNavigationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}},{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindAllNavigationItemsQuery, FindAllNavigationItemsQueryVariables>;
+export const FindNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindNavigationByIdQuery, FindNavigationByIdQueryVariables>;
+export const FindNavigationByPlacementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationByPlacement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"placement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_navigation_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationByPlacementQuery, FindNavigationByPlacementQueryVariables>;
+export const FindNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_navigation_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationQuery, FindNavigationQueryVariables>;
+export const InsertNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_navigation_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_navigation_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<InsertNavigationMutation, InsertNavigationMutationVariables>;
+export const UpdateNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_navigation_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_navigation_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<UpdateNavigationByIdMutation, UpdateNavigationByIdMutationVariables>;
+export const GetOrganisationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationQuery, GetOrganisationQueryVariables>;
 export const GetFileByRepresentationSchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFileByRepresentationSchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_file"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"representation_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]} as unknown as DocumentNode<GetFileByRepresentationSchemaIdentifierQuery, GetFileByRepresentationSchemaIdentifierQueryVariables>;
 export const GetThumbnailUrlByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getThumbnailUrlById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}}]}}]} as unknown as DocumentNode<GetThumbnailUrlByIdQuery, GetThumbnailUrlByIdQueryVariables>;
-export const GetSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_site_variables_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetSiteVariableByNameQuery, GetSiteVariableByNameQueryVariables>;
-export const UpdateSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cms_site_variables_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cms_site_variables"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateSiteVariableByNameMutation, UpdateSiteVariableByNameMutationVariables>;
-export const DeleteCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteCollectionMutation, DeleteCollectionMutationVariables>;
-export const FindCollectionByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}}]}}]}}]} as unknown as DocumentNode<FindCollectionByIdQuery, FindCollectionByIdQueryVariables>;
-export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
-export const FindCollectionsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_collection_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
-export const GetObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectBySchemaIdentifierQuery, GetObjectBySchemaIdentifierQueryVariables>;
-export const FindObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindObjectBySchemaIdentifierQuery, FindObjectBySchemaIdentifierQueryVariables>;
-export const FindObjectInCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectInCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
-export const InsertCollectionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertCollections"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"object"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<InsertCollectionsMutation, InsertCollectionsMutationVariables>;
-export const InsertObjectIntoCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertObjectIntoCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertObjectIntoCollectionMutation, InsertObjectIntoCollectionMutationVariables>;
-export const RemoveObjectFromCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeObjectFromCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_collection_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveObjectFromCollectionMutation, RemoveObjectFromCollectionMutationVariables>;
-export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_collection_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_collection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
-export const GetObjectDetailBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifierQuery, GetObjectDetailBySchemaIdentifierQueryVariables>;
-export const GetRelatedObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getRelatedObjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRelatedObjectsQuery, GetRelatedObjectsQueryVariables>;
-export const FindNotificationsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNotificationsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_notification_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNotificationsByUserQuery, FindNotificationsByUserQueryVariables>;
-export const InsertNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertNotificationsMutation, InsertNotificationsMutationVariables>;
+export const GetSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetSiteVariableByNameQuery, GetSiteVariableByNameQueryVariables>;
+export const UpdateSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_config_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_config"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateSiteVariableByNameMutation, UpdateSiteVariableByNameMutationVariables>;
+export const DeleteCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteCollectionMutation, DeleteCollectionMutationVariables>;
+export const FindCollectionByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}}]}}]}}]} as unknown as DocumentNode<FindCollectionByIdQuery, FindCollectionByIdQueryVariables>;
+export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
+export const FindCollectionsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_folder_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
+export const GetObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectBySchemaIdentifierQuery, GetObjectBySchemaIdentifierQueryVariables>;
+export const FindObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindObjectBySchemaIdentifierQuery, FindObjectBySchemaIdentifierQueryVariables>;
+export const FindObjectInCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectInCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
+export const InsertCollectionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertCollections"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"object"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<InsertCollectionsMutation, InsertCollectionsMutationVariables>;
+export const InsertObjectIntoCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertObjectIntoCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertObjectIntoCollectionMutation, InsertObjectIntoCollectionMutationVariables>;
+export const RemoveObjectFromCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeObjectFromCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveObjectFromCollectionMutation, RemoveObjectFromCollectionMutationVariables>;
+export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
+export const GetObjectDetailBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifierQuery, GetObjectDetailBySchemaIdentifierQueryVariables>;
+export const GetRelatedObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getRelatedObjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_relationship"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_archive"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_episode"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_season"}},{"kind":"Field","name":{"kind":"Name","value":"schema_part_of_series"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_contributor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRelatedObjectsQuery, GetRelatedObjectsQueryVariables>;
+export const FindNotificationsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNotificationsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_notification_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNotificationsByUserQuery, FindNotificationsByUserQueryVariables>;
+export const InsertNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertNotificationsMutation, InsertNotificationsMutationVariables>;
 export const UpdateAllNotificationsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateAllNotificationsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateAllNotificationsForUserMutation, UpdateAllNotificationsForUserMutationVariables>;
-export const UpdateNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
-export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
-export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
-export const FindSpaceByMaintainerIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByMaintainerIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByMaintainerIdentifierQuery, FindSpaceByMaintainerIdentifierQueryVariables>;
-export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_order_by"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
-export const GetSpaceMaintainerProfilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSpaceMaintainerProfiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceMaintainerProfilesQuery, GetSpaceMaintainerProfilesQueryVariables>;
-export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cp_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;
-export const GetTosLastUpdatedAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTosLastUpdatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cms_site_variables_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"TOS_LAST_UPDATED_AT","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetTosLastUpdatedAtQuery, GetTosLastUpdatedAtQueryVariables>;
+export const UpdateNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
+export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"content_partner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
+export const FindSpaceByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByIdQuery, FindSpaceByIdQueryVariables>;
+export const FindSpaceByMaintainerIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByMaintainerIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByMaintainerIdentifierQuery, FindSpaceByMaintainerIdentifierQueryVariables>;
+export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_order_by"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindSpacesQuery, FindSpacesQueryVariables>;
+export const GetSpaceMaintainerProfilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSpaceMaintainerProfiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceMaintainerProfilesQuery, GetSpaceMaintainerProfilesQueryVariables>;
+export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_visitor_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;
+export const GetTosLastUpdatedAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTosLastUpdatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"TOS_LAST_UPDATED_AT","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetTosLastUpdatedAtQuery, GetTosLastUpdatedAtQueryVariables>;
 export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
 export const InsertUserIdentityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUserIdentity"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_identity_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_identity_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertUserIdentityMutation, InsertUserIdentityMutationVariables>;
 export const InsertUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<InsertUserMutation, InsertUserMutationVariables>;
 export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
-export const FindActiveVisitByUserAndSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findActiveVisitByUserAndSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindActiveVisitByUserAndSpaceQuery, FindActiveVisitByUserAndSpaceQueryVariables>;
-export const FindApprovedAlmostEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedAlmostEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_END_WARNING","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedAlmostEndedVisitsWithoutNotificationQuery, FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables>;
-export const FindApprovedEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_ENDED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedEndedVisitsWithoutNotificationQuery, FindApprovedEndedVisitsWithoutNotificationQueryVariables>;
-export const FindApprovedStartedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedStartedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_STARTED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedStartedVisitsWithoutNotificationQuery, FindApprovedStartedVisitsWithoutNotificationQueryVariables>;
-export const FindVisitByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisitById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitByIdQuery, FindVisitByIdQueryVariables>;
-export const FindVisitsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisits"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_visit_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_visit_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cp_visit_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitsQuery, FindVisitsQueryVariables>;
-export const InsertNoteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNote"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"note"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_cp_visit_note_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"visit_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"note"},"value":{"kind":"Variable","name":{"kind":"Name","value":"note"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertNoteMutation, InsertNoteMutationVariables>;
-export const InsertVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_visit_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_cp_visit_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertVisitMutation, InsertVisitMutationVariables>;
-export const PendingVisitCountForUserBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"pendingVisitCountForUserBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_visit_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"PENDING","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}}]}}]}}]}}]} as unknown as DocumentNode<PendingVisitCountForUserBySlugQuery, PendingVisitCountForUserBySlugQueryVariables>;
-export const UpdateVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"cp_visit_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_cp_visit_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"updater"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateVisitMutation, UpdateVisitMutationVariables>;
+export const FindActiveVisitByUserAndSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findActiveVisitByUserAndSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindActiveVisitByUserAndSpaceQuery, FindActiveVisitByUserAndSpaceQueryVariables>;
+export const FindApprovedAlmostEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedAlmostEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_END_WARNING","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedAlmostEndedVisitsWithoutNotificationQuery, FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables>;
+export const FindApprovedEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_ENDED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedEndedVisitsWithoutNotificationQuery, FindApprovedEndedVisitsWithoutNotificationQueryVariables>;
+export const FindApprovedStartedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedStartedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_STARTED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedStartedVisitsWithoutNotificationQuery, FindApprovedStartedVisitsWithoutNotificationQueryVariables>;
+export const FindVisitByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisitById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitByIdQuery, FindVisitByIdQueryVariables>;
+export const FindVisitsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisits"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitsQuery, FindVisitsQueryVariables>;
+export const InsertNoteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNote"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"note"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_note_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"visit_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"note"},"value":{"kind":"Variable","name":{"kind":"Name","value":"note"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertNoteMutation, InsertNoteMutationVariables>;
+export const InsertVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertVisitMutation, InsertVisitMutationVariables>;
+export const PendingVisitCountForUserBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"pendingVisitCountForUserBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"PENDING","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}}]}}]}}]}}]} as unknown as DocumentNode<PendingVisitCountForUserBySlugQuery, PendingVisitCountForUserBySlugQueryVariables>;
+export const UpdateVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_visitor_space_request_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateVisitMutation, UpdateVisitMutationVariables>;

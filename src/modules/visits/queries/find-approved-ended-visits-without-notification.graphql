@@ -1,5 +1,5 @@
 query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
-	cp_visit(
+	maintainer_visitor_space_request(
 		where: {
 			status: { _eq: "APPROVED" }
 			end_date: { _lt: $now }
@@ -9,7 +9,7 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 		id
 		cp_space_id
 		user_profile_id
-		user_profile {
+		requested_by {
 			id
 			full_name
 			first_name
@@ -23,11 +23,11 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 		end_date
 		created_at
 		updated_at
-		updater {
+		last_updated_by {
 			id
 			full_name
 		}
-		space {
+		visitor_space {
 			id
 			schema_image
 			schema_color
@@ -35,11 +35,11 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 			schema_description
 			schema_public_access
 			schema_service_description
-			is_published
+			status
 			published_at
 			created_at
 			updated_at
-			schema_maintainer {
+			content_partner {
 				schema_name
 				schema_identifier
 				information {

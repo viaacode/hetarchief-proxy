@@ -1,9 +1,9 @@
-mutation insertVisit($newVisit: cp_visit_insert_input!) {
-	insert_cp_visit_one(object: $newVisit) {
+mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) {
+	insert_maintainer_visitor_space_request_one(object: $newVisit) {
 		id
 		cp_space_id
 		user_profile_id
-		user_profile {
+		requested_by {
 			id
 			full_name
 			first_name
@@ -15,7 +15,7 @@ mutation insertVisit($newVisit: cp_visit_insert_input!) {
 		status
 		start_date
 		end_date
-		notes(order_by: { created_at: desc }, limit: 1) {
+		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
 			id
 			note
 			profile {
@@ -25,11 +25,11 @@ mutation insertVisit($newVisit: cp_visit_insert_input!) {
 		}
 		created_at
 		updated_at
-		updater {
+		last_updated_by {
 			id
 			full_name
 		}
-		space {
+		visitor_space {
 			id
 			schema_image
 			schema_color
@@ -37,11 +37,11 @@ mutation insertVisit($newVisit: cp_visit_insert_input!) {
 			schema_description
 			schema_public_access
 			schema_service_description
-			is_published
+			status
 			published_at
 			created_at
 			updated_at
-			schema_maintainer {
+			content_partner {
 				schema_name
 				schema_identifier
 				information {

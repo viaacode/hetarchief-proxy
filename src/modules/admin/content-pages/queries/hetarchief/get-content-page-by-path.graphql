@@ -1,5 +1,5 @@
 query getContentPageByPath($path: String!) {
-	cms_content(where: { path: { _eq: $path }, is_deleted: { _eq: false } }) {
+	app_content_page(where: { path: { _eq: $path }, is_deleted: { _eq: false } }) {
 		content_type
 		content_width
 		created_at
