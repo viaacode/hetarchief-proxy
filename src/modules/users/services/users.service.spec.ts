@@ -63,6 +63,13 @@ describe('UsersService', () => {
 		});
 	});
 
+	describe('groupIdToName', () => {
+		it('should return null when the group was not found', () => {
+			const groupName = usersService.groupIdToName('unknown');
+			expect(groupName).toBeNull();
+		});
+	});
+
 	describe('getUserByIdentityId', () => {
 		it('should get a user by identity id', async () => {
 			//data.users_profile[0]

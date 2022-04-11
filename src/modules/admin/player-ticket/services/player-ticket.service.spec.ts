@@ -11,6 +11,7 @@ import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.type
 import { PlayerTicket } from '~modules/admin/player-ticket/player-ticket.types';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -73,7 +74,9 @@ describe('PlayerTicketService', () => {
 					useValue: mockCacheManager,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		playerTicketService = module.get<PlayerTicketService>(PlayerTicketService);
 	});

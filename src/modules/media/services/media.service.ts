@@ -178,17 +178,7 @@ export class MediaService {
 	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
-		let mediaResponse;
-		try {
-			mediaResponse = await this.executeQuery(esIndex, esQuery);
-		} catch (err) {
-			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
-				// TODO remove this fallback once or-ids match between INT and local DB
-				mediaResponse = await this.executeQuery(null, esQuery);
-			} else {
-				throw err;
-			}
-		}
+		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return this.adaptESResponse(mediaResponse, referer);
 	}
