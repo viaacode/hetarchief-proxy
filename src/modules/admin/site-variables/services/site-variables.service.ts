@@ -17,7 +17,7 @@ export class SiteVariablesService {
 	public async getSiteVariable<T>(variable: string): Promise<T> {
 		const {
 			data: {
-				cms_site_variables_by_pk: { value },
+				app_config_by_pk: { value },
 			},
 		} = await this.dataService.execute<GetSiteVariableByNameQuery>(
 			GetSiteVariableByNameDocument,

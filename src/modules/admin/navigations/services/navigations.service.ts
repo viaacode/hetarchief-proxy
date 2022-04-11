@@ -31,7 +31,7 @@ export class NavigationsService {
 
 	public async createElement(navigationItem: CreateNavigationDto): Promise<Navigation> {
 		const {
-			data: { insert_cms_navigation_element_one: createdNavigation },
+			data: { insert_app_navigation_one: createdNavigation },
 		} = await this.dataService.execute<InsertNavigationMutation>(InsertNavigationDocument, {
 			navigationItem,
 		});
@@ -45,7 +45,7 @@ export class NavigationsService {
 		navigationItem: CreateNavigationDto
 	): Promise<Navigation> {
 		const {
-			data: { update_cms_navigation_element_by_pk: updatedNavigation },
+			data: { update_app_navigation_by_pk: updatedNavigation },
 		} = await this.dataService.execute<UpdateNavigationByIdMutation>(
 			UpdateNavigationByIdDocument,
 			{
@@ -61,7 +61,7 @@ export class NavigationsService {
 	public async deleteElement(id: string): Promise<DeleteResponse> {
 		const {
 			data: {
-				delete_cms_navigation_element: { affected_rows: affectedRows },
+				delete_app_navigation: { affected_rows: affectedRows },
 			},
 		} = await this.dataService.execute<DeleteNavigationMutation>(DeleteNavigationDocument, {
 			id,
@@ -103,15 +103,15 @@ export class NavigationsService {
 			FindNavigationByIdDocument,
 			{ id }
 		);
-		if (!navigationResponse.data.cms_navigation_element[0]) {
+		if (!navigationResponse.data.app_navigation[0]) {
 			throw new NotFoundException();
 		}
-		return navigationResponse.data.cms_navigation_element[0];
+		return navigationResponse.data.app_navigation[0];
 	}
 
 	public async getNavigationElementsForUser(user: User): Promise<Record<string, Navigation[]>> {
 		const {
-			data: { cms_navigation_element: navigations },
+			data: { app_navigation: navigations },
 		} = await this.dataService.execute<FindAllNavigationItemsQuery>(
 			FindAllNavigationItemsDocument
 		);

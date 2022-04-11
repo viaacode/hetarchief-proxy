@@ -30,10 +30,10 @@ const mockGqlNotification1: GqlNotification = {
 	visit_id: 'b21e8536-9818-41e0-a1f6-e3596ac75320',
 	created_at: '2022-04-08T07:29:36.186644+00:00',
 	updated_at: '2022-04-08T07:29:36.186644',
-	visit: {
+	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-		space: {
-			schema_maintainer: {
+		visitor_space: {
+			content_partner: {
 				schema_identifier: 'OR-1v5bc86',
 			},
 		},
@@ -51,10 +51,10 @@ const mockGqlNotification2: GqlNotification = {
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
-	visit: {
+	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
-		space: {
-			schema_maintainer: {
+		visitor_space: {
+			content_partner: {
 				schema_identifier: 'OR-1v5bc86',
 			},
 		},

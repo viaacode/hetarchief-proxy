@@ -14,5 +14,6 @@ export type OrganisationQueries = {
 };
 
 export type GqlAvoOrganisation = GetOrganisationQueryAvo['shared_organisations'][0];
-export type GqlHetArchiefOrganisation = GetOrganisationQueryHetArchief['cp_maintainer'][0];
+export type GqlHetArchiefOrganisation =
+	GetOrganisationQueryHetArchief['maintainer_content_partner'][0];
 export type GqlOrganisation = GqlAvoOrganisation | GqlHetArchiefOrganisation;

@@ -19,13 +19,13 @@ export interface Collection {
 	objects?: IeObject[];
 }
 
-export type GqlCollectionWithObjects = FindCollectionsByUserQuery['users_collection'][0];
+export type GqlCollectionWithObjects = FindCollectionsByUserQuery['users_folder'][0];
 
 export type GqlCollection =
 	| GqlCollectionWithObjects
-	| FindCollectionByIdQuery['users_collection'][0]
-	| InsertCollectionsMutation['insert_users_collection']['returning'][0]
-	| UpdateCollectionMutation['update_users_collection']['returning'][0];
+	| FindCollectionByIdQuery['users_folder'][0]
+	| InsertCollectionsMutation['insert_users_folder']['returning'][0]
+	| UpdateCollectionMutation['update_users_folder']['returning'][0];
 
 export interface GqlCreateCollection {
 	name: string;
@@ -44,10 +44,10 @@ export interface GqlUpdateCollection {
 }
 
 export type CollectionObjectLink =
-	| FindObjectInCollectionQuery['users_collection_ie'][0]
-	| FindCollectionsByUserQuery['users_collection'][0]['ies'][0]
-	| InsertObjectIntoCollectionMutation['insert_users_collection_ie']
-	| FindCollectionObjectsByCollectionIdQuery['users_collection_ie'][0];
+	| FindObjectInCollectionQuery['users_folder_ie'][0]
+	| FindCollectionsByUserQuery['users_folder'][0]['ies'][0]
+	| InsertObjectIntoCollectionMutation['insert_users_folder_ie']
+	| FindCollectionObjectsByCollectionIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
 

@@ -3,6 +3,7 @@ import {
 	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
@@ -25,14 +26,14 @@ export interface Space {
 	audienceType: Lookup_Schema_Audience_Type_Enum;
 	publicAccess: boolean;
 	contactInfo: ContactInfo;
-	isPublished: boolean;
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum;
 	publishedAt: string;
 	createdAt: string;
 	updatedAt: string;
 }
 
 export type GqlSpace =
-	| FindSpaceByIdQuery['cp_space'][0]
-	| FindSpacesQuery['cp_space'][0]
-	| FindSpaceByMaintainerIdentifierQuery['cp_space'][0]
-	| FindSpaceByCpAdminIdQuery['cp_space'][0];
+	| FindSpaceByIdQuery['maintainer_visitor_space'][0]
+	| FindSpacesQuery['maintainer_visitor_space'][0]
+	| FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'][0]
+	| FindSpaceByCpAdminIdQuery['maintainer_visitor_space'][0];

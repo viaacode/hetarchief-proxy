@@ -47,19 +47,17 @@ export class MediaService {
 			partOfEpisode: graphQlObject?.schema_part_of_episode,
 			partOfSeason: graphQlObject?.schema_part_of_season,
 			partOfSeries: graphQlObject?.schema_part_of_series,
-			maintainerId: graphQlObject?.schema_maintainer?.[0]?.id,
-			maintainerName: graphQlObject?.schema_maintainer?.[0]?.label,
+			maintainerId: graphQlObject?.maintainer?.[0]?.id,
+			maintainerName: graphQlObject?.maintainer?.[0]?.label,
 			contactInfo: {
-				email: graphQlObject?.schema_maintainer?.[0]?.primary_site.address?.email,
-				telephone: graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.telephone,
+				email: graphQlObject?.maintainer?.[0]?.primary_site.address?.email,
+				telephone: graphQlObject?.maintainer?.[0]?.primary_site?.address?.telephone,
 				address: {
-					street: graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.street,
-					postalCode:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.postal_code,
-					locality:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.locality,
+					street: graphQlObject?.maintainer?.[0]?.primary_site?.address?.street,
+					postalCode: graphQlObject?.maintainer?.[0]?.primary_site?.address?.postal_code,
+					locality: graphQlObject?.maintainer?.[0]?.primary_site?.address?.locality,
 					postOfficeBoxNumber:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address
+						graphQlObject?.maintainer?.[0]?.primary_site?.address
 							?.post_office_box_number,
 				},
 			},

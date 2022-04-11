@@ -322,7 +322,7 @@ describe('CollectionsService', () => {
 		it('can create a new collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					insert_users_collection: {
+					insert_users_folder_ie: {
 						returning: [mockGqlCollection1],
 					},
 				},
@@ -338,7 +338,7 @@ describe('CollectionsService', () => {
 		it('can update a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					update_users_collection: {
+					update_users_folder_ie: {
 						returning: [mockGqlCollection1],
 					},
 				},
@@ -360,7 +360,7 @@ describe('CollectionsService', () => {
 		it('can delete a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					delete_users_collection: {
+					delete_users_folder_ie: {
 						affected_rows: 1,
 					},
 				},
@@ -373,7 +373,7 @@ describe('CollectionsService', () => {
 		it('can delete a non existing collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					delete_users_collection: {
+					delete_users_folder_ie: {
 						affected_rows: 0,
 					},
 				},
@@ -406,7 +406,7 @@ describe('CollectionsService', () => {
 				.mockResolvedValueOnce(mockCollectionObject);
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					insert_users_collection_ie: {
+					insert_users_folder_ie_ie: {
 						returning: [mockGqlCollectionObjectLink],
 					},
 				},
@@ -479,7 +479,7 @@ describe('CollectionsService', () => {
 		it('can remove an object from a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					delete_users_collection_ie: {
+					delete_users_folder_ie_ie: {
 						affected_rows: 1,
 					},
 				},
@@ -495,7 +495,7 @@ describe('CollectionsService', () => {
 		it('can remove a non existing object from a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				data: {
-					delete_users_collection_ie: {
+					delete_users_folder_ie_ie: {
 						affected_rows: 0,
 					},
 				},

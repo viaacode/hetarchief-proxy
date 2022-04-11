@@ -14,6 +14,7 @@ import {
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesDocument,
 	FindSpacesQuery,
+	FindSpacesQueryVariables,
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceDocument,
@@ -33,12 +34,12 @@ export class SpacesService {
 	 */
 	public adapt(graphQlSpace: GqlSpace): Space {
 		/* istanbul ignore next */
-		const information = graphQlSpace?.schema_maintainer?.information?.[0];
+		const information = graphQlSpace?.content_partner?.information?.[0];
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
-			maintainerId: graphQlSpace?.schema_maintainer?.schema_identifier,
-			name: graphQlSpace?.schema_maintainer?.schema_name,
+			maintainerId: graphQlSpace?.content_partner?.schema_identifier,
+			name: graphQlSpace?.content_partner?.schema_name,
 			info: information?.description,
 			description: graphQlSpace?.schema_description,
 			serviceDescription: graphQlSpace?.schema_service_description,
@@ -57,10 +58,10 @@ export class SpacesService {
 					postOfficeBoxNumber: information?.primary_site?.address?.post_office_box_number,
 				},
 			},
-			isPublished: get(graphQlSpace, 'is_published'),
-			publishedAt: get(graphQlSpace, 'published_at'),
-			createdAt: get(graphQlSpace, 'created_at'),
-			updatedAt: get(graphQlSpace, 'updated_at'),
+			status: graphQlSpace?.status,
+			publishedAt: graphQlSpace?.published_at,
+			createdAt: graphQlSpace?.created_at,
+			updatedAt: graphQlSpace?.updated_at,
 		};
 	}
 
@@ -95,13 +96,13 @@ export class SpacesService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		// Build where object
-		const filterArray: any[] = [];
+		const filterArray: FindSpacesQueryVariables['where'][] = [];
 
 		if (query && query !== '%' && query !== '%%') {
 			filterArray.push({
 				_or: [
 					{ schema_description: { _ilike: query } },
-					{ schema_maintainer: { schema_name: { _ilike: query } } },
+					{ content_partner: { schema_name: { _ilike: query } } },
 				],
 			});
 		}
@@ -118,7 +119,7 @@ export class SpacesService {
 			const now = new Date().toISOString();
 			if (accessType === AccessType.ACTIVE) {
 				filterArray.push({
-					visits: {
+					visitor_space_requests: {
 						start_date: { _lte: now },
 						end_date: { _gte: now },
 						status: { _eq: 'APPROVED' },
@@ -130,7 +131,7 @@ export class SpacesService {
 					_and: [
 						{
 							_not: {
-								visits: {
+								visitor_space_requests: {
 									_or: [
 										{ start_date: { _gt: now } },
 										{ end_date: { _lt: now } },
@@ -145,7 +146,8 @@ export class SpacesService {
 				});
 			}
 		}
-		const where: any = { _and: filterArray };
+		const where: FindSpacesQueryVariables['where'] =
+			filterArray?.length > 0 ? { _and: filterArray } : {};
 
 		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(FindSpacesDocument, {
 			where,
@@ -155,10 +157,10 @@ export class SpacesService {
 		});
 
 		return Pagination<Space>({
-			items: spacesResponse.data.cp_space.map((space) => this.adapt(space)),
+			items: spacesResponse.data.maintainer_visitor_space.map((space) => this.adapt(space)),
 			page,
 			size,
-			total: spacesResponse.data.cp_space_aggregate.aggregate.count,
+			total: spacesResponse.data.maintainer_visitor_space_aggregate.aggregate.count,
 		});
 	}
 
@@ -167,10 +169,10 @@ export class SpacesService {
 			FindSpaceByIdDocument,
 			{ id }
 		);
-		if (!spaceResponse.data.cp_space[0]) {
+		if (!spaceResponse.data.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.cp_space[0]);
+		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
 	}
 
 	public async findBySlug(slug: string): Promise<Space | null> {
@@ -180,10 +182,10 @@ export class SpacesService {
 				maintainerId: slug,
 			}
 		);
-		if (!spaceResponse.data.cp_space[0]) {
+		if (!spaceResponse.data.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.cp_space[0]);
+		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
 	}
 
 	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
@@ -193,10 +195,10 @@ export class SpacesService {
 				cpAdminId,
 			}
 		);
-		if (!spaceResponse.data.cp_space[0]) {
+		if (!spaceResponse.data.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.cp_space[0]);
+		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
 	}
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {

@@ -4,6 +4,7 @@ import { addHours } from 'date-fns';
 import { mockCpVisit } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
+import { FindVisitsQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -12,10 +13,10 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const getDefaultVisitsResponse = () => ({
+const getDefaultVisitsResponse = (): { data: FindVisitsQuery } => ({
 	data: {
-		cp_visit: [mockCpVisit],
-		cp_visit_aggregate: {
+		maintainer_visitor_space_request: [mockCpVisit as any],
+		maintainer_visitor_space_request_aggregate: {
 			aggregate: {
 				count: 100,
 			},
@@ -458,7 +459,7 @@ describe('VisitsService', () => {
 
 		it('throws an error when you update to an invalid status', async () => {
 			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			initialVisit.data.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
 			mockDataService.execute.mockResolvedValueOnce(initialVisit);
 
 			let error;
