@@ -9,7 +9,6 @@ import {
 	Patch,
 	Query,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,8 +22,9 @@ import { Space } from '../types';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Permission } from '~modules/users/types';
+import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
@@ -59,7 +59,7 @@ export class SpacesController {
 	}
 
 	@Patch(':id')
-	@UseGuards(LoggedInGuard)
+	@RequirePermissions(Permission.UPDATE_SPACES)
 	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		description: 'Update a space',
