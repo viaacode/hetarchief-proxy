@@ -267,7 +267,7 @@ export class NotificationsService {
 	/**
 	 * Send email on cancel own visit request
 	 */
-	public async onCancelPersonalVisitRequest(
+	public async onCancelVisitRequest(
 		visit: Visit,
 		recipients: Recipient[],
 		user: User

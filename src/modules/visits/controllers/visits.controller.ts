@@ -163,11 +163,7 @@ export class VisitsController {
 			} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
 				const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
 
-				await this.notificationsService.onCancelPersonalVisitRequest(
-					visit,
-					recipients,
-					user
-				);
+				await this.notificationsService.onCancelVisitRequest(visit, recipients, user);
 			}
 		}
 
