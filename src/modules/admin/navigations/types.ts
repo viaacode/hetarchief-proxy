@@ -17,7 +17,7 @@ export enum ContentPickerType {
 }
 
 export type Navigation =
-	| InsertNavigationMutation['insert_cms_navigation_element_one']
-	| UpdateNavigationByIdMutation['update_cms_navigation_element_by_pk']
-	| FindAllNavigationItemsQuery['cms_navigation_element'][0]
-	| FindNavigationByIdQuery['cms_navigation_element'][0];
+	| InsertNavigationMutation['insert_app_navigation_one']
+	| UpdateNavigationByIdMutation['update_app_navigation_by_pk']
+	| FindAllNavigationItemsQuery['app_navigation'][0]
+	| FindNavigationByIdQuery['app_navigation'][0];

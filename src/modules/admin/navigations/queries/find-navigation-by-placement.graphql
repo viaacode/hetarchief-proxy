@@ -1,5 +1,5 @@
 query findNavigationByPlacement($placement: String!) {
-	cms_navigation_element(order_by: { position: asc }, where: { placement: { _eq: $placement } }) {
+	app_navigation(order_by: { position: asc }, where: { placement: { _eq: $placement } }) {
 		id
 		created_at
 		description
@@ -14,7 +14,7 @@ query findNavigationByPlacement($placement: String!) {
 		content_path
 		tooltip
 	}
-	cms_navigation_element_aggregate(where: { placement: { _eq: $placement } }) {
+	app_navigation_aggregate(where: { placement: { _eq: $placement } }) {
 		aggregate {
 			count
 		}

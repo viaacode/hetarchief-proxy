@@ -1,5 +1,5 @@
 mutation updateContentPagePublishDates($now: timestamp, $publishedAt: timestamp) {
-	publish_content_pages: update_cms_content(
+	publish_content_pages: update_app_content_page(
 		where: {
 			_or: [
 				{
@@ -16,7 +16,7 @@ mutation updateContentPagePublishDates($now: timestamp, $publishedAt: timestamp)
 	) {
 		affected_rows
 	}
-	unpublish_content_pages: update_cms_content(
+	unpublish_content_pages: update_app_content_page(
 		where: {
 			depublish_at: { _lt: $now, _is_null: false }
 			is_public: { _eq: true }

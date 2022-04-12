@@ -15,7 +15,7 @@ query getObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
 		maintainer {
 			schema_identifier
 			schema_name
-			space {
+			visitor_space {
 				id
 			}
 		}

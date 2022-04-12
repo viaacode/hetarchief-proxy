@@ -1,5 +1,5 @@
 query findSpaceById($id: uuid!) {
-	cp_space(where: { id: { _eq: $id } }) {
+	maintainer_visitor_space(where: { id: { _eq: $id } }) {
 		id
 		schema_image
 		schema_color
@@ -7,11 +7,11 @@ query findSpaceById($id: uuid!) {
 		schema_description
 		schema_public_access
 		schema_service_description
-		is_published
+		status
 		published_at
 		created_at
 		updated_at
-		schema_maintainer {
+		content_partner {
 			schema_name
 			schema_identifier
 			information {
