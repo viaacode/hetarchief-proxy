@@ -129,6 +129,11 @@ describe('VisitsService', () => {
 			// test some sample keys
 			expect(adapted).toBeNull();
 		});
+
+		it('returns null on invalid input', () => {
+			const adapted = visitsService.adapt(null);
+			expect(adapted).toBeNull();
+		});
 	});
 
 	describe('findAll', () => {

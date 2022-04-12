@@ -10,7 +10,6 @@ import {
 	Patch,
 	Post,
 	Query,
-	Session,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
@@ -24,12 +23,16 @@ import {
 	CreateOrUpdateCollectionDto,
 } from '~modules/collections/dto/collections.dto';
 import { CollectionsService } from '~modules/collections/services/collections.service';
-import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Permission } from '~modules/users/types';
+import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Collections')
 @Controller('collections')
+@RequirePermissions(Permission.MANAGE_COLLECTIONS)
 export class CollectionsController {
 	private logger: Logger = new Logger(CollectionsController.name, { timestamp: true });
 
@@ -38,11 +41,10 @@ export class CollectionsController {
 	@Get()
 	public async getCollections(
 		@Headers('referer') referer: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Collection>> {
-		const userInfo = SessionHelper.getArchiefUserInfo(session);
 		const collections = await this.collectionsService.findCollectionsByUser(
-			userInfo.id,
+			user.getId(),
 			referer,
 			1,
 			1000
@@ -55,12 +57,11 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
 		@Query() queryDto: CollectionObjectsQueryDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<IeObject>> {
-		const userInfo = SessionHelper.getArchiefUserInfo(session);
 		const collectionObjects = await this.collectionsService.findObjectsByCollectionId(
 			collectionId,
-			userInfo.id,
+			user.getId(),
 			queryDto,
 			referer
 		);
@@ -71,12 +72,12 @@ export class CollectionsController {
 	public async createCollection(
 		@Headers('referer') referer: string,
 		@Body() createCollectionDto: CreateOrUpdateCollectionDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Collection> {
 		const collection = await this.collectionsService.create(
 			{
 				name: createCollectionDto.name,
-				user_profile_id: SessionHelper.getArchiefUserInfo(session).id,
+				user_profile_id: user.getId(),
 				is_default: false,
 			},
 			referer
@@ -89,11 +90,11 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<Collection> {
 		const collection = await this.collectionsService.update(
 			collectionId,
-			SessionHelper.getArchiefUserInfo(session).id,
+			user.getId(),
 			updateCollectionDto,
 			referer
 		);
@@ -103,12 +104,9 @@ export class CollectionsController {
 	@Delete(':collectionId')
 	public async deleteCollection(
 		@Param('collectionId') collectionId: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const affectedRows = await this.collectionsService.delete(
-			collectionId,
-			SessionHelper.getArchiefUserInfo(session).id
-		);
+		const affectedRows = await this.collectionsService.delete(collectionId, user.getId());
 		if (affectedRows > 0) {
 			return { status: 'collection has been deleted' };
 		} else {
@@ -121,11 +119,10 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
-		const user = SessionHelper.getArchiefUserInfo(session);
-		if (collection.userProfileId !== user.id) {
+		if (collection.userProfileId !== user.getId()) {
 			throw new UnauthorizedException('You can only add objects to your own collections');
 		}
 
@@ -142,11 +139,10 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectId: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
-		const user = SessionHelper.getArchiefUserInfo(session);
-		if (collection.userProfileId !== user.id) {
+		if (collection.userProfileId !== user.getId()) {
 			throw new UnauthorizedException(
 				'You can only delete objects from your own collections'
 			);
@@ -154,7 +150,7 @@ export class CollectionsController {
 		const affectedRows = await this.collectionsService.removeObjectFromCollection(
 			collectionId,
 			objectId,
-			user.id
+			user.getId()
 		);
 		if (affectedRows > 0) {
 			return { status: 'object has been deleted' };
@@ -169,18 +165,17 @@ export class CollectionsController {
 		@Param('oldCollectionId') oldCollectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
-		@Session() session: Record<string, any>
+		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject> {
 		// Check user is owner of both collections
 		const [oldCollection, newCollection] = await Promise.all([
 			this.collectionsService.findCollectionById(oldCollectionId, referer),
 			this.collectionsService.findCollectionById(newCollectionId, referer),
 		]);
-		const user = SessionHelper.getArchiefUserInfo(session);
-		if (oldCollection.userProfileId !== user.id) {
+		if (oldCollection.userProfileId !== user.getId()) {
 			throw new UnauthorizedException('You can only move objects from your own collections');
 		}
-		if (newCollection.userProfileId !== user.id) {
+		if (newCollection.userProfileId !== user.getId()) {
 			throw new UnauthorizedException('You can only move objects to your own collections');
 		}
 
@@ -192,7 +187,7 @@ export class CollectionsController {
 		await this.collectionsService.removeObjectFromCollection(
 			oldCollectionId,
 			objectSchemaIdentifier,
-			user.id
+			user.getId()
 		);
 		return collectionObject;
 	}

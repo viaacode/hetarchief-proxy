@@ -21,6 +21,7 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { Space } from '~modules/spaces/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -100,7 +101,7 @@ const mockUser: User = {
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 
@@ -274,7 +275,7 @@ describe('NotificationsService', () => {
 			const response = await notificationsService.onCreateVisit(
 				mockVisit,
 				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
-				mockUser
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(response).toHaveLength(1);
@@ -299,7 +300,11 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'createForMultipleRecipients')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onCreateVisit(mockVisit, [], mockUser);
+			const response = await notificationsService.onCreateVisit(
+				mockVisit,
+				[],
+				new SessionUserEntity(mockUser)
+			);
 
 			expect(response).toHaveLength(1);
 			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
@@ -323,7 +328,7 @@ describe('NotificationsService', () => {
 			const response = await notificationsService.onCreateVisit(
 				mockVisit,
 				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
-				mockUser
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(response).toHaveLength(1);

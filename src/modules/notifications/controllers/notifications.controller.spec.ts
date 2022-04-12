@@ -10,6 +10,7 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
@@ -166,7 +167,7 @@ describe('NotificationsController', () => {
 
 			const notifications = await notificationsController.getNotifications(
 				{ page: 1, size: 20 },
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(notifications.items.length).toEqual(2);
@@ -180,7 +181,10 @@ describe('NotificationsController', () => {
 				status: NotificationStatus.READ,
 			});
 
-			const notification = await notificationsController.markAsRead(mockNotification1.id, {});
+			const notification = await notificationsController.markAsRead(
+				mockNotification1.id,
+				new SessionUserEntity(mockUser)
+			);
 
 			expect(notification.id).toEqual(mockNotification1.id);
 			expect(notification.status).toEqual(NotificationStatus.READ);
@@ -190,7 +194,9 @@ describe('NotificationsController', () => {
 	describe('markAllAsRead', () => {
 		it('should mark all notification of a specific user as read', async () => {
 			mockNotificationsService.updateAll.mockResolvedValueOnce(5);
-			const response = await notificationsController.markAllAsRead({});
+			const response = await notificationsController.markAllAsRead(
+				new SessionUserEntity(mockUser)
+			);
 			expect(response).toEqual({ status: `updated 5 notifications`, total: 5 });
 		});
 	});
