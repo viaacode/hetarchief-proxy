@@ -17,5 +17,8 @@ mutation insertUser($newUser: users_profile_insert_input!) {
 		identities {
 			identity_provider_name
 		}
+		maintainer_users_profiles {
+			maintainer_identifier
+		}
 	}
 }

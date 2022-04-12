@@ -17,5 +17,8 @@ query getUserByIdentityId($identityId: uuid!) {
 		identities {
 			identity_provider_name
 		}
+		maintainer_users_profiles {
+			maintainer_identifier
+		}
 	}
 }

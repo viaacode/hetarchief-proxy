@@ -17,6 +17,7 @@ const mockSpacesResponse = {
 			id: '1',
 			name: 'Space Mountain',
 			image: 'http://assets-int.hetarchief.be/hetarchief/SPACE_IMAGE/image.jpg',
+			maintainerId: 'OR-rf5kf25',
 		},
 		{
 			id: '2',
@@ -34,7 +35,7 @@ const mockUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 
@@ -137,7 +138,12 @@ describe('SpacesController', () => {
 		it('should update a space', async () => {
 			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			const space = await spacesController.updateSpace('1', {}, null);
+			const space = await spacesController.updateSpace(
+				'1',
+				{},
+				null,
+				new SessionUserEntity(mockUser)
+			);
 			expect(space.id).toEqual('1');
 		});
 
@@ -159,7 +165,8 @@ describe('SpacesController', () => {
 					buffer: null,
 					stream: null,
 					destination: null,
-				}
+				},
+				new SessionUserEntity(mockUser)
 			);
 			expect(space.id).toEqual('1');
 		});
@@ -167,8 +174,30 @@ describe('SpacesController', () => {
 		it('can delete an image when set empty', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			const space = await spacesController.updateSpace('1', { image: '' }, null);
+			const space = await spacesController.updateSpace(
+				'1',
+				{ image: '' },
+				null,
+				new SessionUserEntity(mockUser)
+			);
 			expect(space.id).toEqual('1');
+		});
+
+		it('throws an UnauthorizedException when updating another maintainers space', async () => {
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
+			let error;
+			try {
+				await spacesController.updateSpace('1', {}, null, new SessionUserEntity(mockUser));
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Unauthorized',
+				statusCode: 401,
+				message: 'You are not authorized to update this visitor space',
+			});
+			mockUser.permissions.pop();
 		});
 	});
 });

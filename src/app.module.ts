@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
@@ -21,6 +22,7 @@ import { TosModule } from '~modules/tos';
 import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
+import { PermissionGuard } from '~shared/guards/permission.guard';
 import { SessionService } from '~shared/services/session.service';
 
 @Module({
@@ -49,7 +51,15 @@ import { SessionService } from '~shared/services/session.service';
 		AdminTranslationsModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, SessionService, ConfigService],
+	providers: [
+		AppService,
+		SessionService,
+		ConfigService,
+		{
+			provide: APP_GUARD,
+			useClass: PermissionGuard,
+		},
+	],
 	exports: [ConfigService],
 })
 export class AppModule {}

@@ -25,7 +25,7 @@ const archiefUser: User = {
 	groupId: mockUser.group_id,
 	groupName: 'VISITOR',
 	idp: Idp.HETARCHIEF,
-	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 };
 
 describe('UsersService', () => {
