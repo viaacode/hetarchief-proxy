@@ -26,6 +26,7 @@ export const mockUserResponse: { data: { users_profile: GqlUser[] } } = {
 						identity_provider_name: Idp.HETARCHIEF,
 					},
 				],
+				maintainer_users_profiles: [],
 			},
 		],
 	},

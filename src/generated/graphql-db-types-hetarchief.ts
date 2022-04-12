@@ -409,7 +409,7 @@ export type App_Config_Mutation_Response = {
   returning: Array<App_Config>;
 };
 
-/** on conflict condition type for table "app.config" */
+/** on_conflict condition type for table "app.config" */
 export type App_Config_On_Conflict = {
   constraint: App_Config_Constraint;
   update_columns?: Array<App_Config_Update_Column>;
@@ -553,7 +553,7 @@ export type App_Content_Block_Append_Input = {
 /** input type for inserting array relation for remote table "app.content_block" */
 export type App_Content_Block_Arr_Rel_Insert_Input = {
   data: Array<App_Content_Block_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Content_Block_On_Conflict>;
 };
 
@@ -670,7 +670,7 @@ export type App_Content_Block_Mutation_Response = {
   returning: Array<App_Content_Block>;
 };
 
-/** on conflict condition type for table "app.content_block" */
+/** on_conflict condition type for table "app.content_block" */
 export type App_Content_Block_On_Conflict = {
   constraint: App_Content_Block_Constraint;
   update_columns?: Array<App_Content_Block_Update_Column>;
@@ -998,11 +998,11 @@ export type App_Content_Label_Mutation_Response = {
 /** input type for inserting object relation for remote table "app.content_label" */
 export type App_Content_Label_Obj_Rel_Insert_Input = {
   data: App_Content_Label_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Content_Label_On_Conflict>;
 };
 
-/** on conflict condition type for table "app.content_label" */
+/** on_conflict condition type for table "app.content_label" */
 export type App_Content_Label_On_Conflict = {
   constraint: App_Content_Label_Constraint;
   update_columns?: Array<App_Content_Label_Update_Column>;
@@ -1285,7 +1285,7 @@ export type App_Content_Page_Content_Label_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "app.content_page_content_label" */
 export type App_Content_Page_Content_Label_Arr_Rel_Insert_Input = {
   data: Array<App_Content_Page_Content_Label_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Content_Page_Content_Label_On_Conflict>;
 };
 
@@ -1367,7 +1367,7 @@ export type App_Content_Page_Content_Label_Mutation_Response = {
   returning: Array<App_Content_Page_Content_Label>;
 };
 
-/** on conflict condition type for table "app.content_page_content_label" */
+/** on_conflict condition type for table "app.content_page_content_label" */
 export type App_Content_Page_Content_Label_On_Conflict = {
   constraint: App_Content_Page_Content_Label_Constraint;
   update_columns?: Array<App_Content_Page_Content_Label_Update_Column>;
@@ -1539,11 +1539,11 @@ export type App_Content_Page_Mutation_Response = {
 /** input type for inserting object relation for remote table "app.content_page" */
 export type App_Content_Page_Obj_Rel_Insert_Input = {
   data: App_Content_Page_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
 };
 
-/** on conflict condition type for table "app.content_page" */
+/** on_conflict condition type for table "app.content_page" */
 export type App_Content_Page_On_Conflict = {
   constraint: App_Content_Page_Constraint;
   update_columns?: Array<App_Content_Page_Update_Column>;
@@ -1923,7 +1923,7 @@ export type App_Navigation_Mutation_Response = {
   returning: Array<App_Navigation>;
 };
 
-/** on conflict condition type for table "app.navigation" */
+/** on_conflict condition type for table "app.navigation" */
 export type App_Navigation_On_Conflict = {
   constraint: App_Navigation_Constraint;
   update_columns?: Array<App_Navigation_Update_Column>;
@@ -2152,7 +2152,7 @@ export type App_Notification_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "app.notification" */
 export type App_Notification_Arr_Rel_Insert_Input = {
   data: Array<App_Notification_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<App_Notification_On_Conflict>;
 };
 
@@ -2268,7 +2268,7 @@ export type App_Notification_Mutation_Response = {
   returning: Array<App_Notification>;
 };
 
-/** on conflict condition type for table "app.notification" */
+/** on_conflict condition type for table "app.notification" */
 export type App_Notification_On_Conflict = {
   constraint: App_Notification_Constraint;
   update_columns?: Array<App_Notification_Update_Column>;
@@ -2542,11 +2542,11 @@ export type Lookup_App_Content_Block_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.app_content_block_type" */
 export type Lookup_App_Content_Block_Type_Obj_Rel_Insert_Input = {
   data: Lookup_App_Content_Block_Type_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Lookup_App_Content_Block_Type_On_Conflict>;
 };
 
-/** on conflict condition type for table "lookup.app_content_block_type" */
+/** on_conflict condition type for table "lookup.app_content_block_type" */
 export type Lookup_App_Content_Block_Type_On_Conflict = {
   constraint: Lookup_App_Content_Block_Type_Constraint;
   update_columns?: Array<Lookup_App_Content_Block_Type_Update_Column>;
@@ -2682,11 +2682,11 @@ export type Lookup_App_Content_Type_Mutation_Response = {
 /** input type for inserting object relation for remote table "lookup.app_content_type" */
 export type Lookup_App_Content_Type_Obj_Rel_Insert_Input = {
   data: Lookup_App_Content_Type_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Lookup_App_Content_Type_On_Conflict>;
 };
 
-/** on conflict condition type for table "lookup.app_content_type" */
+/** on_conflict condition type for table "lookup.app_content_type" */
 export type Lookup_App_Content_Type_On_Conflict = {
   constraint: Lookup_App_Content_Type_Constraint;
   update_columns?: Array<Lookup_App_Content_Type_Update_Column>;
@@ -2805,7 +2805,7 @@ export type Lookup_App_Notification_Type_Mutation_Response = {
   returning: Array<Lookup_App_Notification_Type>;
 };
 
-/** on conflict condition type for table "lookup.app_notification_type" */
+/** on_conflict condition type for table "lookup.app_notification_type" */
 export type Lookup_App_Notification_Type_On_Conflict = {
   constraint: Lookup_App_Notification_Type_Constraint;
   update_columns?: Array<Lookup_App_Notification_Type_Update_Column>;
@@ -2924,7 +2924,7 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response = {
   returning: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
 };
 
-/** on conflict condition type for table "lookup.maintainer_visitor_space_request_status" */
+/** on_conflict condition type for table "lookup.maintainer_visitor_space_request_status" */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict = {
   constraint: Lookup_Maintainer_Visitor_Space_Request_Status_Constraint;
   update_columns?: Array<Lookup_Maintainer_Visitor_Space_Request_Status_Update_Column>;
@@ -3061,7 +3061,7 @@ export type Lookup_Maintainer_Visitor_Space_Status_Mutation_Response = {
   returning: Array<Lookup_Maintainer_Visitor_Space_Status>;
 };
 
-/** on conflict condition type for table "lookup.maintainer_visitor_space_status" */
+/** on_conflict condition type for table "lookup.maintainer_visitor_space_status" */
 export type Lookup_Maintainer_Visitor_Space_Status_On_Conflict = {
   constraint: Lookup_Maintainer_Visitor_Space_Status_Constraint;
   update_columns?: Array<Lookup_Maintainer_Visitor_Space_Status_Update_Column>;
@@ -3196,7 +3196,7 @@ export type Lookup_Schema_Audience_Type_Mutation_Response = {
   returning: Array<Lookup_Schema_Audience_Type>;
 };
 
-/** on conflict condition type for table "lookup.schema_audience_type" */
+/** on_conflict condition type for table "lookup.schema_audience_type" */
 export type Lookup_Schema_Audience_Type_On_Conflict = {
   constraint: Lookup_Schema_Audience_Type_Constraint;
   update_columns?: Array<Lookup_Schema_Audience_Type_Update_Column>;
@@ -3393,11 +3393,11 @@ export type Maintainer_Content_Partner_Mutation_Response = {
 /** input type for inserting object relation for remote table "maintainer.content_partner" */
 export type Maintainer_Content_Partner_Obj_Rel_Insert_Input = {
   data: Maintainer_Content_Partner_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Content_Partner_On_Conflict>;
 };
 
-/** on conflict condition type for table "maintainer.content_partner" */
+/** on_conflict condition type for table "maintainer.content_partner" */
 export type Maintainer_Content_Partner_On_Conflict = {
   constraint: Maintainer_Content_Partner_Constraint;
   update_columns?: Array<Maintainer_Content_Partner_Update_Column>;
@@ -3560,11 +3560,11 @@ export type Maintainer_Index_Mutation_Response = {
 /** input type for inserting object relation for remote table "maintainer.index" */
 export type Maintainer_Index_Obj_Rel_Insert_Input = {
   data: Maintainer_Index_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Index_On_Conflict>;
 };
 
-/** on conflict condition type for table "maintainer.index" */
+/** on_conflict condition type for table "maintainer.index" */
 export type Maintainer_Index_On_Conflict = {
   constraint: Maintainer_Index_Constraint;
   update_columns?: Array<Maintainer_Index_Update_Column>;
@@ -3667,7 +3667,7 @@ export type Maintainer_Users_Profile_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "maintainer.users_profile" */
 export type Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
   data: Array<Maintainer_Users_Profile_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
 };
 
@@ -3739,7 +3739,7 @@ export type Maintainer_Users_Profile_Mutation_Response = {
   returning: Array<Maintainer_Users_Profile>;
 };
 
-/** on conflict condition type for table "maintainer.users_profile" */
+/** on_conflict condition type for table "maintainer.users_profile" */
 export type Maintainer_Users_Profile_On_Conflict = {
   constraint: Maintainer_Users_Profile_Constraint;
   update_columns?: Array<Maintainer_Users_Profile_Update_Column>;
@@ -3957,11 +3957,11 @@ export type Maintainer_Visitor_Space_Mutation_Response = {
 /** input type for inserting object relation for remote table "maintainer.visitor_space" */
 export type Maintainer_Visitor_Space_Obj_Rel_Insert_Input = {
   data: Maintainer_Visitor_Space_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_On_Conflict>;
 };
 
-/** on conflict condition type for table "maintainer.visitor_space" */
+/** on_conflict condition type for table "maintainer.visitor_space" */
 export type Maintainer_Visitor_Space_On_Conflict = {
   constraint: Maintainer_Visitor_Space_Constraint;
   update_columns?: Array<Maintainer_Visitor_Space_Update_Column>;
@@ -4124,7 +4124,7 @@ export type Maintainer_Visitor_Space_Request_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input = {
   data: Array<Maintainer_Visitor_Space_Request_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
 };
 
@@ -4304,7 +4304,7 @@ export type Maintainer_Visitor_Space_Request_Note_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "maintainer.visitor_space_request_note" */
 export type Maintainer_Visitor_Space_Request_Note_Arr_Rel_Insert_Input = {
   data: Array<Maintainer_Visitor_Space_Request_Note_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Note_On_Conflict>;
 };
 
@@ -4397,7 +4397,7 @@ export type Maintainer_Visitor_Space_Request_Note_Mutation_Response = {
   returning: Array<Maintainer_Visitor_Space_Request_Note>;
 };
 
-/** on conflict condition type for table "maintainer.visitor_space_request_note" */
+/** on_conflict condition type for table "maintainer.visitor_space_request_note" */
 export type Maintainer_Visitor_Space_Request_Note_On_Conflict = {
   constraint: Maintainer_Visitor_Space_Request_Note_Constraint;
   update_columns?: Array<Maintainer_Visitor_Space_Request_Note_Update_Column>;
@@ -4467,11 +4467,11 @@ export enum Maintainer_Visitor_Space_Request_Note_Update_Column {
 /** input type for inserting object relation for remote table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_Obj_Rel_Insert_Input = {
   data: Maintainer_Visitor_Space_Request_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
 };
 
-/** on conflict condition type for table "maintainer.visitor_space_request" */
+/** on_conflict condition type for table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_On_Conflict = {
   constraint: Maintainer_Visitor_Space_Request_Constraint;
   update_columns?: Array<Maintainer_Visitor_Space_Request_Update_Column>;
@@ -6521,7 +6521,7 @@ export type Object_File_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.file" */
 export type Object_File_Arr_Rel_Insert_Input = {
   data: Array<Object_File_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_File_On_Conflict>;
 };
 
@@ -6629,7 +6629,7 @@ export type Object_File_Mutation_Response = {
   returning: Array<Object_File>;
 };
 
-/** on conflict condition type for table "object.file" */
+/** on_conflict condition type for table "object.file" */
 export type Object_File_On_Conflict = {
   constraint: Object_File_Constraint;
   update_columns?: Array<Object_File_Update_Column>;
@@ -7356,11 +7356,11 @@ export type Object_Ie_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.ie" */
 export type Object_Ie_Obj_Rel_Insert_Input = {
   data: Object_Ie_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Ie_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.ie" */
+/** on_conflict condition type for table "object.ie" */
 export type Object_Ie_On_Conflict = {
   constraint: Object_Ie_Constraint;
   update_columns?: Array<Object_Ie_Update_Column>;
@@ -7890,7 +7890,7 @@ export type Object_Representation_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "object.representation" */
 export type Object_Representation_Arr_Rel_Insert_Input = {
   data: Array<Object_Representation_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
@@ -8035,11 +8035,11 @@ export type Object_Representation_Mutation_Response = {
 /** input type for inserting object relation for remote table "object.representation" */
 export type Object_Representation_Obj_Rel_Insert_Input = {
   data: Object_Representation_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Object_Representation_On_Conflict>;
 };
 
-/** on conflict condition type for table "object.representation" */
+/** on_conflict condition type for table "object.representation" */
 export type Object_Representation_On_Conflict = {
   constraint: Object_Representation_Constraint;
   update_columns?: Array<Object_Representation_Update_Column>;
@@ -10288,7 +10288,7 @@ export type Sync_Audio_Mutation_Response = {
   returning: Array<Sync_Audio>;
 };
 
-/** on conflict condition type for table "sync.audio" */
+/** on_conflict condition type for table "sync.audio" */
 export type Sync_Audio_On_Conflict = {
   constraint: Sync_Audio_Constraint;
   update_columns?: Array<Sync_Audio_Update_Column>;
@@ -10525,7 +10525,7 @@ export type Sync_Film_Mutation_Response = {
   returning: Array<Sync_Film>;
 };
 
-/** on conflict condition type for table "sync.film" */
+/** on_conflict condition type for table "sync.film" */
 export type Sync_Film_On_Conflict = {
   constraint: Sync_Film_Constraint;
   update_columns?: Array<Sync_Film_Update_Column>;
@@ -10774,7 +10774,7 @@ export type Sync_Video_Mutation_Response = {
   returning: Array<Sync_Video>;
 };
 
-/** on conflict condition type for table "sync.video" */
+/** on_conflict condition type for table "sync.video" */
 export type Sync_Video_On_Conflict = {
   constraint: Sync_Video_Constraint;
   update_columns?: Array<Sync_Video_Update_Column>;
@@ -10988,7 +10988,7 @@ export type Users_Folder_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.folder" */
 export type Users_Folder_Arr_Rel_Insert_Input = {
   data: Array<Users_Folder_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
@@ -11065,7 +11065,7 @@ export type Users_Folder_Ie_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.folder_ie" */
 export type Users_Folder_Ie_Arr_Rel_Insert_Input = {
   data: Array<Users_Folder_Ie_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Folder_Ie_On_Conflict>;
 };
 
@@ -11146,7 +11146,7 @@ export type Users_Folder_Ie_Mutation_Response = {
   returning: Array<Users_Folder_Ie>;
 };
 
-/** on conflict condition type for table "users.folder_ie" */
+/** on_conflict condition type for table "users.folder_ie" */
 export type Users_Folder_Ie_On_Conflict = {
   constraint: Users_Folder_Ie_Constraint;
   update_columns?: Array<Users_Folder_Ie_Update_Column>;
@@ -11265,11 +11265,11 @@ export type Users_Folder_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.folder" */
 export type Users_Folder_Obj_Rel_Insert_Input = {
   data: Users_Folder_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Folder_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.folder" */
+/** on_conflict condition type for table "users.folder" */
 export type Users_Folder_On_Conflict = {
   constraint: Users_Folder_Constraint;
   update_columns?: Array<Users_Folder_Update_Column>;
@@ -11475,11 +11475,11 @@ export type Users_Group_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.group" */
 export type Users_Group_Obj_Rel_Insert_Input = {
   data: Users_Group_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Group_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.group" */
+/** on_conflict condition type for table "users.group" */
 export type Users_Group_On_Conflict = {
   constraint: Users_Group_Constraint;
   update_columns?: Array<Users_Group_Update_Column>;
@@ -11547,7 +11547,7 @@ export type Users_Group_Permission_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.group_permission" */
 export type Users_Group_Permission_Arr_Rel_Insert_Input = {
   data: Array<Users_Group_Permission_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Group_Permission_On_Conflict>;
 };
 
@@ -11619,7 +11619,7 @@ export type Users_Group_Permission_Mutation_Response = {
   returning: Array<Users_Group_Permission>;
 };
 
-/** on conflict condition type for table "users.group_permission" */
+/** on_conflict condition type for table "users.group_permission" */
 export type Users_Group_Permission_On_Conflict = {
   constraint: Users_Group_Permission_Constraint;
   update_columns?: Array<Users_Group_Permission_Update_Column>;
@@ -11765,7 +11765,7 @@ export type Users_Identity_Aggregate_Order_By = {
 /** input type for inserting array relation for remote table "users.identity" */
 export type Users_Identity_Arr_Rel_Insert_Input = {
   data: Array<Users_Identity_Insert_Input>;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Identity_On_Conflict>;
 };
 
@@ -11853,7 +11853,7 @@ export type Users_Identity_Mutation_Response = {
   returning: Array<Users_Identity>;
 };
 
-/** on conflict condition type for table "users.identity" */
+/** on_conflict condition type for table "users.identity" */
 export type Users_Identity_On_Conflict = {
   constraint: Users_Identity_Constraint;
   update_columns?: Array<Users_Identity_Update_Column>;
@@ -11951,7 +11951,7 @@ export type Users_Identity_Provider_Mutation_Response = {
   returning: Array<Users_Identity_Provider>;
 };
 
-/** on conflict condition type for table "users.identity_provider" */
+/** on_conflict condition type for table "users.identity_provider" */
 export type Users_Identity_Provider_On_Conflict = {
   constraint: Users_Identity_Provider_Constraint;
   update_columns?: Array<Users_Identity_Provider_Update_Column>;
@@ -12173,11 +12173,11 @@ export type Users_Permission_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.permission" */
 export type Users_Permission_Obj_Rel_Insert_Input = {
   data: Users_Permission_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Permission_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.permission" */
+/** on_conflict condition type for table "users.permission" */
 export type Users_Permission_On_Conflict = {
   constraint: Users_Permission_Constraint;
   update_columns?: Array<Users_Permission_Update_Column>;
@@ -12589,11 +12589,11 @@ export type Users_Profile_Mutation_Response = {
 /** input type for inserting object relation for remote table "users.profile" */
 export type Users_Profile_Obj_Rel_Insert_Input = {
   data: Users_Profile_Insert_Input;
-  /** on conflict condition */
+  /** upsert condition */
   on_conflict?: InputMaybe<Users_Profile_On_Conflict>;
 };
 
-/** on conflict condition type for table "users.profile" */
+/** on_conflict condition type for table "users.profile" */
 export type Users_Profile_On_Conflict = {
   constraint: Users_Profile_Constraint;
   update_columns?: Array<Users_Profile_Update_Column>;
@@ -13037,7 +13037,7 @@ export type GetUserByIdentityIdQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByIdentityIdQuery = { __typename?: 'query_root', users_profile: Array<{ __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }> }> };
+export type GetUserByIdentityIdQuery = { __typename?: 'query_root', users_profile: Array<{ __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string }> }> };
 
 export type InsertUserIdentityMutationVariables = Exact<{
   newUserIdentity: Users_Identity_Insert_Input;
@@ -13051,7 +13051,7 @@ export type InsertUserMutationVariables = Exact<{
 }>;
 
 
-export type InsertUserMutation = { __typename?: 'mutation_root', insert_users_profile_one?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }> } | null };
+export type InsertUserMutation = { __typename?: 'mutation_root', insert_users_profile_one?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string }> } | null };
 
 export type UpdateUserProfileMutationVariables = Exact<{
   id: Scalars['uuid'];
@@ -13059,7 +13059,7 @@ export type UpdateUserProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserProfileMutation = { __typename?: 'mutation_root', update_users_profile_by_pk?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }> } | null };
+export type UpdateUserProfileMutation = { __typename?: 'mutation_root', update_users_profile_by_pk?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string }> } | null };
 
 export type FindActiveVisitByUserAndSpaceQueryVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -13186,10 +13186,10 @@ export const FindSpacesDocument = {"kind":"Document","definitions":[{"kind":"Ope
 export const GetSpaceMaintainerProfilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSpaceMaintainerProfiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceMaintainerProfilesQuery, GetSpaceMaintainerProfilesQueryVariables>;
 export const UpdateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_visitor_space_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSpaceMutation, UpdateSpaceMutationVariables>;
 export const GetTosLastUpdatedAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTosLastUpdatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"TOS_LAST_UPDATED_AT","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetTosLastUpdatedAtQuery, GetTosLastUpdatedAtQueryVariables>;
-export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
+export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
 export const InsertUserIdentityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUserIdentity"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_identity_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_identity_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertUserIdentityMutation, InsertUserIdentityMutationVariables>;
-export const InsertUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<InsertUserMutation, InsertUserMutationVariables>;
-export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+export const InsertUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<InsertUserMutation, InsertUserMutationVariables>;
+export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
 export const FindActiveVisitByUserAndSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findActiveVisitByUserAndSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrgId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindActiveVisitByUserAndSpaceQuery, FindActiveVisitByUserAndSpaceQueryVariables>;
 export const FindApprovedAlmostEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedAlmostEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_END_WARNING","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedAlmostEndedVisitsWithoutNotificationQuery, FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables>;
 export const FindApprovedEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_READING_ROOM_ENDED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"iri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"locality"}},{"kind":"Field","name":{"kind":"Name","value":"postal_code"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"telephone"}},{"kind":"Field","name":{"kind":"Name","value":"post_office_box_number"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedEndedVisitsWithoutNotificationQuery, FindApprovedEndedVisitsWithoutNotificationQueryVariables>;

@@ -20,7 +20,8 @@ export enum Permission {
 	// Collections
 	MANAGE_COLLECTIONS = 'MANAGE_COLLECTIONS',
 	// Spaces
-	UPDATE_SPACES = 'UPDATE_SPACES',
+	UPDATE_OWN_SPACE = 'UPDATE_OWN_SPACE',
+	UPDATE_ALL_SPACES = 'UPDATE_ALL_SPACES',
 	// Admin
 	EDIT_ANY_CONTENT_PAGES = 'EDIT_ANY_CONTENT_PAGES',
 	EDIT_OWN_CONTENT_PAGES = 'EDIT_OWN_CONTENT_PAGES',
@@ -43,6 +44,7 @@ export interface User {
 	groupName: string;
 	permissions: Permission[];
 	idp: Idp;
+	maintainerId?: string;
 }
 
 export interface GqlPermission {

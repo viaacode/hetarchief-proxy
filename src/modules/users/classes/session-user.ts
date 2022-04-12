@@ -9,12 +9,14 @@ export class SessionUserEntity {
 	protected id: string;
 	protected firstName: string;
 	protected lastName: string;
+	protected maintainerId: string;
 	protected permissions: Array<Permission>;
 
 	public constructor(user: User) {
 		this.id = get(user, 'id');
 		this.firstName = get(user, 'firstName');
 		this.lastName = get(user, 'lastName');
+		this.maintainerId = get(user, 'maintainerId');
 		// can be archief-user or avo-user, where permissions are stored differently
 		// merge them into 1 unified array
 		this.permissions = [
@@ -29,6 +31,10 @@ export class SessionUserEntity {
 
 	public getFullName(): string {
 		return this.firstName + ' ' + this.lastName;
+	}
+
+	public getMaintainerId(): string {
+		return this.maintainerId;
 	}
 
 	public has(permission: Permission): boolean {
@@ -52,6 +58,6 @@ export class SessionUserEntity {
 			return true;
 		}
 
-		return !permissions.some((permission) => !this.has(permission));
+		return permissions.every((permission) => this.has(permission));
 	}
 }

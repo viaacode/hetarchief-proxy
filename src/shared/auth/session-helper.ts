@@ -87,6 +87,7 @@ export class SessionHelper {
 			Permission.APPROVE_DENY_ALL_VISIT_REQUESTS,
 			Permission.APPROVE_DENY_CP_VISIT_REQUESTS,
 			Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+			Permission.UPDATE_ALL_SPACES,
 		];
 		// TODO remove until here ----------------------------------------------------------------------------------------
 
