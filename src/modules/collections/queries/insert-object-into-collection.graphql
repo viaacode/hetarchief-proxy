@@ -1,5 +1,5 @@
 mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-	insert_users_collection_ie(
+	insert_users_folder_ie(
 		objects: {
 			user_collection_id: $collectionId
 			ie_schema_identifier: $objectSchemaIdentifier

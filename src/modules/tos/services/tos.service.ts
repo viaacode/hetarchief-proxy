@@ -15,7 +15,7 @@ export class TosService {
 	/**
 	 * Adapt a tos as returned by a typical graphQl response to our internal tos data model
 	 */
-	public adapt(gqlTosValue: GetTosLastUpdatedAtQuery['cms_site_variables_by_pk']['value']): Tos {
+	public adapt(gqlTosValue: GetTosLastUpdatedAtQuery['app_config_by_pk']['value']): Tos {
 		return {
 			updatedAt: gqlTosValue,
 		};
@@ -23,7 +23,7 @@ export class TosService {
 
 	public async getTosLastUpdatedAt(): Promise<Tos> {
 		const {
-			data: { cms_site_variables_by_pk: cmsSiteVariable },
+			data: { app_config_by_pk: cmsSiteVariable },
 		} = await this.dataService.execute<GetTosLastUpdatedAtQuery>(GetTosLastUpdatedAtDocument);
 
 		const gqlTosValue = cmsSiteVariable?.value;

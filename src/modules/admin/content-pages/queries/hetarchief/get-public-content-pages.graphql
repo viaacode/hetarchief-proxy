@@ -1,5 +1,5 @@
-query getPublicContentPages($where: cms_content_bool_exp) {
-	cms_content(where: $where) {
+query getPublicContentPages($where: app_content_page_bool_exp) {
+	app_content_page(where: $where) {
 		path
 		updated_at
 	}

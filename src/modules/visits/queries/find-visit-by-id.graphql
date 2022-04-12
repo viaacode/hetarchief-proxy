@@ -1,9 +1,9 @@
 query findVisitById($id: uuid!) {
-	cp_visit(where: { id: { _eq: $id } }) {
+	maintainer_visitor_space_request(where: { id: { _eq: $id } }) {
 		id
 		cp_space_id
 		user_profile_id
-		user_profile {
+		requested_by {
 			id
 			full_name
 			first_name
@@ -15,7 +15,7 @@ query findVisitById($id: uuid!) {
 		status
 		start_date
 		end_date
-		notes(order_by: { created_at: desc }, limit: 1) {
+		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
 			id
 			note
 			profile {
@@ -25,11 +25,11 @@ query findVisitById($id: uuid!) {
 		}
 		created_at
 		updated_at
-		updater {
+		last_updated_by {
 			id
 			full_name
 		}
-		space {
+		visitor_space {
 			id
 			schema_image
 			schema_color
@@ -37,11 +37,11 @@ query findVisitById($id: uuid!) {
 			schema_description
 			schema_public_access
 			schema_service_description
-			is_published
+			status
 			published_at
 			created_at
 			updated_at
-			schema_maintainer {
+			content_partner {
 				schema_name
 				schema_identifier
 				information {

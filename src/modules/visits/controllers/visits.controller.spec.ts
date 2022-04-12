@@ -6,7 +6,10 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
+	Lookup_Schema_Audience_Type_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
@@ -112,7 +115,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	isPublished: false,
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',

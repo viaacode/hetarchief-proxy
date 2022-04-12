@@ -44,7 +44,7 @@ export class UsersService {
 		};
 	}
 
-	public groupIdToName(groupId: string): string {
+	public groupIdToName(groupId: keyof typeof GroupIdToName): string {
 		return GroupIdToName[groupId] || null;
 	}
 

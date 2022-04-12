@@ -2,11 +2,15 @@ import { Avo } from '@viaa/avo2-types';
 
 import {
 	GetContentPageByPathQuery as GetContentPageByPathQueryAvo,
+	GetContentPagesQuery as GetContentPagesQueryAvo,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
 	Lookup_Enum_Content_Types_Enum,
 } from '~generated/graphql-db-types-avo';
 import {
 	GetContentPageByPathQuery as GetContentPageByPathQueryHetArchief,
-	Lookup_Cms_Content_Type_Enum,
+	GetContentPagesQuery as GetContentPagesQueryHetArchief,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
+	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { Media } from '~modules/media/types';
 
@@ -108,14 +112,18 @@ export interface ContentPage {
 
 export type GqlContentPage =
 	| GetContentPageByPathQueryAvo['app_content'][0]
-	| GetContentPageByPathQueryHetArchief['cms_content'][0];
+	| GetContentPageByPathQueryHetArchief['app_content_page'][0]
+	| GetContentPagesQueryAvo['app_content'][0]
+	| GetContentPagesQueryHetArchief['app_content_page'][0]
+	| GetContentPagesWithBlocksQueryAvo['app_content'][0]
+	| GetContentPagesWithBlocksQueryHetArchief['app_content_page'][0];
 export type GqlContentBlock =
-	| GetContentPageByPathQueryHetArchief['cms_content'][0]['content_blocks'][0]
+	| GetContentPageByPathQueryHetArchief['app_content_page'][0]['content_blocks'][0]
 	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];
 
 export type GqlAvoUser = GetContentPageByPathQueryAvo['app_content'][0]['profile'];
 export type GqlHetArchiefUser =
-	GetContentPageByPathQueryHetArchief['cms_content'][0]['owner_profile'];
+	GetContentPageByPathQueryHetArchief['app_content_page'][0]['owner_profile'];
 export type GqlUser = GqlAvoUser | GqlHetArchiefUser;
 
 export interface ContentPageUser {
@@ -126,9 +134,9 @@ export interface ContentPageUser {
 	groupId: string | number;
 }
 
-export type ContentPageType = Lookup_Cms_Content_Type_Enum | Lookup_Enum_Content_Types_Enum;
+export type ContentPageType = Lookup_App_Content_Type_Enum | Lookup_Enum_Content_Types_Enum;
 export const ContentPageTypeValues = {
-	...Lookup_Cms_Content_Type_Enum,
+	...Lookup_App_Content_Type_Enum,
 	...Lookup_Enum_Content_Types_Enum,
 };
 
