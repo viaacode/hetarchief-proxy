@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { Lookup_Cp_Space_Status_Enum as SpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { AccessType } from '~modules/spaces/types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
@@ -30,17 +30,17 @@ export class SpacesQueryDto {
 	accessType? = undefined;
 
 	@IsArray()
-	@IsEnum(SpaceStatus, { each: true })
+	@IsEnum(Lookup_Maintainer_Visitor_Space_Status_Enum, { each: true })
 	@IsOptional()
 	@ApiPropertyOptional({
 		isArray: true,
 		description: 'Filter spaces by status',
 		default: undefined,
-		example: SpaceStatus.Active,
-		enum: SpaceStatus,
+		example: Lookup_Maintainer_Visitor_Space_Status_Enum.Active,
+		enum: Lookup_Maintainer_Visitor_Space_Status_Enum,
 	})
 	@Transform(commaSeparatedStringToArray)
-	status?: SpaceStatus[];
+	status?: Lookup_Maintainer_Visitor_Space_Status_Enum[];
 
 	@IsNumber()
 	@Type(() => Number)
@@ -68,7 +68,7 @@ export class SpacesQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'schema_maintainer.schema_name',
+		default: 'content_partner.schema_name',
 		enum: [
 			'id',
 			'schema_image',
@@ -81,11 +81,11 @@ export class SpacesQueryDto {
 			'published_at',
 			'created_at',
 			'updated_at',
-			'schema_maintainer.schema_name',
-			'schema_maintainer.schema_identifier',
+			'content_partner.schema_name',
+			'content_partner.schema_identifier',
 		],
 	})
-	orderProp? = 'schema_maintainer.schema_name';
+	orderProp? = 'content_partner.schema_name';
 
 	@IsString()
 	@Type(() => String)

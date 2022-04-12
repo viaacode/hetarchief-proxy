@@ -48,6 +48,8 @@ query getContentPages(
 		updated_at
 		user_group_ids
 		user_profile_id
+		content_width
+		user_group_ids
 		content_content_labels {
 			content_label {
 				id

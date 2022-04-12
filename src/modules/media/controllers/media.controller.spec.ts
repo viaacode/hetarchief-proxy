@@ -6,6 +6,7 @@ import { MediaService } from '../services/media.service';
 import { MediaController } from './media.controller';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -63,7 +64,9 @@ describe('MediaController', () => {
 					useValue: mockPlayerTicketService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		mediaController = module.get<MediaController>(MediaController);
 	});
@@ -125,7 +128,12 @@ describe('MediaController', () => {
 		it('should get related media items', async () => {
 			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
 			mockMediaService.getRelated.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getRelated('es-index-1', '1', '8911p09j1g');
+			const media = await mediaController.getRelated(
+				'referer',
+				'es-index-1',
+				'1',
+				'8911p09j1g'
+			);
 			expect(media.items.length).toEqual(2);
 		});
 	});
@@ -133,7 +141,7 @@ describe('MediaController', () => {
 	describe('getSimilar', () => {
 		it('should get similar media items', async () => {
 			mockMediaService.getSimilar.mockResolvedValueOnce(getMockMediaResponse());
-			const media = await mediaController.getSimilar('1', 'or-rf5kf25');
+			const media = await mediaController.getSimilar('referer', '1', 'or-rf5kf25');
 			expect(media.hits.hits.length).toEqual(2);
 		});
 	});

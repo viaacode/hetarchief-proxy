@@ -4,9 +4,20 @@ query getObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
 		meemoo_identifier
 		schema_name
 		schema_creator
+		schema_description
 		dcterms_available
 		schema_thumbnail_url
 		dcterms_format
 		schema_number_of_pages
+		schema_is_part_of
+		schema_date_published
+		schema_date_created_lower_bound
+		maintainer {
+			schema_identifier
+			schema_name
+			visitor_space {
+				id
+			}
+		}
 	}
 }

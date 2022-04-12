@@ -1,5 +1,5 @@
 query findSpaceByMaintainerIdentifier($maintainerId: String!) {
-	cp_space(where: { schema_maintainer: { schema_identifier: { _ilike: $maintainerId } } }) {
+	maintainer_visitor_space(where: { schema_maintainer_id: { _ilike: $maintainerId } }) {
 		id
 		schema_image
 		schema_color
@@ -11,7 +11,7 @@ query findSpaceByMaintainerIdentifier($maintainerId: String!) {
 		published_at
 		created_at
 		updated_at
-		schema_maintainer {
+		content_partner {
 			schema_name
 			schema_identifier
 			information {

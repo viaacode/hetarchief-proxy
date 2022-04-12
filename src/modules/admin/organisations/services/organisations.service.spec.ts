@@ -3,22 +3,26 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
+import { GetOrganisationQuery } from '~generated/graphql-db-types-avo';
+import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { Organisation } from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { DataService } from '~modules/data/services/data.service';
 
-const mockGqlHetArchiefOrganisation = {
+const mockGqlHetArchiefOrganisation: { data: GetOrganisationQueryHetArchief } = {
 	data: {
-		cp_maintainer: [
+		maintainer_content_partner: [
 			{
-				information: {
-					logo: {
-						iri: 'http://meemoo.be/some-url',
+				information: [
+					{
+						logo: {
+							iri: 'https://assets.viaa.be/images/OR-2f7jt01',
+						},
 					},
-				},
-				schema_name: 'VRT',
-				schema_identifier: 'or-639k481',
+				],
+				schema_name: 'KAAP',
+				schema_identifier: 'OR-2f7jt01',
 			},
 		],
 	},
@@ -85,7 +89,8 @@ describe('OrganisationsService', () => {
 				'or-639k481'
 			);
 			expect(organisation.logo_url).toEqual(
-				mockGqlHetArchiefOrganisation.data.cp_maintainer[0].information.logo.iri
+				mockGqlHetArchiefOrganisation.data.maintainer_content_partner[0].information[0].logo
+					.iri
 			);
 		});
 
@@ -100,11 +105,10 @@ describe('OrganisationsService', () => {
 		});
 
 		it('should return null if the organisations was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					shared_organisations: [],
-				},
-			});
+			const mockData: GetOrganisationQuery = {
+				shared_organisations: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const organisation: Organisation = await organisationsService.getOrganisation(
 				'or-639k481'
 			);

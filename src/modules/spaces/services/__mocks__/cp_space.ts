@@ -1,6 +1,6 @@
 import {
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
-	Lookup_Cp_Space_Status_Enum as SpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { GqlSpace } from '~modules/spaces/types';
 
@@ -12,11 +12,11 @@ export const mockGqlSpace: GqlSpace = {
 	schema_description: null,
 	schema_public_access: false,
 	schema_service_description: null,
-	status: SpaceStatus.Inactive,
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Active,
 	published_at: null,
 	created_at: '2022-01-19T10:25:51.320763',
 	updated_at: '2022-01-19T10:25:51.320763',
-	schema_maintainer: {
+	content_partner: {
 		schema_name: 'VRT',
 		schema_identifier: 'OR-rf5kf25',
 		information: [

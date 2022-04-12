@@ -6,9 +6,10 @@ import { CollectionsService } from '../services/collections.service';
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCollectionsResponse: IPagination<Collection> = {
 	items: [
@@ -65,6 +66,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 };
 
@@ -94,7 +97,9 @@ describe('CollectionsController', () => {
 					useValue: mockCollectionsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
 
@@ -116,7 +121,7 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionsByUser.mockResolvedValueOnce(
 				mockCollectionsResponse
 			);
-			const collections = await collectionsController.getCollections({});
+			const collections = await collectionsController.getCollections('referer', {});
 			expect(collections.items.length).toEqual(2);
 		});
 	});
@@ -127,6 +132,7 @@ describe('CollectionsController', () => {
 				mockCollectionObjectsResponse
 			);
 			const collectionObjects = await collectionsController.getCollectionObjects(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				{},
 				{}
@@ -141,6 +147,7 @@ describe('CollectionsController', () => {
 		it('should create a collection by id', async () => {
 			mockCollectionsService.create.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
 			const collection = await collectionsController.createCollection(
+				'referer',
 				{
 					name: 'test collection',
 				},
@@ -154,6 +161,7 @@ describe('CollectionsController', () => {
 		it('should update a collection by id', async () => {
 			mockCollectionsService.update.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
 			const collection = await collectionsController.updateCollection(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				{
 					name: 'test collection',
@@ -195,6 +203,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0]
 			);
 			const collectionObject = await collectionsController.addObjectToCollection(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
 				{}
@@ -214,6 +223,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.addObjectToCollection(
+					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					{}
@@ -232,6 +242,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0]
 			);
 			const collectionObject = await collectionsController.removeObjectFromCollection(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
 				{}
@@ -245,6 +256,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0]
 			);
 			const collectionObject = await collectionsController.removeObjectFromCollection(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				'non-existing-object-id',
 				{}
@@ -264,6 +276,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.removeObjectFromCollection(
+					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					{}
@@ -287,6 +300,7 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(null);
 
 			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
+				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockCollectionsResponse.items[1].id,
@@ -311,6 +325,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
+					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
@@ -338,6 +353,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
+					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,

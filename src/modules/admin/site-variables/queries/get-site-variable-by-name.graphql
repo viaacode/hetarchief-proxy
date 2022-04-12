@@ -1,0 +1,6 @@
+query getSiteVariableByName($name: String!) {
+	app_config_by_pk(name: $name) {
+		name
+		value
+	}
+}

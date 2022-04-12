@@ -8,7 +8,9 @@ import { LoginMessage, LoginResponse } from '../types';
 
 import { AuthController } from './auth.controller';
 
+import { SpacesModule } from '~modules/spaces';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,
@@ -26,9 +28,11 @@ describe('AuthController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [AuthController],
-			imports: [ConfigModule],
+			imports: [ConfigModule, SpacesModule],
 			providers: [IdpService],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		authController = module.get<AuthController>(AuthController);
 	});

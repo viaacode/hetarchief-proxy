@@ -1,10 +1,10 @@
 query findSpaces(
-	$where: cp_space_bool_exp!
+	$where: maintainer_visitor_space_bool_exp!
 	$offset: Int!
 	$limit: Int!
-	$orderBy: cp_space_order_by!
+	$orderBy: maintainer_visitor_space_order_by!
 ) {
-	cp_space(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
+	maintainer_visitor_space(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
 		id
 		schema_image
 		schema_color
@@ -16,7 +16,7 @@ query findSpaces(
 		published_at
 		created_at
 		updated_at
-		schema_maintainer {
+		content_partner {
 			schema_name
 			schema_identifier
 			information {
@@ -37,7 +37,7 @@ query findSpaces(
 			}
 		}
 	}
-	cp_space_aggregate(where: $where) {
+	maintainer_visitor_space_aggregate(where: $where) {
 		aggregate {
 			count
 		}

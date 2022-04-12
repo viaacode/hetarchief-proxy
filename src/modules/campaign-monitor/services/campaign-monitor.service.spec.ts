@@ -9,6 +9,7 @@ import { Template } from '../types';
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -29,6 +30,7 @@ const mockConfigService = {
 const getMockVisit = (): Visit => ({
 	id: '1',
 	spaceId: 'space-1',
+	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'user-1',
@@ -42,7 +44,6 @@ const getMockVisit = (): Visit => ({
 		note: 'Visit is limited to max. 2h',
 		authorName: 'Ad Ministrator',
 		createdAt: '2022-03-01T16:00:00',
-		updatedAt: '2022-03-01T16:00:00',
 	},
 	createdAt: '2022-02-01T10:00:00',
 	updatedAt: '2022-02-01T10:00:00',
@@ -67,7 +68,9 @@ describe('CampaignMonitorService', () => {
 					useValue: mockConfigService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
 	});

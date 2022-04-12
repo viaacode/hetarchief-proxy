@@ -7,9 +7,15 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import {
+	GetFileByRepresentationSchemaIdentifierQuery,
+	GetThumbnailUrlByIdQuery,
+} from '~generated/graphql-db-types-hetarchief';
+import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { PlayerTicket } from '~modules/admin/player-ticket/player-ticket.types';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -23,7 +29,7 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 			return 'http://mediaservice';
 		}
 		if (key === 'databaseApplicationType') {
-			return 'hetArchief';
+			return AvoOrHetArchief.hetArchief;
 		}
 		return key;
 	}),
@@ -34,8 +40,7 @@ const mockDataService = {
 };
 
 const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	get: jest.fn(),
-	set: jest.fn(),
+	wrap: jest.fn(),
 };
 
 const mockPlayerTicket: PlayerTicket = {
@@ -73,7 +78,9 @@ describe('PlayerTicketService', () => {
 					useValue: mockCacheManager,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		playerTicketService = module.get<PlayerTicketService>(PlayerTicketService);
 	});
@@ -113,19 +120,29 @@ describe('PlayerTicketService', () => {
 
 	describe('getEmbedUrl', () => {
 		it('returns the embedUrl for an item', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_file: [{ schema_embed_url: 'vrt/item-1' }] },
-			});
+			const mockData: GetFileByRepresentationSchemaIdentifierQuery = {
+				object_file: [{ schema_embed_url: 'vrt/item-1' }],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const url = await playerTicketService.getEmbedUrl('vrt-id');
+			expect(url).toEqual('vrt/item-1');
+		});
+
+		it('returns the embedUrl for an avo item', async () => {
+			const mockData: GetFileByRepresentationSchemaIdentifierQuery = {
+				object_file: [{ schema_embed_url: 'vrt/item-1' }],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockConfigService.get.mockResolvedValueOnce(AvoOrHetArchief.avo);
 			const url = await playerTicketService.getEmbedUrl('vrt-id');
 			expect(url).toEqual('vrt/item-1');
 		});
 
 		it('throws a not found exception if the item was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_file: [],
-				},
-			});
+			const mockData: GetFileByRepresentationSchemaIdentifierQuery = {
+				object_file: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await playerTicketService.getEmbedUrl('unknown-id');
@@ -172,36 +189,37 @@ describe('PlayerTicketService', () => {
 				.get('/TESTBEELD/keyframes_all')
 				.query(true)
 				.reply(200, mockPlayerTicket);
+
+			mockCacheManager.wrap.mockImplementationOnce(async (key, fn, options) => {
+				const ticket = await fn();
+				await options.ttl(ticket);
+				return ticket;
+			});
 			const token = await playerTicketService.getThumbnailToken('referer');
 			expect(token).toEqual('secret-jwt-token');
 		});
 
-		it('uses the fallback referer if none was set', async () => {
-			nock('http://ticketservice/')
-				.get('/TESTBEELD/keyframes_all')
-				.query({
-					app: 'OR-*',
-					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
-				})
-				.reply(200, mockPlayerTicket);
-			const token = await playerTicketService.getThumbnailToken(undefined);
-			expect(token).toEqual('secret-jwt-token');
-		});
-
-		it('returns the cached token if available', async () => {
-			mockCacheManager.get.mockResolvedValueOnce(mockPlayerTicket);
-			const token = await playerTicketService.getThumbnailToken('referer');
-			expect(token).toEqual('secret-jwt-token');
+		it('throws an InternalServerErrorException on error', async () => {
+			mockCacheManager.wrap.mockRejectedValueOnce('error');
+			let error;
+			try {
+				await playerTicketService.getThumbnailToken('referer');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.name).toEqual('InternalServerErrorException');
+			expect(error.message).toEqual('Could not get a thumbnail token');
 		});
 	});
 
 	describe('getThumbnailUrl', () => {
 		it('returns a thumbnail url', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
-			});
+			const mockData: GetThumbnailUrlByIdQuery = {
+				object_ie: [
+					{ schema_thumbnail_url: 'vrt/item-1' },
+				] as GetThumbnailUrlByIdQuery['object_ie'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const getThumbnailTokenSpy = jest
 				.spyOn(playerTicketService, 'getThumbnailToken')
 				.mockResolvedValueOnce('secret-jwt-token');
@@ -213,21 +231,35 @@ describe('PlayerTicketService', () => {
 		});
 	});
 
+	describe('resolveThumbnailUrl', () => {
+		it('does not get a token for an invalid path', async () => {
+			const getThumbnailTokenSpy = jest.spyOn(playerTicketService, 'getThumbnailToken');
+
+			const url = await playerTicketService.resolveThumbnailUrl('', 'referer');
+			expect(url).toEqual('');
+			expect(getThumbnailTokenSpy).not.toBeCalled();
+
+			getThumbnailTokenSpy.mockRestore();
+		});
+	});
+
 	describe('getThumbnailPath', () => {
 		it('returns the thumbnail url for an item', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [{ schema_thumbnail_url: 'vrt/item-1' }] },
-			});
+			const mockData: GetThumbnailUrlByIdQuery = {
+				object_ie: [
+					{ schema_thumbnail_url: 'vrt/item-1' },
+				] as GetThumbnailUrlByIdQuery['object_ie'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const url = await playerTicketService.getThumbnailPath('vrt-id');
 			expect(url).toEqual('vrt/item-1');
 		});
 
 		it('throws a notfoundexception if the item was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_ie: [],
-				},
-			});
+			const mockData: GetThumbnailUrlByIdQuery = {
+				object_ie: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await playerTicketService.getThumbnailPath('unknown-id');

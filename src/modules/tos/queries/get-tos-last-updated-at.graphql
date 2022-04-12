@@ -1,0 +1,5 @@
+query getTosLastUpdatedAt {
+	app_config_by_pk(name: "TOS_LAST_UPDATED_AT") {
+		value
+	}
+}

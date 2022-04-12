@@ -1,0 +1,23 @@
+mutation insertNotifications($objects: [app_notification_insert_input!]!) {
+	insert_app_notification(objects: $objects) {
+		returning {
+			id
+			description
+			title
+			status
+			type
+			recipient
+			visit_id
+			created_at
+			updated_at
+			visitor_space_request {
+				cp_space_id
+				visitor_space {
+					content_partner {
+						schema_identifier
+					}
+				}
+			}
+		}
+	}
+}

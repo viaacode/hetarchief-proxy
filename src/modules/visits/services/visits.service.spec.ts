@@ -1,20 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 
-import cpVisit from './__mocks__/cp_visit';
+import { mockCpVisit } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
+import {
+	FindVisitsQuery,
+	InsertVisitMutation,
+	PendingVisitCountForUserBySlugQuery,
+	UpdateVisitMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const getDefaultVisitsResponse = () => ({
+const getDefaultVisitsResponse = (): { data: FindVisitsQuery } => ({
 	data: {
-		cp_visit: [cpVisit],
-		cp_visit_aggregate: {
+		maintainer_visitor_space_request: [mockCpVisit as any],
+		maintainer_visitor_space_request_aggregate: {
 			aggregate: {
 				count: 100,
 			},
@@ -22,9 +29,25 @@ const getDefaultVisitsResponse = () => ({
 	},
 });
 
+const getDefaultVisitAggregateResponse = (): { data: PendingVisitCountForUserBySlugQuery } => ({
+	data: {
+		maintainer_visitor_space_request_aggregate: {
+			aggregate: {
+				count: 1,
+			},
+			nodes: [
+				{
+					cp_space_id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+				},
+			],
+		},
+	},
+});
+
 const mockVisit: Visit = {
-	id: '20be1bf7-aa5d-42a7-914b-3e530b04f371',
-	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	id: mockCpVisit.id,
+	spaceId: mockCpVisit.cp_space_id,
+	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -46,6 +69,24 @@ const mockVisit: Visit = {
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
+const mockVisitorSpaceRequestResponse: FindVisitsQuery = {
+	maintainer_visitor_space_request: [
+		{
+			id: '1',
+			status: 'APPROVED',
+			requested_by: {
+				full_name: 'Marie Odhiambo',
+			},
+			cp_space_id: '1',
+		},
+	] as FindVisitsQuery['maintainer_visitor_space_request'],
+	maintainer_visitor_space_request_aggregate: {
+		aggregate: {
+			count: 100,
+		},
+	},
+};
+
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
 
@@ -58,7 +99,9 @@ describe('VisitsService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		visitsService = module.get<VisitsService>(VisitsService);
 	});
@@ -73,12 +116,18 @@ describe('VisitsService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our visit interface', () => {
-			const adapted = visitsService.adapt(cpVisit);
+			const adapted = visitsService.adapt(mockCpVisit);
 			// test some sample keys
-			expect(adapted.id).toEqual('20be1bf7-aa5d-42a7-914b-3e530b04f371');
-			expect(adapted.spaceId).toEqual('65790f8f-6365-4891-8ce2-4563f360db89');
-			expect(adapted.userProfileId).toEqual('b6080152-b1e4-4094-b1ad-0f0112a00113');
-			expect(adapted.status).toEqual('PENDING');
+			expect(adapted.id).toEqual(mockCpVisit.id);
+			expect(adapted.spaceId).toEqual(mockCpVisit.cp_space_id);
+			expect(adapted.userProfileId).toEqual(mockCpVisit.user_profile_id);
+			expect(adapted.status).toEqual(mockCpVisit.status);
+		});
+
+		it('should return null when the visit does not exist', () => {
+			const adapted = visitsService.adapt(undefined);
+			// test some sample keys
+			expect(adapted).toBeNull();
 		});
 	});
 
@@ -102,22 +151,7 @@ describe('VisitsService', () => {
 
 		it('returns a paginated response with visits containing maria across all cpSpaces', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-							status: 'APPROVED',
-							user_profile: {
-								full_name: 'Marie Odhiambo',
-							},
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
+				data: mockVisitorSpaceRequestResponse,
 			});
 			const response = await visitsService.findAll(
 				{
@@ -138,22 +172,7 @@ describe('VisitsService', () => {
 
 		it('returns a paginated response with visits containing maria within one cpSpace', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-							status: 'APPROVED',
-							user_profile: {
-								full_name: 'Marie Odhiambo',
-							},
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
+				data: mockVisitorSpaceRequestResponse,
 			});
 			const response = await visitsService.findAll(
 				{
@@ -268,15 +287,19 @@ describe('VisitsService', () => {
 		it('returns a single visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findById('1');
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
+			const mockData: FindVisitsQuery = {
+				maintainer_visitor_space_request: [],
+				maintainer_visitor_space_request_aggregate: {
+					aggregate: {
+						count: 0,
+					},
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await visitsService.findById('unknown-id');
@@ -295,35 +318,56 @@ describe('VisitsService', () => {
 		it('returns the active visit for the given user and space', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
-		it('returns null if the visit was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 0,
-						},
+		it('throws a notfoundexception if the visit was not found', async () => {
+			const mockData: FindVisitsQuery = {
+				maintainer_visitor_space_request: [],
+				maintainer_visitor_space_request_aggregate: {
+					aggregate: {
+						count: 0,
 					},
 				},
-			});
-			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
-			expect(response).toBeNull();
+			let error;
+
+			try {
+				await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.response).toEqual({
+				error: 'Not Found',
+				message:
+					"No active visits for user with id 'user-1' for space with maintainer id 'space-1' found",
+				statusCode: 404,
+			});
+		});
+	});
+
+	describe('getPendingVisitCountForUserBySlug', () => {
+		it('returns the count of the pending visits for the current user in a given space', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitAggregateResponse());
+			const response = await visitsService.getPendingVisitCountForUserBySlug(
+				'user-1',
+				'space-1'
+			);
+			expect(response.count).toBe(1);
 		});
 	});
 
 	describe('create', () => {
 		it('can create a new visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					insert_cp_visit_one: {
-						id: '1',
-					},
-				},
-			});
+			const mockData: InsertVisitMutation = {
+				insert_maintainer_visitor_space_request_one: {
+					id: '1',
+				} as InsertVisitMutation['insert_maintainer_visitor_space_request_one'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await visitsService.create(
 				{
 					spaceId: 'space-1',
@@ -339,11 +383,10 @@ describe('VisitsService', () => {
 	describe('update', () => {
 		it('throws an exception if the visit request was not found', async () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
-				},
-			});
+			const mockData: UpdateVisitMutation = {
+				update_maintainer_visitor_space_request_by_pk: null,
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			let error;
 			try {
@@ -369,13 +412,13 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					startAt: new Date().toISOString(),
 					endAt: addHours(new Date(), 2).toISOString(),
@@ -383,7 +426,7 @@ describe('VisitsService', () => {
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 			findVisitSpy.mockRestore();
 		});
 
@@ -393,24 +436,24 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					status: VisitStatus.APPROVED,
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 		});
 
 		it('throws an error when you update to an invalid status', async () => {
 			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			initialVisit.data.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
 			mockDataService.execute.mockResolvedValueOnce(initialVisit);
 
 			let error;
@@ -453,7 +496,7 @@ describe('VisitsService', () => {
 				.mockResolvedValueOnce({
 					data: {
 						update_cp_visit_by_pk: {
-							id: cpVisit.id,
+							id: mockCpVisit.id,
 						},
 					},
 				})
@@ -468,14 +511,14 @@ describe('VisitsService', () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 
 			const response = await visitsService.update(
-				cpVisit.id,
+				mockCpVisit.id,
 				{
 					note: 'Test note',
 				},
 				mockUserProfileId
 			);
 
-			expect(response.id).toBe(cpVisit.id);
+			expect(response.id).toBe(mockCpVisit.id);
 			findVisitSpy.mockRestore();
 		});
 	});
@@ -526,7 +569,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 
@@ -537,7 +580,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 
@@ -548,7 +591,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(cpVisit.id);
+			expect(visits[0].id).toEqual(mockCpVisit.id);
 		});
 	});
 });

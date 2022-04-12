@@ -1,0 +1,17 @@
+mutation updateNavigationById($id: uuid!, $navigationItem: app_navigation_set_input!) {
+	update_app_navigation_by_pk(pk_columns: { id: $id }, _set: $navigationItem) {
+		id
+		created_at
+		description
+		user_group_ids
+		icon_name
+		label
+		link_target
+		placement
+		position
+		updated_at
+		content_type
+		content_path
+		tooltip
+	}
+}

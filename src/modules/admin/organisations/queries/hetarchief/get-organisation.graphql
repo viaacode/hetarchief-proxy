@@ -1,5 +1,5 @@
 query getOrganisation($id: String) {
-	cp_maintainer(where: { schema_identifier: { _eq: $id } }) {
+	maintainer_content_partner(where: { schema_identifier: { _eq: $id } }) {
 		information {
 			logo {
 				iri

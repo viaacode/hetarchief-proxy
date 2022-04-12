@@ -14,13 +14,16 @@ import {
 	AvoOrHetArchief,
 	ContentBlock,
 	ContentPage,
+	ContentPageLabel,
 	ContentPageOverviewResponse,
 	ContentPageType,
 	ContentPageUser,
 	ContentWidth,
 	FetchSearchQueryFunctionAvo,
+	GqlAvoUser,
 	GqlContentBlock,
 	GqlContentPage,
+	GqlHetArchiefUser,
 	GqlUser,
 	LabelObj,
 	MediaItemResponse,
@@ -30,9 +33,19 @@ import {
 
 import {
 	GetCollectionTileByIdDocument,
+	GetContentPagesQuery as GetContentPagesQueryAvo,
+	GetContentPagesQueryVariables as GetContentPagesQueryVariablesAvo,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
+	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesAvo,
 	GetItemByExternalIdDocument,
 	GetItemTileByIdDocument,
 } from '~generated/graphql-db-types-avo';
+import {
+	GetContentPagesQuery as GetContentPagesQueryHetArchief,
+	GetContentPagesQueryVariables as GetContentPagesQueryVariablesHetArchief,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
+	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesHetArchief,
+} from '~generated/graphql-db-types-hetarchief';
 import {
 	CONTENT_PAGE_QUERIES,
 	DEFAULT_AUDIO_STILL,
@@ -80,30 +93,46 @@ export class ContentPagesService {
 		if (!gqlContentPage) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(gqlContentPage, 'id'),
-			thumbnailPath: get(gqlContentPage, 'thumbnail_path'),
-			title: get(gqlContentPage, 'title'),
-			description: get(gqlContentPage, 'description'),
-			seoDescription: get(gqlContentPage, 'seo_description'),
-			metaDescription: get(gqlContentPage, 'meta_description'),
-			path: get(gqlContentPage, 'path'),
-			isPublic: get(gqlContentPage, 'is_public'),
-			publishedAt: get(gqlContentPage, 'published_at'),
-			publishAt: get(gqlContentPage, 'publish_at'),
-			depublishAt: get(gqlContentPage, 'depublish_at'),
-			createdAt: get(gqlContentPage, 'created_at'),
-			updatedAt: get(gqlContentPage, 'updated_at'),
-			isProtected: get(gqlContentPage, 'is_protected'),
-			contentType: get(gqlContentPage, 'content_type') as ContentPageType,
-			contentWidth: get(gqlContentPage, 'content_width') as ContentWidth,
+			id: gqlContentPage?.id,
+			thumbnailPath: gqlContentPage?.thumbnail_path,
+			title: gqlContentPage?.title,
+			description: gqlContentPage?.description,
+			seoDescription: gqlContentPage?.seo_description,
+			metaDescription: gqlContentPage?.meta_description,
+			path: gqlContentPage?.path,
+			isPublic: gqlContentPage?.is_public,
+			publishedAt: gqlContentPage?.published_at,
+			publishAt: gqlContentPage?.publish_at,
+			depublishAt: gqlContentPage?.depublish_at,
+			createdAt: gqlContentPage?.created_at,
+			updatedAt: gqlContentPage?.updated_at,
+			isProtected: gqlContentPage?.is_protected,
+			contentType: gqlContentPage?.content_type as ContentPageType,
+			contentWidth: gqlContentPage?.content_width as ContentWidth,
 			owner: this.adaptUser(
-				get(gqlContentPage, 'owner_profile') || get(gqlContentPage, 'profile')
+				(gqlContentPage as any)?.owner_profile || (gqlContentPage as any)?.profile
 			),
-			userProfileId: get(gqlContentPage, 'user_profile_id'),
-			userGroupIds: get(gqlContentPage, 'user_group_ids'),
-			contentBlocks: get(gqlContentPage, 'content_blocks', []).map(this.adaptContentBlock),
-			labels: get(gqlContentPage, 'labels'),
+			userProfileId: gqlContentPage?.user_profile_id,
+			userGroupIds: gqlContentPage?.user_group_ids,
+			contentBlocks: (
+				(gqlContentPage as any)?.content_blocks ||
+				(gqlContentPage as any)?.contentBlockssBycontentId ||
+				[]
+			).map(this.adaptContentBlock),
+			labels: (gqlContentPage?.content_content_labels || []).flatMap(
+				(labelLink): ContentPageLabel[] => {
+					return labelLink.map(
+						(labelObj): ContentPageLabel => ({
+							id: labelObj?.content_label?.id,
+							content_type: gqlContentPage?.content_type as ContentPageType,
+							label: labelObj?.content_label?.label,
+							link_to: labelObj?.content_label?.link_to,
+						})
+					);
+				}
+			),
 		};
 	}
 
@@ -111,13 +140,14 @@ export class ContentPagesService {
 		if (!contentBlock) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(contentBlock, 'id'),
-			blockType: get(contentBlock, 'blockType'),
-			createdAt: get(contentBlock, 'created_at'),
-			updatedAt: get(contentBlock, 'updated_at'),
-			position: get(contentBlock, 'position'),
-			variables: get(contentBlock, 'variables'),
+			id: contentBlock?.id,
+			blockType: contentBlock?.content_block_type,
+			createdAt: contentBlock?.created_at,
+			updatedAt: contentBlock?.updated_at,
+			position: contentBlock?.position,
+			variables: contentBlock?.variables,
 		};
 	}
 
@@ -127,14 +157,15 @@ export class ContentPagesService {
 		}
 		const mergedUser = {
 			gqlUser,
-			...get(gqlUser, 'user', {}),
-		};
+			...(gqlUser as GqlAvoUser)?.user,
+		} as unknown as GqlHetArchiefUser & GqlAvoUser & GqlAvoUser['user'];
+		/* istanbul ignore next */
 		return {
-			id: get(mergedUser, 'id'),
-			fullName: get(mergedUser, 'first_name') + ' ' + get(mergedUser, 'last_name'),
-			firstName: get(mergedUser, 'first_name'),
-			lastName: get(mergedUser, 'last_name'),
-			groupId: get(mergedUser, 'role.id') || get(mergedUser, 'group.id'),
+			id: mergedUser?.id,
+			fullName: mergedUser?.first_name + ' ' + mergedUser?.last_name,
+			firstName: mergedUser?.first_name,
+			lastName: mergedUser?.last_name,
+			groupId: mergedUser?.role.id || mergedUser?.group.id,
 		};
 	}
 
@@ -159,36 +190,48 @@ export class ContentPagesService {
 		const filters: ContentPageFiltersDto = inputQuery.filters;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const now = new Date().toISOString();
-		const contentPagesResponse = await this.dataService.execute(
+
+		const where:
+			| GetContentPagesQueryVariablesAvo['where']
+			| GetContentPagesQueryVariablesHetArchief['where']
+			| GetContentPagesWithBlocksQueryVariablesAvo['where']
+			| GetContentPagesWithBlocksQueryVariablesHetArchief['where'] = {
+			_and: [
+				{
+					// Get content pages with the selected content type
+					content_type: { _in: filters.contentTypes },
+				},
+				{
+					// Get pages that are visible to the current user
+					_or: filters.userGroupIds.map((userGroupId) => ({
+						user_group_ids: { _contains: userGroupId },
+					})),
+				},
+				...this.getLabelFilter(filters.labelIds),
+				// publish state
+				{
+					_or: [
+						{ is_public: { _eq: true } },
+						{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
+						{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
+						{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
+					],
+				},
+				{ is_deleted: { _eq: false } },
+			],
+		};
+
+		const contentPagesResponse = await this.dataService.execute<
+			| GetContentPagesQueryAvo
+			| GetContentPagesQueryHetArchief
+			| GetContentPagesWithBlocksQueryAvo
+			| GetContentPagesWithBlocksQueryHetArchief
+		>(
 			withBlocks
 				? this.queries.GetContentPagesWithBlocksDocument
 				: this.queries.GetContentPagesDocument,
 			{
-				where: {
-					_and: [
-						{
-							// Get content pages with the selected content type
-							content_type: { _in: filters.contentTypes },
-						},
-						{
-							// Get pages that are visible to the current user
-							_or: filters.userGroupIds.map((userGroupId) => ({
-								user_group_ids: { _contains: userGroupId },
-							})),
-						},
-						...this.getLabelFilter(filters.labelIds),
-						// publish state
-						{
-							_or: [
-								{ is_public: { _eq: true } },
-								{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
-								{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
-								{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
-							],
-						},
-						{ is_deleted: { _eq: false } },
-					],
-				},
+				where,
 				orderBy: { [orderProp]: orderDirection },
 				orUserGroupIds: filters.userGroupIds.map((userGroupId) => ({
 					content: { user_group_ids: { _contains: userGroupId } },
@@ -199,18 +242,35 @@ export class ContentPagesService {
 		);
 
 		const paginatedResponse = Pagination<ContentPage>({
-			items: get(contentPagesResponse, 'data.app_content', []).map(this.adaptContentPage),
+			items: (
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)?.app_content_page ||
+				[]
+			).map(this.adaptContentPage),
 			page,
 			size,
-			total: get(contentPagesResponse, 'data.cms_content_aggregate.aggregate.count', 0),
+			total:
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content_aggregate
+					.aggregate.count ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+					?.app_content_page_aggregate.aggregate.count ||
+				0,
 		});
 		return {
 			...paginatedResponse,
 			labelCounts: fromPairs(
-				get(contentPagesResponse, 'data.cms_content_labels', []).map(
-					(labelInfo: any): [number, number] => [
-						get(labelInfo, 'id'),
-						get(labelInfo, 'content_content_labels_aggregate.aggregate.count'),
+				(
+					(contentPagesResponse?.data as GetContentPagesQueryAvo).app_content_labels ||
+					(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+						.app_content_label ||
+					[]
+				).map(
+					(
+						labelInfo: GetContentPagesQueryAvo['app_content_labels'][0] &
+							GetContentPagesQueryHetArchief['app_content_label'][0]
+					): [number, number] => [
+						labelInfo?.id,
+						labelInfo?.content_content_labels_aggregate?.aggregate?.count,
 					]
 				)
 			),

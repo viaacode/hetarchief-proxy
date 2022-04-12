@@ -8,7 +8,6 @@ import {
 	Query,
 	Redirect,
 	Session,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,6 +16,7 @@ import { get, isEqual, pick } from 'lodash';
 import { getConfig } from '~config';
 
 import { HetArchiefService } from '../services/het-archief.service';
+import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
@@ -32,6 +32,7 @@ export class HetArchiefController {
 
 	constructor(
 		private hetArchiefService: HetArchiefService,
+		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
 		private configService: ConfigService
@@ -78,31 +79,20 @@ export class HetArchiefController {
 			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
 
-			// permissions check
-			const apps = get(ldapUser, 'attributes.apps', []);
-			if (
-				!apps.includes('hetarchief') &&
-				!apps.includes('admins') // TODO replace by a single value once archief 2.0 is launched
-			) {
-				// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
-				this.logger.error(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
-				);
-				throw new UnauthorizedException(
-					`User ${ldapUser.attributes.mail[0]} has no access to app 'hetarchief'`
-				);
-			}
-
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
 			);
 
+			// determine user group
+			const userGroup = await this.idpService.determineUserGroup(ldapUser);
+
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
+				groupId: userGroup,
 			};
 
 			if (!archiefUser) {
@@ -115,13 +105,21 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
-				await this.collectionsService.create({
-					is_default: true,
-					user_profile_id: archiefUser.id,
-					name: i18n.t('modules/collections/controllers___default-collection-name'),
-				});
+				await this.collectionsService.create(
+					{
+						is_default: true,
+						user_profile_id: archiefUser.id,
+						name: i18n.t('modules/collections/controllers___default-collection-name'),
+					},
+					null // referer not important here
+				);
 			} else {
-				if (!isEqual(pick(archiefUser, ['firstName', 'lastName', 'email']), userDto)) {
+				if (
+					!isEqual(
+						pick(archiefUser, ['firstName', 'lastName', 'email', 'groupId']),
+						userDto
+					)
+				) {
 					// update user
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);

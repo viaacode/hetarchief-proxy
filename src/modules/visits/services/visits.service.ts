@@ -10,20 +10,41 @@ import { addMinutes, isBefore, parseISO } from 'date-fns';
 import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
-import { GqlVisit, Note, Visit, VisitStatus, VisitTimeframe } from '../types';
+import {
+	GqlNote,
+	GqlUpdateVisit,
+	GqlVisit,
+	GqlVisitWithNotes,
+	Note,
+	Visit,
+	VisitSpaceCount,
+	VisitStatus,
+	VisitTimeframe,
+} from '../types';
 
 import {
-	FIND_ACTIVE_VISIT_BY_USER_AND_SPACE,
-	FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
-	FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
-	FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
-	FIND_VISIT_BY_ID,
-	FIND_VISITS,
-	INSERT_NOTE,
-	INSERT_VISIT,
-	UPDATE_VISIT,
-} from './queries.gql';
-
+	FindActiveVisitByUserAndSpaceDocument,
+	FindActiveVisitByUserAndSpaceQuery,
+	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
+	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	FindApprovedEndedVisitsWithoutNotificationDocument,
+	FindApprovedEndedVisitsWithoutNotificationQuery,
+	FindApprovedStartedVisitsWithoutNotificationDocument,
+	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindVisitByIdDocument,
+	FindVisitByIdQuery,
+	FindVisitsDocument,
+	FindVisitsQuery,
+	FindVisitsQueryVariables,
+	InsertNoteDocument,
+	InsertNoteMutation,
+	InsertVisitDocument,
+	InsertVisitMutation,
+	PendingVisitCountForUserBySlugDocument,
+	PendingVisitCountForUserBySlugQuery,
+	UpdateVisitDocument,
+	UpdateVisitMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -72,50 +93,57 @@ export class VisitsService {
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
-	public adapt(graphQlVisit: Partial<GqlVisit>): Visit | null {
+	public adapt(graphQlVisit: GqlVisit): Visit | null {
 		if (!graphQlVisit) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
-			id: get(graphQlVisit, 'id'),
-			spaceId: get(graphQlVisit, 'cp_space_id'),
-			spaceName: get(graphQlVisit, 'space.schema_maintainer.schema_name'),
-			spaceMail: get(
-				graphQlVisit,
-				'space.schema_maintainer.information[0].primary_site.address.email'
+			createdAt: graphQlVisit?.created_at,
+			endAt: graphQlVisit?.end_date,
+			id: graphQlVisit?.id,
+			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
+			reason: graphQlVisit?.user_reason,
+			spaceAddress: this?.adaptSpaceAddress(
+				graphQlVisit?.visitor_space?.content_partner?.information[0]?.primary_site?.address
 			),
-			spaceAddress: this.adaptSpaceAddress(
-				get(graphQlVisit, 'space.schema_maintainer.information[0].primary_site.address')
-			),
-			userProfileId: get(graphQlVisit, 'user_profile_id'),
-			timeframe: get(graphQlVisit, 'user_timeframe'),
-			reason: get(graphQlVisit, 'user_reason'),
-			status: get(graphQlVisit, 'status'),
-			startAt: get(graphQlVisit, 'start_date'),
-			endAt: get(graphQlVisit, 'end_date'),
-			note: this.adaptNotes(graphQlVisit.notes),
-			createdAt: get(graphQlVisit, 'created_at'),
-			updatedAt: get(graphQlVisit, 'updated_at'),
-			visitorName: get(graphQlVisit, 'user_profile.full_name'),
-			visitorMail: get(graphQlVisit, 'user_profile.mail'),
-			visitorId: get(graphQlVisit, 'user_profile.id'),
-			visitorFirstName: get(graphQlVisit, 'user_profile.first_name', ''),
-			visitorLastName: get(graphQlVisit, 'user_profile.last_name', ''),
-			updatedById: get(graphQlVisit, 'updater.id'),
-			updatedByName: get(graphQlVisit, 'updater.full_name'),
+			spaceId: graphQlVisit?.cp_space_id,
+			spaceMail:
+				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
+					?.address?.email,
+			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
+			spaceSlug: graphQlVisit?.visitor_space?.content_partner?.schema_identifier, // TODO switch this to the actual space slug once that column is added to the spaces table
+			spaceColor: graphQlVisit?.visitor_space?.schema_color,
+			spaceImage: graphQlVisit?.visitor_space?.schema_image,
+			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.logo?.iri,
+			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.description,
+			spaceDescription: graphQlVisit?.visitor_space?.schema_description,
+			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
+			startAt: graphQlVisit?.start_date,
+			status: graphQlVisit?.status as VisitStatus,
+			timeframe: graphQlVisit?.user_timeframe,
+			updatedAt: graphQlVisit?.updated_at,
+			updatedById: graphQlVisit?.last_updated_by?.id,
+			updatedByName: graphQlVisit?.last_updated_by?.full_name,
+			userProfileId: graphQlVisit?.user_profile_id,
+			visitorId: graphQlVisit?.requested_by?.id,
+			visitorMail: graphQlVisit?.requested_by?.mail,
+			visitorName: graphQlVisit?.requested_by?.full_name,
+			visitorFirstName: graphQlVisit?.requested_by?.first_name,
+			visitorLastName: graphQlVisit?.requested_by?.last_name,
 		};
 	}
 
-	public adaptNotes(graphQlNotes: any): Note {
+	public adaptNotes(graphQlNotes: GqlNote[]): Note {
 		if (isEmpty(graphQlNotes)) {
 			return null;
 		}
+		/* istanbul ignore next */
 		return {
 			id: graphQlNotes[0].id,
-			authorName: get(graphQlNotes[0], 'profile.full_name', null),
+			authorName: graphQlNotes[0].profile?.full_name || null,
 			note: graphQlNotes[0].note,
 			createdAt: graphQlNotes[0].created_at,
-			updatedAt: graphQlNotes[0].updated_at,
 		};
 	}
 
@@ -129,8 +157,8 @@ export class VisitsService {
 		};
 
 		const {
-			data: { insert_cp_visit_one: createdVisit },
-		} = await this.dataService.execute(INSERT_VISIT, { newVisit });
+			data: { insert_maintainer_visitor_space_request_one: createdVisit },
+		} = await this.dataService.execute<InsertVisitMutation>(InsertVisitDocument, { newVisit });
 
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
@@ -146,7 +174,7 @@ export class VisitsService {
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
 
-		const updateVisit: Partial<GqlVisit> = {
+		const updateVisit: Partial<GqlUpdateVisit> = {
 			...(startAt ? { start_date: startAt } : {}),
 			...(endAt ? { end_date: endAt } : {}),
 			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
@@ -160,14 +188,19 @@ export class VisitsService {
 
 		// Check status transition is valid
 		if (updateVisit.status) {
-			if (!this.statusTransitionAllowed(currentVisit.status, updateVisit.status)) {
+			if (
+				!this.statusTransitionAllowed(
+					currentVisit.status,
+					updateVisit.status as VisitStatus
+				)
+			) {
 				throw new UnauthorizedException(
 					`Status transition '${currentVisit.status}' -> '${updateVisit.status}' is not allowed`
 				);
 			}
 		}
 
-		await this.dataService.execute(UPDATE_VISIT, {
+		await this.dataService.execute<UpdateVisitMutation>(UpdateVisitDocument, {
 			id,
 			updateVisit,
 		});
@@ -185,8 +218,8 @@ export class VisitsService {
 		userProfileId: string
 	): Promise<boolean> {
 		const {
-			data: { insert_cp_visit_note_one: insertNote },
-		} = await this.dataService.execute(INSERT_NOTE, {
+			data: { insert_maintainer_visitor_space_request_note_one: insertNote },
+		} = await this.dataService.execute<InsertNoteMutation>(InsertNoteDocument, {
 			visitId,
 			note,
 			userProfileId,
@@ -206,17 +239,18 @@ export class VisitsService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
-		const where: any = {};
+		const where: FindVisitsQueryVariables['where'] = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
-			const filterBySpaceName = parameters.cpSpaceId
-				? []
-				: [{ space: { schema_maintainer: { schema_name: { _ilike: query } } } }];
+			const visitorSpaceFilter: FindVisitsQueryVariables['where'] = {
+				visitor_space: { content_partner: { schema_name: { _ilike: query } } },
+			};
+			const filterBySpaceName = parameters.cpSpaceId ? [] : [visitorSpaceFilter];
 
 			where._or = [
-				{ user_profile: { full_name: { _ilike: query } } },
-				{ user_profile: { mail: { _ilike: query } } },
+				{ requested_by: { full_name: { _ilike: query } } },
+				{ requested_by: { mail: { _ilike: query } } },
 				...filterBySpaceName,
 			];
 		}
@@ -262,7 +296,7 @@ export class VisitsService {
 			where.user_profile_id = { _eq: parameters.userProfileId };
 		}
 
-		const visitsResponse = await this.dataService.execute(FIND_VISITS, {
+		const visitsResponse = await this.dataService.execute<FindVisitsQuery>(FindVisitsDocument, {
 			where,
 			offset,
 			limit,
@@ -274,60 +308,102 @@ export class VisitsService {
 		});
 
 		return Pagination<Visit>({
-			items: visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit)),
+			items: visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+				this.adapt(visit)
+			),
 			page,
 			size,
-			total: visitsResponse.data.cp_visit_aggregate.aggregate.count,
+			total: visitsResponse.data.maintainer_visitor_space_request_aggregate.aggregate.count,
 		});
 	}
 
 	public async findById(id: string): Promise<Visit> {
-		const visitResponse = await this.dataService.execute(FIND_VISIT_BY_ID, { id });
+		const visitResponse = await this.dataService.execute<FindVisitByIdQuery>(
+			FindVisitByIdDocument,
+			{ id }
+		);
 
-		if (!visitResponse.data.cp_visit[0]) {
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
-		return this.adapt(visitResponse.data.cp_visit[0]);
+		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
 	}
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
 		maintainerOrgId: string
 	): Promise<Visit | null> {
-		const visitResponse = await this.dataService.execute(FIND_ACTIVE_VISIT_BY_USER_AND_SPACE, {
-			userProfileId,
-			maintainerOrgId,
-			now: new Date().toISOString(),
-		});
+		const visitResponse = await this.dataService.execute<FindActiveVisitByUserAndSpaceQuery>(
+			FindActiveVisitByUserAndSpaceDocument,
+			{
+				userProfileId,
+				maintainerOrgId,
+				now: new Date().toISOString(),
+			}
+		);
 
-		return this.adapt(visitResponse.data.cp_visit[0]);
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+			throw new NotFoundException(
+				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
+			);
+		}
+
+		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
+	}
+
+	public async getPendingVisitCountForUserBySlug(
+		userProfileId: string,
+		slug: string
+	): Promise<VisitSpaceCount> {
+		const result = await this.dataService.execute<PendingVisitCountForUserBySlugQuery>(
+			PendingVisitCountForUserBySlugDocument,
+			{
+				user: userProfileId,
+				slug,
+			}
+		);
+
+		/* istanbul ignore next */
+		return {
+			count: result?.data?.maintainer_visitor_space_request_aggregate?.aggregate?.count || 0,
+			id: result?.data?.maintainer_visitor_space_request_aggregate?.nodes?.[0]?.cp_space_id,
+		};
 	}
 
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
-		const visitsResponse = await this.dataService.execute(
-			FIND_APPROVED_STARTED_VISITS_WITHOUT_NOTIFICATION,
-			{ now: new Date().toISOString() }
+		const visitsResponse =
+			await this.dataService.execute<FindApprovedStartedVisitsWithoutNotificationQuery>(
+				FindApprovedStartedVisitsWithoutNotificationDocument,
+				{ now: new Date().toISOString() }
+			);
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
 		);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndAlmostEndedVisitsWithoutNotification() {
-		const visitsResponse = await this.dataService.execute(
-			FIND_APPROVED_ALMOST_ENDED_VISITS_WITHOUT_NOTIFICATION,
-			{
-				now: new Date().toISOString(),
-				warningDate: addMinutes(new Date(), 15).toISOString(),
-			}
+	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
+		const visitsResponse =
+			await this.dataService.execute<FindApprovedAlmostEndedVisitsWithoutNotificationQuery>(
+				FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
+				{
+					now: new Date().toISOString(),
+					warningDate: addMinutes(new Date(), 15).toISOString(),
+				}
+			);
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
 		);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 
-	async getApprovedAndEndedVisitsWithoutNotification() {
-		const visitsResponse = await this.dataService.execute(
-			FIND_APPROVED_ENDED_VISITS_WITHOUT_NOTIFICATION,
-			{ now: new Date().toISOString() }
+	public async getApprovedAndEndedVisitsWithoutNotification() {
+		const visitsResponse =
+			await this.dataService.execute<FindApprovedEndedVisitsWithoutNotificationQuery>(
+				FindApprovedEndedVisitsWithoutNotificationDocument,
+				{ now: new Date().toISOString() }
+			);
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
 		);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
 	}
 }

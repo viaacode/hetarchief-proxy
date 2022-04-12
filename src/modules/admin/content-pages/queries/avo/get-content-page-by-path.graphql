@@ -12,6 +12,7 @@ query getContentPageByPath($path: String!) {
 		is_protected
 		is_public
 		path
+		user_profile_id
 		profile {
 			id
 			user: usersByuserId {
@@ -27,6 +28,8 @@ query getContentPageByPath($path: String!) {
 		published_at
 		title
 		updated_at
+		user_group_ids
+		content_width
 		user_group_ids
 		content_content_labels {
 			content_label {

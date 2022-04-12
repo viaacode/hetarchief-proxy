@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { TranslationKey } from '../types';
 
 import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
+import { Translations } from '~modules/translations/types';
 import { UpdateResponse } from '~shared/types/types';
 
 @Injectable()
@@ -13,12 +14,16 @@ export class TranslationsService {
 
 	public async getTranslations(): Promise<Record<string, Record<string, string>>> {
 		const [frontendTranslations, backendTranslations] = await Promise.all([
-			this.siteVariablesService.getSiteVariable(TranslationKey.FRONTEND_TRANSLATIONS),
-			this.siteVariablesService.getSiteVariable(TranslationKey.BACKEND_TRANSLATIONS),
+			this.siteVariablesService.getSiteVariable<Translations>(
+				TranslationKey.FRONTEND_TRANSLATIONS
+			),
+			this.siteVariablesService.getSiteVariable<Translations>(
+				TranslationKey.BACKEND_TRANSLATIONS
+			),
 		]);
 		return {
-			'frontend-translations': frontendTranslations?.value,
-			'backend-translations': backendTranslations?.value,
+			'frontend-translations': frontendTranslations,
+			'backend-translations': backendTranslations,
 		};
 	}
 

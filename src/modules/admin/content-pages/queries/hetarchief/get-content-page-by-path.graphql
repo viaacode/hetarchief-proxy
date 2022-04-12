@@ -1,5 +1,5 @@
 query getContentPageByPath($path: String!) {
-	cms_content(where: { path: { _eq: $path }, is_deleted: { _eq: false } }) {
+	app_content_page(where: { path: { _eq: $path }, is_deleted: { _eq: false } }) {
 		content_type
 		content_width
 		created_at
@@ -12,6 +12,7 @@ query getContentPageByPath($path: String!) {
 		is_protected
 		is_public
 		path
+		user_profile_id
 		owner_profile {
 			id
 			first_name
@@ -25,6 +26,8 @@ query getContentPageByPath($path: String!) {
 		published_at
 		title
 		updated_at
+		user_group_ids
+		content_width
 		user_group_ids
 		content_content_labels {
 			content_label {

@@ -1,0 +1,56 @@
+query findNotificationsByUser(
+	$userProfileId: uuid
+	$moreRecentThan: timestamptz
+	$offset: Int
+	$limit: Int
+) {
+	app_notification(
+		where: {
+			_or: [
+				{
+					recipient: { _eq: $userProfileId }
+					created_at: { _gt: $moreRecentThan }
+					status: { _eq: "READ" }
+				}
+				{ recipient: { _eq: $userProfileId }, status: { _eq: "UNREAD" } }
+			]
+		}
+		order_by: { created_at: desc }
+		limit: $limit
+		offset: $offset
+	) {
+		id
+		description
+		title
+		status
+		type
+		recipient
+		visit_id
+		created_at
+		updated_at
+		visitor_space_request {
+			id
+			visitor_space {
+				content_partner {
+					schema_identifier
+				}
+			}
+		}
+	}
+	app_notification_aggregate(
+		where: {
+			_or: [
+				{
+					recipient: { _eq: $userProfileId }
+					created_at: { _gt: $moreRecentThan }
+					status: { _eq: "READ" }
+				}
+				{ recipient: { _eq: $userProfileId }, status: { _eq: "UNREAD" } }
+			]
+		}
+	) {
+		aggregate {
+			count
+		}
+	}
+}

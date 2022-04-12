@@ -4,15 +4,17 @@ import { Cache } from 'cache-manager';
 
 import { TranslationsService } from './translations.service';
 
-import { DataService } from '~modules/data/services/data.service';
+import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
-	execute: jest.fn(),
+const mockSiteVariablesService: Partial<Record<keyof SiteVariablesService, jest.SpyInstance>> = {
+	getSiteVariable: jest.fn(),
 };
 
 const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	get: jest.fn(),
-	set: jest.fn(),
+	wrap: ((key: string, func: () => any): any => {
+		return func();
+	}) as any,
 };
 
 const mockTranslationsResponse = {
@@ -28,21 +30,23 @@ describe('TranslationsService', () => {
 			providers: [
 				TranslationsService,
 				{
-					provide: DataService,
-					useValue: mockDataService,
+					provide: SiteVariablesService,
+					useValue: mockSiteVariablesService,
 				},
 				{
 					provide: CACHE_MANAGER,
 					useValue: mockCacheManager,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		translationsService = module.get<TranslationsService>(TranslationsService);
 	});
 
 	afterEach(() => {
-		mockDataService.execute.mockRestore();
+		mockSiteVariablesService.getSiteVariable.mockRestore();
 	});
 
 	it('services should be defined', () => {
@@ -51,18 +55,18 @@ describe('TranslationsService', () => {
 
 	describe('getTranslations', () => {
 		it('can get translations', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { cms_site_variables: [mockTranslationsResponse] },
-			});
+			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce(
+				mockTranslationsResponse.value
+			);
+			// mockCacheManager.wrap.mockResolvedValueOnce(mockTranslationsResponse.value);
 			const translations = await translationsService.getTranslations();
 
 			expect(translations).toEqual(mockTranslationsResponse.value);
 		});
 
 		it('throws an exception if no translations were set', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: { cms_site_variables: undefined },
-			});
+			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce(undefined);
+			// mockCacheManager.wrap.mockResolvedValueOnce(undefined);
 			let error;
 			try {
 				await translationsService.getTranslations();

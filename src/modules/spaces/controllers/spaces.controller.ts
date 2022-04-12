@@ -21,7 +21,7 @@ import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
-import { Lookup_Cp_Space_Status_Enum as SpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -48,7 +48,7 @@ export class SpacesController {
 		// status filter on inactive requires special permission
 		if (
 			queryDto.status &&
-			queryDto.status.includes(SpaceStatus.Inactive) &&
+			queryDto.status.includes(Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive) &&
 			!user.has(Permission.CAN_READ_ALL_SPACES)
 		) {
 			throw new UnauthorizedException(
@@ -57,7 +57,7 @@ export class SpacesController {
 		}
 		// by default only query the active spaces
 		if (!queryDto.status) {
-			queryDto.status = [SpaceStatus.Active];
+			queryDto.status = [Lookup_Maintainer_Visitor_Space_Status_Enum.Active];
 		}
 		const spaces = await this.spacesService.findAll(queryDto, user.getId());
 		return spaces;

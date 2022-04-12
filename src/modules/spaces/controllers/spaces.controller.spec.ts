@@ -4,11 +4,12 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
-import { Lookup_Cp_Space_Status_Enum as SpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSpacesResponse = {
 	items: [
@@ -31,6 +32,8 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
@@ -66,7 +69,9 @@ describe('SpacesController', () => {
 					useValue: mockAssetsService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		spacesController = module.get<SpacesController>(SpacesController);
 	});
@@ -92,7 +97,7 @@ describe('SpacesController', () => {
 			let error;
 			try {
 				await spacesController.getSpaces(
-					{ status: [SpaceStatus.Inactive] },
+					{ status: [Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive] },
 					new SessionUserEntity(undefined)
 				);
 			} catch (e) {

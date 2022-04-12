@@ -2,46 +2,30 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
+import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
-import { Permission, User } from '~modules/users/types';
+import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
+import { Group, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const graphQlUserResponse = {
-	id: '123',
-	full_name: 'Tom Testerom',
-	first_name: 'Tom',
-	last_name: 'Testerom',
-	mail: 'test@studiohypderdrive.be',
-	accepted_tos_at: '2022-02-21T14:00:00',
-	group: {
-		permissions: [
-			{
-				permission: {
-					name: Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-				},
-			},
-		],
-	},
-	identities: [
-		{
-			identity_provider_name: Idp.HETARCHIEF,
-		},
-	],
-};
+const mockUser = mockUserResponse.data.users_profile[0];
 
 const archiefUser: User = {
-	id: '123',
-	firstName: 'Tom',
-	lastName: 'Testerom',
-	fullName: 'Tom Testerom',
+	id: mockUser.id,
+	acceptedTosAt: null,
+	email: mockUser.mail,
+	firstName: mockUser.first_name,
+	lastName: mockUser.last_name,
+	fullName: mockUser.full_name,
+	groupId: mockUser.group_id,
+	groupName: 'VISITOR',
 	idp: Idp.HETARCHIEF,
-	email: 'test@studiohypderdrive.be',
-	acceptedTosAt: '2022-02-21T14:00:00',
-	permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
 };
 
 describe('UsersService', () => {
@@ -56,7 +40,9 @@ describe('UsersService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		usersService = module.get<UsersService>(UsersService);
 	});
@@ -70,25 +56,38 @@ describe('UsersService', () => {
 			const result = usersService.adapt(null);
 			expect(result).toBeNull();
 		});
+
+		it('can adapt a user object', () => {
+			const result = usersService.adapt(mockUserResponse.data.users_profile[0]);
+			expect(result).toBeDefined();
+			expect(result.email).toBeDefined();
+		});
+	});
+
+	describe('groupIdToName', () => {
+		it('should return group id', () => {
+			expect(usersService.groupIdToName(Group.MEEMOO_ADMIN)).toEqual('MEEMOO_ADMIN');
+		});
+
+		it('should return null if invalid group id', () => {
+			expect(usersService.groupIdToName('invalid' as unknown as Group)).toBeNull();
+		});
 	});
 
 	describe('getUserByIdentityId', () => {
 		it('should get a user by identity id', async () => {
 			//data.users_profile[0]
-			mockDataService.execute.mockReturnValueOnce({
-				data: { users_profile: [graphQlUserResponse] },
-			});
+			mockDataService.execute.mockReturnValueOnce(mockUserResponse);
 
 			const result = await usersService.getUserByIdentityId('123');
 			expect(result).toEqual(archiefUser);
 		});
 
 		it('throws a notfoundexception if the user was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					users_profile: [],
-				},
-			});
+			const mockData: GetUserByIdentityIdQuery = {
+				users_profile: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const user = await usersService.getUserByIdentityId('unknown-id');
 
@@ -101,12 +100,19 @@ describe('UsersService', () => {
 			// Mock insert user
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: { insert_users_profile_one: graphQlUserResponse },
+					data: {
+						insert_users_profile_one: mockUser,
+					},
 				})
 				.mockReturnValueOnce({}); // insert idp
 
 			const result = await usersService.createUserWithIdp(
-				{ firstName: 'Tom', lastName: 'Testerom', email: 'test@studiohypderdrive.be' },
+				{
+					firstName: 'Tom',
+					lastName: 'Testerom',
+					email: 'test@studiohypderdrive.be',
+					groupId: Group.CP_ADMIN,
+				},
 				Idp.HETARCHIEF,
 				'idp-1'
 			);
@@ -118,13 +124,14 @@ describe('UsersService', () => {
 		it('should update a user', async () => {
 			// Mock insert user
 			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: graphQlUserResponse },
+				data: { update_users_profile_by_pk: mockUser },
 			});
 
 			const result = await usersService.updateUser('123', {
 				firstName: 'Tom',
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
+				groupId: Group.CP_ADMIN,
 			});
 			expect(result).toEqual(archiefUser);
 		});
@@ -133,7 +140,7 @@ describe('UsersService', () => {
 	describe('updateAcceptedTos', () => {
 		it('should update if a user accepted the terms of service', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: graphQlUserResponse },
+				data: { update_users_profile_by_pk: mockUser },
 			});
 
 			const result = await usersService.updateAcceptedTos('123', {

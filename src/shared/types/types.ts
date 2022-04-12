@@ -13,6 +13,7 @@ export interface Address {
 	locality: string;
 	postOfficeBoxNumber: string;
 }
+
 export interface ContactInfo {
 	email: string;
 	telephone: string;
@@ -25,5 +26,5 @@ export interface Recipient {
 }
 
 export interface UpdateResponse {
-	affected_rows: number;
+	affectedRows: number;
 }

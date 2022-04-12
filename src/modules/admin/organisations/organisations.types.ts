@@ -13,6 +13,7 @@ export type OrganisationQueries = {
 	GetOrganisationDocument: DocumentNode;
 };
 
-export type GqlOrganisation =
-	| GetOrganisationQueryAvo['shared_organisations'][0]
-	| GetOrganisationQueryHetArchief['cp_maintainer'][0];
+export type GqlAvoOrganisation = GetOrganisationQueryAvo['shared_organisations'][0];
+export type GqlHetArchiefOrganisation =
+	GetOrganisationQueryHetArchief['maintainer_content_partner'][0];
+export type GqlOrganisation = GqlAvoOrganisation | GqlHetArchiefOrganisation;

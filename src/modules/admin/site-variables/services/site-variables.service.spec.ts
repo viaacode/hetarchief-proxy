@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { SiteVariablesService } from './site-variables.service';
 
+import {
+	GetSiteVariableByNameQuery,
+	UpdateSiteVariableByNameMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockDataService = {
@@ -31,36 +35,35 @@ describe('SiteVariablesService', () => {
 
 	describe('getSiteVariable', () => {
 		it('returns the value for a site variable', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cms_site_variables_by_pk: {
-						name: 'variable-name',
-						value: {
-							key: 'value',
-						},
+			const mockData: GetSiteVariableByNameQuery = {
+				app_config_by_pk: {
+					name: 'variable-name',
+					value: {
+						key: 'value',
 					},
 				},
-			});
-			const response = await siteVariablesService.getSiteVariable('variable-name');
-			expect(response.name).toEqual('variable-name');
-			expect(response.value.key).toEqual('value');
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const response = await siteVariablesService.getSiteVariable<Record<string, string>>(
+				'variable-name'
+			);
+			expect(response.key).toEqual('value');
 		});
 	});
 
 	describe('updateSiteVariable', () => {
 		it('can update the value for a site variable', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cms_site_variables: {
-						affected_rows: 1,
-					},
+			const mockData: UpdateSiteVariableByNameMutation = {
+				update_app_config: {
+					affected_rows: 1,
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await siteVariablesService.updateSiteVariable(
 				'variable-name',
 				'new-value'
 			);
-			expect(response).toEqual({ affected_rows: 1 });
+			expect(response).toEqual({ affectedRows: 1 });
 		});
 	});
 });

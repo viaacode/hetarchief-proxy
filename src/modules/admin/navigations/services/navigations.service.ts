@@ -6,15 +6,19 @@ import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto
 import { Navigation } from '../types';
 
 import {
-	DELETE_NAVIGATION,
-	FIND_NAVIGATION_BY_ID,
-	FIND_NAVIGATION_BY_PLACEMENT,
-	FIND_NAVIGATIONS,
-	GET_ALL_NAVIGATION_ITEMS,
-	INSERT_NAVIGATION,
-	UPDATE_NAVIGATION_BY_ID,
-} from './queries.gql';
-
+	DeleteNavigationDocument,
+	DeleteNavigationMutation,
+	FindAllNavigationItemsDocument,
+	FindAllNavigationItemsQuery,
+	FindNavigationByIdDocument,
+	FindNavigationByIdQuery,
+	FindNavigationByPlacementDocument,
+	FindNavigationByPlacementQuery,
+	InsertNavigationDocument,
+	InsertNavigationMutation,
+	UpdateNavigationByIdDocument,
+	UpdateNavigationByIdMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { GraphQlResponse } from '~modules/data/types';
 import { User } from '~modules/users/types';
@@ -28,8 +32,10 @@ export class NavigationsService {
 
 	public async createElement(navigationItem: CreateNavigationDto): Promise<Navigation> {
 		const {
-			data: { insert_cms_navigation_element_one: createdNavigation },
-		} = await this.dataService.execute(INSERT_NAVIGATION, { navigationItem });
+			data: { insert_app_navigation_one: createdNavigation },
+		} = await this.dataService.execute<InsertNavigationMutation>(InsertNavigationDocument, {
+			navigationItem,
+		});
 		this.logger.debug(`Navigation ${createdNavigation.id} created`);
 
 		return createdNavigation;
@@ -40,8 +46,14 @@ export class NavigationsService {
 		navigationItem: CreateNavigationDto
 	): Promise<Navigation> {
 		const {
-			data: { update_cms_navigation_element_by_pk: updatedNavigation },
-		} = await this.dataService.execute(UPDATE_NAVIGATION_BY_ID, { id, navigationItem });
+			data: { update_app_navigation_by_pk: updatedNavigation },
+		} = await this.dataService.execute<UpdateNavigationByIdMutation>(
+			UpdateNavigationByIdDocument,
+			{
+				id,
+				navigationItem,
+			}
+		);
 		this.logger.debug(`Navigation ${updatedNavigation.id} updated`);
 
 		return updatedNavigation;
@@ -50,9 +62,11 @@ export class NavigationsService {
 	public async deleteElement(id: string): Promise<DeleteResponse> {
 		const {
 			data: {
-				delete_cms_navigation_element: { affected_rows: affectedRows },
+				delete_app_navigation: { affected_rows: affectedRows },
 			},
-		} = await this.dataService.execute(DELETE_NAVIGATION, { id });
+		} = await this.dataService.execute<DeleteNavigationMutation>(DeleteNavigationDocument, {
+			id,
+		});
 
 		return {
 			affectedRows,
@@ -63,35 +77,47 @@ export class NavigationsService {
 		navigationsQueryDto: NavigationsQueryDto
 	): Promise<IPagination<Navigation>> {
 		const { placement } = navigationsQueryDto;
-		let navigationsResponse: GraphQlResponse;
+		let navigationsResponse: GraphQlResponse<
+			FindNavigationByPlacementQuery | FindAllNavigationItemsQuery
+		>;
 		if (placement) {
-			navigationsResponse = await this.dataService.execute(FIND_NAVIGATION_BY_PLACEMENT, {
-				placement,
-			});
+			navigationsResponse = await this.dataService.execute<FindNavigationByPlacementQuery>(
+				FindNavigationByPlacementDocument,
+				{
+					placement,
+				}
+			);
 		} else {
-			navigationsResponse = await this.dataService.execute(FIND_NAVIGATIONS);
+			navigationsResponse = await this.dataService.execute<FindAllNavigationItemsQuery>(
+				FindAllNavigationItemsDocument
+			);
 		}
 
 		return Pagination<Navigation>({
-			items: navigationsResponse.data.cms_navigation_element,
+			items: navigationsResponse.data.app_navigation,
 			page: 1,
-			size: navigationsResponse.data.cms_navigation_element_aggregate.aggregate.count,
-			total: navigationsResponse.data.cms_navigation_element_aggregate.aggregate.count,
+			size: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
+			total: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
 		});
 	}
 
 	public async findElementById(id: string): Promise<Navigation> {
-		const navigationResponse = await this.dataService.execute(FIND_NAVIGATION_BY_ID, { id });
-		if (!navigationResponse.data.cms_navigation_element[0]) {
+		const navigationResponse = await this.dataService.execute<FindNavigationByIdQuery>(
+			FindNavigationByIdDocument,
+			{ id }
+		);
+		if (!navigationResponse.data.app_navigation[0]) {
 			throw new NotFoundException();
 		}
-		return navigationResponse.data.cms_navigation_element[0];
+		return navigationResponse.data.app_navigation[0];
 	}
 
 	public async getNavigationElementsForUser(user: User): Promise<Record<string, Navigation[]>> {
 		const {
-			data: { cms_navigation_element: navigations },
-		} = await this.dataService.execute(GET_ALL_NAVIGATION_ITEMS);
+			data: { app_navigation: navigations },
+		} = await this.dataService.execute<FindAllNavigationItemsQuery>(
+			FindAllNavigationItemsDocument
+		);
 
 		// filter based on logged in / logged out
 		const allowedUserGroups = user

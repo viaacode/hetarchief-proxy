@@ -1,3 +1,10 @@
+import {
+	FindAllNavigationItemsQuery,
+	FindNavigationByIdQuery,
+	InsertNavigationMutation,
+	UpdateNavigationByIdMutation,
+} from '~generated/graphql-db-types-hetarchief';
+
 export enum ContentPickerType {
 	CONTENT_PAGE = 'CONTENT_PAGE',
 	COLLECTION = 'COLLECTION',
@@ -9,18 +16,8 @@ export enum ContentPickerType {
 	PROFILE = 'PROFILE',
 }
 
-export interface Navigation {
-	id: string;
-	label: string | null;
-	icon_name: string;
-	description: string | null;
-	user_group_ids: number[] | null;
-	content_type: ContentPickerType | null;
-	content_path: string | number | null;
-	link_target: '_blank' | '_self' | null;
-	position: number;
-	placement: string | null;
-	created_at: string;
-	updated_at: string;
-	tooltip: string | null;
-}
+export type Navigation =
+	| InsertNavigationMutation['insert_app_navigation_one']
+	| UpdateNavigationByIdMutation['update_app_navigation_by_pk']
+	| FindAllNavigationItemsQuery['app_navigation'][0]
+	| FindNavigationByIdQuery['app_navigation'][0];

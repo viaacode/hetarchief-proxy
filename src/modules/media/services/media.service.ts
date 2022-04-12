@@ -8,11 +8,13 @@ import { getConfig } from '~config';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { Media, MediaFile, Representation } from '../types';
+import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
 	GetObjectDetailBySchemaIdentifierDocument,
+	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
+	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
@@ -34,70 +36,67 @@ export class MediaService {
 		});
 	}
 
-	public adapt(graphQlObject: any): Media {
+	public adapt(graphQlObject: GqlIeObject): Media {
+		/* istanbul ignore next */
 		return {
-			schemaIdentifier: get(graphQlObject, 'schema_identifier'),
-			meemooIdentifier: get(graphQlObject, 'meemoo_identifier'),
-			premisIdentifier: get(graphQlObject, 'premis_identifier'),
-			premisRelationship: get(graphQlObject, 'premis_relationship'),
-			isPartOf: get(graphQlObject, 'schema_is_part_of'),
-			partOfArchive: get(graphQlObject, 'schema_part_of_archive'),
-			partOfEpisode: get(graphQlObject, 'schema_part_of_episode'),
-			partOfSeason: get(graphQlObject, 'schema_part_of_season'),
-			partOfSeries: get(graphQlObject, 'schema_part_of_series'),
-			maintainerId: get(graphQlObject, 'schema_maintainer[0].id'),
-			maintainerName: get(graphQlObject, 'schema_maintainer[0].label'),
+			schemaIdentifier: graphQlObject?.schema_identifier,
+			meemooIdentifier: graphQlObject?.meemoo_identifier,
+			premisIdentifier: graphQlObject?.premis_identifier,
+			premisRelationship: graphQlObject?.premis_relationship,
+			isPartOf: graphQlObject?.schema_is_part_of,
+			partOfArchive: graphQlObject?.schema_part_of_archive,
+			partOfEpisode: graphQlObject?.schema_part_of_episode,
+			partOfSeason: graphQlObject?.schema_part_of_season,
+			partOfSeries: graphQlObject?.schema_part_of_series,
+			maintainerId: graphQlObject?.maintainer?.schema_identifier,
+			maintainerName: graphQlObject?.maintainer?.schema_name,
 			contactInfo: {
-				email: get(graphQlObject, 'schema_maintainer[0].primary_site.address.email'),
-				telephone: get(
-					graphQlObject,
-					'schema_maintainer[0].primary_site.address.telephone'
-				),
+				email: graphQlObject?.maintainer?.information?.[0]?.primary_site.address?.email,
+				telephone:
+					graphQlObject?.maintainer?.information?.[0]?.primary_site?.address?.telephone,
 				address: {
-					street: get(graphQlObject, 'schema_maintainer[0].primary_site.address.street'),
-					postalCode: get(
-						graphQlObject,
-						'schema_maintainer[0].primary_site.address.postal_code'
-					),
-					locality: get(
-						graphQlObject,
-						'schema_maintainer[0].primary_site.address.locality'
-					),
-					postOfficeBoxNumber: get(
-						graphQlObject,
-						'schema_maintainer[0].primary_site.address.post_office_box_number'
-					),
+					street: graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+						?.street,
+					postalCode:
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+							?.postal_code,
+					locality:
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+							?.locality,
+					postOfficeBoxNumber:
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+							?.post_office_box_number,
 				},
 			},
-			copyrightHolder: get(graphQlObject, 'schema_copyright_holder'),
-			copyrightNotice: get(graphQlObject, 'schema_copyright_notice'),
-			durationInSeconds: get(graphQlObject, 'schema_duration_in_seconds'),
-			numberOfPages: get(graphQlObject, 'schema_number_of_pages'),
-			datePublished: get(graphQlObject, 'schema_date_published'),
-			dctermsAvailable: get(graphQlObject, 'dcterms_available'),
-			name: get(graphQlObject, 'schema_name'),
-			description: get(graphQlObject, 'schema_description'),
-			abstract: get(graphQlObject, 'schema_abstract'),
-			creator: get(graphQlObject, 'schema_creator'),
-			actor: get(graphQlObject, 'schema_actor'),
-			contributor: get(graphQlObject, 'schema_contributor'),
-			publisher: get(graphQlObject, 'schema_publisher'),
-			spatial: get(graphQlObject, 'schema_spatial'),
-			temporal: get(graphQlObject, 'schema_temporal'),
-			keywords: get(graphQlObject, 'schema_keywords'),
-			dctermsFormat: get(graphQlObject, 'dcterms_format'),
-			inLanguage: get(graphQlObject, 'schema_in_language'),
-			thumbnailUrl: get(graphQlObject, 'schema_thumbnail_url'),
-			embedUrl: get(graphQlObject, 'schema_embed_url'),
-			alternateName: get(graphQlObject, 'schema_alternate_name'),
-			duration: get(graphQlObject, 'schema_duration'),
-			license: get(graphQlObject, 'schema_license'),
-			meemooMediaObjectId: get(graphQlObject, 'meemoo_media_object_id'),
-			dateCreated: get(graphQlObject, 'schema_date_created'),
-			dateCreatedLowerBound: get(graphQlObject, 'schema_date_created_lower_bound'),
-			genre: get(graphQlObject, 'schema_genre'),
-			ebucoreObjectType: get(graphQlObject, 'ebucore_object_type'),
-			representations: this.adaptRepresentations(graphQlObject.premis_is_represented_by),
+			copyrightHolder: graphQlObject?.schema_copyright_holder,
+			copyrightNotice: graphQlObject?.schema_copyright_notice,
+			durationInSeconds: graphQlObject?.schema_duration_in_seconds,
+			numberOfPages: graphQlObject?.schema_number_of_pages,
+			datePublished: graphQlObject?.schema_date_published,
+			dctermsAvailable: graphQlObject?.dcterms_available,
+			name: graphQlObject?.schema_name,
+			description: graphQlObject?.schema_description,
+			abstract: graphQlObject?.schema_abstract,
+			creator: graphQlObject?.schema_creator,
+			actor: graphQlObject?.schema_actor,
+			contributor: graphQlObject?.schema_contributor,
+			publisher: graphQlObject?.schema_publisher,
+			// spatial: graphQlObject?.schema_spatial,
+			// temporal: graphQlObject?.schema_temporal,
+			keywords: graphQlObject?.schema_keywords,
+			dctermsFormat: graphQlObject?.dcterms_format,
+			inLanguage: graphQlObject?.schema_in_language,
+			thumbnailUrl: graphQlObject?.schema_thumbnail_url,
+			// embedUrl: graphQlObject?.schema_embed_url,
+			alternateName: graphQlObject?.schema_alternate_name,
+			duration: graphQlObject?.schema_duration,
+			license: graphQlObject?.schema_license,
+			meemooMediaObjectId: graphQlObject?.meemoo_media_object_id,
+			dateCreated: graphQlObject?.schema_date_created,
+			dateCreatedLowerBound: graphQlObject?.schema_date_created_lower_bound,
+			genre: graphQlObject?.schema_genre,
+			ebucoreObjectType: graphQlObject?.ebucore_object_type,
+			representations: this?.adaptRepresentations(graphQlObject?.premis_is_represented_by),
 		};
 	}
 
@@ -105,15 +104,17 @@ export class MediaService {
 		if (isEmpty(graphQlRepresentations)) {
 			return [];
 		}
+
+		/* istanbul ignore next */
 		return graphQlRepresentations.map((representation) => ({
-			name: get(representation, 'schema_name'),
-			alternateName: get(representation, 'schema_alternate_name'),
-			description: get(representation, 'schema_description'),
-			schemaIdentifier: get(representation, 'ie_schema_identifier'),
-			dctermsFormat: get(representation, 'dcterms_format'),
-			transcript: get(representation, 'schema_transcript'),
-			dateCreated: get(representation, 'schema_date_created'),
-			files: this.adaptFiles(representation.premis_includes),
+			name: representation?.schema_name,
+			alternateName: representation?.schema_alternate_name,
+			description: representation?.schema_description,
+			schemaIdentifier: representation?.ie_schema_identifier,
+			dctermsFormat: representation?.dcterms_format,
+			transcript: representation?.schema_transcript,
+			dateCreated: representation?.schema_date_created,
+			files: this.adaptFiles(representation?.premis_includes),
 		}));
 	}
 
@@ -121,15 +122,17 @@ export class MediaService {
 		if (isEmpty(graphQlFiles)) {
 			return [];
 		}
+
+		/* istanbul ignore next */
 		return graphQlFiles.map(
 			(file): MediaFile => ({
-				name: get(file, 'schema_name'),
-				alternateName: get(file, 'schema_alternate_name'),
-				description: get(file, 'schema_description'),
-				schemaIdentifier: get(file, 'representation_schema_identifier'),
-				ebucoreMediaType: get(file, 'ebucore_media_type'),
-				ebucoreIsMediaFragmentOf: get(file, 'ebucore_is_media_fragment_of'),
-				embedUrl: get(file, 'schema_embed_url'),
+				name: file?.schema_name,
+				alternateName: file?.schema_alternate_name,
+				description: file?.schema_description,
+				schemaIdentifier: file?.representation_schema_identifier,
+				ebucoreMediaType: file?.ebucore_media_type,
+				ebucoreIsMediaFragmentOf: file?.ebucore_is_media_fragment_of,
+				embedUrl: file?.schema_embed_url,
 			})
 		);
 	}
@@ -180,17 +183,7 @@ export class MediaService {
 	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
-		let mediaResponse;
-		try {
-			mediaResponse = await this.executeQuery(esIndex, esQuery);
-		} catch (err) {
-			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
-				// TODO remove this fallback once or-ids match between INT and local DB
-				mediaResponse = await this.executeQuery(null, esQuery);
-			} else {
-				throw err;
-			}
-		}
+		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return this.adaptESResponse(mediaResponse, referer);
 	}
@@ -202,9 +195,12 @@ export class MediaService {
 	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
-		});
+		} = await this.dataService.execute<GetObjectDetailBySchemaIdentifierQuery>(
+			GetObjectDetailBySchemaIdentifierDocument,
+			{
+				schemaIdentifier,
+			}
+		);
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
@@ -221,23 +217,43 @@ export class MediaService {
 	public async getRelated(
 		maintainerId: string,
 		schemaIdentifier: string,
-		meemooIdentifier: string
+		meemooIdentifier: string,
+		referer: string
 	): Promise<IPagination<Media>> {
-		const mediaObjects = await this.dataService.execute(GetRelatedObjectsDocument, {
-			maintainerId,
-			schemaIdentifier,
-			meemooIdentifier,
-		});
+		const mediaObjects = await this.dataService.execute<GetRelatedObjectsQuery>(
+			GetRelatedObjectsDocument,
+			{
+				maintainerId,
+				schemaIdentifier,
+				meemooIdentifier,
+			}
+		);
+
+		const adaptedItems = await Promise.all(
+			mediaObjects.data.object_ie.map(async (object: any) => {
+				const adapted = this.adapt(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer
+				);
+				return adapted;
+			})
+		);
 
 		return Pagination<Media>({
-			items: mediaObjects.data.object_ie.map((object: any) => this.adapt(object)),
+			items: adaptedItems,
 			page: 1,
 			size: mediaObjects.data.object_ie.length,
 			total: mediaObjects.data.object_ie.length,
 		});
 	}
 
-	public async getSimilar(schemaIdentifier: string, esIndex: string, limit = 4): Promise<any> {
+	public async getSimilar(
+		schemaIdentifier: string,
+		esIndex: string,
+		referer: string,
+		limit = 4
+	): Promise<any> {
 		const likeFilter = {
 			_index: esIndex,
 			_id: schemaIdentifier,
@@ -256,6 +272,7 @@ export class MediaService {
 			},
 		};
 
-		return this.executeQuery(esIndex, esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 }

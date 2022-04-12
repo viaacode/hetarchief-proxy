@@ -4,42 +4,67 @@ import { addMonths } from 'date-fns';
 import { NotificationsService } from './notifications.service';
 
 import {
+	InsertNotificationsMutation,
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
-	Lookup_Cp_Space_Status_Enum as SpaceStatus,
+	UpdateAllNotificationsForUserMutation,
+	UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
-import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import {
+	GqlCreateOrUpdateNotification,
+	GqlNotification,
+	Notification,
+	NotificationStatus,
+	NotificationType,
+} from '~modules/notifications/types';
 import { Space } from '~modules/spaces/types';
-import { Permission, User } from '~modules/users/types';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
+import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockGqlNotification1 = {
+const mockGqlNotification1: GqlNotification = {
+	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',
+	description: 'Bert2 Verhelst2 wil je leeszaal bezoeken',
+	title: 'Er is aan aanvraag om je leeszaal te bezoeken',
+	status: NotificationStatus.UNREAD,
+	type: NotificationType.NEW_VISIT_REQUEST,
+	recipient: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+	visit_id: 'b21e8536-9818-41e0-a1f6-e3596ac75320',
+	created_at: '2022-04-08T07:29:36.186644+00:00',
+	updated_at: '2022-04-08T07:29:36.186644',
+	visitor_space_request: {
+		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+		visitor_space: {
+			content_partner: {
+				schema_identifier: 'OR-1v5bc86',
+			},
+		},
+	},
+};
+
+const mockGqlNotification2: GqlNotification = {
+	id: 'b925aca7-2e57-4f8e-a46b-13625c512fc2',
 	description:
 		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
-	title: 'Je bezoek aanvraag is goedgekeurd',
-	id: 'b925aca7-2e57-4f8e-a46b-13625c512fc2',
-	status: NotificationStatus.UNREAD,
+	title: 'Je bezoek aanvraag is goedgekeurd 00',
+	status: NotificationStatus.READ,
+	type: NotificationType.VISIT_REQUEST_APPROVED,
 	recipient: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
 	created_at: '2022-02-28T17:21:58.937169+00:00',
 	updated_at: '2022-02-28T17:21:58.937169',
-	type: NotificationType.VISIT_REQUEST_APPROVED,
-};
-
-const mockGqlNotification2 = {
-	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
-	title: 'Je bezoek aanvraag is goedgekeurd',
-	id: '84056059-c9fe-409b-844e-e7ce606c6212',
-	status: NotificationStatus.UNREAD,
-	recipient: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
-	visit_id: '0fb12a25-a882-42f7-9c79-9d77839c7237',
-	created_at: '2022-02-25T17:21:58.937169+00:00',
-	updated_at: '2022-02-25T17:21:58.937169',
-	type: NotificationType.VISIT_REQUEST_APPROVED,
+	visitor_space_request: {
+		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+		visitor_space: {
+			content_partner: {
+				schema_identifier: 'OR-1v5bc86',
+			},
+		},
+	},
 };
 
 const mockGqlNotificationsResult = {
@@ -73,6 +98,8 @@ const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
@@ -80,6 +107,7 @@ const mockUser: User = {
 const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
+	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
@@ -99,7 +127,6 @@ const mockVisit: Visit = {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
 		note: 'test note',
 		createdAt: '2022-01-24T17:21:58.937169+00:00',
-		updatedAt: '2022-01-24T17:21:58.937169+00:00',
 		authorName: 'Test Testers',
 	},
 	updatedById: null,
@@ -110,8 +137,8 @@ const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description:
-		'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
+	description: null,
+	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
 	serviceDescription: null,
 	image: null,
 	color: null,
@@ -128,7 +155,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: SpaceStatus.Inactive,
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
@@ -159,7 +186,9 @@ describe('NotificationsService', () => {
 					useValue: mockCampaignMonitorService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		notificationsService = module.get<NotificationsService>(NotificationsService);
 	});
@@ -200,16 +229,17 @@ describe('NotificationsService', () => {
 
 	describe('create', () => {
 		it('can create a new notification', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					insert_app_notification: {
-						returning: [mockGqlNotification1],
-					},
+			const mockData: InsertNotificationsMutation = {
+				insert_app_notification: {
+					returning: [mockGqlNotification1],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
-			const response = await notificationsService.create([mockNotification]);
+			const response = await notificationsService.create([
+				mockNotification as Partial<GqlCreateOrUpdateNotification>,
+			]);
 			expect(response[0].id).toBe(mockGqlNotification1.id);
 		});
 	});
@@ -224,7 +254,7 @@ describe('NotificationsService', () => {
 			const { id, created_at, updated_at, recipient, ...createNotification } =
 				mockGqlNotification1;
 			const response = await notificationsService.createForMultipleRecipients(
-				createNotification,
+				createNotification as Partial<GqlCreateOrUpdateNotification>,
 				[recipient, recipient]
 			);
 			expect(response).toHaveLength(2);
@@ -330,32 +360,38 @@ describe('NotificationsService', () => {
 
 	describe('update', () => {
 		it('should update a notification', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						returning: [mockGqlNotification1],
-					},
+			const mockData: UpdateNotificationMutation = {
+				update_app_notification: {
+					returning: [mockGqlNotification1],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
-			const response = await notificationsService.update(id, mockUser.id, mockNotification);
+			const response = await notificationsService.update(
+				id,
+				mockUser.id,
+				mockNotification as Partial<GqlCreateOrUpdateNotification>
+			);
 			expect(response.id).toBe(mockGqlNotification1.id);
 		});
 
 		it('should not update a notification if you are not the recipient', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						returning: [],
-					},
+			const mockData: UpdateNotificationMutation = {
+				update_app_notification: {
+					returning: [],
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			let error;
 			try {
-				await notificationsService.update(id, mockUser.id, mockNotification);
+				await notificationsService.update(
+					id,
+					mockUser.id,
+					mockNotification as Partial<GqlCreateOrUpdateNotification>
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -369,18 +405,17 @@ describe('NotificationsService', () => {
 
 	describe('updateAll', () => {
 		it('can update all notifications of a specific user', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_app_notification: {
-						affectedRows: 5,
-					},
+			const mockData: UpdateAllNotificationsForUserMutation = {
+				update_app_notification: {
+					affected_rows: 5,
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(
 				mockUser.id,
-				mockNotification
+				mockNotification as Partial<GqlCreateOrUpdateNotification>
 			);
 			expect(affectedRows).toBe(5);
 		});

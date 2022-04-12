@@ -1,7 +1,7 @@
 query findSpaceByCpAdminId($cpAdminId: uuid!) {
-	cp_space(
+	maintainer_visitor_space(
 		where: {
-			schema_maintainer: {
+			content_partner: {
 				maintainer_users_profiles: { users_profile_id: { _eq: $cpAdminId } }
 			}
 		}
@@ -17,7 +17,7 @@ query findSpaceByCpAdminId($cpAdminId: uuid!) {
 		published_at
 		created_at
 		updated_at
-		schema_maintainer {
+		content_partner {
 			schema_name
 			schema_identifier
 			information {

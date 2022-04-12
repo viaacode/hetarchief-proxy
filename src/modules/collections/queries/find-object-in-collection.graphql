@@ -1,19 +1,30 @@
 query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
-	users_collection_ie(
+	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $collectionId }
 			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
 		}
 	) {
 		ie {
-			meemoo_identifier
 			schema_identifier
+			meemoo_identifier
 			schema_name
 			schema_creator
+			schema_description
 			dcterms_available
 			schema_thumbnail_url
 			dcterms_format
 			schema_number_of_pages
+			schema_is_part_of
+			schema_date_published
+			schema_date_created_lower_bound
+			maintainer {
+				schema_identifier
+				schema_name
+				visitor_space {
+					id
+				}
+			}
 		}
 		created_at
 	}

@@ -82,7 +82,8 @@ export class SessionService {
 			sessionConfig.store = new redisStore({ client: redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
-		} else {
+		} else if (process.platform !== 'win32') {
+			// Windows doesn't handle multithreaded file access very well
 			sessionConfig.store = new FileStore({});
 			this.logger.log('isDevelopment: File Store ready');
 		}

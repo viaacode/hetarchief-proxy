@@ -1,5 +1,5 @@
 mutation deleteCollection($collectionId: uuid, $userProfileId: uuid) {
-	delete_users_collection(
+	delete_users_folder(
 		where: { id: { _eq: $collectionId }, user_profile_id: { _eq: $userProfileId } }
 	) {
 		affected_rows
