@@ -41,10 +41,11 @@ export class UsersService {
 				(permData: GqlPermissionData) => permData.permission.name as Permission
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
+			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
 		};
 	}
 
-	public groupIdToName(groupId: string): string {
+	public groupIdToName(groupId: keyof typeof GroupIdToName): string {
 		return GroupIdToName[groupId] || null;
 	}
 

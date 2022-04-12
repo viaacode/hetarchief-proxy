@@ -16,7 +16,7 @@ export const mockUserResponse: { data: { users_profile: GqlUser[] } } = {
 					permissions: [
 						{
 							permission: {
-								name: Permission.CAN_READ_ALL_VISIT_REQUESTS,
+								name: Permission.READ_ALL_VISIT_REQUESTS,
 							},
 						},
 					],
@@ -26,6 +26,7 @@ export const mockUserResponse: { data: { users_profile: GqlUser[] } } = {
 						identity_provider_name: Idp.HETARCHIEF,
 					},
 				],
+				maintainer_users_profiles: [],
 			},
 		],
 	},

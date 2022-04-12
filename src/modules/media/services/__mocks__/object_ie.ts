@@ -1,4 +1,6 @@
-export default {
+import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
+
+export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 	data: {
 		object_ie: [
 			{
@@ -12,25 +14,26 @@ export default {
 				schema_part_of_episode: null,
 				schema_part_of_season: null,
 				schema_part_of_series: ['Durf te vragen'],
-				schema_maintainer_id: 'OR-rf5kf25',
 				schema_copyright_holder: 'vrt',
 				schema_copyright_notice:
 					'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
-				schema_maintainer: [
-					{
-						id: 'OR-rf5kf25',
-						primary_site: {
-							address: {
-								email: null,
-								locality: 'Brussel',
-								postal_code: '1043',
-								street: 'Auguste Reyerslaan 52',
-								telephone: null,
-								post_office_box_number: null,
+				maintainer: {
+					schema_identifier: 'OR-rf5kf25',
+					information: [
+						{
+							primary_site: {
+								address: {
+									email: null,
+									locality: 'Brussel',
+									postal_code: '1043',
+									street: 'Auguste Reyerslaan 52',
+									telephone: null,
+									post_office_box_number: null,
+								},
 							},
 						},
-					},
-				],
+					],
+				},
 				schema_duration_in_seconds: null,
 				schema_number_of_pages: null,
 				schema_date_published: '2020-09-01',
@@ -46,8 +49,8 @@ export default {
 				schema_actor: null,
 				schema_contributor: null,
 				schema_publisher: null,
-				schema_spatial: null,
-				schema_temporal: null,
+				schema_spatial_coverage: null,
+				schema_temporal_coverage: null,
 				schema_keywords: [
 					'INTERVIEW',
 					'ZIEKTE',
@@ -66,8 +69,6 @@ export default {
 				schema_in_language: null,
 				schema_thumbnail_url:
 					'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-				schema_embed_url:
-					'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
 				schema_alternate_name: null,
 				schema_duration: '00:39:52',
 				schema_license: null,
@@ -85,11 +86,8 @@ export default {
 						dcterms_format: 'mp4',
 						schema_transcript: null,
 						schema_date_created: null,
-						id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
 						premis_includes: [
 							{
-								schema_identifier:
-									'https://archief-media.viaa.be/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
 								schema_name: 'browse.mp4',
 								schema_alternate_name: '8911p09j1g.MXF',
 								schema_description: null,

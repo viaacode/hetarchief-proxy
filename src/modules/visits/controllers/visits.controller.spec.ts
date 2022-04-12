@@ -6,7 +6,10 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import { Lookup_Schema_Audience_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import {
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
+	Lookup_Schema_Audience_Type_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
@@ -82,7 +85,11 @@ const mockUser: User = {
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+	permissions: [
+		Permission.READ_ALL_VISIT_REQUESTS,
+		Permission.CREATE_VISIT_REQUEST,
+		Permission.UPDATE_VISIT_REQUEST,
+	],
 	idp: Idp.HETARCHIEF,
 };
 
@@ -108,7 +115,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	isPublished: false,
+	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
@@ -188,7 +195,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+					permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 				})
 			);
 
@@ -203,7 +210,7 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+					permissions: [Permission.READ_CP_VISIT_REQUESTS],
 				})
 			);
 
@@ -220,7 +227,7 @@ describe('VisitsController', () => {
 					null,
 					new SessionUserEntity({
 						...mockUser,
-						permissions: [Permission.CAN_READ_CP_VISIT_REQUESTS],
+						permissions: [Permission.READ_CP_VISIT_REQUESTS],
 					})
 				);
 			} catch (err) {
@@ -233,29 +240,6 @@ describe('VisitsController', () => {
 				error: 'Not Found',
 			});
 		});
-
-		it('should throw an unauthorized error for regular visitors', async () => {
-			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-
-			let error;
-			try {
-				await visitsController.getVisits(
-					null,
-					new SessionUserEntity({
-						...mockUser,
-						permissions: [],
-					})
-				);
-			} catch (err) {
-				error = err;
-			}
-
-			expect(error?.response).toEqual({
-				error: 'Unauthorized',
-				message: 'You do not have the right permissions to call this route',
-				statusCode: 401,
-			});
-		});
 	});
 
 	describe('getPersonalVisits', () => {
@@ -266,34 +250,11 @@ describe('VisitsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
 				})
 			);
 
 			expect(visits).toEqual(mockVisitsResponse);
-		});
-
-		it('should throw an error if user does not have the correct permission', async () => {
-			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-
-			let error;
-			try {
-				await visitsController.getPersonalVisits(
-					null,
-					new SessionUserEntity({
-						...mockUser,
-						permissions: [],
-					})
-				);
-			} catch (err) {
-				error = err;
-			}
-
-			expect(error.response).toEqual({
-				statusCode: 401,
-				message: 'You do not have the right permissions to call this route',
-				error: 'Unauthorized',
-			});
 		});
 	});
 
@@ -308,9 +269,10 @@ describe('VisitsController', () => {
 	describe('getActiveVisitForUserAndSpace', () => {
 		it('should return the active visit for the current user', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
-			const visit = await visitsController.getActiveVisitForUserAndSpace('space-1', {
-				archiefUserInfo: { id: 'user-1' },
-			});
+			const visit = await visitsController.getActiveVisitForUserAndSpace(
+				'space-1',
+				new SessionUserEntity(mockUser)
+			);
 			expect(visit).toEqual(mockVisit1);
 		});
 	});
@@ -318,9 +280,10 @@ describe('VisitsController', () => {
 	describe('getPendingVisitCountForUserBySlug', () => {
 		it('should return a count of the pending visits for the current user in a given space', async () => {
 			mockVisitsService.getPendingVisitCountForUserBySlug.mockResolvedValueOnce(mockCount);
-			const visit = await visitsController.getPendingVisitCountForUserBySlug('space-1', {
-				archiefUserInfo: { id: 'user-1' },
-			});
+			const visit = await visitsController.getPendingVisitCountForUserBySlug(
+				'space-1',
+				new SessionUserEntity(mockUser)
+			);
 			expect(visit).toEqual(mockCount);
 		});
 	});
@@ -343,7 +306,7 @@ describe('VisitsController', () => {
 					timeframe: 'asap',
 					acceptedTos: true,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);
@@ -374,7 +337,7 @@ describe('VisitsController', () => {
 						timeframe: 'asap',
 						acceptedTos: false,
 					},
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (err) {
 				error = err;
@@ -408,12 +371,52 @@ describe('VisitsController', () => {
 					endAt: addHours(new Date(), 2).toISOString(),
 					status: VisitStatus.APPROVED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);
 			sessionHelperSpy.mockRestore();
 			mockNotificationsService.create.mockClear();
+		});
+
+		it('should throw an exception when a visitor tries to update another ones visit', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			let error;
+			try {
+				await visitsController.update(
+					'space-1',
+					{
+						status: VisitStatus.CANCELLED_BY_VISITOR,
+					},
+					new SessionUserEntity({
+						...mockUser,
+						permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
+					})
+				);
+			} catch (e) {
+				error = e;
+			}
+
+			expect(error.message).toEqual(
+				'You do not have the right permissions to call this route'
+			);
+		});
+
+		it('a visitor can cancel his own visit requests', async () => {
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			const visit = await visitsController.update(
+				'space-1',
+				{
+					status: VisitStatus.CANCELLED_BY_VISITOR,
+				},
+				new SessionUserEntity({
+					...mockUser,
+					id: mockVisit1.userProfileId,
+					permissions: [Permission.CANCEL_OWN_VISIT_REQUEST],
+				})
+			);
+			expect(visit).toEqual(mockVisit1);
 		});
 
 		it('should update a visit status: approved', async () => {
@@ -428,7 +431,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.APPROVED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(1);
@@ -448,7 +451,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.DENIED,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
@@ -468,7 +471,7 @@ describe('VisitsController', () => {
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 
 			expect(visit).toEqual(mockVisit1);

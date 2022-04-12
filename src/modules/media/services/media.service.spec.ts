@@ -5,11 +5,12 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import objectIe from './__mocks__/object_ie';
 import { MediaService } from './media.service';
 
+import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
+import { mockObjectIe } from '~modules/media/services/__mocks__/object_ie';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -41,7 +42,7 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getThumbnailPath: jest.fn(),
 };
 
-const mockObjectSchemaIdentifier = objectIe.data.object_ie[0].schema_identifier;
+const mockObjectSchemaIdentifier = mockObjectIe.data.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -125,28 +126,16 @@ describe('MediaService', () => {
 			expect(response.hits.hits.length).toBe(2);
 		});
 
-		// TODO re-enable this test once the or-ids of the maintainers are the same between local development DB and the elasticsearch INT
-		// it('returns a 404 not found if the index is unknown', async () => {
-		// 	nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
-		// 	let error;
-		// 	try {
-		// 		await mediaService.findAll({}, 'my-index');
-		// 	} catch (e) {
-		// 		error = e.response;
-		// 	}
-		// 	expect(error).toEqual({ message: 'Not Found', statusCode: 404 });
-		// });
-
-		it('returns the es response from the main _search endpoint if the index is not found (TEMP FOR TESTING)', async () => {
-			nock('http://elasticsearch/')
-				.post('/my-index/_search')
-				.reply(404, {
-					error: { type: 'index_not_found_exception' },
-				});
-			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
-			const response = await mediaService.findAll({}, 'my-index', 'referer');
-			expect(response.hits.total.value).toBe(2);
-			expect(response.hits.hits.length).toBe(2);
+		it('returns a 404 not found if the index is unknown', async () => {
+			nock('http://elasticsearch/').post('/my-index/_search').reply(404, 'not found');
+			let error;
+			try {
+				await mediaService.findAll({}, 'my-index', 'referer');
+			} catch (e) {
+				error = e.response;
+			}
+			expect(error.body).toEqual('not found');
+			expect(error.statusCode).toEqual(404);
 		});
 
 		it('throws an exception when a non-404 error occurs', async () => {
@@ -163,7 +152,7 @@ describe('MediaService', () => {
 
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
-			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
 			const response = await mediaService.findBySchemaIdentifier(
 				mockObjectSchemaIdentifier,
 				'referer'
@@ -177,7 +166,7 @@ describe('MediaService', () => {
 		});
 
 		it('returns an empty array if no representations were found', async () => {
-			const objectIeMock = cloneDeep(objectIe);
+			const objectIeMock = cloneDeep(mockObjectIe);
 			objectIeMock.data.object_ie[0].premis_is_represented_by = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
@@ -192,7 +181,7 @@ describe('MediaService', () => {
 		});
 
 		it('returns an empty array if no files were found', async () => {
-			const objectIeMock = cloneDeep(objectIe);
+			const objectIeMock = cloneDeep(mockObjectIe);
 			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
@@ -206,11 +195,10 @@ describe('MediaService', () => {
 		});
 
 		it('throws a notfoundexception if the object was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					object_ie: [],
-				},
-			});
+			const mockData: GetObjectDetailBySchemaIdentifierQuery = {
+				object_ie: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await mediaService.findBySchemaIdentifier(mockObjectSchemaIdentifier, 'referer');
@@ -227,7 +215,7 @@ describe('MediaService', () => {
 
 	describe('getRelated', () => {
 		it('returns the related objects for a given id and meemooIdentifier', async () => {
-			mockDataService.execute.mockResolvedValueOnce(objectIe);
+			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
 			const response = await mediaService.getRelated(
 				'es-index-1',
 				mockObjectSchemaIdentifier,

@@ -4,6 +4,12 @@ import { addHours } from 'date-fns';
 import { mockCpVisit } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
+import {
+	FindVisitsQuery,
+	InsertVisitMutation,
+	PendingVisitCountForUserBySlugQuery,
+	UpdateVisitMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -12,10 +18,10 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const getDefaultVisitsResponse = () => ({
+const getDefaultVisitsResponse = (): { data: FindVisitsQuery } => ({
 	data: {
-		cp_visit: [mockCpVisit],
-		cp_visit_aggregate: {
+		maintainer_visitor_space_request: [mockCpVisit as any],
+		maintainer_visitor_space_request_aggregate: {
 			aggregate: {
 				count: 100,
 			},
@@ -23,9 +29,9 @@ const getDefaultVisitsResponse = () => ({
 	},
 });
 
-const getDefaultVisitAggregateResponse = () => ({
+const getDefaultVisitAggregateResponse = (): { data: PendingVisitCountForUserBySlugQuery } => ({
 	data: {
-		cp_visit_aggregate: {
+		maintainer_visitor_space_request_aggregate: {
 			aggregate: {
 				count: 1,
 			},
@@ -62,6 +68,24 @@ const mockVisit: Visit = {
 };
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
+
+const mockVisitorSpaceRequestResponse: FindVisitsQuery = {
+	maintainer_visitor_space_request: [
+		{
+			id: '1',
+			status: 'APPROVED',
+			requested_by: {
+				full_name: 'Marie Odhiambo',
+			},
+			cp_space_id: '1',
+		},
+	] as FindVisitsQuery['maintainer_visitor_space_request'],
+	maintainer_visitor_space_request_aggregate: {
+		aggregate: {
+			count: 100,
+		},
+	},
+};
 
 describe('VisitsService', () => {
 	let visitsService: VisitsService;
@@ -105,6 +129,11 @@ describe('VisitsService', () => {
 			// test some sample keys
 			expect(adapted).toBeNull();
 		});
+
+		it('returns null on invalid input', () => {
+			const adapted = visitsService.adapt(null);
+			expect(adapted).toBeNull();
+		});
 	});
 
 	describe('findAll', () => {
@@ -127,22 +156,7 @@ describe('VisitsService', () => {
 
 		it('returns a paginated response with visits containing maria across all cpSpaces', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-							status: 'APPROVED',
-							user_profile: {
-								full_name: 'Marie Odhiambo',
-							},
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
+				data: mockVisitorSpaceRequestResponse,
 			});
 			const response = await visitsService.findAll(
 				{
@@ -163,22 +177,7 @@ describe('VisitsService', () => {
 
 		it('returns a paginated response with visits containing maria within one cpSpace', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [
-						{
-							id: '1',
-							status: 'APPROVED',
-							user_profile: {
-								full_name: 'Marie Odhiambo',
-							},
-						},
-					],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
+				data: mockVisitorSpaceRequestResponse,
 			});
 			const response = await visitsService.findAll(
 				{
@@ -297,11 +296,15 @@ describe('VisitsService', () => {
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
+			const mockData: FindVisitsQuery = {
+				maintainer_visitor_space_request: [],
+				maintainer_visitor_space_request_aggregate: {
+					aggregate: {
+						count: 0,
+					},
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await visitsService.findById('unknown-id');
@@ -324,16 +327,15 @@ describe('VisitsService', () => {
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
-					cp_visit_aggregate: {
-						aggregate: {
-							count: 0,
-						},
+			const mockData: FindVisitsQuery = {
+				maintainer_visitor_space_request: [],
+				maintainer_visitor_space_request_aggregate: {
+					aggregate: {
+						count: 0,
 					},
 				},
-			});
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			let error;
 
@@ -365,13 +367,12 @@ describe('VisitsService', () => {
 
 	describe('create', () => {
 		it('can create a new visit', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					insert_cp_visit_one: {
-						id: '1',
-					},
-				},
-			});
+			const mockData: InsertVisitMutation = {
+				insert_maintainer_visitor_space_request_one: {
+					id: '1',
+				} as InsertVisitMutation['insert_maintainer_visitor_space_request_one'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await visitsService.create(
 				{
 					spaceId: 'space-1',
@@ -387,11 +388,10 @@ describe('VisitsService', () => {
 	describe('update', () => {
 		it('throws an exception if the visit request was not found', async () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_visit: [],
-				},
-			});
+			const mockData: UpdateVisitMutation = {
+				update_maintainer_visitor_space_request_by_pk: null,
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			let error;
 			try {
@@ -458,7 +458,7 @@ describe('VisitsService', () => {
 
 		it('throws an error when you update to an invalid status', async () => {
 			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.cp_visit[0].status = VisitStatus.DENIED;
+			initialVisit.data.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
 			mockDataService.execute.mockResolvedValueOnce(initialVisit);
 
 			let error;

@@ -82,11 +82,12 @@ export class SessionHelper {
 
 		// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
 		user.permissions = [
-			Permission.CAN_READ_ALL_VISIT_REQUESTS,
-			Permission.CAN_READ_CP_VISIT_REQUESTS,
-			Permission.CAN_APPROVE_DENY_ALL_VISIT_REQUESTS,
-			Permission.CAN_APPROVE_DENY_CP_VISIT_REQUESTS,
-			Permission.CAN_READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+			Permission.READ_ALL_VISIT_REQUESTS,
+			Permission.READ_CP_VISIT_REQUESTS,
+			Permission.APPROVE_DENY_ALL_VISIT_REQUESTS,
+			Permission.APPROVE_DENY_CP_VISIT_REQUESTS,
+			Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+			Permission.UPDATE_ALL_SPACES,
 		];
 		// TODO remove until here ----------------------------------------------------------------------------------------
 

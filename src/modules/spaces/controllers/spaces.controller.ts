@@ -8,8 +8,8 @@ import {
 	ParseUUIDPipe,
 	Patch,
 	Query,
+	UnauthorizedException,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,8 +23,9 @@ import { Space } from '../types';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Permission } from '~modules/users/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
@@ -59,7 +60,6 @@ export class SpacesController {
 	}
 
 	@Patch(':id')
-	@UseGuards(LoggedInGuard)
 	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		description: 'Update a space',
@@ -80,12 +80,21 @@ export class SpacesController {
 			},
 		},
 	})
+	@RequireAnyPermissions(Permission.UPDATE_OWN_SPACE, Permission.UPDATE_ALL_SPACES)
 	public async updateSpace(
 		@Param('id', ParseUUIDPipe) id: string,
 		@Body() updateSpaceDto: UpdateSpaceDto,
-		@UploadedFile() file: Express.Multer.File
+		@UploadedFile() file: Express.Multer.File,
+		@SessionUser() user: SessionUserEntity
 	): Promise<Space> {
 		const space = await this.spacesService.findById(id);
+		if (
+			user.has(Permission.UPDATE_OWN_SPACE) &&
+			user.getMaintainerId() !== space.maintainerId
+		) {
+			throw new UnauthorizedException('You are not authorized to update this visitor space');
+		}
+
 		if (file) {
 			updateSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
 			if (space.image) {

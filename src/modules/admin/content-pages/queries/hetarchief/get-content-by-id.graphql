@@ -1,5 +1,5 @@
 query getContentById($id: uuid!) {
-	cms_content(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
+	app_content_page(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
 		content_type
 		content_width
 		created_at
@@ -39,6 +39,8 @@ query getContentById($id: uuid!) {
 		updated_at
 		user_group_ids
 		user_profile_id
+		content_width
+		user_group_ids
 		content_content_labels {
 			content_label {
 				label
