@@ -263,4 +263,26 @@ export class NotificationsService {
 		]);
 		return notifications[0];
 	}
+
+	/**
+	 * Send email on cancel own visit request
+	 */
+	public async onCancelPersonalVisitRequest(
+		visit: Visit,
+		recipients: Recipient[],
+		user: User
+	): Promise<Notification[]> {
+		return this.createForMultipleRecipients(
+			{
+				title: i18n.t('Een aanvraag om je leeszaal te bezoeken is geannuleerd.'),
+				description: i18n.t('{{name}} heeft zelf de aanvraag geannuleerd.', {
+					name: user.firstName + ' ' + user.lastName,
+				}),
+				visit_id: visit.id,
+				type: NotificationType.VISIT_REQUEST_CANCELLED,
+				status: NotificationStatus.UNREAD,
+			},
+			recipients.map((recipient) => recipient.id)
+		);
+	}
 }

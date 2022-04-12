@@ -84,6 +84,7 @@ export class CampaignMonitorService {
 		});
 
 		if (recipients.length === 0) {
+			this.logger.error('Mail will not be sent - no recipients');
 			return false;
 		}
 
