@@ -5,8 +5,7 @@ import { UsersService } from './users.service';
 import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
-import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
-import { mockCpVisit } from '~modules/visits/services/__mocks__/cp_visit';
+import { Group, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 

@@ -4,7 +4,6 @@ import { NavigationsService } from '../services/navigations.service';
 
 import { NavigationsController } from './navigations.controller';
 
-import { DeleteNavigationMutation } from '~generated/graphql-db-types-hetarchief';
 import { DeleteResponse } from '~shared/types/types';
 
 const mockNavigationsResponse = {

@@ -4,7 +4,6 @@ import { TranslationKey } from '../types';
 
 import { TranslationsService } from './translations.service';
 
-import { UpdateSiteVariableByNameMutation } from '~generated/graphql-db-types-hetarchief';
 import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
 import { UpdateResponse } from '~shared/types/types';
 

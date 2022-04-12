@@ -9,7 +9,6 @@ import { Configuration } from '~config';
 
 import {
 	GetFileByRepresentationSchemaIdentifierQuery,
-	GetThumbnailUrlByIdDocument,
 	GetThumbnailUrlByIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';

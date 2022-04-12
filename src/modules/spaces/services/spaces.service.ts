@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get, set } from 'lodash';
+import { set } from 'lodash';
 
 import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, GqlSpace, Space } from '../types';

@@ -6,10 +6,7 @@ import { Configuration } from '~config';
 import { GetOrganisationQuery } from '~generated/graphql-db-types-avo';
 import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
-import {
-	GqlHetArchiefOrganisation,
-	Organisation,
-} from '~modules/admin/organisations/organisations.types';
+import { Organisation } from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { DataService } from '~modules/data/services/data.service';
 
