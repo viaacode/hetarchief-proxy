@@ -10,16 +10,20 @@ import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { differenceInSeconds } from 'date-fns';
 import got, { Got } from 'got';
-import { get } from 'lodash';
 
 import { getConfig } from '~config';
 
 import { PlayerTicket } from '../player-ticket.types';
 
-import { GetItemBrowsePathByExternalIdDocument } from '~generated/graphql-db-types-avo';
+import {
+	GetItemBrowsePathByExternalIdDocument,
+	GetItemBrowsePathByExternalIdQuery,
+} from '~generated/graphql-db-types-avo';
 import {
 	GetFileByRepresentationSchemaIdentifierDocument,
+	GetFileByRepresentationSchemaIdentifierQuery,
 	GetThumbnailUrlByIdDocument,
+	GetThumbnailUrlByIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 import { DataService } from '~modules/data/services/data.service';
@@ -110,7 +114,7 @@ export class PlayerTicketService {
 			getConfig(this.configService, 'databaseApplicationType') === AvoOrHetArchief.hetArchief
 		) {
 			// Het archief
-			response = await this.dataService.execute(
+			response = await this.dataService.execute<GetFileByRepresentationSchemaIdentifierQuery>(
 				GetFileByRepresentationSchemaIdentifierDocument,
 				{
 					id,
@@ -118,14 +122,18 @@ export class PlayerTicketService {
 			);
 		} else {
 			// AVO
-			response = await this.dataService.execute(GetItemBrowsePathByExternalIdDocument, {
-				externalId: id,
-			});
+			response = await this.dataService.execute<GetItemBrowsePathByExternalIdQuery>(
+				GetItemBrowsePathByExternalIdDocument,
+				{
+					externalId: id,
+				}
+			);
 		}
 
+		/* istanbul ignore next */
 		const browsePath: string =
-			get(response, 'data.app_item_meta[0].browse_path') ||
-			get(response, 'data.object_file[0].schema_embed_url');
+			response?.data?.app_item_meta?.[0]?.browse_path ||
+			response?.data?.object_file?.[0]?.schema_embed_url;
 		if (!browsePath) {
 			throw new NotFoundException(`Object file with representation_id '${id}' not found`);
 		}
@@ -149,7 +157,9 @@ export class PlayerTicketService {
 	public async getThumbnailPath(id: string): Promise<string> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GetThumbnailUrlByIdDocument, { id });
+		} = await this.dataService.execute<GetThumbnailUrlByIdQuery>(GetThumbnailUrlByIdDocument, {
+			id,
+		});
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}

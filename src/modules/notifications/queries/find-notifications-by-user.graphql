@@ -28,10 +28,10 @@ query findNotificationsByUser(
 		visit_id
 		created_at
 		updated_at
-		visit {
-			cp_space_id
-			space {
-				schema_maintainer {
+		visitor_space_request {
+			id
+			visitor_space {
+				content_partner {
 					schema_identifier
 				}
 			}

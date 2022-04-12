@@ -7,7 +7,6 @@ import {
 	CollectionObjectLink,
 	GqlCollection,
 	GqlCollectionWithObjects,
-	GqlCreateCollection,
 	GqlObject,
 	GqlUpdateCollection,
 	IeObject,
@@ -28,6 +27,7 @@ import {
 	FindObjectInCollectionQuery,
 	InsertCollectionsDocument,
 	InsertCollectionsMutation,
+	InsertCollectionsMutationVariables,
 	InsertObjectIntoCollectionDocument,
 	InsertObjectIntoCollectionMutation,
 	RemoveObjectFromCollectionDocument,
@@ -58,7 +58,7 @@ export class CollectionsService {
 		return {
 			maintainerId: gqlIeObject?.maintainer?.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
-			readingRoomId: gqlIeObject?.maintainer?.space?.id,
+			readingRoomId: gqlIeObject?.maintainer?.visitor_space?.id,
 			creator: gqlIeObject?.schema_creator,
 			description: gqlIeObject?.schema_description,
 			format: gqlIeObject?.dcterms_format,
@@ -86,6 +86,7 @@ export class CollectionsService {
 			return undefined;
 		}
 
+		/* istanbul ignore next */
 		return {
 			id: gqlCollection.id,
 			name: gqlCollection.name,
@@ -110,7 +111,9 @@ export class CollectionsService {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
 		}
-		const objectIe = this.adaptIeObject(get(gqlCollectionObjectLink, 'ie'));
+
+		/* istanbul ignore next */
+		const objectIe = this.adaptIeObject(gqlCollectionObjectLink?.ie as GqlObject);
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
 			referer
@@ -140,13 +143,13 @@ export class CollectionsService {
 
 		return Pagination<Collection>({
 			items: await Promise.all(
-				collectionsResponse.data.users_collection.map((collection: any) =>
+				collectionsResponse.data.users_folder.map((collection: any) =>
 					this.adaptCollection(collection, referer)
 				)
 			),
 			page,
 			size,
-			total: collectionsResponse.data.users_collection_aggregate.aggregate.count,
+			total: collectionsResponse.data.users_folder_aggregate.aggregate.count,
 		});
 	}
 
@@ -158,7 +161,7 @@ export class CollectionsService {
 			}
 		);
 
-		return this.adaptCollection(collectionResponse.data.users_collection[0], referer);
+		return this.adaptCollection(collectionResponse.data.users_folder[0], referer);
 	}
 
 	public async findObjectsByCollectionId(
@@ -181,13 +184,13 @@ export class CollectionsService {
 					limit,
 				}
 			);
-		if (!collectionObjectsResponse.data.users_collection_ie) {
+		if (!collectionObjectsResponse.data.users_folder_ie[0]) {
 			throw new NotFoundException();
 		}
-		const total = collectionObjectsResponse.data.users_collection_ie_aggregate.aggregate.count;
+		const total = collectionObjectsResponse.data.users_folder_ie_aggregate.aggregate.count;
 		return {
 			items: await Promise.all(
-				collectionObjectsResponse.data.users_collection_ie.map((collectionObject) =>
+				collectionObjectsResponse.data.users_folder_ie.map((collectionObject) =>
 					this.adaptCollectionObjectLink(collectionObject, referer)
 				)
 			),
@@ -198,14 +201,17 @@ export class CollectionsService {
 		};
 	}
 
-	public async create(collection: GqlCreateCollection, referer: string): Promise<Collection> {
+	public async create(
+		collection: InsertCollectionsMutationVariables['object'],
+		referer: string
+	): Promise<Collection> {
 		const response = await this.dataService.execute<InsertCollectionsMutation>(
 			InsertCollectionsDocument,
 			{
 				object: collection,
 			}
 		);
-		const createdCollection = response.data.insert_users_collection.returning[0];
+		const createdCollection = response.data.insert_users_folder.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
 		return this.adaptCollection(createdCollection, referer);
@@ -226,7 +232,7 @@ export class CollectionsService {
 			}
 		);
 
-		const updatedCollection = response.data.update_users_collection.returning[0];
+		const updatedCollection = response.data.update_users_folder.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
 		return this.adaptCollection(updatedCollection, referer);
@@ -242,7 +248,7 @@ export class CollectionsService {
 		);
 		this.logger.debug(`Collection ${collectionId} deleted`);
 
-		return response.data.delete_users_collection.affected_rows;
+		return response.data.delete_users_folder.affected_rows;
 	}
 
 	public async findObjectInCollectionBySchemaIdentifier(
@@ -257,7 +263,9 @@ export class CollectionsService {
 				objectSchemaIdentifier,
 			}
 		);
-		const foundObject = response.data.users_collection_ie[0];
+
+		/* istanbul ignore next */
+		const foundObject = response?.data?.users_folder_ie?.[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
 		return this.adaptCollectionObjectLink(foundObject, referer);
@@ -310,7 +318,7 @@ export class CollectionsService {
 				objectSchemaIdentifier,
 			}
 		);
-		const createdObject = response.data.insert_users_collection_ie.returning[0];
+		const createdObject = response.data.insert_users_folder_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
 		return this.adaptCollectionObjectLink(createdObject, referer);
@@ -331,6 +339,6 @@ export class CollectionsService {
 		);
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} deleted`);
 
-		return response.data.delete_users_collection_ie.affected_rows || 0;
+		return response.data.delete_users_folder_ie.affected_rows || 0;
 	}
 }

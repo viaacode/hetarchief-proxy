@@ -7,7 +7,7 @@ describe('SpacesQueryDto', () => {
 			expect(spacesQueryDto).toEqual({
 				accessType: undefined,
 				orderDirection: 'asc',
-				orderProp: 'schema_maintainer.schema_name',
+				orderProp: 'content_partner.schema_name',
 				page: 1,
 				query: undefined,
 				size: 10,

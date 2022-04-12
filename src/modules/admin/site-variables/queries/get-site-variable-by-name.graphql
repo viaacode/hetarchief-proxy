@@ -1,5 +1,5 @@
 query getSiteVariableByName($name: String!) {
-	cms_site_variables_by_pk(name: $name) {
+	app_config_by_pk(name: $name) {
 		name
 		value
 	}

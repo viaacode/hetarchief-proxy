@@ -35,11 +35,13 @@ import {
 	FindVisitByIdQuery,
 	FindVisitsDocument,
 	FindVisitsQuery,
+	FindVisitsQueryVariables,
 	InsertNoteDocument,
 	InsertNoteMutation,
 	InsertVisitDocument,
 	InsertVisitMutation,
 	PendingVisitCountForUserBySlugDocument,
+	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitDocument,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -100,35 +102,35 @@ export class VisitsService {
 			createdAt: graphQlVisit?.created_at,
 			endAt: graphQlVisit?.end_date,
 			id: graphQlVisit?.id,
-			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.notes),
+			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
 			reason: graphQlVisit?.user_reason,
 			spaceAddress: this?.adaptSpaceAddress(
-				graphQlVisit?.space?.schema_maintainer?.information[0]?.primary_site?.address
+				graphQlVisit?.visitor_space?.content_partner?.information[0]?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
 			spaceMail:
-				graphQlVisit?.space?.schema_maintainer?.information?.[0]?.primary_site?.address
-					?.email,
-			spaceName: graphQlVisit?.space?.schema_maintainer?.schema_name,
-			spaceSlug: graphQlVisit?.space?.schema_maintainer?.schema_identifier, // TODO switch this to the actual space slug once that column is added to the spaces table
-			spaceColor: graphQlVisit?.space?.schema_color,
-			spaceImage: graphQlVisit?.space?.schema_image,
-			spaceLogo: graphQlVisit?.space?.schema_maintainer?.information[0]?.logo?.iri,
-			spaceInfo: graphQlVisit?.space?.schema_maintainer?.information[0]?.description,
-			spaceDescription: graphQlVisit?.space?.schema_description,
-			spaceServiceDescription: graphQlVisit?.space?.schema_service_description,
+				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
+					?.address?.email,
+			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
+			spaceSlug: graphQlVisit?.visitor_space?.content_partner?.schema_identifier, // TODO switch this to the actual space slug once that column is added to the spaces table
+			spaceColor: graphQlVisit?.visitor_space?.schema_color,
+			spaceImage: graphQlVisit?.visitor_space?.schema_image,
+			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.logo?.iri,
+			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.description,
+			spaceDescription: graphQlVisit?.visitor_space?.schema_description,
+			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
 			startAt: graphQlVisit?.start_date,
 			status: graphQlVisit?.status as VisitStatus,
 			timeframe: graphQlVisit?.user_timeframe,
 			updatedAt: graphQlVisit?.updated_at,
-			updatedById: graphQlVisit?.updater?.id,
-			updatedByName: graphQlVisit?.updater?.full_name,
+			updatedById: graphQlVisit?.last_updated_by?.id,
+			updatedByName: graphQlVisit?.last_updated_by?.full_name,
 			userProfileId: graphQlVisit?.user_profile_id,
-			visitorId: graphQlVisit?.user_profile?.id,
-			visitorMail: graphQlVisit?.user_profile?.mail,
-			visitorName: graphQlVisit?.user_profile?.full_name,
-			visitorFirstName: graphQlVisit?.user_profile?.first_name,
-			visitorLastName: graphQlVisit?.user_profile?.last_name,
+			visitorId: graphQlVisit?.requested_by?.id,
+			visitorMail: graphQlVisit?.requested_by?.mail,
+			visitorName: graphQlVisit?.requested_by?.full_name,
+			visitorFirstName: graphQlVisit?.requested_by?.first_name,
+			visitorLastName: graphQlVisit?.requested_by?.last_name,
 		};
 	}
 
@@ -155,7 +157,7 @@ export class VisitsService {
 		};
 
 		const {
-			data: { insert_cp_visit_one: createdVisit },
+			data: { insert_maintainer_visitor_space_request_one: createdVisit },
 		} = await this.dataService.execute<InsertVisitMutation>(InsertVisitDocument, { newVisit });
 
 		this.logger.debug(`Visit ${createdVisit.id} created`);
@@ -216,7 +218,7 @@ export class VisitsService {
 		userProfileId: string
 	): Promise<boolean> {
 		const {
-			data: { insert_cp_visit_note_one: insertNote },
+			data: { insert_maintainer_visitor_space_request_note_one: insertNote },
 		} = await this.dataService.execute<InsertNoteMutation>(InsertNoteDocument, {
 			visitId,
 			note,
@@ -237,17 +239,18 @@ export class VisitsService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
-		const where: any = {};
+		const where: FindVisitsQueryVariables['where'] = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
-			const filterBySpaceName = parameters.cpSpaceId
-				? []
-				: [{ space: { schema_maintainer: { schema_name: { _ilike: query } } } }];
+			const visitorSpaceFilter: FindVisitsQueryVariables['where'] = {
+				visitor_space: { content_partner: { schema_name: { _ilike: query } } },
+			};
+			const filterBySpaceName = parameters.cpSpaceId ? [] : [visitorSpaceFilter];
 
 			where._or = [
-				{ user_profile: { full_name: { _ilike: query } } },
-				{ user_profile: { mail: { _ilike: query } } },
+				{ requested_by: { full_name: { _ilike: query } } },
+				{ requested_by: { mail: { _ilike: query } } },
 				...filterBySpaceName,
 			];
 		}
@@ -305,10 +308,12 @@ export class VisitsService {
 		});
 
 		return Pagination<Visit>({
-			items: visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit)),
+			items: visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+				this.adapt(visit)
+			),
 			page,
 			size,
-			total: visitsResponse.data.cp_visit_aggregate.aggregate.count,
+			total: visitsResponse.data.maintainer_visitor_space_request_aggregate.aggregate.count,
 		});
 	}
 
@@ -318,11 +323,11 @@ export class VisitsService {
 			{ id }
 		);
 
-		if (!visitResponse.data.cp_visit[0]) {
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
-		return this.adapt(visitResponse.data.cp_visit[0]);
+		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
 	}
 
 	public async getActiveVisitForUserAndSpace(
@@ -338,27 +343,31 @@ export class VisitsService {
 			}
 		);
 
-		if (!visitResponse.data.cp_visit[0]) {
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(
 				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
 			);
 		}
 
-		return this.adapt(visitResponse.data.cp_visit[0]);
+		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
 	}
 
 	public async getPendingVisitCountForUserBySlug(
 		userProfileId: string,
 		slug: string
 	): Promise<VisitSpaceCount> {
-		const result = await this.dataService.execute(PendingVisitCountForUserBySlugDocument, {
-			user: userProfileId,
-			slug,
-		});
+		const result = await this.dataService.execute<PendingVisitCountForUserBySlugQuery>(
+			PendingVisitCountForUserBySlugDocument,
+			{
+				user: userProfileId,
+				slug,
+			}
+		);
 
+		/* istanbul ignore next */
 		return {
-			count: get(result, 'data.cp_visit_aggregate.aggregate.count', 0),
-			id: get(result, 'data.cp_visit_aggregate.nodes[0].cp_space_id', null),
+			count: result?.data?.maintainer_visitor_space_request_aggregate?.aggregate?.count || 0,
+			id: result?.data?.maintainer_visitor_space_request_aggregate?.nodes?.[0]?.cp_space_id,
 		};
 	}
 
@@ -368,7 +377,9 @@ export class VisitsService {
 				FindApprovedStartedVisitsWithoutNotificationDocument,
 				{ now: new Date().toISOString() }
 			);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
+		);
 	}
 
 	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
@@ -380,7 +391,9 @@ export class VisitsService {
 					warningDate: addMinutes(new Date(), 15).toISOString(),
 				}
 			);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
+		);
 	}
 
 	public async getApprovedAndEndedVisitsWithoutNotification() {
@@ -389,6 +402,8 @@ export class VisitsService {
 				FindApprovedEndedVisitsWithoutNotificationDocument,
 				{ now: new Date().toISOString() }
 			);
-		return visitsResponse.data.cp_visit.map((visit: any) => this.adapt(visit));
+		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			this.adapt(visit)
+		);
 	}
 }

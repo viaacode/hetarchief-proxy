@@ -3,7 +3,7 @@ mutation removeObjectFromCollection(
 	$collectionId: uuid
 	$userProfileId: uuid
 ) {
-	delete_users_collection_ie(
+	delete_users_folder_ie(
 		where: {
 			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
 			user_collection_id: { _eq: $collectionId }

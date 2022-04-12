@@ -5,6 +5,8 @@ import { TranslationKey } from '../types';
 
 import { TranslationsController } from './translations.controller';
 
+import { UpdateResponse } from '~shared/types/types';
+
 const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
 	getTranslations: jest.fn(),
 	updateTranslations: jest.fn(),
@@ -49,14 +51,15 @@ describe('TranslationsController', () => {
 
 	describe('updateTranslations', () => {
 		it('should update the translations', async () => {
-			mockTranslationsService.updateTranslations.mockResolvedValueOnce({ affected_rows: 1 });
+			const mockData: UpdateResponse = { affectedRows: 1 };
+			mockTranslationsService.updateTranslations.mockResolvedValueOnce(mockData);
 
 			const response = await translationsController.updateTranslations({
 				key: TranslationKey.FRONTEND_TRANSLATIONS,
 				data: { key1: 'newTranslation' },
 			});
 
-			expect(response.affected_rows).toBe(1);
+			expect(response.affectedRows).toBe(1);
 		});
 	});
 });

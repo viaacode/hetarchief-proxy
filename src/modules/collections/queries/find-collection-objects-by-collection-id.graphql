@@ -1,11 +1,11 @@
 query findCollectionObjectsByCollectionId(
 	$collectionId: uuid
 	$userProfileId: uuid
-	$where: users_collection_ie_bool_exp!
+	$where: users_folder_ie_bool_exp!
 	$offset: Int
 	$limit: Int
 ) {
-	users_collection_ie(
+	users_folder_ie(
 		where: {
 			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
 			collection: { user_profile_id: { _eq: $userProfileId } }
@@ -30,13 +30,13 @@ query findCollectionObjectsByCollectionId(
 			maintainer {
 				schema_identifier
 				schema_name
-				space {
+				visitor_space {
 					id
 				}
 			}
 		}
 	}
-	users_collection_ie_aggregate(
+	users_folder_ie_aggregate(
 		where: { _and: [{ user_collection_id: { _eq: $collectionId } }, $where] }
 	) {
 		aggregate {

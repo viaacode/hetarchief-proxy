@@ -1,5 +1,5 @@
 query findNavigationById($id: uuid!) {
-	cms_navigation_element(where: { id: { _eq: $id } }) {
+	app_navigation(where: { id: { _eq: $id } }) {
 		id
 		created_at
 		description

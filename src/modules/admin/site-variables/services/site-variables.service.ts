@@ -4,6 +4,7 @@ import {
 	GetSiteVariableByNameDocument,
 	GetSiteVariableByNameQuery,
 	UpdateSiteVariableByNameDocument,
+	UpdateSiteVariableByNameMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { UpdateResponse } from '~shared/types/types';
@@ -17,7 +18,7 @@ export class SiteVariablesService {
 	public async getSiteVariable<T>(variable: string): Promise<T> {
 		const {
 			data: {
-				cms_site_variables_by_pk: { value },
+				app_config_by_pk: { value },
 			},
 		} = await this.dataService.execute<GetSiteVariableByNameQuery>(
 			GetSiteVariableByNameDocument,
@@ -28,13 +29,17 @@ export class SiteVariablesService {
 	}
 
 	public async updateSiteVariable(variable: string, value: any): Promise<UpdateResponse> {
-		const {
-			data: { update_cms_site_variables: response },
-		} = await this.dataService.execute(UpdateSiteVariableByNameDocument, {
-			name: variable,
-			data: { value },
-		});
+		const response = await this.dataService.execute<UpdateSiteVariableByNameMutation>(
+			UpdateSiteVariableByNameDocument,
+			{
+				name: variable,
+				data: { value },
+			}
+		);
 
-		return response;
+		/* istanbul ignore next */
+		return {
+			affectedRows: response?.data?.update_app_config?.affected_rows,
+		};
 	}
 }

@@ -26,5 +26,5 @@ export interface Recipient {
 }
 
 export interface UpdateResponse {
-	affected_rows: number;
+	affectedRows: number;
 }

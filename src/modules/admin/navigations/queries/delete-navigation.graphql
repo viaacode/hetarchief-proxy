@@ -1,5 +1,5 @@
 mutation deleteNavigation($id: uuid!) {
-	delete_cms_navigation_element(where: { id: { _eq: $id } }) {
+	delete_app_navigation(where: { id: { _eq: $id } }) {
 		affected_rows
 	}
 }

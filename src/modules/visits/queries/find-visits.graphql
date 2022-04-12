@@ -1,14 +1,19 @@
 query findVisits(
-	$where: cp_visit_bool_exp
+	$where: maintainer_visitor_space_request_bool_exp
 	$offset: Int!
 	$limit: Int!
-	$orderBy: cp_visit_order_by! = {}
+	$orderBy: maintainer_visitor_space_request_order_by! = {}
 ) {
-	cp_visit(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
+	maintainer_visitor_space_request(
+		where: $where
+		offset: $offset
+		limit: $limit
+		order_by: [$orderBy]
+	) {
 		id
 		cp_space_id
 		user_profile_id
-		user_profile {
+		requested_by {
 			id
 			full_name
 			first_name
@@ -20,7 +25,7 @@ query findVisits(
 		status
 		start_date
 		end_date
-		notes(order_by: { created_at: desc }, limit: 1) {
+		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
 			id
 			note
 			profile {
@@ -30,7 +35,7 @@ query findVisits(
 		}
 		created_at
 		updated_at
-		space {
+		visitor_space {
 			id
 			schema_image
 			schema_color
@@ -38,11 +43,11 @@ query findVisits(
 			schema_description
 			schema_public_access
 			schema_service_description
-			is_published
+			status
 			published_at
 			created_at
 			updated_at
-			schema_maintainer {
+			content_partner {
 				schema_name
 				schema_identifier
 				information {
@@ -63,12 +68,12 @@ query findVisits(
 				}
 			}
 		}
-		updater {
+		last_updated_by {
 			id
 			full_name
 		}
 	}
-	cp_visit_aggregate(where: $where) {
+	maintainer_visitor_space_request_aggregate(where: $where) {
 		aggregate {
 			count
 		}

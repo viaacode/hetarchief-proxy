@@ -17,10 +17,10 @@ mutation updateNotification(
 			visit_id
 			created_at
 			updated_at
-			visit {
+			visitor_space_request {
 				cp_space_id
-				space {
-					schema_maintainer {
+				visitor_space {
+					content_partner {
 						schema_identifier
 					}
 				}

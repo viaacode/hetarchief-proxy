@@ -4,6 +4,13 @@ import { cloneDeep } from 'lodash';
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
+import {
+	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdentifierQuery,
+	FindSpacesQuery,
+	GetSpaceMaintainerProfilesQuery,
+	UpdateSpaceMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -25,6 +32,19 @@ const mockUser: User = {
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockFindSpacesResponse: FindSpacesQuery = {
+	maintainer_visitor_space: [
+		{
+			id: '1',
+		},
+	] as FindSpacesQuery['maintainer_visitor_space'],
+	maintainer_visitor_space_aggregate: {
+		aggregate: {
+			count: 100,
+		},
+	},
 };
 
 describe('SpacesService', () => {
@@ -59,10 +79,10 @@ describe('SpacesService', () => {
 			const adapted = spacesService.adapt(mockGqlSpace);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlSpace.id);
-			expect(adapted.name).toEqual(mockGqlSpace.schema_maintainer.schema_name);
-			expect(adapted.logo).toEqual(mockGqlSpace.schema_maintainer.information[0].logo.iri);
+			expect(adapted.name).toEqual(mockGqlSpace.content_partner.schema_name);
+			expect(adapted.logo).toEqual(mockGqlSpace.content_partner.information[0].logo.iri);
 			expect(adapted.contactInfo.address.postalCode).toEqual(
-				mockGqlSpace.schema_maintainer.information[0].primary_site.address.postal_code
+				mockGqlSpace.content_partner.information[0].primary_site.address.postal_code
 			);
 		});
 
@@ -79,13 +99,12 @@ describe('SpacesService', () => {
 
 	describe('update', () => {
 		it('can update a space', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_space_by_pk: {
-						id: '1',
-					},
-				},
-			});
+			const mockData: UpdateSpaceMutation = {
+				update_maintainer_visitor_space_by_pk: {
+					id: '1',
+				} as UpdateSpaceMutation['update_maintainer_visitor_space_by_pk'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.update('1', {
 				color: 'red',
 				description: 'my-space',
@@ -96,23 +115,21 @@ describe('SpacesService', () => {
 		});
 
 		it('does not crash when updating not a single value', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_space_by_pk: {
-						id: '1',
-					},
-				},
-			});
+			const mockData: UpdateSpaceMutation = {
+				update_maintainer_visitor_space_by_pk: {
+					id: '1',
+				} as UpdateSpaceMutation['update_maintainer_visitor_space_by_pk'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.update('1', {});
 			expect(response.id).toEqual('1');
 		});
 
 		it('throws a notfoundexception if the space was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					update_cp_space_by_pk: null,
-				},
-			});
+			const mockData: UpdateSpaceMutation = {
+				update_maintainer_visitor_space_by_pk: null,
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			let error;
 			try {
 				await spacesService.update('0', {});
@@ -125,20 +142,7 @@ describe('SpacesService', () => {
 
 	describe('findAll', () => {
 		it('returns a paginated response with all spaces (query undefined)', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll({ page: 1, size: 10 }, mockUser.id);
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
@@ -147,20 +151,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns a paginated response with all spaces (query %)', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ query: '%', page: 1, size: 10 },
 				mockUser.id
@@ -172,20 +163,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns a paginated response with all spaces (query %%)', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ query: '%%', page: 1, size: 10 },
 				mockUser.id
@@ -197,20 +175,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns a paginated response with all spaces (query %Marie%)', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ query: '%Marie%', page: 1, size: 10 },
 				mockUser.id
@@ -222,20 +187,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns a paginated response with all spaces that are accessible', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ accessType: AccessType.ACTIVE, page: 1, size: 10 },
 				mockUser.id
@@ -247,20 +199,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns a paginated response with all spaces that are not accessible', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ accessType: AccessType.NO_ACCESS, page: 1, size: 10 },
 				mockUser.id
@@ -272,20 +211,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns an empty array response if no user is defined and the accessType is set', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-					cp_space_aggregate: {
-						aggregate: {
-							count: 100,
-						},
-					},
-				},
-			});
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
 			const response = await spacesService.findAll(
 				{ accessType: AccessType.NO_ACCESS, page: 1, size: 20 },
 				undefined
@@ -299,25 +225,23 @@ describe('SpacesService', () => {
 
 	describe('findById', () => {
 		it('returns a single space', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-				},
-			});
+			const mockData: FindSpaceByIdQuery = {
+				maintainer_visitor_space: [
+					{
+						id: '1',
+					},
+				] as FindSpaceByIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findById('1');
 			expect(response.id).toBe('1');
 		});
 
 		it('returns null if the space was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [],
-				},
-			});
+			const mockData: FindSpaceByIdQuery = {
+				maintainer_visitor_space: [] as FindSpaceByIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const space = await spacesService.findById('unknown-id');
 			expect(space).toBeNull();
@@ -328,27 +252,25 @@ describe('SpacesService', () => {
 		const slug = 'slug';
 
 		it('returns a single space by slug', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							schema_maintainer: {
-								schema_identifier: slug,
-							},
+			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+				maintainer_visitor_space: [
+					{
+						content_partner: {
+							schema_identifier: slug,
 						},
-					],
-				},
-			});
+					},
+				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findBySlug(slug);
 			expect(response.maintainerId).toBe(slug);
 		});
 
 		it('returns null if the space was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [],
-				},
-			});
+			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+				maintainer_visitor_space: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const space = await spacesService.findBySlug('unknown-id');
 			expect(space).toBeNull();
@@ -357,25 +279,23 @@ describe('SpacesService', () => {
 
 	describe('findSpaceByCpUserId', () => {
 		it('returns a single space', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [
-						{
-							id: '1',
-						},
-					],
-				},
-			});
+			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+				maintainer_visitor_space: [
+					{
+						id: '1',
+					},
+				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findSpaceByCpUserId('1');
 			expect(response.id).toBe('1');
 		});
 
 		it('returns null if the space was not found', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					cp_space: [],
-				},
-			});
+			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+				maintainer_visitor_space: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const space = await spacesService.findSpaceByCpUserId('unknown-id');
 			expect(space).toBeNull();
@@ -384,36 +304,34 @@ describe('SpacesService', () => {
 
 	describe('getMaintainerProfiles', () => {
 		it('returns all profile ids for all maintainers of a ReadingRoom', async () => {
-			const mockMaintainerIds = {
-				data: {
-					cp_maintainer_users_profile: [
-						{
-							users_profile_id: '181c014f-365a-40ab-8694-1792768e57ee',
-							profile: {
-								mail: 'test.testers@meemoo.be',
-							},
+			const mockMaintainerIds: GetSpaceMaintainerProfilesQuery = {
+				maintainer_users_profile: [
+					{
+						users_profile_id: '181c014f-365a-40ab-8694-1792768e57ee',
+						profile: {
+							mail: 'test.testers@meemoo.be',
 						},
-						{
-							users_profile_id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
-							profile: {
-								mail: 'test.testers2@meemoo.be',
-							},
+					},
+					{
+						users_profile_id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+						profile: {
+							mail: 'test.testers2@meemoo.be',
 						},
-						{
-							users_profile_id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
-							profile: {
-								mail: 'test.testers3@meemoo.be',
-							},
+					},
+					{
+						users_profile_id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+						profile: {
+							mail: 'test.testers3@meemoo.be',
 						},
-					],
-				},
+					},
+				],
 			};
-			mockDataService.execute.mockResolvedValueOnce(mockMaintainerIds);
+			mockDataService.execute.mockResolvedValueOnce({ data: mockMaintainerIds });
 			const response = await spacesService.getMaintainerProfiles('1');
 			expect(response).toHaveLength(3);
 			expect(response[0]).toEqual({
-				id: mockMaintainerIds.data.cp_maintainer_users_profile[0].users_profile_id,
-				email: mockMaintainerIds.data.cp_maintainer_users_profile[0].profile.mail,
+				id: mockMaintainerIds.maintainer_users_profile[0].users_profile_id,
+				email: mockMaintainerIds.maintainer_users_profile[0].profile.mail,
 			});
 		});
 	});

@@ -53,7 +53,7 @@ export class SpacesQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'schema_maintainer.schema_name',
+		default: 'content_partner.schema_name',
 		enum: [
 			'id',
 			'schema_image',
@@ -62,15 +62,15 @@ export class SpacesQueryDto {
 			'schema_description',
 			'schema_public_access',
 			'schema_service_description',
-			'is_published',
+			'status',
 			'published_at',
 			'created_at',
 			'updated_at',
-			'schema_maintainer.schema_name',
-			'schema_maintainer.schema_identifier',
+			'content_partner.schema_name',
+			'content_partner.schema_identifier',
 		],
 	})
-	orderProp? = 'schema_maintainer.schema_name';
+	orderProp? = 'content_partner.schema_name';
 
 	@IsString()
 	@Type(() => String)
