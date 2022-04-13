@@ -29,6 +29,14 @@ const mockSchedulerRegistry: Partial<Record<keyof SchedulerRegistry, jest.SpyIns
 	addCronJob: jest.fn(),
 };
 
+const mockCronJob = {
+	start: jest.fn(),
+};
+
+jest.mock('cron', () => ({
+	CronJob: jest.fn(() => mockCronJob),
+}));
+
 describe('SessionService', () => {
 	let sessionService: SessionService;
 
@@ -65,6 +73,7 @@ describe('SessionService', () => {
 					}),
 				};
 			});
+
 			const response = await sessionService.getSessionConfig();
 			expect(response.secret).toEqual('thecookiesecret');
 			expect(response.cookie.maxAge).toEqual('86400');
