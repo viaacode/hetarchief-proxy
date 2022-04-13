@@ -1,7 +1,6 @@
 import { Body, Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 
 import { CreateEventsDto } from '../dto/events.dto';
 import { EventsService } from '../services/events.service';
@@ -9,6 +8,7 @@ import { EventsService } from '../services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Events')
@@ -25,7 +25,7 @@ export class EventsController {
 		@Body() createEventsDto: CreateEventsDto
 	): boolean {
 		const logEvent = {
-			id: uuidv4(),
+			id: EventsHelper.getEventId(request),
 			type: createEventsDto.type,
 			source: request.path,
 			subject: user.getId(),

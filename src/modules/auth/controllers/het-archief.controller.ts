@@ -7,10 +7,12 @@ import {
 	Post,
 	Query,
 	Redirect,
+	Req,
 	Session,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
 
 import { getConfig } from '~config';
@@ -20,9 +22,12 @@ import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { EventsHelper } from '~shared/helpers/events';
 import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
@@ -35,7 +40,8 @@ export class HetArchiefController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
-		private configService: ConfigService
+		private configService: ConfigService,
+		private eventsService: EventsService
 	) {}
 
 	@Get('login')
@@ -69,6 +75,7 @@ export class HetArchiefController {
 	@Post('login-callback')
 	@Redirect()
 	async loginCallback(
+		@Req() request: Request,
 		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
@@ -127,6 +134,17 @@ export class HetArchiefController {
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.USER_AUTHENTICATE,
+					source: request.path,
+					subject: archiefUser.id,
+					time: new Date().toISOString(),
+				},
+			]);
 
 			return {
 				url: info.returnToUrl, // TODO add fallback if undefined

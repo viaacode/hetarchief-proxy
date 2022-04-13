@@ -50,7 +50,7 @@ describe('EventsController', () => {
 	describe('sendEvent', () => {
 		it('should send log events', async () => {
 			const result = eventsController.sendEvent(
-				{ path: '/events' } as unknown as Request,
+				{ path: '/events', headers: {} } as unknown as Request,
 				new SessionUserEntity(mockUser),
 				{ type: LogEventType.USER_AUTHENTICATE }
 			);
