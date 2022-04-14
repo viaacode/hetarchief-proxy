@@ -12,6 +12,8 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
+	GetAllObjectsByCollectionIdDocument,
+	GetAllObjectsByCollectionIdQuery,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
@@ -158,6 +160,13 @@ export class MediaService {
 		return esResponse;
 	}
 
+	public adaptMetadata(object: Media): Partial<Media> {
+		// unset thumbnail and representations
+		delete object.representations;
+		delete object.thumbnailUrl;
+		return object;
+	}
+
 	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
@@ -215,9 +224,50 @@ export class MediaService {
 		return adapted;
 	}
 
-	public async getXml(schemaIdentifier: string, referer: string): Promise<string> {
+	/**
+	 * Find by id returns all details as stored in DB
+	 * (not all details are in ES)
+	 */
+	public async findMetadataBySchemaIdentifier(
+		schemaIdentifier: string,
+		referer: string
+	): Promise<Partial<Media>> {
 		const object = await this.findBySchemaIdentifier(schemaIdentifier, referer);
+		return this.adaptMetadata(object);
+	}
+
+	public convertObjectsToXml(objects: Partial<Media>[]): string {
+		// this structure defines the parent 'objects' tag, which includes
+		// all objects wrapped in a separate 'object' tag
+		return convert.js2xml({ objects: { object: objects } }, { compact: true });
+	}
+
+	public convertObjectToXml(object: Partial<Media>): string {
 		return convert.js2xml({ object }, { compact: true });
+	}
+
+	public async findAllObjectMetadataByCollectionId(
+		collectionId: string,
+		userProfileId: string
+	): Promise<Partial<Media>[]> {
+		const {
+			data: { users_folder_ie: allObjects },
+		} = await this.dataService.execute<GetAllObjectsByCollectionIdQuery>(
+			GetAllObjectsByCollectionIdDocument,
+			{
+				collectionId,
+				userProfileId,
+			}
+		);
+		if (!allObjects[0]) {
+			throw new NotFoundException();
+		}
+		const allAdapted = allObjects.map((object) => {
+			const adaptee = this.adapt(object.ie);
+			return this.adaptMetadata(adaptee);
+		});
+
+		return allAdapted;
 	}
 
 	public async getRelated(

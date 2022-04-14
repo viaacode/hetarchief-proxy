@@ -84,8 +84,9 @@ export class MediaController {
 	public async export(
 		@Headers('referer') referer: string,
 		@Param('id') id: string
-	): Promise<any> {
-		return this.mediaService.getXml(id, referer);
+	): Promise<string> {
+		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id, referer);
+		return this.mediaService.convertObjectToXml(objectMetadata);
 	}
 
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
