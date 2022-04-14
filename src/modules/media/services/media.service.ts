@@ -225,8 +225,7 @@ export class MediaService {
 	}
 
 	/**
-	 * Find by id returns all details as stored in DB
-	 * (not all details are in ES)
+	 * Get the object detail fields that are exposed as metadata
 	 */
 	public async findMetadataBySchemaIdentifier(
 		schemaIdentifier: string,
