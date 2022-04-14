@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
+import convert from 'xml-js';
 
 import { getConfig } from '~config';
 
@@ -212,6 +213,11 @@ export class MediaService {
 			referer
 		);
 		return adapted;
+	}
+
+	public async getXml(schemaIdentifier: string, referer: string): Promise<string> {
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, referer);
+		return convert.js2xml({ object }, { compact: true });
 	}
 
 	public async getRelated(

@@ -3,6 +3,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	Header,
 	Headers,
 	Logger,
 	Param,
@@ -75,6 +76,16 @@ export class MediaController {
 		@Param('id') id: string
 	): Promise<any> {
 		return this.mediaService.findBySchemaIdentifier(id, referer);
+	}
+
+	@Get(':id/export')
+	@Header('Content-Type', 'text/xml')
+	@RequirePermissions(Permission.EXPORT_OBJECT)
+	public async export(
+		@Headers('referer') referer: string,
+		@Param('id') id: string
+	): Promise<any> {
+		return this.mediaService.getXml(id, referer);
 	}
 
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')

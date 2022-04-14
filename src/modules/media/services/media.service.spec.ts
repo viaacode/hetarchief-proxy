@@ -213,6 +213,14 @@ describe('MediaService', () => {
 		});
 	});
 
+	describe('getXml', () => {
+		it('returns the xml version of an object', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
+			const xml = await mediaService.getXml(mockObjectSchemaIdentifier, 'referer');
+			expect(xml.startsWith('<object>')).toBeTruthy();
+		});
+	});
+
 	describe('getRelated', () => {
 		it('returns the related objects for a given id and meemooIdentifier', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
