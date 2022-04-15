@@ -25,7 +25,7 @@ const incompleteConfig = {
 	AGGS_PROPERTIES: ['format'],
 
 	NEEDS_FILTER_SUFFIX: {
-		query: false,
+		genre: 'keyword',
 		// no format property
 	},
 	DEFAULT_QUERY_TYPE: {
@@ -238,7 +238,7 @@ describe('QueryBuilder', () => {
 				requestedAggs: [SearchFilterField.FORMAT],
 			});
 			expect(esQuery.query.bool.must[0]).toEqual({
-				term: { 'schema_genre.filter': 'interview' },
+				term: { 'schema_genre.keyword': 'interview' },
 			});
 		});
 

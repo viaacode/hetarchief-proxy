@@ -1,5 +1,5 @@
-mutation updateSpace($id: uuid!, $updateSpace: cp_space_set_input!) {
-	update_cp_space_by_pk(pk_columns: { id: $id }, _set: $updateSpace) {
+mutation updateSpace($id: uuid!, $updateSpace: maintainer_visitor_space_set_input!) {
+	update_maintainer_visitor_space_by_pk(pk_columns: { id: $id }, _set: $updateSpace) {
 		id
 		schema_image
 		schema_color
@@ -7,11 +7,11 @@ mutation updateSpace($id: uuid!, $updateSpace: cp_space_set_input!) {
 		schema_description
 		schema_public_access
 		schema_service_description
-		is_published
+		status
 		published_at
 		created_at
 		updated_at
-		schema_maintainer {
+		content_partner {
 			schema_name
 			schema_identifier
 			information {

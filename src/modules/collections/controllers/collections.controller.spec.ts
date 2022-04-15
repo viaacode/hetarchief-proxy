@@ -6,6 +6,7 @@ import { CollectionsService } from '../services/collections.service';
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -121,7 +122,10 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionsByUser.mockResolvedValueOnce(
 				mockCollectionsResponse
 			);
-			const collections = await collectionsController.getCollections('referer', {});
+			const collections = await collectionsController.getCollections(
+				'referer',
+				new SessionUserEntity(mockUser)
+			);
 			expect(collections.items.length).toEqual(2);
 		});
 	});
@@ -135,7 +139,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				{},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObjects.items[0].name).toEqual(
 				mockCollectionObjectsResponse.items[0].name
@@ -151,7 +155,7 @@ describe('CollectionsController', () => {
 				{
 					name: 'test collection',
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collection).toEqual(mockCollectionsResponse.items[0]);
 		});
@@ -166,7 +170,7 @@ describe('CollectionsController', () => {
 				{
 					name: 'test collection',
 				},
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collection).toEqual(mockCollectionsResponse.items[0]);
 		});
@@ -178,7 +182,7 @@ describe('CollectionsController', () => {
 
 			const response = await collectionsController.deleteCollection(
 				mockCollectionsResponse.items[0].id,
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(response).toEqual({ status: 'collection has been deleted' });
 		});
@@ -188,7 +192,7 @@ describe('CollectionsController', () => {
 
 			const response = await collectionsController.deleteCollection(
 				mockCollectionsResponse.items[0].id,
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(response).toEqual({ status: 'no collections found with that id' });
 		});
@@ -206,7 +210,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
 		});
@@ -226,7 +230,7 @@ describe('CollectionsController', () => {
 					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
 				error = e;
@@ -245,7 +249,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual({ status: 'object has been deleted' });
 		});
@@ -259,7 +263,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				'non-existing-object-id',
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual({
 				status: 'no object found with that id in that collection',
@@ -279,7 +283,7 @@ describe('CollectionsController', () => {
 					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
 				error = e;
@@ -304,7 +308,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockCollectionsResponse.items[1].id,
-				{}
+				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual(mockCollectionObjectsResponse.items[0]);
 		});
@@ -329,7 +333,7 @@ describe('CollectionsController', () => {
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
 				error = e;
@@ -357,7 +361,7 @@ describe('CollectionsController', () => {
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
-					{}
+					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
 				error = e;

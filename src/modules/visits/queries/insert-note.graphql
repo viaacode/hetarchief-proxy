@@ -1,5 +1,5 @@
 mutation insertNote($visitId: uuid!, $note: String, $userProfileId: uuid) {
-	insert_cp_visit_note_one(
+	insert_maintainer_visitor_space_request_note_one(
 		object: { visit_id: $visitId, note: $note, profile_id: $userProfileId }
 	) {
 		id

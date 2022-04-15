@@ -1,6 +1,9 @@
 import { QueryType } from './elasticsearch/consts';
 
-import { GetRelatedObjectsQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	GetObjectDetailBySchemaIdentifierQuery,
+	GetRelatedObjectsQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 
 export enum MediaFormat {
@@ -12,7 +15,7 @@ export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<SearchFilterField>;
 	MAX_COUNT_SEARCH_RESULTS: number;
 	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean };
+	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
 	NUMBER_OF_FILTER_OPTIONS: number;
 	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
 	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
@@ -24,7 +27,8 @@ export interface QueryBuilderConfig {
 	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
-export type GqlIeObject = GetRelatedObjectsQuery['object_ie'][0];
+export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
+	GetRelatedObjectsQuery['object_ie'][0];
 
 export interface MediaFile {
 	name: string;

@@ -33,9 +33,19 @@ import {
 
 import {
 	GetCollectionTileByIdDocument,
+	GetContentPagesQuery as GetContentPagesQueryAvo,
+	GetContentPagesQueryVariables as GetContentPagesQueryVariablesAvo,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
+	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesAvo,
 	GetItemByExternalIdDocument,
 	GetItemTileByIdDocument,
 } from '~generated/graphql-db-types-avo';
+import {
+	GetContentPagesQuery as GetContentPagesQueryHetArchief,
+	GetContentPagesQueryVariables as GetContentPagesQueryVariablesHetArchief,
+	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
+	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesHetArchief,
+} from '~generated/graphql-db-types-hetarchief';
 import {
 	CONTENT_PAGE_QUERIES,
 	DEFAULT_AUDIO_STILL,
@@ -180,36 +190,48 @@ export class ContentPagesService {
 		const filters: ContentPageFiltersDto = inputQuery.filters;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		const now = new Date().toISOString();
-		const contentPagesResponse = await this.dataService.execute(
+
+		const where:
+			| GetContentPagesQueryVariablesAvo['where']
+			| GetContentPagesQueryVariablesHetArchief['where']
+			| GetContentPagesWithBlocksQueryVariablesAvo['where']
+			| GetContentPagesWithBlocksQueryVariablesHetArchief['where'] = {
+			_and: [
+				{
+					// Get content pages with the selected content type
+					content_type: { _in: filters.contentTypes },
+				},
+				{
+					// Get pages that are visible to the current user
+					_or: filters.userGroupIds.map((userGroupId) => ({
+						user_group_ids: { _contains: userGroupId },
+					})),
+				},
+				...this.getLabelFilter(filters.labelIds),
+				// publish state
+				{
+					_or: [
+						{ is_public: { _eq: true } },
+						{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
+						{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
+						{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
+					],
+				},
+				{ is_deleted: { _eq: false } },
+			],
+		};
+
+		const contentPagesResponse = await this.dataService.execute<
+			| GetContentPagesQueryAvo
+			| GetContentPagesQueryHetArchief
+			| GetContentPagesWithBlocksQueryAvo
+			| GetContentPagesWithBlocksQueryHetArchief
+		>(
 			withBlocks
 				? this.queries.GetContentPagesWithBlocksDocument
 				: this.queries.GetContentPagesDocument,
 			{
-				where: {
-					_and: [
-						{
-							// Get content pages with the selected content type
-							content_type: { _in: filters.contentTypes },
-						},
-						{
-							// Get pages that are visible to the current user
-							_or: filters.userGroupIds.map((userGroupId) => ({
-								user_group_ids: { _contains: userGroupId },
-							})),
-						},
-						...this.getLabelFilter(filters.labelIds),
-						// publish state
-						{
-							_or: [
-								{ is_public: { _eq: true } },
-								{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
-								{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
-								{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
-							],
-						},
-						{ is_deleted: { _eq: false } },
-					],
-				},
+				where,
 				orderBy: { [orderProp]: orderDirection },
 				orUserGroupIds: filters.userGroupIds.map((userGroupId) => ({
 					content: { user_group_ids: { _contains: userGroupId } },
@@ -220,18 +242,35 @@ export class ContentPagesService {
 		);
 
 		const paginatedResponse = Pagination<ContentPage>({
-			items: get(contentPagesResponse, 'data.app_content', []).map(this.adaptContentPage),
+			items: (
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)?.app_content_page ||
+				[]
+			).map(this.adaptContentPage),
 			page,
 			size,
-			total: get(contentPagesResponse, 'data.cms_content_aggregate.aggregate.count', 0),
+			total:
+				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content_aggregate
+					.aggregate.count ||
+				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+					?.app_content_page_aggregate.aggregate.count ||
+				0,
 		});
 		return {
 			...paginatedResponse,
 			labelCounts: fromPairs(
-				get(contentPagesResponse, 'data.cms_content_labels', []).map(
-					(labelInfo: any): [number, number] => [
-						get(labelInfo, 'id'),
-						get(labelInfo, 'content_content_labels_aggregate.aggregate.count'),
+				(
+					(contentPagesResponse?.data as GetContentPagesQueryAvo).app_content_labels ||
+					(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
+						.app_content_label ||
+					[]
+				).map(
+					(
+						labelInfo: GetContentPagesQueryAvo['app_content_labels'][0] &
+							GetContentPagesQueryHetArchief['app_content_label'][0]
+					): [number, number] => [
+						labelInfo?.id,
+						labelInfo?.content_content_labels_aggregate?.aggregate?.count,
 					]
 				)
 			),

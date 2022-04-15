@@ -12,6 +12,7 @@ import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
 	GetObjectDetailBySchemaIdentifierDocument,
+	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -47,19 +48,23 @@ export class MediaService {
 			partOfEpisode: graphQlObject?.schema_part_of_episode,
 			partOfSeason: graphQlObject?.schema_part_of_season,
 			partOfSeries: graphQlObject?.schema_part_of_series,
-			maintainerId: graphQlObject?.schema_maintainer?.[0]?.id,
-			maintainerName: graphQlObject?.schema_maintainer?.[0]?.label,
+			maintainerId: graphQlObject?.maintainer?.schema_identifier,
+			maintainerName: graphQlObject?.maintainer?.schema_name,
 			contactInfo: {
-				email: graphQlObject?.schema_maintainer?.[0]?.primary_site.address?.email,
-				telephone: graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.telephone,
+				email: graphQlObject?.maintainer?.information?.[0]?.primary_site.address?.email,
+				telephone:
+					graphQlObject?.maintainer?.information?.[0]?.primary_site?.address?.telephone,
 				address: {
-					street: graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.street,
+					street: graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+						?.street,
 					postalCode:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.postal_code,
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+							?.postal_code,
 					locality:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address?.locality,
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+							?.locality,
 					postOfficeBoxNumber:
-						graphQlObject?.schema_maintainer?.[0]?.primary_site?.address
+						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
 							?.post_office_box_number,
 				},
 			},
@@ -178,17 +183,7 @@ export class MediaService {
 	): Promise<any> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
-		let mediaResponse;
-		try {
-			mediaResponse = await this.executeQuery(esIndex, esQuery);
-		} catch (err) {
-			if (get(err, 'response.body.error.type') === 'index_not_found_exception') {
-				// TODO remove this fallback once or-ids match between INT and local DB
-				mediaResponse = await this.executeQuery(null, esQuery);
-			} else {
-				throw err;
-			}
-		}
+		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return this.adaptESResponse(mediaResponse, referer);
 	}
@@ -200,9 +195,12 @@ export class MediaService {
 	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
 		const {
 			data: { object_ie: objectIe },
-		} = await this.dataService.execute(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
-		});
+		} = await this.dataService.execute<GetObjectDetailBySchemaIdentifierQuery>(
+			GetObjectDetailBySchemaIdentifierDocument,
+			{
+				schemaIdentifier,
+			}
+		);
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);

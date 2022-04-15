@@ -22,20 +22,21 @@ export enum VisitTimeframe {
 	FUTURE = 'FUTURE',
 }
 
-export type GqlNote = InsertVisitMutation['insert_cp_visit_one']['notes'][0];
+export type GqlNote =
+	InsertVisitMutation['insert_maintainer_visitor_space_request_one']['visitor_space_request_notes'][0];
 
 export type GqlVisitWithNotes =
-	| InsertVisitMutation['insert_cp_visit_one']
-	| FindVisitsQuery['cp_visit'][0]
-	| FindVisitByIdQuery['cp_visit'][0]
-	| FindActiveVisitByUserAndSpaceQuery['cp_visit'][0]
-	| UpdateVisitMutation['update_cp_visit_by_pk'];
+	| InsertVisitMutation['insert_maintainer_visitor_space_request_one']
+	| FindVisitsQuery['maintainer_visitor_space_request'][0]
+	| FindVisitByIdQuery['maintainer_visitor_space_request'][0]
+	| FindActiveVisitByUserAndSpaceQuery['maintainer_visitor_space_request'][0]
+	| UpdateVisitMutation['update_maintainer_visitor_space_request_by_pk'];
 
 export type GqlVisit =
 	| GqlVisitWithNotes
-	| FindApprovedStartedVisitsWithoutNotificationQuery['cp_visit'][0]
-	| FindApprovedAlmostEndedVisitsWithoutNotificationQuery['cp_visit'][0]
-	| FindApprovedEndedVisitsWithoutNotificationQuery['cp_visit'][0];
+	| FindApprovedStartedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0]
+	| FindApprovedAlmostEndedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0]
+	| FindApprovedEndedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0];
 
 export interface GqlUpdateVisit {
 	start_date: string;

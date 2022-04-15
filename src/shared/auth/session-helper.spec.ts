@@ -35,7 +35,7 @@ const mockArchiefUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
-	permissions: [Permission.CAN_READ_ALL_VISIT_REQUESTS],
+	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 };
 
