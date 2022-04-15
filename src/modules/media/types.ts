@@ -15,7 +15,7 @@ export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<SearchFilterField>;
 	MAX_COUNT_SEARCH_RESULTS: number;
 	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean };
+	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
 	NUMBER_OF_FILTER_OPTIONS: number;
 	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
 	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
