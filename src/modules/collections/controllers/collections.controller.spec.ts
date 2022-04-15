@@ -90,6 +90,8 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
+
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
 	let sessionHelperSpy: jest.SpyInstance;
@@ -217,7 +219,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0]
 			);
 			const collectionObject = await collectionsController.addObjectToCollection(
-				{ path: '/collections', headers: {} } as unknown as Request,
+				mockRequest,
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
@@ -238,7 +240,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.addObjectToCollection(
-					{ path: '/collections', headers: {} } as unknown as Request,
+					mockRequest,
 					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,

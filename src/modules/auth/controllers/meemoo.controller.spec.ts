@@ -86,6 +86,8 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockRequest = { path: '/auth/meemoo', headers: {} } as unknown as Request;
+
 const getNewMockSession = () => ({
 	idp: Idp.MEEMOO,
 	idpUserInfo: {
@@ -175,11 +177,7 @@ describe('MeemooController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
-			const result = await meemooController.loginCallback(
-				{ path: '/auth/meemoo', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -199,7 +197,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
 			const result = await meemooController.loginCallback(
-				{ path: '/auth/meemoo', headers: {} } as unknown as Request,
+				mockRequest,
 				{},
 				samlResponseWithNullRelayState
 			);
@@ -212,11 +210,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
-			const result = await meemooController.loginCallback(
-				{ path: '/auth/meemoo', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -236,11 +230,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
-			const result = await meemooController.loginCallback(
-				{ path: '/auth/meemoo', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -257,11 +247,7 @@ describe('MeemooController', () => {
 			});
 			let error;
 			try {
-				await meemooController.loginCallback(
-					{ path: '/auth/meemoo', headers: {} } as unknown as Request,
-					{},
-					samlResponse
-				);
+				await meemooController.loginCallback(mockRequest, {}, samlResponse);
 			} catch (e) {
 				error = e;
 			}
@@ -278,11 +264,7 @@ describe('MeemooController', () => {
 			mockMeemooService.assertSamlResponse.mockRejectedValueOnce({
 				message: 'SAML Response is no longer valid',
 			});
-			const response = await meemooController.loginCallback(
-				{ path: '/auth/meemoo', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const response = await meemooController.loginCallback(mockRequest, {}, samlResponse);
 			expect(response).toEqual({
 				url: `${configService.get('host')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,

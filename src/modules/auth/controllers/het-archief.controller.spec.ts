@@ -86,6 +86,8 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
+
 const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,
 	idpUserInfo: {
@@ -175,11 +177,7 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
-			const result = await hetArchiefController.loginCallback(
-				{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -199,7 +197,7 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
 			const result = await hetArchiefController.loginCallback(
-				{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
+				mockRequest,
 				{},
 				samlResponseWithNullRelayState
 			);
@@ -212,11 +210,7 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(
-				{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -235,11 +229,7 @@ describe('HetArchiefController', () => {
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(
-				{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
-				{},
-				samlResponse
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -256,11 +246,7 @@ describe('HetArchiefController', () => {
 			});
 			let error;
 			try {
-				await hetArchiefController.loginCallback(
-					{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
-					{},
-					samlResponse
-				);
+				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
 			} catch (e) {
 				error = e;
 			}
@@ -278,7 +264,7 @@ describe('HetArchiefController', () => {
 				message: 'SAML Response is no longer valid',
 			});
 			const response = await hetArchiefController.loginCallback(
-				{ path: '/auth/hetarchief', headers: {} } as unknown as Request,
+				mockRequest,
 				{},
 				samlResponse
 			);

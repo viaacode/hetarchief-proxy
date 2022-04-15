@@ -155,6 +155,8 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
+
 describe('VisitsController', () => {
 	let visitsController: VisitsController;
 
@@ -311,7 +313,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.createVisit(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				{
 					spaceId: 'space-1',
 					timeframe: 'asap',
@@ -343,7 +345,7 @@ describe('VisitsController', () => {
 			let error: any;
 			try {
 				await visitsController.createVisit(
-					{ path: '/visits', headers: {} } as unknown as Request,
+					mockRequest,
 					{
 						spaceId: 'space-1',
 						timeframe: 'asap',
@@ -377,7 +379,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				'visit-id',
 				{
 					startAt: new Date().toISOString(),
@@ -397,7 +399,7 @@ describe('VisitsController', () => {
 			let error;
 			try {
 				await visitsController.update(
-					{ path: '/visits', headers: {} } as unknown as Request,
+					mockRequest,
 					'space-1',
 					{
 						status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -420,7 +422,7 @@ describe('VisitsController', () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				'space-1',
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -442,7 +444,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.APPROVED,
@@ -464,7 +466,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				mockVisit2.id,
 				{
 					status: VisitStatus.DENIED,
@@ -486,7 +488,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.DENIED,
@@ -507,7 +509,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
-				{ path: '/visits', headers: {} } as unknown as Request,
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
