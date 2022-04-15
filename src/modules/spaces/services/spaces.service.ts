@@ -10,8 +10,8 @@ import {
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdentifierDocument,
-	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceBySlugDocument,
+	FindSpaceBySlugQuery,
 	FindSpacesDocument,
 	FindSpacesQuery,
 	FindSpacesQueryVariables,
@@ -39,6 +39,7 @@ export class SpacesService {
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
+			slug: graphQlSpace?.slug,
 			maintainerId: graphQlSpace?.content_partner?.schema_identifier,
 			name: graphQlSpace?.content_partner?.schema_name,
 			info: information?.description,
@@ -180,10 +181,10 @@ export class SpacesService {
 	}
 
 	public async findBySlug(slug: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdentifierQuery>(
-			FindSpaceByMaintainerIdentifierDocument,
+		const spaceResponse = await this.dataService.execute<FindSpaceBySlugQuery>(
+			FindSpaceBySlugDocument,
 			{
-				maintainerId: slug,
+				slug,
 			}
 		);
 		if (!spaceResponse.data.maintainer_visitor_space[0]) {

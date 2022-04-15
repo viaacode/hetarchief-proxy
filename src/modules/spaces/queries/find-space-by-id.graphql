@@ -1,6 +1,7 @@
 query findSpaceById($id: uuid!) {
 	maintainer_visitor_space(where: { id: { _eq: $id } }) {
 		id
+		slug
 		schema_image
 		schema_color
 		schema_audience_type

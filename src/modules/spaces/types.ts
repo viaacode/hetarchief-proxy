@@ -1,7 +1,7 @@
 import {
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
@@ -15,6 +15,7 @@ export enum AccessType {
 
 export interface Space {
 	id: string;
+	slug: string;
 	maintainerId: string;
 	name: string;
 	info: string;
@@ -35,5 +36,5 @@ export interface Space {
 export type GqlSpace =
 	| FindSpaceByIdQuery['maintainer_visitor_space'][0]
 	| FindSpacesQuery['maintainer_visitor_space'][0]
-	| FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'][0]
+	| FindSpaceBySlugQuery['maintainer_visitor_space'][0]
 	| FindSpaceByCpAdminIdQuery['maintainer_visitor_space'][0];
