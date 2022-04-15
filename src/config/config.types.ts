@@ -48,6 +48,7 @@ export interface Configuration {
 	tempAssetFolder: string;
 	multerOptions: MulterOptions;
 	meemooAdminOrganizationIds: string[];
+	rerouteEmailsTo: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
