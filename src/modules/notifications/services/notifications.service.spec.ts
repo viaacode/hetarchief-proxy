@@ -40,9 +40,7 @@ const mockGqlNotification1: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
-			content_partner: {
-				schema_identifier: 'OR-1v5bc86',
-			},
+			slug: 'amsab',
 		},
 	},
 };
@@ -61,9 +59,7 @@ const mockGqlNotification2: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
-			content_partner: {
-				schema_identifier: 'OR-1v5bc86',
-			},
+			slug: 'amsab',
 		},
 	},
 };
@@ -89,7 +85,7 @@ const mockNotification: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:54:59.894586',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	readingRoomId: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+	visitorSpaceSlug: 'amsab',
 };
 
 const mockUser: User = {

@@ -1,7 +1,7 @@
 query findActiveVisitByUserAndSpace(
-	$userProfileId: uuid
-	$maintainerOrgId: String
-	$now: timestamp
+	$userProfileId: uuid!
+	$visitorSpaceSlug: String!
+	$now: timestamp!
 ) {
 	maintainer_visitor_space_request(
 		where: {
@@ -9,7 +9,7 @@ query findActiveVisitByUserAndSpace(
 			status: { _eq: "APPROVED" }
 			start_date: { _lte: $now }
 			end_date: { _gte: $now }
-			visitor_space: { schema_maintainer_id: { _ilike: $maintainerOrgId } }
+			visitor_space: { slug: { _eq: $visitorSpaceSlug } }
 		}
 	) {
 		id
@@ -43,6 +43,7 @@ query findActiveVisitByUserAndSpace(
 		}
 		visitor_space {
 			id
+			slug
 			schema_image
 			schema_color
 			schema_audience_type

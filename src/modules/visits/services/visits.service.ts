@@ -112,7 +112,7 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
 					?.address?.email,
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
-			spaceSlug: graphQlVisit?.visitor_space?.content_partner?.schema_identifier, // TODO switch this to the actual space slug once that column is added to the spaces table
+			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
 			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.logo?.iri,
@@ -332,20 +332,20 @@ export class VisitsService {
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
-		maintainerOrgId: string
+		visitorSpaceSlug: string
 	): Promise<Visit | null> {
 		const visitResponse = await this.dataService.execute<FindActiveVisitByUserAndSpaceQuery>(
 			FindActiveVisitByUserAndSpaceDocument,
 			{
 				userProfileId,
-				maintainerOrgId,
+				visitorSpaceSlug,
 				now: new Date().toISOString(),
 			}
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(
-				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
+				`No active visits for user with id '${userProfileId}' and space with slug '${visitorSpaceSlug}' found`
 			);
 		}
 

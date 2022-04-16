@@ -162,7 +162,7 @@ const mockCollectionObject: IeObject = {
 	description: 'A description for this collection',
 	maintainerId: 'OR-1v5bc86',
 	maintainerName: 'Huis van Alijn',
-	readingRoomId: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+	visitorSpaceSlug: 'amsab',
 	series: ['Serie'],
 	programs: ['Programma'],
 };

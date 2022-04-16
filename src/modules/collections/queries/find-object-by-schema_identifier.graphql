@@ -17,6 +17,7 @@ query findObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
 			schema_name
 			visitor_space {
 				id
+				slug
 			}
 		}
 	}
