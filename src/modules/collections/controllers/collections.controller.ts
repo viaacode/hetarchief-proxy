@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Header,
 	Headers,
 	Logger,
 	Param,
@@ -27,6 +28,7 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
@@ -43,7 +45,8 @@ export class CollectionsController {
 
 	constructor(
 		private collectionsService: CollectionsService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		private mediaService: MediaService
 	) {}
 
 	@Get()
@@ -74,6 +77,21 @@ export class CollectionsController {
 			referer
 		);
 		return collectionObjects;
+	}
+
+	@Get(':collectionId/export')
+	@RequirePermissions(Permission.EXPORT_OBJECT)
+	@Header('Content-Type', 'text/xml')
+	public async exportCollection(
+		@Headers('referer') referer: string,
+		@Param('collectionId', ParseUUIDPipe) collectionId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
+		const objects = await this.mediaService.findAllObjectMetadataByCollectionId(
+			collectionId,
+			user.getId()
+		);
+		return this.mediaService.convertObjectsToXml(objects);
 	}
 
 	@Post()
