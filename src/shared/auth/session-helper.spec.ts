@@ -5,6 +5,7 @@ import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',
@@ -260,6 +261,18 @@ describe('SessionHelper', () => {
 				idpUserInfo: { email: 'test@studiohyperdrive.be' },
 			});
 			expect(result).toEqual({ email: 'test@studiohyperdrive.be' });
+		});
+	});
+
+	describe('getUserGroupIds', () => {
+		it('should return user group info', () => {
+			const result = SessionHelper.getUserGroupIds(mockArchiefUser);
+			expect(result).toEqual([Group.CP_ADMIN, SpecialPermissionGroups.loggedInUsers]);
+		});
+
+		it('should return user groups for not logged in user', () => {
+			const result = SessionHelper.getUserGroupIds(null);
+			expect(result).toEqual([SpecialPermissionGroups.loggedOutUsers]);
 		});
 	});
 

@@ -19,6 +19,7 @@ export interface Configuration {
 	cookieMaxAge: number;
 	redisConnectionString: string;
 	elasticSearchUrl: string;
+	ssumRegistrationPage: string;
 	samlIdpMetaDataEndpoint: string;
 	samlSpEntityId: string;
 	samlSpPrivateKey: string;

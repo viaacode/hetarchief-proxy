@@ -3,6 +3,7 @@ import {
 	Controller,
 	Get,
 	HttpStatus,
+	InternalServerErrorException,
 	Logger,
 	Post,
 	Query,
@@ -12,6 +13,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { get, isEqual, pick } from 'lodash';
+import queryString from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -40,7 +42,7 @@ export class HetArchiefController {
 
 	@Get('login')
 	@Redirect()
-	public async getAuth(
+	public async loginRoute(
 		@Session() session: Record<string, any>,
 		@Query('returnToUrl') returnToUrl: string
 	) {
@@ -51,6 +53,7 @@ export class HetArchiefController {
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
+
 			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl);
 			return {
 				url,
@@ -58,6 +61,36 @@ export class HetArchiefController {
 			};
 		} catch (err) {
 			Logger.error('Failed during hetarchief auth login route', err);
+		}
+		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+	}
+
+	@Get('register')
+	@Redirect()
+	public async registerRoute(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string
+	) {
+		try {
+			const serverRedirectUrl = `${getConfig(
+				this.configService,
+				'host'
+			)}/auth/hetarchief/login?${queryString.stringify({
+				returnToUrl,
+			})}`;
+			const url = queryString.stringifyUrl({
+				url: getConfig(this.configService, 'ssumRegistrationPage'),
+				query: {
+					redirect_to: serverRedirectUrl,
+					app_name: getConfig(this.configService, 'samlSpEntityId'),
+				},
+			});
+			return {
+				url,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		} catch (err) {
+			Logger.error('Failed during hetarchief auth register route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
