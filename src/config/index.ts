@@ -114,6 +114,7 @@ const config = (): Configuration => {
 		meemooAdminOrganizationIds: (getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '')
 			.split(',')
 			.map((orgId) => orgId.trim()),
+		rerouteEmailsTo: getEnvValue('REROUTE_EMAILS_TO', false),
 	};
 };
 

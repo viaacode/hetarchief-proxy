@@ -21,6 +21,8 @@ export enum Permission {
 	// Collections
 	MANAGE_COLLECTIONS = 'MANAGE_COLLECTIONS',
 	// Spaces
+	/** Spaces */
+	READ_ALL_SPACES = 'READ_ALL_SPACES',
 	UPDATE_OWN_SPACE = 'UPDATE_OWN_SPACE',
 	UPDATE_ALL_SPACES = 'UPDATE_ALL_SPACES',
 	// Admin
