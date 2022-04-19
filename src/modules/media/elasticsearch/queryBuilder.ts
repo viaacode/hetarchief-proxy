@@ -283,7 +283,9 @@ export class QueryBuilder {
 	 * @param prop
 	 */
 	private static filterSuffix(prop: SearchFilterField): string {
-		return this.config.NEEDS_FILTER_SUFFIX[prop] ? '.filter' : '';
+		return this.config.NEEDS_FILTER_SUFFIX[prop]
+			? `.${this.config.NEEDS_FILTER_SUFFIX[prop]}`
+			: '';
 	}
 
 	/**
