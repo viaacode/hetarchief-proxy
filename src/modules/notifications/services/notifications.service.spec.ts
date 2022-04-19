@@ -4,6 +4,7 @@ import { addMonths } from 'date-fns';
 import { NotificationsService } from './notifications.service';
 
 import {
+	DeleteNotificationsMutation,
 	InsertNotificationsMutation,
 	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
@@ -422,6 +423,21 @@ describe('NotificationsService', () => {
 				mockUser.id,
 				mockNotification as Partial<GqlCreateOrUpdateNotification>
 			);
+			expect(affectedRows).toBe(5);
+		});
+	});
+
+	describe('delete', () => {
+		it('can delete notifications', async () => {
+			const mockData: DeleteNotificationsMutation = {
+				delete_app_notification: {
+					affected_rows: 5,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const affectedRows = await notificationsService.delete('visit-id', {
+				types: [NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED],
+			});
 			expect(affectedRows).toBe(5);
 		});
 	});
