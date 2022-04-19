@@ -5,11 +5,12 @@ import { CollectionsService } from './services/collections.service';
 
 import { PlayerTicketModule } from '~modules/admin/player-ticket/player-ticket.module';
 import { DataModule } from '~modules/data';
+import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
 
 @Module({
 	controllers: [CollectionsController],
-	imports: [DataModule, PlayerTicketModule, MediaModule],
+	imports: [DataModule, PlayerTicketModule, MediaModule, EventsModule],
 	providers: [CollectionsService],
 	exports: [CollectionsService],
 })

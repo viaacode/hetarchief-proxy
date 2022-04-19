@@ -47,6 +47,8 @@ const config = (): Configuration => {
 		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		graphqlUrlAvo: getEnvValue('GRAPHQL_URL_AVO', true),
 		graphqlSecretAvo: getEnvValue('GRAPHQL_SECRET_AVO', true),
+		graphQlUrlLogging: getEnvValue('GRAPHQL_URL_LOGGING', true),
+		graphQlSecretLogging: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
 		databaseApplicationType: getEnvValue('DATABASE_APPLICATION_TYPE', true) as AvoOrHetArchief,
 		cookieSecret: getEnvValue('COOKIE_SECRET', true),
 		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),

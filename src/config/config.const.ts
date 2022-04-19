@@ -10,6 +10,8 @@ export const configValidationSchema = Joi.object({
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
 	GRAPHQL_URL_AVO: Joi.string().required(),
 	GRAPHQL_SECRET_AVO: Joi.string().required(),
+	GRAPHQL_URL_LOGGING: Joi.string().required(),
+	GRAPHQL_SECRET_LOGGING: Joi.string().required(),
 	DATABASE_APPLICATION_TYPE: Joi.string().valid('hetarchief', 'avo').required(),
 	COOKIE_SECRET: Joi.string(),
 	COOKIE_MAX_AGE: Joi.number().default(86400000),

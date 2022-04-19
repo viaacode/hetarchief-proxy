@@ -9,6 +9,7 @@ import { IdpService } from './services/idp.service';
 import { MeemooService } from './services/meemoo.service';
 
 import { CollectionsModule } from '~modules/collections';
+import { EventsModule } from '~modules/events';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 
@@ -34,7 +35,7 @@ export const meemooServiceFactory = {
 
 @Module({
 	controllers: [AuthController, HetArchiefController, MeemooController],
-	imports: [ConfigModule, UsersModule, CollectionsModule, SpacesModule],
+	imports: [ConfigModule, UsersModule, CollectionsModule, SpacesModule, EventsModule],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService],
 })
 export class AuthModule {}
