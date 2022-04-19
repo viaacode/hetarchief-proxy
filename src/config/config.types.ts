@@ -14,6 +14,8 @@ export interface Configuration {
 	graphQlEnableWhitelist: boolean;
 	graphqlUrlAvo: string;
 	graphqlSecretAvo: string;
+	graphQlUrlLogging: string;
+	graphQlSecretLogging: string;
 	databaseApplicationType: AvoOrHetArchief;
 	cookieSecret: string;
 	cookieMaxAge: number;
@@ -48,6 +50,7 @@ export interface Configuration {
 	tempAssetFolder: string;
 	multerOptions: MulterOptions;
 	meemooAdminOrganizationIds: string[];
+	rerouteEmailsTo: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

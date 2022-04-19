@@ -95,10 +95,8 @@ export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 // By default add the 'format' aggregation
 export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
 
-export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: boolean } = {
-	query: false,
-	format: false,
-	genre: true,
+export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
+	genre: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {

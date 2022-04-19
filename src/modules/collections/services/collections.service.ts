@@ -172,7 +172,15 @@ export class CollectionsService {
 	): Promise<IPagination<IeObject>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const where = { ie: { schema_name: { _ilike: query } } };
+		const where = {
+			_or: [
+				{ ie: { schema_name: { _ilike: query } } },
+				{ ie: { maintainer: { schema_name: { _ilike: query } } } },
+				{ ie: { dcterms_format: { _ilike: query } } },
+				{ ie: { meemoo_identifier: { _ilike: query } } },
+				{ ie: { schema_identifier: { _ilike: query } } },
+			],
+		};
 		const collectionObjectsResponse =
 			await this.dataService.execute<FindCollectionObjectsByCollectionIdQuery>(
 				FindCollectionObjectsByCollectionIdDocument,

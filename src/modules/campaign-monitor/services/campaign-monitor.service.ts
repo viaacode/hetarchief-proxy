@@ -19,6 +19,7 @@ export class CampaignMonitorService {
 	private templateToCampaignMonitorIdMap: Record<Template, any>;
 	private isEnabled: boolean;
 	private clientHost: string;
+	private rerouteEmailsTo: string;
 
 	constructor(private configService: ConfigService) {
 		this.gotInstance = got.extend({
@@ -30,6 +31,8 @@ export class CampaignMonitorService {
 		});
 
 		this.isEnabled = getConfig(this.configService, 'enableSendEmail');
+		this.rerouteEmailsTo = getConfig(this.configService, 'rerouteEmailsTo');
+
 		this.clientHost = getConfig(this.configService, 'clientHost');
 
 		this.templateToCampaignMonitorIdMap = {
@@ -44,6 +47,10 @@ export class CampaignMonitorService {
 
 	public setIsEnabled(enabled: boolean): void {
 		this.isEnabled = enabled;
+	}
+
+	public setRerouteEmailsTo(rerouteEmailsTo: string): void {
+		this.rerouteEmailsTo = rerouteEmailsTo;
 	}
 
 	public buildUrlToAdminVisit(): string {
@@ -106,6 +113,9 @@ export class CampaignMonitorService {
 
 	public async send(template: string, data: CampaignMonitorData): Promise<boolean> {
 		if (this.isEnabled) {
+			if (this.rerouteEmailsTo) {
+				data.To = this.rerouteEmailsTo;
+			}
 			await this.gotInstance.post(`${template}/send`, {
 				json: data,
 			});
