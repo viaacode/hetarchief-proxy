@@ -45,6 +45,7 @@ export interface User {
 	permissions: Permission[];
 	idp: Idp;
 	maintainerId?: string;
+	visitorSpaceSlug?: string;
 }
 
 export interface GqlPermission {

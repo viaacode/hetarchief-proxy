@@ -19,6 +19,11 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 		}
 		maintainer_users_profiles {
 			maintainer_identifier
+			maintainer {
+				visitor_space {
+					id
+				}
+			}
 		}
 	}
 }

@@ -42,6 +42,8 @@ export class UsersService {
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+			visitorSpaceSlug:
+				graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.id,
 		};
 	}
 

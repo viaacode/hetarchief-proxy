@@ -348,7 +348,7 @@ describe('VisitsService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				message:
-					"No active visits for user with id 'user-1' for space with maintainer id 'space-1' found",
+					"No active visits for user with id 'user-1' for space with visitor space id 'space-1' found",
 				statusCode: 404,
 			});
 		});
