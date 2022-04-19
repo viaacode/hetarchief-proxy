@@ -21,7 +21,7 @@ mutation insertUser($newUser: users_profile_insert_input!) {
 			maintainer_identifier
 			maintainer {
 				visitor_space {
-					id
+					slug
 				}
 			}
 		}
