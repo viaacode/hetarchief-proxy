@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { Request } from 'express';
 
 import { CollectionsService } from '../services/collections.service';
 
 import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
+import { EventsService } from '~modules/events/services/events.service';
 import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -85,6 +87,12 @@ const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyI
 	removeObjectFromCollection: jest.fn(),
 };
 
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
+const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
+
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
 	convertObjectsToXml: jest.fn(),
@@ -102,6 +110,10 @@ describe('CollectionsController', () => {
 				{
 					provide: CollectionsService,
 					useValue: mockCollectionsService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
 				},
 				{
 					provide: MediaService,
@@ -230,6 +242,7 @@ describe('CollectionsController', () => {
 				mockCollectionsResponse.items[0]
 			);
 			const collectionObject = await collectionsController.addObjectToCollection(
+				mockRequest,
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
@@ -250,6 +263,7 @@ describe('CollectionsController', () => {
 			let error;
 			try {
 				await collectionsController.addObjectToCollection(
+					mockRequest,
 					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,

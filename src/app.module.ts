@@ -15,6 +15,7 @@ import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
+import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
@@ -49,6 +50,7 @@ import { SessionService } from '~shared/services/session.service';
 		ContentPagesModule,
 		TranslationsModule,
 		AdminTranslationsModule,
+		EventsModule,
 	],
 	controllers: [AppController],
 	providers: [
