@@ -1,1 +1,1 @@
-export * from './navigations.module';
+export * from './admin-navigations.module';
