@@ -81,11 +81,8 @@ export class MediaController {
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
 	@RequirePermissions(Permission.EXPORT_OBJECT)
-	public async export(
-		@Headers('referer') referer: string,
-		@Param('id') id: string
-	): Promise<string> {
-		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id, referer);
+	public async export(@Param('id') id: string): Promise<string> {
+		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id);
 		return this.mediaService.convertObjectToXml(objectMetadata);
 	}
 

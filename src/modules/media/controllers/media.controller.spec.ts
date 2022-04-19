@@ -134,7 +134,7 @@ describe('MediaController', () => {
 			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
 			mockMediaService.convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
-			const xml = await mediaController.export('referer', '1');
+			const xml = await mediaController.export('1');
 			expect(xml).toEqual(mockXmlResponse);
 		});
 	});

@@ -12,8 +12,8 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
-	GetAllObjectsByCollectionIdDocument,
-	GetAllObjectsByCollectionIdQuery,
+	FindAllObjectsByCollectionIdDocument,
+	FindAllObjectsByCollectionIdQuery,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
@@ -227,11 +227,8 @@ export class MediaService {
 	/**
 	 * Get the object detail fields that are exposed as metadata
 	 */
-	public async findMetadataBySchemaIdentifier(
-		schemaIdentifier: string,
-		referer: string
-	): Promise<Partial<Media>> {
-		const object = await this.findBySchemaIdentifier(schemaIdentifier, referer);
+	public async findMetadataBySchemaIdentifier(schemaIdentifier: string): Promise<Partial<Media>> {
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
 		return this.adaptMetadata(object);
 	}
 
@@ -251,8 +248,8 @@ export class MediaService {
 	): Promise<Partial<Media>[]> {
 		const {
 			data: { users_folder_ie: allObjects },
-		} = await this.dataService.execute<GetAllObjectsByCollectionIdQuery>(
-			GetAllObjectsByCollectionIdDocument,
+		} = await this.dataService.execute<FindAllObjectsByCollectionIdQuery>(
+			FindAllObjectsByCollectionIdDocument,
 			{
 				collectionId,
 				userProfileId,

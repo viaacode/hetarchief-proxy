@@ -241,6 +241,16 @@ describe('PlayerTicketService', () => {
 
 			getThumbnailTokenSpy.mockRestore();
 		});
+
+		it('does not get a token for an invalid referer', async () => {
+			const getThumbnailTokenSpy = jest.spyOn(playerTicketService, 'getThumbnailToken');
+
+			const url = await playerTicketService.resolveThumbnailUrl('http://thumbnail.jpg', null);
+			expect(url).toEqual('http://thumbnail.jpg');
+			expect(getThumbnailTokenSpy).not.toBeCalled();
+
+			getThumbnailTokenSpy.mockRestore();
+		});
 	});
 
 	describe('getThumbnailPath', () => {

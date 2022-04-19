@@ -1,4 +1,4 @@
-query getAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
+query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $collectionId }

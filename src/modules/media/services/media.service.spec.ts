@@ -165,8 +165,7 @@ describe('MediaService', () => {
 		it('returns the metadata object details', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
 			const response = await mediaService.findMetadataBySchemaIdentifier(
-				mockObjectSchemaIdentifier,
-				'referer'
+				mockObjectSchemaIdentifier
 			);
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations).toBeUndefined();
