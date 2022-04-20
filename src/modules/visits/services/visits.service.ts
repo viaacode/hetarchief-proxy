@@ -46,6 +46,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -147,9 +148,12 @@ export class VisitsService {
 		};
 	}
 
-	public async create(createVisitDto: CreateVisitDto, userProfileId: string): Promise<Visit> {
+	public async create(
+		createVisitDto: CreateVisitDto & { visitorSpaceId: string },
+		userProfileId: string
+	): Promise<Visit> {
 		const newVisit = {
-			cp_space_id: createVisitDto.spaceId,
+			cp_space_id: createVisitDto.visitorSpaceId,
 			user_profile_id: userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
