@@ -37,7 +37,6 @@ export class EventsController {
 			logEvent.data = createEventsDto.data;
 		}
 
-		// We do not await this one to not let the client wait the response
 		await this.eventsService.insertEvents([logEvent]);
 
 		return true;
