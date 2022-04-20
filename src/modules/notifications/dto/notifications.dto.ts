@@ -26,7 +26,7 @@ export class NotificationsQueryDto {
 	size? = 10;
 }
 
-// not yes exposed in api, used internally for consistency
+// not yet exposed in api, used internally for consistency
 export class DeleteNotificationDto {
 	@IsArray()
 	@IsEnum(NotificationType, { each: true })

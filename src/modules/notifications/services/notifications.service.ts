@@ -171,13 +171,15 @@ export class NotificationsService {
 	}
 
 	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
+		const where = {
+			visit_id: { _eq: visitId },
+			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
+		};
+
 		const response = await this.dataService.execute<DeleteNotificationsMutation>(
 			DeleteNotificationsDocument,
 			{
-				where: {
-					visit_id: { _eq: visitId },
-					type: { _in: deleteNotificationDto.types },
-				},
+				where,
 			}
 		);
 
