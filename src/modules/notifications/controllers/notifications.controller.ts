@@ -157,7 +157,7 @@ export class NotificationsController {
 				),
 				description: i18n.t('Sla je werk op voor je toegang verliest'),
 				visit_id: visit.id,
-				type: NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+				type: NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
 				status: NotificationStatus.UNREAD,
 				recipient: visit.userProfileId,
 			})

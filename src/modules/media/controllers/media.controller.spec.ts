@@ -33,6 +33,8 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findBySchemaIdentifier: jest.fn(),
+	findMetadataBySchemaIdentifier: jest.fn(),
+	convertObjectToXml: jest.fn(),
 	getRelated: jest.fn(),
 	getSimilar: jest.fn(),
 };
@@ -121,6 +123,19 @@ describe('MediaController', () => {
 			const media = await mediaController.getMediaById('referer', '1');
 			expect(media.hits.total.value).toEqual(1);
 			expect(media.hits.hits.length).toEqual(1);
+		});
+	});
+
+	describe('export', () => {
+		it('should export a media item as xml', async () => {
+			const mockResponse = getMockMediaResponse();
+			mockResponse.hits.total.value = 1;
+			mockResponse.hits.hits.shift();
+			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
+			mockMediaService.convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
+			const xml = await mediaController.export('1');
+			expect(xml).toEqual(mockXmlResponse);
 		});
 	});
 

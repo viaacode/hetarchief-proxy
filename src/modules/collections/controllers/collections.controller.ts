@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Header,
 	Headers,
 	Logger,
 	Param,
@@ -10,11 +11,13 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { Request } from 'express';
 
 import { Collection, IeObject } from '../types';
 
@@ -23,11 +26,15 @@ import {
 	CreateOrUpdateCollectionDto,
 } from '~modules/collections/dto/collections.dto';
 import { CollectionsService } from '~modules/collections/services/collections.service';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
+import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Collections')
@@ -36,7 +43,11 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 export class CollectionsController {
 	private logger: Logger = new Logger(CollectionsController.name, { timestamp: true });
 
-	constructor(private collectionsService: CollectionsService) {}
+	constructor(
+		private collectionsService: CollectionsService,
+		private eventsService: EventsService,
+		private mediaService: MediaService
+	) {}
 
 	@Get()
 	public async getCollections(
@@ -66,6 +77,21 @@ export class CollectionsController {
 			referer
 		);
 		return collectionObjects;
+	}
+
+	@Get(':collectionId/export')
+	@RequirePermissions(Permission.EXPORT_OBJECT)
+	@Header('Content-Type', 'text/xml')
+	public async exportCollection(
+		@Headers('referer') referer: string,
+		@Param('collectionId', ParseUUIDPipe) collectionId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
+		const objects = await this.mediaService.findAllObjectMetadataByCollectionId(
+			collectionId,
+			user.getId()
+		);
+		return this.mediaService.convertObjectsToXml(objects);
 	}
 
 	@Post()
@@ -116,6 +142,7 @@ export class CollectionsController {
 
 	@Post(':collectionId/objects/:objectId')
 	public async addObjectToCollection(
+		@Req() request: Request,
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
@@ -131,6 +158,21 @@ export class CollectionsController {
 			objectSchemaIdentifier,
 			referer
 		);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.ITEM_BOOKMARK,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+				data: {
+					schema_identifier: objectSchemaIdentifier,
+				},
+			},
+		]);
+
 		return collectionObject;
 	}
 

@@ -10,6 +10,8 @@ export const configValidationSchema = Joi.object({
 	GRAPHQL_ENABLE_WHITELIST: Joi.boolean().default(true),
 	GRAPHQL_URL_AVO: Joi.string().required(),
 	GRAPHQL_SECRET_AVO: Joi.string().required(),
+	GRAPHQL_URL_LOGGING: Joi.string().required(),
+	GRAPHQL_SECRET_LOGGING: Joi.string().required(),
 	DATABASE_APPLICATION_TYPE: Joi.string().valid('hetarchief', 'avo').required(),
 	COOKIE_SECRET: Joi.string(),
 	COOKIE_MAX_AGE: Joi.number().default(86400000),
@@ -41,6 +43,7 @@ export const configValidationSchema = Joi.object({
 	ASSET_SERVER_BUCKET_NAME: Joi.string(),
 	TEMP_ASSET_FOLDER: Joi.string().allow(''),
 	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
+	REROUTE_EMAILS_TO: Joi.string().allow(''),
 });
 
 export const DEFAULT_CONFIG = {

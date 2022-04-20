@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
+import { Request } from 'express';
 
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitSpaceCount, VisitStatus } from '../types';
@@ -10,7 +11,9 @@ import {
 	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
+import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -141,6 +144,8 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onCreateVisit: jest.fn(),
 	onApproveVisitRequest: jest.fn(),
 	onDenyVisitRequest: jest.fn(),
+	delete: jest.fn(),
+	onCancelVisitRequest: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -148,6 +153,12 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
+
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
+const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
 
 describe('VisitsController', () => {
 	let visitsController: VisitsController;
@@ -169,6 +180,10 @@ describe('VisitsController', () => {
 					provide: SpacesService,
 					useValue: mockSpacesService,
 				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -181,6 +196,7 @@ describe('VisitsController', () => {
 		mockNotificationsService.onCreateVisit.mockClear();
 		mockNotificationsService.onApproveVisitRequest.mockClear();
 		mockNotificationsService.onDenyVisitRequest.mockClear();
+		mockNotificationsService.delete.mockClear();
 	});
 
 	it('should be defined', () => {
@@ -301,6 +317,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.createVisit(
+				mockRequest,
 				{
 					spaceId: 'space-1',
 					timeframe: 'asap',
@@ -332,6 +349,7 @@ describe('VisitsController', () => {
 			let error: any;
 			try {
 				await visitsController.createVisit(
+					mockRequest,
 					{
 						spaceId: 'space-1',
 						timeframe: 'asap',
@@ -358,6 +376,7 @@ describe('VisitsController', () => {
 
 	describe('update', () => {
 		it('should update a visit', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
@@ -365,6 +384,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				'visit-id',
 				{
 					startAt: new Date().toISOString(),
@@ -384,6 +404,7 @@ describe('VisitsController', () => {
 			let error;
 			try {
 				await visitsController.update(
+					mockRequest,
 					'space-1',
 					{
 						status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -406,6 +427,7 @@ describe('VisitsController', () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.update(
+				mockRequest,
 				'space-1',
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -420,6 +442,7 @@ describe('VisitsController', () => {
 		});
 
 		it('should update a visit status: approved', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
@@ -427,6 +450,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.APPROVED,
@@ -440,33 +464,65 @@ describe('VisitsController', () => {
 		});
 
 		it('should update a visit status: denied', async () => {
-			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			const mockVisit3 = { ...mockVisit2 };
+			mockVisit3.status = VisitStatus.DENIED;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
+				mockVisit2.id,
+				{
+					status: VisitStatus.DENIED,
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(visit).toEqual(mockVisit3);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
+			sessionHelperSpy.mockRestore();
+		});
+
+		it('should send a revoke event when an approved visit is denied', async () => {
+			const mockVisit3 = { ...mockVisit1 };
+			mockVisit3.status = VisitStatus.DENIED;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
+			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.DENIED,
 				},
 				new SessionUserEntity(mockUser)
 			);
-			expect(visit).toEqual(mockVisit1);
+			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
 		});
 
 		it('should update a visit status: cancelled', async () => {
-			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			const mockVisit3 = { ...mockVisit1 };
+			mockVisit3.status = VisitStatus.CANCELLED_BY_VISITOR;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -474,10 +530,33 @@ describe('VisitsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 
-			expect(visit).toEqual(mockVisit1);
+			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
 			sessionHelperSpy.mockRestore();
+		});
+
+		it('should delete notifications when the startAt/endAt time is changed to a future date', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			await visitsController.update(
+				mockRequest,
+				mockVisit1.id,
+				{
+					startAt: addHours(new Date(), 1).toISOString(),
+					endAt: addHours(new Date(), 2).toISOString(),
+					status: VisitStatus.APPROVED,
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(mockNotificationsService.delete).toHaveBeenCalledTimes(1);
+			expect(mockNotificationsService.delete).toHaveBeenLastCalledWith(mockVisit1.id, {
+				types: [
+					NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,
+					NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+					NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
+				],
+			});
 		});
 	});
 });

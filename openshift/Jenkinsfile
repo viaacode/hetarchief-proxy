@@ -165,19 +165,19 @@ pipeline {
                 }
             }
         }
-        always {
-            jiraSendBuildInfo site: "${JIRA_URL}"
-            container('default') {
-                // Archive tets results
-                script {
-                    if (fileExists('./tests/test_results.xml')) {
-                        junit 'tests/test_results.xml'
-                    } else {
-                        echo 'No test results found'
-                    }
-                }
-            }
-        }
+        // always {
+        //     jiraSendBuildInfo site: "${JIRA_URL}"
+        //     container('default') {
+        //         // Archive tets results
+        //         script {
+        //             if (fileExists('./tests/test_results.xml')) {
+        //                 junit 'tests/test_results.xml'
+        //             } else {
+        //                 echo 'No test results found'
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
 
