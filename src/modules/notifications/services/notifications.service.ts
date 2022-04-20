@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
+import { DeleteNotificationDto } from '../dto/notifications.dto';
 import {
 	GqlCreateNotificationsForReadingRoom,
 	GqlCreateOrUpdateNotification,
@@ -11,6 +12,8 @@ import {
 } from '../types';
 
 import {
+	DeleteNotificationsDocument,
+	DeleteNotificationsMutation,
 	FindNotificationsByUserDocument,
 	FindNotificationsByUserQuery,
 	InsertNotificationsDocument,
@@ -163,6 +166,25 @@ export class NotificationsService {
 
 		const affectedRows = response.data.update_app_notification.affected_rows;
 		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
+
+		return affectedRows;
+	}
+
+	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
+		const where = {
+			visit_id: { _eq: visitId },
+			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
+		};
+
+		const response = await this.dataService.execute<DeleteNotificationsMutation>(
+			DeleteNotificationsDocument,
+			{
+				where,
+			}
+		);
+
+		const affectedRows = response.data.delete_app_notification.affected_rows;
+		this.logger.debug(`${affectedRows} notifications deleted for visit ${visitId}`);
 
 		return affectedRows;
 	}

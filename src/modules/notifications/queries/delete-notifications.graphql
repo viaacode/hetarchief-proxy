@@ -1,0 +1,5 @@
+mutation deleteNotifications($where: app_notification_bool_exp!) {
+	delete_app_notification(where: $where) {
+		affected_rows
+	}
+}
