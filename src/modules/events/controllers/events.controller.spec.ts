@@ -27,6 +27,8 @@ const mockUser: User = {
 	idp: Idp.HETARCHIEF,
 };
 
+const mockRequest = { path: '/events', headers: {} } as unknown as Request;
+
 describe('EventsController', () => {
 	let eventsController: EventsController;
 	beforeEach(async () => {
@@ -50,9 +52,22 @@ describe('EventsController', () => {
 	describe('sendEvent', () => {
 		it('should send log events', async () => {
 			const result = eventsController.sendEvent(
-				{ path: '/events', headers: {} } as unknown as Request,
+				mockRequest,
 				new SessionUserEntity(mockUser),
-				{ type: LogEventType.USER_AUTHENTICATE }
+				{ type: LogEventType.USER_AUTHENTICATE, path: 'http://localhost:3200' }
+			);
+			expect(result).toBeTruthy();
+		});
+
+		it('should send log events with data', async () => {
+			const result = eventsController.sendEvent(
+				mockRequest,
+				new SessionUserEntity(mockUser),
+				{
+					type: LogEventType.USER_AUTHENTICATE,
+					path: 'http://localhost:3200',
+					data: { test: true },
+				}
 			);
 			expect(result).toBeTruthy();
 		});

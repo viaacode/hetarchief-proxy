@@ -1,11 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Request } from 'express';
 
 import { MediaService } from '../services/media.service';
 
 import { MediaController } from './media.controller';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { EventsService } from '~modules/events/services/events.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Group, GroupIdToName, Permission } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const getMockMediaResponse = () => ({
@@ -24,6 +29,21 @@ const getMockMediaResponse = () => ({
 			},
 		],
 	},
+});
+
+const mockRequest = { path: '/media', headers: {} } as unknown as Request;
+
+const mockUser: SessionUserEntity = new SessionUserEntity({
+	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	firstName: 'Test',
+	lastName: 'Testers',
+	fullName: 'Test Testers',
+	email: 'test.testers@meemoo.be',
+	idp: Idp.HETARCHIEF,
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
+	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 });
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -45,6 +65,10 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getThumbnailUrl: jest.fn(),
 };
 
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
 describe('MediaController', () => {
 	let mediaController: MediaController;
 
@@ -64,6 +88,10 @@ describe('MediaController', () => {
 				{
 					provide: PlayerTicketService,
 					useValue: mockPlayerTicketService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
 				},
 			],
 		})
@@ -134,7 +162,7 @@ describe('MediaController', () => {
 			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
 			mockMediaService.convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
-			const xml = await mediaController.export('1');
+			const xml = await mediaController.export('1', mockRequest, mockUser);
 			expect(xml).toEqual(mockXmlResponse);
 		});
 	});
