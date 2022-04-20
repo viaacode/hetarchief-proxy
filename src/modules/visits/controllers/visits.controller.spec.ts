@@ -145,6 +145,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onApproveVisitRequest: jest.fn(),
 	onDenyVisitRequest: jest.fn(),
 	delete: jest.fn(),
+	onCancelVisitRequest: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {

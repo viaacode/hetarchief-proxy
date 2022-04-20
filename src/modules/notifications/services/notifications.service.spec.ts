@@ -364,6 +364,24 @@ describe('NotificationsService', () => {
 		});
 	});
 
+	describe('onCancelVisitRequest', () => {
+		it('should send a notification about a visit request cancellation', async () => {
+			const createForMultipleRecipientsSpy = jest
+				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.mockResolvedValueOnce([mockNotification]);
+
+			const response = await notificationsService.onCancelVisitRequest(
+				mockVisit,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(response).toHaveLength(1);
+			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
+			createForMultipleRecipientsSpy.mockRestore();
+		});
+	});
+
 	describe('update', () => {
 		it('should update a notification', async () => {
 			const mockData: UpdateNotificationMutation = {

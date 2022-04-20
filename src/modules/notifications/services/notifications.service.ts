@@ -285,4 +285,26 @@ export class NotificationsService {
 		]);
 		return notifications[0];
 	}
+
+	/**
+	 * Send a notification to multiple recipients when a user cancels their own request
+	 */
+	public async onCancelVisitRequest(
+		visit: Visit,
+		recipients: Recipient[],
+		user: SessionUserEntity
+	): Promise<Notification[]> {
+		return this.createForMultipleRecipients(
+			{
+				title: i18n.t('Een aanvraag om je leeszaal te bezoeken is geannuleerd.'),
+				description: i18n.t('{{name}} heeft zelf de aanvraag geannuleerd.', {
+					name: user.getFullName(),
+				}),
+				visit_id: visit.id,
+				type: NotificationType.VISIT_REQUEST_CANCELLED,
+				status: NotificationStatus.UNREAD,
+			},
+			recipients.map((recipient) => recipient.id)
+		);
+	}
 }
