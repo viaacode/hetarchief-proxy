@@ -4,6 +4,7 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
+import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -91,6 +92,21 @@ describe('SpacesController', () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
 			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(undefined));
 			expect(spaces.items.length).toEqual(2);
+		});
+
+		it('should throw an exception on illegal querying of INACTIVE spaces', async () => {
+			let error;
+			try {
+				await spacesController.getSpaces(
+					{ status: [Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive] },
+					new SessionUserEntity(undefined)
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'You do not have the right permissions to query this data'
+			);
 		});
 	});
 

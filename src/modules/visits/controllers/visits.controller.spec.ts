@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
+import { Request } from 'express';
 
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitSpaceCount, VisitStatus } from '../types';
@@ -10,6 +11,7 @@ import {
 	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
+import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
@@ -142,6 +144,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onCreateVisit: jest.fn(),
 	onApproveVisitRequest: jest.fn(),
 	onDenyVisitRequest: jest.fn(),
+	onCancelVisitRequest: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -149,6 +152,12 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
+
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
+const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
 
 describe('VisitsController', () => {
 	let visitsController: VisitsController;
@@ -169,6 +178,10 @@ describe('VisitsController', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
 				},
 			],
 		})
@@ -302,6 +315,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.createVisit(
+				mockRequest,
 				{
 					spaceId: 'space-1',
 					timeframe: 'asap',
@@ -333,6 +347,7 @@ describe('VisitsController', () => {
 			let error: any;
 			try {
 				await visitsController.createVisit(
+					mockRequest,
 					{
 						spaceId: 'space-1',
 						timeframe: 'asap',
@@ -366,6 +381,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				'visit-id',
 				{
 					startAt: new Date().toISOString(),
@@ -385,6 +401,7 @@ describe('VisitsController', () => {
 			let error;
 			try {
 				await visitsController.update(
+					mockRequest,
 					'space-1',
 					{
 						status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -407,6 +424,7 @@ describe('VisitsController', () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.update(
+				mockRequest,
 				'space-1',
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -428,6 +446,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.APPROVED,
@@ -441,6 +460,29 @@ describe('VisitsController', () => {
 		});
 
 		it('should update a visit status: denied', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit2);
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
+			const visit = await visitsController.update(
+				mockRequest,
+				mockVisit2.id,
+				{
+					status: VisitStatus.DENIED,
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(visit).toEqual(mockVisit2);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
+			sessionHelperSpy.mockRestore();
+		});
+
+		it('should send a revoke event when an approved visit is denied', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
@@ -448,6 +490,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.DENIED,
@@ -468,6 +511,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,

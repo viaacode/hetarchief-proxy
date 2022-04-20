@@ -142,7 +142,7 @@ export class PlayerTicketService {
 	}
 
 	public async resolveThumbnailUrl(path: string, referer: string): Promise<string> {
-		if (!path) {
+		if (!path || !referer) {
 			return path;
 		}
 		const token = await this.getThumbnailToken(referer);

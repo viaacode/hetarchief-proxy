@@ -9,16 +9,20 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -27,6 +31,7 @@ import { RequireAnyPermissions } from '~shared/decorators/require-any-permission
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 import i18n from '~shared/i18n';
 
 @UseGuards(LoggedInGuard)
@@ -38,7 +43,8 @@ export class VisitsController {
 	constructor(
 		private visitsService: VisitsService,
 		private notificationsService: NotificationsService,
-		private spacesService: SpacesService
+		private spacesService: SpacesService,
+		private eventsService: EventsService
 	) {}
 
 	@Get()
@@ -126,6 +132,7 @@ export class VisitsController {
 	})
 	@RequirePermissions(Permission.CREATE_VISIT_REQUEST)
 	public async createVisit(
+		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
@@ -144,6 +151,17 @@ export class VisitsController {
 		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
 		await this.notificationsService.onCreateVisit(visit, recipients, user);
 
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.VISIT_REQUEST,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
 		return visit;
 	}
 
@@ -153,17 +171,19 @@ export class VisitsController {
 	})
 	@RequireAnyPermissions(Permission.UPDATE_VISIT_REQUEST, Permission.CANCEL_OWN_VISIT_REQUEST)
 	public async update(
+		@Req() request: Request,
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
+		const originalVisit = await this.visitsService.findById(id);
+
 		if (
 			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
 			user.hasNot(Permission.UPDATE_VISIT_REQUEST)
 		) {
-			const visit = await this.visitsService.findById(id);
 			if (
-				visit.userProfileId !== user.getId() ||
+				originalVisit.userProfileId !== user.getId() ||
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				throw new UnauthorizedException(
@@ -185,12 +205,61 @@ export class VisitsController {
 			const space = await this.spacesService.findById(visit.spaceId);
 			if (updateVisitDto.status === VisitStatus.APPROVED) {
 				await this.notificationsService.onApproveVisitRequest(visit, space);
+
+				// Log event
+				this.eventsService.insertEvents([
+					{
+						id: EventsHelper.getEventId(request),
+						type: LogEventType.VISIT_REQUEST_APPROVED,
+						source: request.path,
+						subject: user.getId(),
+						time: new Date().toISOString(),
+						data: {
+							visitor_space_request_id: id,
+						},
+					},
+				]);
 			} else if (updateVisitDto.status === VisitStatus.DENIED) {
 				await this.notificationsService.onDenyVisitRequest(
 					visit,
 					space,
 					updateVisitDto.note
 				);
+
+				// Log event
+				this.eventsService.insertEvents([
+					{
+						id: EventsHelper.getEventId(request),
+						type:
+							originalVisit.status === VisitStatus.APPROVED
+								? LogEventType.VISIT_REQUEST_REVOKED
+								: LogEventType.VISIT_REQUEST_DENIED,
+						source: request.path,
+						subject: user.getId(),
+						time: new Date().toISOString(),
+						data: {
+							visitor_space_request_id: id,
+						},
+					},
+				]);
+			} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
+				const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
+
+				await this.notificationsService.onCancelVisitRequest(visit, recipients, user);
+
+				// Log event
+				this.eventsService.insertEvents([
+					{
+						id: EventsHelper.getEventId(request),
+						type: LogEventType.VISIT_REQUEST_CANCELLED_BY_VISITOR,
+						source: request.path,
+						subject: user.getId(),
+						time: new Date().toISOString(),
+						data: {
+							visitor_space_request_id: id,
+						},
+					},
+				]);
 			}
 		}
 

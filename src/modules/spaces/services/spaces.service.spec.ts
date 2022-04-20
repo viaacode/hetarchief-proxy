@@ -9,6 +9,7 @@ import {
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
+	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
@@ -220,6 +221,31 @@ describe('SpacesService', () => {
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(20);
 			expect(response.total).toBe(0);
+		});
+
+		it('can filter spaces by their status', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space: [
+						{
+							id: '1',
+						},
+					],
+					maintainer_visitor_space_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await spacesService.findAll(
+				{ status: [Lookup_Maintainer_Visitor_Space_Status_Enum.Active], page: 1, size: 20 },
+				undefined
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(20);
+			expect(response.total).toBe(100);
 		});
 	});
 
