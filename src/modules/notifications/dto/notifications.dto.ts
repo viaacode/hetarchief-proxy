@@ -1,6 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator';
+
+import { NotificationType } from '../types';
 
 export class NotificationsQueryDto {
 	@IsNumber()
@@ -22,4 +24,19 @@ export class NotificationsQueryDto {
 		default: 10,
 	})
 	size? = 10;
+}
+
+// not yet exposed in api, used internally for consistency
+export class DeleteNotificationDto {
+	@IsArray()
+	@IsEnum(NotificationType, { each: true })
+	@IsOptional()
+	@ApiPropertyOptional({
+		isArray: true,
+		description: 'Filter spaces by status',
+		default: undefined,
+		example: [NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED],
+		enum: NotificationType,
+	})
+	types?: NotificationType[];
 }
