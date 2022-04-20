@@ -9,9 +9,11 @@ import {
 	Param,
 	Post,
 	Query,
+	Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { getConfig } from '~config';
 
@@ -19,8 +21,14 @@ import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/
 import { MediaService } from '../services/media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { ArchiefUser } from '~modules/auth/types';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { SessionUser } from '~shared/decorators/user.decorator';
+import { EventsHelper } from '~shared/helpers/events';
 
 @ApiTags('Media')
 @Controller('media')
@@ -31,6 +39,7 @@ export class MediaController {
 	constructor(
 		private mediaService: MediaService,
 		private playerTicketService: PlayerTicketService,
+		private eventsService: EventsService,
 		private configService: ConfigService
 	) {}
 
@@ -81,8 +90,24 @@ export class MediaController {
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
 	@RequirePermissions(Permission.EXPORT_OBJECT)
-	public async export(@Param('id') id: string): Promise<string> {
+	public async export(
+		@Param('id') id: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
 		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.METADATA_EXPORT,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
 		return this.mediaService.convertObjectToXml(objectMetadata);
 	}
 
