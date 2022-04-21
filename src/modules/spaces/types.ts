@@ -1,9 +1,9 @@
 import {
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
-	Lookup_Schema_Audience_Type_Enum,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
@@ -23,7 +23,7 @@ export interface Space {
 	image: string;
 	color: string;
 	logo: string;
-	audienceType: Lookup_Schema_Audience_Type_Enum;
+	audienceType: AudienceType;
 	publicAccess: boolean;
 	contactInfo: ContactInfo;
 	status: VisitorSpaceStatus;

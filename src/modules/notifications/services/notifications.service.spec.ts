@@ -4,9 +4,9 @@ import { addMonths } from 'date-fns';
 import { NotificationsService } from './notifications.service';
 
 import {
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	DeleteNotificationsMutation,
 	InsertNotificationsMutation,
-	Lookup_Schema_Audience_Type_Enum,
 	UpdateAllNotificationsForUserMutation,
 	UpdateNotificationMutation,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
@@ -145,7 +145,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
+	audienceType: AudienceType.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,

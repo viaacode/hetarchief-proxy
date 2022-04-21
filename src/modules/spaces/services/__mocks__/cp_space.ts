@@ -1,5 +1,5 @@
 import {
-	Lookup_Schema_Audience_Type_Enum,
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { GqlSpace } from '~modules/spaces/types';
@@ -8,7 +8,7 @@ export const mockGqlSpace: GqlSpace = {
 	id: '65790f8f-6365-4891-8ce2-4563f360db89',
 	schema_image: null,
 	schema_color: null,
-	schema_audience_type: Lookup_Schema_Audience_Type_Enum.Private,
+	schema_audience_type: AudienceType.Private,
 	schema_description: null,
 	schema_public_access: false,
 	schema_service_description: null,

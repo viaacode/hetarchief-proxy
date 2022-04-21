@@ -8,7 +8,7 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 import { VisitsController } from './visits.controller';
 
 import {
-	Lookup_Schema_Audience_Type_Enum,
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
@@ -106,7 +106,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
+	audienceType: AudienceType.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,
