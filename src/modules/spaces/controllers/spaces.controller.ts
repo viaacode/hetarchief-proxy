@@ -20,7 +20,7 @@ import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -47,7 +47,7 @@ export class SpacesController {
 		// status filter on inactive requires special permission
 		if (
 			queryDto.status &&
-			queryDto.status.includes(Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive) &&
+			queryDto.status.includes(VisitorSpaceStatus.Inactive) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
 			throw new UnauthorizedException(
@@ -56,7 +56,7 @@ export class SpacesController {
 		}
 		// by default only query the active spaces
 		if (!queryDto.status) {
-			queryDto.status = [Lookup_Maintainer_Visitor_Space_Status_Enum.Active];
+			queryDto.status = [VisitorSpaceStatus.Active];
 		}
 		const spaces = await this.spacesService.findAll(queryDto, user.getId());
 		return spaces;
@@ -92,6 +92,7 @@ export class SpacesController {
 				serviceDescription: { type: 'string' },
 				color: { type: 'string' },
 				image: { type: 'string' },
+				status: { type: 'string' },
 			},
 		},
 	})
@@ -105,6 +106,7 @@ export class SpacesController {
 		const space = await this.spacesService.findById(id);
 		if (
 			user.has(Permission.UPDATE_OWN_SPACE) &&
+			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
 			user.getMaintainerId() !== space.maintainerId
 		) {
 			throw new UnauthorizedException('You are not authorized to update this visitor space');

@@ -11,6 +11,7 @@ import {
 	UpdateNavigationByIdMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const mockNavigationElement1 = {
 	content_path: '/gebruiksvoorwaarden',
@@ -20,7 +21,7 @@ const mockNavigationElement1 = {
 	position: 1,
 	id: '42555c7e-1cf7-4031-bb17-e6ca57eaab64',
 	icon_name: '',
-	user_group_ids: null,
+	user_group_ids: [SpecialPermissionGroups.loggedOutUsers, SpecialPermissionGroups.loggedInUsers],
 	label: 'Gebruikersvoorwaarden',
 	updated_at: '2022-02-21T16:36:06.045845+00:00',
 	description: 'Navigatie balk in de footer gecentreerd',
@@ -37,7 +38,7 @@ const mockNavigationElement2 = {
 	position: 1,
 	id: '7f8c1140-d52e-4f12-8437-6176392f64db',
 	icon_name: '',
-	user_group_ids: null,
+	user_group_ids: [SpecialPermissionGroups.loggedInUsers],
 	label: 'Over de leeszalen',
 	updated_at: '2022-02-21T16:35:08.635696+00:00',
 	description: 'Hoofd navigatie balk bovenaan de pagina linker zijde',

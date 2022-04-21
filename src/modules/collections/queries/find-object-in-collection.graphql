@@ -23,6 +23,7 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 				schema_name
 				visitor_space {
 					id
+					slug
 				}
 			}
 		}

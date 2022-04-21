@@ -1,0 +1,13 @@
+query getVisitRequestForAccess($userProfileId: uuid!, $maintainerOrId: String!, $now: timestamp!) {
+	maintainer_visitor_space_request(
+		where: {
+			user_profile_id: { _eq: $userProfileId }
+			visitor_space: { schema_maintainer_id: { _ilike: $maintainerOrId } }
+			start_date: { _lte: $now }
+			end_date: { _gte: $now }
+			status: { _eq: "APPROVED" }
+		}
+	) {
+		id
+	}
+}

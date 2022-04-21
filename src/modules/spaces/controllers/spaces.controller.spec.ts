@@ -4,7 +4,7 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum } from '~generated/graphql-db-types-hetarchief';
+import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -98,7 +98,7 @@ describe('SpacesController', () => {
 			let error;
 			try {
 				await spacesController.getSpaces(
-					{ status: [Lookup_Maintainer_Visitor_Space_Status_Enum.Inactive] },
+					{ status: [VisitorSpaceStatus.Inactive] },
 					new SessionUserEntity(undefined)
 				);
 			} catch (e) {
