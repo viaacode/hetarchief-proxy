@@ -21,14 +21,33 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { GraphQlResponse } from '~modules/data/types';
+import { NavigationItem } from '~modules/navigations/navigations.types';
 import { User } from '~modules/users/types';
 import { DeleteResponse, SpecialPermissionGroups } from '~shared/types/types';
 
 @Injectable()
-export class NavigationsService {
-	private logger: Logger = new Logger(NavigationsService.name, { timestamp: true });
+export class AdminNavigationsService {
+	private logger: Logger = new Logger(AdminNavigationsService.name, { timestamp: true });
 
 	constructor(private dataService: DataService) {}
+
+	public adapt(navigationItem: Navigation): NavigationItem {
+		/* istanbul ignore next */
+		return {
+			id: navigationItem?.id,
+			label: navigationItem?.label,
+			placement: navigationItem?.placement,
+			description: navigationItem?.description,
+			linkTarget: navigationItem?.link_target,
+			iconName: navigationItem?.icon_name,
+			position: navigationItem?.position,
+			contentType: navigationItem?.content_type,
+			contentPath: navigationItem?.content_path,
+			tooltip: navigationItem?.tooltip,
+			updatedAt: navigationItem?.updated_at,
+			createdAt: navigationItem?.created_at,
+		};
+	}
 
 	public async createElement(navigationItem: CreateNavigationDto): Promise<Navigation> {
 		const {
@@ -96,8 +115,8 @@ export class NavigationsService {
 		return Pagination<Navigation>({
 			items: navigationsResponse.data.app_navigation,
 			page: 1,
-			size: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
-			total: navigationsResponse.data.app_navigation_aggregate.aggregate.count,
+			size: navigationsResponse.data.app_navigation.length,
+			total: navigationsResponse.data.app_navigation.length,
 		});
 	}
 
@@ -110,31 +129,5 @@ export class NavigationsService {
 			throw new NotFoundException();
 		}
 		return navigationResponse.data.app_navigation[0];
-	}
-
-	public async getNavigationElementsForUser(user: User): Promise<Record<string, Navigation[]>> {
-		const {
-			data: { app_navigation: navigations },
-		} = await this.dataService.execute<FindAllNavigationItemsQuery>(
-			FindAllNavigationItemsDocument
-		);
-
-		// filter based on logged in / logged out
-		const allowedUserGroups = user
-			? [SpecialPermissionGroups.loggedInUsers]
-			: [SpecialPermissionGroups.loggedOutUsers];
-
-		const visibleItems = [];
-		navigations.forEach((navigation: Navigation) => {
-			if (navigation.user_group_ids && navigation.user_group_ids.length) {
-				// If the page doesn't have any groups specified, it isn't visible for anyone
-				if (_.intersection(allowedUserGroups, navigation.user_group_ids).length) {
-					// The logged in user has at least one user group that is required to view the nav item
-					visibleItems.push(navigation);
-				}
-			}
-		});
-
-		return _.groupBy(visibleItems, 'placement');
 	}
 }

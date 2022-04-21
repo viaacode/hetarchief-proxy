@@ -6,6 +6,7 @@ import { VisitsService } from './visits.service';
 
 import {
 	FindVisitsQuery,
+	GetVisitRequestForAccessQuery,
 	InsertVisitMutation,
 	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitMutation,
@@ -598,6 +599,38 @@ describe('VisitsService', () => {
 
 			expect(visits).toHaveLength(1);
 			expect(visits[0].id).toEqual(mockCpVisit.id);
+		});
+	});
+
+	describe('hasAccess', () => {
+		it('should allow access if approved visit request exists', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [{ id: '1' }],
+				} as GetVisitRequestForAccessQuery,
+			});
+
+			const hasAccess: boolean = await visitsService.hasAccess(
+				mockUserProfileId,
+				'maintainer-1'
+			);
+
+			expect(hasAccess).toEqual(true);
+		});
+
+		it('should deny access if no approved visit request exists', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [],
+				} as GetVisitRequestForAccessQuery,
+			});
+
+			const hasAccess: boolean = await visitsService.hasAccess(
+				mockUserProfileId,
+				'maintainer-1'
+			);
+
+			expect(hasAccess).toEqual(false);
 		});
 	});
 });

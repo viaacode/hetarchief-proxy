@@ -1,31 +1,19 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Logger,
-	Param,
-	Patch,
-	Post,
-	Query,
-	Session,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 
 import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto';
-import { NavigationsService } from '../services/navigations.service';
+import { AdminNavigationsService } from '../services/admin-navigations.service';
 import { Navigation } from '../types';
 
-import { SessionHelper } from '~shared/auth/session-helper';
 import { DeleteResponse } from '~shared/types/types';
 
-@ApiTags('Navigations')
-@Controller('navigations')
-export class NavigationsController {
-	private logger: Logger = new Logger(NavigationsController.name, { timestamp: true });
+@ApiTags('Admin Navigations')
+@Controller('admin/navigations')
+export class AdminNavigationsController {
+	private logger: Logger = new Logger(AdminNavigationsController.name, { timestamp: true });
 
-	constructor(private navigationsService: NavigationsService) {}
+	constructor(private navigationsService: AdminNavigationsService) {}
 
 	@ApiOperation({
 		description: 'Get an overview of all the navigation bars that exist',
@@ -37,19 +25,6 @@ export class NavigationsController {
 		const navigations = await this.navigationsService.findAllNavigationBars(
 			navigationsQueryDto
 		);
-		return navigations;
-	}
-
-	@ApiOperation({
-		description:
-			'Get navigation items for the current user (logged in or not logged in). Currently there are not yet special permission groups',
-	})
-	@Get('elements')
-	async getNavigationElementsForUser(
-		@Session() session: Record<string, any>
-	): Promise<Record<string, Navigation[]>> {
-		const user = SessionHelper.getArchiefUserInfo(session);
-		const navigations = await this.navigationsService.getNavigationElementsForUser(user);
 		return navigations;
 	}
 

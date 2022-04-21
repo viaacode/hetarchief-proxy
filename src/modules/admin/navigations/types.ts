@@ -1,5 +1,4 @@
 import {
-	FindAllNavigationItemsQuery,
 	FindNavigationByIdQuery,
 	InsertNavigationMutation,
 	UpdateNavigationByIdMutation,
@@ -19,5 +18,4 @@ export enum ContentPickerType {
 export type Navigation =
 	| InsertNavigationMutation['insert_app_navigation_one']
 	| UpdateNavigationByIdMutation['update_app_navigation_by_pk']
-	| FindAllNavigationItemsQuery['app_navigation'][0]
 	| FindNavigationByIdQuery['app_navigation'][0];
