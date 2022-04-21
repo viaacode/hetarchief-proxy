@@ -92,6 +92,7 @@ export class SpacesController {
 				serviceDescription: { type: 'string' },
 				color: { type: 'string' },
 				image: { type: 'string' },
+				status: { type: 'string' },
 			},
 		},
 	})
