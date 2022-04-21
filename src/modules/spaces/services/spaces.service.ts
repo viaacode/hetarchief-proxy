@@ -78,6 +78,7 @@ export class SpacesService {
 				? { schema_service_description: updateSpaceDto.serviceDescription }
 				: {}),
 			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
+			...(updateKeys.includes('status') ? { status: updateSpaceDto.status } : {}),
 		};
 		const {
 			data: { update_maintainer_visitor_space_by_pk: updatedSpace },

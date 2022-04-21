@@ -3,11 +3,10 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	DeleteNotificationsMutation,
 	InsertNotificationsMutation,
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
-	Lookup_Schema_Audience_Type_Enum,
 	UpdateAllNotificationsForUserMutation,
 	UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -142,7 +141,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
+	audienceType: AudienceType.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,
@@ -154,7 +153,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
+	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
