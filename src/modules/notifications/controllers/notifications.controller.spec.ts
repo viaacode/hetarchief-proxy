@@ -99,6 +99,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	create: jest.fn(),
 	update: jest.fn(),
 	updateAll: jest.fn(),
+	simplifyUnreadNotifications: jest.fn(),
 	onCancelVisitRequest: jest.fn(),
 };
 
@@ -164,6 +165,9 @@ describe('NotificationsController', () => {
 		it('should return all notifications for a specific user', async () => {
 			mockNotificationsService.findNotificationsByUser.mockResolvedValueOnce(
 				mockNotificationsResponse
+			);
+			mockNotificationsService.simplifyUnreadNotifications.mockReturnValueOnce(
+				mockNotificationsResponse.items
 			);
 
 			const notifications = await notificationsController.getNotifications(

@@ -41,6 +41,10 @@ export class NotificationsController {
 			queryDto.page,
 			queryDto.size
 		);
+		notifications.items = await this.notificationsService.simplifyUnreadNotifications(
+			notifications.items,
+			user.getId()
+		);
 		return notifications;
 	}
 

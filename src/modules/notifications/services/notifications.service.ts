@@ -189,6 +189,30 @@ export class NotificationsService {
 		return affectedRows;
 	}
 
+	public async simplifyUnreadNotifications(
+		notifications: Notification[],
+		userProfileId: string
+	): Promise<Notification[]> {
+		// if a user should receive both the 'approved' and 'started' notification simultaneously, only show the started one
+		const hasApproved = notifications.find(
+			(notification) =>
+				notification.type === NotificationType.VISIT_REQUEST_APPROVED &&
+				notification.status === NotificationStatus.UNREAD
+		);
+		const hasStarted = notifications.find(
+			(notification) =>
+				notification.type === NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED &&
+				notification.status === NotificationStatus.UNREAD
+		);
+
+		if (hasApproved && hasStarted) {
+			hasApproved.status = NotificationStatus.READ;
+			await this.update(hasApproved.id, userProfileId, { status: NotificationStatus.READ });
+		}
+
+		return notifications;
+	}
+
 	/**
 	 * Send notifications and email on new visit request
 	 */

@@ -470,4 +470,30 @@ describe('NotificationsService', () => {
 			expect(affectedRows).toBe(9);
 		});
 	});
+
+	describe('simplifyUnreadNotifications', () => {
+		it('when both an approved and started notification are unread, it marks the approved one as read', async () => {
+			const notification1 = { ...mockNotification };
+			const notification2 = { ...mockNotification };
+			notification1.type = NotificationType.VISIT_REQUEST_APPROVED;
+			notification2.type = NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED;
+			notification1.status = NotificationStatus.UNREAD;
+			notification2.status = NotificationStatus.UNREAD;
+
+			// mock the update
+			const mockUpdateData: UpdateNotificationMutation = {
+				update_app_notification: {
+					returning: [mockGqlNotification1],
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockUpdateData });
+
+			const simplifiedNotifications = await notificationsService.simplifyUnreadNotifications(
+				[notification1, notification2],
+				mockUser.id
+			);
+			expect(simplifiedNotifications.length).toBe(2);
+			expect(notification1.status).toEqual(NotificationStatus.READ);
+		});
+	});
 });
