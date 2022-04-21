@@ -375,7 +375,8 @@ describe('VisitsService', () => {
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await visitsService.create(
 				{
-					spaceId: 'space-1',
+					visitorSpaceSlug: 'space-slug-1',
+					visitorSpaceId: 'space-1',
 					timeframe: 'tomorrow',
 					acceptedTos: true,
 				},

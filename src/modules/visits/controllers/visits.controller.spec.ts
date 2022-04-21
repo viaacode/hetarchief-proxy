@@ -151,6 +151,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	getMaintainerProfiles: jest.fn(),
+	findBySlug: jest.fn(),
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
@@ -313,6 +314,7 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
+			mockSpacesService.findBySlug.mockResolvedValueOnce([{ id: mockVisit1.spaceId }]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -320,7 +322,7 @@ describe('VisitsController', () => {
 			const visit = await visitsController.createVisit(
 				mockRequest,
 				{
-					spaceId: 'space-1',
+					visitorSpaceSlug: 'space-slug-1',
 					timeframe: 'asap',
 					acceptedTos: true,
 				},
@@ -352,7 +354,7 @@ describe('VisitsController', () => {
 				await visitsController.createVisit(
 					mockRequest,
 					{
-						spaceId: 'space-1',
+						visitorSpaceSlug: 'space-slug-1',
 						timeframe: 'asap',
 						acceptedTos: false,
 					},
@@ -363,14 +365,52 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				i18n.t(
-					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
-				)
+				'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
 			sessionHelperSpy.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
+			mockNotificationsService.createForMultipleRecipients.mockClear();
+		});
+
+		it("should throw an error if you try to create a new visit for a visitor space that doesn't exist", async () => {
+			mockVisitsService.create.mockResolvedValueOnce({
+				mockVisit1,
+			});
+			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+
+			let error: any;
+			try {
+				await visitsController.createVisit(
+					mockRequest,
+					{
+						visitorSpaceSlug: 'space-slug-1',
+						timeframe: 'asap',
+						acceptedTos: true,
+					},
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response.message).toEqual(
+				`The space with slug 'space-slug-1' was not found`
+			);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
+			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
+			sessionHelperSpy.mockRestore();
+			mockSpacesService.getMaintainerProfiles.mockClear();
+			mockSpacesService.findBySlug.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
 		});
 	});
