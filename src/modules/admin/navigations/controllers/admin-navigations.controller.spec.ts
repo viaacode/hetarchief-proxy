@@ -20,7 +20,6 @@ const mockNavigationsResponse = {
 const mockNavigationsService: Partial<Record<keyof AdminNavigationsService, jest.SpyInstance>> = {
 	findAllNavigationBars: jest.fn(),
 	findElementById: jest.fn(),
-	getNavigationElementsForUser: jest.fn(),
 	createElement: jest.fn(),
 	updateElement: jest.fn(),
 	deleteElement: jest.fn(),

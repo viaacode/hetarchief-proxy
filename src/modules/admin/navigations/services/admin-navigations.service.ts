@@ -130,32 +130,4 @@ export class AdminNavigationsService {
 		}
 		return navigationResponse.data.app_navigation[0];
 	}
-
-	public async getNavigationElementsForUser(
-		user: User
-	): Promise<Record<string, NavigationItem[]>> {
-		const {
-			data: { app_navigation: navigations },
-		} = await this.dataService.execute<FindAllNavigationItemsQuery>(
-			FindAllNavigationItemsDocument
-		);
-
-		// filter based on logged in / logged out
-		const allowedUserGroups = user
-			? [SpecialPermissionGroups.loggedInUsers]
-			: [SpecialPermissionGroups.loggedOutUsers];
-
-		const visibleItems = [];
-		navigations.forEach((navigation: Navigation) => {
-			if (navigation.user_group_ids && navigation.user_group_ids.length) {
-				// If the page doesn't have any groups specified, it isn't visible for anyone
-				if (_.intersection(allowedUserGroups, navigation.user_group_ids).length) {
-					// The logged in user has at least one user group that is required to view the nav item
-					visibleItems.push(navigation);
-				}
-			}
-		});
-
-		return _.groupBy(visibleItems.map(this.adapt), 'placement');
-	}
 }
