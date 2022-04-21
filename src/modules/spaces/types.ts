@@ -1,10 +1,9 @@
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
-	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 

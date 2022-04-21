@@ -1,7 +1,4 @@
-import {
-	Lookup_Schema_Audience_Type_Enum as AudienceType,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
-} from '~generated/graphql-db-types-hetarchief';
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import { GqlSpace } from '~modules/spaces/types';
 
 export const mockGqlSpace: GqlSpace = {

@@ -3,13 +3,12 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
-	Lookup_Schema_Audience_Type_Enum as AudienceType,
 	DeleteNotificationsMutation,
 	InsertNotificationsMutation,
 	UpdateAllNotificationsForUserMutation,
 	UpdateNotificationMutation,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { DataService } from '~modules/data/services/data.service';

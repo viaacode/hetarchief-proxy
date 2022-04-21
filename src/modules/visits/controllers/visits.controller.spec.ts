@@ -7,10 +7,7 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import {
-	Lookup_Schema_Audience_Type_Enum as AudienceType,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
-} from '~generated/graphql-db-types-hetarchief';
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
