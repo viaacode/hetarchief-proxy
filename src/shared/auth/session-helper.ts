@@ -94,9 +94,9 @@ export class SessionHelper {
 		return session[ARCHIEF_USER_INFO_PATH];
 	}
 
-	public static getUserGroupIds(user: User | null | undefined): number[] {
+	public static getUserGroupIds(user: User | null | undefined): string[] {
 		return [
-			...get(user, 'userGroupIds', []),
+			...(user?.groupId ? [user.groupId] : []),
 			user ? SpecialPermissionGroups.loggedInUsers : SpecialPermissionGroups.loggedOutUsers,
 		];
 	}

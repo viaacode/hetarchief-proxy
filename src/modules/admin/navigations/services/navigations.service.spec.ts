@@ -14,6 +14,7 @@ import {
 import { DataService } from '~modules/data/services/data.service';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 const mockDataService = {
 	execute: jest.fn(),
@@ -189,12 +190,15 @@ describe('NavigationsService', () => {
 					{
 						id: '1',
 						placement: 'footer-links',
-						user_group_ids: [-1, -2],
+						user_group_ids: [
+							SpecialPermissionGroups.loggedOutUsers,
+							SpecialPermissionGroups.loggedInUsers,
+						],
 					},
 					{
 						id: '2',
 						placement: 'footer-links',
-						user_group_ids: [-2],
+						user_group_ids: [SpecialPermissionGroups.loggedInUsers],
 					},
 				],
 				app_navigation_aggregate: {
@@ -216,12 +220,15 @@ describe('NavigationsService', () => {
 					{
 						id: '1',
 						placement: 'footer-links',
-						user_group_ids: [-1, -2],
+						user_group_ids: [
+							SpecialPermissionGroups.loggedOutUsers,
+							SpecialPermissionGroups.loggedInUsers,
+						],
 					},
 					{
 						id: '2',
 						placement: 'footer-links',
-						user_group_ids: [-2],
+						user_group_ids: [SpecialPermissionGroups.loggedInUsers],
 					},
 				],
 				app_navigation_aggregate: {

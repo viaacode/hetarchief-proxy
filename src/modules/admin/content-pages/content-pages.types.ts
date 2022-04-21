@@ -105,7 +105,7 @@ export interface ContentPage {
 	contentWidth: ContentWidth;
 	owner: ContentPageUser;
 	userProfileId: string | null;
-	userGroupIds: number[] | null;
+	userGroupIds: string[] | null;
 	contentBlocks: ContentBlock[];
 	labels: ContentPageLabel[];
 }

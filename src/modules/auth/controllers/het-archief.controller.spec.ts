@@ -19,6 +19,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const hetArchiefLoginUrl = 'http://localhost:3200';
 const hetArchiefLogoutUrl = 'http://localhost:3200';
+const hetArchiefRegisterUrl = 'http://meemoo.be/dummy-ssum-registration-page';
 
 const ldapUser = {
 	attributes: {
@@ -77,6 +78,9 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 		}
 		if (key === 'host') {
 			return 'http://localhost:3100';
+		}
+		if (key === 'ssumRegistrationPage') {
+			return hetArchiefRegisterUrl;
 		}
 		return key;
 	}),
@@ -141,10 +145,33 @@ describe('HetArchiefController', () => {
 		expect(hetArchiefController).toBeDefined();
 	});
 
+	describe('register', () => {
+		it('should redirect to the register url', async () => {
+			const result = await hetArchiefController.registerRoute(
+				{},
+				configService.get('clientHost')
+			);
+			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
+			expect(result.url.split('?')[0]).toEqual(hetArchiefRegisterUrl);
+		});
+
+		it('should catch an exception when generating the register url', async () => {
+			const clientHost = configService.get('clientHost');
+			mockConfigService.get.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.registerRoute({}, clientHost);
+			expect(result).toBeUndefined();
+		});
+	});
+
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
-			const result = await hetArchiefController.getAuth({}, configService.get('clientHost'));
+			const result = await hetArchiefController.loginRoute(
+				{},
+				configService.get('clientHost')
+			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: hetArchiefLoginUrl,
@@ -152,7 +179,7 @@ describe('HetArchiefController', () => {
 		});
 
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
-			const result = await hetArchiefController.getAuth(
+			const result = await hetArchiefController.loginRoute(
 				getNewMockSession(),
 				configService.get('clientHost')
 			);
@@ -166,7 +193,10 @@ describe('HetArchiefController', () => {
 			mockArchiefService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.getAuth({}, configService.get('clientHost'));
+			const result = await hetArchiefController.loginRoute(
+				{},
+				configService.get('clientHost')
+			);
 			expect(result).toBeUndefined();
 		});
 	});
