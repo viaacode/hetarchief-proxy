@@ -111,6 +111,7 @@ describe('SpacesService', () => {
 				description: 'my-space',
 				serviceDescription: 'service description',
 				image: '',
+				status: Lookup_Maintainer_Visitor_Space_Status_Enum.Active,
 			});
 			expect(response.id).toEqual('1');
 		});

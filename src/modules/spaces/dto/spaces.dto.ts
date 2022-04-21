@@ -142,4 +142,21 @@ export class UpdateSpaceDto {
 		default: undefined,
 	})
 	image?: string;
+
+	@IsString()
+	@IsOptional()
+	@IsEnum(Lookup_Maintainer_Visitor_Space_Status_Enum, {
+		message: `Status must be one of: ${Object.values(
+			Lookup_Maintainer_Visitor_Space_Status_Enum
+		).join(', ')}`,
+	})
+	@ApiPropertyOptional({
+		type: String,
+		description: `The status for this visitor space. Possible statuses: ${Object.values(
+			Lookup_Maintainer_Visitor_Space_Status_Enum
+		).join(', ')}`,
+		example: Lookup_Maintainer_Visitor_Space_Status_Enum.Active,
+		enum: Lookup_Maintainer_Visitor_Space_Status_Enum,
+	})
+	status?: Lookup_Maintainer_Visitor_Space_Status_Enum;
 }

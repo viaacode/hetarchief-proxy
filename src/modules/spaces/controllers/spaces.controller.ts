@@ -105,6 +105,7 @@ export class SpacesController {
 		const space = await this.spacesService.findById(id);
 		if (
 			user.has(Permission.UPDATE_OWN_SPACE) &&
+			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
 			user.getMaintainerId() !== space.maintainerId
 		) {
 			throw new UnauthorizedException('You are not authorized to update this visitor space');
