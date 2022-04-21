@@ -36,6 +36,8 @@ import {
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
+	GetVisitRequestForAccessDocument,
+	GetVisitRequestForAccessQuery,
 	InsertNoteDocument,
 	InsertNoteMutation,
 	InsertVisitDocument,
@@ -405,5 +407,26 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
 			this.adapt(visit)
 		);
+	}
+
+	/**
+	 * Checks if the user has access to a maintainer's space because
+	 * - he is the maintainer or
+	 * - if he is a meemoo admin or
+	 * - if the visitor has an approved visit request for the current date
+	 * @param userProfileId: UUID of a user
+	 * @param maintainerOrId: OR-id of a maintainer
+	 */
+	async hasAccess(userProfileId: string, maintainerOrId: string): Promise<boolean> {
+		const visitsResponse = await this.dataService.execute<GetVisitRequestForAccessQuery>(
+			GetVisitRequestForAccessDocument,
+			{
+				userProfileId,
+				maintainerOrId,
+				now: new Date().toISOString(),
+			}
+		);
+
+		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 }

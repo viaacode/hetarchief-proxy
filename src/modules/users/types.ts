@@ -17,6 +17,7 @@ export enum Permission {
 	CANCEL_OWN_VISIT_REQUEST = 'CANCEL_OWN_VISIT_REQUEST',
 	// Objects
 	SEARCH_OBJECTS = 'SEARCH_OBJECTS',
+	SEARCH_ALL_OBJECTS = 'SEARCH_ALL_OBJECTS', // Search objects in all indexes in elasticsearch
 	EXPORT_OBJECT = 'EXPORT_OBJECT',
 	// Collections
 	MANAGE_COLLECTIONS = 'MANAGE_COLLECTIONS',
