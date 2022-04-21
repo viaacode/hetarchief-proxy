@@ -13,7 +13,7 @@ const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.Sp
 };
 
 const mockTranslationsResponse = {
-	name: TranslationKey.FRONTEND_TRANSLATIONS,
+	name: TranslationKey.TRANSLATIONS_FRONTEND,
 	value: { key1: 'translation 1' },
 };
 
@@ -55,7 +55,7 @@ describe('TranslationsController', () => {
 			mockTranslationsService.updateTranslations.mockResolvedValueOnce(mockData);
 
 			const response = await translationsController.updateTranslations({
-				key: TranslationKey.FRONTEND_TRANSLATIONS,
+				key: TranslationKey.TRANSLATIONS_FRONTEND,
 				data: { key1: 'newTranslation' },
 			});
 
