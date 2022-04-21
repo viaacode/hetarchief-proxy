@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import queryString from 'query-string';
+import queryString, { stringifyUrl } from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -78,12 +78,10 @@ export class HetArchiefController {
 		@Query('returnToUrl') returnToUrl: string
 	) {
 		try {
-			const serverRedirectUrl = `${getConfig(
-				this.configService,
-				'host'
-			)}/auth/hetarchief/login?${queryString.stringify({
-				returnToUrl,
-			})}`;
+			const serverRedirectUrl = stringifyUrl({
+				url: `${getConfig(this.configService, 'host')}/auth/hetarchief/login`,
+				query: { returnToUrl },
+			});
 			const url = queryString.stringifyUrl({
 				url: getConfig(this.configService, 'ssumRegistrationPage'),
 				query: {
