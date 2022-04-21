@@ -21,7 +21,6 @@ import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/
 import { MediaService } from '../services/media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
-import { ArchiefUser } from '~modules/auth/types';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

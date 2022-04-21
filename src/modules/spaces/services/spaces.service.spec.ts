@@ -6,7 +6,7 @@ import { SpacesService } from './spaces.service';
 
 import {
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
 	Lookup_Maintainer_Visitor_Space_Status_Enum,
@@ -278,22 +278,20 @@ describe('SpacesService', () => {
 		const slug = 'slug';
 
 		it('returns a single space by slug', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [
 					{
-						content_partner: {
-							schema_identifier: slug,
-						},
+						slug,
 					},
-				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findBySlug(slug);
-			expect(response.maintainerId).toBe(slug);
+			expect(response.slug).toBe(slug);
 		});
 
 		it('returns null if the space was not found', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
@@ -305,12 +303,12 @@ describe('SpacesService', () => {
 
 	describe('findSpaceByCpUserId', () => {
 		it('returns a single space', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [
 					{
 						id: '1',
 					},
-				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findSpaceByCpUserId('1');
@@ -318,7 +316,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns null if the space was not found', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });

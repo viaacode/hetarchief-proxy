@@ -102,15 +102,15 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Get('active-for-space/:maintainerOrgId')
+	@Get('active-for-space/:visitorSpaceSlug')
 	// TODO permissions?
 	public async getActiveVisitForUserAndSpace(
-		@Param('maintainerOrgId') maintainerOrgId: string,
+		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			user.getId(),
-			maintainerOrgId
+			visitorSpaceSlug
 		);
 		return activeVisit;
 	}

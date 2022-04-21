@@ -98,6 +98,7 @@ const mockUser: User = {
 
 const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+	slug: 'amsab',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
 	description: null,
