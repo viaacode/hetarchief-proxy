@@ -235,11 +235,11 @@ export class MediaService {
 	public convertObjectsToXml(objects: Partial<Media>[]): string {
 		// this structure defines the parent 'objects' tag, which includes
 		// all objects wrapped in a separate 'object' tag
-		return convert.js2xml({ objects: { object: objects } }, { compact: true });
+		return convert.js2xml({ objects: { object: objects } }, { compact: true, spaces: 2 });
 	}
 
 	public convertObjectToXml(object: Partial<Media>): string {
-		return convert.js2xml({ object }, { compact: true });
+		return convert.js2xml({ object }, { compact: true, spaces: 2 });
 	}
 
 	public async findAllObjectMetadataByCollectionId(
