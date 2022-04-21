@@ -9,8 +9,8 @@ import {
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	UpdateSpaceMutation,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
@@ -111,7 +111,7 @@ describe('SpacesService', () => {
 				description: 'my-space',
 				serviceDescription: 'service description',
 				image: '',
-				status: Lookup_Maintainer_Visitor_Space_Status_Enum.Active,
+				status: VisitorSpaceStatus.Active,
 			});
 			expect(response.id).toEqual('1');
 		});
@@ -240,7 +240,7 @@ describe('SpacesService', () => {
 				},
 			});
 			const response = await spacesService.findAll(
-				{ status: [Lookup_Maintainer_Visitor_Space_Status_Enum.Active], page: 1, size: 20 },
+				{ status: [VisitorSpaceStatus.Active], page: 1, size: 20 },
 				undefined
 			);
 			expect(response.items.length).toBe(1);

@@ -3,8 +3,8 @@ import {
 	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdentifierQuery,
 	FindSpacesQuery,
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 
@@ -26,7 +26,7 @@ export interface Space {
 	audienceType: Lookup_Schema_Audience_Type_Enum;
 	publicAccess: boolean;
 	contactInfo: ContactInfo;
-	status: Lookup_Maintainer_Visitor_Space_Status_Enum;
+	status: VisitorSpaceStatus;
 	publishedAt: string;
 	createdAt: string;
 	updatedAt: string;

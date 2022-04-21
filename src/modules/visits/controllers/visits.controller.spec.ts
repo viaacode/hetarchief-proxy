@@ -8,8 +8,8 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 import { VisitsController } from './visits.controller';
 
 import {
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
 	Lookup_Schema_Audience_Type_Enum,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
@@ -118,7 +118,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
+	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
