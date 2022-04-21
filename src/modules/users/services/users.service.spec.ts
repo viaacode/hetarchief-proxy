@@ -149,4 +149,30 @@ describe('UsersService', () => {
 			expect(result).toEqual(archiefUser);
 		});
 	});
+
+	describe('linkCpAdminToMaintainer', () => {
+		it('should link a user (cp admin) to a maintainer', async () => {
+			mockDataService.execute.mockReturnValueOnce({
+				data: {
+					insert_maintainer_users_profile_one: {
+						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+					},
+				},
+			});
+
+			const linked = await usersService.linkCpAdminToMaintainer('user-123', 'OR-rf5kf25');
+			expect(linked).toBeTruthy();
+		});
+
+		it('should return false if the user was already linked to the maintainer', async () => {
+			mockDataService.execute.mockReturnValueOnce({
+				data: {
+					insert_maintainer_users_profile_one: null,
+				},
+			});
+
+			const linked = await usersService.linkCpAdminToMaintainer('user-123', 'OR-rf5kf25');
+			expect(linked).toBeFalsy();
+		});
+	});
 });

@@ -1,0 +1,11 @@
+mutation linkUserToMaintainer($maintainerId: String!, $userProfileId: uuid!) {
+	insert_maintainer_users_profile_one(
+		object: { maintainer_identifier: $maintainerId, users_profile_id: $userProfileId }
+		on_conflict: {
+			constraint: maintainer_users_profile_maintainer_identifier_users_profil_key
+			update_columns: []
+		}
+	) {
+		id
+	}
+}
