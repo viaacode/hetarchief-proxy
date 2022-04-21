@@ -3,7 +3,6 @@ import {
 	Controller,
 	Get,
 	HttpStatus,
-	InternalServerErrorException,
 	Logger,
 	Post,
 	Query,
@@ -15,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import queryString, { stringifyUrl } from 'query-string';
+import { stringifyUrl } from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -82,7 +81,7 @@ export class HetArchiefController {
 				url: `${getConfig(this.configService, 'host')}/auth/hetarchief/login`,
 				query: { returnToUrl },
 			});
-			const url = queryString.stringifyUrl({
+			const url = stringifyUrl({
 				url: getConfig(this.configService, 'ssumRegistrationPage'),
 				query: {
 					redirect_to: serverRedirectUrl,
