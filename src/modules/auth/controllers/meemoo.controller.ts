@@ -25,6 +25,7 @@ import { CollectionsService } from '~modules/collections/services/collections.se
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { UsersService } from '~modules/users/services/users.service';
+import { Group } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
@@ -130,6 +131,13 @@ export class MeemooController {
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
+			}
+			// CP_ADMIN: Link the user to the maintainer. CP_ADMIN = Only Meemoo IDP.
+			if (userGroup === Group.CP_ADMIN) {
+				await this.usersService.linkCpAdminToMaintainer(
+					archiefUser.id,
+					get(ldapUser, 'attributes.o[0]')
+				);
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
