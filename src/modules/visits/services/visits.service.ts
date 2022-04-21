@@ -410,10 +410,7 @@ export class VisitsService {
 	}
 
 	/**
-	 * Checks if the user has access to a maintainer's space because
-	 * - he is the maintainer or
-	 * - if he is a meemoo admin or
-	 * - if the visitor has an approved visit request for the current date
+	 * Checks if the user has access to a maintainer's space because he has an approved visit request for the current date
 	 * @param userProfileId: UUID of a user
 	 * @param maintainerOrId: OR-id of a maintainer
 	 */
