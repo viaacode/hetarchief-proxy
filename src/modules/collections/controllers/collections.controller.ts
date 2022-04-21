@@ -85,12 +85,25 @@ export class CollectionsController {
 	public async exportCollection(
 		@Headers('referer') referer: string,
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Req() request: Request
 	): Promise<string> {
 		const objects = await this.mediaService.findAllObjectMetadataByCollectionId(
 			collectionId,
 			user.getId()
 		);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.METADATA_EXPORT,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
 		return this.mediaService.convertObjectsToXml(objects);
 	}
 
