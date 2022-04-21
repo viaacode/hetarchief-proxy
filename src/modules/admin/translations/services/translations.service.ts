@@ -15,10 +15,10 @@ export class TranslationsService {
 	public async getTranslations(): Promise<Record<string, Record<string, string>>> {
 		const [frontendTranslations, backendTranslations] = await Promise.all([
 			this.siteVariablesService.getSiteVariable<Translations>(
-				TranslationKey.FRONTEND_TRANSLATIONS
+				TranslationKey.TRANSLATIONS_FRONTEND
 			),
 			this.siteVariablesService.getSiteVariable<Translations>(
-				TranslationKey.BACKEND_TRANSLATIONS
+				TranslationKey.TRANSLATIONS_BACKEND
 			),
 		]);
 		return {
