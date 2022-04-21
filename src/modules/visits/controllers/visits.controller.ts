@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { isFuture } from 'date-fns';
 import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
@@ -24,6 +25,7 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
@@ -196,69 +198,112 @@ export class VisitsController {
 				status: VisitStatus.CANCELLED_BY_VISITOR,
 			};
 		}
+
+		// update the Visit
 		const visit = await this.visitsService.update(id, updateVisitDto, user.getId());
 
+		// Post processing for notifications
 		if (updateVisitDto.status) {
-			// Status was updated
-
-			// Send notifications
-			const space = await this.spacesService.findById(visit.spaceId);
-			if (updateVisitDto.status === VisitStatus.APPROVED) {
-				await this.notificationsService.onApproveVisitRequest(visit, space);
-
-				// Log event
-				this.eventsService.insertEvents([
-					{
-						id: EventsHelper.getEventId(request),
-						type: LogEventType.VISIT_REQUEST_APPROVED,
-						source: request.path,
-						subject: user.getId(),
-						time: new Date().toISOString(),
-						data: {
-							visitor_space_request_id: id,
-						},
-					},
-				]);
-			} else if (updateVisitDto.status === VisitStatus.DENIED) {
-				await this.notificationsService.onDenyVisitRequest(
-					visit,
-					space,
-					updateVisitDto.note
-				);
-
-				// Log event
-				this.eventsService.insertEvents([
-					{
-						id: EventsHelper.getEventId(request),
-						type:
-							originalVisit.status === VisitStatus.APPROVED
-								? LogEventType.VISIT_REQUEST_REVOKED
-								: LogEventType.VISIT_REQUEST_DENIED,
-						source: request.path,
-						subject: user.getId(),
-						time: new Date().toISOString(),
-						data: {
-							visitor_space_request_id: id,
-						},
-					},
-				]);
-			} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
-				// Log event
-				this.eventsService.insertEvents([
-					{
-						id: EventsHelper.getEventId(request),
-						type: LogEventType.VISIT_REQUEST_CANCELLED_BY_VISITOR,
-						source: request.path,
-						subject: user.getId(),
-						time: new Date().toISOString(),
-						data: {
-							visitor_space_request_id: id,
-						},
-					},
-				]);
-			}
+			await this.postProcessVisitStatusChange(
+				request,
+				visit,
+				updateVisitDto,
+				originalVisit.status,
+				user
+			);
+		}
+		if (updateVisitDto.startAt || updateVisitDto.endAt) {
+			await this.postProcessVisitTimes(updateVisitDto, visit);
 		}
 
 		return visit;
+	}
+
+	/**
+	 * When the a visit status changed, check if notifications should be sent
+	 */
+	protected async postProcessVisitStatusChange(
+		request: Request,
+		visit: Visit,
+		updateVisitDto: UpdateVisitDto,
+		formerStatus: VisitStatus,
+		user: SessionUserEntity
+	) {
+		const space = await this.spacesService.findById(visit.spaceId);
+		if (visit.status === VisitStatus.APPROVED) {
+			await this.notificationsService.onApproveVisitRequest(visit, space);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.VISIT_REQUEST_APPROVED,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		} else if (visit.status === VisitStatus.DENIED) {
+			await this.notificationsService.onDenyVisitRequest(visit, space, updateVisitDto.note);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type:
+						formerStatus === VisitStatus.APPROVED
+							? LogEventType.VISIT_REQUEST_REVOKED
+							: LogEventType.VISIT_REQUEST_DENIED,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
+			const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
+
+			await this.notificationsService.onCancelVisitRequest(visit, recipients, user);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.VISIT_REQUEST_CANCELLED_BY_VISITOR,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		}
+	}
+
+	/**
+	 * When the a visit status changed, check if notifications should be sent
+	 */
+	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
+		const typesToDelete = [];
+		if (updateVisitDto.startAt && isFuture(new Date(updateVisitDto.startAt))) {
+			typesToDelete.push(NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED);
+		}
+
+		if (updateVisitDto.endAt && isFuture(new Date(updateVisitDto.endAt))) {
+			typesToDelete.push(
+				NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+				NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING
+			);
+		}
+
+		await this.notificationsService.delete(visit.id, {
+			types: typesToDelete,
+		});
 	}
 }

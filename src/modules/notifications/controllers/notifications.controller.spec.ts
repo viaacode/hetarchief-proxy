@@ -99,6 +99,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	create: jest.fn(),
 	update: jest.fn(),
 	updateAll: jest.fn(),
+	onCancelVisitRequest: jest.fn(),
 };
 
 const mockApiKey = 'MySecretApiKey';

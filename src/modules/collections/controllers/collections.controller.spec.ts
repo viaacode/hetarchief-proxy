@@ -176,7 +176,8 @@ describe('CollectionsController', () => {
 			const result = await collectionsController.exportCollection(
 				'referer',
 				'collection-id',
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity(mockUser),
+				mockRequest
 			);
 			expect(result).toEqual('</objects>');
 		});
