@@ -27,7 +27,7 @@ export interface Notification {
 	createdAt: string;
 	updatedAt: string;
 	type: NotificationType;
-	readingRoomId: string;
+	visitorSpaceSlug: string;
 }
 
 export type GqlNotification =

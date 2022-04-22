@@ -7,11 +7,14 @@ import {
 	Post,
 	Query,
 	Redirect,
+	Req,
 	Session,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
+import { stringifyUrl } from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -20,9 +23,12 @@ import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { EventsHelper } from '~shared/helpers/events';
 import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
@@ -35,12 +41,13 @@ export class HetArchiefController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
-		private configService: ConfigService
+		private configService: ConfigService,
+		private eventsService: EventsService
 	) {}
 
 	@Get('login')
 	@Redirect()
-	public async getAuth(
+	public async loginRoute(
 		@Session() session: Record<string, any>,
 		@Query('returnToUrl') returnToUrl: string
 	) {
@@ -51,6 +58,7 @@ export class HetArchiefController {
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
+
 			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl);
 			return {
 				url,
@@ -62,6 +70,34 @@ export class HetArchiefController {
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
 
+	@Get('register')
+	@Redirect()
+	public async registerRoute(
+		@Session() session: Record<string, any>,
+		@Query('returnToUrl') returnToUrl: string
+	) {
+		try {
+			const serverRedirectUrl = stringifyUrl({
+				url: `${getConfig(this.configService, 'host')}/auth/hetarchief/login`,
+				query: { returnToUrl },
+			});
+			const url = stringifyUrl({
+				url: getConfig(this.configService, 'ssumRegistrationPage'),
+				query: {
+					redirect_to: serverRedirectUrl,
+					app_name: getConfig(this.configService, 'samlSpEntityId'),
+				},
+			});
+			return {
+				url,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			};
+		} catch (err) {
+			Logger.error('Failed during hetarchief auth register route', err);
+		}
+		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
+	}
+
 	/**
 	 * Called by SAML service to return LDAP info if user successfully logged in
 	 * This function has to redirect the browser back to the app once the information is stored in the user's session
@@ -69,6 +105,7 @@ export class HetArchiefController {
 	@Post('login-callback')
 	@Redirect()
 	async loginCallback(
+		@Req() request: Request,
 		@Session() session: Record<string, any>,
 		@Body() response: SamlCallbackBody
 	): Promise<any> {
@@ -127,6 +164,17 @@ export class HetArchiefController {
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.USER_AUTHENTICATE,
+					source: request.path,
+					subject: archiefUser.id,
+					time: new Date().toISOString(),
+				},
+			]);
 
 			return {
 				url: info.returnToUrl, // TODO add fallback if undefined

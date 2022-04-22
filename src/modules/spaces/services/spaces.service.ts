@@ -10,8 +10,8 @@ import {
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdentifierDocument,
-	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceBySlugDocument,
+	FindSpaceBySlugQuery,
 	FindSpacesDocument,
 	FindSpacesQuery,
 	FindSpacesQueryVariables,
@@ -39,6 +39,7 @@ export class SpacesService {
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
+			slug: graphQlSpace?.slug,
 			maintainerId: graphQlSpace?.content_partner?.schema_identifier,
 			name: graphQlSpace?.content_partner?.schema_name,
 			info: information?.description,
@@ -77,6 +78,7 @@ export class SpacesService {
 				? { schema_service_description: updateSpaceDto.serviceDescription }
 				: {}),
 			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
+			...(updateKeys.includes('status') ? { status: updateSpaceDto.status } : {}),
 		};
 		const {
 			data: { update_maintainer_visitor_space_by_pk: updatedSpace },
@@ -96,7 +98,7 @@ export class SpacesService {
 		inputQuery: SpacesQueryDto,
 		userProfileId: string | undefined
 	): Promise<IPagination<Space>> {
-		const { query, accessType, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, accessType, status, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		// Build where object
@@ -150,6 +152,11 @@ export class SpacesService {
 				});
 			}
 		}
+
+		if (status) {
+			filterArray.push({ status: { _in: status } });
+		}
+
 		const where: FindSpacesQueryVariables['where'] =
 			filterArray.length > 0 ? { _and: filterArray } : {};
 
@@ -180,10 +187,10 @@ export class SpacesService {
 	}
 
 	public async findBySlug(slug: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdentifierQuery>(
-			FindSpaceByMaintainerIdentifierDocument,
+		const spaceResponse = await this.dataService.execute<FindSpaceBySlugQuery>(
+			FindSpaceBySlugDocument,
 			{
-				maintainerId: slug,
+				slug,
 			}
 		);
 		if (!spaceResponse.data.maintainer_visitor_space[0]) {

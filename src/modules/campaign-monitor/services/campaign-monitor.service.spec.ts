@@ -22,6 +22,9 @@ const mockConfigService = {
 		if (key === 'campaignMonitorTemplateVisitDenied') {
 			return null;
 		}
+		if (key === 'rerouteEmailsTo') {
+			return '';
+		}
 
 		return key;
 	}),
@@ -145,6 +148,25 @@ describe('CampaignMonitorService', () => {
 				to: [],
 			});
 			expect(result).toBeFalsy();
+		});
+	});
+
+	describe('send', () => {
+		it('should reroute the emails to a specific adres if configured', async () => {
+			nock('http://campaignmonitor/')
+				.post('/template/send', {
+					To: 'test@studiohyperdrive.be',
+					ConsentToTrack: 'unchanged',
+					Data: {},
+				})
+				.reply(201, {});
+			campaignMonitorService.setRerouteEmailsTo('test@studiohyperdrive.be');
+			const result = await campaignMonitorService.send('template', {
+				To: 'forbidden@studiohyperdrive.be',
+				ConsentToTrack: 'unchanged',
+				Data: {},
+			});
+			expect(result).toBeTruthy();
 		});
 	});
 });

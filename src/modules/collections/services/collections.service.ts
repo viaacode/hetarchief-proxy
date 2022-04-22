@@ -58,7 +58,7 @@ export class CollectionsService {
 		return {
 			maintainerId: gqlIeObject?.maintainer?.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
-			readingRoomId: gqlIeObject?.maintainer?.visitor_space?.id,
+			visitorSpaceSlug: gqlIeObject?.maintainer?.visitor_space?.slug,
 			creator: gqlIeObject?.schema_creator,
 			description: gqlIeObject?.schema_description,
 			format: gqlIeObject?.dcterms_format,

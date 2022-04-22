@@ -1,16 +1,20 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	ForbiddenException,
 	Get,
+	Header,
 	Headers,
 	Logger,
 	Param,
 	Post,
 	Query,
+	Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { getConfig } from '~config';
 
@@ -18,8 +22,16 @@ import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/
 import { MediaService } from '../services/media.service';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitStatus } from '~modules/visits/types';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { SessionUser } from '~shared/decorators/user.decorator';
+import { EventsHelper } from '~shared/helpers/events';
+import i18n from '~shared/i18n';
 
 @ApiTags('Media')
 @Controller('media')
@@ -30,7 +42,9 @@ export class MediaController {
 	constructor(
 		private mediaService: MediaService,
 		private playerTicketService: PlayerTicketService,
-		private configService: ConfigService
+		private eventsService: EventsService,
+		private configService: ConfigService,
+		private visitsService: VisitsService
 	) {}
 
 	// Disabled in production since users always need to search inside one reading room
@@ -77,6 +91,30 @@ export class MediaController {
 		return this.mediaService.findBySchemaIdentifier(id, referer);
 	}
 
+	@Get(':id/export')
+	@Header('Content-Type', 'text/xml')
+	@RequirePermissions(Permission.EXPORT_OBJECT)
+	public async export(
+		@Param('id') id: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
+		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.METADATA_EXPORT,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
+		return this.mediaService.convertObjectToXml(objectMetadata);
+	}
+
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
 	public async getRelated(
 		@Headers('referer') referer: string,
@@ -107,8 +145,29 @@ export class MediaController {
 	public async getMediaOnIndex(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
-		@Param('esIndex') esIndex: string
+		@Param('esIndex') esIndex: string,
+		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
+		// Check is the user is a maintainer of the specified esIndex
+		const isMaintainer =
+			esIndex &&
+			user.getMaintainerId() &&
+			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
+
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (!isMaintainer && !canSearchInAllSpaces) {
+			// Check if user has approved visit request for the current timestamp
+			// Keeping this check for last since it is more expensive
+			const hasAccess = await this.visitsService.hasAccess(user.getId(), esIndex);
+			if (!hasAccess) {
+				throw new ForbiddenException(
+					i18n.t('You do not have access to this visitor space')
+				);
+			}
+		}
+
 		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
 		return media;
 	}

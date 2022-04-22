@@ -57,7 +57,7 @@ export interface IeObject {
 	thumbnailUrl: string;
 	maintainerId: string;
 	maintainerName: string;
-	readingRoomId: string;
+	visitorSpaceSlug: string;
 	series: string[];
 	programs: string[];
 	datePublished?: string;

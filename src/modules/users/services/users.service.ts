@@ -10,6 +10,8 @@ import {
 	InsertUserIdentityDocument,
 	InsertUserIdentityMutation,
 	InsertUserMutation,
+	LinkUserToMaintainerDocument,
+	LinkUserToMaintainerMutation,
 	UpdateUserProfileDocument,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -42,6 +44,8 @@ export class UsersService {
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+			visitorSpaceSlug:
+				graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
 		};
 	}
 
@@ -135,5 +139,19 @@ export class UsersService {
 		});
 
 		return this.adapt(updatedUser);
+	}
+
+	public async linkCpAdminToMaintainer(id: string, maintainerId: string): Promise<boolean> {
+		const {
+			data: { insert_maintainer_users_profile_one: inserted },
+		} = await this.dataService.execute<LinkUserToMaintainerMutation>(
+			LinkUserToMaintainerDocument,
+			{
+				userProfileId: id,
+				maintainerId,
+			}
+		);
+
+		return !!inserted?.id;
 	}
 }

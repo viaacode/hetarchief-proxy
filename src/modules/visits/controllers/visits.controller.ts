@@ -9,17 +9,23 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { isFuture } from 'date-fns';
+import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
@@ -27,6 +33,7 @@ import { RequireAnyPermissions } from '~shared/decorators/require-any-permission
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 import i18n from '~shared/i18n';
 
 @UseGuards(LoggedInGuard)
@@ -38,7 +45,8 @@ export class VisitsController {
 	constructor(
 		private visitsService: VisitsService,
 		private notificationsService: NotificationsService,
-		private spacesService: SpacesService
+		private spacesService: SpacesService,
+		private eventsService: EventsService
 	) {}
 
 	@Get()
@@ -94,15 +102,15 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Get('active-for-space/:maintainerOrgId')
+	@Get('active-for-space/:visitorSpaceSlug')
 	// TODO permissions?
 	public async getActiveVisitForUserAndSpace(
-		@Param('maintainerOrgId') maintainerOrgId: string,
+		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			user.getId(),
-			maintainerOrgId
+			visitorSpaceSlug
 		);
 		return activeVisit;
 	}
@@ -126,23 +134,50 @@ export class VisitsController {
 	})
 	@RequirePermissions(Permission.CREATE_VISIT_REQUEST)
 	public async createVisit(
+		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				i18n.t(
-					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
+					'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
 				)
 			);
 		}
 
+		// Resolve visitor space slug to visitor space id
+		const visitorSpace = await this.spacesService.findBySlug(createVisitDto.visitorSpaceSlug);
+
+		if (!visitorSpace) {
+			throw new BadRequestException(
+				i18n.t(`The space with slug '${createVisitDto.visitorSpaceSlug}' was not found`)
+			);
+		}
+
 		// Create visit request
-		const visit = await this.visitsService.create(createVisitDto, user.getId());
+		const visit = await this.visitsService.create(
+			{
+				...createVisitDto,
+				visitorSpaceId: visitorSpace.id,
+			},
+			user.getId()
+		);
 
 		// Send notifications
 		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
 		await this.notificationsService.onCreateVisit(visit, recipients, user);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.VISIT_REQUEST,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
 
 		return visit;
 	}
@@ -153,17 +188,19 @@ export class VisitsController {
 	})
 	@RequireAnyPermissions(Permission.UPDATE_VISIT_REQUEST, Permission.CANCEL_OWN_VISIT_REQUEST)
 	public async update(
+		@Req() request: Request,
 		@Param('id') id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
+		const originalVisit = await this.visitsService.findById(id);
+
 		if (
 			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
 			user.hasNot(Permission.UPDATE_VISIT_REQUEST)
 		) {
-			const visit = await this.visitsService.findById(id);
 			if (
-				visit.userProfileId !== user.getId() ||
+				originalVisit.userProfileId !== user.getId() ||
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				throw new UnauthorizedException(
@@ -176,24 +213,112 @@ export class VisitsController {
 				status: VisitStatus.CANCELLED_BY_VISITOR,
 			};
 		}
+
+		// update the Visit
 		const visit = await this.visitsService.update(id, updateVisitDto, user.getId());
 
+		// Post processing for notifications
 		if (updateVisitDto.status) {
-			// Status was updated
-
-			// Send notifications
-			const space = await this.spacesService.findById(visit.spaceId);
-			if (updateVisitDto.status === VisitStatus.APPROVED) {
-				await this.notificationsService.onApproveVisitRequest(visit, space);
-			} else if (updateVisitDto.status === VisitStatus.DENIED) {
-				await this.notificationsService.onDenyVisitRequest(
-					visit,
-					space,
-					updateVisitDto.note
-				);
-			}
+			await this.postProcessVisitStatusChange(
+				request,
+				visit,
+				updateVisitDto,
+				originalVisit.status,
+				user
+			);
+		}
+		if (updateVisitDto.startAt || updateVisitDto.endAt) {
+			await this.postProcessVisitTimes(updateVisitDto, visit);
 		}
 
 		return visit;
+	}
+
+	/**
+	 * When the a visit status changed, check if notifications should be sent
+	 */
+	protected async postProcessVisitStatusChange(
+		request: Request,
+		visit: Visit,
+		updateVisitDto: UpdateVisitDto,
+		formerStatus: VisitStatus,
+		user: SessionUserEntity
+	) {
+		const space = await this.spacesService.findById(visit.spaceId);
+		if (visit.status === VisitStatus.APPROVED) {
+			await this.notificationsService.onApproveVisitRequest(visit, space);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.VISIT_REQUEST_APPROVED,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		} else if (visit.status === VisitStatus.DENIED) {
+			await this.notificationsService.onDenyVisitRequest(visit, space, updateVisitDto.note);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type:
+						formerStatus === VisitStatus.APPROVED
+							? LogEventType.VISIT_REQUEST_REVOKED
+							: LogEventType.VISIT_REQUEST_DENIED,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
+			const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
+
+			await this.notificationsService.onCancelVisitRequest(visit, recipients, user);
+
+			// Log event
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.VISIT_REQUEST_CANCELLED_BY_VISITOR,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						visitor_space_request_id: visit.id,
+					},
+				},
+			]);
+		}
+	}
+
+	/**
+	 * When the a visit status changed, check if notifications should be sent
+	 */
+	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
+		const typesToDelete = [];
+		if (updateVisitDto.startAt && isFuture(new Date(updateVisitDto.startAt))) {
+			typesToDelete.push(NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED);
+		}
+
+		if (updateVisitDto.endAt && isFuture(new Date(updateVisitDto.endAt))) {
+			typesToDelete.push(
+				NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+				NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING
+			);
+		}
+
+		await this.notificationsService.delete(visit.id, {
+			types: typesToDelete,
+		});
 	}
 }

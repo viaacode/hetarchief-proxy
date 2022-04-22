@@ -63,7 +63,7 @@ describe('TranslationsService', () => {
 			};
 			mockSiteVariablesService.updateSiteVariable.mockResolvedValueOnce(mockData);
 			const response = await translationsService.updateTranslations(
-				TranslationKey.FRONTEND_TRANSLATIONS,
+				TranslationKey.TRANSLATIONS_FRONTEND,
 				{
 					key: 'new-translation',
 				}

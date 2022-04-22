@@ -1,6 +1,7 @@
-query findSpaceByMaintainerIdentifier($maintainerId: String!) {
-	maintainer_visitor_space(where: { schema_maintainer_id: { _ilike: $maintainerId } }) {
+query findSpaceBySlug($slug: String!) {
+	maintainer_visitor_space(where: { slug: { _eq: $slug } }) {
 		id
+		slug
 		schema_image
 		schema_color
 		schema_audience_type

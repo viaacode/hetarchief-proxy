@@ -3,10 +3,10 @@ import { addMonths } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
+	DeleteNotificationsMutation,
 	InsertNotificationsMutation,
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
-	Lookup_Schema_Audience_Type_Enum,
 	UpdateAllNotificationsForUserMutation,
 	UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -40,9 +40,7 @@ const mockGqlNotification1: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
-			content_partner: {
-				schema_identifier: 'OR-1v5bc86',
-			},
+			slug: 'amsab',
 		},
 	},
 };
@@ -61,9 +59,7 @@ const mockGqlNotification2: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
-			content_partner: {
-				schema_identifier: 'OR-1v5bc86',
-			},
+			slug: 'amsab',
 		},
 	},
 };
@@ -89,7 +85,7 @@ const mockNotification: Notification = {
 	createdAt: '2022-02-25T17:21:58.937169+00:00',
 	updatedAt: '2022-02-28T17:54:59.894586',
 	type: NotificationType.VISIT_REQUEST_APPROVED,
-	readingRoomId: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+	visitorSpaceSlug: 'amsab',
 };
 
 const mockUser: User = {
@@ -136,6 +132,7 @@ const mockVisit: Visit = {
 
 const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+	slug: 'amsab',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
 	description: null,
@@ -144,7 +141,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
+	audienceType: AudienceType.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,
@@ -156,7 +153,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
+	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
@@ -363,6 +360,24 @@ describe('NotificationsService', () => {
 		});
 	});
 
+	describe('onCancelVisitRequest', () => {
+		it('should send a notification about a visit request cancellation', async () => {
+			const createForMultipleRecipientsSpy = jest
+				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.mockResolvedValueOnce([mockNotification]);
+
+			const response = await notificationsService.onCancelVisitRequest(
+				mockVisit,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(response).toHaveLength(1);
+			expect(response[0].status).toEqual(NotificationStatus.UNREAD);
+			createForMultipleRecipientsSpy.mockRestore();
+		});
+	});
+
 	describe('update', () => {
 		it('should update a notification', async () => {
 			const mockData: UpdateNotificationMutation = {
@@ -423,6 +438,32 @@ describe('NotificationsService', () => {
 				mockNotification as Partial<GqlCreateOrUpdateNotification>
 			);
 			expect(affectedRows).toBe(5);
+		});
+	});
+
+	describe('delete', () => {
+		it('can delete notifications with types', async () => {
+			const mockData: DeleteNotificationsMutation = {
+				delete_app_notification: {
+					affected_rows: 5,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const affectedRows = await notificationsService.delete('visit-id', {
+				types: [NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED],
+			});
+			expect(affectedRows).toBe(5);
+		});
+
+		it('can delete all notifications for a visit', async () => {
+			const mockData: DeleteNotificationsMutation = {
+				delete_app_notification: {
+					affected_rows: 9,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const affectedRows = await notificationsService.delete('visit-id', {});
+			expect(affectedRows).toBe(9);
 		});
 	});
 });

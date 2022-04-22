@@ -47,11 +47,14 @@ const config = (): Configuration => {
 		graphQlEnableWhitelist: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		graphqlUrlAvo: getEnvValue('GRAPHQL_URL_AVO', true),
 		graphqlSecretAvo: getEnvValue('GRAPHQL_SECRET_AVO', true),
+		graphQlUrlLogging: getEnvValue('GRAPHQL_URL_LOGGING', true),
+		graphQlSecretLogging: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
 		databaseApplicationType: getEnvValue('DATABASE_APPLICATION_TYPE', true) as AvoOrHetArchief,
 		cookieSecret: getEnvValue('COOKIE_SECRET', true),
 		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		redisConnectionString: getEnvValue('REDIS_CONNECTION_STRING', false),
 		elasticSearchUrl: getEnvValue('ELASTICSEARCH_URL', true),
+		ssumRegistrationPage: getEnvValue('SSUM_REGISTRATION_PAGE', true),
 		samlIdpMetaDataEndpoint: getEnvValue('SAML_IDP_META_DATA_ENDPOINT', true),
 		samlSpEntityId: getEnvValue('SAML_SP_ENTITY_ID', true),
 		samlSpPrivateKey: cleanMultilineEnv(getEnvValue('SAML_SP_PRIVATE_KEY', false)),
@@ -114,6 +117,7 @@ const config = (): Configuration => {
 		meemooAdminOrganizationIds: (getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '')
 			.split(',')
 			.map((orgId) => orgId.trim()),
+		rerouteEmailsTo: getEnvValue('REROUTE_EMAILS_TO', false),
 	};
 };
 

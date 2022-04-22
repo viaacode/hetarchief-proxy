@@ -31,6 +31,7 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 		}
 		visitor_space {
 			id
+			slug
 			schema_image
 			schema_color
 			schema_audience_type

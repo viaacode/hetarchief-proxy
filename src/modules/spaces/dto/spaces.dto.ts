@@ -1,8 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { AccessType } from '~modules/spaces/types';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SpacesQueryDto {
@@ -26,6 +28,19 @@ export class SpacesQueryDto {
 		enum: AccessType,
 	})
 	accessType? = undefined;
+
+	@IsArray()
+	@IsEnum(VisitorSpaceStatus, { each: true })
+	@IsOptional()
+	@ApiPropertyOptional({
+		isArray: true,
+		description: 'Filter spaces by status',
+		default: undefined,
+		example: VisitorSpaceStatus.Active,
+		enum: VisitorSpaceStatus,
+	})
+	@Transform(commaSeparatedStringToArray)
+	status?: VisitorSpaceStatus[];
 
 	@IsNumber()
 	@Type(() => Number)
@@ -127,4 +142,19 @@ export class UpdateSpaceDto {
 		default: undefined,
 	})
 	image?: string;
+
+	@IsString()
+	@IsOptional()
+	@IsEnum(VisitorSpaceStatus, {
+		message: `Status must be one of: ${Object.values(VisitorSpaceStatus).join(', ')}`,
+	})
+	@ApiPropertyOptional({
+		type: String,
+		description: `The status for this visitor space. Possible statuses: ${Object.values(
+			VisitorSpaceStatus
+		).join(', ')}`,
+		example: VisitorSpaceStatus.Active,
+		enum: VisitorSpaceStatus,
+	})
+	status?: VisitorSpaceStatus;
 }

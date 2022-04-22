@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
+import { Request } from 'express';
 
 import { VisitsService } from '../services/visits.service';
 import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import {
-	Lookup_Maintainer_Visitor_Space_Status_Enum,
-	Lookup_Schema_Audience_Type_Enum,
-} from '~generated/graphql-db-types-hetarchief';
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
+import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -95,6 +95,7 @@ const mockUser: User = {
 
 const mockSpace: Space = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+	slug: 'amsab',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
 	description: null,
@@ -103,7 +104,7 @@ const mockSpace: Space = {
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
-	audienceType: Lookup_Schema_Audience_Type_Enum.Public,
+	audienceType: AudienceType.Public,
 	publicAccess: false,
 	contactInfo: {
 		email: null,
@@ -115,7 +116,7 @@ const mockSpace: Space = {
 			postOfficeBoxNumber: null,
 		},
 	},
-	status: Lookup_Maintainer_Visitor_Space_Status_Enum.Requested,
+	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,
 	createdAt: '2022-01-13T13:10:14.41978',
 	updatedAt: '2022-01-13T13:10:14.41978',
@@ -141,13 +142,22 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onCreateVisit: jest.fn(),
 	onApproveVisitRequest: jest.fn(),
 	onDenyVisitRequest: jest.fn(),
+	delete: jest.fn(),
+	onCancelVisitRequest: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	getMaintainerProfiles: jest.fn(),
+	findBySlug: jest.fn(),
 	findById: jest.fn(),
 	findSpaceByCpUserId: jest.fn(),
 };
+
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
+const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
 
 describe('VisitsController', () => {
 	let visitsController: VisitsController;
@@ -169,6 +179,10 @@ describe('VisitsController', () => {
 					provide: SpacesService,
 					useValue: mockSpacesService,
 				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -181,6 +195,7 @@ describe('VisitsController', () => {
 		mockNotificationsService.onCreateVisit.mockClear();
 		mockNotificationsService.onApproveVisitRequest.mockClear();
 		mockNotificationsService.onDenyVisitRequest.mockClear();
+		mockNotificationsService.delete.mockClear();
 	});
 
 	it('should be defined', () => {
@@ -296,13 +311,15 @@ describe('VisitsController', () => {
 				{ id: '1', email: '1@shd.be' },
 				{ id: '2', email: '2@shd.be' },
 			]);
+			mockSpacesService.findBySlug.mockResolvedValueOnce([{ id: mockVisit1.spaceId }]);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.createVisit(
+				mockRequest,
 				{
-					spaceId: 'space-1',
+					visitorSpaceSlug: 'space-slug-1',
 					timeframe: 'asap',
 					acceptedTos: true,
 				},
@@ -332,8 +349,9 @@ describe('VisitsController', () => {
 			let error: any;
 			try {
 				await visitsController.createVisit(
+					mockRequest,
 					{
-						spaceId: 'space-1',
+						visitorSpaceSlug: 'space-slug-1',
 						timeframe: 'asap',
 						acceptedTos: false,
 					},
@@ -344,9 +362,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				i18n.t(
-					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
-				)
+				'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
@@ -354,10 +370,51 @@ describe('VisitsController', () => {
 			mockSpacesService.getMaintainerProfiles.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
 		});
+
+		it("should throw an error if you try to create a new visit for a visitor space that doesn't exist", async () => {
+			mockVisitsService.create.mockResolvedValueOnce({
+				mockVisit1,
+			});
+			mockNotificationsService.createForMultipleRecipients.mockResolvedValueOnce([]);
+			mockSpacesService.getMaintainerProfiles.mockResolvedValueOnce([
+				{ id: '1', email: '1@shd.be' },
+				{ id: '2', email: '2@shd.be' },
+			]);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+
+			let error: any;
+			try {
+				await visitsController.createVisit(
+					mockRequest,
+					{
+						visitorSpaceSlug: 'space-slug-1',
+						timeframe: 'asap',
+						acceptedTos: true,
+					},
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response.message).toEqual(
+				`The space with slug 'space-slug-1' was not found`
+			);
+			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
+			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
+			sessionHelperSpy.mockRestore();
+			mockSpacesService.getMaintainerProfiles.mockClear();
+			mockSpacesService.findBySlug.mockClear();
+			mockNotificationsService.createForMultipleRecipients.mockClear();
+		});
 	});
 
 	describe('update', () => {
 		it('should update a visit', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
@@ -365,6 +422,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				'visit-id',
 				{
 					startAt: new Date().toISOString(),
@@ -384,6 +442,7 @@ describe('VisitsController', () => {
 			let error;
 			try {
 				await visitsController.update(
+					mockRequest,
 					'space-1',
 					{
 						status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -406,6 +465,7 @@ describe('VisitsController', () => {
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			const visit = await visitsController.update(
+				mockRequest,
 				'space-1',
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -420,6 +480,7 @@ describe('VisitsController', () => {
 		});
 
 		it('should update a visit status: approved', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
@@ -427,6 +488,7 @@ describe('VisitsController', () => {
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.APPROVED,
@@ -440,33 +502,65 @@ describe('VisitsController', () => {
 		});
 
 		it('should update a visit status: denied', async () => {
-			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			const mockVisit3 = { ...mockVisit2 };
+			mockVisit3.status = VisitStatus.DENIED;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
+				mockVisit2.id,
+				{
+					status: VisitStatus.DENIED,
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(visit).toEqual(mockVisit3);
+			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
+			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
+			sessionHelperSpy.mockRestore();
+		});
+
+		it('should send a revoke event when an approved visit is denied', async () => {
+			const mockVisit3 = { ...mockVisit1 };
+			mockVisit3.status = VisitStatus.DENIED;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			const sessionHelperSpy = jest
+				.spyOn(SessionHelper, 'getArchiefUserInfo')
+				.mockReturnValue(mockUser);
+
+			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.DENIED,
 				},
 				new SessionUserEntity(mockUser)
 			);
-			expect(visit).toEqual(mockVisit1);
+			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
 			sessionHelperSpy.mockRestore();
 		});
 
 		it('should update a visit status: cancelled', async () => {
-			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			const mockVisit3 = { ...mockVisit1 };
+			mockVisit3.status = VisitStatus.CANCELLED_BY_VISITOR;
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 
 			const visit = await visitsController.update(
+				mockRequest,
 				mockVisit1.id,
 				{
 					status: VisitStatus.CANCELLED_BY_VISITOR,
@@ -474,10 +568,33 @@ describe('VisitsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 
-			expect(visit).toEqual(mockVisit1);
+			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
 			sessionHelperSpy.mockRestore();
+		});
+
+		it('should delete notifications when the startAt/endAt time is changed to a future date', async () => {
+			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
+			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
+			await visitsController.update(
+				mockRequest,
+				mockVisit1.id,
+				{
+					startAt: addHours(new Date(), 1).toISOString(),
+					endAt: addHours(new Date(), 2).toISOString(),
+					status: VisitStatus.APPROVED,
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(mockNotificationsService.delete).toHaveBeenCalledTimes(1);
+			expect(mockNotificationsService.delete).toHaveBeenLastCalledWith(mockVisit1.id, {
+				types: [
+					NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,
+					NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+					NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
+				],
+			});
 		});
 	});
 });

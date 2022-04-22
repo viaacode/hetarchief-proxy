@@ -6,10 +6,11 @@ import { SpacesService } from './spaces.service';
 
 import {
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdentifierQuery,
+	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceMutation,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
@@ -110,6 +111,7 @@ describe('SpacesService', () => {
 				description: 'my-space',
 				serviceDescription: 'service description',
 				image: '',
+				status: VisitorSpaceStatus.Active,
 			});
 			expect(response.id).toEqual('1');
 		});
@@ -221,6 +223,31 @@ describe('SpacesService', () => {
 			expect(response.size).toBe(20);
 			expect(response.total).toBe(0);
 		});
+
+		it('can filter spaces by their status', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space: [
+						{
+							id: '1',
+						},
+					],
+					maintainer_visitor_space_aggregate: {
+						aggregate: {
+							count: 100,
+						},
+					},
+				},
+			});
+			const response = await spacesService.findAll(
+				{ status: [VisitorSpaceStatus.Active], page: 1, size: 20 },
+				undefined
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(20);
+			expect(response.total).toBe(100);
+		});
 	});
 
 	describe('findById', () => {
@@ -252,22 +279,20 @@ describe('SpacesService', () => {
 		const slug = 'slug';
 
 		it('returns a single space by slug', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [
 					{
-						content_partner: {
-							schema_identifier: slug,
-						},
+						slug,
 					},
-				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findBySlug(slug);
-			expect(response.maintainerId).toBe(slug);
+			expect(response.slug).toBe(slug);
 		});
 
 		it('returns null if the space was not found', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
@@ -279,12 +304,12 @@ describe('SpacesService', () => {
 
 	describe('findSpaceByCpUserId', () => {
 		it('returns a single space', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [
 					{
 						id: '1',
 					},
-				] as FindSpaceByMaintainerIdentifierQuery['maintainer_visitor_space'],
+				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await spacesService.findSpaceByCpUserId('1');
@@ -292,7 +317,7 @@ describe('SpacesService', () => {
 		});
 
 		it('returns null if the space was not found', async () => {
-			const mockData: FindSpaceByMaintainerIdentifierQuery = {
+			const mockData: FindSpaceBySlugQuery = {
 				maintainer_visitor_space: [],
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });

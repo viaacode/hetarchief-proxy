@@ -6,6 +6,7 @@ import { VisitsService } from './visits.service';
 
 import {
 	FindVisitsQuery,
+	GetVisitRequestForAccessQuery,
 	InsertVisitMutation,
 	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitMutation,
@@ -348,7 +349,7 @@ describe('VisitsService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				message:
-					"No active visits for user with id 'user-1' for space with maintainer id 'space-1' found",
+					"No active visits for user with id 'user-1' and space with visitor space with slug 'space-1' found",
 				statusCode: 404,
 			});
 		});
@@ -375,7 +376,8 @@ describe('VisitsService', () => {
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const response = await visitsService.create(
 				{
-					spaceId: 'space-1',
+					visitorSpaceSlug: 'space-slug-1',
+					visitorSpaceId: 'space-1',
 					timeframe: 'tomorrow',
 					acceptedTos: true,
 				},
@@ -597,6 +599,38 @@ describe('VisitsService', () => {
 
 			expect(visits).toHaveLength(1);
 			expect(visits[0].id).toEqual(mockCpVisit.id);
+		});
+	});
+
+	describe('hasAccess', () => {
+		it('should allow access if approved visit request exists', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [{ id: '1' }],
+				} as GetVisitRequestForAccessQuery,
+			});
+
+			const hasAccess: boolean = await visitsService.hasAccess(
+				mockUserProfileId,
+				'maintainer-1'
+			);
+
+			expect(hasAccess).toEqual(true);
+		});
+
+		it('should deny access if no approved visit request exists', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [],
+				} as GetVisitRequestForAccessQuery,
+			});
+
+			const hasAccess: boolean = await visitsService.hasAccess(
+				mockUserProfileId,
+				'maintainer-1'
+			);
+
+			expect(hasAccess).toEqual(false);
 		});
 	});
 });

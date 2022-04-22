@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
 import { get, isEmpty } from 'lodash';
+import convert from 'xml-js';
 
 import { getConfig } from '~config';
 
@@ -11,6 +12,8 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { GqlIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
+	FindAllObjectsByCollectionIdDocument,
+	FindAllObjectsByCollectionIdQuery,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsDocument,
@@ -157,6 +160,13 @@ export class MediaService {
 		return esResponse;
 	}
 
+	public adaptMetadata(object: Media): Partial<Media> {
+		// unset thumbnail and representations
+		delete object.representations;
+		delete object.thumbnailUrl;
+		return object;
+	}
+
 	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
@@ -212,6 +222,48 @@ export class MediaService {
 			referer
 		);
 		return adapted;
+	}
+
+	/**
+	 * Get the object detail fields that are exposed as metadata
+	 */
+	public async findMetadataBySchemaIdentifier(schemaIdentifier: string): Promise<Partial<Media>> {
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
+		return this.adaptMetadata(object);
+	}
+
+	public convertObjectsToXml(objects: Partial<Media>[]): string {
+		// this structure defines the parent 'objects' tag, which includes
+		// all objects wrapped in a separate 'object' tag
+		return convert.js2xml({ objects: { object: objects } }, { compact: true, spaces: 2 });
+	}
+
+	public convertObjectToXml(object: Partial<Media>): string {
+		return convert.js2xml({ object }, { compact: true, spaces: 2 });
+	}
+
+	public async findAllObjectMetadataByCollectionId(
+		collectionId: string,
+		userProfileId: string
+	): Promise<Partial<Media>[]> {
+		const {
+			data: { users_folder_ie: allObjects },
+		} = await this.dataService.execute<FindAllObjectsByCollectionIdQuery>(
+			FindAllObjectsByCollectionIdDocument,
+			{
+				collectionId,
+				userProfileId,
+			}
+		);
+		if (!allObjects[0]) {
+			throw new NotFoundException();
+		}
+		const allAdapted = allObjects.map((object) => {
+			const adaptee = this.adapt(object.ie);
+			return this.adaptMetadata(adaptee);
+		});
+
+		return allAdapted;
 	}
 
 	public async getRelated(

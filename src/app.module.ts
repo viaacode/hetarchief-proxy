@@ -9,13 +9,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { ContentPagesModule } from '~modules/admin/content-pages';
-import { NavigationsModule } from '~modules/admin/navigations';
+import { AdminNavigationsModule } from '~modules/admin/navigations';
 import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
 import { DataModule } from '~modules/data';
+import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
+import { NavigationsModule } from '~modules/navigations';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
 import { TosModule } from '~modules/tos';
@@ -40,6 +42,7 @@ import { SessionService } from '~shared/services/session.service';
 		MediaModule,
 		SpacesModule,
 		MediaModule,
+		AdminNavigationsModule,
 		NavigationsModule,
 		TosModule,
 		UsersModule,
@@ -49,6 +52,7 @@ import { SessionService } from '~shared/services/session.service';
 		ContentPagesModule,
 		TranslationsModule,
 		AdminTranslationsModule,
+		EventsModule,
 	],
 	controllers: [AppController],
 	providers: [

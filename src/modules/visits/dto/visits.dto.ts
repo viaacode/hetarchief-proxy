@@ -19,18 +19,20 @@ import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-str
 import { SortDirection } from '~shared/types';
 
 export class CreateVisitDto {
-	@IsUUID()
+	@IsString()
 	@ApiProperty({
 		type: string,
-		description: "The space's uuid",
+		description: "The space's slug",
+		example: 'vrt',
 	})
-	spaceId: string;
+	visitorSpaceSlug: string;
 
 	@IsString()
 	@IsOptional()
 	@ApiProperty({
 		type: string,
 		description: 'The requested timeframe by the user',
+		example: 'Next thursday afternoon from 2 to 6',
 	})
 	timeframe?: string;
 
@@ -39,6 +41,8 @@ export class CreateVisitDto {
 	@ApiProperty({
 		type: string,
 		description: "The reason for this user's visit",
+		example:
+			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
 	reason?: string;
 
@@ -46,6 +50,7 @@ export class CreateVisitDto {
 	@ApiProperty({
 		type: Boolean,
 		description: 'If the user accepted the Terms of Service for this reading room',
+		example: true,
 	})
 	acceptedTos: boolean;
 }

@@ -17,15 +17,21 @@ export enum Permission {
 	CANCEL_OWN_VISIT_REQUEST = 'CANCEL_OWN_VISIT_REQUEST',
 	// Objects
 	SEARCH_OBJECTS = 'SEARCH_OBJECTS',
+	SEARCH_ALL_OBJECTS = 'SEARCH_ALL_OBJECTS', // Search objects in all indexes in elasticsearch
+	EXPORT_OBJECT = 'EXPORT_OBJECT',
 	// Collections
 	MANAGE_COLLECTIONS = 'MANAGE_COLLECTIONS',
 	// Spaces
+	/** Spaces */
+	READ_ALL_SPACES = 'READ_ALL_SPACES',
 	UPDATE_OWN_SPACE = 'UPDATE_OWN_SPACE',
 	UPDATE_ALL_SPACES = 'UPDATE_ALL_SPACES',
 	// Admin
 	EDIT_ANY_CONTENT_PAGES = 'EDIT_ANY_CONTENT_PAGES',
 	EDIT_OWN_CONTENT_PAGES = 'EDIT_OWN_CONTENT_PAGES',
 	SEARCH = 'SEARCH',
+	// Kiosk
+	SHOW_RESEARCH_WARNING = 'SHOW_RESEARCH_WARNING',
 }
 
 export type GqlUser =
@@ -45,6 +51,7 @@ export interface User {
 	permissions: Permission[];
 	idp: Idp;
 	maintainerId?: string;
+	visitorSpaceSlug?: string;
 }
 
 export interface GqlPermission {

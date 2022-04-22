@@ -5,6 +5,8 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { Media } from '../types';
+
 import { MediaService } from './media.service';
 
 import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
@@ -109,6 +111,15 @@ describe('MediaService', () => {
 		});
 	});
 
+	describe('adaptMetadata', () => {
+		it('returns adapted metadata', () => {
+			const media = mediaService.adapt(mockObjectIe.data.object_ie[0]);
+			const result = mediaService.adaptMetadata(media);
+			expect(result.representations).toBeUndefined();
+			expect(result.thumbnailUrl).toBeUndefined();
+		});
+	});
+
 	describe('findAll', () => {
 		it('returns the es response from the main _search endpoint if no index is specified', async () => {
 			nock('http://elasticsearch/').post('/_search').reply(201, getMockMediaResponse());
@@ -147,6 +158,18 @@ describe('MediaService', () => {
 				error = e.response;
 			}
 			expect(error.statusCode).toEqual(500);
+		});
+	});
+
+	describe('findMetadataBySchemaIdentifier', () => {
+		it('returns the metadata object details', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
+			const response = await mediaService.findMetadataBySchemaIdentifier(
+				mockObjectSchemaIdentifier
+			);
+			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(response.representations).toBeUndefined();
+			expect(response.thumbnailUrl).toBeUndefined();
 		});
 	});
 
@@ -210,6 +233,47 @@ describe('MediaService', () => {
 				message: `Object IE with id '${mockObjectSchemaIdentifier}' not found`,
 				statusCode: 404,
 			});
+		});
+	});
+
+	describe('convertObjectToXml', () => {
+		it('returns the xml version of an object', () => {
+			const xml = mediaService.convertObjectToXml({ id: '1' } as unknown as Media);
+			expect(xml.startsWith('<object>')).toBeTruthy();
+		});
+	});
+
+	describe('convertObjectsToXml', () => {
+		it('returns the xml version of an array of objects', () => {
+			const metadata = mediaService.adaptMetadata(
+				mediaService.adapt(mockObjectIe.data.object_ie[0])
+			);
+			const xml = mediaService.convertObjectsToXml([metadata]);
+			expect(xml.startsWith('<objects>')).toBeTruthy();
+		});
+	});
+
+	describe('findAllObjectMetadataByCollectionId', () => {
+		it('returns the metadata objects for a collection', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { users_folder_ie: [mockObjectIe] },
+			});
+			const result = await mediaService.findAllObjectMetadataByCollectionId(
+				'collection-1',
+				'user-1'
+			);
+			expect(result.length).toEqual(1);
+		});
+
+		it('throws an exception if no objects were found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({ data: { users_folder_ie: [] } });
+			let error;
+			try {
+				await mediaService.findAllObjectMetadataByCollectionId('collection-1', 'user-1');
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({ message: 'Not Found', statusCode: 404 });
 		});
 	});
 

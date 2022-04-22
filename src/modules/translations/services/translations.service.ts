@@ -17,10 +17,10 @@ export class TranslationsService {
 
 	public async getTranslations(): Promise<Translations> {
 		const translations = await this.cacheManager.wrap(
-			TranslationKey.FRONTEND_TRANSLATIONS,
+			TranslationKey.TRANSLATIONS_FRONTEND,
 			() =>
 				this.siteVariablesService.getSiteVariable<Translations>(
-					TranslationKey.FRONTEND_TRANSLATIONS
+					TranslationKey.TRANSLATIONS_FRONTEND
 				),
 			// cache for 1h
 			{ ttl: 3600 }

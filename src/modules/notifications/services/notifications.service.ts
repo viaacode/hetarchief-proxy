@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
+import { DeleteNotificationDto } from '../dto/notifications.dto';
 import {
 	GqlCreateNotificationsForReadingRoom,
 	GqlCreateOrUpdateNotification,
@@ -11,6 +12,8 @@ import {
 } from '../types';
 
 import {
+	DeleteNotificationsDocument,
+	DeleteNotificationsMutation,
 	FindNotificationsByUserDocument,
 	FindNotificationsByUserQuery,
 	InsertNotificationsDocument,
@@ -59,9 +62,7 @@ export class NotificationsService {
 			createdAt: gqlNotification?.created_at,
 			updatedAt: gqlNotification?.updated_at,
 			type: gqlNotification?.type as NotificationType,
-			readingRoomId:
-				gqlNotification?.visitor_space_request?.visitor_space?.content_partner
-					?.schema_identifier,
+			visitorSpaceSlug: gqlNotification?.visitor_space_request?.visitor_space?.slug,
 		};
 	}
 
@@ -167,6 +168,25 @@ export class NotificationsService {
 		return affectedRows;
 	}
 
+	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
+		const where = {
+			visit_id: { _eq: visitId },
+			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
+		};
+
+		const response = await this.dataService.execute<DeleteNotificationsMutation>(
+			DeleteNotificationsDocument,
+			{
+				where,
+			}
+		);
+
+		const affectedRows = response.data.delete_app_notification.affected_rows;
+		this.logger.debug(`${affectedRows} notifications deleted for visit ${visitId}`);
+
+		return affectedRows;
+	}
+
 	/**
 	 * Send notifications and email on new visit request
 	 */
@@ -264,5 +284,27 @@ export class NotificationsService {
 			}),
 		]);
 		return notifications[0];
+	}
+
+	/**
+	 * Send a notification to multiple recipients when a user cancels their own request
+	 */
+	public async onCancelVisitRequest(
+		visit: Visit,
+		recipients: Recipient[],
+		user: SessionUserEntity
+	): Promise<Notification[]> {
+		return this.createForMultipleRecipients(
+			{
+				title: i18n.t('Een aanvraag om je leeszaal te bezoeken is geannuleerd.'),
+				description: i18n.t('{{name}} heeft zelf de aanvraag geannuleerd.', {
+					name: user.getFullName(),
+				}),
+				visit_id: visit.id,
+				type: NotificationType.VISIT_REQUEST_CANCELLED,
+				status: NotificationStatus.UNREAD,
+			},
+			recipients.map((recipient) => recipient.id)
+		);
 	}
 }
