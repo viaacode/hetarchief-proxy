@@ -94,6 +94,18 @@ describe('SpacesController', () => {
 			expect(spaces.items.length).toEqual(2);
 		});
 
+		it('should only return active spaces if the user does not have the READ_ALL_SPACES permission', async () => {
+			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
+			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(mockUser));
+			expect(spaces.items.length).toEqual(2);
+			expect(mockSpacesService.findAll).toHaveBeenCalledWith(
+				{
+					status: [VisitorSpaceStatus.Active],
+				},
+				mockUser.id
+			);
+		});
+
 		it('should throw an exception on illegal querying of INACTIVE spaces', async () => {
 			let error;
 			try {

@@ -47,12 +47,17 @@ export class SpacesController {
 		// status filter on inactive requires special permission
 		if (
 			queryDto.status &&
-			queryDto.status.includes(VisitorSpaceStatus.Inactive) &&
+			(queryDto.status.includes(VisitorSpaceStatus.Inactive) ||
+				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
 			throw new UnauthorizedException(
 				i18n.t('You do not have the right permissions to query this data')
 			);
+		}
+		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
+			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
+			queryDto.status = [VisitorSpaceStatus.Active];
 		}
 		// by default only query the active spaces
 		if (!queryDto.status) {
