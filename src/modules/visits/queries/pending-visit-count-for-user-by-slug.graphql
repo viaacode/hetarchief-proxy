@@ -3,7 +3,7 @@ query pendingVisitCountForUserBySlug($user: uuid = "", $slug: String = "") {
 		where: {
 			user_profile_id: { _eq: $user }
 			status: { _eq: "PENDING" }
-			visitor_space: { slug: { _ilike: $slug } }
+			visitor_space: { slug: { _eq: $slug } }
 		}
 	) {
 		aggregate {
