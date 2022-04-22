@@ -1,0 +1,5 @@
+query getFirstObjectId {
+	object_ie(limit: 1) {
+		schema_identifier
+	}
+}
