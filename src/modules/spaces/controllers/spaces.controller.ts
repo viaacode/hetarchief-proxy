@@ -59,10 +59,6 @@ export class SpacesController {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
 			queryDto.status = [VisitorSpaceStatus.Active];
 		}
-		// by default only query the active spaces
-		if (!queryDto.status) {
-			queryDto.status = [VisitorSpaceStatus.Active];
-		}
 		const spaces = await this.spacesService.findAll(queryDto, user.getId());
 		return spaces;
 	}
