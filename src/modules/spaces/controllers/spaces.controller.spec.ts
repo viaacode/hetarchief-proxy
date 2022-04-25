@@ -120,6 +120,21 @@ describe('SpacesController', () => {
 				'You do not have the right permissions to query this data'
 			);
 		});
+
+		it('should throw an exception on illegal querying of PENDING spaces', async () => {
+			let error;
+			try {
+				await spacesController.getSpaces(
+					{ status: [VisitorSpaceStatus.Requested] },
+					new SessionUserEntity(undefined)
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'You do not have the right permissions to query this data'
+			);
+		});
 	});
 
 	describe('getSpaceBySlug', () => {
