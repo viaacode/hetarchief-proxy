@@ -5,9 +5,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
 import { ContentPagesModule } from '~modules/admin/content-pages';
 import { AdminNavigationsModule } from '~modules/admin/navigations';
 import { AdminTranslationsModule } from '~modules/admin/translations';
@@ -20,6 +17,7 @@ import { MediaModule } from '~modules/media';
 import { NavigationsModule } from '~modules/navigations';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
+import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
 import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
@@ -36,27 +34,27 @@ import { SessionService } from '~shared/services/session.service';
 			expandVariables: true,
 		}),
 		ScheduleModule.forRoot(),
+		AdminNavigationsModule,
+		AdminTranslationsModule,
 		AuthModule,
 		CampaignMonitorModule,
+		CollectionsModule,
+		ContentPagesModule,
 		DataModule,
+		EventsModule,
 		MediaModule,
-		SpacesModule,
 		MediaModule,
-		AdminNavigationsModule,
 		NavigationsModule,
+		NotificationsModule,
+		SpacesModule,
+		StatusModule,
 		TosModule,
+		TranslationsModule,
 		UsersModule,
 		VisitsModule,
-		CollectionsModule,
-		NotificationsModule,
-		ContentPagesModule,
-		TranslationsModule,
-		AdminTranslationsModule,
-		EventsModule,
 	],
-	controllers: [AppController],
+	controllers: [],
 	providers: [
-		AppService,
 		SessionService,
 		ConfigService,
 		{
