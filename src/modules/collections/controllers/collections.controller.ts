@@ -31,7 +31,7 @@ import { LogEventType } from '~modules/events/types';
 import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
-import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
@@ -39,7 +39,7 @@ import { EventsHelper } from '~shared/helpers/events';
 @UseGuards(LoggedInGuard)
 @ApiTags('Collections')
 @Controller('collections')
-@RequirePermissions(Permission.MANAGE_COLLECTIONS)
+@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 export class CollectionsController {
 	private logger: Logger = new Logger(CollectionsController.name, { timestamp: true });
 
@@ -80,7 +80,7 @@ export class CollectionsController {
 	}
 
 	@Get(':collectionId/export')
-	@RequirePermissions(Permission.EXPORT_OBJECT)
+	@RequireAllPermissions(Permission.EXPORT_OBJECT)
 	@Header('Content-Type', 'text/xml')
 	public async exportCollection(
 		@Headers('referer') referer: string,

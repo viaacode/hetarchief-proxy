@@ -30,7 +30,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
-import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
@@ -80,7 +80,10 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
-	@RequirePermissions(Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS)
+	@RequireAllPermissions(
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		Permission.MANAGE_ACCOUNT
+	)
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -132,7 +135,7 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Create a Visit request. Requires the CREATE_VISIT_REQUEST permission.',
 	})
-	@RequirePermissions(Permission.CREATE_VISIT_REQUEST)
+	@RequireAllPermissions(Permission.CREATE_VISIT_REQUEST)
 	public async createVisit(
 		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,
