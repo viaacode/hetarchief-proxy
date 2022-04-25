@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	ForbiddenException,
@@ -27,7 +26,6 @@ import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus } from '~modules/visits/types';
 import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
