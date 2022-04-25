@@ -191,10 +191,12 @@ describe('VisitsController', () => {
 	});
 
 	afterEach(() => {
-		mockNotificationsService.onCreateVisit.mockClear();
-		mockNotificationsService.onApproveVisitRequest.mockClear();
-		mockNotificationsService.onDenyVisitRequest.mockClear();
-		mockNotificationsService.delete.mockClear();
+		mockNotificationsService.onCreateVisit.mockRestore();
+		mockNotificationsService.onApproveVisitRequest.mockRestore();
+		mockNotificationsService.onDenyVisitRequest.mockRestore();
+		mockNotificationsService.delete.mockRestore();
+		mockVisitsService.getActiveVisitForUserAndSpace.mockRestore();
+		mockSpacesService.findBySlug.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -288,6 +290,20 @@ describe('VisitsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
+		});
+
+		it('should return a generated active visit for kiosk and cpAdmins if they are linked to the space', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			const visit = await visitsController.getActiveVisitForUserAndSpace(
+				'space-1',
+				new SessionUserEntity({
+					...mockUser,
+					visitorSpaceSlug: 'space-1',
+				})
+			);
+			expect(visit.status).toEqual(VisitStatus.APPROVED);
+			expect(visit.endAt.split('-')[0]).toEqual('2099');
 		});
 
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {

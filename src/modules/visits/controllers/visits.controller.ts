@@ -132,7 +132,7 @@ export class VisitsController {
 				visitorLastName: user.getLastName(),
 				visitorId: user.getId(),
 				visitorMail: user.getMail(),
-				spaceMail: spaceInfo.contactInfo?.email,
+				spaceMail: spaceInfo.contactInfo.email,
 				updatedById: '',
 				updatedByName: '',
 				spaceSlug: spaceInfo.slug,
