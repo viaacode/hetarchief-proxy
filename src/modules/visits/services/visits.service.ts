@@ -349,9 +349,7 @@ export class VisitsService {
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
-			throw new NotFoundException(
-				`No active visits for user with id '${userProfileId}' and space with visitor space with slug '${visitorSpaceSlug}' found`
-			);
+			return null;
 		}
 
 		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
