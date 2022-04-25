@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import {
 	BadRequestException,
 	Body,
@@ -112,10 +114,41 @@ export class VisitsController {
 		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
+		// Check if the user is a CP admin or a Kiosk user for the requested space
+		if (visitorSpaceSlug === user.getVisitorSpaceSlug()) {
+			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
+			// Return fake visit request that is approved and valid forever
+			return {
+				spaceId: spaceInfo.id,
+				id: randomUUID(),
+				startAt: new Date(2000, 0, 1).toISOString(),
+				endAt: new Date(2100, 0, 1).toISOString(),
+				visitorName: user.getFullName(),
+				spaceName: spaceInfo.name,
+				status: VisitStatus.APPROVED,
+				createdAt: new Date().toISOString(),
+				reason: 'permanent access',
+				visitorFirstName: user.getFirstName(),
+				visitorLastName: user.getLastName(),
+				visitorId: user.getId(),
+				visitorMail: user.getMail(),
+				spaceMail: spaceInfo.contactInfo?.email,
+				updatedById: '',
+				updatedByName: '',
+				spaceSlug: spaceInfo.slug,
+				timeframe: '',
+				updatedAt: new Date().toISOString(),
+				userProfileId: user.getId(),
+			};
+		}
+
+		// Find visit request that is approved for the current time
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			user.getId(),
 			visitorSpaceSlug
 		);
+
+		// If no visitor request, check of we need to show a 404 not found or a 403 no access
 		if (!activeVisit) {
 			// Check if space exists
 			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
@@ -130,6 +163,7 @@ export class VisitsController {
 				throw new NotFoundException(`Space with slug '${visitorSpaceSlug}' was not found.`);
 			}
 		}
+
 		return activeVisit;
 	}
 
