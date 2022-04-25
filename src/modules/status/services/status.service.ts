@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import packageJson from '../../../package.json';
+import packageJson from '../../../../package.json';
 
 import {
 	GetFirstObjectIdDocument,
