@@ -174,7 +174,7 @@ export class MediaService {
 		return `${esIndex}/_search`;
 	}
 
-	private async executeQuery(esIndex: string, esQuery: any) {
+	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
 			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
 				json: esQuery,

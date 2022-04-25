@@ -153,7 +153,7 @@ export class SpacesService {
 			}
 		}
 
-		if (status) {
+		if (status?.length) {
 			filterArray.push({ status: { _in: status } });
 		}
 
