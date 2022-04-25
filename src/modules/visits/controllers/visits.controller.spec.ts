@@ -17,7 +17,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
-import i18n from '~shared/i18n';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
@@ -289,6 +288,42 @@ describe('VisitsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
+		});
+
+		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(
+				`You do not have access to space with slug 'space-1'.`
+			);
+			expect(error.response.statusCode).toEqual(403);
+		});
+
+		it('should throw NotFound exception if an active visit was not found and the space does not exist', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(`Space with slug 'space-1' was not found.`);
+			expect(error.response.statusCode).toEqual(404);
 		});
 	});
 

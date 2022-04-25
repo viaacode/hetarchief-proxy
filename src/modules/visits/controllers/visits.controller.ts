@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	ForbiddenException,
 	Get,
 	Logger,
 	NotFoundException,
@@ -112,6 +113,20 @@ export class VisitsController {
 			user.getId(),
 			visitorSpaceSlug
 		);
+		if (!activeVisit) {
+			// Check if space exists
+			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
+
+			if (space) {
+				// User does not have access to existing space
+				throw new ForbiddenException(
+					`You do not have access to space with slug '${visitorSpaceSlug}'.`
+				);
+			} else {
+				// Space does not exist
+				throw new NotFoundException(`Space with slug '${visitorSpaceSlug}' was not found.`);
+			}
+		}
 		return activeVisit;
 	}
 
