@@ -9,14 +9,18 @@ export class SessionUserEntity {
 	protected id: string;
 	protected firstName: string;
 	protected lastName: string;
+	protected mail: string;
 	protected maintainerId: string;
+	protected visitorSpaceSlug: string;
 	protected permissions: Array<Permission>;
 
 	public constructor(user: User) {
 		this.id = get(user, 'id');
 		this.firstName = get(user, 'firstName');
 		this.lastName = get(user, 'lastName');
+		this.mail = get(user, 'email');
 		this.maintainerId = get(user, 'maintainerId');
+		this.visitorSpaceSlug = get(user, 'visitorSpaceSlug');
 		// can be archief-user or avo-user, where permissions are stored differently
 		// merge them into 1 unified array
 		this.permissions = [
@@ -33,8 +37,24 @@ export class SessionUserEntity {
 		return this.firstName + ' ' + this.lastName;
 	}
 
+	public getFirstName(): string {
+		return this.firstName;
+	}
+
+	public getLastName(): string {
+		return this.lastName;
+	}
+
+	public getMail(): string {
+		return this.mail;
+	}
+
 	public getMaintainerId(): string {
 		return this.maintainerId;
+	}
+
+	public getVisitorSpaceSlug(): string {
+		return this.visitorSpaceSlug;
 	}
 
 	public has(permission: Permission): boolean {
