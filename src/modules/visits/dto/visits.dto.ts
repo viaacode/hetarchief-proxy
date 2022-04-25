@@ -9,7 +9,6 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
-	IsUUID,
 } from 'class-validator';
 import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';

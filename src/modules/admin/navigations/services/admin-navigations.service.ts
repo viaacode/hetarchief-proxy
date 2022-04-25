@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import _ from 'lodash';
 
 import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto';
 import { Navigation } from '../types';
@@ -22,8 +21,7 @@ import {
 import { DataService } from '~modules/data/services/data.service';
 import { GraphQlResponse } from '~modules/data/types';
 import { NavigationItem } from '~modules/navigations/navigations.types';
-import { User } from '~modules/users/types';
-import { DeleteResponse, SpecialPermissionGroups } from '~shared/types/types';
+import { DeleteResponse } from '~shared/types/types';
 
 @Injectable()
 export class AdminNavigationsService {
