@@ -19,6 +19,11 @@ query getUserByIdentityId($identityId: uuid!) {
 		}
 		maintainer_users_profiles {
 			maintainer_identifier
+			maintainer {
+				visitor_space {
+					slug
+				}
+			}
 		}
 	}
 }

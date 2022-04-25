@@ -54,6 +54,7 @@ const config = (): Configuration => {
 		cookieMaxAge: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		redisConnectionString: getEnvValue('REDIS_CONNECTION_STRING', false),
 		elasticSearchUrl: getEnvValue('ELASTICSEARCH_URL', true),
+		ssumRegistrationPage: getEnvValue('SSUM_REGISTRATION_PAGE', true),
 		samlIdpMetaDataEndpoint: getEnvValue('SAML_IDP_META_DATA_ENDPOINT', true),
 		samlSpEntityId: getEnvValue('SAML_SP_ENTITY_ID', true),
 		samlSpPrivateKey: cleanMultilineEnv(getEnvValue('SAML_SP_PRIVATE_KEY', false)),

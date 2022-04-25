@@ -15,9 +15,4 @@ query findAllNavigationItems {
 		content_id
 		tooltip
 	}
-	app_navigation_aggregate {
-		aggregate {
-			count
-		}
-	}
 }

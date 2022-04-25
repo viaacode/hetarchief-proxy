@@ -36,6 +36,8 @@ import {
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
+	GetVisitRequestForAccessDocument,
+	GetVisitRequestForAccessQuery,
 	InsertNoteDocument,
 	InsertNoteMutation,
 	InsertVisitDocument,
@@ -46,6 +48,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -112,7 +115,7 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
 					?.address?.email,
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
-			spaceSlug: graphQlVisit?.visitor_space?.content_partner?.schema_identifier, // TODO switch this to the actual space slug once that column is added to the spaces table
+			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
 			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.logo?.iri,
@@ -147,9 +150,12 @@ export class VisitsService {
 		};
 	}
 
-	public async create(createVisitDto: CreateVisitDto, userProfileId: string): Promise<Visit> {
+	public async create(
+		createVisitDto: CreateVisitDto & { visitorSpaceId: string },
+		userProfileId: string
+	): Promise<Visit> {
 		const newVisit = {
-			cp_space_id: createVisitDto.spaceId,
+			cp_space_id: createVisitDto.visitorSpaceId,
 			user_profile_id: userProfileId,
 			user_reason: createVisitDto.reason,
 			user_timeframe: createVisitDto.timeframe,
@@ -332,20 +338,20 @@ export class VisitsService {
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
-		maintainerOrgId: string
+		visitorSpaceSlug: string
 	): Promise<Visit | null> {
 		const visitResponse = await this.dataService.execute<FindActiveVisitByUserAndSpaceQuery>(
 			FindActiveVisitByUserAndSpaceDocument,
 			{
 				userProfileId,
-				maintainerOrgId,
+				visitorSpaceSlug,
 				now: new Date().toISOString(),
 			}
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(
-				`No active visits for user with id '${userProfileId}' for space with maintainer id '${maintainerOrgId}' found`
+				`No active visits for user with id '${userProfileId}' and space with visitor space with slug '${visitorSpaceSlug}' found`
 			);
 		}
 
@@ -405,5 +411,23 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
 			this.adapt(visit)
 		);
+	}
+
+	/**
+	 * Checks if the user has access to a maintainer's space because he has an approved visit request for the current date
+	 * @param userProfileId: UUID of a user
+	 * @param maintainerOrId: OR-id of a maintainer
+	 */
+	async hasAccess(userProfileId: string, maintainerOrId: string): Promise<boolean> {
+		const visitsResponse = await this.dataService.execute<GetVisitRequestForAccessQuery>(
+			GetVisitRequestForAccessDocument,
+			{
+				userProfileId,
+				maintainerOrId,
+				now: new Date().toISOString(),
+			}
+		);
+
+		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 }

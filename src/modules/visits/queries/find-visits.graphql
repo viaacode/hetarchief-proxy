@@ -37,6 +37,7 @@ query findVisits(
 		updated_at
 		visitor_space {
 			id
+			slug
 			schema_image
 			schema_color
 			schema_audience_type

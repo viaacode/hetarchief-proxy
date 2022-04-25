@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { NavigationsService } from '../services/navigations.service';
+import { AdminNavigationsService } from '../services/admin-navigations.service';
 
-import { NavigationsController } from './navigations.controller';
+import { AdminNavigationsController } from './admin-navigations.controller';
 
 import { DeleteResponse } from '~shared/types/types';
 
@@ -17,31 +17,30 @@ const mockNavigationsResponse = {
 	],
 };
 
-const mockNavigationsService: Partial<Record<keyof NavigationsService, jest.SpyInstance>> = {
+const mockNavigationsService: Partial<Record<keyof AdminNavigationsService, jest.SpyInstance>> = {
 	findAllNavigationBars: jest.fn(),
 	findElementById: jest.fn(),
-	getNavigationElementsForUser: jest.fn(),
 	createElement: jest.fn(),
 	updateElement: jest.fn(),
 	deleteElement: jest.fn(),
 };
 
 describe('NavigationsController', () => {
-	let navigationsController: NavigationsController;
+	let navigationsController: AdminNavigationsController;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			controllers: [NavigationsController],
+			controllers: [AdminNavigationsController],
 			imports: [],
 			providers: [
 				{
-					provide: NavigationsService,
+					provide: AdminNavigationsService,
 					useValue: mockNavigationsService,
 				},
 			],
 		}).compile();
 
-		navigationsController = module.get<NavigationsController>(NavigationsController);
+		navigationsController = module.get<AdminNavigationsController>(AdminNavigationsController);
 	});
 
 	it('should be defined', () => {
@@ -54,16 +53,6 @@ describe('NavigationsController', () => {
 				mockNavigationsResponse
 			);
 			const navigations = await navigationsController.getNavigationBars({});
-			expect(navigations).toEqual(mockNavigationsResponse);
-		});
-	});
-
-	describe('getNavigationElementsForUser', () => {
-		it('should return all navigation items for the user (session)', async () => {
-			mockNavigationsService.getNavigationElementsForUser.mockResolvedValueOnce(
-				mockNavigationsResponse
-			);
-			const navigations = await navigationsController.getNavigationElementsForUser({});
 			expect(navigations).toEqual(mockNavigationsResponse);
 		});
 	});

@@ -63,9 +63,7 @@ export class NotificationsService {
 			createdAt: gqlNotification?.created_at,
 			updatedAt: gqlNotification?.updated_at,
 			type: gqlNotification?.type as NotificationType,
-			readingRoomId:
-				gqlNotification?.visitor_space_request?.visitor_space?.content_partner
-					?.schema_identifier,
+			visitorSpaceSlug: gqlNotification?.visitor_space_request?.visitor_space?.slug,
 		};
 	}
 

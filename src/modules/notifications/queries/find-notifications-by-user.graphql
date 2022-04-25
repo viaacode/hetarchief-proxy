@@ -31,9 +31,7 @@ query findNotificationsByUser(
 		visitor_space_request {
 			id
 			visitor_space {
-				content_partner {
-					schema_identifier
-				}
+				slug
 			}
 		}
 	}

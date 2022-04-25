@@ -102,15 +102,15 @@ export class VisitsController {
 		return visit;
 	}
 
-	@Get('active-for-space/:maintainerOrgId')
+	@Get('active-for-space/:visitorSpaceSlug')
 	// TODO permissions?
 	public async getActiveVisitForUserAndSpace(
-		@Param('maintainerOrgId') maintainerOrgId: string,
+		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			user.getId(),
-			maintainerOrgId
+			visitorSpaceSlug
 		);
 		return activeVisit;
 	}
@@ -141,13 +141,28 @@ export class VisitsController {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				i18n.t(
-					'The Terms of Service of the reading room need to be accepted to be able to request a visit.'
+					'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
 				)
 			);
 		}
 
+		// Resolve visitor space slug to visitor space id
+		const visitorSpace = await this.spacesService.findBySlug(createVisitDto.visitorSpaceSlug);
+
+		if (!visitorSpace) {
+			throw new BadRequestException(
+				i18n.t(`The space with slug '${createVisitDto.visitorSpaceSlug}' was not found`)
+			);
+		}
+
 		// Create visit request
-		const visit = await this.visitsService.create(createVisitDto, user.getId());
+		const visit = await this.visitsService.create(
+			{
+				...createVisitDto,
+				visitorSpaceId: visitorSpace.id,
+			},
+			user.getId()
+		);
 
 		// Send notifications
 		const recipients = await this.spacesService.getMaintainerProfiles(visit.spaceId);
