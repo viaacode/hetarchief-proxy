@@ -79,7 +79,6 @@ export class SessionHelper {
 	 */
 	public static setArchiefUserInfo(session: Record<string, any>, user: User): void {
 		SessionHelper.ensureValidSession(session);
-
 		session[ARCHIEF_USER_INFO_PATH] = user;
 	}
 
