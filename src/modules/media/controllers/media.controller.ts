@@ -26,14 +26,15 @@ import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { VisitStatus } from '~modules/visits/types';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
 import i18n from '~shared/i18n';
 
 @ApiTags('Media')
 @Controller('media')
-@RequirePermissions(Permission.SEARCH_OBJECTS)
+@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
@@ -91,7 +92,7 @@ export class MediaController {
 
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
-	@RequirePermissions(Permission.EXPORT_OBJECT)
+	@RequireAllPermissions(Permission.EXPORT_OBJECT)
 	public async export(
 		@Param('id') id: string,
 		@Req() request: Request,

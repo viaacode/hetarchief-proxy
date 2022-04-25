@@ -20,7 +20,7 @@ export enum Permission {
 	SEARCH_ALL_OBJECTS = 'SEARCH_ALL_OBJECTS', // Search objects in all indexes in elasticsearch
 	EXPORT_OBJECT = 'EXPORT_OBJECT',
 	// Collections
-	MANAGE_COLLECTIONS = 'MANAGE_COLLECTIONS',
+	MANAGE_FOLDERS = 'MANAGE_FOLDERS',
 	// Spaces
 	/** Spaces */
 	READ_ALL_SPACES = 'READ_ALL_SPACES',
@@ -32,6 +32,7 @@ export enum Permission {
 	SEARCH = 'SEARCH',
 	// Kiosk
 	SHOW_RESEARCH_WARNING = 'SHOW_RESEARCH_WARNING',
+	MANAGE_ACCOUNT = 'MANAGE_ACCOUNT',
 }
 
 export type GqlUser =
