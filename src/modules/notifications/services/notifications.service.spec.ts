@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { addMonths } from 'date-fns';
+import { addHours, addMonths, subHours } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
@@ -336,13 +336,31 @@ describe('NotificationsService', () => {
 
 	describe('onApproveVisitRequest', () => {
 		it('should send a notification about a visit request approval', async () => {
+			const visit = { ...mockVisit };
+			visit.startAt = addHours(new Date(), 1).toISOString();
+			visit.endAt = addHours(new Date(), 2).toISOString();
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onApproveVisitRequest(mockVisit, mockSpace);
+			const response = await notificationsService.onApproveVisitRequest(visit, mockSpace);
 
 			expect(response.status).toEqual(NotificationStatus.UNREAD);
+			createNotificationSpy.mockRestore();
+		});
+
+		it('should create a read notification if the visit already started', async () => {
+			const visit = { ...mockVisit };
+			visit.startAt = subHours(new Date(), 1).toISOString();
+			const createNotificationSpy = jest
+				.spyOn(notificationsService, 'create')
+				.mockResolvedValueOnce([mockNotification]);
+
+			await notificationsService.onApproveVisitRequest(visit, mockSpace);
+			// first call, first argument is an array->first element
+			const createdNotification = createNotificationSpy.mock.calls[0][0][0];
+
+			expect(createdNotification.status).toEqual(NotificationStatus.READ);
 			createNotificationSpy.mockRestore();
 		});
 	});
