@@ -10,6 +10,8 @@ import {
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdDocument,
+	FindSpaceByMaintainerIdQuery,
 	FindSpaceBySlugDocument,
 	FindSpaceBySlugQuery,
 	FindSpacesDocument,
@@ -179,6 +181,17 @@ export class SpacesService {
 		const spaceResponse = await this.dataService.execute<FindSpaceByIdQuery>(
 			FindSpaceByIdDocument,
 			{ id }
+		);
+		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+			return null;
+		}
+		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+	}
+
+	public async findByMaintainerId(maintainerId: string): Promise<Space | null> {
+		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdQuery>(
+			FindSpaceByMaintainerIdDocument,
+			{ maintainerId }
 		);
 		if (!spaceResponse.data.maintainer_visitor_space[0]) {
 			return null;

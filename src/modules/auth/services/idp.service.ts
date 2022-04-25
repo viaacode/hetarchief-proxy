@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { get } from 'lodash';
+import { get, intersection } from 'lodash';
 import queryString from 'query-string';
 
 import { getConfig } from '~config';
@@ -35,21 +35,20 @@ export class IdpService {
 
 	/**
 	 * Flowchart: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/2978447456/Gebruikersgroepen+en+permissies+BZT+versie+1#Functionele-samenvatting
+	 * Overview test users: https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3458269217/Overzicht+testusers
 	 */
 	public async determineUserGroup(ldapUser: LdapUser): Promise<Group> {
 		// permissions check
 		const apps = get(ldapUser, 'attributes.apps', []);
-		if (
-			apps.includes('hetarchief') ||
-			apps.includes('admins') // TODO replace by a single value 'hetarchief-beheer' once archief 2.0 is launched
-		) {
+		if (apps.includes('hetarchief-beheer')) {
 			// bottom section of the flowchart
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
-			if (maintainerId && (await this.spacesService.findBySlug(maintainerId))) {
+			if (maintainerId && (await this.spacesService.findByMaintainerId(maintainerId))) {
 				return Group.CP_ADMIN;
 			}
 
-			if (this.meemooAdminOrganizationIds.includes(maintainerId)) {
+			// our (test) accounts have multiple organizations
+			if (intersection(this.meemooAdminOrganizationIds, ldapUser.attributes.o).length > 0) {
 				return Group.MEEMOO_ADMIN;
 			}
 
@@ -62,7 +61,7 @@ export class IdpService {
 		if (get(ldapUser, 'attributes.organizationalStatus', []).includes('kiosk')) {
 			// organization needs to have a space to be a kiosk user
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
-			if (await this.spacesService.findBySlug(maintainerId)) {
+			if (await this.spacesService.findByMaintainerId(maintainerId)) {
 				return Group.KIOSK_VISITOR;
 			}
 		}
