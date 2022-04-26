@@ -47,7 +47,7 @@ export class MeemooController {
 
 	@Get('login')
 	@Redirect()
-	public async getAuth(
+	public async loginRoute(
 		@Session() session: Record<string, any>,
 		@Query('returnToUrl') returnToUrl: string
 	) {
@@ -132,7 +132,7 @@ export class MeemooController {
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
 			}
-			// CP_ADMIN: Link the user to the maintainer. CP_ADMIN = Only Meemoo IDP.
+			// CP_ADMIN: Link the user to the maintainer
 			if (userGroup === Group.CP_ADMIN) {
 				await this.usersService.linkCpAdminToMaintainer(
 					archiefUser.id,

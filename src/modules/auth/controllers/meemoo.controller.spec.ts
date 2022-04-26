@@ -145,7 +145,7 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.getAuth({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
@@ -153,7 +153,7 @@ describe('MeemooController', () => {
 		});
 
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
-			const result = await meemooController.getAuth(
+			const result = await meemooController.loginRoute(
 				getNewMockSession(),
 				configService.get('clientHost')
 			);
@@ -167,7 +167,7 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.getAuth({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
 			expect(result).toBeUndefined();
 		});
 	});
