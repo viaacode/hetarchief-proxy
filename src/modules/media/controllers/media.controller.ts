@@ -19,6 +19,7 @@ import { getConfig } from '~config';
 
 import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
+import { Media } from '../types';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -26,7 +27,6 @@ import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
@@ -85,9 +85,22 @@ export class MediaController {
 	@Get(':id')
 	public async getMediaById(
 		@Headers('referer') referer: string,
-		@Param('id') id: string
-	): Promise<any> {
-		return this.mediaService.findBySchemaIdentifier(id, referer);
+		@Param('id') id: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<Media> {
+		const object = await this.mediaService.findBySchemaIdentifier(id, referer);
+
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (
+			!canSearchInAllSpaces &&
+			!(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId))
+		) {
+			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		}
+
+		return object;
 	}
 
 	@Get(':id/export')
@@ -99,6 +112,19 @@ export class MediaController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<string> {
 		const objectMetadata = await this.mediaService.findMetadataBySchemaIdentifier(id);
+
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (
+			!canSearchInAllSpaces &&
+			objectMetadata.maintainerId &&
+			!(await this.userHasAccessToVisitorSpaceOrId(user, objectMetadata.maintainerId))
+		) {
+			throw new ForbiddenException(
+				i18n.t('You do not have access to the visitor space of this object')
+			);
+		}
 
 		// Log event
 		this.eventsService.insertEvents([
@@ -119,8 +145,19 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Param('esIndex') maintainerId: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
-		@Param('meemooIdentifier') meemooIdentifier: string
+		@Param('meemooIdentifier') meemooIdentifier: string,
+		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (
+			!canSearchInAllSpaces &&
+			!(await this.userHasAccessToVisitorSpaceOrId(user, maintainerId))
+		) {
+			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		}
+
 		// We use the esIndex as the maintainerId -- no need to lowercase
 		return this.mediaService.getRelated(
 			maintainerId,
@@ -134,8 +171,16 @@ export class MediaController {
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
-		@Param('esIndex') esIndex: string
+		@Param('esIndex') esIndex: string,
+		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
+			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		}
+
 		return this.mediaService.getSimilar(id, esIndex.toLowerCase(), referer);
 	}
 
@@ -147,27 +192,31 @@ export class MediaController {
 		@Param('esIndex') esIndex: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
-		// Check is the user is a maintainer of the specified esIndex
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
+			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		}
+
+		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
+		return media;
+	}
+
+	/**
+	 * Helper function to return if the user has access to a visitor space (or-id) / esIndex
+	 * The user is either a maintainer of the specified esIndex
+	 * Or the user has an approved visit request for the current timestamp
+	 */
+	protected async userHasAccessToVisitorSpaceOrId(
+		user: SessionUserEntity,
+		esIndex: string
+	): Promise<boolean> {
 		const isMaintainer =
 			esIndex &&
 			user.getMaintainerId() &&
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
-		// Check if the user can search in all index (meemoo admin)
-		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
-
-		if (!isMaintainer && !canSearchInAllSpaces) {
-			// Check if user has approved visit request for the current timestamp
-			// Keeping this check for last since it is more expensive
-			const hasAccess = await this.visitsService.hasAccess(user.getId(), esIndex);
-			if (!hasAccess) {
-				throw new ForbiddenException(
-					i18n.t('You do not have access to this visitor space')
-				);
-			}
-		}
-
-		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
-		return media;
+		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
 	}
 }
