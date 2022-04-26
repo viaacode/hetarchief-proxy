@@ -9,7 +9,7 @@ import { getConfig } from '~config';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { GqlIeObject, Media, MediaFile, Representation } from '../types';
+import { GqlIeObject, GqlLimitedIeObject, Media, MediaFile, Representation } from '../types';
 
 import {
 	FindAllObjectsByCollectionIdDocument,
@@ -167,6 +167,22 @@ export class MediaService {
 		return object;
 	}
 
+	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<Media> {
+		/* istanbul ignore next */
+		return {
+			schemaIdentifier: graphQlObject.ie?.schema_identifier,
+			premisIdentifier: graphQlObject.ie?.premis_identifier,
+			maintainerName: graphQlObject.ie?.maintainer?.schema_name,
+			name: graphQlObject.ie?.schema_name,
+			alternateName: graphQlObject.ie?.schema_alternate_name,
+			partOfSeries: graphQlObject.ie?.schema_part_of_series,
+			partOfEpisode: graphQlObject.ie?.schema_part_of_episode,
+			dctermsFormat: graphQlObject.ie?.dcterms_format,
+			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
+			datePublished: graphQlObject.ie?.schema_date_published,
+		};
+	}
+
 	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
 			return '_search';
@@ -242,6 +258,9 @@ export class MediaService {
 		return convert.js2xml({ object }, { compact: true, spaces: 2 });
 	}
 
+	/**
+	 * Returns a limited set of metadata fields for export
+	 */
 	public async findAllObjectMetadataByCollectionId(
 		collectionId: string,
 		userProfileId: string
@@ -259,8 +278,7 @@ export class MediaService {
 			throw new NotFoundException();
 		}
 		const allAdapted = allObjects.map((object) => {
-			const adaptee = this.adapt(object.ie);
-			return this.adaptMetadata(adaptee);
+			return this.adaptLimitedMetadata(object);
 		});
 
 		return allAdapted;

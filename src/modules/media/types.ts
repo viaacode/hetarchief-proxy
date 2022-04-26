@@ -1,6 +1,7 @@
 import { QueryType } from './elasticsearch/consts';
 
 import {
+	FindAllObjectsByCollectionIdQuery,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -29,6 +30,8 @@ export interface QueryBuilderConfig {
 
 export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];
+
+export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];
 
 export interface MediaFile {
 	name: string;
