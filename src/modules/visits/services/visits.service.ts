@@ -48,7 +48,6 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
-import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -59,13 +58,17 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
-			VisitStatus.PENDING,
-			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
+			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.DENIED,
+			VisitStatus.PENDING,
 		],
 		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
-		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.APPROVED]: [
+			VisitStatus.APPROVED,
+			VisitStatus.CANCELLED_BY_VISITOR,
+			VisitStatus.DENIED,
+		],
 		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
