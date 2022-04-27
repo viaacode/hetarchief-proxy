@@ -34,7 +34,13 @@ export class EventsService {
 				},
 			});
 		} catch (err) {
-			this.logger.error('Failed to insert events into the database', err);
+			this.logger.error(
+				JSON.stringify({
+					message: 'Failed to insert events into the database',
+					innerException: err,
+					additionalInfo: { logEvents },
+				})
+			);
 		}
 		return logEvents;
 	}
