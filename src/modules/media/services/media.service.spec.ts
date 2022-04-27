@@ -256,7 +256,7 @@ describe('MediaService', () => {
 	describe('findAllObjectMetadataByCollectionId', () => {
 		it('returns the metadata objects for a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { users_folder_ie: [mockObjectIe] },
+				data: { users_folder_ie: [{ ie: mockObjectIe.data.object_ie[0] }] },
 			});
 			const result = await mediaService.findAllObjectMetadataByCollectionId(
 				'collection-1',

@@ -167,22 +167,56 @@ describe('MediaController', () => {
 			mockResponse.hits.total.value = 1;
 			mockResponse.hits.hits.shift();
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			const media = await mediaController.getMediaById('referer', '1');
-			expect(media.hits.total.value).toEqual(1);
-			expect(media.hits.hits.length).toEqual(1);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
+			expect(media).toBeDefined();
+		});
+
+		it('should throw forbidden exception if user has no longer access', async () => {
+			const mockResponse = getMockMediaResponse();
+			mockResponse.hits.total.value = 1;
+			mockResponse.hits.hits.shift();
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+
+			let error: any;
+			try {
+				await mediaController.getMediaById('referer', '1', mockSessionUser);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual('You do not have access to this visitor space');
 		});
 	});
 
 	describe('export', () => {
 		it('should export a media item as xml', async () => {
-			const mockResponse = getMockMediaResponse();
-			mockResponse.hits.total.value = 1;
-			mockResponse.hits.hits.shift();
-			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce({
+				maintainerId: 'or-vrt',
+			});
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+
 			const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
 			mockMediaService.convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
 			const xml = await mediaController.export('1', mockRequest, mockSessionUser);
 			expect(xml).toEqual(mockXmlResponse);
+		});
+
+		it('should throw forbidden exception if user has no longer access', async () => {
+			mockMediaService.findMetadataBySchemaIdentifier.mockResolvedValueOnce({
+				maintainerId: 'or-vrt',
+			});
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+
+			let error: any;
+			try {
+				await mediaController.export('1', mockRequest, mockSessionUser);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(
+				'You do not have access to the visitor space of this object'
+			);
 		});
 	});
 
@@ -190,21 +224,59 @@ describe('MediaController', () => {
 		it('should get related media items', async () => {
 			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
 			mockMediaService.getRelated.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const media = await mediaController.getRelated(
 				'referer',
 				'es-index-1',
 				'1',
-				'8911p09j1g'
+				'8911p09j1g',
+				mockSessionUser
 			);
 			expect(media.items.length).toEqual(2);
+		});
+
+		it('should throw forbidden exception if user has no longer access', async () => {
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+
+			let error: any;
+			try {
+				await mediaController.getRelated(
+					'referer',
+					'es-index-1',
+					'1',
+					'8911p09j1g',
+					mockSessionUser
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual('You do not have access to this visitor space');
 		});
 	});
 
 	describe('getSimilar', () => {
 		it('should get similar media items', async () => {
 			mockMediaService.getSimilar.mockResolvedValueOnce(getMockMediaResponse());
-			const media = await mediaController.getSimilar('referer', '1', 'or-rf5kf25');
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			const media = await mediaController.getSimilar(
+				'referer',
+				'1',
+				'or-rf5kf25',
+				mockSessionUser
+			);
 			expect(media.hits.hits.length).toEqual(2);
+		});
+
+		it('should throw forbidden exception if user has no longer access', async () => {
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+
+			let error: any;
+			try {
+				await mediaController.getSimilar('referer', '1', 'or-rf5kf25', mockSessionUser);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual('You do not have access to this visitor space');
 		});
 	});
 
