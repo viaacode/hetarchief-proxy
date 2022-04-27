@@ -121,8 +121,8 @@ export class VisitsController {
 			return {
 				spaceId: spaceInfo.id,
 				id: randomUUID(),
-				startAt: new Date(2000, 0, 1).toISOString(),
-				endAt: new Date(2100, 0, 1).toISOString(),
+				startAt: new Date(2000, 0, 2).toISOString(),
+				endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
 				visitorName: user.getFullName(),
 				spaceName: spaceInfo.name,
 				status: VisitStatus.APPROVED,
