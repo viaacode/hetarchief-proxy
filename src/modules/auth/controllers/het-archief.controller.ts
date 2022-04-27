@@ -26,7 +26,6 @@ import { CollectionsService } from '~modules/collections/services/collections.se
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { UsersService } from '~modules/users/services/users.service';
-import { Group } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
@@ -164,9 +163,9 @@ export class HetArchiefController {
 				}
 			}
 
-			// CP_ADMIN: Link the user to the maintainer
-			if (userGroup === Group.CP_ADMIN) {
-				await this.usersService.linkCpAdminToMaintainer(
+			// Some userGroups require a link to the maintainer
+			if (this.idpService.userGroupRequiresMaintainerLink(userGroup)) {
+				await this.usersService.linkUserToMaintainer(
 					archiefUser.id,
 					get(ldapUser, 'attributes.o[0]')
 				);
