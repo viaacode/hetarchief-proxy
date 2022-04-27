@@ -79,12 +79,6 @@ export class SessionHelper {
 	 */
 	public static setArchiefUserInfo(session: Record<string, any>, user: User): void {
 		SessionHelper.ensureValidSession(session);
-
-		// TODO remove this temp permissions array once we can login wit the correct user group --------------------------
-		user.permissions = Object.values(Permission);
-		user.visitorSpaceSlug = 'vrt';
-		// TODO remove until here ----------------------------------------------------------------------------------------
-
 		session[ARCHIEF_USER_INFO_PATH] = user;
 	}
 

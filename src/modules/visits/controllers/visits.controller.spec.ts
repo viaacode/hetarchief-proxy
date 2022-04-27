@@ -303,7 +303,7 @@ describe('VisitsController', () => {
 				})
 			);
 			expect(visit.status).toEqual(VisitStatus.APPROVED);
-			expect(visit.endAt.split('-')[0]).toEqual('2099');
+			expect(visit.endAt.split('-')[0]).toEqual('2100');
 		});
 
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
