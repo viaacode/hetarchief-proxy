@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 
 import { MediaService } from '../services/media.service';
+import { MediaFormat, Operator, SearchFilterField } from '../types';
 
 import { MediaController } from './media.controller';
 
@@ -286,7 +287,7 @@ describe('MediaController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
-				null,
+				{ filters: [] },
 				'test-index',
 				mockSessionUser
 			);
@@ -302,7 +303,7 @@ describe('MediaController', () => {
 			try {
 				await mediaController.getMediaOnIndex(
 					'referer',
-					null,
+					{ filters: [] },
 					'test-index',
 					mockSessionUser
 				);
@@ -317,7 +318,7 @@ describe('MediaController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
-				null,
+				{ filters: [] },
 				'or-id-maintainer-1',
 				new SessionUserEntity({
 					...mockUser,
@@ -333,7 +334,7 @@ describe('MediaController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
-				null,
+				{ filters: [] },
 				'or-id-maintainer-1',
 				new SessionUserEntity({
 					...mockUser,
@@ -342,6 +343,34 @@ describe('MediaController', () => {
 			);
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
+		});
+	});
+
+	describe('checkAndFixFormatFilter', () => {
+		it('should add film to a video format query', () => {
+			const fixedQuery = mediaController.checkAndFixFormatFilter({
+				filters: [
+					{
+						field: SearchFilterField.FORMAT,
+						value: MediaFormat.VIDEO,
+						operator: Operator.IS,
+					},
+				],
+			});
+			expect(fixedQuery.filters[0].multiValue).toEqual(['video', 'film']);
+		});
+
+		it('should add film to a query on video in a multivalue', () => {
+			const fixedQuery = mediaController.checkAndFixFormatFilter({
+				filters: [
+					{
+						field: SearchFilterField.FORMAT,
+						multiValue: [MediaFormat.VIDEO],
+						operator: Operator.IS,
+					},
+				],
+			});
+			expect(fixedQuery.filters[0].multiValue).toEqual(['video', 'film']);
 		});
 	});
 });
