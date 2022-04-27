@@ -118,8 +118,8 @@ export class MediaController {
 
 		if (
 			!canSearchInAllSpaces &&
-			objectMetadata.maintainerId &&
-			!(await this.userHasAccessToVisitorSpaceOrId(user, objectMetadata.maintainerId))
+			(!objectMetadata.maintainerId ||
+				!(await this.userHasAccessToVisitorSpaceOrId(user, objectMetadata.maintainerId)))
 		) {
 			throw new ForbiddenException(
 				i18n.t('You do not have access to the visitor space of this object')
