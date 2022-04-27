@@ -6,6 +6,7 @@ import { SpacesService } from './spaces.service';
 
 import {
 	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdQuery,
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
@@ -271,6 +272,32 @@ describe('SpacesService', () => {
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const space = await spacesService.findById('unknown-id');
+			expect(space).toBeNull();
+		});
+	});
+
+	describe('findByMaintainerId', () => {
+		it('returns a single space by maintainer id', async () => {
+			const mockData: FindSpaceByMaintainerIdQuery = {
+				maintainer_visitor_space: [
+					{
+						id: '1',
+					},
+				] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const response = await spacesService.findByMaintainerId('1');
+			expect(response.id).toBe('1');
+		});
+
+		it('returns null if the space was not found', async () => {
+			const mockData: FindSpaceByMaintainerIdQuery = {
+				maintainer_visitor_space:
+					[] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+
+			const space = await spacesService.findByMaintainerId('unknown-id');
 			expect(space).toBeNull();
 		});
 	});
