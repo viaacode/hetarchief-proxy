@@ -2855,6 +2855,7 @@ export enum Lookup_App_Notification_Type_Update_Column {
 export type Lookup_Maintainer_Visitor_Space_Request_Status = {
   __typename?: 'lookup_maintainer_visitor_space_request_status';
   comment: Scalars['String'];
+  sort_order: Scalars['Int'];
   value: Scalars['String'];
 };
 
@@ -2868,9 +2869,17 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate = {
 /** aggregate fields of "lookup.maintainer_visitor_space_request_status" */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate_Fields = {
   __typename?: 'lookup_maintainer_visitor_space_request_status_aggregate_fields';
+  avg?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Max_Fields>;
   min?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Min_Fields>;
+  stddev?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Fields>;
+  stddev_pop?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Samp_Fields>;
+  sum?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Sum_Fields>;
+  var_pop?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Var_Pop_Fields>;
+  var_samp?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Var_Samp_Fields>;
+  variance?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Variance_Fields>;
 };
 
 
@@ -2880,24 +2889,39 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Aggregate_FieldsCount
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** aggregate avg on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Avg_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_avg_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
 /** Boolean expression to filter rows from the table "lookup.maintainer_visitor_space_request_status". All fields are combined with a logical 'AND'. */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp = {
   _and?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>>;
   _not?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
   _or?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>>;
   comment?: InputMaybe<String_Comparison_Exp>;
+  sort_order?: InputMaybe<Int_Comparison_Exp>;
   value?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "lookup.maintainer_visitor_space_request_status" */
 export enum Lookup_Maintainer_Visitor_Space_Request_Status_Constraint {
   /** unique or primary key constraint */
-  CpVisitStatusPkey = 'cp_visit_status_pkey'
+  CpVisitStatusPkey = 'cp_visit_status_pkey',
+  /** unique or primary key constraint */
+  MaintainerVisitorSpaceRequestStatusSortOrderKey = 'maintainer_visitor_space_request_status_sort_order_key'
 }
+
+/** input type for incrementing numeric columns in table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Inc_Input = {
+  sort_order?: InputMaybe<Scalars['Int']>;
+};
 
 /** input type for inserting data into table "lookup.maintainer_visitor_space_request_status" */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input = {
   comment?: InputMaybe<Scalars['String']>;
+  sort_order?: InputMaybe<Scalars['Int']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
@@ -2905,6 +2929,7 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input = {
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Max_Fields = {
   __typename?: 'lookup_maintainer_visitor_space_request_status_max_fields';
   comment?: Maybe<Scalars['String']>;
+  sort_order?: Maybe<Scalars['Int']>;
   value?: Maybe<Scalars['String']>;
 };
 
@@ -2912,6 +2937,7 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Max_Fields = {
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Min_Fields = {
   __typename?: 'lookup_maintainer_visitor_space_request_status_min_fields';
   comment?: Maybe<Scalars['String']>;
+  sort_order?: Maybe<Scalars['Int']>;
   value?: Maybe<Scalars['String']>;
 };
 
@@ -2924,6 +2950,13 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response = {
   returning: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
 };
 
+/** input type for inserting object relation for remote table "lookup.maintainer_visitor_space_request_status" */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Obj_Rel_Insert_Input = {
+  data: Lookup_Maintainer_Visitor_Space_Request_Status_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict>;
+};
+
 /** on_conflict condition type for table "lookup.maintainer_visitor_space_request_status" */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict = {
   constraint: Lookup_Maintainer_Visitor_Space_Request_Status_Constraint;
@@ -2934,6 +2967,7 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_On_Conflict = {
 /** Ordering options when selecting data from "lookup.maintainer_visitor_space_request_status". */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Order_By = {
   comment?: InputMaybe<Order_By>;
+  sort_order?: InputMaybe<Order_By>;
   value?: InputMaybe<Order_By>;
 };
 
@@ -2947,13 +2981,40 @@ export enum Lookup_Maintainer_Visitor_Space_Request_Status_Select_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
+  SortOrder = 'sort_order',
+  /** column name */
   Value = 'value'
 }
 
 /** input type for updating data in table "lookup.maintainer_visitor_space_request_status" */
 export type Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input = {
   comment?: InputMaybe<Scalars['String']>;
+  sort_order?: InputMaybe<Scalars['Int']>;
   value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_stddev_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Pop_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_stddev_pop_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Stddev_Samp_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_stddev_samp_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Sum_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_sum_fields';
+  sort_order?: Maybe<Scalars['Int']>;
 };
 
 /** update columns of table "lookup.maintainer_visitor_space_request_status" */
@@ -2961,8 +3022,28 @@ export enum Lookup_Maintainer_Visitor_Space_Request_Status_Update_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
+  SortOrder = 'sort_order',
+  /** column name */
   Value = 'value'
 }
+
+/** aggregate var_pop on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Var_Pop_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_var_pop_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Var_Samp_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_var_samp_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Status_Variance_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_status_variance_fields';
+  sort_order?: Maybe<Scalars['Float']>;
+};
 
 /**
  * Enum waardes voor de status van een bezoekersruimte
@@ -4020,6 +4101,8 @@ export type Maintainer_Visitor_Space_Request = {
   requested_by: Users_Profile;
   start_date?: Maybe<Scalars['timestamp']>;
   status: Scalars['String'];
+  /** An object relationship */
+  status_info: Lookup_Maintainer_Visitor_Space_Request_Status;
   updated_at: Scalars['timestamp'];
   updated_by?: Maybe<Scalars['uuid']>;
   user_accepted_tos?: Maybe<Scalars['Boolean']>;
@@ -4148,6 +4231,7 @@ export type Maintainer_Visitor_Space_Request_Bool_Exp = {
   requested_by?: InputMaybe<Users_Profile_Bool_Exp>;
   start_date?: InputMaybe<Timestamp_Comparison_Exp>;
   status?: InputMaybe<String_Comparison_Exp>;
+  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   updated_by?: InputMaybe<Uuid_Comparison_Exp>;
   user_accepted_tos?: InputMaybe<Boolean_Comparison_Exp>;
@@ -4175,6 +4259,7 @@ export type Maintainer_Visitor_Space_Request_Insert_Input = {
   requested_by?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
   start_date?: InputMaybe<Scalars['timestamp']>;
   status?: InputMaybe<Scalars['String']>;
+  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Obj_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
   updated_by?: InputMaybe<Scalars['uuid']>;
   user_accepted_tos?: InputMaybe<Scalars['Boolean']>;
@@ -4495,6 +4580,7 @@ export type Maintainer_Visitor_Space_Request_Order_By = {
   requested_by?: InputMaybe<Users_Profile_Order_By>;
   start_date?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
+  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   updated_by?: InputMaybe<Order_By>;
   user_accepted_tos?: InputMaybe<Order_By>;
@@ -6116,6 +6202,7 @@ export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_StatusArgs = {
+  _inc?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Inc_Input>;
   _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input>;
   where: Lookup_Maintainer_Visitor_Space_Request_Status_Bool_Exp;
 };
@@ -6123,6 +6210,7 @@ export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_StatusAr
 
 /** mutation root */
 export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_Status_By_PkArgs = {
+  _inc?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Inc_Input>;
   _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Status_Set_Input>;
   pk_columns: Lookup_Maintainer_Visitor_Space_Request_Status_Pk_Columns_Input;
 };

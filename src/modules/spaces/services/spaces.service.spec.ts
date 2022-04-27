@@ -4,13 +4,13 @@ import { cloneDeep } from 'lodash';
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	FindSpaceByIdQuery,
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceMutation,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
