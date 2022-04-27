@@ -163,6 +163,14 @@ export class HetArchiefController {
 				}
 			}
 
+			// Some userGroups require a link to the maintainer
+			if (this.idpService.userGroupRequiresMaintainerLink(userGroup)) {
+				await this.usersService.linkUserToMaintainer(
+					archiefUser.id,
+					get(ldapUser, 'attributes.o[0]')
+				);
+			}
+
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			// Log event

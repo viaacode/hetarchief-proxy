@@ -68,6 +68,15 @@ describe('IdpService', () => {
 		expect(configService).toBeDefined();
 	});
 
+	describe('userGroupRequiresMaintainerLink', () => {
+		it('can determine if a userGroup requires a link to a maintainer', () => {
+			expect(idpService.userGroupRequiresMaintainerLink(Group.CP_ADMIN)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.KIOSK_VISITOR)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.VISITOR)).toBeFalsy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.MEEMOO_ADMIN)).toBeFalsy();
+		});
+	});
+
 	describe('determineUserGroup', () => {
 		it('should assign the Visitor group if user has no archief-beheer and no kiosk', async () => {
 			const ldapUser = getLdapUser();
