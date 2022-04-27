@@ -14,12 +14,18 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { find } from 'lodash';
 
 import { getConfig } from '~config';
 
-import { MediaQueryDto, PlayerTicketsQueryDto, ThumbnailQueryDto } from '../dto/media.dto';
+import {
+	MediaQueryDto,
+	PlayerTicketsQueryDto,
+	SearchFilter,
+	ThumbnailQueryDto,
+} from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
-import { Media } from '../types';
+import { Media, MediaFormat } from '../types';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -199,6 +205,9 @@ export class MediaController {
 			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
 		}
 
+		// Filter on format video should also include film format
+		this.checkAndFixFormatFilter(queryDto);
+
 		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
 		return media;
 	}
@@ -218,5 +227,22 @@ export class MediaController {
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
+	}
+
+	public checkAndFixFormatFilter(queryDto: MediaQueryDto): MediaQueryDto {
+		const formatFilter = find(queryDto.filters, { field: 'format' }) as SearchFilter;
+		if (formatFilter && formatFilter.value === MediaFormat.VIDEO) {
+			// change to multivalue with video and film
+			formatFilter.multiValue = ['video', 'film'];
+			delete formatFilter.value;
+		} else if (
+			// multiValue case
+			formatFilter &&
+			formatFilter.multiValue &&
+			formatFilter.multiValue.includes(MediaFormat.VIDEO)
+		) {
+			formatFilter.multiValue.push('film');
+		}
+		return queryDto;
 	}
 }

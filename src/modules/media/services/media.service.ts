@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { get, isEmpty } from 'lodash';
+import { find, get, isEmpty } from 'lodash';
 import convert from 'xml-js';
 
 import { getConfig } from '~config';
@@ -141,12 +141,34 @@ export class MediaService {
 	}
 
 	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+		// merge 'film' aggregations with 'video' if need be
+		if (esResponse.aggregations?.dcterms_format?.buckets) {
+			esResponse.aggregations.dcterms_format.buckets =
+				esResponse.aggregations.dcterms_format.buckets.filter((bucket) => {
+					if (bucket.key === 'film') {
+						const videoBucket = find(esResponse.aggregations.dcterms_format.buckets, {
+							key: 'video',
+						});
+						if (videoBucket) {
+							// there is also a video bucket: add film counts to this bucket
+							videoBucket.doc_count += bucket.doc_count;
+							return false; // filter out current film bucket
+						}
+						// there is no video bucket: rename the film bucket to video bucket
+						bucket.key = 'video';
+						return true; // include newly renamed video bucket in response
+					}
+					return true; // not a film bucket -> include in response
+				});
+		}
+
 		// sanity check
 		const nrHits = get(esResponse, 'hits.total.value');
 		if (!nrHits) {
 			return esResponse;
 		}
-		// there are hits
+
+		// there are hits - resolve thumbnail urls
 		esResponse.hits.hits = await Promise.all(
 			esResponse.hits.hits.map(async (hit) => {
 				hit._source.schema_thumbnail_url =
@@ -157,6 +179,7 @@ export class MediaService {
 				return hit;
 			})
 		);
+
 		return esResponse;
 	}
 
