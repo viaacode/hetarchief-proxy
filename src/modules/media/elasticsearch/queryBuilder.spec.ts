@@ -135,11 +135,6 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					must_not: {
-						term: {
-							'type.keyword': 'SOLR',
-						},
-					},
 					filter: [
 						{
 							term: {
@@ -167,11 +162,6 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					must_not: {
-						term: {
-							'type.keyword': 'SOLR',
-						},
-					},
 					filter: [{ range: { schema_duration: rangeQuery } }],
 				},
 			});
