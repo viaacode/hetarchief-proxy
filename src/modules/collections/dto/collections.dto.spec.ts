@@ -15,7 +15,7 @@ describe('CollectionsDto', () => {
 			const collectionObjectsQueryDto = new CollectionObjectsQueryDto();
 			expect(collectionObjectsQueryDto).toEqual({
 				page: 1,
-				query: '%',
+				query: undefined,
 				size: 10,
 			});
 		});
