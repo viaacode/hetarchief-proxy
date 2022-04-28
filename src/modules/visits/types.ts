@@ -74,7 +74,6 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
-	hypotheticalStatus?: string;
 }
 
 export interface VisitSpaceCount {
@@ -87,4 +86,10 @@ export interface Note {
 	authorName?: string;
 	note: string;
 	createdAt: string;
+}
+
+export interface AccessStatus {
+	spaceId: string;
+	visitorId: string;
+	status: VisitStatus;
 }

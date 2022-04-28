@@ -625,4 +625,30 @@ describe('VisitsService', () => {
 			expect(hasAccess).toEqual(false);
 		});
 	});
+
+	describe('getAccessStatus', () => {
+		it('should get the access status for a space and user', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { maintainer_visitor_space_request: [{ status: VisitStatus.APPROVED }] },
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus.spaceId).toEqual('space-1');
+			expect(accessStatus.visitorId).toEqual('user-1');
+			expect(accessStatus.status).toEqual(VisitStatus.APPROVED);
+		});
+
+		it('should return the access status denied if no actual visit requests were found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { maintainer_visitor_space_request: [] },
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus.spaceId).toEqual('space-1');
+			expect(accessStatus.visitorId).toEqual('user-1');
+			expect(accessStatus.status).toEqual(VisitStatus.DENIED);
+		});
+	});
 });

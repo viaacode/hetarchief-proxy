@@ -7,10 +7,11 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { find, get, isArray, isEmpty, set, uniq } from 'lodash';
+import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
+	AccessStatus,
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
@@ -430,48 +431,28 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 
-	public async getHypotheticalStatus(
-		visitorSpaceId: string,
-		userProfileId: string
-	): Promise<{ visitorSpaceId: string; status: VisitStatus }> {
+	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<AccessStatus> {
 		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
 			FindActualVisitByUserAndSpaceDocument,
 			{
 				userProfileId,
-				visitorSpaceId,
+				spaceId,
 				now: new Date().toISOString(),
 			}
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
 			return {
-				visitorSpaceId,
+				spaceId,
+				visitorId: userProfileId,
 				status: VisitStatus.DENIED,
 			};
 		}
 
 		return {
-			visitorSpaceId,
+			spaceId,
+			visitorId: userProfileId,
 			status: visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus,
 		};
-	}
-
-	public async addHyptheticalStatuses(visits: Visit[], userProfileId: string): Promise<Visit[]> {
-		// get distinct visitor spaces
-		const visitorSpaces = uniq(visits.map((visit) => visit.spaceId));
-		// get the hypothetical statuses for all these spaces
-		const hypotheticalStatuses = await Promise.all(
-			visitorSpaces.map((visitorSpaceId) =>
-				this.getHypotheticalStatus(visitorSpaceId, userProfileId)
-			)
-		);
-
-		return visits.map((visit) => {
-			const hypotheticalStatus = find(hypotheticalStatuses, {
-				visitorSpaceId: visit.spaceId,
-			});
-			visit.hypotheticalStatus = hypotheticalStatus.status;
-			return visit;
-		});
 	}
 }
