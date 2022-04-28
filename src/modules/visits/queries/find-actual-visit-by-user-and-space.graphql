@@ -1,0 +1,22 @@
+query findActualVisitByUserAndSpace(
+	$userProfileId: uuid!
+	$visitorSpaceId: uuid!
+	$now: timestamp!
+) {
+	maintainer_visitor_space_request(
+		where: {
+			user_profile_id: { _eq: $userProfileId }
+			start_date: { _lte: $now }
+			end_date: { _gte: $now }
+			visitor_space: { id: { _eq: $visitorSpaceId } }
+		}
+		order_by: { status_info: { sort_order: asc } }
+	) {
+		id
+		cp_space_id
+		user_profile_id
+		status
+		start_date
+		end_date
+	}
+}

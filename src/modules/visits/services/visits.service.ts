@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { get, isArray, isEmpty, set } from 'lodash';
+import { find, get, isArray, isEmpty, set, uniq } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -25,6 +25,8 @@ import {
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
+	FindActualVisitByUserAndSpaceDocument,
+	FindActualVisitByUserAndSpaceQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
@@ -426,5 +428,50 @@ export class VisitsService {
 		);
 
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
+	}
+
+	public async getHypotheticalStatus(
+		visitorSpaceId: string,
+		userProfileId: string
+	): Promise<{ visitorSpaceId: string; status: VisitStatus }> {
+		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
+			FindActualVisitByUserAndSpaceDocument,
+			{
+				userProfileId,
+				visitorSpaceId,
+				now: new Date().toISOString(),
+			}
+		);
+
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+			return {
+				visitorSpaceId,
+				status: VisitStatus.DENIED,
+			};
+		}
+
+		return {
+			visitorSpaceId,
+			status: visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus,
+		};
+	}
+
+	public async addHyptheticalStatuses(visits: Visit[], userProfileId: string): Promise<Visit[]> {
+		// get distinct visitor spaces
+		const visitorSpaces = uniq(visits.map((visit) => visit.spaceId));
+		// get the hypothetical statuses for all these spaces
+		const hypotheticalStatuses = await Promise.all(
+			visitorSpaces.map((visitorSpaceId) =>
+				this.getHypotheticalStatus(visitorSpaceId, userProfileId)
+			)
+		);
+
+		return visits.map((visit) => {
+			const hypotheticalStatus = find(hypotheticalStatuses, {
+				visitorSpaceId: visit.spaceId,
+			});
+			visit.hypotheticalStatus = hypotheticalStatus.status;
+			return visit;
+		});
 	}
 }

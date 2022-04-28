@@ -83,10 +83,10 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
-	@RequireAllPermissions(
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-		Permission.MANAGE_ACCOUNT
-	)
+	// @RequireAllPermissions(
+	// Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+	// Permission.MANAGE_ACCOUNT
+	// )
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -94,6 +94,7 @@ export class VisitsController {
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
+		await this.visitsService.addHyptheticalStatuses(visits.items, user.getId());
 		return visits;
 	}
 
