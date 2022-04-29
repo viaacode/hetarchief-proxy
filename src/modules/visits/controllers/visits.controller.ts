@@ -111,7 +111,7 @@ export class VisitsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<AccessStatus> {
-		return this.visitsService.getAccessStatus(id, user.getId());
+		return { status: await this.visitsService.getAccessStatus(id, user.getId()) };
 	}
 
 	@Get(':id')

@@ -11,7 +11,6 @@ import { get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
-	AccessStatus,
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
@@ -431,7 +430,7 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 
-	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<AccessStatus> {
+	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<VisitStatus> {
 		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
 			FindActualVisitByUserAndSpaceDocument,
 			{
@@ -442,17 +441,9 @@ export class VisitsService {
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
-			return {
-				spaceId,
-				visitorId: userProfileId,
-				status: VisitStatus.DENIED,
-			};
+			return VisitStatus.DENIED;
 		}
 
-		return {
-			spaceId,
-			visitorId: userProfileId,
-			status: visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus,
-		};
+		return visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus;
 	}
 }

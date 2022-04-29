@@ -277,11 +277,7 @@ describe('VisitsController', () => {
 
 	describe('getAccessStatus', () => {
 		it('should return the access status for a spaceId and user', async () => {
-			mockVisitsService.getAccessStatus.mockResolvedValueOnce({
-				spaceId: 'space-1',
-				visitorId: 'visitor-1',
-				status: VisitStatus.PENDING,
-			});
+			mockVisitsService.getAccessStatus.mockResolvedValueOnce(VisitStatus.PENDING);
 
 			const accessStatus = await visitsController.getAccessStatus(
 				'space-1',

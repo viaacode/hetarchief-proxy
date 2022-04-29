@@ -89,7 +89,5 @@ export interface Note {
 }
 
 export interface AccessStatus {
-	spaceId: string;
-	visitorId: string;
 	status: VisitStatus;
 }

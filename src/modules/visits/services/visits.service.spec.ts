@@ -634,9 +634,7 @@ describe('VisitsService', () => {
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
-			expect(accessStatus.spaceId).toEqual('space-1');
-			expect(accessStatus.visitorId).toEqual('user-1');
-			expect(accessStatus.status).toEqual(VisitStatus.APPROVED);
+			expect(accessStatus).toEqual(VisitStatus.APPROVED);
 		});
 
 		it('should return the access status denied if no actual visit requests were found', async () => {
@@ -646,9 +644,7 @@ describe('VisitsService', () => {
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
-			expect(accessStatus.spaceId).toEqual('space-1');
-			expect(accessStatus.visitorId).toEqual('user-1');
-			expect(accessStatus.status).toEqual(VisitStatus.DENIED);
+			expect(accessStatus).toEqual(VisitStatus.DENIED);
 		});
 	});
 });
