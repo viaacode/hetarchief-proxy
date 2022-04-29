@@ -23,7 +23,7 @@ import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { Visit, VisitSpaceCount, VisitStatus } from '../types';
+import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -94,7 +94,24 @@ export class VisitsController {
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
+
 		return visits;
+	}
+
+	@Get('space/:id/access-status')
+	@ApiOperation({
+		description:
+			'Get Access status. Returns the highest status (APPROVED>PENDING>..) for a current active visit request. DENIED if no active visit request was found.',
+	})
+	@RequireAllPermissions(
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		Permission.MANAGE_ACCOUNT
+	)
+	public async getAccessStatus(
+		@Param('id') id: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<AccessStatus> {
+		return { status: await this.visitsService.getAccessStatus(id, user.getId()) };
 	}
 
 	@Get(':id')

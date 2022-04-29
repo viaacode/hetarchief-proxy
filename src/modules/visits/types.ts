@@ -87,3 +87,7 @@ export interface Note {
 	note: string;
 	createdAt: string;
 }
+
+export interface AccessStatus {
+	status: VisitStatus;
+}

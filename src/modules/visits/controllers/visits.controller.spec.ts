@@ -133,6 +133,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	update: jest.fn(),
 	getActiveVisitForUserAndSpace: jest.fn(),
 	getPendingVisitCountForUserBySlug: jest.fn(),
+	getAccessStatus: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -271,6 +272,22 @@ describe('VisitsController', () => {
 			);
 
 			expect(visits).toEqual(mockVisitsResponse);
+		});
+	});
+
+	describe('getAccessStatus', () => {
+		it('should return the access status for a spaceId and user', async () => {
+			mockVisitsService.getAccessStatus.mockResolvedValueOnce(VisitStatus.PENDING);
+
+			const accessStatus = await visitsController.getAccessStatus(
+				'space-1',
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+				})
+			);
+
+			expect(accessStatus.status).toEqual(VisitStatus.PENDING);
 		});
 	});
 
