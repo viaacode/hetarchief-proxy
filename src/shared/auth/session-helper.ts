@@ -3,7 +3,7 @@ import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } 
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
-import { Permission, User } from '~modules/users/types';
+import { User } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SpecialPermissionGroups } from '~shared/types/types';
 

@@ -25,6 +25,8 @@ import {
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
+	FindActualVisitByUserAndSpaceDocument,
+	FindActualVisitByUserAndSpaceQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
@@ -426,5 +428,22 @@ export class VisitsService {
 		);
 
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
+	}
+
+	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<VisitStatus> {
+		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
+			FindActualVisitByUserAndSpaceDocument,
+			{
+				userProfileId,
+				spaceId,
+				now: new Date().toISOString(),
+			}
+		);
+
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+			return VisitStatus.DENIED;
+		}
+
+		return visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus;
 	}
 }
