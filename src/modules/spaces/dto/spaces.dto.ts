@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AccessType } from '~modules/spaces/types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';

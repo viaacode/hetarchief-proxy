@@ -8,7 +8,7 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof Visit, string>> = {
 	userProfileId: 'user_profile_id',
 	timeframe: 'user_timeframe',
 	reason: 'user_reason',
-	status: 'status',
+	status: 'status_info.sort_order',
 	startAt: 'start_date',
 	endAt: 'end_date',
 	createdAt: 'created_at',

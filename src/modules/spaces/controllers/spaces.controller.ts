@@ -20,7 +20,7 @@ import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
