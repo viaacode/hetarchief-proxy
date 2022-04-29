@@ -18,6 +18,12 @@ export const mockGqlSpace: GqlSpace = {
 		schema_identifier: 'OR-rf5kf25',
 		information: [
 			{
+				contact_point: [
+					{
+						contact_type: 'ontsluiting',
+						email: null,
+					},
+				],
 				description:
 					'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 				logo: {
@@ -25,7 +31,6 @@ export const mockGqlSpace: GqlSpace = {
 				},
 				primary_site: {
 					address: {
-						email: null,
 						locality: 'Brussel',
 						postal_code: '1043',
 						street: 'Auguste Reyerslaan 52',

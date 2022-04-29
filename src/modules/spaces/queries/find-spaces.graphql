@@ -21,13 +21,16 @@ query findSpaces(
 			schema_name
 			schema_identifier
 			information {
+				contact_point {
+					contact_type
+					email
+				}
 				description
 				logo {
 					iri
 				}
 				primary_site {
 					address {
-						email
 						locality
 						postal_code
 						street

@@ -99,6 +99,23 @@ describe('SpacesService', () => {
 		});
 	});
 
+	describe('adaptEmail', () => {
+		it('returns the correct email address', () => {
+			const email = spacesService.adaptEmail({
+				contactPoint: [
+					{ contact_type: 'primary', email: 'wrong@mail.be' },
+					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				],
+			});
+			expect(email).toEqual('correct@mail.be');
+		});
+
+		it('returns null if no email address was found', () => {
+			const email = spacesService.adaptEmail(undefined);
+			expect(email).toBeNull();
+		});
+	});
+
 	describe('update', () => {
 		it('can update a space', async () => {
 			const mockData: UpdateSpaceMutation = {

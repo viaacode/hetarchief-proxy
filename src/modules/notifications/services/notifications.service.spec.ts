@@ -166,6 +166,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
 		sendForVisit: jest.fn().mockResolvedValue(true),
+		getAdminEmail: jest.fn().mockImplementation((email) => email),
 	};
 
 describe('NotificationsService', () => {
