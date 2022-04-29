@@ -19,10 +19,10 @@ export class CollectionObjectsQueryDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: "The query to search for. Use '%' for wildcard.",
-		default: '%',
+		description: "The query to search for. Use '%queryTerm%' for wildcard.",
+		default: undefined,
 	})
-	query? = '%';
+	query? = undefined;
 
 	@IsNumber()
 	@Type(() => Number)

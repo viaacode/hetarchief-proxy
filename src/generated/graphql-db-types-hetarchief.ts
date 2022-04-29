@@ -38,8 +38,10 @@ export type Boolean_Comparison_Exp = {
 export type Concept = {
   __typename?: 'Concept';
   alt_label?: Maybe<Scalars['String']>;
+  broader?: Maybe<Concept>;
   iri: Scalars['ID'];
   label?: Maybe<Scalars['String']>;
+  narrower?: Maybe<Concept>;
 };
 
 export type ContactPoint = IContactPoint & {
@@ -58,6 +60,7 @@ export type ContentPartner = IOrganization & {
   classification?: Maybe<Concept>;
   contact_point?: Maybe<Array<Maybe<ContactPoint>>>;
   description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   iri: Scalars['ID'];
@@ -67,13 +70,9 @@ export type ContentPartner = IOrganization & {
   overlay?: Maybe<Scalars['Boolean']>;
   posts?: Maybe<Array<Maybe<Post>>>;
   primary_site?: Maybe<Site>;
+  sector?: Maybe<Scalars['String']>;
   sites?: Maybe<Array<Maybe<Site>>>;
   units?: Maybe<Array<Maybe<OrganizationalUnit>>>;
-};
-
-
-export type ContentPartnerClassificationArgs = {
-  label?: InputMaybe<Scalars['String']>;
 };
 
 export type IContactPoint = {
@@ -83,6 +82,7 @@ export type IContactPoint = {
   telephone?: Maybe<Scalars['String']>;
 };
 
+/** Interface for all organizations. */
 export type IOrganization = {
   account_manager?: Maybe<Person>;
   alt_label?: Maybe<Scalars['String']>;
@@ -90,6 +90,7 @@ export type IOrganization = {
   classification?: Maybe<Concept>;
   contact_point?: Maybe<Array<Maybe<ContactPoint>>>;
   description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   iri: Scalars['ID'];
@@ -99,13 +100,9 @@ export type IOrganization = {
   overlay?: Maybe<Scalars['Boolean']>;
   posts?: Maybe<Array<Maybe<Post>>>;
   primary_site?: Maybe<Site>;
+  sector?: Maybe<Scalars['String']>;
   sites?: Maybe<Array<Maybe<Site>>>;
   units?: Maybe<Array<Maybe<OrganizationalUnit>>>;
-};
-
-
-export type IOrganizationClassificationArgs = {
-  label?: InputMaybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -132,9 +129,11 @@ export type Organization = IOrganization & {
   account_manager?: Maybe<Person>;
   alt_label?: Maybe<Scalars['String']>;
   bzt?: Maybe<Scalars['Boolean']>;
+  category?: Maybe<Scalars['String']>;
   classification?: Maybe<Concept>;
   contact_point?: Maybe<Array<Maybe<ContactPoint>>>;
   description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   iri: Scalars['ID'];
@@ -144,13 +143,9 @@ export type Organization = IOrganization & {
   overlay?: Maybe<Scalars['Boolean']>;
   posts?: Maybe<Array<Maybe<Post>>>;
   primary_site?: Maybe<Site>;
+  sector?: Maybe<Scalars['String']>;
   sites?: Maybe<Array<Maybe<Site>>>;
   units?: Maybe<Array<Maybe<OrganizationalUnit>>>;
-};
-
-
-export type OrganizationClassificationArgs = {
-  label?: InputMaybe<Scalars['String']>;
 };
 
 export type OrganizationalUnit = IOrganization & {
@@ -161,6 +156,7 @@ export type OrganizationalUnit = IOrganization & {
   classification?: Maybe<Concept>;
   contact_point?: Maybe<Array<Maybe<ContactPoint>>>;
   description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   iri: Scalars['ID'];
@@ -170,14 +166,10 @@ export type OrganizationalUnit = IOrganization & {
   overlay?: Maybe<Scalars['Boolean']>;
   posts?: Maybe<Array<Maybe<Post>>>;
   primary_site?: Maybe<Site>;
+  sector?: Maybe<Scalars['String']>;
   sites?: Maybe<Array<Maybe<Site>>>;
-  unit_of: Organization;
+  unit_of: IOrganization;
   units?: Maybe<Array<Maybe<OrganizationalUnit>>>;
-};
-
-
-export type OrganizationalUnitClassificationArgs = {
-  label?: InputMaybe<Scalars['String']>;
 };
 
 export type Person = {
@@ -220,6 +212,7 @@ export type School = IOrganization & {
   classification?: Maybe<Concept>;
   contact_point?: Maybe<Array<Maybe<ContactPoint>>>;
   description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   iri: Scalars['ID'];
@@ -229,13 +222,9 @@ export type School = IOrganization & {
   overlay?: Maybe<Scalars['Boolean']>;
   posts?: Maybe<Array<Maybe<Post>>>;
   primary_site?: Maybe<Site>;
+  sector?: Maybe<Scalars['String']>;
   sites?: Maybe<Array<Maybe<Site>>>;
   units?: Maybe<Array<Maybe<OrganizationalUnit>>>;
-};
-
-
-export type SchoolClassificationArgs = {
-  label?: InputMaybe<Scalars['String']>;
 };
 
 export type Site = {
@@ -3353,6 +3342,8 @@ export type Maintainer_Content_Partner = {
  */
 export type Maintainer_Content_PartnerInformationArgs = {
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -6985,6 +6976,8 @@ export type Object_IeSchema_LicenseArgs = {
 /** columns and relationships of "object.ie" */
 export type Object_IeSchema_MaintainerArgs = {
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -8285,6 +8278,7 @@ export type Query_Root = {
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
+  /** Retrieve data about contentpartners of meemoo. */
   contentpartners?: Maybe<Array<Maybe<ContentPartner>>>;
   /** fetch data from the table: "lookup.app_content_block_type" */
   lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
@@ -8380,8 +8374,11 @@ export type Query_Root = {
   object_representation_aggregate: Object_Representation_Aggregate;
   /** fetch data from the table: "object.representation" using primary key columns */
   object_representation_by_pk?: Maybe<Object_Representation>;
+  /** Retrieve data about all organizations. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
+  /** Retrieve data about personnel or persons known to meemoo. */
   persons?: Maybe<Array<Maybe<Person>>>;
+  /** Retrieve data about schools known to meemoo. */
   schools?: Maybe<Array<Maybe<School>>>;
   /** fetch data from the table: "sync.audio" */
   sync_audio: Array<Sync_Audio>;
@@ -8616,6 +8613,8 @@ export type Query_RootApp_Notification_By_PkArgs = {
 export type Query_RootContentpartnersArgs = {
   id?: InputMaybe<Scalars['String']>;
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -8985,6 +8984,8 @@ export type Query_RootObject_Representation_By_PkArgs = {
 export type Query_RootOrganizationsArgs = {
   id?: InputMaybe<Scalars['String']>;
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -8992,12 +8993,16 @@ export type Query_RootPersonsArgs = {
   family_name?: InputMaybe<Scalars['String']>;
   given_name?: InputMaybe<Scalars['String']>;
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type Query_RootSchoolsArgs = {
   id?: InputMaybe<Scalars['String']>;
   iri?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
