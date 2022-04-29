@@ -137,6 +137,23 @@ describe('VisitsService', () => {
 		});
 	});
 
+	describe('adaptEmail', () => {
+		it('returns the correct email address', () => {
+			const email = visitsService.adaptEmail({
+				contactPoint: [
+					{ contact_type: 'primary', email: 'wrong@mail.be' },
+					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				],
+			});
+			expect(email).toEqual('correct@mail.be');
+		});
+
+		it('returns null if no email address was found', () => {
+			const email = visitsService.adaptEmail(undefined);
+			expect(email).toBeNull();
+		});
+	});
+
 	describe('findAll', () => {
 		it('returns a paginated response with all visits', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());

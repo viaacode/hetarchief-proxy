@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { get, isArray, isEmpty, set } from 'lodash';
+import { find, get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -95,6 +95,11 @@ export class VisitsService {
 		return `${street}, ${postalCode} ${locality}`;
 	}
 
+	public adaptEmail(graphQlInfo: any): string {
+		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+		return contactPoint?.email || null;
+	}
+
 	public adapt(graphQlVisit: GqlVisit): Visit | null {
 		if (!graphQlVisit) {
 			return null;
@@ -106,13 +111,13 @@ export class VisitsService {
 			id: graphQlVisit?.id,
 			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
 			reason: graphQlVisit?.user_reason,
-			spaceAddress: this?.adaptSpaceAddress(
+			spaceAddress: this.adaptSpaceAddress(
 				graphQlVisit?.visitor_space?.content_partner?.information[0]?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
-			spaceMail:
-				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
-					?.address?.email,
+			spaceMail: this.adaptEmail(
+				graphQlVisit?.visitor_space?.content_partner?.information?.[0]
+			),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
