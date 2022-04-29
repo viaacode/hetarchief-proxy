@@ -178,15 +178,7 @@ export class QueryBuilder {
 			return { match_all: {} };
 		}
 
-		const filterObject: any = {
-			bool: {
-				must_not: {
-					term: {
-						'type.keyword': 'SOLR', // We never want to get results with type: SOLR
-					},
-				},
-			},
-		};
+		const filterObject: any = {};
 
 		// Add additional filters to the query object
 		const filterArray: any[] = [];

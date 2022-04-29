@@ -109,6 +109,36 @@ describe('MediaService', () => {
 			const result = await mediaService.adaptESResponse(esResponse, 'referer');
 			expect(result).toEqual(esResponse);
 		});
+
+		it('merges film aggregations with an existing video bucket', async () => {
+			const esResponse = {
+				aggregations: {
+					dcterms_format: {
+						buckets: [
+							{ key: 'film', doc_count: 1 },
+							{ key: 'video', doc_count: 1 },
+						],
+					},
+				},
+			};
+			const result = await mediaService.adaptESResponse(esResponse, 'referer');
+			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
+			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(2);
+		});
+
+		it('converts film bucket to video bucket if there was no video buckets', async () => {
+			const esResponse = {
+				aggregations: {
+					dcterms_format: {
+						buckets: [{ key: 'film', doc_count: 1 }],
+					},
+				},
+			};
+			const result = await mediaService.adaptESResponse(esResponse, 'referer');
+			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
+			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual('video');
+			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
+		});
 	});
 
 	describe('adaptMetadata', () => {
@@ -256,7 +286,7 @@ describe('MediaService', () => {
 	describe('findAllObjectMetadataByCollectionId', () => {
 		it('returns the metadata objects for a collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { users_folder_ie: [mockObjectIe] },
+				data: { users_folder_ie: [{ ie: mockObjectIe.data.object_ie[0] }] },
 			});
 			const result = await mediaService.findAllObjectMetadataByCollectionId(
 				'collection-1',

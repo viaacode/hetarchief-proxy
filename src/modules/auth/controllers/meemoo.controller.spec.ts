@@ -60,7 +60,7 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	getUserByIdentityId: jest.fn(),
 	createUserWithIdp: jest.fn(),
 	updateUser: jest.fn(),
-	linkCpAdminToMaintainer: jest.fn(),
+	linkUserToMaintainer: jest.fn(),
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
@@ -69,6 +69,7 @@ const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyI
 
 const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
 	determineUserGroup: jest.fn(),
+	userGroupRequiresMaintainerLink: jest.fn(),
 };
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -145,7 +146,7 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.getAuth({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
@@ -153,7 +154,7 @@ describe('MeemooController', () => {
 		});
 
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
-			const result = await meemooController.getAuth(
+			const result = await meemooController.loginRoute(
 				getNewMockSession(),
 				configService.get('clientHost')
 			);
@@ -167,7 +168,7 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.getAuth({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
 			expect(result).toBeUndefined();
 		});
 	});
@@ -177,6 +178,7 @@ describe('MeemooController', () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
 			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
 

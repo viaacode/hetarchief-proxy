@@ -33,6 +33,10 @@ export class IdpService {
 		return url;
 	}
 
+	public userGroupRequiresMaintainerLink(userGroup: Group): boolean {
+		return [Group.KIOSK_VISITOR, Group.CP_ADMIN].includes(userGroup);
+	}
+
 	/**
 	 * Flowchart: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/2978447456/Gebruikersgroepen+en+permissies+BZT+versie+1#Functionele-samenvatting
 	 * Overview test users: https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3458269217/Overzicht+testusers
