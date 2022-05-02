@@ -89,12 +89,16 @@ export class VisitsService {
 		return true;
 	}
 
+	/* istanbul ignore next */
 	public adaptSpaceAddress(graphQlAddress: any): string {
-		const locality = get(graphQlAddress, `locality`);
-		const postalCode = get(graphQlAddress, `postal_code`);
-		const street = get(graphQlAddress, `street`);
+		const locality = graphQlAddress?.locality || '';
+		const postalCode = graphQlAddress?.postal_code || '';
+		const street = graphQlAddress?.street || '';
 
-		return `${street}, ${postalCode} ${locality}`;
+		if (locality || postalCode || street) {
+			return `${street}, ${postalCode} ${locality}`;
+		}
+		return '';
 	}
 
 	public adaptEmail(graphQlInfo: any): string {
