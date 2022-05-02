@@ -1,7 +1,10 @@
+import { randomUUID } from 'crypto';
+
 import {
 	BadRequestException,
 	Body,
 	Controller,
+	ForbiddenException,
 	Get,
 	Logger,
 	NotFoundException,
@@ -20,7 +23,7 @@ import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { Visit, VisitSpaceCount, VisitStatus } from '../types';
+import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -30,7 +33,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
-import { RequirePermissions } from '~shared/decorators/require-permissions.decorator';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
@@ -80,7 +83,10 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
-	@RequirePermissions(Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS)
+	@RequireAllPermissions(
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		Permission.MANAGE_ACCOUNT
+	)
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -88,7 +94,24 @@ export class VisitsController {
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
+
 		return visits;
+	}
+
+	@Get('space/:id/access-status')
+	@ApiOperation({
+		description:
+			'Get Access status. Returns the highest status (APPROVED>PENDING>..) for a current active visit request. DENIED if no active visit request was found.',
+	})
+	@RequireAllPermissions(
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
+		Permission.MANAGE_ACCOUNT
+	)
+	public async getAccessStatus(
+		@Param('id') id: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<AccessStatus> {
+		return { status: await this.visitsService.getAccessStatus(id, user.getId()) };
 	}
 
 	@Get(':id')
@@ -108,10 +131,56 @@ export class VisitsController {
 		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
+		// Check if the user is a CP admin or a Kiosk user for the requested space
+		if (visitorSpaceSlug === user.getVisitorSpaceSlug()) {
+			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
+			// Return fake visit request that is approved and valid forever
+			return {
+				spaceId: spaceInfo.id,
+				id: randomUUID(),
+				startAt: new Date(2000, 0, 2).toISOString(),
+				endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
+				visitorName: user.getFullName(),
+				spaceName: spaceInfo.name,
+				status: VisitStatus.APPROVED,
+				createdAt: new Date().toISOString(),
+				reason: 'permanent access',
+				visitorFirstName: user.getFirstName(),
+				visitorLastName: user.getLastName(),
+				visitorId: user.getId(),
+				visitorMail: user.getMail(),
+				spaceMail: spaceInfo.contactInfo.email,
+				updatedById: '',
+				updatedByName: '',
+				spaceSlug: spaceInfo.slug,
+				timeframe: '',
+				updatedAt: new Date().toISOString(),
+				userProfileId: user.getId(),
+			};
+		}
+
+		// Find visit request that is approved for the current time
 		const activeVisit = await this.visitsService.getActiveVisitForUserAndSpace(
 			user.getId(),
 			visitorSpaceSlug
 		);
+
+		// If no visitor request, check of we need to show a 404 not found or a 403 no access
+		if (!activeVisit) {
+			// Check if space exists
+			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
+
+			if (space) {
+				// User does not have access to existing space
+				throw new ForbiddenException(
+					`You do not have access to space with slug '${visitorSpaceSlug}'.`
+				);
+			} else {
+				// Space does not exist
+				throw new NotFoundException(`Space with slug '${visitorSpaceSlug}' was not found.`);
+			}
+		}
+
 		return activeVisit;
 	}
 
@@ -132,7 +201,7 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Create a Visit request. Requires the CREATE_VISIT_REQUEST permission.',
 	})
-	@RequirePermissions(Permission.CREATE_VISIT_REQUEST)
+	@RequireAllPermissions(Permission.CREATE_VISIT_REQUEST)
 	public async createVisit(
 		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,

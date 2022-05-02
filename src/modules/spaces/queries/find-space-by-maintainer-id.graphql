@@ -1,5 +1,5 @@
-mutation updateSpace($id: uuid!, $updateSpace: maintainer_visitor_space_set_input!) {
-	update_maintainer_visitor_space_by_pk(pk_columns: { id: $id }, _set: $updateSpace) {
+query findSpaceByMaintainerId($maintainerId: String!) {
+	maintainer_visitor_space(where: { schema_maintainer_id: { _eq: $maintainerId } }) {
 		id
 		slug
 		schema_image

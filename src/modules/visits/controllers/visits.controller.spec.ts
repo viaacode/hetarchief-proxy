@@ -17,7 +17,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
-import i18n from '~shared/i18n';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
@@ -134,6 +133,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	update: jest.fn(),
 	getActiveVisitForUserAndSpace: jest.fn(),
 	getPendingVisitCountForUserBySlug: jest.fn(),
+	getAccessStatus: jest.fn(),
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
@@ -192,10 +192,12 @@ describe('VisitsController', () => {
 	});
 
 	afterEach(() => {
-		mockNotificationsService.onCreateVisit.mockClear();
-		mockNotificationsService.onApproveVisitRequest.mockClear();
-		mockNotificationsService.onDenyVisitRequest.mockClear();
-		mockNotificationsService.delete.mockClear();
+		mockNotificationsService.onCreateVisit.mockRestore();
+		mockNotificationsService.onApproveVisitRequest.mockRestore();
+		mockNotificationsService.onDenyVisitRequest.mockRestore();
+		mockNotificationsService.delete.mockRestore();
+		mockVisitsService.getActiveVisitForUserAndSpace.mockRestore();
+		mockSpacesService.findBySlug.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -273,6 +275,22 @@ describe('VisitsController', () => {
 		});
 	});
 
+	describe('getAccessStatus', () => {
+		it('should return the access status for a spaceId and user', async () => {
+			mockVisitsService.getAccessStatus.mockResolvedValueOnce(VisitStatus.PENDING);
+
+			const accessStatus = await visitsController.getAccessStatus(
+				'space-1',
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS],
+				})
+			);
+
+			expect(accessStatus.status).toEqual(VisitStatus.PENDING);
+		});
+	});
+
 	describe('getVisitById', () => {
 		it('should return a visit by id', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
@@ -289,6 +307,56 @@ describe('VisitsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 			expect(visit).toEqual(mockVisit1);
+		});
+
+		it('should return a generated active visit for kiosk and cpAdmins if they are linked to the space', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			const visit = await visitsController.getActiveVisitForUserAndSpace(
+				'space-1',
+				new SessionUserEntity({
+					...mockUser,
+					visitorSpaceSlug: 'space-1',
+				})
+			);
+			expect(visit.status).toEqual(VisitStatus.APPROVED);
+			expect(visit.endAt.split('-')[0]).toEqual('2100');
+		});
+
+		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(
+				`You do not have access to space with slug 'space-1'.`
+			);
+			expect(error.response.statusCode).toEqual(403);
+		});
+
+		it('should throw NotFound exception if an active visit was not found and the space does not exist', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(`Space with slug 'space-1' was not found.`);
+			expect(error.response.statusCode).toEqual(404);
 		});
 	});
 

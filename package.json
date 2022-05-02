@@ -7,7 +7,8 @@
   "license": "UNLICENSED",
   "contributors": [
     "Andry Charlier <andry.charlier@studiohyperdrive.be>",
-    "Bart Naessens <bart.naessens@studiohyperdrive.be>"
+    "Bart Naessens <bart.naessens@studiohyperdrive.be>",
+    "Bert Verhelst <bert.verhelst@studiohyperdrive.be>"
   ],
   "scripts": {
     "prepare": "husky install",

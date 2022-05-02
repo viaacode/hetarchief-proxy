@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { set } from 'lodash';
+import { find, set } from 'lodash';
 
 import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, GqlSpace, Space } from '../types';
@@ -10,6 +10,8 @@ import {
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdDocument,
+	FindSpaceByMaintainerIdQuery,
 	FindSpaceBySlugDocument,
 	FindSpaceBySlugQuery,
 	FindSpacesDocument,
@@ -51,7 +53,7 @@ export class SpacesService {
 			audienceType: graphQlSpace?.schema_audience_type,
 			publicAccess: graphQlSpace?.schema_public_access,
 			contactInfo: {
-				email: information?.primary_site?.address?.email,
+				email: this.adaptEmail(information),
 				telephone: information?.primary_site?.address?.telephone,
 				address: {
 					street: information?.primary_site?.address?.street,
@@ -65,6 +67,11 @@ export class SpacesService {
 			createdAt: graphQlSpace?.created_at,
 			updatedAt: graphQlSpace?.updated_at,
 		};
+	}
+
+	public adaptEmail(graphQlInfo: any): string {
+		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+		return contactPoint?.email || null;
 	}
 
 	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
@@ -153,7 +160,7 @@ export class SpacesService {
 			}
 		}
 
-		if (status) {
+		if (status?.length) {
 			filterArray.push({ status: { _in: status } });
 		}
 
@@ -179,6 +186,17 @@ export class SpacesService {
 		const spaceResponse = await this.dataService.execute<FindSpaceByIdQuery>(
 			FindSpaceByIdDocument,
 			{ id }
+		);
+		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+			return null;
+		}
+		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+	}
+
+	public async findByMaintainerId(maintainerId: string): Promise<Space | null> {
+		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdQuery>(
+			FindSpaceByMaintainerIdDocument,
+			{ maintainerId }
 		);
 		if (!spaceResponse.data.maintainer_visitor_space[0]) {
 			return null;

@@ -4,13 +4,14 @@ import { cloneDeep } from 'lodash';
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	FindSpaceByIdQuery,
+	FindSpaceByMaintainerIdQuery,
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceMutation,
-	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
@@ -95,6 +96,23 @@ describe('SpacesService', () => {
 
 			// test some sample keys
 			expect(adapted.description).toEqual('Space specific description');
+		});
+	});
+
+	describe('adaptEmail', () => {
+		it('returns the correct email address', () => {
+			const email = spacesService.adaptEmail({
+				contactPoint: [
+					{ contact_type: 'primary', email: 'wrong@mail.be' },
+					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				],
+			});
+			expect(email).toEqual('correct@mail.be');
+		});
+
+		it('returns null if no email address was found', () => {
+			const email = spacesService.adaptEmail(undefined);
+			expect(email).toBeNull();
 		});
 	});
 
@@ -271,6 +289,32 @@ describe('SpacesService', () => {
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
 			const space = await spacesService.findById('unknown-id');
+			expect(space).toBeNull();
+		});
+	});
+
+	describe('findByMaintainerId', () => {
+		it('returns a single space by maintainer id', async () => {
+			const mockData: FindSpaceByMaintainerIdQuery = {
+				maintainer_visitor_space: [
+					{
+						id: '1',
+					},
+				] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			const response = await spacesService.findByMaintainerId('1');
+			expect(response.id).toBe('1');
+		});
+
+		it('returns null if the space was not found', async () => {
+			const mockData: FindSpaceByMaintainerIdQuery = {
+				maintainer_visitor_space:
+					[] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+			};
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+
+			const space = await spacesService.findByMaintainerId('unknown-id');
 			expect(space).toBeNull();
 		});
 	});

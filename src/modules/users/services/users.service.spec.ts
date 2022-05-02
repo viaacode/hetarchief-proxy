@@ -160,7 +160,7 @@ describe('UsersService', () => {
 				},
 			});
 
-			const linked = await usersService.linkCpAdminToMaintainer('user-123', 'OR-rf5kf25');
+			const linked = await usersService.linkUserToMaintainer('user-123', 'OR-rf5kf25');
 			expect(linked).toBeTruthy();
 		});
 
@@ -171,7 +171,7 @@ describe('UsersService', () => {
 				},
 			});
 
-			const linked = await usersService.linkCpAdminToMaintainer('user-123', 'OR-rf5kf25');
+			const linked = await usersService.linkUserToMaintainer('user-123', 'OR-rf5kf25');
 			expect(linked).toBeFalsy();
 		});
 	});

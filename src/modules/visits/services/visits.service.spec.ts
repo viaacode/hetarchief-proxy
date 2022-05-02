@@ -137,6 +137,23 @@ describe('VisitsService', () => {
 		});
 	});
 
+	describe('adaptEmail', () => {
+		it('returns the correct email address', () => {
+			const email = visitsService.adaptEmail({
+				contactPoint: [
+					{ contact_type: 'primary', email: 'wrong@mail.be' },
+					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				],
+			});
+			expect(email).toEqual('correct@mail.be');
+		});
+
+		it('returns null if no email address was found', () => {
+			const email = visitsService.adaptEmail(undefined);
+			expect(email).toBeNull();
+		});
+	});
+
 	describe('findAll', () => {
 		it('returns a paginated response with all visits', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
@@ -327,7 +344,7 @@ describe('VisitsService', () => {
 			expect(response.id).toBe(mockCpVisit.id);
 		});
 
-		it('throws a notfoundexception if the visit was not found', async () => {
+		it('returns null if the visit was not found', async () => {
 			const mockData: FindVisitsQuery = {
 				maintainer_visitor_space_request: [],
 				maintainer_visitor_space_request_aggregate: {
@@ -338,20 +355,12 @@ describe('VisitsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 
-			let error;
+			const activeVisit = await visitsService.getActiveVisitForUserAndSpace(
+				'user-1',
+				'space-1'
+			);
 
-			try {
-				await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
-			} catch (e) {
-				error = e;
-			}
-
-			expect(error.response).toEqual({
-				error: 'Not Found',
-				message:
-					"No active visits for user with id 'user-1' and space with visitor space with slug 'space-1' found",
-				statusCode: 404,
-			});
+			expect(activeVisit).toBeNull();
 		});
 	});
 
@@ -631,6 +640,28 @@ describe('VisitsService', () => {
 			);
 
 			expect(hasAccess).toEqual(false);
+		});
+	});
+
+	describe('getAccessStatus', () => {
+		it('should get the access status for a space and user', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { maintainer_visitor_space_request: [{ status: VisitStatus.APPROVED }] },
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus).toEqual(VisitStatus.APPROVED);
+		});
+
+		it('should return the access status denied if no actual visit requests were found', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: { maintainer_visitor_space_request: [] },
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus).toEqual(VisitStatus.DENIED);
 		});
 	});
 });

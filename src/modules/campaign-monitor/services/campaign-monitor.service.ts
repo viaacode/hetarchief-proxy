@@ -59,6 +59,10 @@ export class CampaignMonitorService {
 		return url.href;
 	}
 
+	public getAdminEmail(email: string): string {
+		return this.rerouteEmailsTo ? this.rerouteEmailsTo : email;
+	}
+
 	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
 		return {
 			client_firstname: visit.visitorFirstName,
@@ -115,9 +119,6 @@ export class CampaignMonitorService {
 
 	public async send(template: string, data: CampaignMonitorData): Promise<boolean> {
 		if (this.isEnabled) {
-			if (this.rerouteEmailsTo) {
-				data.To = this.rerouteEmailsTo;
-			}
 			await this.gotInstance.post(`${template}/send`, {
 				json: data,
 			});

@@ -141,7 +141,7 @@ export class UsersService {
 		return this.adapt(updatedUser);
 	}
 
-	public async linkCpAdminToMaintainer(id: string, maintainerId: string): Promise<boolean> {
+	public async linkUserToMaintainer(id: string, maintainerId: string): Promise<boolean> {
 		const {
 			data: { insert_maintainer_users_profile_one: inserted },
 		} = await this.dataService.execute<LinkUserToMaintainerMutation>(

@@ -82,6 +82,20 @@ describe('CampaignMonitorService', () => {
 		expect(campaignMonitorService).toBeDefined();
 	});
 
+	describe('getAdminEmail', () => {
+		it('should return the rerout email address if set', () => {
+			campaignMonitorService.setRerouteEmailsTo('overrule@meemoo.be');
+			expect(campaignMonitorService.getAdminEmail('me@meemoo.be')).toEqual(
+				'overrule@meemoo.be'
+			);
+		});
+
+		it('should return the rerout email address if set', () => {
+			campaignMonitorService.setRerouteEmailsTo(undefined);
+			expect(campaignMonitorService.getAdminEmail('me@meemoo.be')).toEqual('me@meemoo.be');
+		});
+	});
+
 	describe('convertVisitToEmailTemplateData', () => {
 		it('should parse visits with empty startAt / endAt', () => {
 			const visit = getMockVisit();
@@ -148,25 +162,6 @@ describe('CampaignMonitorService', () => {
 				to: [],
 			});
 			expect(result).toBeFalsy();
-		});
-	});
-
-	describe('send', () => {
-		it('should reroute the emails to a specific adres if configured', async () => {
-			nock('http://campaignmonitor/')
-				.post('/template/send', {
-					To: 'test@studiohyperdrive.be',
-					ConsentToTrack: 'unchanged',
-					Data: {},
-				})
-				.reply(201, {});
-			campaignMonitorService.setRerouteEmailsTo('test@studiohyperdrive.be');
-			const result = await campaignMonitorService.send('template', {
-				To: 'forbidden@studiohyperdrive.be',
-				ConsentToTrack: 'unchanged',
-				Data: {},
-			});
-			expect(result).toBeTruthy();
 		});
 	});
 });

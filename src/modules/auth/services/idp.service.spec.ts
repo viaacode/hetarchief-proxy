@@ -9,7 +9,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Group } from '~modules/users/types';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
-	findBySlug: jest.fn(),
+	findByMaintainerId: jest.fn(),
 };
 
 const meemooAdminOrganizationIds = ['OR-w66976m'];
@@ -31,7 +31,7 @@ const getLdapUser = () => ({
 		cn: ['Tom Testerom'],
 		sn: ['Testerom'],
 		oNickname: ['Testbeeld'],
-		apps: ['hetarchief', 'admin'], // TODO replace by a single value 'hetarchief-beheer' once archief 2.0 is launched
+		apps: ['hetarchief-beheer'],
 		organizationalStatus: [''],
 		o: meemooAdminOrganizationIds,
 	},
@@ -68,6 +68,15 @@ describe('IdpService', () => {
 		expect(configService).toBeDefined();
 	});
 
+	describe('userGroupRequiresMaintainerLink', () => {
+		it('can determine if a userGroup requires a link to a maintainer', () => {
+			expect(idpService.userGroupRequiresMaintainerLink(Group.CP_ADMIN)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.KIOSK_VISITOR)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.VISITOR)).toBeFalsy();
+			expect(idpService.userGroupRequiresMaintainerLink(Group.MEEMOO_ADMIN)).toBeFalsy();
+		});
+	});
+
 	describe('determineUserGroup', () => {
 		it('should assign the Visitor group if user has no archief-beheer and no kiosk', async () => {
 			const ldapUser = getLdapUser();
@@ -87,7 +96,7 @@ describe('IdpService', () => {
 		});
 
 		it('should assign the Kiosk group if user has no archief-beheer, but kiosk and an org id with a space', async () => {
-			mockSpacesService.findBySlug.mockResolvedValueOnce({ id: 'space-1' });
+			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.apps = [];
 			ldapUser.attributes.organizationalStatus = ['kiosk'];
@@ -108,7 +117,7 @@ describe('IdpService', () => {
 		it('should assign the Visitor group if user has archief-beheer but no valid organization', async () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.o = ['unknown'];
-			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);
 			expect(group).toEqual(Group.VISITOR);
@@ -117,7 +126,7 @@ describe('IdpService', () => {
 		it('should assign the Meemoo Admin group if user has archief-beheer and the Meemoo Organization', async () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.o = meemooAdminOrganizationIds;
-			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);
 			expect(group).toEqual(Group.MEEMOO_ADMIN);
@@ -126,7 +135,7 @@ describe('IdpService', () => {
 		it('should assign the CP Admin group if user has archief-beheer and a valid organization with space', async () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.o = ['OR-rf5kf25'];
-			mockSpacesService.findBySlug.mockResolvedValueOnce({ id: 'space-1' });
+			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 
 			const group = await idpService.determineUserGroup(ldapUser);
 			expect(group).toEqual(Group.CP_ADMIN);

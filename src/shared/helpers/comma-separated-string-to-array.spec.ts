@@ -20,6 +20,11 @@ describe('commaSeparatedStringToArray', () => {
 		expect(converted).toEqual(['first']);
 	});
 
+	it('should convert empty string als empty array', () => {
+		const converted = commaSeparatedStringToArray({ value: '' });
+		expect(converted).toEqual([]);
+	});
+
 	it('should pass through array of strings without modifications even if no items in array', () => {
 		const converted = commaSeparatedStringToArray({ value: [] });
 		expect(converted).toEqual([]);

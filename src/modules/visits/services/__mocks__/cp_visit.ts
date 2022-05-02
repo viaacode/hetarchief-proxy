@@ -37,6 +37,12 @@ export const mockCpVisit: GqlVisit = {
 			schema_identifier: 'OR-d79593p',
 			information: [
 				{
+					contact_point: [
+						{
+							contact_type: 'ontsluiting',
+							email: null,
+						},
+					],
 					description:
 						'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
 					logo: {
@@ -44,12 +50,9 @@ export const mockCpVisit: GqlVisit = {
 					},
 					primary_site: {
 						address: {
-							email: null,
 							locality: 'Elsene',
 							postal_code: '1050',
 							street: 'Eugène Flageyplein 18',
-							telephone: null,
-							post_office_box_number: null,
 						},
 					},
 				},

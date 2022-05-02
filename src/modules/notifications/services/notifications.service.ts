@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { isPast } from 'date-fns';
 
 import { DeleteNotificationDto } from '../dto/notifications.dto';
 import {
@@ -29,7 +30,7 @@ import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
-import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import i18n from '~shared/i18n';
 import { Recipient } from '~shared/types/types';
@@ -213,7 +214,12 @@ export class NotificationsService {
 			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
 			// See ARC-305
 			this.campaignMonitorService.sendForVisit({
-				to: [{ id: `space-${visit.spaceId}`, email: newVisitRequestEmail }],
+				to: [
+					{
+						id: `space-${visit.spaceId}`,
+						email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
+					},
+				],
 				template: Template.VISIT_REQUEST_CP,
 				visit,
 			}),
@@ -241,7 +247,9 @@ export class NotificationsService {
 					),
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
-					status: NotificationStatus.UNREAD,
+					status: isPast(convertToDate(visit.startAt))
+						? NotificationStatus.READ
+						: NotificationStatus.UNREAD,
 					recipient: visit.visitorId,
 				},
 			]),

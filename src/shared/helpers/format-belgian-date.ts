@@ -1,6 +1,10 @@
 import { formatInTimeZone, OptionsWithTZ } from 'date-fns-tz';
 import { nlBE } from 'date-fns/locale';
 
+export function convertToDate(date: string): Date {
+	return new Date(date + (date.toLocaleLowerCase().endsWith('z') ? '' : 'Z'));
+}
+
 export function formatAsBelgianDate(
 	date: string | Date,
 	format = 'dd/MM/yyyy HH:mm',
@@ -8,7 +12,7 @@ export function formatAsBelgianDate(
 ): string {
 	let dateObj;
 	if (typeof date === 'string') {
-		dateObj = new Date(date + (date.toLocaleLowerCase().endsWith('z') ? '' : 'Z'));
+		dateObj = convertToDate(date);
 	} else {
 		dateObj = date;
 	}

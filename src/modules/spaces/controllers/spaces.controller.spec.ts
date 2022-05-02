@@ -4,7 +4,7 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -94,11 +94,38 @@ describe('SpacesController', () => {
 			expect(spaces.items.length).toEqual(2);
 		});
 
+		it('should only return active spaces if the user does not have the READ_ALL_SPACES permission', async () => {
+			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
+			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(mockUser));
+			expect(spaces.items.length).toEqual(2);
+			expect(mockSpacesService.findAll).toHaveBeenCalledWith(
+				{
+					status: [VisitorSpaceStatus.Active],
+				},
+				mockUser.id
+			);
+		});
+
 		it('should throw an exception on illegal querying of INACTIVE spaces', async () => {
 			let error;
 			try {
 				await spacesController.getSpaces(
 					{ status: [VisitorSpaceStatus.Inactive] },
+					new SessionUserEntity(undefined)
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual(
+				'You do not have the right permissions to query this data'
+			);
+		});
+
+		it('should throw an exception on illegal querying of PENDING spaces', async () => {
+			let error;
+			try {
+				await spacesController.getSpaces(
+					{ status: [VisitorSpaceStatus.Requested] },
 					new SessionUserEntity(undefined)
 				);
 			} catch (e) {

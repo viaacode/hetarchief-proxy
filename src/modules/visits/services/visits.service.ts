@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { get, isArray, isEmpty, set } from 'lodash';
+import { find, get, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -25,6 +25,8 @@ import {
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
+	FindActualVisitByUserAndSpaceDocument,
+	FindActualVisitByUserAndSpaceQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
@@ -48,7 +50,6 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
-import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -88,12 +89,21 @@ export class VisitsService {
 		return true;
 	}
 
+	/* istanbul ignore next */
 	public adaptSpaceAddress(graphQlAddress: any): string {
-		const locality = get(graphQlAddress, `locality`);
-		const postalCode = get(graphQlAddress, `postal_code`);
-		const street = get(graphQlAddress, `street`);
+		const locality = graphQlAddress?.locality || '';
+		const postalCode = graphQlAddress?.postal_code || '';
+		const street = graphQlAddress?.street || '';
 
-		return `${street}, ${postalCode} ${locality}`;
+		if (locality || postalCode || street) {
+			return `${street}, ${postalCode} ${locality}`;
+		}
+		return '';
+	}
+
+	public adaptEmail(graphQlInfo: any): string {
+		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+		return contactPoint?.email || null;
 	}
 
 	public adapt(graphQlVisit: GqlVisit): Visit | null {
@@ -107,13 +117,13 @@ export class VisitsService {
 			id: graphQlVisit?.id,
 			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
 			reason: graphQlVisit?.user_reason,
-			spaceAddress: this?.adaptSpaceAddress(
+			spaceAddress: this.adaptSpaceAddress(
 				graphQlVisit?.visitor_space?.content_partner?.information[0]?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
-			spaceMail:
-				graphQlVisit?.visitor_space?.content_partner?.information?.[0]?.primary_site
-					?.address?.email,
+			spaceMail: this.adaptEmail(
+				graphQlVisit?.visitor_space?.content_partner?.information?.[0]
+			),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
@@ -350,9 +360,7 @@ export class VisitsService {
 		);
 
 		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
-			throw new NotFoundException(
-				`No active visits for user with id '${userProfileId}' and space with visitor space with slug '${visitorSpaceSlug}' found`
-			);
+			return null;
 		}
 
 		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
@@ -429,5 +437,22 @@ export class VisitsService {
 		);
 
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
+	}
+
+	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<VisitStatus> {
+		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
+			FindActualVisitByUserAndSpaceDocument,
+			{
+				userProfileId,
+				spaceId,
+				now: new Date().toISOString(),
+			}
+		);
+
+		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+			return VisitStatus.DENIED;
+		}
+
+		return visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus;
 	}
 }
