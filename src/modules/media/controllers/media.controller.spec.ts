@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 
 import { MediaService } from '../services/media.service';
-import { MediaFormat, Operator, SearchFilterField } from '../types';
+import { License, MediaFormat, Operator, SearchFilterField } from '../types';
 
 import { MediaController } from './media.controller';
 
@@ -62,6 +62,7 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	convertObjectToXml: jest.fn(),
 	getRelated: jest.fn(),
 	getSimilar: jest.fn(),
+	getLimitedMetadata: jest.fn(),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
@@ -164,21 +165,24 @@ describe('MediaController', () => {
 
 	describe('getMediaById', () => {
 		it('should return a media item by id', async () => {
-			const mockResponse = getMockMediaResponse();
-			mockResponse.hits.total.value = 1;
-			mockResponse.hits.hits.shift();
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [License.BEZOEKERTOOL_CONTENT],
+			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
 			expect(media).toBeDefined();
 		});
 
-		it('should throw forbidden exception if user has no longer access', async () => {
-			const mockResponse = getMockMediaResponse();
-			mockResponse.hits.total.value = 1;
-			mockResponse.hits.hits.shift();
+		it('should throw a notfound exception if the object has no valid license', async () => {
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [],
+			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
 
 			let error: any;
 			try {
@@ -186,7 +190,37 @@ describe('MediaController', () => {
 			} catch (err) {
 				error = err;
 			}
-			expect(error.response.message).toEqual('You do not have access to this visitor space');
+			expect(error.response.message).toEqual('Object not found');
+		});
+
+		it('should return limited metadata if the user no longer has access', async () => {
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [License.BEZOEKERTOOL_METADATA_ALL],
+				representations: [{ name: 'test' }],
+			};
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockMediaService.getLimitedMetadata.mockReturnValueOnce({
+				schemaIdentifier: 'limited-1',
+			});
+
+			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
+			expect(media.schemaIdentifier).toEqual('limited-1');
+		});
+
+		it('should return full metadata without essence if the object has no content license', async () => {
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [License.BEZOEKERTOOL_METADATA_ALL],
+				representations: [{ name: 'test' }],
+			};
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+
+			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
+			expect(media.representations).toBeUndefined();
 		});
 	});
 

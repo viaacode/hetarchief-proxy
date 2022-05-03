@@ -132,3 +132,8 @@ export enum OrderProperty {
 	PUBLISHED = 'published',
 	NAME = 'name',
 }
+
+export enum License {
+	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
+	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
+}
