@@ -60,16 +60,16 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
-			VisitStatus.PENDING,
-			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
+			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.DENIED,
+			VisitStatus.PENDING,
 		],
 		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
 		[VisitStatus.APPROVED]: [
 			VisitStatus.APPROVED,
-			VisitStatus.DENIED,
 			VisitStatus.CANCELLED_BY_VISITOR,
+			VisitStatus.DENIED,
 		],
 		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
