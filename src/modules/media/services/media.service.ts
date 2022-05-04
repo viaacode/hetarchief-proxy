@@ -307,6 +307,21 @@ export class MediaService {
 		return allAdapted;
 	}
 
+	public getLimitedMetadata(mediaObject: Media): Partial<Media> {
+		return {
+			schemaIdentifier: mediaObject.schemaIdentifier,
+			premisIdentifier: mediaObject.premisIdentifier,
+			maintainerName: mediaObject.maintainerName,
+			name: mediaObject.name,
+			alternateName: mediaObject.alternateName,
+			partOfSeries: mediaObject.partOfSeries,
+			partOfEpisode: mediaObject.partOfEpisode,
+			dctermsFormat: mediaObject.dctermsFormat,
+			dateCreatedLowerBound: mediaObject.dateCreatedLowerBound,
+			datePublished: mediaObject.datePublished,
+		};
+	}
+
 	public async getRelated(
 		maintainerId: string,
 		schemaIdentifier: string,

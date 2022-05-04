@@ -118,6 +118,7 @@ const config = (): Configuration => {
 			.split(',')
 			.map((orgId) => orgId.trim()),
 		rerouteEmailsTo: getEnvValue('REROUTE_EMAILS_TO', false),
+		ignoreObjectLicenses: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 	};
 };
 
