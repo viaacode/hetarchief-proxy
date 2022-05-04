@@ -1,9 +1,9 @@
 import {
 	CanActivate,
 	ExecutionContext,
+	ForbiddenException,
 	Injectable,
 	Logger,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
@@ -49,15 +49,11 @@ export class PermissionGuard implements CanActivate {
 		const user = new SessionUserEntity(SessionHelper.getArchiefUserInfo(request.session));
 		// User needs all required permissions
 		if (!user.hasAll(allRequiredPermissions)) {
-			throw new UnauthorizedException(
-				"You don't have the required permission for this route"
-			);
+			throw new ForbiddenException("You don't have the required permission for this route");
 		}
 		// user needs any of the anyPermissions
 		if (!user.hasAny(allAnyPermissions)) {
-			throw new UnauthorizedException(
-				"You don't have the required permission for this route"
-			);
+			throw new ForbiddenException("You don't have the required permission for this route");
 		}
 		return true;
 	}

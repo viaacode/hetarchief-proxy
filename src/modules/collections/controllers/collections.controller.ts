@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Delete,
+	ForbiddenException,
 	Get,
 	Header,
 	Headers,
@@ -12,7 +13,6 @@ import {
 	Post,
 	Query,
 	Req,
-	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -163,7 +163,7 @@ export class CollectionsController {
 	): Promise<IeObject> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 		if (collection.userProfileId !== user.getId()) {
-			throw new UnauthorizedException('You can only add objects to your own collections');
+			throw new ForbiddenException('You can only add objects to your own collections');
 		}
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(
@@ -198,9 +198,7 @@ export class CollectionsController {
 	): Promise<{ status: string }> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 		if (collection.userProfileId !== user.getId()) {
-			throw new UnauthorizedException(
-				'You can only delete objects from your own collections'
-			);
+			throw new ForbiddenException('You can only delete objects from your own collections');
 		}
 		const affectedRows = await this.collectionsService.removeObjectFromCollection(
 			collectionId,
@@ -228,10 +226,10 @@ export class CollectionsController {
 			this.collectionsService.findCollectionById(newCollectionId, referer),
 		]);
 		if (oldCollection.userProfileId !== user.getId()) {
-			throw new UnauthorizedException('You can only move objects from your own collections');
+			throw new ForbiddenException('You can only move objects from your own collections');
 		}
 		if (newCollection.userProfileId !== user.getId()) {
-			throw new UnauthorizedException('You can only move objects to your own collections');
+			throw new ForbiddenException('You can only move objects to your own collections');
 		}
 
 		const collectionObject = await this.collectionsService.addObjectToCollection(

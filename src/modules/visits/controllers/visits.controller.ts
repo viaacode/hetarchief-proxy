@@ -13,7 +13,6 @@ import {
 	Post,
 	Query,
 	Req,
-	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -272,7 +271,7 @@ export class VisitsController {
 				originalVisit.userProfileId !== user.getId() ||
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
-				throw new UnauthorizedException(
+				throw new ForbiddenException(
 					i18n.t('You do not have the right permissions to call this route')
 				);
 			}

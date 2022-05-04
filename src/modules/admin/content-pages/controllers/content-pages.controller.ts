@@ -2,13 +2,13 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	ForbiddenException,
 	Get,
 	Logger,
 	Post,
 	Query,
 	Req,
 	Session,
-	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -140,9 +140,7 @@ export class ContentPagesController {
 		@Req() request
 	): Promise<any[]> {
 		if (user.has(Permission.SEARCH)) {
-			throw new UnauthorizedException(
-				'You do not have the required permission for this route'
-			);
+			throw new ForbiddenException('You do not have the required permission for this route');
 		}
 		return await this.contentPagesService.resolveMediaTileItems(
 			body.searchQuery,

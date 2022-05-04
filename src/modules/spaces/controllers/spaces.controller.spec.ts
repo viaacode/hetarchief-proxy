@@ -210,7 +210,7 @@ describe('SpacesController', () => {
 			expect(space.id).toEqual('1');
 		});
 
-		it('throws an UnauthorizedException when updating another maintainers space', async () => {
+		it('throws an ForbiddenException when updating another maintainers space', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
 			let error;
@@ -220,8 +220,8 @@ describe('SpacesController', () => {
 				error = e;
 			}
 			expect(error.response).toEqual({
-				error: 'Unauthorized',
-				statusCode: 401,
+				error: 'Forbidden',
+				statusCode: 403,
 				message: 'You are not authorized to update this visitor space',
 			});
 			mockUser.permissions.pop();

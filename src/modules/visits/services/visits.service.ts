@@ -1,13 +1,13 @@
 import {
+	ForbiddenException,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
 	NotFoundException,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { find, get, isArray, isEmpty, set } from 'lodash';
+import { find, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -210,7 +210,7 @@ export class VisitsService {
 					updateVisit.status as VisitStatus
 				)
 			) {
-				throw new UnauthorizedException(
+				throw new ForbiddenException(
 					`Status transition '${currentVisit.status}' -> '${updateVisit.status}' is not allowed`
 				);
 			}
