@@ -52,6 +52,7 @@ export interface Configuration {
 	multerOptions: MulterOptions;
 	meemooAdminOrganizationIds: string[];
 	rerouteEmailsTo: string;
+	ignoreLicenses: boolean;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

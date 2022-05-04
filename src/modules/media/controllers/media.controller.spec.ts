@@ -183,6 +183,7 @@ describe('MediaController', () => {
 				license: [],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			let error: any;
 			try {
@@ -221,6 +222,41 @@ describe('MediaController', () => {
 
 			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
 			expect(media.representations).toBeUndefined();
+		});
+
+		it('should throw a notfoundexception if licenses are ignored but the user does not have access', async () => {
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [],
+			};
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(true);
+
+			let error: any;
+			try {
+				await mediaController.getMediaById('referer', '1', mockSessionUser);
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response.message).toEqual('Object not found');
+		});
+
+		it('should return the object without a valid license if licenses are ignored', async () => {
+			const mockResponse = {
+				_id: '8911p09j1g',
+				name: 'Durf te vragen R002 A0001',
+				license: [],
+			};
+			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(true);
+
+			const result = await mediaController.getMediaById('referer', '1', mockSessionUser);
+
+			expect(result).toEqual(mockResponse);
 		});
 	});
 

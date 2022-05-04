@@ -45,6 +45,7 @@ export const configValidationSchema = Joi.object({
 	TEMP_ASSET_FOLDER: Joi.string().allow(''),
 	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
 	REROUTE_EMAILS_TO: Joi.string().allow(''),
+	IGNORE_LICENSES: Joi.boolean().default(false),
 });
 
 export const DEFAULT_CONFIG = {

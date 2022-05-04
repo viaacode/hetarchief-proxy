@@ -100,37 +100,18 @@ export class MediaController {
 		// Check if the user can search in all index (meemoo admin)
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
-		// check licenses
-		if (
-			!object.license ||
-			intersection(object.license, [
-				License.BEZOEKERTOOL_CONTENT,
-				License.BEZOEKERTOOL_METADATA_ALL,
-			]).length === 0
-		) {
-			this.logger.debug(`Object ${id} has no valid license`);
-			// no valid license throws a not found exception(ARC-670)
-			throw new NotFoundException(i18n.t('Object not found'));
+		const userHasAccessToSpace =
+			canSearchInAllSpaces ||
+			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
+
+		if (getConfig(this.configService, 'ignoreLicenses')) {
+			if (!userHasAccessToSpace) {
+				throw new NotFoundException(i18n.t('Object not found'));
+			}
+			return object;
 		}
 
-		// no access to visitor space == limited metadata
-		if (
-			!canSearchInAllSpaces &&
-			!(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId))
-		) {
-			this.logger.debug(
-				`User has no access to visitor space ${object.maintainerId}, only limited metadata allowed`
-			);
-			return this.mediaService.getLimitedMetadata(object);
-		}
-
-		if (!object.license?.includes(License.BEZOEKERTOOL_CONTENT)) {
-			// unset representations - user not allowed to view essence
-			this.logger.debug(`Object ${id} has no content license, only metadata is returned`);
-			delete object.representations;
-		}
-
-		return object;
+		return this.applyLicenses(object, userHasAccessToSpace);
 	}
 
 	@Get(':id/export')
@@ -268,5 +249,38 @@ export class MediaController {
 			formatFilter.multiValue.push('film');
 		}
 		return queryDto;
+	}
+
+	protected applyLicenses(object: Media, userHasAccessToSpace: boolean): Media | Partial<Media> {
+		// check licenses
+		if (
+			!object.license ||
+			intersection(object.license, [
+				License.BEZOEKERTOOL_CONTENT,
+				License.BEZOEKERTOOL_METADATA_ALL,
+			]).length === 0
+		) {
+			this.logger.debug(`Object ${object.schemaIdentifier} has no valid license`);
+			// no valid license throws a not found exception(ARC-670)
+			throw new NotFoundException(i18n.t('Object not found'));
+		}
+
+		// no access to visitor space == limited metadata
+		if (!userHasAccessToSpace) {
+			this.logger.debug(
+				`User has no access to visitor space ${object.maintainerId}, only limited metadata allowed`
+			);
+			return this.mediaService.getLimitedMetadata(object);
+		}
+
+		if (!object.license.includes(License.BEZOEKERTOOL_CONTENT)) {
+			// unset representations - user not allowed to view essence
+			this.logger.debug(
+				`Object ${object.schemaIdentifier} has no content license, only metadata is returned`
+			);
+			delete object.representations;
+		}
+
+		return object;
 	}
 }
