@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	ForbiddenException,
 	Get,
 	Logger,
 	NotFoundException,
@@ -8,7 +9,6 @@ import {
 	ParseUUIDPipe,
 	Patch,
 	Query,
-	UnauthorizedException,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -51,7 +51,7 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
-			throw new UnauthorizedException(
+			throw new ForbiddenException(
 				i18n.t('You do not have the right permissions to query this data')
 			);
 		}
@@ -110,7 +110,7 @@ export class SpacesController {
 			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
 			user.getMaintainerId() !== space.maintainerId
 		) {
-			throw new UnauthorizedException('You are not authorized to update this visitor space');
+			throw new ForbiddenException('You are not authorized to update this visitor space');
 		}
 
 		if (file) {
