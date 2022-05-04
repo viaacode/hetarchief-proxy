@@ -104,7 +104,7 @@ export class MediaController {
 			canSearchInAllSpaces ||
 			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
 
-		if (getConfig(this.configService, 'ignoreLicenses')) {
+		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
 			if (!userHasAccessToSpace) {
 				throw new NotFoundException(i18n.t('Object not found'));
 			}
