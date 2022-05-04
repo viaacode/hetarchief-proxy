@@ -5,6 +5,7 @@ import { StatusService } from '../services/status.service';
 
 import { DataService } from '~modules/data/services/data.service';
 import { MediaService } from '~modules/media/services/media.service';
+import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
 	executeQuery: jest.fn(),
@@ -35,7 +36,9 @@ describe('StatusService', () => {
 					useValue: mockDataService,
 				},
 			],
-		}).compile();
+		})
+			.setLogger(new TestingLogger())
+			.compile();
 
 		statusService = app.get<StatusService>(StatusService);
 	});
