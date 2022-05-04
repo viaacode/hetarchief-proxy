@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, parseISO } from 'date-fns';
-import { find, get, isArray, isEmpty, set } from 'lodash';
+import { find, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -60,13 +60,17 @@ export class VisitsService {
 
 	private statusTransitions = {
 		[VisitStatus.PENDING]: [
-			VisitStatus.PENDING,
-			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.APPROVED,
+			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.DENIED,
+			VisitStatus.PENDING,
 		],
 		[VisitStatus.CANCELLED_BY_VISITOR]: [VisitStatus.CANCELLED_BY_VISITOR],
-		[VisitStatus.APPROVED]: [VisitStatus.APPROVED, VisitStatus.DENIED],
+		[VisitStatus.APPROVED]: [
+			VisitStatus.APPROVED,
+			VisitStatus.CANCELLED_BY_VISITOR,
+			VisitStatus.DENIED,
+		],
 		[VisitStatus.DENIED]: [VisitStatus.DENIED],
 	};
 
