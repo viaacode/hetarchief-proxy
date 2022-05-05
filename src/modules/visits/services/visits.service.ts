@@ -443,12 +443,12 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 
-	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<VisitStatus> {
+	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<VisitStatus> {
 		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
 			FindActualVisitByUserAndSpaceDocument,
 			{
 				userProfileId,
-				spaceId,
+				spaceSlug,
 				now: new Date().toISOString(),
 			}
 		);
