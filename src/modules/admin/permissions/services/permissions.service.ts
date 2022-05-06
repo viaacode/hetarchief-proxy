@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Permission } from '../types';
+import { PermissionResponse } from '../types';
 
 import {
 	GetPermissionsDocument,
@@ -14,7 +14,7 @@ export class PermissionsService {
 
 	constructor(private dataService: DataService) {}
 
-	public async getPermissions(): Promise<Permission[]> {
+	public async getPermissions(): Promise<PermissionResponse[]> {
 		const {
 			data: { users_permission: permissions },
 		} = await this.dataService.execute<GetPermissionsQuery>(GetPermissionsDocument);
