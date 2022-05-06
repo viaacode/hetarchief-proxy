@@ -7,6 +7,7 @@ import config, { configValidationSchema } from '~config';
 
 import { ContentPagesModule } from '~modules/admin/content-pages';
 import { AdminNavigationsModule } from '~modules/admin/navigations';
+import { AdminPermissionsModule } from '~modules/admin/permissions';
 import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AdminUserGroupsModule } from '~modules/admin/user-groups';
 import { AuthModule } from '~modules/auth';
@@ -36,6 +37,7 @@ import { SessionService } from '~shared/services/session.service';
 		}),
 		ScheduleModule.forRoot(),
 		AdminNavigationsModule,
+		AdminPermissionsModule,
 		AdminTranslationsModule,
 		AdminUserGroupsModule,
 		AuthModule,
