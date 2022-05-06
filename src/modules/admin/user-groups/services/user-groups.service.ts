@@ -16,6 +16,7 @@ export class UserGroupsService {
 
 	public adapt(userGroup: GetUserGroupsPermissionsQuery['users_group'][0]): UserGroupsResponse {
 		return {
+			id: userGroup.id,
 			name: userGroup.name,
 			permissions: userGroup.permissions.map((permissionWrap) => ({
 				id: permissionWrap.permission.id,
