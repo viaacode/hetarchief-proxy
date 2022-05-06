@@ -454,7 +454,10 @@ export class VisitsService {
 				now: new Date().toISOString(),
 			}
 		);
-		// return ACCESS, PENDING (pending or approved in the future), NO ACCESS
+		// return 
+		// - PENDING (visit request with status pending or approved in the future)
+		// - ACCESS (approved visit request with the now() time between start and end date)
+		// - NO ACCESS (denied visit request or no visit request)
 		const visit = visitResponse.data.maintainer_visitor_space_request[0];
 
 		if (
