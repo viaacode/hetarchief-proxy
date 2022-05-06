@@ -6,11 +6,12 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { addMinutes, isBefore, parseISO } from 'date-fns';
+import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { find, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
+	AccessStatus,
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
@@ -51,6 +52,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
+import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -443,7 +445,7 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 
-	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<VisitStatus> {
+	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<AccessStatus> {
 		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
 			FindActualVisitByUserAndSpaceDocument,
 			{
@@ -452,11 +454,28 @@ export class VisitsService {
 				now: new Date().toISOString(),
 			}
 		);
+		// return ACCESS, PENDING (pending or approved in the future), NO ACCESS
+		const visit = visitResponse.data.maintainer_visitor_space_request[0];
 
-		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
-			return VisitStatus.DENIED;
+		if (
+			!visit ||
+			[VisitStatus.CANCELLED_BY_VISITOR, VisitStatus.DENIED].includes(
+				visit.status as VisitStatus
+			)
+		) {
+			return AccessStatus.NO_ACCESS;
+		}
+		// visit is Pending or Approved. We only return ACCESS status if the visit is APPROVED and valid right now
+		if (
+			visit.status === VisitStatus.APPROVED &&
+			visit.start_date &&
+			isPast(convertToDate(visit.start_date)) &&
+			visit.end_date &&
+			isFuture(convertToDate(visit.end_date))
+		) {
+			return AccessStatus.ACCESS;
 		}
 
-		return visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus;
+		return AccessStatus.PENDING;
 	}
 }

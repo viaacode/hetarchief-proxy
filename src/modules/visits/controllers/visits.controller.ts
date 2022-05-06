@@ -109,7 +109,7 @@ export class VisitsController {
 	public async getAccessStatus(
 		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<AccessStatus> {
+	): Promise<{ status: AccessStatus }> {
 		return { status: await this.visitsService.getAccessStatus(slug, user.getId()) };
 	}
 
