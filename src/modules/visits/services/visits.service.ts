@@ -26,14 +26,14 @@ import {
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
-	FindActualVisitByUserAndSpaceDocument,
-	FindActualVisitByUserAndSpaceQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
 	FindApprovedEndedVisitsWithoutNotificationQuery,
 	FindApprovedStartedVisitsWithoutNotificationDocument,
 	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindPendingOrApprovedVisitRequestsForUserDocument,
+	FindPendingOrApprovedVisitRequestsForUserQuery,
 	FindVisitByIdDocument,
 	FindVisitByIdQuery,
 	FindVisitsDocument,
@@ -446,26 +446,22 @@ export class VisitsService {
 	}
 
 	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<AccessStatus> {
-		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
-			FindActualVisitByUserAndSpaceDocument,
-			{
-				userProfileId,
-				spaceSlug,
-				now: new Date().toISOString(),
-			}
-		);
-		// return 
+		const visitResponse =
+			await this.dataService.execute<FindPendingOrApprovedVisitRequestsForUserQuery>(
+				FindPendingOrApprovedVisitRequestsForUserDocument,
+				{
+					userProfileId,
+					spaceSlug,
+					now: new Date().toISOString(),
+				}
+			);
+		// return
 		// - PENDING (visit request with status pending or approved in the future)
 		// - ACCESS (approved visit request with the now() time between start and end date)
 		// - NO ACCESS (denied visit request or no visit request)
 		const visit = visitResponse.data.maintainer_visitor_space_request[0];
 
-		if (
-			!visit ||
-			[VisitStatus.CANCELLED_BY_VISITOR, VisitStatus.DENIED].includes(
-				visit.status as VisitStatus
-			)
-		) {
+		if (!visit) {
 			return AccessStatus.NO_ACCESS;
 		}
 		// visit is Pending or Approved. We only return ACCESS status if the visit is APPROVED and valid right now
