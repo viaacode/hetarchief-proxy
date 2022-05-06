@@ -40,7 +40,7 @@ describe('PermissionsController', () => {
 	});
 
 	describe('getPermissions', () => {
-		it('should return the translations', async () => {
+		it('should return the permissions', async () => {
 			mockPermissionsService.getPermissions.mockResolvedValueOnce(mockPermissionsResponse);
 
 			const permissions = await permissionsController.getPermissions();
