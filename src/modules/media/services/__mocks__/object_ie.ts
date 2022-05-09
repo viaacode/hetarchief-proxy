@@ -10,10 +10,6 @@ export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 				premis_identifier: 'WP00178829',
 				premis_relationship: null,
 				schema_is_part_of: null,
-				schema_part_of_archive: null,
-				schema_part_of_episode: null,
-				schema_part_of_season: null,
-				schema_part_of_series: ['Durf te vragen'],
 				schema_copyright_holder: 'vrt',
 				schema_copyright_notice:
 					'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',

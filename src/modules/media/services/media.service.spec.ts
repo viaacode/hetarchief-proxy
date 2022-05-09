@@ -211,7 +211,6 @@ describe('MediaService', () => {
 				'referer'
 			);
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.partOfSeries.length).toBe(1);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
 			expect(response.contactInfo.address.postalCode).toBe('1043');
 			expect(response.copyrightHolder).toEqual('vrt');
