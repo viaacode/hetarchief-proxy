@@ -61,4 +61,23 @@ describe('UserGroupsService', () => {
 			expect(response[0].permissions[0].name).toBe('READ_ALL_SPACES');
 		});
 	});
+
+	describe('updateUserGroupd', () => {
+		it('updates user group permissions', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					delete_users_group_permission: { affected_rows: 1 },
+					insert_users_group_permission: { affected_rows: 2 },
+				},
+			});
+
+			const response = await userGroupsService.updateUserGroups([
+				{ userGroupId: '1', permissionId: '2', hasPermission: false },
+				{ userGroupId: '1', permissionId: '3', hasPermission: true },
+				{ userGroupId: '1', permissionId: '4', hasPermission: true },
+			]);
+			expect(response.deleted).toEqual(1);
+			expect(response.inserted).toEqual(2);
+		});
+	});
 });

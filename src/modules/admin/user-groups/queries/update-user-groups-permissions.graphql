@@ -1,0 +1,14 @@
+mutation updateUserGroupsPermissions(
+	$insertions: [users_group_permission_insert_input!]!
+	$deletions: users_group_permission_bool_exp!
+) {
+	delete_users_group_permission(where: $deletions) {
+		affected_rows
+	}
+	insert_users_group_permission(
+		objects: $insertions
+		on_conflict: { constraint: group_permission_group_id_permission_id_key, update_columns: [] }
+	) {
+		affected_rows
+	}
+}

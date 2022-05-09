@@ -1,6 +1,7 @@
-import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Patch, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { UpdateUserGroupsDto } from '../dto/user-groups.dto';
 import { UserGroupsService } from '../services/user-groups.service';
 import { UserGroupsResponse } from '../types';
 
@@ -20,5 +21,12 @@ export class UserGroupsController {
 	@Get()
 	public async getUserGroups(): Promise<UserGroupsResponse[]> {
 		return this.userGroupsService.getUserGroups();
+	}
+
+	@Patch()
+	public async updateUserGroups(
+		@Body() updateUserGroupsDto: UpdateUserGroupsDto
+	): Promise<{ deleted: number; inserted: number }> {
+		return this.userGroupsService.updateUserGroups(updateUserGroupsDto.updates);
 	}
 }
