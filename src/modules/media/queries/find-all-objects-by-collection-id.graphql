@@ -13,8 +13,6 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 			}
 			schema_name
 			schema_alternate_name
-			schema_part_of_series
-			schema_part_of_episode
 			dcterms_format
 			schema_date_created_lower_bound
 			schema_date_published
