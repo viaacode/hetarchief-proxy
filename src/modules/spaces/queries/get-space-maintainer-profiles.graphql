@@ -1,5 +1,10 @@
 query getSpaceMaintainerProfiles($spaceId: uuid) {
-	maintainer_users_profile(where: { maintainer: { visitor_space: { id: { _eq: $spaceId } } } }) {
+	maintainer_users_profile(
+		where: {
+			maintainer: { visitor_space: { id: { _eq: $spaceId } } }
+			profile: { group: { name: { _eq: "CP_ADMIN" } } }
+		}
+	) {
 		users_profile_id
 		profile {
 			mail

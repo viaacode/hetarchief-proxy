@@ -113,7 +113,7 @@ describe('DataService - no whitelist', () => {
 			});
 		});
 
-		it('should throw an UnauthorizedException when the query is not allowed to be executed', async () => {
+		it('should throw an ForbiddenException when the query is not allowed to be executed', async () => {
 			mockDataPermissionsService.verify.mockReturnValueOnce(false);
 			let error;
 			try {
@@ -122,8 +122,8 @@ describe('DataService - no whitelist', () => {
 				error = e.response;
 			}
 			expect(error).toEqual({
-				error: 'Unauthorized',
-				statusCode: 401,
+				error: 'Forbidden',
+				statusCode: 403,
 				message: 'You are not authorized to execute this query',
 			});
 		});
@@ -153,8 +153,8 @@ describe('DataService - no whitelist', () => {
 				error = e.response;
 			}
 			expect(error).toEqual({
-				error: 'Unauthorized',
-				statusCode: 401,
+				error: 'Forbidden',
+				statusCode: 403,
 				message: 'You are not authorized to execute this query',
 			});
 		});
@@ -240,8 +240,8 @@ describe('DataService - with whitelist', () => {
 				error = e.response;
 			}
 			expect(error).toEqual({
-				error: 'Unauthorized',
-				statusCode: 401,
+				error: 'Forbidden',
+				statusCode: 403,
 				message: 'You are not authorized to execute this query',
 			});
 		});

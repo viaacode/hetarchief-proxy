@@ -6,6 +6,7 @@ import {
 	Header,
 	Headers,
 	Logger,
+	NotFoundException,
 	Param,
 	Post,
 	Query,
@@ -14,7 +15,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { find } from 'lodash';
+import { find, intersection } from 'lodash';
 
 import { getConfig } from '~config';
 
@@ -25,7 +26,7 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/media.dto';
 import { MediaService } from '../services/media.service';
-import { Media, MediaFormat } from '../types';
+import { License, Media, MediaFormat } from '../types';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -93,20 +94,24 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Media> {
+	): Promise<Media | Partial<Media>> {
 		const object = await this.mediaService.findBySchemaIdentifier(id, referer);
 
 		// Check if the user can search in all index (meemoo admin)
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
-		if (
-			!canSearchInAllSpaces &&
-			!(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId))
-		) {
-			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		const userHasAccessToSpace =
+			canSearchInAllSpaces ||
+			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
+
+		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
+			if (!userHasAccessToSpace) {
+				throw new NotFoundException(i18n.t('Object not found'));
+			}
+			return object;
 		}
 
-		return object;
+		return this.applyLicenses(object, userHasAccessToSpace);
 	}
 
 	@Get(':id/export')
@@ -244,5 +249,38 @@ export class MediaController {
 			formatFilter.multiValue.push('film');
 		}
 		return queryDto;
+	}
+
+	protected applyLicenses(object: Media, userHasAccessToSpace: boolean): Media | Partial<Media> {
+		// check licenses
+		if (
+			!object.license ||
+			intersection(object.license, [
+				License.BEZOEKERTOOL_CONTENT,
+				License.BEZOEKERTOOL_METADATA_ALL,
+			]).length === 0
+		) {
+			this.logger.debug(`Object ${object.schemaIdentifier} has no valid license`);
+			// no valid license throws a not found exception(ARC-670)
+			throw new NotFoundException(i18n.t('Object not found'));
+		}
+
+		// no access to visitor space == limited metadata
+		if (!userHasAccessToSpace) {
+			this.logger.debug(
+				`User has no access to visitor space ${object.maintainerId}, only limited metadata allowed`
+			);
+			return this.mediaService.getLimitedMetadata(object);
+		}
+
+		if (!object.license.includes(License.BEZOEKERTOOL_CONTENT)) {
+			// unset representations - user not allowed to view essence
+			this.logger.debug(
+				`Object ${object.schemaIdentifier} has no content license, only metadata is returned`
+			);
+			delete object.representations;
+		}
+
+		return object;
 	}
 }

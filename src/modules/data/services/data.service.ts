@@ -1,10 +1,10 @@
 import path from 'path';
 
 import {
+	ForbiddenException,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
@@ -127,7 +127,7 @@ export class DataService {
 	public async executeClientQuery(queryDto: GraphQlQueryDto): Promise<GraphQlResponse> {
 		// check if query can be executed
 		if (!(await this.isAllowedToExecuteQuery(queryDto, QueryOrigin.CLIENT))) {
-			throw new UnauthorizedException('You are not authorized to execute this query');
+			throw new ForbiddenException('You are not authorized to execute this query');
 		}
 		return this.execute(
 			this.getWhitelistedQuery(queryDto.query, QueryOrigin.CLIENT),

@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
 import { ConfigService } from '@nestjs/config';
 
@@ -71,7 +71,7 @@ const config = (): Configuration => {
 					// whitelist enabled but not permitted
 					callback(null, true);
 				} else {
-					callback(new UnauthorizedException('Request not allowed by CORS'), false);
+					callback(new ForbiddenException('Request not allowed by CORS'), false);
 				}
 			},
 			credentials: true,
@@ -118,6 +118,7 @@ const config = (): Configuration => {
 			.split(',')
 			.map((orgId) => orgId.trim()),
 		rerouteEmailsTo: getEnvValue('REROUTE_EMAILS_TO', false),
+		ignoreObjectLicenses: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 	};
 };
 

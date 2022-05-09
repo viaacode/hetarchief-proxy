@@ -307,6 +307,18 @@ describe('MediaService', () => {
 		});
 	});
 
+	describe('getLimitedMetadata', () => {
+		it('returns a limited metadata set for a media object', () => {
+			const t = mediaService.adapt(mockObjectIe.data.object_ie[0]);
+			const limited = mediaService.getLimitedMetadata(t);
+			expect(limited.keywords).toBeUndefined();
+			expect(limited.representations).toBeUndefined();
+			expect(limited.schemaIdentifier).toEqual(
+				'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793'
+			);
+		});
+	});
+
 	describe('getRelated', () => {
 		it('returns the related objects for a given id and meemooIdentifier', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
