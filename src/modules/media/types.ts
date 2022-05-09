@@ -60,10 +60,6 @@ export interface Media {
 	premisIdentifier: any;
 	premisRelationship: string;
 	isPartOf: string;
-	partOfArchive: string;
-	partOfEpisode: string;
-	partOfSeason: string;
-	partOfSeries: string;
 	maintainerId: string;
 	maintainerName: string;
 	contactInfo: ContactInfo;
