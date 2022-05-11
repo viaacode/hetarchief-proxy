@@ -37,7 +37,23 @@ export class UpdateUserGroupsDto {
 	@ApiProperty({
 		type: () => [UpdatePermission],
 		description: 'The permissionId to add/remove from the user group',
-		example: 'b53def44-7b00-402c-9014-e2fd3e3db06c',
+		example: [
+			{
+				userGroupId: '01ba6e7e-de74-4546-9462-7489aa3ed5a5',
+				permissionId: 'e19e9490-b2b0-4bd5-bb7d-aa930fffcceb',
+				hasPermission: true,
+			},
+			{
+				userGroupId: '01ba6e7e-de74-4546-9462-7489aa3ed5a5',
+				permissionId: 'aca096c1-8a3e-4ee5-823e-c12652c888f2',
+				hasPermission: true,
+			},
+			{
+				userGroupId: '012b353c-1486-45a6-b335-c48ff7484892',
+				permissionId: 'e19e9490-b2b0-4bd5-bb7d-aa930fffcceb',
+				hasPermission: false,
+			},
+		] as UpdatePermission[],
 	})
 	updates: UpdatePermission[];
 }
