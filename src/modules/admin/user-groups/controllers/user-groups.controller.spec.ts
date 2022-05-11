@@ -6,6 +6,7 @@ import { UserGroupsController } from './user-groups.controller';
 
 const mockUserGroupsService: Partial<Record<keyof UserGroupsService, jest.SpyInstance>> = {
 	getUserGroups: jest.fn(),
+	updateUserGroups: jest.fn(),
 };
 
 const mockUserGroupsResponse = [
@@ -22,6 +23,8 @@ const mockUserGroupsResponse = [
 		],
 	},
 ];
+
+const mockUpdateUserGroupsResponse = { inserted: 0, deleted: 0 };
 
 describe('UserGroupsController', () => {
 	let userGroupsController: UserGroupsController;
@@ -52,6 +55,18 @@ describe('UserGroupsController', () => {
 			const permissions = await userGroupsController.getUserGroups();
 
 			expect(permissions).toEqual(mockUserGroupsResponse);
+		});
+	});
+
+	describe('updateUserGroups', () => {
+		it('should update userGroup permissions', async () => {
+			mockUserGroupsService.updateUserGroups.mockResolvedValueOnce(
+				mockUpdateUserGroupsResponse
+			);
+
+			const updates = await userGroupsController.updateUserGroups({ updates: [] });
+
+			expect(updates).toEqual({ inserted: 0, deleted: 0 });
 		});
 	});
 });
