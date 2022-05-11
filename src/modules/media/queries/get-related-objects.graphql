@@ -15,10 +15,6 @@ query getRelatedObjects(
 		premis_identifier
 		premis_relationship
 		schema_is_part_of
-		schema_part_of_archive
-		schema_part_of_episode
-		schema_part_of_season
-		schema_part_of_series
 		maintainer {
 			schema_identifier
 			schema_name
