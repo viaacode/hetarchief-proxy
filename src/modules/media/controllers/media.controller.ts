@@ -6,7 +6,6 @@ import {
 	Header,
 	Headers,
 	Logger,
-	NotFoundException,
 	Param,
 	Post,
 	Query,
@@ -15,7 +14,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { find, intersection } from 'lodash';
+import { compact, find, intersection } from 'lodash';
 
 import { getConfig } from '~config';
 
@@ -25,8 +24,14 @@ import {
 	SearchFilter,
 	ThumbnailQueryDto,
 } from '../dto/media.dto';
+import {
+	ElasticsearchMedia,
+	ElasticsearchResponse,
+	License,
+	Media,
+	MediaFormat,
+} from '../media.types';
 import { MediaService } from '../services/media.service';
-import { License, Media, MediaFormat } from '../types';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -104,14 +109,15 @@ export class MediaController {
 			canSearchInAllSpaces ||
 			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
 
+		if (!userHasAccessToSpace) {
+			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+		}
+
 		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
-			if (!userHasAccessToSpace) {
-				throw new NotFoundException(i18n.t('Object not found'));
-			}
 			return object;
 		}
 
-		return this.applyLicenses(object, userHasAccessToSpace);
+		return this.applyLicensesToObject(object, userHasAccessToSpace) as Media | Partial<Media>;
 	}
 
 	@Get(':id/export')
@@ -213,8 +219,20 @@ export class MediaController {
 		// Filter on format video should also include film format
 		this.checkAndFixFormatFilter(queryDto);
 
-		const media = await this.mediaService.findAll(queryDto, esIndex.toLowerCase(), referer);
-		return media;
+		const searchResult = await this.mediaService.findAll(
+			queryDto,
+			esIndex.toLowerCase(),
+			referer
+		);
+
+		const userHasAccessToSpace =
+			canSearchInAllSpaces || (await this.userHasAccessToVisitorSpaceOrId(user, esIndex));
+
+		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
+			return searchResult;
+		}
+
+		return this.applyLicensesToSearchResult(searchResult, userHasAccessToSpace);
 	}
 
 	/**
@@ -251,36 +269,69 @@ export class MediaController {
 		return queryDto;
 	}
 
-	protected applyLicenses(object: Media, userHasAccessToSpace: boolean): Media | Partial<Media> {
+	protected applyLicensesToObject(
+		object: Media | ElasticsearchMedia,
+		userHasAccessToSpace: boolean
+	): Media | Partial<Media | ElasticsearchMedia> | null {
 		// check licenses
+		const licenses = (object as Media).license || (object as ElasticsearchMedia).schema_license;
+		const schemaIdentifier =
+			(object as Media).schemaIdentifier || (object as ElasticsearchMedia).schema_identifier;
+		const maintainerId =
+			(object as Media).maintainerId || (object as ElasticsearchMedia).schema_maintainer;
 		if (
-			!object.license ||
-			intersection(object.license, [
+			!licenses ||
+			intersection(licenses, [
 				License.BEZOEKERTOOL_CONTENT,
 				License.BEZOEKERTOOL_METADATA_ALL,
 			]).length === 0
 		) {
-			this.logger.debug(`Object ${object.schemaIdentifier} has no valid license`);
+			this.logger.debug(`Object ${schemaIdentifier} has no valid license`);
 			// no valid license throws a not found exception(ARC-670)
-			throw new NotFoundException(i18n.t('Object not found'));
+			return null;
 		}
 
 		// no access to visitor space == limited metadata
 		if (!userHasAccessToSpace) {
 			this.logger.debug(
-				`User has no access to visitor space ${object.maintainerId}, only limited metadata allowed`
+				`User has no access to visitor space ${maintainerId}, only limited metadata allowed`
 			);
-			return this.mediaService.getLimitedMetadata(object);
+			if ((object as Media).schemaIdentifier) {
+				return this.mediaService.getLimitedMetadata(object as Media);
+			} else {
+				return this.mediaService.getLimitedMetadataElastic(object as ElasticsearchMedia);
+			}
 		}
 
-		if (!object.license.includes(License.BEZOEKERTOOL_CONTENT)) {
+		if (!licenses.includes(License.BEZOEKERTOOL_CONTENT)) {
 			// unset representations - user not allowed to view essence
 			this.logger.debug(
-				`Object ${object.schemaIdentifier} has no content license, only metadata is returned`
+				`Object ${schemaIdentifier} has no content license, only metadata is returned`
 			);
-			delete object.representations;
+			delete (object as Media).representations; // No access to files (mp4/mp3)
+			delete (object as Media).thumbnailUrl; // Not allowed to view thumbnail
+
+			// Representations are not included in elasticsearch, so we don't need to delete them
+			delete (object as ElasticsearchMedia)?.schema_thumbnail_url; // Not allowed to view thumbnail
 		}
 
 		return object;
+	}
+
+	protected applyLicensesToSearchResult(
+		result: ElasticsearchResponse,
+		userHasAccessToSpace: boolean
+	): ElasticsearchResponse {
+		result.hits.hits = compact(
+			result.hits.hits.map((object) => {
+				object._source = this.applyLicensesToObject(
+					object._source,
+					userHasAccessToSpace
+				) as ElasticsearchMedia;
+
+				return object;
+			})
+		);
+		return result;
 	}
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../types';
+import { Operator, OrderProperty, SearchFilterField } from '../media.types';
 
 import descriptionSearchQuery from './templates/description-search-query.json';
 import nameSearchQuery from './templates/name-search-query.json';

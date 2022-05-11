@@ -4,7 +4,7 @@ import {
 	OrderProperty,
 	QueryBuilderConfig,
 	SearchFilterField,
-} from '../types';
+} from '../media.types';
 
 import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';

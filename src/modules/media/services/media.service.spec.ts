@@ -5,7 +5,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { Media } from '../types';
+import { Media } from '../media.types';
 
 import { MediaService } from './media.service';
 

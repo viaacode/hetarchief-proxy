@@ -2,8 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 
+import { License, MediaFormat, Operator, SearchFilterField } from '../media.types';
 import { MediaService } from '../services/media.service';
-import { License, MediaFormat, Operator, SearchFilterField } from '../types';
 
 import { MediaController } from './media.controller';
 
