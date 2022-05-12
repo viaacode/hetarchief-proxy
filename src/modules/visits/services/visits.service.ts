@@ -71,7 +71,7 @@ export class VisitsService {
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.DENIED]: [VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED, VisitStatus.APPROVED],
 	};
 
 	constructor(private dataService: DataService) {}
