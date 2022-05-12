@@ -206,6 +206,17 @@ export class QueryBuilder {
 				);
 				return;
 			}
+			// name and description are multi_match fields, but they are allowed to be queried using is/isNot operator
+			if (
+				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
+				[SearchFilterField.ADVANCED_QUERY, SearchFilterField.QUERY].includes(
+					searchFilter.field
+				)
+			) {
+				throw new BadRequestException(
+					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
+				);
+			}
 
 			// // Map frontend filter names to elasticsearch names
 			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
