@@ -135,7 +135,8 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					filter: [
+					filter: [],
+					must: [
 						{
 							term: {
 								dcterms_format: 'video',
