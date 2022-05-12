@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { addHours } from 'date-fns';
+import { addHours, subHours } from 'date-fns';
 
 import { mockCpVisit } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
@@ -12,7 +12,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
-import { Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { AccessStatus, Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -646,12 +646,48 @@ describe('VisitsService', () => {
 	describe('getAccessStatus', () => {
 		it('should get the access status for a space and user', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { maintainer_visitor_space_request: [{ status: VisitStatus.APPROVED }] },
+				data: { maintainer_visitor_space_request: [{ status: VisitStatus.PENDING }] },
 			});
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
-			expect(accessStatus).toEqual(VisitStatus.APPROVED);
+			expect(accessStatus).toEqual(AccessStatus.PENDING);
+		});
+
+		it('should return ACCESS on APPROVED request that is valid now', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [
+						{
+							status: VisitStatus.APPROVED,
+							start_date: subHours(new Date(), 1).toISOString(),
+							end_date: addHours(new Date(), 1).toISOString(),
+						},
+					],
+				},
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus).toEqual(AccessStatus.ACCESS);
+		});
+
+		it('should return PENDING on APPROVED request that is valid in the future', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				data: {
+					maintainer_visitor_space_request: [
+						{
+							status: VisitStatus.APPROVED,
+							start_date: addHours(new Date(), 1).toISOString(),
+							end_date: addHours(new Date(), 2).toISOString(),
+						},
+					],
+				},
+			});
+
+			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
+
+			expect(accessStatus).toEqual(AccessStatus.PENDING);
 		});
 
 		it('should return the access status denied if no actual visit requests were found', async () => {
@@ -661,7 +697,7 @@ describe('VisitsService', () => {
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
-			expect(accessStatus).toEqual(VisitStatus.DENIED);
+			expect(accessStatus).toEqual(AccessStatus.NO_ACCESS);
 		});
 	});
 });
