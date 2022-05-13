@@ -6,11 +6,12 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { addMinutes, isBefore, parseISO } from 'date-fns';
+import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { find, isArray, isEmpty, set } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
+	AccessStatus,
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
@@ -25,14 +26,14 @@ import {
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
-	FindActualVisitByUserAndSpaceDocument,
-	FindActualVisitByUserAndSpaceQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
 	FindApprovedEndedVisitsWithoutNotificationQuery,
 	FindApprovedStartedVisitsWithoutNotificationDocument,
 	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindPendingOrApprovedVisitRequestsForUserDocument,
+	FindPendingOrApprovedVisitRequestsForUserQuery,
 	FindVisitByIdDocument,
 	FindVisitByIdQuery,
 	FindVisitsDocument,
@@ -51,6 +52,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
+import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -71,7 +73,7 @@ export class VisitsService {
 			VisitStatus.CANCELLED_BY_VISITOR,
 			VisitStatus.DENIED,
 		],
-		[VisitStatus.DENIED]: [VisitStatus.DENIED],
+		[VisitStatus.DENIED]: [VisitStatus.DENIED, VisitStatus.APPROVED],
 	};
 
 	constructor(private dataService: DataService) {}
@@ -443,20 +445,36 @@ export class VisitsService {
 		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
 	}
 
-	public async getAccessStatus(spaceId: string, userProfileId: string): Promise<VisitStatus> {
-		const visitResponse = await this.dataService.execute<FindActualVisitByUserAndSpaceQuery>(
-			FindActualVisitByUserAndSpaceDocument,
-			{
-				userProfileId,
-				spaceId,
-				now: new Date().toISOString(),
-			}
-		);
+	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<AccessStatus> {
+		const visitResponse =
+			await this.dataService.execute<FindPendingOrApprovedVisitRequestsForUserQuery>(
+				FindPendingOrApprovedVisitRequestsForUserDocument,
+				{
+					userProfileId,
+					spaceSlug,
+					now: new Date().toISOString(),
+				}
+			);
+		// return
+		// - PENDING (visit request with status pending or approved in the future)
+		// - ACCESS (approved visit request with the now() time between start and end date)
+		// - NO ACCESS (denied visit request or no visit request)
+		const visit = visitResponse.data.maintainer_visitor_space_request[0];
 
-		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
-			return VisitStatus.DENIED;
+		if (!visit) {
+			return AccessStatus.NO_ACCESS;
+		}
+		// visit is Pending or Approved. We only return ACCESS status if the visit is APPROVED and valid right now
+		if (
+			visit.status === VisitStatus.APPROVED &&
+			visit.start_date &&
+			isPast(convertToDate(visit.start_date)) &&
+			visit.end_date &&
+			isFuture(convertToDate(visit.end_date))
+		) {
+			return AccessStatus.ACCESS;
 		}
 
-		return visitResponse.data.maintainer_visitor_space_request[0].status as VisitStatus;
+		return AccessStatus.PENDING;
 	}
 }
