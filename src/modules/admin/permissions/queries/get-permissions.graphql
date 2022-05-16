@@ -1,0 +1,8 @@
+query getPermissions {
+	users_permission {
+		id
+		label
+		name
+		description
+	}
+}

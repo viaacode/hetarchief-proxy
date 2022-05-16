@@ -16,6 +16,12 @@ export enum VisitStatus {
 	CANCELLED_BY_VISITOR = 'CANCELLED_BY_VISITOR',
 }
 
+export enum AccessStatus {
+	ACCESS = 'ACCESS',
+	PENDING = 'PENDING',
+	NO_ACCESS = 'NO_ACCESS',
+}
+
 export enum VisitTimeframe {
 	ACTIVE = 'ACTIVE',
 	PAST = 'PAST',
@@ -86,8 +92,4 @@ export interface Note {
 	authorName?: string;
 	note: string;
 	createdAt: string;
-}
-
-export interface AccessStatus {
-	status: VisitStatus;
 }

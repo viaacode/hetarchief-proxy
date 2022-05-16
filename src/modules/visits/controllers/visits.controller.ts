@@ -97,7 +97,7 @@ export class VisitsController {
 		return visits;
 	}
 
-	@Get('space/:id/access-status')
+	@Get('space/:slug/access-status')
 	@ApiOperation({
 		description:
 			'Get Access status. Returns the highest status (APPROVED>PENDING>..) for a current active visit request. DENIED if no active visit request was found.',
@@ -107,10 +107,10 @@ export class VisitsController {
 		Permission.MANAGE_ACCOUNT
 	)
 	public async getAccessStatus(
-		@Param('id') id: string,
+		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<AccessStatus> {
-		return { status: await this.visitsService.getAccessStatus(id, user.getId()) };
+	): Promise<{ status: AccessStatus }> {
+		return { status: await this.visitsService.getAccessStatus(slug, user.getId()) };
 	}
 
 	@Get(':id')
