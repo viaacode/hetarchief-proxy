@@ -474,7 +474,7 @@ export class ContentPagesService {
 		};
 	}
 
-	public async getContentPagesByIds(contentPageIds: number[]): Promise<Avo.ContentPage.Page[]> {
+	public async getContentPagesByIds(contentPageIds: string[]): Promise<Avo.ContentPage.Page[]> {
 		const response = await this.dataService.execute(this.queries.GetContentByIdDocument, {
 			ids: contentPageIds,
 		});
