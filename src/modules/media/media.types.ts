@@ -58,40 +58,43 @@ export interface Media {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
-	premisRelationship: string;
-	isPartOf: string;
+	premisRelationship?: string;
+	isPartOf?: {
+		serie?: string[];
+		programma?: string[];
+	};
 	maintainerId: string;
 	maintainerName: string;
-	contactInfo: ContactInfo;
-	copyrightHolder: string;
-	copyrightNotice: string;
-	durationInSeconds: number;
-	numberOfPages: number;
+	contactInfo?: ContactInfo;
+	copyrightHolder?: string;
+	copyrightNotice?: string;
+	durationInSeconds?: number;
+	numberOfPages?: number;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
 	description: string;
 	abstract: string;
 	creator: any;
-	actor: any;
+	actor?: any;
 	contributor: any;
 	publisher: any;
 	// spatial: string;
 	// temporal: string;
-	keywords: string;
-	genre: string;
+	keywords: string[];
+	genre: string[];
 	dctermsFormat: string;
-	inLanguage: string;
+	inLanguage: string[];
 	thumbnailUrl: string;
 	// embedUrl: string;
 	alternateName: string;
 	duration: string;
 	license: any;
-	meemooMediaObjectId: string;
+	meemooMediaObjectId?: string;
 	dateCreated: string;
-	dateCreatedLowerBound: string;
+	dateCreatedLowerBound?: string;
 	ebucoreObjectType: string;
-	representations: Representation[];
+	representations?: Representation[];
 }
 
 export enum SearchFilterField {
@@ -158,13 +161,7 @@ export interface ElasticsearchResponse {
 			relation: string;
 		};
 		max_score: number;
-		hits: {
-			_index: string;
-			_type: string;
-			_id: string;
-			_score: number;
-			_source: ElasticsearchMedia;
-		}[];
+		hits: ElasticsearchHit[];
 	};
 	aggregations: {
 		dcterms_format: MediaSearchAggregation<string>;
@@ -173,6 +170,14 @@ export interface ElasticsearchResponse {
 		schema_creator: MediaSearchAggregation<string>;
 		schema_in_language: MediaSearchAggregation<string>;
 	};
+}
+
+export interface ElasticsearchHit {
+	_index: string;
+	_type: string;
+	_id: string;
+	_score: number;
+	_source: ElasticsearchMedia;
 }
 
 export interface ElasticsearchMedia {
@@ -188,7 +193,7 @@ export interface ElasticsearchMedia {
 	schema_description?: string;
 	schema_publisher: any;
 	schema_duration: string;
-	dcterms_medium?: string;
+	dcterms_medium?: string | null;
 	premis_is_part_of?: string;
 	schema_alternate_name?: string;
 	schema_abstract: any;
@@ -204,6 +209,7 @@ export interface ElasticsearchMedia {
 		Bestandsnaam?: string[];
 		Api?: string[];
 		Object_number?: string[];
+		MEDIA_ID?: string[];
 	};
 	schema_keywords: string[];
 	schema_is_part_of?: {

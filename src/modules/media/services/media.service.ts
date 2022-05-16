@@ -145,7 +145,10 @@ export class MediaService {
 		);
 	}
 
-	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+	public async adaptESResponse(
+		esResponse: ElasticsearchResponse,
+		referer: string
+	): Promise<ElasticsearchResponse> {
 		// merge 'film' aggregations with 'video' if need be
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =

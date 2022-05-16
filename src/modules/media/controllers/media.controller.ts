@@ -6,6 +6,7 @@ import {
 	Header,
 	Headers,
 	Logger,
+	NotFoundException,
 	Param,
 	Post,
 	Query,
@@ -110,14 +111,22 @@ export class MediaController {
 			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
 
 		if (!userHasAccessToSpace) {
-			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+			const obj = this.mediaService.getLimitedMetadata(object);
+			return obj;
 		}
 
 		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
 			return object;
 		}
 
-		return this.applyLicensesToObject(object, userHasAccessToSpace) as Media | Partial<Media>;
+		const limitedObject = this.applyLicensesToObject(object, userHasAccessToSpace) as
+			| Media
+			| Partial<Media>;
+
+		if (!limitedObject) {
+			throw new NotFoundException(i18n.t('Object not found'));
+		}
+		return limitedObject;
 	}
 
 	@Get(':id/export')
