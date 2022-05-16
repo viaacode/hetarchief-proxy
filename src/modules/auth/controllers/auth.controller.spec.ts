@@ -9,6 +9,7 @@ import { LoginMessage, LoginResponse } from '../types';
 import { AuthController } from './auth.controller';
 
 import { SpacesModule } from '~modules/spaces';
+import { UsersModule } from '~modules/users';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -28,7 +29,7 @@ describe('AuthController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [AuthController],
-			imports: [ConfigModule, SpacesModule],
+			imports: [ConfigModule, SpacesModule, UsersModule],
 			providers: [IdpService],
 		})
 			.setLogger(new TestingLogger())

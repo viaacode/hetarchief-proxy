@@ -16,6 +16,7 @@ import { getConfig } from '~config';
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, LoginResponse } from '../types';
 
+import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 @ApiTags('Auth')
@@ -23,7 +24,11 @@ import { SessionHelper } from '~shared/auth/session-helper';
 export class AuthController {
 	private logger: Logger = new Logger(AuthController.name, { timestamp: true });
 
-	constructor(private idpService: IdpService, private configService: ConfigService) {}
+	constructor(
+		private idpService: IdpService,
+		private usersService: UsersService,
+		private configService: ConfigService
+	) {}
 
 	@Get('check-login')
 	public async checkLogin(@Session() session: Record<string, any>): Promise<LoginResponse> {
@@ -32,9 +37,10 @@ export class AuthController {
 			/**
 			 * In AVO there is extra logic here:
 			 * - check on accepted terms and conditions
-			 * - Update user last access date
 			 * - Send a log event
 			 */
+			// update last access
+			await this.usersService.updateLastAccessDate(userInfo.id);
 
 			return {
 				userInfo,
