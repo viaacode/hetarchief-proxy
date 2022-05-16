@@ -12,7 +12,7 @@ import {
 	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
 	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { Media } from '~modules/media/types';
+import { Media } from '~modules/media/media.types';
 
 export enum AvoOrHetArchief {
 	avo = 'avo',

@@ -58,40 +58,43 @@ export interface Media {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
-	premisRelationship: string;
-	isPartOf: string;
+	premisRelationship?: string;
+	isPartOf?: {
+		serie?: string[];
+		programma?: string[];
+	};
 	maintainerId: string;
 	maintainerName: string;
-	contactInfo: ContactInfo;
-	copyrightHolder: string;
-	copyrightNotice: string;
-	durationInSeconds: number;
-	numberOfPages: number;
+	contactInfo?: ContactInfo;
+	copyrightHolder?: string;
+	copyrightNotice?: string;
+	durationInSeconds?: number;
+	numberOfPages?: number;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
 	description: string;
 	abstract: string;
 	creator: any;
-	actor: any;
+	actor?: any;
 	contributor: any;
 	publisher: any;
 	// spatial: string;
 	// temporal: string;
-	keywords: string;
-	genre: string;
+	keywords: string[];
+	genre: string[];
 	dctermsFormat: string;
-	inLanguage: string;
+	inLanguage: string[];
 	thumbnailUrl: string;
 	// embedUrl: string;
 	alternateName: string;
 	duration: string;
 	license: any;
-	meemooMediaObjectId: string;
+	meemooMediaObjectId?: string;
 	dateCreated: string;
-	dateCreatedLowerBound: string;
+	dateCreatedLowerBound?: string;
 	ebucoreObjectType: string;
-	representations: Representation[];
+	representations?: Representation[];
 }
 
 export enum SearchFilterField {
@@ -132,4 +135,101 @@ export enum OrderProperty {
 export enum License {
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
+}
+
+export interface MediaSearchAggregation<T> {
+	buckets: {
+		key: T;
+		doc_count: number;
+	}[];
+	doc_count_error_upper_bound: number;
+	sum_other_doc_count: number;
+}
+
+export interface ElasticsearchResponse {
+	took: number;
+	timed_out: boolean;
+	_shards: {
+		total: number;
+		successful: number;
+		skipped: number;
+		failed: number;
+	};
+	hits: {
+		total: {
+			value: number;
+			relation: string;
+		};
+		max_score: number;
+		hits: ElasticsearchHit[];
+	};
+	aggregations: {
+		dcterms_format: MediaSearchAggregation<string>;
+		dcterms_medium: MediaSearchAggregation<string>;
+		schema_genre: MediaSearchAggregation<string>;
+		schema_creator: MediaSearchAggregation<string>;
+		schema_in_language: MediaSearchAggregation<string>;
+	};
+}
+
+export interface ElasticsearchHit {
+	_index: string;
+	_type: string;
+	_id: string;
+	_score: number;
+	_source: ElasticsearchMedia;
+}
+
+export interface ElasticsearchMedia {
+	ebucore_object_type: any;
+	schema_in_language: string[];
+	dcterms_available: string;
+	meemoo_identifier: string;
+	schema_creator?: {
+		Maker?: string[];
+		Archiefvormer?: string[];
+	};
+	schema_identifier: string;
+	schema_description?: string;
+	schema_publisher: any;
+	schema_duration: string;
+	dcterms_medium?: string | null;
+	premis_is_part_of?: string;
+	schema_alternate_name?: string;
+	schema_abstract: any;
+	premis_identifier?: {
+		Afbeelding?: string[];
+		Objectnaam?: string[];
+		object_nummer?: string[];
+		kp_productie_id?: string[];
+		kp_show_id?: string[];
+		Inventarisnummer?: string[];
+		batch?: string[];
+		Acquisition_number?: string[];
+		Bestandsnaam?: string[];
+		Api?: string[];
+		Object_number?: string[];
+		MEDIA_ID?: string[];
+	};
+	schema_keywords: string[];
+	schema_is_part_of?: {
+		archief?: string[];
+		reeks?: string[];
+		alternatief?: string[];
+		serie?: string[];
+	};
+	schema_genre: string[];
+	schema_date_published?: string;
+	schema_license: string[];
+	schema_date_created?: string;
+	schema_contributor?: {
+		Voorzitter: string[];
+	};
+	schema_maintainer: {
+		schema_identifier: string;
+		schema_name: string;
+	}[];
+	schema_thumbnail_url: string;
+	dcterms_format: string;
+	schema_name: string;
 }
