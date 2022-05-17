@@ -11,7 +11,8 @@ import { Permission, User } from '~modules/users/types';
 type IsAllowed = (user: User, query: string, variables: any) => Promise<boolean>;
 
 function hasPermission(user: User, permissionName: Permission): boolean {
-	return get(user, 'profile.permissions', []).includes(permissionName);
+	const permissions = get(user, 'profile.permissions') || get(user, 'permissions') || [];
+	return permissions.includes(permissionName);
 }
 
 function or(...permissionNames: Permission[]): IsAllowed {
