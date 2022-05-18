@@ -1,6 +1,7 @@
 query getUserGroupsPermissions {
 	users_group {
 		id
+		label
 		name
 		permissions {
 			permission {
