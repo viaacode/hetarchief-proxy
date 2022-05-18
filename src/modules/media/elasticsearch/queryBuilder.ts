@@ -206,7 +206,10 @@ export class QueryBuilder {
 				);
 				return;
 			}
-			// name and description are multi_match fields, but they are allowed to be queried using is/isNot operator
+			/**
+			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
+			 * name and description are also multi_match fields, but they are allowed to be queried using is/isNot operator
+			 */
 			if (
 				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
 				[SearchFilterField.ADVANCED_QUERY, SearchFilterField.QUERY].includes(
