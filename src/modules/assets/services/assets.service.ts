@@ -127,7 +127,7 @@ export class AssetsService {
 			parsedFilename.ext
 		}`;
 
-		// Save meta info in the database so we can find this file when we implement the asset library
+		// Save meta info in the database, so we can find this file when we implement the asset library
 		const url = await this.uploadToObjectStore(key, file);
 
 		// Remove temp file from temp folder, since it should be uploaded to the asset server now
