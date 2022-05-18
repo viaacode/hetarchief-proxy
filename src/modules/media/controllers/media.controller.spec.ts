@@ -1,14 +1,28 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
+import { cloneDeep } from 'lodash';
 
+import {
+	ElasticsearchMedia,
+	ElasticsearchResponse,
+	License,
+	Media,
+	MediaFormat,
+	Operator,
+	SearchFilterField,
+} from '../media.types';
 import { MediaService } from '../services/media.service';
-import { License, MediaFormat, Operator, SearchFilterField } from '../types';
 
 import { MediaController } from './media.controller';
 
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
+import {
+	mockElasticObject1,
+	mockElasticObject2,
+	mockMediaObject1,
+} from '~modules/media/__mocks__/media-object-mocks';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -16,23 +30,15 @@ import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
-const getMockMediaResponse = () => ({
-	hits: {
-		total: {
-			value: 2,
+const getMockMediaResponse = () =>
+	cloneDeep({
+		hits: {
+			total: {
+				value: 2,
+			},
+			hits: [mockElasticObject1, mockElasticObject2],
 		},
-		hits: [
-			{
-				_id: '4f1mg9x363',
-				schema_name: 'Op de boerderij',
-			},
-			{
-				_id: '8911p09j1g',
-				schema_name: 'Durf te vragen R002 A0001',
-			},
-		],
-	},
-});
+	});
 
 const mockRequest = { path: '/media', headers: {} } as unknown as Request;
 
@@ -62,7 +68,29 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	convertObjectToXml: jest.fn(),
 	getRelated: jest.fn(),
 	getSimilar: jest.fn(),
-	getLimitedMetadata: jest.fn(),
+	getLimitedMetadata: jest.fn().mockImplementation(
+		(mediaObject: Media): Partial<Media> => ({
+			schemaIdentifier: mediaObject.schemaIdentifier,
+			premisIdentifier: mediaObject.premisIdentifier,
+			maintainerName: mediaObject.maintainerName,
+			name: mediaObject.name,
+			alternateName: mediaObject.alternateName,
+			dctermsFormat: mediaObject.dctermsFormat,
+			dateCreatedLowerBound: mediaObject.dateCreatedLowerBound,
+			datePublished: mediaObject.datePublished,
+		})
+	),
+	getLimitedMetadataElastic: jest.fn().mockImplementation(
+		(mediaObject: ElasticsearchMedia): Partial<ElasticsearchMedia> => ({
+			schema_identifier: mediaObject.schema_identifier,
+			premis_identifier: mediaObject.premis_identifier,
+			schema_name: mediaObject.schema_name,
+			schema_alternate_name: mediaObject.schema_alternate_name,
+			dcterms_format: mediaObject.dcterms_format,
+			schema_date_created: mediaObject.schema_date_created,
+			schema_date_published: mediaObject.schema_date_published,
+		})
+	),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
@@ -116,6 +144,7 @@ describe('MediaController', () => {
 	});
 
 	afterEach(() => {
+		mockConfigService.get.mockRestore();
 		mockVisitsService.hasAccess.mockRestore();
 		mockMediaService.findAll.mockRestore();
 		mockMediaService.getSimilar.mockRestore();
@@ -166,24 +195,25 @@ describe('MediaController', () => {
 	describe('getMediaById', () => {
 		it('should return a media item by id', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [License.BEZOEKERTOOL_CONTENT],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+
 			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
+
 			expect(media).toBeDefined();
 		});
 
 		it('should throw a notfound exception if the object has no valid license', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			let error: any;
 			try {
@@ -191,68 +221,65 @@ describe('MediaController', () => {
 			} catch (err) {
 				error = err;
 			}
+
 			expect(error.response.message).toEqual('Object not found');
 		});
 
 		it('should return limited metadata if the user no longer has access', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [License.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockMediaService.getLimitedMetadata.mockReturnValueOnce({
-				schemaIdentifier: 'limited-1',
-			});
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
-			expect(media.schemaIdentifier).toEqual('limited-1');
+
+			expect(media.schemaIdentifier).toEqual(mockMediaObject1.schemaIdentifier);
+			expect(media.thumbnailUrl).toBeUndefined();
+			expect(media.representations).toBeUndefined();
 		});
 
 		it('should return full metadata without essence if the object has no content license', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [License.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
+
 			expect(media.representations).toBeUndefined();
 		});
 
-		it('should throw a notfoundexception if licenses are ignored but the user does not have access', async () => {
+		it('should return limited metadata if licenses are ignored but the user does not have access', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
-			mockConfigService.get.mockReturnValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
 
-			let error: any;
-			try {
-				await mediaController.getMediaById('referer', '1', mockSessionUser);
-			} catch (err) {
-				error = err;
-			}
+			const media = await mediaController.getMediaById('referer', '1', mockSessionUser);
 
-			expect(error.response.message).toEqual('Object not found');
+			expect(media.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
+			expect(media.thumbnailUrl).toBeUndefined();
+			expect(media.representations).toBeUndefined();
 		});
 
 		it('should return the object without a valid license if licenses are ignored', async () => {
 			const mockResponse = {
-				_id: '8911p09j1g',
-				name: 'Durf te vragen R002 A0001',
+				...mockMediaObject1,
 				license: [],
 			};
 			mockMediaService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
 
 			const result = await mediaController.getMediaById('referer', '1', mockSessionUser);
 
@@ -266,6 +293,7 @@ describe('MediaController', () => {
 				maintainerId: 'or-vrt',
 			});
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
 			mockMediaService.convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
@@ -278,6 +306,7 @@ describe('MediaController', () => {
 				maintainerId: 'or-vrt',
 			});
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			let error: any;
 			try {
@@ -296,6 +325,7 @@ describe('MediaController', () => {
 			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
 			mockMediaService.getRelated.mockResolvedValueOnce(mockResponse);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+
 			const media = await mediaController.getRelated(
 				'referer',
 				'es-index-1',
@@ -355,6 +385,8 @@ describe('MediaController', () => {
 		it('should return all media items in a specific index', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
 				{ filters: [] },
@@ -368,6 +400,7 @@ describe('MediaController', () => {
 		it('should throw forbidden exception if user does not have an active visit request', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			let error: any;
 			try {
@@ -386,6 +419,8 @@ describe('MediaController', () => {
 		it('should return media objects if user is the cp admin of the space', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
 				{ filters: [] },
@@ -402,6 +437,8 @@ describe('MediaController', () => {
 		it('should return media objects if user is a meemoo admin', async () => {
 			mockMediaService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
 			const media = await mediaController.getMediaOnIndex(
 				'referer',
 				{ filters: [] },
@@ -413,6 +450,65 @@ describe('MediaController', () => {
 			);
 			expect(media.hits.total.value).toEqual(2);
 			expect(media.hits.hits.length).toEqual(2);
+		});
+
+		it('should not return thumbnail if object does not have content license', async () => {
+			mockMediaService.findAll.mockResolvedValueOnce({
+				hits: {
+					total: {
+						value: 1,
+					},
+					hits: [
+						{
+							...mockElasticObject1,
+							_source: {
+								...mockElasticObject1._source,
+								schema_license: [License.BEZOEKERTOOL_METADATA_ALL],
+							},
+						},
+					],
+				},
+			});
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
+			const media: ElasticsearchResponse = await mediaController.getMediaOnIndex(
+				'referer',
+				{ filters: [] },
+				'or-id-maintainer-1',
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.SEARCH_ALL_OBJECTS],
+				})
+			);
+			expect(media.hits.total.value).toEqual(1);
+			expect(media.hits.hits.length).toEqual(1);
+			expect(media.hits.hits[0]._source.schema_thumbnail_url).toBeUndefined();
+		});
+
+		it('should not return thumbnail if object does not have any licenses', async () => {
+			mockMediaService.findAll.mockResolvedValueOnce({
+				hits: {
+					total: {
+						value: 0,
+					},
+					hits: [],
+				},
+			});
+			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
+			const media: ElasticsearchResponse = await mediaController.getMediaOnIndex(
+				'referer',
+				{ filters: [] },
+				'or-id-maintainer-1',
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.SEARCH_ALL_OBJECTS],
+				})
+			);
+			expect(media.hits.total.value).toEqual(0);
+			expect(media.hits.hits.length).toEqual(0);
 		});
 	});
 

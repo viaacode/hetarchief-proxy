@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilter } from '../dto/media.dto';
-import { Operator, OrderProperty, QueryBuilderConfig, SearchFilterField } from '../types';
+import { Operator, OrderProperty, QueryBuilderConfig, SearchFilterField } from '../media.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -218,7 +218,7 @@ export class QueryBuilder {
 				);
 			}
 
-			// // Map frontend filter names to elasticsearch names
+			// Map frontend filter names to elasticsearch names
 			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
 			if (!elasticKey) {
 				throw new InternalServerErrorException(
