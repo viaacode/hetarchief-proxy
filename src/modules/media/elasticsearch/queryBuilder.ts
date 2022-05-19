@@ -186,7 +186,10 @@ export class QueryBuilder {
 		_.forEach(filters, (searchFilter: SearchFilter) => {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
-			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
+			if (
+				this.isFuzzyOperator(searchFilter.operator) &&
+				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)
+			) {
 				if (!searchFilter.value) {
 					throw new BadRequestException(
 						`Value cannot be empty when filtering on field '${searchFilter.field}'`
@@ -202,6 +205,20 @@ export class QueryBuilder {
 					})
 				);
 				return;
+			}
+			/**
+			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
+			 * name and description are also multi_match fields, but they are allowed to be queried using is/isNot operator
+			 */
+			if (
+				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
+				[SearchFilterField.ADVANCED_QUERY, SearchFilterField.QUERY].includes(
+					searchFilter.field
+				)
+			) {
+				throw new BadRequestException(
+					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
+				);
 			}
 
 			// Map frontend filter names to elasticsearch names
@@ -293,5 +310,9 @@ export class QueryBuilder {
 	 */
 	private static aggSuffix(prop: SearchFilterField): string {
 		return this.config.NEEDS_AGG_SUFFIX[prop] ? `.${this.config.NEEDS_AGG_SUFFIX[prop]}` : '';
+	}
+
+	public static isFuzzyOperator(operator: Operator): boolean {
+		return [Operator.CONTAINS, Operator.CONTAINS_NOT].includes(operator);
 	}
 }
