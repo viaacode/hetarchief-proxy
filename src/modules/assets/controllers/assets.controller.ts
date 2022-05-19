@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	Body,
 	Controller,
 	Delete,
 	InternalServerErrorException,
@@ -13,6 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { DeleteAssetDto } from '~modules/assets/dto/assets.dto';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { Permission } from '~modules/users/types';
@@ -80,22 +82,18 @@ export class AssetsController {
 	 */
 	@Delete('delete')
 	@UseGuards(LoggedInGuard)
-	async deleteAsset(body: { url: string }): Promise<{ status: 'deleted' } | BadRequestException> {
-		if (!body || !body.url) {
-			throw new BadRequestException(
-				'the body must contain the url of the to-be-deleted asset  {url: string}'
-			);
-		}
-
+	async deleteAsset(
+		@Body() deleteAssetDto: DeleteAssetDto
+	): Promise<{ status: 'deleted' } | BadRequestException> {
 		try {
-			await this.assetsService.delete(body.url);
+			await this.assetsService.delete(deleteAssetDto.url);
 			return { status: 'deleted' };
 		} catch (err) {
 			const error = new InternalServerErrorException({
 				message: 'Failed to delete asset file',
 				innerException: err,
 				additionalInfo: {
-					body,
+					body: deleteAssetDto,
 				},
 			});
 			this.logger.error(error);
