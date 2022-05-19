@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 
@@ -11,7 +11,7 @@ import { DataModule } from '~modules/data';
 @Module({
 	controllers: [SpacesController],
 	imports: [
-		DataModule,
+		forwardRef(() => DataModule),
 		MulterModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: async (configService: ConfigService) => configService.get('multerOptions'),

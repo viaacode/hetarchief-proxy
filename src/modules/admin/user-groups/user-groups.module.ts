@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { UserGroupsController } from './controllers/user-groups.controller';
 import { UserGroupsService } from './services/user-groups.service';
@@ -6,7 +6,7 @@ import { UserGroupsService } from './services/user-groups.service';
 import { DataModule } from '~modules/data';
 
 @Module({
-	imports: [DataModule],
+	imports: [forwardRef(() => DataModule)],
 	controllers: [UserGroupsController],
 	providers: [UserGroupsService],
 })

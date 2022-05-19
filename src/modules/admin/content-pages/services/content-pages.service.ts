@@ -1,4 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+	forwardRef,
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Avo } from '@viaa/avo2-types';
@@ -73,7 +79,7 @@ export class ContentPagesService {
 	private fetchSearchQueryAvo: FetchSearchQueryFunctionAvo | null = null;
 
 	constructor(
-		protected dataService: DataService,
+		@Inject(forwardRef(() => DataService)) protected dataService: DataService,
 		protected configService: ConfigService,
 		protected playerTicketService: PlayerTicketService,
 		protected organisationsService: OrganisationsService

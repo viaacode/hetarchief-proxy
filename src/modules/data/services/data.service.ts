@@ -1,20 +1,20 @@
-import path from 'path';
+import * as fs from 'fs';
 
 import {
 	ForbiddenException,
+	forwardRef,
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import fse from 'fs-extra';
 import got, { Got } from 'got';
 import { DocumentNode } from 'graphql';
 import { print } from 'graphql/language/printer';
 
 import { getConfig } from '~config';
 
-import { extractNameRegex } from '../data.consts';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
@@ -28,10 +28,11 @@ export class DataService {
 	private gotInstance: Got;
 
 	private whitelistEnabled: boolean;
-	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
+	private whitelist: Partial<Record<QueryOrigin, Record<string, string>>> = {};
 
 	constructor(
 		private configService: ConfigService,
+		@Inject(forwardRef(() => DataPermissionsService))
 		private dataPermissionsService: DataPermissionsService
 	) {
 		if (configService.get('environment') !== 'production') {
@@ -50,25 +51,29 @@ export class DataService {
 			responseType: 'json',
 		});
 
+		this.initWhitelist();
+	}
+
+	public async initWhitelist(): Promise<void> {
 		this.whitelistEnabled = getConfig(this.configService, 'graphQlEnableWhitelist');
 
-		const proxyWhitelistPath = path.join(
-			__dirname,
-			'../../../../../scripts/proxy-whitelist.json'
-		);
-		const adminCoreWhitelistPath = path.join(
-			__dirname,
-			'../../../../../scripts/admin-core-whitelist-hetarchief.json'
-		);
-
-		this.whitelist = {
-			[QueryOrigin.PROXY]: fse.existsSync(proxyWhitelistPath)
-				? JSON.parse(fse.readFileSync(proxyWhitelistPath, { encoding: 'utf8' }))
-				: {},
-			[QueryOrigin.ADMIN_CORE]: fse.existsSync(adminCoreWhitelistPath)
-				? JSON.parse(fse.readFileSync(adminCoreWhitelistPath, { encoding: 'utf8' }))
-				: {},
+		const whitelistFiles: Record<QueryOrigin, string[]> = {
+			PROXY: ['scripts/proxy-whitelist.json', 'scripts/proxy-whitelist-hetarchief.json'],
+			ADMIN_CORE: ['scripts/admin-core-whitelist-hetarchief.json'],
 		};
+
+		Object.keys(whitelistFiles).forEach((whitelistKey) => {
+			const whitelistPaths = whitelistFiles[whitelistKey];
+			whitelistPaths.forEach((whitelistPath) => {
+				const whitelistFileContent = fs.existsSync(whitelistPath)
+					? fs.readFileSync(whitelistPath, { encoding: 'utf-8' }).toString()
+					: '{}';
+				this.whitelist[whitelistKey] = {
+					...(this.whitelist[whitelistKey] || {}),
+					...JSON.parse(whitelistFileContent),
+				};
+			});
+		});
 	}
 
 	/**

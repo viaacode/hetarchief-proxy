@@ -95,11 +95,13 @@ describe('DataService - no whitelist', () => {
 	describe('isAllowedToExecuteQuery', () => {
 		it('should allow a query when permissions are verified', async () => {
 			mockDataPermissionsService.verify.mockResolvedValueOnce(true);
+
 			const result = await dataService.isAllowedToExecuteQuery(
 				mockUser,
 				mockQuery,
 				QueryOrigin.ADMIN_CORE
 			);
+
 			expect(result).toEqual(true);
 			expect(mockDataPermissionsService.verify).toHaveBeenCalled();
 		});
@@ -150,7 +152,7 @@ describe('DataService - no whitelist', () => {
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query: ',
+				message: 'You are not authorized to execute this query: testQuery',
 			});
 		});
 
@@ -181,7 +183,7 @@ describe('DataService - no whitelist', () => {
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query',
+				message: 'You are not authorized to execute this query: testQuery',
 			});
 		});
 
@@ -243,9 +245,11 @@ describe('DataService - with whitelist', () => {
 			});
 			dataService.setWhitelistEnabled(true);
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
+
 			const result = await dataService.executeClientQuery(mockUser, {
-				query: 'query getClientQuery()',
+				query: 'query getUsers(...',
 			});
+
 			expect(result).toEqual({
 				data: 'ok',
 			});
@@ -268,7 +272,7 @@ describe('DataService - with whitelist', () => {
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query',
+				message: 'You are not authorized to execute this query: unknown',
 			});
 		});
 	});
