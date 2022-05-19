@@ -6,21 +6,23 @@ import {
 	Logger,
 	Post,
 	Req,
+	UploadedFile,
 	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { Avo } from '@viaa/avo2-types';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { SessionUser } from '~shared/decorators/user.decorator';
+import { Permission } from '~modules/users/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 // @UseGuards(LoggedInGuard)
-@ApiTags('Permissions')
-@Controller('admin/permissions')
-// @RequireAllPermissions(Permission.EDIT_PERMISSION_GROUPS)
+@ApiTags('Assets')
+@Controller('assets')
+// @RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 export class AssetsController {
 	private logger: Logger = new Logger(AssetsController.name, { timestamp: true });
 
@@ -30,27 +32,42 @@ export class AssetsController {
 	 * Upload a file to the asset server and track it in the asset table in graphql
 	 */
 	@Post('upload')
-	@UseGuards(LoggedInGuard)
-	async uploadAsset(
-		@Req() request: Request & { files: Express.Multer.File[] }
-	): Promise<{ url: string }> {
-		if (!request.files || !request.files.length) {
-			throw new BadRequestException('The request should contain some files to upload');
+	@UseInterceptors(FileInterceptor('file'))
+	@ApiOperation({
+		description: 'Upload a file and get back a url',
+	})
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				file: {
+					type: 'string',
+					format: 'binary',
+				},
+			},
+		},
+	})
+	// @UseGuards(LoggedInGuard)
+	// @RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
+	async uploadAsset(@UploadedFile() file: Express.Multer.File): Promise<{ url: string }> {
+		if (!file) {
+			throw new BadRequestException('The request should contain a file to upload');
 		}
 
 		try {
 			return {
-				url: await this.assetsService.upload(
-					AssetFileType.CONTENT_PAGE_IMAGE,
-					request.files[0]
-				),
+				url: await this.assetsService.upload(AssetFileType.CONTENT_PAGE_IMAGE, file),
 			};
 		} catch (err) {
 			const error = new InternalServerErrorException({
 				message: 'Failed to upload file to asset server',
 				innerException: err,
 				additionalInfo: {
-					files: request?.files,
+					file: {
+						...file,
+						buffer: '<<omitted>>',
+					},
 				},
 			});
 			this.logger.error(error);
