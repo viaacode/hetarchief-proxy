@@ -5,6 +5,7 @@ const fse: any = jest.createMockFromModule('fs-extra');
 // what the files on the "mock" filesystem should look like when any of the
 // `fse` APIs are used.
 let mockFiles = Object.create(null);
+
 function __setMockFiles(newMockFiles) {
 	mockFiles = newMockFiles;
 }
@@ -24,6 +25,7 @@ const readFileSync = (path: string): string | null => {
 
 fse.__setMockFiles = __setMockFiles;
 fse.existsSync = (): boolean => true;
+fse.unlink = (): Promise<void> => Promise.resolve();
 fse.readFileSync = readFileSync;
 
 module.exports = fse;

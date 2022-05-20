@@ -172,7 +172,7 @@ export class AssetsService {
 				this.logger.error(error);
 				reject(error);
 			}
-			fse.unlink(tmpFilePath).catch((err) =>
+			fse.unlink(tmpFilePath)?.catch((err) =>
 				this.logger.error({
 					message: 'Failed to remove file from tmp folder after upload to s3',
 					innerException: err,

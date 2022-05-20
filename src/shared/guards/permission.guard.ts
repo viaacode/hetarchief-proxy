@@ -19,9 +19,6 @@ export class PermissionGuard implements CanActivate {
 	constructor(private reflector: Reflector) {}
 
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-		// TODO remove when stop working on the admin-core
-		return true;
-
 		// required permissions
 		const requiredPermissionsClass =
 			this.reflector.get<Permission[]>('requiredPermissions', context.getClass()) || [];

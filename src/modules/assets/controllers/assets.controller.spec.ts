@@ -37,9 +37,7 @@ describe('AssetsController', () => {
 		it('should return the asset url', async () => {
 			mockAssetsService.upload.mockResolvedValueOnce(mockUploadUrl);
 
-			const response = await assetsController.uploadAsset({
-				files: [{} as Express.Multer.File],
-			} as Request & { files: Express.Multer.File[] });
+			const response = await assetsController.uploadAsset({} as Express.Multer.File);
 
 			expect(response).toEqual({
 				url: mockUploadUrl,
