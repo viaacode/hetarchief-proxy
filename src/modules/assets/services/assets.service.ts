@@ -127,25 +127,19 @@ export class AssetsService {
 			parsedFilename.ext
 		}`;
 
-		// Save meta info in the database so we can find this file when we implement the asset library
-		const url = await this.uploadToObjectStore(key, file);
-
-		// Remove temp file from temp folder, since it should be uploaded to the asset server now
-		await fse.unlink(file.path);
-		return url;
+		return this.uploadToObjectStore(key, file);
 	}
 
 	public async uploadToObjectStore(key: string, file: Express.Multer.File): Promise<string> {
-		const [s3Client, fileContents] = await Promise.all([
-			this.getS3Client(),
-			fse.readFile(file.path),
-		]);
-		return new Promise<string>((resolve, reject) => {
+		const s3Client = await this.getS3Client();
+		const tmpFilePath = path.join(__dirname, '../../../../..', file.path);
+		// eslint-disable-next-line no-async-promise-executor
+		return new Promise<string>(async (resolve, reject) => {
 			try {
 				s3Client.putObject(
 					{
 						Key: key,
-						Body: fileContents,
+						Body: file.buffer || (await fse.readFile(tmpFilePath)),
 						ACL: 'public-read',
 						ContentType: file.mimetype,
 						Bucket: getConfig(this.configService, 'assetServerBucketName'),
@@ -178,6 +172,12 @@ export class AssetsService {
 				this.logger.error(error);
 				reject(error);
 			}
+			fse.unlink(tmpFilePath)?.catch((err) =>
+				this.logger.error({
+					message: 'Failed to remove file from tmp folder after upload to s3',
+					innerException: err,
+				})
+			);
 		});
 	}
 

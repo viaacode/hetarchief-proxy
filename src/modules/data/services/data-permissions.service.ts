@@ -26,7 +26,7 @@ async function canInsertContentBlocks(user: User, query: string, variables: any)
 		return true;
 	}
 
-	const contentPageIds: number[] = variables.contentBlocks.map(
+	const contentPageIds: number[] = variables.content_blocks.map(
 		(block: Avo.ContentPage.Block) => block.content_id
 	);
 	const contentPages: Avo.ContentPage.Page[] =

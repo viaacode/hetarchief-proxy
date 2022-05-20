@@ -122,7 +122,7 @@ export class ContentPagesService {
 			),
 			userProfileId: gqlContentPage?.user_profile_id,
 			userGroupIds: gqlContentPage?.user_group_ids,
-			contentBlocks: (
+			content_blocks: (
 				(gqlContentPage as any)?.content_blocks ||
 				(gqlContentPage as any)?.contentBlockssBycontentId ||
 				[]
@@ -149,9 +149,9 @@ export class ContentPagesService {
 		/* istanbul ignore next */
 		return {
 			id: contentBlock?.id,
-			blockType: contentBlock?.content_block_type,
-			createdAt: contentBlock?.created_at,
-			updatedAt: contentBlock?.updated_at,
+			content_block_type: contentBlock?.content_block_type,
+			created_at: contentBlock?.created_at,
+			updated_at: contentBlock?.updated_at,
 			position: contentBlock?.position,
 			variables: contentBlock?.variables,
 		};
@@ -171,7 +171,7 @@ export class ContentPagesService {
 			fullName: mergedUser?.first_name + ' ' + mergedUser?.last_name,
 			firstName: mergedUser?.first_name,
 			lastName: mergedUser?.last_name,
-			groupId: mergedUser?.role.id || mergedUser?.group.id,
+			groupId: mergedUser?.role?.id || mergedUser?.group?.id,
 		};
 	}
 
@@ -288,7 +288,7 @@ export class ContentPagesService {
 			path,
 		});
 		const contentPage: GqlContentPage | undefined =
-			get(response, 'data.cms_content[0]') || get(response, 'data.app_content[0]');
+			get(response, 'data.cms_content[0]') || get(response, 'data.app_content_page[0]');
 
 		return this.adaptContentPage(contentPage);
 	}
@@ -355,7 +355,7 @@ export class ContentPagesService {
 
 	public async fetchContentPages(
 		withBlock: boolean,
-		userGroupIds: number[],
+		userGroupIds: (string | number)[],
 		contentType: string,
 		labelIds: number[],
 		selectedLabelIds: number[],
@@ -526,8 +526,8 @@ export class ContentPagesService {
 	}
 
 	public async resolveMediaTileItemsInPage(contentPage: ContentPage, request: Request) {
-		const mediaGridBlocks = contentPage.contentBlocks.filter(
-			(contentBlock) => contentBlock.blockType === 'MEDIA_GRID'
+		const mediaGridBlocks = contentPage.content_blocks.filter(
+			(contentBlock) => contentBlock.content_block_type === 'MEDIA_GRID'
 		);
 		if (mediaGridBlocks.length) {
 			await promiseUtils.mapLimit(mediaGridBlocks, 2, async (mediaGridBlock: any) => {
@@ -567,8 +567,8 @@ export class ContentPagesService {
 	}
 
 	public async resolveMediaPlayersInPage(contentPage: ContentPage, request: Request) {
-		const mediaPlayerBlocks = contentPage.contentBlocks.filter((contentBlock) =>
-			keys(MEDIA_PLAYER_BLOCKS).includes(contentBlock.blockType)
+		const mediaPlayerBlocks = contentPage.content_blocks.filter((contentBlock) =>
+			keys(MEDIA_PLAYER_BLOCKS).includes(contentBlock.content_block_type)
 		);
 		if (mediaPlayerBlocks.length) {
 			await promiseUtils.mapLimit(mediaPlayerBlocks, 2, async (mediaPlayerBlock: any) => {
