@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { CollectionsController } from './controllers/collections.controller';
 import { CollectionsService } from './services/collections.service';
@@ -10,7 +10,7 @@ import { MediaModule } from '~modules/media';
 
 @Module({
 	controllers: [CollectionsController],
-	imports: [DataModule, PlayerTicketModule, MediaModule, EventsModule],
+	imports: [forwardRef(() => DataModule), PlayerTicketModule, MediaModule, EventsModule],
 	providers: [CollectionsService],
 	exports: [CollectionsService],
 })

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { DataModule } from '~modules/data';
 import { MediaModule } from '~modules/media';
@@ -7,7 +7,7 @@ import { StatusService } from '~modules/status/services/status.service';
 
 @Module({
 	controllers: [StatusController],
-	imports: [DataModule, MediaModule],
+	imports: [forwardRef(() => DataModule), MediaModule],
 	providers: [StatusService],
 	exports: [StatusService],
 })
