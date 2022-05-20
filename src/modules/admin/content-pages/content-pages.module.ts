@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { ContentPagesController } from './controllers/content-pages.controller';
@@ -10,7 +10,7 @@ import { DataModule } from '~modules/data';
 
 @Module({
 	controllers: [ContentPagesController],
-	imports: [DataModule, ConfigModule, PlayerTicketModule, OrganisationsModule],
+	imports: [ConfigModule, PlayerTicketModule, OrganisationsModule, forwardRef(() => DataModule)],
 	providers: [ContentPagesService, ConfigService],
 	exports: [ContentPagesService],
 })

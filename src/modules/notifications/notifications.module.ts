@@ -10,7 +10,12 @@ import { VisitsModule } from '~modules/visits';
 
 @Module({
 	controllers: [NotificationsController],
-	imports: [DataModule, forwardRef(() => VisitsModule), ConfigModule, CampaignMonitorModule],
+	imports: [
+		forwardRef(() => DataModule),
+		forwardRef(() => VisitsModule),
+		ConfigModule,
+		CampaignMonitorModule,
+	],
 	providers: [NotificationsService, ConfigService],
 	exports: [NotificationsService],
 })

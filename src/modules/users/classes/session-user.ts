@@ -6,6 +6,7 @@ import { Permission, User } from '../types';
 export class SessionUserEntity {
 	private logger = new Logger(SessionUserEntity.name, { timestamp: true });
 
+	protected user: User;
 	protected id: string;
 	protected firstName: string;
 	protected lastName: string;
@@ -15,12 +16,7 @@ export class SessionUserEntity {
 	protected permissions: Array<Permission>;
 
 	public constructor(user: User) {
-		this.id = get(user, 'id');
-		this.firstName = get(user, 'firstName');
-		this.lastName = get(user, 'lastName');
-		this.mail = get(user, 'email');
-		this.maintainerId = get(user, 'maintainerId');
-		this.visitorSpaceSlug = get(user, 'visitorSpaceSlug');
+		this.user = user;
 		// can be archief-user or avo-user, where permissions are stored differently
 		// merge them into 1 unified array
 		this.permissions = [
@@ -29,32 +25,36 @@ export class SessionUserEntity {
 		];
 	}
 
-	public getId(): string {
-		return this.id;
+	public getUser(): User {
+		return this.user;
 	}
 
-	public getFullName(): string {
-		return this.firstName + ' ' + this.lastName;
+	public getId(): string {
+		return get(this.user, 'id');
 	}
 
 	public getFirstName(): string {
-		return this.firstName;
+		return get(this.user, 'firstName');
 	}
 
 	public getLastName(): string {
-		return this.lastName;
+		return get(this.user, 'lastName');
+	}
+
+	public getFullName(): string {
+		return this.getFirstName() + ' ' + this.getLastName();
 	}
 
 	public getMail(): string {
-		return this.mail;
+		return get(this.user, 'mail');
 	}
 
 	public getMaintainerId(): string {
-		return this.maintainerId;
+		return get(this.user, 'maintainerId');
 	}
 
 	public getVisitorSpaceSlug(): string {
-		return this.visitorSpaceSlug;
+		return get(this.user, 'visitorSpaceSlug');
 	}
 
 	public has(permission: Permission): boolean {
