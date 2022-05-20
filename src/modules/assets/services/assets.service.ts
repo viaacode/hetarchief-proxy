@@ -132,12 +132,14 @@ export class AssetsService {
 
 	public async uploadToObjectStore(key: string, file: Express.Multer.File): Promise<string> {
 		const s3Client = await this.getS3Client();
-		return new Promise<string>((resolve, reject) => {
+		const tmpFilePath = path.join(__dirname, '../../../../..', file.path);
+		// eslint-disable-next-line no-async-promise-executor
+		return new Promise<string>(async (resolve, reject) => {
 			try {
 				s3Client.putObject(
 					{
 						Key: key,
-						Body: file.buffer,
+						Body: file.buffer || (await fse.readFile(tmpFilePath)),
 						ACL: 'public-read',
 						ContentType: file.mimetype,
 						Bucket: getConfig(this.configService, 'assetServerBucketName'),
@@ -170,6 +172,12 @@ export class AssetsService {
 				this.logger.error(error);
 				reject(error);
 			}
+			fse.unlink(tmpFilePath).catch((err) =>
+				this.logger.error({
+					message: 'Failed to remove file from tmp folder after upload to s3',
+					innerException: err,
+				})
+			);
 		});
 	}
 

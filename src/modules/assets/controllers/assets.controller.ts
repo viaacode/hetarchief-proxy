@@ -6,7 +6,6 @@ import {
 	InternalServerErrorException,
 	Logger,
 	Post,
-	Req,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -21,10 +20,10 @@ import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-// @UseGuards(LoggedInGuard)
+@UseGuards(LoggedInGuard)
 @ApiTags('Assets')
 @Controller('assets')
-// @RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
+@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 export class AssetsController {
 	private logger: Logger = new Logger(AssetsController.name, { timestamp: true });
 
@@ -50,8 +49,8 @@ export class AssetsController {
 			},
 		},
 	})
-	// @UseGuards(LoggedInGuard)
-	// @RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
+	@UseGuards(LoggedInGuard)
+	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 	async uploadAsset(@UploadedFile() file: Express.Multer.File): Promise<{ url: string }> {
 		if (!file) {
 			throw new BadRequestException('The request should contain a file to upload');

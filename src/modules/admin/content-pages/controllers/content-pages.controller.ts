@@ -96,7 +96,12 @@ export class ContentPagesController {
 		}
 
 		// Check if content page is accessible for the user who requested the content page
-		if (!intersection(contentPage.userGroupIds, SessionHelper.getUserGroupIds(user)).length) {
+		if (
+			!intersection(
+				contentPage.userGroupIds.map((id) => String(id)),
+				SessionHelper.getUserGroupIds(user)
+			).length
+		) {
 			return null;
 		}
 
