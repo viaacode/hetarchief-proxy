@@ -1,4 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { Configuration } from '~config';
 
 import { QueryOrigin } from '../types';
 
@@ -25,6 +28,21 @@ const mockUser: User = {
 
 const mockContentPagesService = jest.fn();
 
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'graphQlUrl') {
+			return 'http://localhost/v1/graphql/';
+		}
+		if (key === 'graphQlSecret') {
+			return 'graphQl-$ecret';
+		}
+		if (key == 'graphQlEnableWhitelist') {
+			return false; // For testing we disable the whitelist by default
+		}
+		return key;
+	}),
+};
+
 describe('DataPermissionsService', () => {
 	let dataPermissionsService: DataPermissionsService;
 
@@ -32,6 +50,10 @@ describe('DataPermissionsService', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				DataPermissionsService,
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 				{
 					provide: ContentPagesService,
 					useValue: mockContentPagesService,
@@ -44,6 +66,50 @@ describe('DataPermissionsService', () => {
 
 	it('services should be defined', () => {
 		expect(dataPermissionsService).toBeDefined();
+	});
+
+	describe('isAllowedToExecuteQuery', () => {
+		it('should allow a query when permissions are verified', async () => {
+			const verifySpy = jest
+				.spyOn(dataPermissionsService, 'verify')
+				.mockResolvedValueOnce(true);
+
+			const result = await dataPermissionsService.isAllowedToExecuteQuery(
+				mockUser,
+				mockQuery,
+				QueryOrigin.ADMIN_CORE
+			);
+
+			expect(result).toEqual(true);
+			expect(verifySpy).toHaveBeenCalled();
+			verifySpy.mockRestore();
+		});
+
+		it('should NOT allow a query when permissions are not verified', async () => {
+			const verifySpy = jest
+				.spyOn(dataPermissionsService, 'verify')
+				.mockResolvedValueOnce(false);
+
+			const result = await dataPermissionsService.isAllowedToExecuteQuery(
+				mockUser,
+				mockQuery,
+				QueryOrigin.ADMIN_CORE
+			);
+
+			expect(result).toEqual(false);
+			expect(verifySpy).toHaveBeenCalled();
+		});
+	});
+
+	describe('isWhitelist', () => {
+		it('should return the setting variable from the ConfigService', () => {
+			expect(dataPermissionsService.isWhitelistEnabled()).toEqual(false);
+		});
+
+		it('should be able to update the whitelist setting', () => {
+			dataPermissionsService.setWhitelistEnabled(true);
+			expect(dataPermissionsService.isWhitelistEnabled()).toEqual(true);
+		});
 	});
 
 	// Test need to be updated as current permissions implementation is a dummy
