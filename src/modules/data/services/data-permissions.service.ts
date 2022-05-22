@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 import {
 	forwardRef,
@@ -109,8 +110,13 @@ export class DataPermissionsService {
 		Object.keys(whitelistFiles).forEach((whitelistKey) => {
 			const whitelistPaths = whitelistFiles[whitelistKey];
 			whitelistPaths.forEach((whitelistPath) => {
-				const whitelistFileContent = fs.existsSync(whitelistPath)
-					? fs.readFileSync(whitelistPath, { encoding: 'utf-8' }).toString()
+				const absoluteWhitelistPath = path.resolve(
+					__dirname,
+					'../../../../..',
+					whitelistPath
+				);
+				const whitelistFileContent = fs.existsSync(absoluteWhitelistPath)
+					? fs.readFileSync(absoluteWhitelistPath, { encoding: 'utf-8' }).toString()
 					: '{}';
 				this.whitelist[whitelistKey] = {
 					...(this.whitelist[whitelistKey] || {}),

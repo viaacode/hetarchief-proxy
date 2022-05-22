@@ -26,7 +26,7 @@ RUN chown -R node:0 /app
 COPY --chown=node:node --from=builder /app/package*.json /app/
 COPY --chown=node:node --from=builder /app/dist/ /app/dist/
 COPY --chown=node:node --from=builder /app/src/ /app/src/
-COPY --chown=node:node --from=builder /app/scripts/ /app/dist/scripts/
+COPY --chown=node:node --from=builder /app/scripts/ /app/scripts/
 USER node
 
 ## disable prepare no need for husky in docker
