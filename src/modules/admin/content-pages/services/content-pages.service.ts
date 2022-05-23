@@ -6,7 +6,7 @@ import {
 	Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { IPagination } from '@studiohyperdrive/pagination';
 import { Avo } from '@viaa/avo2-types';
 import { SearchResultItem } from '@viaa/avo2-types/types/search';
 import * as promiseUtils from 'blend-promise-utils';
@@ -39,34 +39,20 @@ import {
 
 import {
 	GetCollectionTileByIdDocument,
-	GetContentPagesQuery as GetContentPagesQueryAvo,
-	GetContentPagesQueryVariables as GetContentPagesQueryVariablesAvo,
-	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryAvo,
-	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesAvo,
 	GetItemByExternalIdDocument,
 	GetItemTileByIdDocument,
 } from '~generated/graphql-db-types-avo';
-import {
-	GetContentPagesQuery as GetContentPagesQueryHetArchief,
-	GetContentPagesQueryVariables as GetContentPagesQueryVariablesHetArchief,
-	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
-	GetContentPagesWithBlocksQueryVariables as GetContentPagesWithBlocksQueryVariablesHetArchief,
-} from '~generated/graphql-db-types-hetarchief';
 import {
 	CONTENT_PAGE_QUERIES,
 	DEFAULT_AUDIO_STILL,
 	MEDIA_PLAYER_BLOCKS,
 } from '~modules/admin/content-pages/content-pages.consts';
-import {
-	ContentPageFiltersDto,
-	ContentPagesQueryDto,
-} from '~modules/admin/content-pages/dto/content-pages.dto';
+import { ContentPageOverviewParams } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { MediaItemsDto } from '~modules/admin/content-pages/dto/resolve-media-grid-blocks.dto';
 import { Organisation } from '~modules/admin/organisations/organisations.types';
 import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
-import { PaginationHelper } from '~shared/helpers/pagination';
 import { SpecialPermissionGroups } from '~shared/types/types';
 
 @Injectable()
@@ -190,95 +176,87 @@ export class ContentPagesService {
 	}
 
 	public async getContentPagesForOverview(
-		inputQuery: ContentPagesQueryDto
+		inputQuery: ContentPageOverviewParams,
+		userGroupIds: string[]
 	): Promise<IPagination<ContentPage> & { labelCounts: Record<string, number> }> {
-		const { page, size, orderProp, orderDirection, withBlocks } = inputQuery;
-		const filters: ContentPageFiltersDto = inputQuery.filters;
-		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const now = new Date().toISOString();
-
-		const where:
-			| GetContentPagesQueryVariablesAvo['where']
-			| GetContentPagesQueryVariablesHetArchief['where']
-			| GetContentPagesWithBlocksQueryVariablesAvo['where']
-			| GetContentPagesWithBlocksQueryVariablesHetArchief['where'] = {
-			_and: [
-				{
-					// Get content pages with the selected content type
-					content_type: { _in: filters.contentTypes },
-				},
-				{
-					// Get pages that are visible to the current user
-					_or: filters.userGroupIds.map((userGroupId) => ({
-						user_group_ids: { _contains: userGroupId },
-					})),
-				},
-				...this.getLabelFilter(filters.labelIds),
-				// publish state
-				{
-					_or: [
-						{ is_public: { _eq: true } },
-						{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
-						{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
-						{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
-					],
-				},
-				{ is_deleted: { _eq: false } },
-			],
-		};
-
-		const contentPagesResponse = await this.dataService.execute<
-			| GetContentPagesQueryAvo
-			| GetContentPagesQueryHetArchief
-			| GetContentPagesWithBlocksQueryAvo
-			| GetContentPagesWithBlocksQueryHetArchief
-		>(
-			withBlocks
-				? this.queries.GetContentPagesWithBlocksDocument
-				: this.queries.GetContentPagesDocument,
-			{
-				where,
-				orderBy: { [orderProp]: orderDirection },
-				orUserGroupIds: filters.userGroupIds.map((userGroupId) => ({
-					content: { user_group_ids: { _contains: userGroupId } },
-				})),
-				offset,
-				limit,
-			}
-		);
-
-		const paginatedResponse = Pagination<ContentPage>({
-			items: (
-				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content ||
-				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)?.app_content_page ||
-				[]
-			).map(this.adaptContentPage),
+		const {
+			withBlock,
+			contentType,
+			labelIds,
+			selectedLabelIds,
+			orderProp,
+			orderDirection,
 			page,
 			size,
-			total:
-				(contentPagesResponse?.data as GetContentPagesQueryAvo)?.app_content_aggregate
-					.aggregate.count ||
-				(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
-					?.app_content_page_aggregate.aggregate.count ||
-				0,
-		});
+		} = inputQuery;
+		const now = new Date().toISOString();
+		const variables = {
+			limit: size,
+			labelIds: labelIds || [],
+			offset: (page - 1) * size,
+			where: {
+				_and: [
+					{
+						// Get content pages with the selected content type
+						content_type: { _eq: contentType },
+					},
+					{
+						// Get pages that are visible to the current user
+						_or: userGroupIds.map((userGroupId) => ({
+							user_group_ids: { _contains: userGroupId },
+						})),
+					},
+					...this.getLabelFilter(selectedLabelIds || []),
+					// publish state
+					{
+						_or: [
+							{ is_public: { _eq: true } },
+							{ publish_at: { _is_null: true }, depublish_at: { _gte: now } },
+							{ publish_at: { _lte: now }, depublish_at: { _is_null: true } },
+							{ publish_at: { _lte: now }, depublish_at: { _gte: now } },
+						],
+					},
+					{ is_deleted: { _eq: false } },
+				],
+			},
+			orderBy: { [orderProp]: orderDirection },
+			orUserGroupIds: userGroupIds.map((userGroupId) => ({
+				content: { user_group_ids: { _contains: userGroupId } },
+			})),
+		};
+		const response = await this.dataService.execute(
+			withBlock
+				? this.queries.GetContentPagesWithBlocksDocument
+				: this.queries.GetContentPagesDocument,
+			variables
+		);
+		if (response.errors) {
+			throw new InternalServerErrorException({
+				message: 'GraphQL has errors',
+				additionalInfo: { response },
+			});
+		}
+		const count =
+			get(response, 'data.app_content_aggregate.aggregate.count') ||
+			get(response, 'data.app_content_page_aggregate.aggregate.count') ||
+			0;
+		const contentPageLabels =
+			get(response, 'data.app_content_labels') ||
+			get(response, 'data.app_content_page_content_label') ||
+			[];
 		return {
-			...paginatedResponse,
+			items:
+				get(response, 'data.app_content') || get(response, 'data.app_content_page') || [],
+			page,
+			size,
+			total: count,
+			pages: Math.ceil(count / size),
 			labelCounts: fromPairs(
-				(
-					(contentPagesResponse?.data as GetContentPagesQueryAvo).app_content_labels ||
-					(contentPagesResponse?.data as GetContentPagesQueryHetArchief)
-						.app_content_label ||
-					[]
-				).map(
-					(
-						labelInfo: GetContentPagesQueryAvo['app_content_labels'][0] &
-							GetContentPagesQueryHetArchief['app_content_label'][0]
-					): [number, number] => [
-						labelInfo?.id,
-						labelInfo?.content_content_labels_aggregate?.aggregate?.count,
-					]
-				)
+				contentPageLabels.map((labelInfo: any): [number, number] => [
+					get(labelInfo, 'id'),
+					get(labelInfo, 'content_content_labels_aggregate.aggregate.count') ||
+						get(labelInfo, 'content_page_content_label_aggregate.aggregate.count'),
+				])
 			),
 		};
 	}
@@ -359,8 +337,8 @@ export class ContentPagesService {
 		contentType: string,
 		labelIds: number[],
 		selectedLabelIds: number[],
-		orderByProp: string,
-		orderByDirection: 'asc' | 'desc',
+		orderProp: string,
+		orderDirection: 'asc' | 'desc',
 		offset = 0,
 		limit: number
 	): Promise<ContentPageOverviewResponse> {
@@ -394,7 +372,7 @@ export class ContentPagesService {
 					{ is_deleted: { _eq: false } },
 				],
 			},
-			orderBy: { [orderByProp]: orderByDirection },
+			orderBy: { [orderProp]: orderDirection },
 			orUserGroupIds: userGroupIds.map((userGroupId) => ({
 				content: { user_group_ids: { _contains: userGroupId } },
 			})),
