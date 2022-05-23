@@ -329,7 +329,6 @@ export class DataPermissionsService {
 	 * @returns boolean if the query is whitelisted
 	 */
 	public isQueryWhitelisted(queryDto: GraphQlQueryDto): boolean {
-		console.log('whitelist: ' + JSON.stringify(this.whitelist, null, 2));
 		// Find query in whitelist by looking for the first part. eg: "query getUserGroups"
 		const queryName = this.getWhitelistedQueryName(queryDto.query, QueryOrigin.ADMIN_CORE);
 		// if we found the name, the query is whitelisted
