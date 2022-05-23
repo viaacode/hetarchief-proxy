@@ -18,11 +18,20 @@ export class TranslationsService {
 	public async getTranslations(): Promise<Translations> {
 		const translations = await this.cacheManager.wrap(
 			TranslationKey.TRANSLATIONS_FRONTEND,
-			() =>
-				this.siteVariablesService.getSiteVariable<Translations>(
-					TranslationKey.TRANSLATIONS_FRONTEND
-				),
-			// cache for 1h
+			async () => {
+				const [translationsFrontend, translationsAdminCore] = await Promise.all([
+					this.siteVariablesService.getSiteVariable<Translations>(
+						TranslationKey.TRANSLATIONS_FRONTEND
+					),
+					this.siteVariablesService.getSiteVariable<Translations>(
+						TranslationKey.TRANSLATIONS_ADMIN_CORE
+					),
+				]);
+				return {
+					...translationsAdminCore,
+					...translationsFrontend,
+				};
+			}, // cache for 1h
 			{ ttl: 3600 }
 		);
 		if (!translations) {
