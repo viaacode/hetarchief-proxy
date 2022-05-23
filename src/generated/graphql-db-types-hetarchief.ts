@@ -6876,17 +6876,11 @@ export type Object_Ie = {
   /** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
   schema_maintainer_id?: Maybe<Scalars['String']>;
   schema_maintainer_id_lower?: Maybe<Scalars['String']>;
+  schema_maintainer_name?: Maybe<Scalars['String']>;
   /** De primaire titel van de IE */
   schema_name: Scalars['String'];
   /** Aantal paginas van geschreven media */
   schema_number_of_pages?: Maybe<Scalars['Int']>;
-  schema_part_of_archive?: Maybe<Scalars['_text']>;
-  /** Aflevering */
-  schema_part_of_episode?: Maybe<Scalars['_text']>;
-  /** Seizoen */
-  schema_part_of_season?: Maybe<Scalars['_text']>;
-  /** Serie */
-  schema_part_of_series?: Maybe<Scalars['_text']>;
   /** Persoon of organisatie die verantwoordelijk was voor de publicatie van de IE */
   schema_publisher?: Maybe<Scalars['jsonb']>;
   /** Plaatsen of locaties waarover de IE handelt of betrekking op heeft */
@@ -7089,12 +7083,9 @@ export type Object_Ie_Bool_Exp = {
   schema_license?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_maintainer_id?: InputMaybe<String_Comparison_Exp>;
   schema_maintainer_id_lower?: InputMaybe<String_Comparison_Exp>;
+  schema_maintainer_name?: InputMaybe<String_Comparison_Exp>;
   schema_name?: InputMaybe<String_Comparison_Exp>;
   schema_number_of_pages?: InputMaybe<Int_Comparison_Exp>;
-  schema_part_of_archive?: InputMaybe<_Text_Comparison_Exp>;
-  schema_part_of_episode?: InputMaybe<_Text_Comparison_Exp>;
-  schema_part_of_season?: InputMaybe<_Text_Comparison_Exp>;
-  schema_part_of_series?: InputMaybe<_Text_Comparison_Exp>;
   schema_publisher?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_spatial_coverage?: InputMaybe<_Text_Comparison_Exp>;
   schema_temporal_coverage?: InputMaybe<_Text_Comparison_Exp>;
@@ -7312,17 +7303,11 @@ export type Object_Ie_Insert_Input = {
   /** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
   schema_maintainer_id?: InputMaybe<Scalars['String']>;
   schema_maintainer_id_lower?: InputMaybe<Scalars['String']>;
+  schema_maintainer_name?: InputMaybe<Scalars['String']>;
   /** De primaire titel van de IE */
   schema_name?: InputMaybe<Scalars['String']>;
   /** Aantal paginas van geschreven media */
   schema_number_of_pages?: InputMaybe<Scalars['Int']>;
-  schema_part_of_archive?: InputMaybe<Scalars['_text']>;
-  /** Aflevering */
-  schema_part_of_episode?: InputMaybe<Scalars['_text']>;
-  /** Seizoen */
-  schema_part_of_season?: InputMaybe<Scalars['_text']>;
-  /** Serie */
-  schema_part_of_series?: InputMaybe<Scalars['_text']>;
   /** Persoon of organisatie die verantwoordelijk was voor de publicatie van de IE */
   schema_publisher?: InputMaybe<Scalars['jsonb']>;
   /** Plaatsen of locaties waarover de IE handelt of betrekking op heeft */
@@ -7377,6 +7362,7 @@ export type Object_Ie_Max_Fields = {
   /** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
   schema_maintainer_id?: Maybe<Scalars['String']>;
   schema_maintainer_id_lower?: Maybe<Scalars['String']>;
+  schema_maintainer_name?: Maybe<Scalars['String']>;
   /** De primaire titel van de IE */
   schema_name?: Maybe<Scalars['String']>;
   /** Aantal paginas van geschreven media */
@@ -7429,6 +7415,7 @@ export type Object_Ie_Min_Fields = {
   /** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
   schema_maintainer_id?: Maybe<Scalars['String']>;
   schema_maintainer_id_lower?: Maybe<Scalars['String']>;
+  schema_maintainer_name?: Maybe<Scalars['String']>;
   /** De primaire titel van de IE */
   schema_name?: Maybe<Scalars['String']>;
   /** Aantal paginas van geschreven media */
@@ -7503,12 +7490,9 @@ export type Object_Ie_Order_By = {
   schema_license?: InputMaybe<Order_By>;
   schema_maintainer_id?: InputMaybe<Order_By>;
   schema_maintainer_id_lower?: InputMaybe<Order_By>;
+  schema_maintainer_name?: InputMaybe<Order_By>;
   schema_name?: InputMaybe<Order_By>;
   schema_number_of_pages?: InputMaybe<Order_By>;
-  schema_part_of_archive?: InputMaybe<Order_By>;
-  schema_part_of_episode?: InputMaybe<Order_By>;
-  schema_part_of_season?: InputMaybe<Order_By>;
-  schema_part_of_series?: InputMaybe<Order_By>;
   schema_publisher?: InputMaybe<Order_By>;
   schema_spatial_coverage?: InputMaybe<Order_By>;
   schema_temporal_coverage?: InputMaybe<Order_By>;
@@ -7616,17 +7600,11 @@ export enum Object_Ie_Select_Column {
   /** column name */
   SchemaMaintainerIdLower = 'schema_maintainer_id_lower',
   /** column name */
+  SchemaMaintainerName = 'schema_maintainer_name',
+  /** column name */
   SchemaName = 'schema_name',
   /** column name */
   SchemaNumberOfPages = 'schema_number_of_pages',
-  /** column name */
-  SchemaPartOfArchive = 'schema_part_of_archive',
-  /** column name */
-  SchemaPartOfEpisode = 'schema_part_of_episode',
-  /** column name */
-  SchemaPartOfSeason = 'schema_part_of_season',
-  /** column name */
-  SchemaPartOfSeries = 'schema_part_of_series',
   /** column name */
   SchemaPublisher = 'schema_publisher',
   /** column name */
@@ -7702,17 +7680,11 @@ export type Object_Ie_Set_Input = {
   /** De ID van de beherende instelling of aanbieder van de IE, aka de CP (tbv relatie met org API v2) */
   schema_maintainer_id?: InputMaybe<Scalars['String']>;
   schema_maintainer_id_lower?: InputMaybe<Scalars['String']>;
+  schema_maintainer_name?: InputMaybe<Scalars['String']>;
   /** De primaire titel van de IE */
   schema_name?: InputMaybe<Scalars['String']>;
   /** Aantal paginas van geschreven media */
   schema_number_of_pages?: InputMaybe<Scalars['Int']>;
-  schema_part_of_archive?: InputMaybe<Scalars['_text']>;
-  /** Aflevering */
-  schema_part_of_episode?: InputMaybe<Scalars['_text']>;
-  /** Seizoen */
-  schema_part_of_season?: InputMaybe<Scalars['_text']>;
-  /** Serie */
-  schema_part_of_series?: InputMaybe<Scalars['_text']>;
   /** Persoon of organisatie die verantwoordelijk was voor de publicatie van de IE */
   schema_publisher?: InputMaybe<Scalars['jsonb']>;
   /** Plaatsen of locaties waarover de IE handelt of betrekking op heeft */
@@ -7837,17 +7809,11 @@ export enum Object_Ie_Update_Column {
   /** column name */
   SchemaMaintainerIdLower = 'schema_maintainer_id_lower',
   /** column name */
+  SchemaMaintainerName = 'schema_maintainer_name',
+  /** column name */
   SchemaName = 'schema_name',
   /** column name */
   SchemaNumberOfPages = 'schema_number_of_pages',
-  /** column name */
-  SchemaPartOfArchive = 'schema_part_of_archive',
-  /** column name */
-  SchemaPartOfEpisode = 'schema_part_of_episode',
-  /** column name */
-  SchemaPartOfSeason = 'schema_part_of_season',
-  /** column name */
-  SchemaPartOfSeries = 'schema_part_of_series',
   /** column name */
   SchemaPublisher = 'schema_publisher',
   /** column name */

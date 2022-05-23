@@ -266,6 +266,12 @@ export class DataPermissionsService {
 				getOrganizationsWithUsers: or(Permission.VIEW_USERS),
 				getTranslations: or(Permission.EDIT_TRANSLATIONS),
 				updateTranslations: or(Permission.EDIT_TRANSLATIONS),
+				deleteNavigationItem: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationElements: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationItemById: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationItemsByPlacement: or(Permission.EDIT_NAVIGATION_BARS),
+				insertNavigationItem: or(Permission.EDIT_NAVIGATION_BARS),
+				updateNavigationItemById: or(Permission.EDIT_NAVIGATION_BARS),
 			},
 			PROXY: {},
 		};
