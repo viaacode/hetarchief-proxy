@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 
@@ -19,6 +20,9 @@ async function bootstrap() {
 	/** Security */
 	app.enableCors(configService.get('corsOptions'));
 	app.use(helmet());
+
+	/** Api data size limitations */
+	app.use(json({ limit: '500kb' }));
 
 	/** Validation */
 	app.useGlobalPipes(
