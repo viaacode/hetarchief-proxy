@@ -175,4 +175,30 @@ describe('UsersService', () => {
 			expect(linked).toBeFalsy();
 		});
 	});
+
+	describe('updateLastAccessDate', () => {
+		it('should update a users last access date', async () => {
+			mockDataService.execute.mockReturnValueOnce({
+				data: {
+					update_users_profile: {
+						affected_rows: 1,
+					},
+				},
+			});
+
+			const response = await usersService.updateLastAccessDate('user-123');
+			expect(response).toEqual({ affectedRows: 1 });
+		});
+
+		it('should catch and not throw an error', async () => {
+			mockDataService.execute.mockReturnValueOnce({
+				data: {
+					errors: 'Something went wrong',
+				},
+			});
+
+			const response = await usersService.updateLastAccessDate('user-123');
+			expect(response).toBeUndefined();
+		});
+	});
 });

@@ -12,11 +12,14 @@ import {
 	InsertUserMutation,
 	LinkUserToMaintainerDocument,
 	LinkUserToMaintainerMutation,
+	UpdateUserLastAccessDateDocument,
+	UpdateUserLastAccessDateMutation,
 	UpdateUserProfileDocument,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { Idp } from '~shared/auth/auth.types';
+import { UpdateResponse } from '~shared/types/types';
 
 @Injectable()
 export class UsersService {
@@ -153,5 +156,23 @@ export class UsersService {
 		);
 
 		return !!inserted?.id;
+	}
+
+	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {
+		try {
+			const response = await this.dataService.execute<UpdateUserLastAccessDateMutation>(
+				UpdateUserLastAccessDateDocument,
+				{
+					userProfileId: id,
+					date: new Date().toISOString(),
+				}
+			);
+
+			return {
+				affectedRows: response.data.update_users_profile.affected_rows,
+			};
+		} catch (err) {
+			this.logger.error('Failed to update user last access date', { id });
+		}
 	}
 }

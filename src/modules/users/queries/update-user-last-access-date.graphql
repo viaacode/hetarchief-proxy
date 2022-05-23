@@ -1,0 +1,5 @@
+mutation updateUserLastAccessDate($userProfileId: uuid!, $date: timestamptz) {
+	update_users_profile(where: { id: { _eq: $userProfileId } }, _set: { last_access_at: $date }) {
+		affected_rows
+	}
+}
