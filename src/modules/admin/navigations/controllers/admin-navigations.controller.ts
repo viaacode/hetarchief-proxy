@@ -6,10 +6,16 @@ import { CreateNavigationDto, NavigationsQueryDto } from '../dto/navigations.dto
 import { AdminNavigationsService } from '../services/admin-navigations.service';
 import { Navigation } from '../types';
 
+import { Permission } from '~modules/users/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { DeleteResponse } from '~shared/types/types';
 
+// TODO these routes are currently not used by the admin-core
+// Currently the admin core does all navigation manipulations through the data route
+// In the long term we would like to switch this to use these routes
 @ApiTags('Admin Navigations')
 @Controller('admin/navigations')
+@RequireAnyPermissions(Permission.EDIT_NAVIGATION_BARS)
 export class AdminNavigationsController {
 	private logger: Logger = new Logger(AdminNavigationsController.name, { timestamp: true });
 

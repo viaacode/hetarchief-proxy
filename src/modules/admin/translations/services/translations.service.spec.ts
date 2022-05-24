@@ -36,17 +36,22 @@ describe('TranslationsService', () => {
 	describe('getTranslations', () => {
 		it('returns translations', async () => {
 			const mockData1 = {
-				key: 'translation',
+				key: 'FE-translation',
 			};
 			const mockData2 = {
+				key: 'AC-translation',
+			};
+			const mockData3 = {
 				key: 'BE-translation',
 			};
 			mockSiteVariablesService.getSiteVariable
 				.mockResolvedValueOnce(mockData1)
-				.mockResolvedValueOnce(mockData2);
+				.mockResolvedValueOnce(mockData2)
+				.mockResolvedValueOnce(mockData3);
 			const response = await translationsService.getTranslations();
-			expect(response['frontend-translations']).toEqual({ key: 'translation' });
-			expect(response['backend-translations']).toEqual({ key: 'BE-translation' });
+			expect(response['TRANSLATIONS_FRONTEND']).toEqual({ key: 'FE-translation' });
+			expect(response['TRANSLATIONS_ADMIN_CORE']).toEqual({ key: 'AC-translation' });
+			expect(response['TRANSLATIONS_BACKEND']).toEqual({ key: 'BE-translation' });
 		});
 
 		it('returns nothing on empty translations', async () => {

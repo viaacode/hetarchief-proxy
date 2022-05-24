@@ -266,6 +266,12 @@ export class DataPermissionsService {
 				getOrganizationsWithUsers: or(Permission.VIEW_USERS),
 				getTranslations: or(Permission.EDIT_TRANSLATIONS),
 				updateTranslations: or(Permission.EDIT_TRANSLATIONS),
+				deleteNavigationItem: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationElements: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationItemById: or(Permission.EDIT_NAVIGATION_BARS),
+				getNavigationItemsByPlacement: or(Permission.EDIT_NAVIGATION_BARS),
+				insertNavigationItem: or(Permission.EDIT_NAVIGATION_BARS),
+				updateNavigationItemById: or(Permission.EDIT_NAVIGATION_BARS),
 			},
 			PROXY: {},
 		};
@@ -329,7 +335,6 @@ export class DataPermissionsService {
 	 * @returns boolean if the query is whitelisted
 	 */
 	public isQueryWhitelisted(queryDto: GraphQlQueryDto): boolean {
-		console.log('whitelist: ' + JSON.stringify(this.whitelist, null, 2));
 		// Find query in whitelist by looking for the first part. eg: "query getUserGroups"
 		const queryName = this.getWhitelistedQueryName(queryDto.query, QueryOrigin.ADMIN_CORE);
 		// if we found the name, the query is whitelisted
