@@ -105,6 +105,15 @@ export class UpdateSpaceDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
+		description: 'The slug for this space, should be unique.',
+	})
+	slug?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
 		description: 'The description for this space',
 		default: undefined,
 	})
@@ -169,12 +178,4 @@ export class CreateSpaceDto extends UpdateSpaceDto {
 		default: undefined,
 	})
 	orId: string;
-
-	@IsString()
-	@Type(() => String)
-	@ApiProperty({
-		type: String,
-		description: 'The slug for this space, should be unique.',
-	})
-	slug: string;
 }

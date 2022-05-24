@@ -126,52 +126,28 @@ export class SpacesService {
 
 			return this.adapt(createdSpace);
 		} catch (e) {
-			if (e instanceof DuplicateKeyException) {
-				if (
-					e.data.message ===
-					'Uniqueness violation. duplicate key value violates unique constraint "space_schema_maintainer_id_key"'
-				) {
-					throw new InternalServerErrorException(
-						`A space already exists for maintainer with id '${createSpaceDto.orId}'`
-					);
-				}
-				if (
-					e.data.message ===
-					'Foreign key violation. insert or update on table "visitor_space" violates foreign key constraint "space_schema_maintainer_id_fkey"'
-				) {
-					throw new InternalServerErrorException(
-						`Unknown maintainerId '${createSpaceDto.orId}'`
-					);
-				}
-				if (
-					e.data.message ===
-					'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
-				) {
-					throw new InternalServerErrorException(
-						`A space already exists with slug '${createSpaceDto.slug}'`
-					);
-				}
-			}
-			// Unknown error
-			throw new InternalServerErrorException();
+			this.handleException(e, createSpaceDto);
 		}
 	}
 
 	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
 		const updateSpace = this.buildSpaceDatabaseObject(updateSpaceDto);
+		try {
+			const {
+				data: { update_maintainer_visitor_space_by_pk: updatedSpace },
+			} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
+				id,
+				updateSpace,
+			});
 
-		const {
-			data: { update_maintainer_visitor_space_by_pk: updatedSpace },
-		} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
-			id,
-			updateSpace,
-		});
+			if (!updatedSpace) {
+				throw new NotFoundException(`Space with id '${id}' not found`);
+			}
 
-		if (!updatedSpace) {
-			throw new NotFoundException(`Space with id '${id}' not found`);
+			return this.adapt(updatedSpace);
+		} catch (e) {
+			this.handleException(e, updateSpaceDto);
 		}
-
-		return this.adapt(updatedSpace);
 	}
 
 	public async findAll(
@@ -316,5 +292,37 @@ export class SpacesService {
 			id: item.users_profile_id,
 			email: item.profile.mail,
 		}));
+	}
+
+	public handleException(e: Error, inputDto: Partial<CreateSpaceDto>): void {
+		if (e instanceof DuplicateKeyException) {
+			if (
+				e.data.message ===
+				'Uniqueness violation. duplicate key value violates unique constraint "space_schema_maintainer_id_key"'
+			) {
+				throw new InternalServerErrorException(
+					`A space already exists for maintainer with id '${inputDto.orId}'`
+				);
+			}
+			if (
+				e.data.message ===
+				'Foreign key violation. insert or update on table "visitor_space" violates foreign key constraint "space_schema_maintainer_id_fkey"'
+			) {
+				throw new InternalServerErrorException(`Unknown maintainerId '${inputDto.orId}'`);
+			}
+			if (
+				e.data.message ===
+				'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
+			) {
+				throw new InternalServerErrorException(
+					`A space already exists with slug '${inputDto.slug}'`
+				);
+			}
+		}
+		if (e instanceof NotFoundException) {
+			throw e;
+		}
+		// Unknown error
+		throw new InternalServerErrorException();
 	}
 }

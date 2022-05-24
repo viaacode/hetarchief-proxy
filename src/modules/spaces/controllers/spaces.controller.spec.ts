@@ -22,6 +22,7 @@ const mockSpacesResponse = {
 		{
 			id: '2',
 			name: 'Space X',
+			maintainerId: 'OR-spacex',
 		},
 	],
 };
@@ -37,6 +38,7 @@ const mockUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+	maintainerId: 'OR-rf5kf25',
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -212,7 +214,7 @@ describe('SpacesController', () => {
 		});
 
 		it('throws an ForbiddenException when updating another maintainers space', async () => {
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[1]);
 			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
 			let error;
 			try {
@@ -224,6 +226,28 @@ describe('SpacesController', () => {
 				error: 'Forbidden',
 				statusCode: 403,
 				message: 'You are not authorized to update this visitor space',
+			});
+			mockUser.permissions.pop();
+		});
+
+		it('throws an ForbiddenException when not allowed to update the slug', async () => {
+			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
+			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
+			let error;
+			try {
+				await spacesController.updateSpace(
+					'1',
+					{ slug: 'forbidden' },
+					null,
+					new SessionUserEntity(mockUser)
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Forbidden',
+				statusCode: 403,
+				message: 'You are not allowed to update the slug',
 			});
 			mockUser.permissions.pop();
 		});
@@ -252,6 +276,27 @@ describe('SpacesController', () => {
 				}
 			);
 			expect(space.id).toEqual('1');
+		});
+
+		it('should throw an exception if slug was not  a space', async () => {
+			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockSpacesService.create.mockResolvedValueOnce({ id: '1' });
+			let error;
+			try {
+				await spacesController.createSpace(
+					{
+						orId: 'OR-test',
+					},
+					null
+				);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({
+				error: 'Bad Request',
+				statusCode: 400,
+				message: ['slug must be a string'],
+			});
 		});
 	});
 });
