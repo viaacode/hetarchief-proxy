@@ -1,4 +1,14 @@
-import { Controller, Get, Headers, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+	Controller,
+	ForbiddenException,
+	Get,
+	Headers,
+	Param,
+	Patch,
+	Post,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
@@ -35,6 +45,9 @@ export class NotificationsController {
 		@Query() queryDto: NotificationsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Notification>> {
+		if (!user.getId()) {
+			throw new ForbiddenException('You need to be logged in to get your notifications');
+		}
 		const notifications = await this.notificationsService.findNotificationsByUser(
 			user.getId(),
 			addMonths(new Date(), -1).toISOString(),

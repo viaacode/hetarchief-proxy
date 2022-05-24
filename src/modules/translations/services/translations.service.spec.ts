@@ -12,7 +12,7 @@ const mockSiteVariablesService: Partial<Record<keyof SiteVariablesService, jest.
 };
 
 const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
-	wrap: ((key: string, func: () => any): any => {
+	wrap: jest.fn().mockImplementation((key: string, func: () => any): any => {
 		return func();
 	}) as any,
 };
@@ -66,7 +66,7 @@ describe('TranslationsService', () => {
 
 		it('throws an exception if no translations were set', async () => {
 			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce(undefined);
-			// mockCacheManager.wrap.mockResolvedValueOnce(undefined);
+			mockCacheManager.wrap.mockResolvedValueOnce(undefined);
 			let error;
 			try {
 				await translationsService.getTranslations();

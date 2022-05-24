@@ -10,6 +10,7 @@ import { AdminNavigationsModule } from '~modules/admin/navigations';
 import { AdminPermissionsModule } from '~modules/admin/permissions';
 import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AdminUserGroupsModule } from '~modules/admin/user-groups';
+import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
@@ -44,6 +45,7 @@ import { SessionService } from '~shared/services/session.service';
 		CampaignMonitorModule,
 		CollectionsModule,
 		ContentPagesModule,
+		AssetsModule,
 		DataModule,
 		EventsModule,
 		MediaModule,

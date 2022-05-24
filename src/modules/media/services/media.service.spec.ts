@@ -5,7 +5,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { Media } from '../types';
+import { ElasticsearchResponse, Media } from '../media.types';
 
 import { MediaService } from './media.service';
 
@@ -105,7 +105,7 @@ describe('MediaService', () => {
 
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
-			const esResponse = { hits: { total: { value: 0 } } };
+			const esResponse = { hits: { hits: [], total: { value: 0 } } } as ElasticsearchResponse;
 			const result = await mediaService.adaptESResponse(esResponse, 'referer');
 			expect(result).toEqual(esResponse);
 		});
@@ -120,7 +120,7 @@ describe('MediaService', () => {
 						],
 					},
 				},
-			};
+			} as ElasticsearchResponse;
 			const result = await mediaService.adaptESResponse(esResponse, 'referer');
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(2);
@@ -133,7 +133,7 @@ describe('MediaService', () => {
 						buckets: [{ key: 'film', doc_count: 1 }],
 					},
 				},
-			};
+			} as ElasticsearchResponse;
 			const result = await mediaService.adaptESResponse(esResponse, 'referer');
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual('video');

@@ -4,7 +4,7 @@ import {
 	OrderProperty,
 	QueryBuilderConfig,
 	SearchFilterField,
-} from '../types';
+} from '../media.types';
 
 import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';
@@ -135,7 +135,8 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					filter: [
+					filter: [],
+					must: [
 						{
 							term: {
 								dcterms_format: 'video',
@@ -165,6 +166,28 @@ describe('QueryBuilder', () => {
 					filter: [{ range: { schema_duration: rangeQuery } }],
 				},
 			});
+		});
+
+		it('should throw an exception when using the is operator on the query field', () => {
+			let error;
+			try {
+				QueryBuilder.build({
+					filters: [
+						{
+							field: SearchFilterField.QUERY,
+							operator: Operator.IS,
+							value: 'testvalue',
+						},
+					],
+					size: 10,
+					page: 1,
+				});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response.error.message).toEqual(
+				"Field 'query' cannot be queried with the 'is' operator."
+			);
 		});
 
 		it('throws an internal server exception when an unkown filter value is passed', () => {

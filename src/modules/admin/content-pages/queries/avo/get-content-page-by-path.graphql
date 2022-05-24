@@ -38,7 +38,7 @@ query getContentPageByPath($path: String!) {
 				link_to
 			}
 		}
-		contentBlockssBycontentId(order_by: { position: asc }) {
+		content_blocks: contentBlockssBycontentId(order_by: { position: asc }) {
 			content_block_type
 			content_id
 			created_at

@@ -1,17 +1,15 @@
-import path from 'path';
-
 import {
 	ForbiddenException,
+	forwardRef,
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import fse from 'fs-extra';
 import got, { Got } from 'got';
 import { DocumentNode } from 'graphql';
 import { print } from 'graphql/language/printer';
-import { keys } from 'lodash';
 
 import { getConfig } from '~config';
 
@@ -20,25 +18,18 @@ import { GraphQlResponse, QueryOrigin } from '../types';
 
 import { DataPermissionsService } from './data-permissions.service';
 
+import { User } from '~modules/users/types';
+
 @Injectable()
 export class DataService {
 	private logger: Logger = new Logger(DataService.name, { timestamp: true });
 	private gotInstance: Got;
 
-	private whitelistEnabled: boolean;
-	private whitelist: { [key in QueryOrigin]: { [queryName: string]: string } };
-
 	constructor(
 		private configService: ConfigService,
+		@Inject(forwardRef(() => DataPermissionsService))
 		private dataPermissionsService: DataPermissionsService
 	) {
-		if (configService.get('environment') !== 'production') {
-			this.logger.log('GraphQl config: ', {
-				url: getConfig(this.configService, 'graphQlUrl'),
-				secret: getConfig(this.configService, 'graphQlSecret'),
-				whitelistEnabled: getConfig(this.configService, 'graphQlEnableWhitelist'),
-			});
-		}
 		this.gotInstance = got.extend({
 			prefixUrl: getConfig(this.configService, 'graphQlUrl'),
 			headers: {
@@ -47,90 +38,33 @@ export class DataService {
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
-
-		this.whitelistEnabled = getConfig(this.configService, 'graphQlEnableWhitelist');
-
-		const proxyWhitelistPath = path.join(__dirname, '../../../../scripts/proxy-whitelist.json');
-		const clientWhitelistPath = path.join(
-			__dirname,
-			'../../../../scripts/client-whitelist.json'
-		);
-
-		this.whitelist = {
-			[QueryOrigin.PROXY]: fse.existsSync(proxyWhitelistPath)
-				? JSON.parse(fse.readFileSync(proxyWhitelistPath, { encoding: 'utf8' }))
-				: {},
-			[QueryOrigin.CLIENT]: fse.existsSync(clientWhitelistPath)
-				? JSON.parse(fse.readFileSync(clientWhitelistPath, { encoding: 'utf8' }))
-				: {},
-		};
-	}
-
-	/**
-	 * @returns if a query is allowed, by checking both whitlisting and query permissions
-	 */
-	public async isAllowedToExecuteQuery(
-		queryDto: GraphQlQueryDto,
-		origin: QueryOrigin
-	): Promise<boolean> {
-		if (this.isWhitelistEnabled() && !this.isQueryWhitelisted(queryDto, origin)) {
-			return false;
-		}
-		return this.dataPermissionsService.verify(
-			this.getWhitelistedQueryName(queryDto.query, origin),
-			origin,
-			queryDto
-		);
-	}
-
-	public isWhitelistEnabled(): boolean {
-		return this.whitelistEnabled;
-	}
-
-	public setWhitelistEnabled(enabled: boolean): void {
-		this.whitelistEnabled = enabled;
-	}
-
-	public getWhitelistedQueryName(query: string, origin: QueryOrigin): string {
-		const queryStart = query.replace(/[\s]+/gm, ' ').split(/[{(]/)[0].trim();
-		return keys(this.whitelist[origin]).find(
-			(key) => this.whitelist[origin][key].split(/[{(]/)[0].trim() === queryStart
-		);
-	}
-
-	/**
-	 * @returns boolean if the query is whitelisted
-	 */
-	public isQueryWhitelisted(queryDto: GraphQlQueryDto, origin: QueryOrigin): boolean {
-		// Find query in whitelist by looking for the first part. eg: "query getUserGroups"
-		const queryName = this.getWhitelistedQueryName(queryDto.query, origin);
-		// if we found the name, the query is whitelisted
-		return !!queryName;
-	}
-
-	/**
-	 * @returns the whitelisted query for the given query
-	 */
-	public getWhitelistedQuery(query: string, origin: QueryOrigin): string {
-		if (this.isWhitelistEnabled()) {
-			const queryName = this.getWhitelistedQueryName(query, origin);
-			return this.whitelist[origin][queryName];
-		}
-		return query;
 	}
 
 	/**
 	 * Execute an incoming query from the client
+	 * @param user
 	 * @param queryDto the query to be executed
 	 * @returns the query result
 	 */
-	public async executeClientQuery(queryDto: GraphQlQueryDto): Promise<GraphQlResponse> {
+	public async executeClientQuery(
+		user: User,
+		queryDto: GraphQlQueryDto
+	): Promise<GraphQlResponse> {
 		// check if query can be executed
-		if (!(await this.isAllowedToExecuteQuery(queryDto, QueryOrigin.CLIENT))) {
-			throw new ForbiddenException('You are not authorized to execute this query');
+		if (
+			!(await this.dataPermissionsService.isAllowedToExecuteQuery(
+				user,
+				queryDto,
+				QueryOrigin.ADMIN_CORE
+			))
+		) {
+			const queryName = this.dataPermissionsService.getQueryName(queryDto.query);
+			throw new ForbiddenException(
+				'You are not authorized to execute this query: ' + queryName
+			);
 		}
 		return this.execute(
-			this.getWhitelistedQuery(queryDto.query, QueryOrigin.CLIENT),
+			this.dataPermissionsService.getWhitelistedQuery(queryDto.query, QueryOrigin.ADMIN_CORE),
 			queryDto.variables
 		);
 	}
@@ -153,7 +87,7 @@ export class DataService {
 			});
 			if (data.errors) {
 				this.logger.error(`GraphQl query failed: ${JSON.stringify(data.errors)}`);
-				throw new InternalServerErrorException();
+				throw new InternalServerErrorException(data);
 			}
 			return data;
 		} catch (err) {

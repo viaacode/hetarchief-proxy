@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { getConfig } from '~config';
@@ -20,7 +20,10 @@ export class OrganisationsService {
 	private logger: Logger = new Logger(OrganisationsService.name, { timestamp: true });
 	private queries: OrganisationQueries;
 
-	constructor(private configService: ConfigService, protected dataService: DataService) {
+	constructor(
+		private configService: ConfigService,
+		@Inject(forwardRef(() => DataService)) protected dataService: DataService
+	) {
 		this.queries =
 			ORGANISATION_QUERIES[getConfig(this.configService, 'databaseApplicationType')];
 	}

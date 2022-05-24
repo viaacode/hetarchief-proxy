@@ -2,14 +2,23 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty } from 'lodash';
+import { find, get, isEmpty, set, unset } from 'lodash';
 import convert from 'xml-js';
 
 import { getConfig } from '~config';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { GqlIeObject, GqlLimitedIeObject, Media, MediaFile, Representation } from '../types';
+import {
+	ElasticsearchMedia,
+	ElasticsearchResponse,
+	GqlIeObject,
+	GqlLimitedIeObject,
+	License,
+	Media,
+	MediaFile,
+	Representation,
+} from '../media.types';
 
 import {
 	FindAllObjectsByCollectionIdDocument,
@@ -136,7 +145,10 @@ export class MediaService {
 		);
 	}
 
-	public async adaptESResponse(esResponse: any, referer: string): Promise<any> {
+	public async adaptESResponse(
+		esResponse: ElasticsearchResponse,
+		referer: string
+	): Promise<ElasticsearchResponse> {
 		// merge 'film' aggregations with 'video' if need be
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =
@@ -223,8 +235,26 @@ export class MediaService {
 		inputQuery: MediaQueryDto,
 		esIndex: string | null,
 		referer: string
-	): Promise<any> {
+	): Promise<ElasticsearchResponse> {
 		const esQuery = QueryBuilder.build(inputQuery);
+
+		// Check licenses of objects
+		if (!getConfig(this.configService, 'ignoreObjectLicenses')) {
+			unset(esQuery, 'query.match_all');
+			set(esQuery, 'query.bool.should', [
+				{
+					term: {
+						schema_license: License.BEZOEKERTOOL_CONTENT,
+					},
+				},
+				{
+					term: {
+						schema_license: License.BEZOEKERTOOL_METADATA_ALL,
+					},
+				},
+			]);
+			set(esQuery, 'query.bool.minimum_should_match', 1);
+		}
 
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
@@ -311,6 +341,18 @@ export class MediaService {
 			dctermsFormat: mediaObject.dctermsFormat,
 			dateCreatedLowerBound: mediaObject.dateCreatedLowerBound,
 			datePublished: mediaObject.datePublished,
+		};
+	}
+
+	public getLimitedMetadataElastic(mediaObject: ElasticsearchMedia): Partial<ElasticsearchMedia> {
+		return {
+			schema_identifier: mediaObject.schema_identifier,
+			premis_identifier: mediaObject.premis_identifier,
+			schema_name: mediaObject.schema_name,
+			schema_alternate_name: mediaObject.schema_alternate_name,
+			dcterms_format: mediaObject.dcterms_format,
+			schema_date_created: mediaObject.schema_date_created,
+			schema_date_published: mediaObject.schema_date_published,
 		};
 	}
 

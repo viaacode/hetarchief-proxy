@@ -45,3 +45,6 @@ lerna-debug.log*
 
 # Ignore sessions that are stored as files for the local development environment
 /sessions
+
+# temp upload files
+tmp

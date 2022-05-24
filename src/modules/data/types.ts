@@ -4,6 +4,6 @@ export interface GraphQlResponse<T = any> {
 }
 
 export enum QueryOrigin {
-	CLIENT = 'CLIENT',
+	ADMIN_CORE = 'ADMIN_CORE',
 	PROXY = 'PROXY',
 }

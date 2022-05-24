@@ -12,7 +12,7 @@ import {
 	GetContentPagesWithBlocksQuery as GetContentPagesWithBlocksQueryHetArchief,
 	Lookup_App_Content_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { Media } from '~modules/media/types';
+import { Media } from '~modules/media/media.types';
 
 export enum AvoOrHetArchief {
 	avo = 'avo',
@@ -51,9 +51,9 @@ export interface ContentBlock {
 	id: number;
 	variables: { [key: string]: any } | any[] | null;
 	position: number;
-	createdAt: string;
-	updatedAt: string;
-	blockType: string;
+	created_at: string;
+	updated_at: string;
+	content_block_type: string;
 }
 
 export type ContentWidth = 'REGULAR' | 'LARGE' | 'MEDIUM';
@@ -106,7 +106,7 @@ export interface ContentPage {
 	owner: ContentPageUser;
 	userProfileId: string | null;
 	userGroupIds: string[] | null;
-	contentBlocks: ContentBlock[];
+	content_blocks: ContentBlock[];
 	labels: ContentPageLabel[];
 }
 
@@ -119,7 +119,7 @@ export type GqlContentPage =
 	| GetContentPagesWithBlocksQueryHetArchief['app_content_page'][0];
 export type GqlContentBlock =
 	| GetContentPageByPathQueryHetArchief['app_content_page'][0]['content_blocks'][0]
-	| GetContentPageByPathQueryAvo['app_content'][0]['contentBlockssBycontentId'][0];
+	| GetContentPageByPathQueryAvo['app_content'][0]['content_blocks'][0];
 
 export type GqlAvoUser = GetContentPageByPathQueryAvo['app_content'][0]['profile'];
 export type GqlHetArchiefUser =

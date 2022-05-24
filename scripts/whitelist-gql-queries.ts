@@ -1,102 +1,73 @@
+// tslint:disable:no-console
 /**
- * This script runs over all files that match *.gql.ts and extracts the gql queries and whitelists them into the graphql database
+ * This script runs over all files that match *.gql.ts and extracts the gql queries and outputs them to the client-whitelist.json file in /scripts
  */
+import * as fs from 'fs';
 import * as path from 'path';
 
-import fse from 'fs-extra';
 import glob from 'glob';
-import { split } from 'lodash';
 
-const logger = {
-	error: (message, err = null) => {
-		const now = new Date().toISOString();
-		console.log(`${now} [ERROR] ${message}`, err?.stack);
-	},
-	warn: (message, obj = null) => {
-		const now = new Date().toISOString();
-		console.log(`${now} [WARN] ${message}`, obj);
-	},
-	info: (message, obj = null) => {
-		const now = new Date().toISOString();
-		console.log(`${now} [info] ${message}`, obj);
-	},
-};
+const extractNameRegex = /(query|mutation) ([^\s(]+)(.*)/gm;
 
-const gqlRegex = /const ([^\s]+) = `([^`]+?)`/gm;
-
-/**
- * Extracts label of query
- * example: query getCollectionNamesByOwner($owner_profile_id: uuid) { app_collections( wher...
- * would return: getCollectionNamesByOwner
- * @param query
- */
-function getQueryLabel(query: string): string {
-	return split(query, /[ ({]/)[1];
-}
-
-async function whitelistQueries() {
+function extractQueriesFromCode(globPattern: string, outputFileName: string) {
 	const options = {
 		cwd: path.join(__dirname, '../src'),
 	};
 
-	const files = glob.sync('**/*.gql.ts', options);
-	const queries: { [queryName: string]: string } = {};
-	const queryLabels: string[] = [];
+	glob(globPattern, options, async (err: any, files: string[]) => {
+		const queries: { [queryName: string]: string } = {};
 
-	try {
-		// Find and extract queries
-		files.forEach((relativeFilePath: string) => {
-			try {
-				const absoluteFilePath = `${options.cwd}/${relativeFilePath}`;
-				const content: string = fse.readFileSync(absoluteFilePath).toString();
-
-				let matches: RegExpExecArray | null;
-				do {
-					matches = gqlRegex.exec(content);
-					if (matches) {
-						const name = matches[1];
-						const query = matches[2];
-						if (query.includes('${')) {
-							logger.warn(
-								`Extracting graphql queries with javascript template parameters isn't supported: ${name}`
-							);
-						}
-
-						if (queries[name]) {
-							logger.warn(
-								`Query with the same variable name is found twice. This will cause a conflicts in the query whitelist: ${name}`
-							);
-						}
-
-						const label = getQueryLabel(query);
-						if (queryLabels.includes(label)) {
-							logger.warn(
-								`Query with the same label is found twice. This will cause a conflicts in the query whitelist: ${label}`
-							);
-						}
-						queryLabels.push(label);
-
-						// Remove new lines and tabs
-						// Trim whitespace
-						queries[name] = query.replace(/[\t\r\n]+/gm, ' ').trim();
-					}
-				} while (matches);
-			} catch (err) {
-				logger.error(`Failed to find queries in file: ${relativeFilePath}`, err);
+		try {
+			if (err) {
+				console.error('Failed to find files using **/*.graphql', err);
+				return;
 			}
-		});
 
-		const outputFile = path.join(__dirname, 'proxy-whitelist.json');
-		await fse.writeFile(outputFile, JSON.stringify(queries, null, 2));
+			// Find and extract queries
+			files.forEach((relativeFilePath: string) => {
+				try {
+					const absoluteFilePath = `${options.cwd}/${relativeFilePath}`;
+					const content: string = fs.readFileSync(absoluteFilePath).toString();
 
-		logger.info(
-			`[QUERY WHITELISTING]: Whitelisted ${
-				Object.keys(queries).length
-			} queries in the graphql database. Full list: ${outputFile}`
-		);
-	} catch (err) {
-		logger.error('Failed to extract and upload graphql query whitelist', err);
-	}
+					let matches: RegExpExecArray | null;
+					do {
+						matches = extractNameRegex.exec(content);
+						if (matches) {
+							const name = matches[2];
+							const query = content;
+
+							if (queries[name]) {
+								console.error(
+									`Query with the same variable name is found twice. This will cause a conflicts in the query whitelist: ${name}`
+								);
+							}
+
+							// Remove new lines and tabs
+							// Trim whitespace
+							queries[name] = query.replace(/[\t\r\n]+/gm, ' ').trim();
+						}
+					} while (matches);
+				} catch (err) {
+					console.error(`Failed to find queries in file: ${relativeFilePath}`, err);
+				}
+			});
+
+			const outputFile = path.join(__dirname, outputFileName);
+
+			fs.writeFileSync(outputFile, JSON.stringify(queries, null, 2));
+
+			console.log(
+				`Found ${
+					Object.keys(queries).length
+				} queries, outputted to: ${outputFile}. Copy this file to /scripts folder in the avo2 proxy`
+			);
+		} catch (err) {
+			console.error('Failed to extract graphql query whitelist', JSON.stringify(err));
+		}
+	});
 }
 
-whitelistQueries();
+extractQueriesFromCode('**/queries/hetarchief/*.graphql', 'proxy-whitelist-hetarchief.json');
+extractQueriesFromCode('**/queries/avo/*.graphql', 'proxy-whitelist-avo.json');
+extractQueriesFromCode('**/queries/*.graphql', 'proxy-whitelist.json');
+// tslint:enable:no-console

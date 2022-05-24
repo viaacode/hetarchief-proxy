@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../types';
+import { Operator, OrderProperty, SearchFilterField } from '../media.types';
 
 import descriptionSearchQuery from './templates/description-search-query.json';
 import nameSearchQuery from './templates/name-search-query.json';
@@ -81,12 +81,14 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	location: QueryType.MATCH,
 	language: QueryType.TERMS,
 	medium: QueryType.MATCH,
+	name: QueryType.TERM, // used for exact (not) matching
+	description: QueryType.TERM, // used for exact (not) matching
 };
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 	contains: 'must',
 	containsNot: 'must_not',
-	is: 'filter', // exact match === filter query
+	is: 'must',
 	isNot: 'must_not',
 };
 
@@ -97,6 +99,7 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	genre: 'keyword',
+	name: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {

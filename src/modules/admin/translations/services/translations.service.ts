@@ -13,17 +13,22 @@ export class TranslationsService {
 	constructor(private siteVariablesService: SiteVariablesService) {}
 
 	public async getTranslations(): Promise<Record<string, Record<string, string>>> {
-		const [frontendTranslations, backendTranslations] = await Promise.all([
-			this.siteVariablesService.getSiteVariable<Translations>(
-				TranslationKey.TRANSLATIONS_FRONTEND
-			),
-			this.siteVariablesService.getSiteVariable<Translations>(
-				TranslationKey.TRANSLATIONS_BACKEND
-			),
-		]);
+		const [translationsFrontend, translationsAdminCore, translationsBackend] =
+			await Promise.all([
+				this.siteVariablesService.getSiteVariable<Translations>(
+					TranslationKey.TRANSLATIONS_FRONTEND
+				),
+				this.siteVariablesService.getSiteVariable<Translations>(
+					TranslationKey.TRANSLATIONS_ADMIN_CORE
+				),
+				this.siteVariablesService.getSiteVariable<Translations>(
+					TranslationKey.TRANSLATIONS_BACKEND
+				),
+			]);
 		return {
-			'frontend-translations': frontendTranslations,
-			'backend-translations': backendTranslations,
+			TRANSLATIONS_FRONTEND: translationsFrontend,
+			TRANSLATIONS_ADMIN_CORE: translationsAdminCore,
+			TRANSLATIONS_BACKEND: translationsBackend,
 		};
 	}
 

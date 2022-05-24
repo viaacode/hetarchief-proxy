@@ -5,11 +5,12 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { QueryOrigin } from '../types';
-
 import { DataPermissionsService } from './data-permissions.service';
 import { DataService } from './data.service';
 
+import { GraphQlQueryDto } from '~modules/data/dto/graphql-query.dto';
+import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 jest.mock('fs-extra');
@@ -19,6 +20,10 @@ const mockedFse = fse as any;
 const mockDataPermissionsService: Partial<Record<keyof DataPermissionsService, jest.SpyInstance>> =
 	{
 		verify: jest.fn(),
+		isAllowedToExecuteQuery: jest.fn(),
+		isWhitelistEnabled: jest.fn(),
+		getWhitelistedQuery: jest.fn(),
+		getQueryName: jest.fn(),
 	};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -36,7 +41,22 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 	}),
 };
 
-const mockQuery = { query: 'query testQuery { username }' };
+const mockUser: User = {
+	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	firstName: 'Test',
+	lastName: 'Testers',
+	fullName: 'Test Testers',
+	email: 'test.testers@meemoo.be',
+	idp: Idp.HETARCHIEF,
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
+	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+};
+
+const mockQuery: GraphQlQueryDto = {
+	query: 'query testQuery { username }',
+};
 
 describe('DataService - no whitelist', () => {
 	let dataService: DataService;
@@ -66,6 +86,14 @@ describe('DataService - no whitelist', () => {
 		dataService = module.get<DataService>(DataService);
 		configService = module.get<ConfigService>(ConfigService);
 		dataPermissionsService = module.get<DataPermissionsService>(DataPermissionsService);
+
+		mockDataPermissionsService.getQueryName.mockReturnValue('testQuery');
+	});
+
+	afterEach(() => {
+		mockDataPermissionsService.verify.mockRestore();
+		mockDataPermissionsService.isAllowedToExecuteQuery.mockRestore();
+		mockDataPermissionsService.getWhitelistedQuery.mockRestore();
 	});
 
 	it('services should be defined', () => {
@@ -74,40 +102,17 @@ describe('DataService - no whitelist', () => {
 		expect(dataPermissionsService).toBeDefined();
 	});
 
-	describe('isAllowedToExecuteQuery', () => {
-		it('should allow a query when permissions are verified', async () => {
-			mockDataPermissionsService.verify.mockResolvedValueOnce(true);
-			const result = await dataService.isAllowedToExecuteQuery(mockQuery, QueryOrigin.CLIENT);
-			expect(result).toEqual(true);
-			expect(mockDataPermissionsService.verify).toHaveBeenCalled();
-		});
-
-		it('should NOT allow a query when permissions are not verified', async () => {
-			mockDataPermissionsService.verify.mockResolvedValueOnce(false);
-			const result = await dataService.isAllowedToExecuteQuery(mockQuery, QueryOrigin.CLIENT);
-			expect(result).toEqual(false);
-			expect(mockDataPermissionsService.verify).toHaveBeenCalled();
-		});
-	});
-
-	describe('isWhitelist', () => {
-		it('should return the setting variable from the ConfigService', () => {
-			expect(dataService.isWhitelistEnabled()).toEqual(false);
-		});
-
-		it('should be able to update the whitelist setting', () => {
-			dataService.setWhitelistEnabled(true);
-			expect(dataService.isWhitelistEnabled()).toEqual(true);
-		});
-	});
-
 	describe('executeClientQuery', () => {
 		it('should execute a query and return a result', async () => {
 			nock('http://localhost/').post('/v1/graphql/').reply(201, {
 				data: 'ok',
 			});
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
-			const result = await dataService.executeClientQuery(mockQuery);
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(true);
+			mockDataPermissionsService.getWhitelistedQuery.mockReturnValueOnce(mockQuery.query);
+
+			const result = await dataService.executeClientQuery(mockUser, mockQuery);
+
 			expect(result).toEqual({
 				data: 'ok',
 			});
@@ -115,16 +120,20 @@ describe('DataService - no whitelist', () => {
 
 		it('should throw an ForbiddenException when the query is not allowed to be executed', async () => {
 			mockDataPermissionsService.verify.mockReturnValueOnce(false);
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(false);
+			mockDataPermissionsService.getWhitelistedQuery.mockReturnValueOnce(mockQuery.query);
+
 			let error;
 			try {
-				await dataService.executeClientQuery(mockQuery);
+				await dataService.executeClientQuery(mockUser, mockQuery);
 			} catch (e) {
 				error = e.response;
 			}
+
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query',
+				message: 'You are not authorized to execute this query: testQuery',
 			});
 		});
 
@@ -134,9 +143,12 @@ describe('DataService - no whitelist', () => {
 				message: 'Internal Server Error',
 			});
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(true);
+			mockDataPermissionsService.getWhitelistedQuery.mockReturnValueOnce(mockQuery.query);
+
 			let error;
 			try {
-				await dataService.executeClientQuery(mockQuery);
+				await dataService.executeClientQuery(mockUser, mockQuery);
 			} catch (e) {
 				error = e.response;
 			}
@@ -145,17 +157,20 @@ describe('DataService - no whitelist', () => {
 		});
 
 		it('should not execute a not-whitelisted query', async () => {
-			dataService.setWhitelistEnabled(true);
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(false);
+			mockDataPermissionsService.getWhitelistedQuery.mockReturnValueOnce(undefined);
+
 			let error;
 			try {
-				await dataService.executeClientQuery(mockQuery);
+				await dataService.executeClientQuery(mockUser, mockQuery);
 			} catch (e) {
 				error = e.response;
 			}
+
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query',
+				message: 'You are not authorized to execute this query: testQuery',
 			});
 		});
 
@@ -169,10 +184,11 @@ describe('DataService - no whitelist', () => {
 						},
 					],
 				});
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(true);
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
 			let error;
 			try {
-				await dataService.executeClientQuery(mockQuery);
+				await dataService.executeClientQuery(mockUser, mockQuery);
 			} catch (e) {
 				error = e.response;
 			}
@@ -215,11 +231,14 @@ describe('DataService - with whitelist', () => {
 			nock('http://localhost/').post('/v1/graphql/').reply(201, {
 				data: 'ok',
 			});
-			dataService.setWhitelistEnabled(true);
+			mockDataPermissionsService.isAllowedToExecuteQuery.mockReturnValueOnce(true);
+			mockDataPermissionsService.isWhitelistEnabled.mockReturnValueOnce(true);
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
-			const result = await dataService.executeClientQuery({
-				query: 'query getClientQuery()',
+
+			const result = await dataService.executeClientQuery(mockUser, {
+				query: 'query getUsers(...',
 			});
+
 			expect(result).toEqual({
 				data: 'ok',
 			});
@@ -229,11 +248,11 @@ describe('DataService - with whitelist', () => {
 			nock('http://localhost/').post('/v1/graphql/').reply(201, {
 				data: 'ok',
 			});
-			dataService.setWhitelistEnabled(true);
+			mockDataPermissionsService.isWhitelistEnabled.mockReturnValueOnce(true);
 			mockDataPermissionsService.verify.mockReturnValueOnce(true);
 			let error;
 			try {
-				await dataService.executeClientQuery({
+				await dataService.executeClientQuery(mockUser, {
 					query: 'query unknown()',
 				});
 			} catch (e) {
@@ -242,7 +261,7 @@ describe('DataService - with whitelist', () => {
 			expect(error).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to execute this query',
+				message: 'You are not authorized to execute this query: testQuery',
 			});
 		});
 	});

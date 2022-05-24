@@ -13,12 +13,15 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { get, intersection } from 'lodash';
+import { compact, get, intersection } from 'lodash';
 
 import { ContentPage, LabelObj } from '../content-pages.types';
 
 import { ContentLabelsRequestDto } from '~modules/admin/content-pages/dto/content-labels-request.dto';
-import { ContentPagesQueryDto } from '~modules/admin/content-pages/dto/content-pages.dto';
+import {
+	ContentPageOverviewParams,
+	ContentPagesQueryDto,
+} from '~modules/admin/content-pages/dto/content-pages.dto';
 import { ResolveMediaGridBlocksDto } from '~modules/admin/content-pages/dto/resolve-media-grid-blocks.dto';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -27,6 +30,7 @@ import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { SpecialPermissionGroups } from '~shared/types/types';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('ContentPages')
@@ -38,9 +42,18 @@ export class ContentPagesController {
 
 	@Post('overview')
 	public async getContentPagesForOverview(
-		@Query() queryDto: ContentPagesQueryDto
+		@Body() queryDto: ContentPageOverviewParams,
+		@SessionUser() user?: SessionUserEntity
 	): Promise<IPagination<ContentPage>> {
-		const contentPages = await this.contentPagesService.getContentPagesForOverview(queryDto);
+		const contentPages = await this.contentPagesService.getContentPagesForOverview(
+			queryDto,
+			compact([
+				user?.getUser()?.groupId,
+				user
+					? SpecialPermissionGroups.loggedInUsers
+					: SpecialPermissionGroups.loggedOutUsers,
+			])
+		);
 		return contentPages;
 	}
 
@@ -96,7 +109,12 @@ export class ContentPagesController {
 		}
 
 		// Check if content page is accessible for the user who requested the content page
-		if (!intersection(contentPage.userGroupIds, SessionHelper.getUserGroupIds(user)).length) {
+		if (
+			!intersection(
+				contentPage.userGroupIds.map((id) => String(id)),
+				SessionHelper.getUserGroupIds(user)
+			).length
+		) {
 			return null;
 		}
 

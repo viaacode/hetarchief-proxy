@@ -1,5 +1,6 @@
 import {
 	CACHE_MANAGER,
+	forwardRef,
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -38,7 +39,7 @@ export class PlayerTicketService {
 
 	constructor(
 		protected configService: ConfigService,
-		protected dataService: DataService,
+		@Inject(forwardRef(() => DataService)) protected dataService: DataService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {
 		this.playerTicketsGotInstance = got.extend({

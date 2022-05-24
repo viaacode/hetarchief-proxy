@@ -16,16 +16,13 @@ export class SiteVariablesService {
 	constructor(private dataService: DataService) {}
 
 	public async getSiteVariable<T>(variable: string): Promise<T> {
-		const {
-			data: {
-				app_config_by_pk: { value },
-			},
-		} = await this.dataService.execute<GetSiteVariableByNameQuery>(
+		const response = await this.dataService.execute<GetSiteVariableByNameQuery>(
 			GetSiteVariableByNameDocument,
 			{ name: variable }
 		);
 
-		return value;
+		/* istanbul ignore next */
+		return response?.data?.app_config_by_pk?.value;
 	}
 
 	public async updateSiteVariable(variable: string, value: any): Promise<UpdateResponse> {
