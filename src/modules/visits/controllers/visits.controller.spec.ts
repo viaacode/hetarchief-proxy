@@ -323,6 +323,28 @@ describe('VisitsController', () => {
 			expect(visit.endAt.split('-')[0]).toEqual('2100');
 		});
 
+		it('should throw a Gone exception if an active visit was not found and the space is inactive', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			const status = mockSpace.status;
+			mockSpace.status = VisitorSpaceStatus.Inactive;
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual('Gone');
+			expect(error.response.statusCode).toEqual(410);
+
+			// reset
+			mockSpace.status = status;
+		});
+
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
