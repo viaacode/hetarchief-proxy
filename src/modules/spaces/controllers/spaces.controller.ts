@@ -8,6 +8,7 @@ import {
 	Param,
 	ParseUUIDPipe,
 	Patch,
+	Post,
 	Query,
 	UploadedFile,
 	UseInterceptors,
@@ -16,7 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
@@ -26,6 +27,7 @@ import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import i18n from '~shared/i18n';
 
@@ -125,5 +127,43 @@ export class SpacesController {
 		}
 
 		return this.spacesService.update(id, updateSpaceDto);
+	}
+
+	@Post()
+	@UseInterceptors(FileInterceptor('file'))
+	@ApiOperation({
+		description: 'Update a space',
+	})
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				orId: { type: 'string' },
+				slug: { type: 'string' },
+				file: {
+					type: 'string',
+					format: 'binary',
+				},
+				description: { type: 'string' },
+				serviceDescription: { type: 'string' },
+				color: { type: 'string' },
+				image: { type: 'string' },
+				status: { type: 'string' },
+			},
+		},
+	})
+	@RequireAllPermissions(Permission.CREATE_SPACES)
+	public async createSpace(
+		@Body() createSpaceDto: CreateSpaceDto,
+		@UploadedFile() file: Express.Multer.File
+	): Promise<Space> {
+		if (file) {
+			createSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
+		}
+		// Space is always created with 'REQUESTED' status
+		createSpaceDto.status = VisitorSpaceStatus.Requested;
+
+		return this.spacesService.create(createSpaceDto);
 	}
 }

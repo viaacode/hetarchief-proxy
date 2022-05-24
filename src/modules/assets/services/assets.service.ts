@@ -132,14 +132,13 @@ export class AssetsService {
 
 	public async uploadToObjectStore(key: string, file: Express.Multer.File): Promise<string> {
 		const s3Client = await this.getS3Client();
-		const tmpFilePath = path.join(__dirname, '../../../../..', file.path);
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise<string>(async (resolve, reject) => {
 			try {
 				s3Client.putObject(
 					{
 						Key: key,
-						Body: file.buffer || (await fse.readFile(tmpFilePath)),
+						Body: file.buffer || (await fse.readFile(file.path)),
 						ACL: 'public-read',
 						ContentType: file.mimetype,
 						Bucket: getConfig(this.configService, 'assetServerBucketName'),
@@ -162,22 +161,26 @@ export class AssetsService {
 							)}/${key}`;
 							resolve(url.href);
 						}
+						if (!file.buffer) {
+							fse.unlink(file.path)?.catch((err) =>
+								this.logger.error({
+									message:
+										'Failed to remove file from tmp folder after upload to s3',
+									innerException: err,
+								})
+							);
+						}
 					}
 				);
 			} catch (err) {
 				const error = new InternalServerErrorException({
 					message: 'Failed to upload asset to the s3 asset service',
 					error: err,
+					additionalInfo: { path: file.path },
 				});
 				this.logger.error(error);
 				reject(error);
 			}
-			fse.unlink(tmpFilePath)?.catch((err) =>
-				this.logger.error({
-					message: 'Failed to remove file from tmp folder after upload to s3',
-					innerException: err,
-				})
-			);
 		});
 	}
 

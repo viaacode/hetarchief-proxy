@@ -46,6 +46,7 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	getMaintainerProfiles: jest.fn(),
 	findBySlug: jest.fn(),
 	update: jest.fn(),
+	create: jest.fn(),
 };
 
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
@@ -225,6 +226,32 @@ describe('SpacesController', () => {
 				message: 'You are not authorized to update this visitor space',
 			});
 			mockUser.permissions.pop();
+		});
+	});
+
+	describe('createSpace', () => {
+		it('should create a space', async () => {
+			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockSpacesService.create.mockResolvedValueOnce({ id: '1' });
+			const space = await spacesController.createSpace(
+				{
+					orId: 'OR-test',
+					slug: 'test',
+				},
+				{
+					fieldname: 'file',
+					originalname: 'image.jpg',
+					encoding: '7bit',
+					mimetype: 'image/png',
+					size: 6714,
+					filename: 'ee1c7ce7dc5a8b49ca95fc2f62425edc',
+					path: '',
+					buffer: null,
+					stream: null,
+					destination: null,
+				}
+			);
+			expect(space.id).toEqual('1');
 		});
 	});
 });
