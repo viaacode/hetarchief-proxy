@@ -338,7 +338,9 @@ describe('VisitsController', () => {
 			} catch (err) {
 				error = err;
 			}
-			expect(error.response.message).toEqual('Gone');
+			expect(error.response.message).toEqual(
+				"The space with slug 'space-1' is no longer accepting visit requests."
+			);
 			expect(error.response.statusCode).toEqual(410);
 
 			// reset
