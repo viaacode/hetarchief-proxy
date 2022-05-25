@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	ForbiddenException,
@@ -91,6 +92,7 @@ export class SpacesController {
 					type: 'string',
 					format: 'binary',
 				},
+				slug: { type: 'string' },
 				description: { type: 'string' },
 				serviceDescription: { type: 'string' },
 				color: { type: 'string' },
@@ -113,6 +115,10 @@ export class SpacesController {
 			user.getMaintainerId() !== space.maintainerId
 		) {
 			throw new ForbiddenException('You are not authorized to update this visitor space');
+		}
+
+		if (updateSpaceDto.slug && user.hasNot(Permission.UPDATE_ALL_SPACES)) {
+			throw new ForbiddenException('You are not allowed to update the slug');
 		}
 
 		if (file) {
@@ -158,6 +164,12 @@ export class SpacesController {
 		@Body() createSpaceDto: CreateSpaceDto,
 		@UploadedFile() file: Express.Multer.File
 	): Promise<Space> {
+		// create dto is inherited from update, and conflicts with slug: required here, optional in update
+		if (!createSpaceDto.slug) {
+			// same error as other validation errors
+			throw new BadRequestException(['slug must be a string']);
+		}
+
 		if (file) {
 			createSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
 		}
