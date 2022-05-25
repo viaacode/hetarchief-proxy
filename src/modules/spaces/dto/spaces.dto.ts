@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
@@ -157,4 +157,24 @@ export class UpdateSpaceDto {
 		enum: VisitorSpaceStatus,
 	})
 	status?: VisitorSpaceStatus;
+}
+
+export class CreateSpaceDto extends UpdateSpaceDto {
+	@IsString()
+	@Type(() => String)
+	@ApiProperty({
+		type: String,
+		description:
+			'Create a space for the maintainer with this or_id. A maintainer can have only 1 space.',
+		default: undefined,
+	})
+	orId: string;
+
+	@IsString()
+	@Type(() => String)
+	@ApiProperty({
+		type: String,
+		description: 'The slug for this space, should be unique.',
+	})
+	slug: string;
 }
