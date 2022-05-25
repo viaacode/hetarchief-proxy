@@ -173,7 +173,7 @@ export class VisitsController {
 
 			if (space) {
 				if (space.status === VisitorSpaceStatus.Inactive) {
-					throw new GoneException();
+					throw new GoneException(`The space with slug '${visitorSpaceSlug}' is no longer accepting visit requests.`);
 				}
 
 				// User does not have access to existing space
