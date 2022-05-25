@@ -6,6 +6,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	GoneException,
 	Logger,
 	NotFoundException,
 	Param,
@@ -24,6 +25,7 @@ import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dt
 import { VisitsService } from '../services/visits.service';
 import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
@@ -170,6 +172,10 @@ export class VisitsController {
 			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
 
 			if (space) {
+				if (space.status === VisitorSpaceStatus.Inactive) {
+					throw new GoneException(`The space with slug '${visitorSpaceSlug}' is no longer accepting visit requests.`);
+				}
+
 				// User does not have access to existing space
 				throw new ForbiddenException(
 					`You do not have access to space with slug '${visitorSpaceSlug}'.`

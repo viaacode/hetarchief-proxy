@@ -40,7 +40,7 @@ export class SpacesQueryDto {
 		enum: VisitorSpaceStatus,
 	})
 	@Transform(commaSeparatedStringToArray)
-	status?: VisitorSpaceStatus[];
+	status?: VisitorSpaceStatus[] = [VisitorSpaceStatus.Active];
 
 	@IsNumber()
 	@Type(() => Number)
