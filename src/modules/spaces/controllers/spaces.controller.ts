@@ -92,6 +92,7 @@ export class SpacesController {
 					type: 'string',
 					format: 'binary',
 				},
+				slug: { type: 'string' },
 				description: { type: 'string' },
 				serviceDescription: { type: 'string' },
 				color: { type: 'string' },
