@@ -13,6 +13,7 @@ import { print } from 'graphql/language/printer';
 
 import { getConfig } from '~config';
 
+import { DuplicateKeyException } from '../../../shared/exceptions/duplicate-key.exception';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
@@ -87,10 +88,19 @@ export class DataService {
 			});
 			if (data.errors) {
 				this.logger.error(`GraphQl query failed: ${JSON.stringify(data.errors)}`);
+				if (data.errors[0]?.extensions?.code === 'constraint-violation') {
+					throw new DuplicateKeyException({
+						message: data.errors[0].message,
+						path: data.errors[0].extensions.path,
+					});
+				}
 				throw new InternalServerErrorException(data);
 			}
 			return data;
 		} catch (err) {
+			if (err instanceof DuplicateKeyException) {
+				throw err;
+			}
 			this.logger.error('Failed to get data from database', err.stack);
 			throw new InternalServerErrorException();
 		}
