@@ -82,9 +82,9 @@ describe('SpacesService', () => {
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlSpace.id);
 			expect(adapted.name).toEqual(mockGqlSpace.content_partner.schema_name);
-			expect(adapted.logo).toEqual(mockGqlSpace.content_partner.information[0].logo.iri);
+			expect(adapted.logo).toEqual(mockGqlSpace.content_partner.information.logo.iri);
 			expect(adapted.contactInfo.address.postalCode).toEqual(
-				mockGqlSpace.content_partner.information[0].primary_site.address.postal_code
+				mockGqlSpace.content_partner.information.primary_site.address.postal_code
 			);
 		});
 

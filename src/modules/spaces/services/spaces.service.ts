@@ -37,7 +37,7 @@ export class SpacesService {
 	 */
 	public adapt(graphQlSpace: GqlSpace): Space {
 		/* istanbul ignore next */
-		const information = graphQlSpace?.content_partner?.information?.[0];
+		const information = graphQlSpace?.content_partner?.information;
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,

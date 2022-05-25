@@ -242,16 +242,16 @@ export class HetArchiefController {
 	@Redirect()
 	async logoutCallbackPost(
 		@Session() session: Record<string, any>,
-		@Body() response: SamlCallbackBody
+		@Body() requestOrResponse: SamlCallbackBody
 	): Promise<any> {
 		try {
 			SessionHelper.logout(session);
 
-			if (response.SAMLResponse) {
+			if (requestOrResponse.SAMLResponse) {
 				// response => user was requesting a logout starting in the archief2 client
 				let returnToUrl: string;
 				try {
-					const relayState: any = JSON.parse(response.RelayState);
+					const relayState: any = JSON.parse(requestOrResponse.RelayState);
 					returnToUrl = get(relayState, 'returnToUrl');
 				} catch (err) {
 					this.logger.error(
@@ -268,10 +268,10 @@ export class HetArchiefController {
 
 			// request => user requested logout starting in another app and the idp is requesting archief2 to log the user out
 			const responseUrl = await this.hetArchiefService.createLogoutResponseUrl(
-				response.RelayState
+				requestOrResponse.RelayState
 			);
 			return {
-				url: responseUrl, // TODO add fallback if undefined (possbile scenario if the IDP initiates the logout action)
+				url: responseUrl, // TODO add fallback if undefined (possible scenario if the IDP initiates the logout action)
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {

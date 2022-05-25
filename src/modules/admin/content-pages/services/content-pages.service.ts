@@ -49,8 +49,8 @@ import {
 } from '~modules/admin/content-pages/content-pages.consts';
 import { ContentPageOverviewParams } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { MediaItemsDto } from '~modules/admin/content-pages/dto/resolve-media-grid-blocks.dto';
-import { Organisation } from '~modules/admin/organisations/organisations.types';
-import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
+import { Organisation } from '~modules/admin/organisations/admin-organisations.types';
+import { AdminOrganisationsService } from '~modules/admin/organisations/services/admin-organisations.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 import { SpecialPermissionGroups } from '~shared/types/types';
@@ -68,7 +68,7 @@ export class ContentPagesService {
 		@Inject(forwardRef(() => DataService)) protected dataService: DataService,
 		protected configService: ConfigService,
 		protected playerTicketService: PlayerTicketService,
-		protected organisationsService: OrganisationsService
+		protected organisationsService: AdminOrganisationsService
 	) {
 		this.avoOrHetArchief = getConfig(this.configService, 'databaseApplicationType');
 		this.queries = CONTENT_PAGE_QUERIES[this.avoOrHetArchief];

@@ -19,6 +19,7 @@ import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
 import { NavigationsModule } from '~modules/navigations';
 import { NotificationsModule } from '~modules/notifications';
+import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
@@ -48,6 +49,7 @@ import { SessionService } from '~shared/services/session.service';
 		AssetsModule,
 		DataModule,
 		EventsModule,
+		OrganisationsModule,
 		MediaModule,
 		MediaModule,
 		NavigationsModule,

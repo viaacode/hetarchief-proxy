@@ -22,9 +22,7 @@ query getContentById($id: uuid!) {
 					schema_identifier
 					schema_name
 					information {
-						logo {
-							iri
-						}
+						logo
 					}
 				}
 			}
