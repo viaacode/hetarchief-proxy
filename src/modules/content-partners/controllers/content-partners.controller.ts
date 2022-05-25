@@ -6,8 +6,12 @@ import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
 import { ContentPartnersService } from '../services/content-partners.service';
 import { ContentPartner } from '../types';
 
+import { Permission } from '~modules/users/types';
+import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
+
 @ApiTags('Content-partners')
 @Controller('content-partners')
+@RequireAllPermissions(Permission.UPDATE_ALL_SPACES)
 export class ContentPartnersController {
 	private logger: Logger = new Logger(ContentPartnersController.name, { timestamp: true });
 
