@@ -49,6 +49,7 @@ export class SessionService {
 		const sessionConfig: session.SessionOptions = {
 			resave: false, // Postgres session provider doesn't need to resave the session every time
 			saveUninitialized: false, // Do not create a session for users that are not logged in, neither for health checks
+			name: 'connect.sid.hetarchief', // Avoid conflicts with the avo cookie
 			cookie: {
 				httpOnly: false,
 				maxAge: cookieMaxAge || 24 * 60 * 60 * 1000, // 24h
