@@ -35,7 +35,7 @@ export class DeleteNotificationDto {
 		isArray: true,
 		description: 'Filter spaces by status',
 		default: undefined,
-		example: [NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED],
+		example: [NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED],
 		enum: NotificationType,
 	})
 	types?: NotificationType[];

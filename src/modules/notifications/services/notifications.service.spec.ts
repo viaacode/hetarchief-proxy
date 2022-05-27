@@ -469,7 +469,7 @@ describe('NotificationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
 			const affectedRows = await notificationsService.delete('visit-id', {
-				types: [NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED],
+				types: [NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED],
 			});
 			expect(affectedRows).toBe(5);
 		});

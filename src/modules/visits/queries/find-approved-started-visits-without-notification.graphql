@@ -4,7 +4,7 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			status: { _eq: "APPROVED" }
 			start_date: { _lt: $now }
 			end_date: { _gt: $now }
-			_not: { notifications: { type: { _eq: "ACCESS_PERIOD_READING_ROOM_STARTED" } } }
+			_not: { notifications: { type: { _eq: "ACCESS_PERIOD_VISITOR_SPACE_STARTED" } } }
 		}
 	) {
 		id

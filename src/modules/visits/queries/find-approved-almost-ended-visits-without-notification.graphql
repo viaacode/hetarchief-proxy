@@ -3,7 +3,7 @@ query findApprovedAlmostEndedVisitsWithoutNotification($warningDate: timestamp, 
 		where: {
 			status: { _eq: "APPROVED" }
 			end_date: { _lt: $warningDate, _gt: $now }
-			_not: { notifications: { type: { _eq: "ACCESS_PERIOD_READING_ROOM_END_WARNING" } } }
+			_not: { notifications: { type: { _eq: "ACCESS_PERIOD_VISITOR_SPACE_END_WARNING" } } }
 		}
 	) {
 		id

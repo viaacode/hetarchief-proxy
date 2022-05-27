@@ -478,7 +478,7 @@ describe('SpacesService', () => {
 	});
 
 	describe('getMaintainerProfiles', () => {
-		it('returns all profile ids for all maintainers of a ReadingRoom', async () => {
+		it('returns all profile ids for all maintainers of a VisitorSpace', async () => {
 			const mockMaintainerIds: GetSpaceMaintainerProfilesQuery = {
 				maintainer_users_profile: [
 					{
