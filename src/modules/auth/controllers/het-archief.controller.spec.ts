@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 import { Configuration } from '~config';
 
@@ -49,6 +49,10 @@ const samlLogoutResponse = {
 	RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
 	SAMLResponse: 'dummy',
 };
+
+const mockResponseObject = {
+	redirect: jest.fn(),
+} as unknown as Response;
 
 const mockArchiefService: Partial<Record<keyof HetArchiefService, jest.SpyInstance>> = {
 	createLoginRequestUrl: jest.fn(),
@@ -141,6 +145,10 @@ describe('HetArchiefController', () => {
 
 		hetArchiefController = module.get<HetArchiefController>(HetArchiefController);
 		configService = module.get<ConfigService>(ConfigService);
+	});
+
+	afterEach(() => {
+		(mockResponseObject.redirect as jest.Mock).mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -357,7 +365,8 @@ describe('HetArchiefController', () => {
 
 			const result = await hetArchiefController.logoutCallbackPost(
 				getNewMockSession(),
-				samlLogoutResponse
+				samlLogoutResponse,
+				mockResponseObject
 			);
 
 			expect(result).toEqual({
@@ -373,7 +382,8 @@ describe('HetArchiefController', () => {
 				{
 					RelayState: 'invalidjson',
 					SAMLResponse: 'dummy',
-				}
+				},
+				mockResponseObject
 			);
 			expect(result).toEqual({
 				url: undefined,
@@ -383,31 +393,30 @@ describe('HetArchiefController', () => {
 
 		it('should redirect to the generated logout response url', async () => {
 			mockArchiefService.createLogoutResponseUrl.mockResolvedValueOnce('logout-response-url');
-			const result = await hetArchiefController.logoutCallbackPost(
+			await hetArchiefController.logoutCallbackPost(
 				{},
 				{
 					RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
 					SAMLResponse: null,
-				}
+				},
+				mockResponseObject
 			);
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: 'logout-response-url',
-			});
+			expect(mockResponseObject.redirect).toBeCalledWith('logout-response-url');
 		});
 
-		it('should catch an exception when generationg the logout response url', async () => {
+		it('should catch an exception when generating the logout response url', async () => {
 			mockArchiefService.createLogoutResponseUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await hetArchiefController.logoutCallbackPost(
+			await hetArchiefController.logoutCallbackPost(
 				{},
 				{
 					RelayState: null,
 					SAMLResponse: null,
-				}
+				},
+				mockResponseObject
 			);
-			expect(result).toBeUndefined();
+			expect(mockResponseObject.redirect).toBeCalledTimes(0);
 		});
 	});
 });
