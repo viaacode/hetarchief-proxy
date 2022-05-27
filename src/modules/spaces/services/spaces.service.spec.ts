@@ -184,8 +184,6 @@ describe('SpacesService', () => {
 			};
 
 			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
-			// update content partner has_space, response not important
-			mockDataService.execute.mockResolvedValueOnce({ data: true });
 
 			const response = await spacesService.create(mockCreateSpace);
 			expect(response.id).toEqual('1');

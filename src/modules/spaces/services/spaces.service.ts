@@ -113,17 +113,6 @@ export class SpacesService {
 				createSpace,
 			});
 
-			// set has_space on true for the content partner
-			await this.dataService.execute<UpdateContentPartnerMutation>(
-				UpdateContentPartnerDocument,
-				{
-					updateContentPartner: {
-						has_space: true,
-					},
-					pkColumns: { schema_identifier: createSpaceDto.orId },
-				}
-			);
-
 			return this.adapt(createdSpace);
 		} catch (e) {
 			this.handleException(e, createSpaceDto);

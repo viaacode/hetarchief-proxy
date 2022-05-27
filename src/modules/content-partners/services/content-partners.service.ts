@@ -31,13 +31,17 @@ export class ContentPartnersService {
 	public async getContentPartners(
 		inputQuery: ContentPartnersQueryDto
 	): Promise<IPagination<ContentPartner>> {
-		const hasSpaceFilter =
-			inputQuery.hasSpace === undefined ? {} : { has_space: { _eq: inputQuery.hasSpace } };
+		let where = {};
+		if (inputQuery.hasSpace === true) {
+			where = { visitor_space: {} };
+		} else if (inputQuery.hasSpace === false) {
+			where = { _not: { visitor_space: {} } };
+		}
 
 		const contentPartners = await this.dataService.execute<FindContentPartnersQuery>(
 			FindContentPartnersDocument,
 			{
-				where: { ...hasSpaceFilter },
+				where,
 			}
 		);
 
