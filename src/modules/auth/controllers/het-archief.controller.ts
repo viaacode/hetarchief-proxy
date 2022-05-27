@@ -261,10 +261,8 @@ export class HetArchiefController {
 					);
 				}
 
-				return {
-					url: returnToUrl,
-					statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				};
+				response.redirect(returnToUrl);
+				return;
 			}
 
 			// request => user requested logout starting in another app and the idp is requesting archief2 to log the user out

@@ -149,6 +149,7 @@ describe('HetArchiefController', () => {
 
 	afterEach(() => {
 		(mockResponseObject.redirect as jest.Mock).mockRestore();
+		mockArchiefService.createLogoutResponseUrl.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -363,21 +364,18 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
 
-			const result = await hetArchiefController.logoutCallbackPost(
+			await hetArchiefController.logoutCallbackPost(
 				getNewMockSession(),
 				samlLogoutResponse,
 				mockResponseObject
 			);
 
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: hetArchiefLogoutUrl,
-			});
+			expect(mockResponseObject.redirect).toBeCalledWith(hetArchiefLogoutUrl);
 			expect(mockArchiefService.createLogoutResponseUrl).not.toBeCalled();
 		});
 
 		it('should catch an exception when handling the saml response', async () => {
-			const result = await hetArchiefController.logoutCallbackPost(
+			await hetArchiefController.logoutCallbackPost(
 				{},
 				{
 					RelayState: 'invalidjson',
@@ -385,10 +383,7 @@ describe('HetArchiefController', () => {
 				},
 				mockResponseObject
 			);
-			expect(result).toEqual({
-				url: undefined,
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-			});
+			expect(mockResponseObject.redirect).toBeCalledWith(undefined);
 		});
 
 		it('should redirect to the generated logout response url', async () => {
