@@ -682,9 +682,9 @@ describe('VisitsController', () => {
 			expect(mockNotificationsService.delete).toHaveBeenCalledTimes(1);
 			expect(mockNotificationsService.delete).toHaveBeenLastCalledWith(mockVisit1.id, {
 				types: [
-					NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,
-					NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
-					NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				],
 			});
 		});
