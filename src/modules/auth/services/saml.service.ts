@@ -73,7 +73,7 @@ export abstract class SamlService {
 				private_key: privateKey,
 				certificate,
 				assert_endpoint: assertEndpoint,
-				force_authn: false, // !!certificate, // this is required when a certificate is set (not for local development)
+				force_authn: !!certificate, // this is required when a certificate is set (not for local development)
 				auth_context: {
 					comparison: 'exact',
 					class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'],
@@ -86,7 +86,7 @@ export abstract class SamlService {
 				sso_login_url: this.ssoLoginUrl,
 				sso_logout_url: this.ssoLogoutUrl,
 				certificates: signingIdpCertificates,
-				force_authn: false, // !!certificate, // this is required when a certificate is set (not for local development)
+				force_authn: !!certificate, // this is required when a certificate is set (not for local development)
 				sign_get_request: !!certificate, // this is required when a certificate is set (not for local development)
 				allow_unencrypted_assertion: true,
 			});
