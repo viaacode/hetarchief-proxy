@@ -1,0 +1,5 @@
+mutation deleteOrganisations {
+	delete_maintainer_organisation(where: {}) {
+		affected_rows
+	}
+}

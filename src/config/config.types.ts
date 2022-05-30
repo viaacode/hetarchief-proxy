@@ -53,6 +53,7 @@ export interface Configuration {
 	meemooAdminOrganizationIds: string[];
 	rerouteEmailsTo: string;
 	ignoreObjectLicenses: boolean;
+	organizationsApiV2Url: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

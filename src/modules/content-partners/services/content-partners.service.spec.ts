@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ContentPartnersService } from './content-partners.service';
 
-import { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 

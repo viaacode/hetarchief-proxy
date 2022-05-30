@@ -13,13 +13,13 @@ import { print } from 'graphql/language/printer';
 
 import { getConfig } from '~config';
 
-import { DuplicateKeyException } from '../../../shared/exceptions/duplicate-key.exception';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
 
 import { DataPermissionsService } from './data-permissions.service';
 
 import { User } from '~modules/users/types';
+import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 
 @Injectable()
 export class DataService {

@@ -124,18 +124,16 @@ export class VisitsService {
 			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
 			reason: graphQlVisit?.user_reason,
 			spaceAddress: this.adaptSpaceAddress(
-				graphQlVisit?.visitor_space?.content_partner?.information[0]?.primary_site?.address
+				graphQlVisit?.visitor_space?.content_partner?.information?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
-			spaceMail: this.adaptEmail(
-				graphQlVisit?.visitor_space?.content_partner?.information?.[0]
-			),
+			spaceMail: this.adaptEmail(graphQlVisit?.visitor_space?.content_partner?.information),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
-			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.logo?.iri,
-			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information[0]?.description,
+			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information?.logo?.iri,
+			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information?.description,
 			spaceDescription: graphQlVisit?.visitor_space?.schema_description,
 			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
 			startAt: graphQlVisit?.start_date,
