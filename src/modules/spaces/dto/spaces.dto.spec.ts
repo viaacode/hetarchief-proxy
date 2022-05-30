@@ -1,3 +1,4 @@
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { SpacesQueryDto } from '~modules/spaces/dto/spaces.dto';
 
 describe('SpacesQueryDto', () => {
@@ -11,6 +12,7 @@ describe('SpacesQueryDto', () => {
 				page: 1,
 				query: undefined,
 				size: 10,
+				status: [VisitorSpaceStatus.Active],
 			});
 		});
 	});

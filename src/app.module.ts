@@ -14,6 +14,7 @@ import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
+import { ContentPartnersModule } from '~modules/content-partners';
 import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
@@ -45,6 +46,7 @@ import { SessionService } from '~shared/services/session.service';
 		AuthModule,
 		CampaignMonitorModule,
 		CollectionsModule,
+		ContentPartnersModule,
 		ContentPagesModule,
 		AssetsModule,
 		DataModule,

@@ -4,7 +4,7 @@ import { isPast } from 'date-fns';
 
 import { DeleteNotificationDto } from '../dto/notifications.dto';
 import {
-	GqlCreateNotificationsForReadingRoom,
+	GqlCreateNotificationsForVisitorSpace,
 	GqlCreateOrUpdateNotification,
 	GqlNotification,
 	Notification,
@@ -115,7 +115,7 @@ export class NotificationsService {
 	 * @param recipients user profile ids to whom the notification should be sent
 	 */
 	public async createForMultipleRecipients(
-		notification: Partial<GqlCreateNotificationsForReadingRoom>,
+		notification: Partial<GqlCreateNotificationsForVisitorSpace>,
 		recipients: string[]
 	): Promise<Notification[]> {
 		return this.create(

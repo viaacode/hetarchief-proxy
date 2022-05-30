@@ -1,0 +1,26 @@
+mutation createSpace($createSpace: maintainer_visitor_space_insert_input!) {
+	insert_maintainer_visitor_space_one(object: $createSpace) {
+		id
+		slug
+		schema_image
+		schema_color
+		schema_audience_type
+		schema_description
+		schema_public_access
+		schema_service_description
+		status
+		published_at
+		created_at
+		updated_at
+		content_partner {
+			schema_name
+			schema_identifier
+			information {
+				contact_point
+				description
+				logo
+				primary_site
+			}
+		}
+	}
+}

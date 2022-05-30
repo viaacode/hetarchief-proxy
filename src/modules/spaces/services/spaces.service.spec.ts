@@ -1,11 +1,15 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
+
+import { CreateSpaceDto } from '../dto/spaces.dto';
 
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
+	CreateSpaceMutation,
 	FindSpaceByIdQuery,
 	FindSpaceByMaintainerIdQuery,
 	FindSpaceBySlugQuery,
@@ -17,6 +21,7 @@ import { DataService } from '~modules/data/services/data.service';
 import { AccessType } from '~modules/spaces/types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockUser: User = {
@@ -30,6 +35,16 @@ const mockUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+};
+
+const mockCreateSpace: CreateSpaceDto = {
+	orId: 'test',
+	slug: 'test-slug',
+	color: 'red',
+	description: 'my-space',
+	serviceDescription: 'service description',
+	image: '',
+	status: VisitorSpaceStatus.Active,
 };
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -157,6 +172,95 @@ describe('SpacesService', () => {
 				error = e;
 			}
 			expect(error.message).toEqual("Space with id '0' not found");
+		});
+	});
+
+	describe('create', () => {
+		it('can create a space', async () => {
+			const mockData: CreateSpaceMutation = {
+				insert_maintainer_visitor_space_one: {
+					id: '1',
+				} as CreateSpaceMutation['insert_maintainer_visitor_space_one'],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+
+			const response = await spacesService.create(mockCreateSpace);
+			expect(response.id).toEqual('1');
+		});
+
+		it('throws an Internal server exception with a specific message on duplicate orId', async () => {
+			const errorData = {
+				message:
+					'Uniqueness violation. duplicate key value violates unique constraint "space_schema_maintainer_id_key"',
+				path: 'path-to-error',
+			};
+
+			mockDataService.execute.mockImplementationOnce(() => {
+				throw new DuplicateKeyException(errorData);
+			});
+
+			let error;
+			try {
+				await spacesService.create(mockCreateSpace);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual("A space already exists for maintainer with id 'test'");
+		});
+
+		it('throws an Internal server exception with a specific message on unknown orId', async () => {
+			const errorData = {
+				message:
+					'Foreign key violation. insert or update on table "visitor_space" violates foreign key constraint "space_schema_maintainer_id_fkey"',
+				path: 'path-to-error',
+			};
+
+			mockDataService.execute.mockImplementationOnce(() => {
+				throw new DuplicateKeyException(errorData);
+			});
+
+			let error;
+			try {
+				await spacesService.create(mockCreateSpace);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual("Unknown maintainerId 'test'");
+		});
+
+		it('throws an Internal server exception with a specific message on duplicate slug', async () => {
+			const errorData = {
+				message:
+					'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"',
+				path: 'path-to-error',
+			};
+
+			mockDataService.execute.mockImplementationOnce(() => {
+				throw new DuplicateKeyException(errorData);
+			});
+
+			let error;
+			try {
+				await spacesService.create(mockCreateSpace);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.message).toEqual("A space already exists with slug 'test-slug'");
+		});
+
+		it('throws a general Internal server exception when another error occurred', async () => {
+			mockDataService.execute.mockImplementationOnce(() => {
+				throw new InternalServerErrorException('Unknown error');
+			});
+
+			let error;
+			try {
+				await spacesService.create(mockCreateSpace);
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response).toEqual({ message: 'Internal Server Error', statusCode: 500 });
 		});
 	});
 
@@ -372,7 +476,7 @@ describe('SpacesService', () => {
 	});
 
 	describe('getMaintainerProfiles', () => {
-		it('returns all profile ids for all maintainers of a ReadingRoom', async () => {
+		it('returns all profile ids for all maintainers of a VisitorSpace', async () => {
 			const mockMaintainerIds: GetSpaceMaintainerProfilesQuery = {
 				maintainer_users_profile: [
 					{

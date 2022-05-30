@@ -8,11 +8,12 @@ import {
 	Query,
 	Redirect,
 	Req,
+	Res,
 	Session,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
@@ -239,19 +240,19 @@ export class HetArchiefController {
 	 * This call should redirect to the idp logout response url
 	 */
 	@Post('logout-callback')
-	@Redirect()
 	async logoutCallbackPost(
 		@Session() session: Record<string, any>,
-		@Body() requestOrResponse: SamlCallbackBody
+		@Body() samlCallbackBody: SamlCallbackBody,
+		@Res() response: Response
 	): Promise<any> {
 		try {
 			SessionHelper.logout(session);
 
-			if (requestOrResponse.SAMLResponse) {
+			if (samlCallbackBody.SAMLResponse) {
 				// response => user was requesting a logout starting in the archief2 client
 				let returnToUrl: string;
 				try {
-					const relayState: any = JSON.parse(requestOrResponse.RelayState);
+					const relayState: any = JSON.parse(samlCallbackBody.RelayState);
 					returnToUrl = get(relayState, 'returnToUrl');
 				} catch (err) {
 					this.logger.error(
@@ -260,20 +261,15 @@ export class HetArchiefController {
 					);
 				}
 
-				return {
-					url: returnToUrl,
-					statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				};
+				response.redirect(returnToUrl);
+				return;
 			}
 
 			// request => user requested logout starting in another app and the idp is requesting archief2 to log the user out
 			const responseUrl = await this.hetArchiefService.createLogoutResponseUrl(
-				requestOrResponse.RelayState
+				samlCallbackBody.RelayState
 			);
-			return {
-				url: responseUrl, // TODO add fallback if undefined (possible scenario if the IDP initiates the logout action)
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-			};
+			response.redirect(responseUrl);
 		} catch (err) {
 			this.logger.error('Failed during hetarchief auth POST logout-callback route', err);
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)

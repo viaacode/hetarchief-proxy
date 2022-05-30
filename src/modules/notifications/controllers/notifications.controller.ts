@@ -110,11 +110,11 @@ export class NotificationsController {
 			return {
 				status: i18n.t('Notificaties verzonden'),
 				notifications: {
-					[NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED]:
+					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED]:
 						accessStartsNotifications.length,
-					[NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING]:
+					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING]:
 						accessAlmostEndedNotifications.length,
-					[NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED]:
+					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED]:
 						accessEndedNotifications.length,
 				},
 				total: totalNotificationsSent,
@@ -143,7 +143,7 @@ export class NotificationsController {
 					endDate: formatAsBelgianDate(visit.endAt),
 				}),
 				visit_id: visit.id,
-				type: NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,
+				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
 				status: NotificationStatus.UNREAD,
 				recipient: visit.userProfileId,
 			})
@@ -153,7 +153,7 @@ export class NotificationsController {
 	}
 
 	/**
-	 * Check APPROVED visitRequests that have passed their warning end time and do not have an ACCESS_PERIOD_READING_ROOM_END_WARNING notification
+	 * Check APPROVED visitRequests that have passed their warning end time and do not have an ACCESS_PERIOD_VISITOR_SPACE_END_WARNING notification
 	 * @private
 	 */
 	private async sendAccessAlmostEndedNotifications(): Promise<Notification[]> {
@@ -170,7 +170,7 @@ export class NotificationsController {
 				),
 				description: i18n.t('Sla je werk op voor je toegang verliest'),
 				visit_id: visit.id,
-				type: NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
+				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				status: NotificationStatus.UNREAD,
 				recipient: visit.userProfileId,
 			})
@@ -180,7 +180,7 @@ export class NotificationsController {
 	}
 
 	/**
-	 * Check APPROVED visitRequests that have passed their end time and do not have an ACCESS_PERIOD_READING_ROOM_ENDED notification
+	 * Check APPROVED visitRequests that have passed their end time and do not have an ACCESS_PERIOD_VISITOR_SPACE_ENDED notification
 	 * @private
 	 */
 	private async sendAccessEndNotifications(): Promise<Notification[]> {
@@ -195,7 +195,7 @@ export class NotificationsController {
 					'Om opnieuw toegang te krijgen tot deze leeszaal kan je een nieuwe aanvraag indienen'
 				),
 				visit_id: visit.id,
-				type: NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
+				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
 				status: NotificationStatus.UNREAD,
 				recipient: visit.userProfileId,
 			})

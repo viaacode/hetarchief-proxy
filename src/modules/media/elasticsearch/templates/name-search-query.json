@@ -6,18 +6,34 @@
       "slop": 5,
       "boost": 100,
       "fields": [
+        "schema_is_part_of.serie^20",
+        "schema_is_part_of.serie.lemma_split^15",
+        "schema_is_part_of.serie.lemma_split_spell^10",
         "schema_name^20",
-        "schema_alternate_name",
-        "schema_is_part_of",
-        "schema_is_part_of.alternatief",
-        "schema_is_part_of.archief",
-        "schema_is_part_of.deelarchief",
-        "schema_is_part_of.deelreeks",
-        "schema_is_part_of.programma",
-        "schema_is_part_of.reeks",
-        "schema_is_part_of.seizoen",
-        "schema_is_part_of.serie"
+        "schema_name.lemma_split^15",
+        "schema_name.lemma_split_spell^10",
+        "schema_alternate_name^10",
+        "schema_alternate_name.lemma_split^8",
+        "schema_alternate_name.lemma_split_spell^5"
       ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "fields": [
+        "schema_is_part_of.serie^20",
+        "schema_is_part_of.serie.lemma_split^15",
+        "schema_is_part_of.serie.lemma_split_spell^10",
+        "schema_name^20",
+        "schema_name.lemma_split^15",
+        "schema_name.lemma_split_spell^10",
+        "schema_alternate_name^10",
+        "schema_alternate_name.lemma_split^8",
+        "schema_alternate_name.lemma_split_spell^5"
+      ],
+      "type": "cross_fields",
+      "operator": "and"
     }
   }
 ]
