@@ -229,9 +229,9 @@ describe('NotificationsController', () => {
 
 			expect(response.status).toEqual(i18n.t('Notificaties verzonden'));
 			expect(response.notifications).toEqual({
-				ACCESS_PERIOD_READING_ROOM_STARTED: 2,
-				ACCESS_PERIOD_READING_ROOM_END_WARNING: 1,
-				ACCESS_PERIOD_READING_ROOM_ENDED: 3,
+				ACCESS_PERIOD_VISITOR_SPACE_STARTED: 2,
+				ACCESS_PERIOD_VISITOR_SPACE_END_WARNING: 1,
+				ACCESS_PERIOD_VISITOR_SPACE_ENDED: 3,
 			});
 			expect(response.total).toEqual(2 + 1 + 3);
 		});

@@ -1,0 +1,11 @@
+query findContentPartners($where: maintainer_content_partner_bool_exp!) {
+	maintainer_content_partner(where: $where) {
+		schema_identifier
+		schema_name
+	}
+	maintainer_content_partner_aggregate(where: $where) {
+		aggregate {
+			count
+		}
+	}
+}

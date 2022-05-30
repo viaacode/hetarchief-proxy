@@ -323,6 +323,30 @@ describe('VisitsController', () => {
 			expect(visit.endAt.split('-')[0]).toEqual('2100');
 		});
 
+		it('should throw a Gone exception if an active visit was not found and the space is inactive', async () => {
+			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			const status = mockSpace.status;
+			mockSpace.status = VisitorSpaceStatus.Inactive;
+
+			let error;
+			try {
+				await visitsController.getActiveVisitForUserAndSpace(
+					'space-1',
+					new SessionUserEntity(mockUser)
+				);
+			} catch (err) {
+				error = err;
+			}
+			expect(error.response.message).toEqual(
+				"The space with slug 'space-1' is no longer accepting visit requests."
+			);
+			expect(error.response.statusCode).toEqual(410);
+
+			// reset
+			mockSpace.status = status;
+		});
+
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
@@ -658,9 +682,9 @@ describe('VisitsController', () => {
 			expect(mockNotificationsService.delete).toHaveBeenCalledTimes(1);
 			expect(mockNotificationsService.delete).toHaveBeenLastCalledWith(mockVisit1.id, {
 				types: [
-					NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED,
-					NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
-					NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
+					NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				],
 			});
 		});

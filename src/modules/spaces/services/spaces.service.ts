@@ -1,11 +1,18 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
 
-import { SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
+import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { AccessType, GqlSpace, Space } from '../types';
 
 import {
+	CreateSpaceDocument,
+	CreateSpaceMutation,
 	FindSpaceByCpAdminIdDocument,
 	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdDocument,
@@ -19,10 +26,14 @@ import {
 	FindSpacesQueryVariables,
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
+	Maintainer_Visitor_Space_Set_Input,
+	UpdateContentPartnerDocument,
+	UpdateContentPartnerMutation,
 	UpdateSpaceDocument,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { Recipient } from '~shared/types/types';
 
@@ -74,31 +85,58 @@ export class SpacesService {
 		return contactPoint?.email || null;
 	}
 
-	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
-		const updateKeys = Object.keys(updateSpaceDto);
-		const updateSpace = {
-			...(updateKeys.includes('color') ? { schema_color: updateSpaceDto.color } : {}),
-			...(updateKeys.includes('description')
-				? { schema_description: updateSpaceDto.description }
+	protected buildSpaceDatabaseObject(
+		inputDto: Partial<CreateSpaceDto>
+	): Maintainer_Visitor_Space_Set_Input {
+		const inputKeys = Object.keys(inputDto);
+		return {
+			...(inputKeys.includes('orId') ? { schema_maintainer_id: inputDto.orId } : {}),
+			...(inputKeys.includes('slug') ? { slug: inputDto.slug } : {}),
+			...(inputKeys.includes('color') ? { schema_color: inputDto.color } : {}),
+			...(inputKeys.includes('description')
+				? { schema_description: inputDto.description }
 				: {}),
-			...(updateKeys.includes('serviceDescription')
-				? { schema_service_description: updateSpaceDto.serviceDescription }
+			...(inputKeys.includes('serviceDescription')
+				? { schema_service_description: inputDto.serviceDescription }
 				: {}),
-			...(updateKeys.includes('image') ? { schema_image: updateSpaceDto.image } : {}),
-			...(updateKeys.includes('status') ? { status: updateSpaceDto.status } : {}),
+			...(inputKeys.includes('image') ? { schema_image: inputDto.image } : {}),
+			...(inputKeys.includes('status') ? { status: inputDto.status } : {}),
 		};
-		const {
-			data: { update_maintainer_visitor_space_by_pk: updatedSpace },
-		} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
-			id,
-			updateSpace,
-		});
+	}
 
-		if (!updatedSpace) {
-			throw new NotFoundException(`Space with id '${id}' not found`);
+	public async create(createSpaceDto: CreateSpaceDto): Promise<Space> {
+		const createSpace = this.buildSpaceDatabaseObject(createSpaceDto);
+		try {
+			const {
+				data: { insert_maintainer_visitor_space_one: createdSpace },
+			} = await this.dataService.execute<CreateSpaceMutation>(CreateSpaceDocument, {
+				createSpace,
+			});
+
+			return this.adapt(createdSpace);
+		} catch (e) {
+			this.handleException(e, createSpaceDto);
 		}
+	}
 
-		return this.adapt(updatedSpace);
+	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
+		const updateSpace = this.buildSpaceDatabaseObject(updateSpaceDto);
+		try {
+			const {
+				data: { update_maintainer_visitor_space_by_pk: updatedSpace },
+			} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
+				id,
+				updateSpace,
+			});
+
+			if (!updatedSpace) {
+				throw new NotFoundException(`Space with id '${id}' not found`);
+			}
+
+			return this.adapt(updatedSpace);
+		} catch (e) {
+			this.handleException(e, updateSpaceDto);
+		}
 	}
 
 	public async findAll(
@@ -243,5 +281,37 @@ export class SpacesService {
 			id: item.users_profile_id,
 			email: item.profile.mail,
 		}));
+	}
+
+	public handleException(e: Error, inputDto: Partial<CreateSpaceDto>): void {
+		if (e instanceof DuplicateKeyException) {
+			if (
+				e.data.message ===
+				'Uniqueness violation. duplicate key value violates unique constraint "space_schema_maintainer_id_key"'
+			) {
+				throw new InternalServerErrorException(
+					`A space already exists for maintainer with id '${inputDto.orId}'`
+				);
+			}
+			if (
+				e.data.message ===
+				'Foreign key violation. insert or update on table "visitor_space" violates foreign key constraint "space_schema_maintainer_id_fkey"'
+			) {
+				throw new InternalServerErrorException(`Unknown maintainerId '${inputDto.orId}'`);
+			}
+			if (
+				e.data.message ===
+				'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
+			) {
+				throw new InternalServerErrorException(
+					`A space already exists with slug '${inputDto.slug}'`
+				);
+			}
+		}
+		if (e instanceof NotFoundException) {
+			throw e;
+		}
+		// Unknown error
+		throw new InternalServerErrorException();
 	}
 }

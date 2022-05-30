@@ -6,6 +6,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	GoneException,
 	Logger,
 	NotFoundException,
 	Param,
@@ -24,6 +25,7 @@ import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dt
 import { VisitsService } from '../services/visits.service';
 import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
@@ -170,6 +172,12 @@ export class VisitsController {
 			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
 
 			if (space) {
+				if (space.status === VisitorSpaceStatus.Inactive) {
+					throw new GoneException(
+						`The space with slug '${visitorSpaceSlug}' is no longer accepting visit requests.`
+					);
+				}
+
 				// User does not have access to existing space
 				throw new ForbiddenException(
 					`You do not have access to space with slug '${visitorSpaceSlug}'.`
@@ -375,13 +383,13 @@ export class VisitsController {
 	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
 		const typesToDelete = [];
 		if (updateVisitDto.startAt && isFuture(new Date(updateVisitDto.startAt))) {
-			typesToDelete.push(NotificationType.ACCESS_PERIOD_READING_ROOM_STARTED);
+			typesToDelete.push(NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED);
 		}
 
 		if (updateVisitDto.endAt && isFuture(new Date(updateVisitDto.endAt))) {
 			typesToDelete.push(
-				NotificationType.ACCESS_PERIOD_READING_ROOM_ENDED,
-				NotificationType.ACCESS_PERIOD_READING_ROOM_END_WARNING
+				NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
+				NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING
 			);
 		}
 

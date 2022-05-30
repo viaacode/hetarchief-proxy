@@ -59,7 +59,7 @@ export class MediaController {
 		private visitsService: VisitsService
 	) {}
 
-	// Disabled in production since users always need to search inside one reading room
+	// Disabled in production since users always need to search inside one visitor space
 	// handy on local environment due to limited test data in a single index
 	// Can be re-enabled in phase2 for cross-bezoekersruimte search
 	@Post()
