@@ -4,9 +4,8 @@ import {
 	Logger,
 	OnApplicationBootstrap,
 } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
+import got from 'got';
 import { uniqBy } from 'lodash';
-import cron from 'node-cron';
 
 import {
 	OrganisationInfoV2,
@@ -33,14 +32,6 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 
 			await this.updateOrganisationsCache();
 
-			// Register a cron job to refresh the organizations every night
-			if (process.env.NODE_ENV !== 'test') {
-				/* istanbul ignore next */
-				cron.schedule('0 0 04 * * *', async () => {
-					await this.updateOrganisationsCache();
-				}).start();
-			}
-
 			this.logger.log('caching organizations... done');
 		} catch (err) {
 			this.logger.log('caching organizations... error');
@@ -48,8 +39,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 			/* istanbul ignore next */
 			this.logger.error(
 				new InternalServerErrorException({
-					message:
-						'Failed to fill initial organizations cache or schedule cron job to renew the cache',
+					message: 'Failed to fill initial organizations cache',
 					innerException: err,
 				})
 			);
@@ -86,23 +76,17 @@ export default class OrganisationsService implements OnApplicationBootstrap {
   }
 }`,
 			};
-			const orgResponse: AxiosResponse<OrganisationResponse> = await axios({
+			const orgResponse: OrganisationResponse = await got({
 				url,
 				method: 'post',
-				data: JSON.stringify(queryBody),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
+				throwHttpErrors: true,
+				json: queryBody,
+			}).json<OrganisationResponse>();
 
 			// Handle response
-			if (
-				orgResponse.status >= 200 &&
-				orgResponse.status < 400 &&
-				(orgResponse?.data?.data?.contentpartners?.length || 0) > 50
-			) {
+			if ((orgResponse?.data?.contentpartners?.length || 0) > 50) {
 				await this.emptyOrganizations();
-				await this.insertOrganizations(orgResponse.data.data.contentpartners);
+				await this.insertOrganizations(orgResponse?.data.contentpartners);
 			} else {
 				/* istanbul ignore next */
 				throw new InternalServerErrorException({
@@ -111,8 +95,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 					additionalInfo: {
 						url,
 						method: 'get',
-						status: orgResponse.status,
-						statusText: orgResponse.statusText,
+						response: orgResponse,
 					},
 				});
 			}

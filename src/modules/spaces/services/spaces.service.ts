@@ -27,8 +27,6 @@ import {
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
 	Maintainer_Visitor_Space_Set_Input,
-	UpdateContentPartnerDocument,
-	UpdateContentPartnerMutation,
 	UpdateSpaceDocument,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -39,8 +37,6 @@ import { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {
-	private logger: Logger = new Logger(SpacesService.name, { timestamp: true });
-
 	constructor(protected dataService: DataService) {}
 
 	/**

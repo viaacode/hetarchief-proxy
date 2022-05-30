@@ -3385,6 +3385,7 @@ export type Maintainer_Organisation = {
   logo: Scalars['jsonb'];
   primary_site: Scalars['jsonb'];
   schema_identifier: Scalars['String'];
+  schema_name?: Maybe<Scalars['String']>;
 };
 
 
@@ -3444,6 +3445,7 @@ export type Maintainer_Organisation_Bool_Exp = {
   logo?: InputMaybe<Jsonb_Comparison_Exp>;
   primary_site?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "maintainer.organisation" */
@@ -3480,6 +3482,7 @@ export type Maintainer_Organisation_Insert_Input = {
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate max on columns */
@@ -3487,6 +3490,7 @@ export type Maintainer_Organisation_Max_Fields = {
   __typename?: 'maintainer_organisation_max_fields';
   description?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
 };
 
 /** aggregate min on columns */
@@ -3494,6 +3498,7 @@ export type Maintainer_Organisation_Min_Fields = {
   __typename?: 'maintainer_organisation_min_fields';
   description?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
 };
 
 /** response of any mutation on the table "maintainer.organisation" */
@@ -3526,6 +3531,7 @@ export type Maintainer_Organisation_Order_By = {
   logo?: InputMaybe<Order_By>;
   primary_site?: InputMaybe<Order_By>;
   schema_identifier?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: maintainer_organisation */
@@ -3551,7 +3557,9 @@ export enum Maintainer_Organisation_Select_Column {
   /** column name */
   PrimarySite = 'primary_site',
   /** column name */
-  SchemaIdentifier = 'schema_identifier'
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaName = 'schema_name'
 }
 
 /** input type for updating data in table "maintainer.organisation" */
@@ -3561,6 +3569,7 @@ export type Maintainer_Organisation_Set_Input = {
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
 };
 
 /** update columns of table "maintainer.organisation" */
@@ -3574,7 +3583,9 @@ export enum Maintainer_Organisation_Update_Column {
   /** column name */
   PrimarySite = 'primary_site',
   /** column name */
-  SchemaIdentifier = 'schema_identifier'
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaName = 'schema_name'
 }
 
 /** The user profiles that will manage this reading room */

@@ -20,8 +20,6 @@ export interface OrganisationInfoV2 {
 }
 
 export interface OrganisationResponse {
-	status: string;
-	description: string;
 	data: {
 		contentpartners: OrganisationInfoV2[];
 	};
