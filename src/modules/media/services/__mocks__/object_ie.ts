@@ -62,6 +62,7 @@ export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 				],
 				schema_genre: 'program',
 				dcterms_format: 'video',
+				dcterms_medium: '16mm',
 				schema_in_language: null,
 				schema_thumbnail_url:
 					'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
