@@ -15,20 +15,18 @@ export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 					'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
 				maintainer: {
 					schema_identifier: 'OR-rf5kf25',
-					information: [
-						{
-							primary_site: {
-								address: {
-									email: null,
-									locality: 'Brussel',
-									postal_code: '1043',
-									street: 'Auguste Reyerslaan 52',
-									telephone: null,
-									post_office_box_number: null,
-								},
+					information: {
+						primary_site: {
+							address: {
+								email: null,
+								locality: 'Brussel',
+								postal_code: '1043',
+								street: 'Auguste Reyerslaan 52',
+								telephone: null,
+								post_office_box_number: null,
 							},
 						},
-					],
+					},
 				},
 				schema_duration_in_seconds: null,
 				schema_number_of_pages: null,

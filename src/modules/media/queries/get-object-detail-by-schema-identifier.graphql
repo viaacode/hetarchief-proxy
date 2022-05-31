@@ -9,16 +9,7 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 			schema_identifier
 			schema_name
 			information {
-				primary_site {
-					address {
-						email
-						locality
-						postal_code
-						street
-						telephone
-						post_office_box_number
-					}
-				}
+				primary_site
 			}
 		}
 		schema_copyright_holder

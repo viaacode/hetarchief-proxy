@@ -46,6 +46,7 @@ export const configValidationSchema = Joi.object({
 	MEEMOO_ADMIN_ORGANIZATION_IDS: Joi.string(),
 	REROUTE_EMAILS_TO: Joi.string().allow(''),
 	IGNORE_OBJECT_LICENSES: Joi.boolean().default(false),
+	ORGANIZATIONS_API_V2_URL: Joi.string(),
 });
 
 export const DEFAULT_CONFIG = {

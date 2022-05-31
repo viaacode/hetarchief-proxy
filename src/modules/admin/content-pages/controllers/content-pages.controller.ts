@@ -18,10 +18,7 @@ import { compact, get, intersection } from 'lodash';
 import { ContentPage, LabelObj } from '../content-pages.types';
 
 import { ContentLabelsRequestDto } from '~modules/admin/content-pages/dto/content-labels-request.dto';
-import {
-	ContentPageOverviewParams,
-	ContentPagesQueryDto,
-} from '~modules/admin/content-pages/dto/content-pages.dto';
+import { ContentPageOverviewParams } from '~modules/admin/content-pages/dto/content-pages.dto';
 import { ResolveMediaGridBlocksDto } from '~modules/admin/content-pages/dto/resolve-media-grid-blocks.dto';
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Configuration } from '~config';
 
 import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
-import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
+import { AdminOrganisationsService } from '~modules/admin/organisations/services/admin-organisations.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 
@@ -32,10 +32,11 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getEmbedUrl: jest.fn(),
 };
 
-const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
-	getOrganisation: jest.fn(),
-	adapt: jest.fn(),
-};
+const mockOrganisationsService: Partial<Record<keyof AdminOrganisationsService, jest.SpyInstance>> =
+	{
+		getOrganisation: jest.fn(),
+		adapt: jest.fn(),
+	};
 
 describe('ContentPagesService', () => {
 	let contentPagesService: ContentPagesService;
@@ -57,7 +58,7 @@ describe('ContentPagesService', () => {
 					useValue: mockPlayerTicketService,
 				},
 				{
-					provide: OrganisationsService,
+					provide: AdminOrganisationsService,
 					useValue: mockOrganisationsService,
 				},
 			],
