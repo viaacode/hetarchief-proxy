@@ -5,19 +5,19 @@ import { getConfig } from '~config';
 
 import { GetOrganisationQuery as GetOrganisationQueryAvo } from '~generated/graphql-db-types-avo';
 import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
-import { ORGANISATION_QUERIES } from '~modules/admin/organisations/organisations.consts';
+import { ORGANISATION_QUERIES } from '~modules/admin/organisations/admin-organisations.consts';
 import {
 	GqlAvoOrganisation,
 	GqlHetArchiefOrganisation,
 	GqlOrganisation,
 	Organisation,
 	OrganisationQueries,
-} from '~modules/admin/organisations/organisations.types';
+} from '~modules/admin/organisations/admin-organisations.types';
 import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
-export class OrganisationsService {
-	private logger: Logger = new Logger(OrganisationsService.name, { timestamp: true });
+export class AdminOrganisationsService {
+	private logger: Logger = new Logger(AdminOrganisationsService.name, { timestamp: true });
 	private queries: OrganisationQueries;
 
 	constructor(
@@ -39,8 +39,7 @@ export class OrganisationsService {
 		return {
 			id: hetArchiefOrganisation?.schema_identifier || avoOrganisation?.or_id,
 			name: hetArchiefOrganisation?.schema_name || avoOrganisation?.name,
-			logo_url:
-				hetArchiefOrganisation?.information?.[0]?.logo?.iri || avoOrganisation?.logo_url,
+			logo_url: hetArchiefOrganisation?.information?.logo?.iri || avoOrganisation?.logo_url,
 		};
 	}
 

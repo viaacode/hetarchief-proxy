@@ -35,28 +35,26 @@ export const mockCpVisit: GqlVisit = {
 		content_partner: {
 			schema_name: 'BRUZZ',
 			schema_identifier: 'OR-d79593p',
-			information: [
-				{
-					contact_point: [
-						{
-							contact_type: 'ontsluiting',
-							email: null,
-						},
-					],
-					description:
-						'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
-					logo: {
-						iri: 'https://assets.viaa.be/images/OR-d79593p',
+			information: {
+				contact_point: [
+					{
+						contact_type: 'ontsluiting',
+						email: null,
 					},
-					primary_site: {
-						address: {
-							locality: 'Elsene',
-							postal_code: '1050',
-							street: 'Eugène Flageyplein 18',
-						},
+				],
+				description:
+					'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
+				logo: {
+					iri: 'https://assets.viaa.be/images/OR-d79593p',
+				},
+				primary_site: {
+					address: {
+						locality: 'Elsene',
+						postal_code: '1050',
+						street: 'Eugène Flageyplein 18',
 					},
 				},
-			],
+			},
 		},
 	},
 	last_updated_by: null,

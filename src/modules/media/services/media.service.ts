@@ -59,20 +59,16 @@ export class MediaService {
 			maintainerId: graphQlObject?.maintainer?.schema_identifier,
 			maintainerName: graphQlObject?.maintainer?.schema_name,
 			contactInfo: {
-				email: graphQlObject?.maintainer?.information?.[0]?.primary_site.address?.email,
-				telephone:
-					graphQlObject?.maintainer?.information?.[0]?.primary_site?.address?.telephone,
+				email: graphQlObject?.maintainer?.information?.primary_site.address?.email,
+				telephone: graphQlObject?.maintainer?.information?.primary_site?.address?.telephone,
 				address: {
-					street: graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
-						?.street,
+					street: graphQlObject?.maintainer?.information?.primary_site?.address?.street,
 					postalCode:
-						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
-							?.postal_code,
+						graphQlObject?.maintainer?.information?.primary_site?.address?.postal_code,
 					locality:
-						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
-							?.locality,
+						graphQlObject?.maintainer?.information?.primary_site?.address?.locality,
 					postOfficeBoxNumber:
-						graphQlObject?.maintainer?.information?.[0]?.primary_site?.address
+						graphQlObject?.maintainer?.information?.primary_site?.address
 							?.post_office_box_number,
 				},
 			},

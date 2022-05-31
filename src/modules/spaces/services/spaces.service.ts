@@ -27,8 +27,6 @@ import {
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
 	Maintainer_Visitor_Space_Set_Input,
-	UpdateContentPartnerDocument,
-	UpdateContentPartnerMutation,
 	UpdateSpaceDocument,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -39,8 +37,6 @@ import { Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {
-	private logger: Logger = new Logger(SpacesService.name, { timestamp: true });
-
 	constructor(protected dataService: DataService) {}
 
 	/**
@@ -48,7 +44,7 @@ export class SpacesService {
 	 */
 	public adapt(graphQlSpace: GqlSpace): Space {
 		/* istanbul ignore next */
-		const information = graphQlSpace?.content_partner?.information?.[0];
+		const information = graphQlSpace?.content_partner?.information;
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,

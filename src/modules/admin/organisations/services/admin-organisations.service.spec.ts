@@ -6,21 +6,19 @@ import { Configuration } from '~config';
 import { GetOrganisationQuery } from '~generated/graphql-db-types-avo';
 import { GetOrganisationQuery as GetOrganisationQueryHetArchief } from '~generated/graphql-db-types-hetarchief';
 import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
-import { Organisation } from '~modules/admin/organisations/organisations.types';
-import { OrganisationsService } from '~modules/admin/organisations/services/organisations.service';
+import { Organisation } from '~modules/admin/organisations/admin-organisations.types';
+import { AdminOrganisationsService } from '~modules/admin/organisations/services/admin-organisations.service';
 import { DataService } from '~modules/data/services/data.service';
 
 const mockGqlHetArchiefOrganisation: { data: GetOrganisationQueryHetArchief } = {
 	data: {
 		maintainer_content_partner: [
 			{
-				information: [
-					{
-						logo: {
-							iri: 'https://assets.viaa.be/images/OR-2f7jt01',
-						},
+				information: {
+					logo: {
+						iri: 'https://assets.viaa.be/images/OR-2f7jt01',
 					},
-				],
+				},
 				schema_name: 'KAAP',
 				schema_identifier: 'OR-2f7jt01',
 			},
@@ -54,12 +52,12 @@ const mockDataService = {
 };
 
 describe('OrganisationsService', () => {
-	let organisationsService: OrganisationsService;
+	let organisationsService: AdminOrganisationsService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				OrganisationsService,
+				AdminOrganisationsService,
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
@@ -71,7 +69,7 @@ describe('OrganisationsService', () => {
 			],
 		}).compile();
 
-		organisationsService = module.get<OrganisationsService>(OrganisationsService);
+		organisationsService = module.get<AdminOrganisationsService>(AdminOrganisationsService);
 	});
 
 	afterEach(() => {
@@ -89,7 +87,7 @@ describe('OrganisationsService', () => {
 				'or-639k481'
 			);
 			expect(organisation.logo_url).toEqual(
-				mockGqlHetArchiefOrganisation.data.maintainer_content_partner[0].information[0].logo
+				mockGqlHetArchiefOrganisation.data.maintainer_content_partner[0].information.logo
 					.iri
 			);
 		});
