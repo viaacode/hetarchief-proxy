@@ -3036,8 +3036,6 @@ export enum Lookup_Schema_Audience_Type_Update_Column {
 export type Maintainer_Content_Partner = {
   __typename?: 'maintainer_content_partner';
   created_at: Scalars['timestamp'];
-  has_index: Scalars['Boolean'];
-  has_space: Scalars['Boolean'];
   /** An object relationship */
   index?: Maybe<Maintainer_Index>;
   /** An object relationship */
@@ -3101,8 +3099,6 @@ export type Maintainer_Content_Partner_Bool_Exp = {
   _not?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
   _or?: InputMaybe<Array<Maintainer_Content_Partner_Bool_Exp>>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  has_index?: InputMaybe<Boolean_Comparison_Exp>;
-  has_space?: InputMaybe<Boolean_Comparison_Exp>;
   index?: InputMaybe<Maintainer_Index_Bool_Exp>;
   information?: InputMaybe<Maintainer_Organisation_Bool_Exp>;
   maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
@@ -3121,8 +3117,6 @@ export enum Maintainer_Content_Partner_Constraint {
 /** input type for inserting data into table "maintainer.content_partner" */
 export type Maintainer_Content_Partner_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
-  has_index?: InputMaybe<Scalars['Boolean']>;
-  has_space?: InputMaybe<Scalars['Boolean']>;
   index?: InputMaybe<Maintainer_Index_Obj_Rel_Insert_Input>;
   information?: InputMaybe<Maintainer_Organisation_Obj_Rel_Insert_Input>;
   maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
@@ -3176,8 +3170,6 @@ export type Maintainer_Content_Partner_On_Conflict = {
 /** Ordering options when selecting data from "maintainer.content_partner". */
 export type Maintainer_Content_Partner_Order_By = {
   created_at?: InputMaybe<Order_By>;
-  has_index?: InputMaybe<Order_By>;
-  has_space?: InputMaybe<Order_By>;
   index?: InputMaybe<Maintainer_Index_Order_By>;
   information?: InputMaybe<Maintainer_Organisation_Order_By>;
   maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Order_By>;
@@ -3197,10 +3189,6 @@ export enum Maintainer_Content_Partner_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  HasIndex = 'has_index',
-  /** column name */
-  HasSpace = 'has_space',
-  /** column name */
   SchemaIdentifier = 'schema_identifier',
   /** column name */
   SchemaName = 'schema_name',
@@ -3211,8 +3199,6 @@ export enum Maintainer_Content_Partner_Select_Column {
 /** input type for updating data in table "maintainer.content_partner" */
 export type Maintainer_Content_Partner_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
-  has_index?: InputMaybe<Scalars['Boolean']>;
-  has_space?: InputMaybe<Scalars['Boolean']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
@@ -3222,10 +3208,6 @@ export type Maintainer_Content_Partner_Set_Input = {
 export enum Maintainer_Content_Partner_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
-  /** column name */
-  HasIndex = 'has_index',
-  /** column name */
-  HasSpace = 'has_space',
   /** column name */
   SchemaIdentifier = 'schema_identifier',
   /** column name */
@@ -6719,9 +6701,17 @@ export type Object_Ie = {
   ies_aggregate: Users_Folder_Ie_Aggregate;
   /** An object relationship */
   maintainer?: Maybe<Maintainer_Content_Partner>;
+  /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
+  meemoo_description_cast?: Maybe<Scalars['String']>;
+  /** Beschrijving van het programma. */
+  meemoo_description_programme?: Maybe<Scalars['String']>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier: Scalars['String'];
+  /** Hoofd lokale identifier van de CP. */
+  meemoo_local_id?: Maybe<Scalars['String']>;
   meemoo_media_object_id?: Maybe<Scalars['String']>;
+  /** Aka oorsprong. De naam van de beherende CP. */
+  meemoo_original_cp?: Maybe<Scalars['String']>;
   meemoofilm_base?: Maybe<Scalars['String']>;
   meemoofilm_color?: Maybe<Scalars['Boolean']>;
   meemoofilm_contains_embedded_caption?: Maybe<Scalars['Boolean']>;
@@ -6962,8 +6952,12 @@ export type Object_Ie_Bool_Exp = {
   ebucore_object_type?: InputMaybe<String_Comparison_Exp>;
   ies?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
+  meemoo_description_cast?: InputMaybe<String_Comparison_Exp>;
+  meemoo_description_programme?: InputMaybe<String_Comparison_Exp>;
   meemoo_identifier?: InputMaybe<String_Comparison_Exp>;
+  meemoo_local_id?: InputMaybe<String_Comparison_Exp>;
   meemoo_media_object_id?: InputMaybe<String_Comparison_Exp>;
+  meemoo_original_cp?: InputMaybe<String_Comparison_Exp>;
   meemoofilm_base?: InputMaybe<String_Comparison_Exp>;
   meemoofilm_color?: InputMaybe<Boolean_Comparison_Exp>;
   meemoofilm_contains_embedded_caption?: InputMaybe<Boolean_Comparison_Exp>;
@@ -7163,9 +7157,17 @@ export type Object_Ie_Insert_Input = {
   ebucore_object_type?: InputMaybe<Scalars['String']>;
   ies?: InputMaybe<Users_Folder_Ie_Arr_Rel_Insert_Input>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
+  /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
+  meemoo_description_cast?: InputMaybe<Scalars['String']>;
+  /** Beschrijving van het programma. */
+  meemoo_description_programme?: InputMaybe<Scalars['String']>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier?: InputMaybe<Scalars['String']>;
+  /** Hoofd lokale identifier van de CP. */
+  meemoo_local_id?: InputMaybe<Scalars['String']>;
   meemoo_media_object_id?: InputMaybe<Scalars['String']>;
+  /** Aka oorsprong. De naam van de beherende CP. */
+  meemoo_original_cp?: InputMaybe<Scalars['String']>;
   meemoofilm_base?: InputMaybe<Scalars['String']>;
   meemoofilm_color?: InputMaybe<Scalars['Boolean']>;
   meemoofilm_contains_embedded_caption?: InputMaybe<Scalars['Boolean']>;
@@ -7348,9 +7350,17 @@ export type Object_Ie_Max_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
+  meemoo_description_cast?: Maybe<Scalars['String']>;
+  /** Beschrijving van het programma. */
+  meemoo_description_programme?: Maybe<Scalars['String']>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier?: Maybe<Scalars['String']>;
+  /** Hoofd lokale identifier van de CP. */
+  meemoo_local_id?: Maybe<Scalars['String']>;
   meemoo_media_object_id?: Maybe<Scalars['String']>;
+  /** Aka oorsprong. De naam van de beherende CP. */
+  meemoo_original_cp?: Maybe<Scalars['String']>;
   meemoofilm_base?: Maybe<Scalars['String']>;
   meemoofilm_embeddedCaptionLanguage?: Maybe<Scalars['String']>;
   meemoofilm_image_or_sound?: Maybe<Scalars['String']>;
@@ -7401,9 +7411,17 @@ export type Object_Ie_Min_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
+  meemoo_description_cast?: Maybe<Scalars['String']>;
+  /** Beschrijving van het programma. */
+  meemoo_description_programme?: Maybe<Scalars['String']>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier?: Maybe<Scalars['String']>;
+  /** Hoofd lokale identifier van de CP. */
+  meemoo_local_id?: Maybe<Scalars['String']>;
   meemoo_media_object_id?: Maybe<Scalars['String']>;
+  /** Aka oorsprong. De naam van de beherende CP. */
+  meemoo_original_cp?: Maybe<Scalars['String']>;
   meemoofilm_base?: Maybe<Scalars['String']>;
   meemoofilm_embeddedCaptionLanguage?: Maybe<Scalars['String']>;
   meemoofilm_image_or_sound?: Maybe<Scalars['String']>;
@@ -7475,8 +7493,12 @@ export type Object_Ie_Order_By = {
   ebucore_object_type?: InputMaybe<Order_By>;
   ies_aggregate?: InputMaybe<Users_Folder_Ie_Aggregate_Order_By>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Order_By>;
+  meemoo_description_cast?: InputMaybe<Order_By>;
+  meemoo_description_programme?: InputMaybe<Order_By>;
   meemoo_identifier?: InputMaybe<Order_By>;
+  meemoo_local_id?: InputMaybe<Order_By>;
   meemoo_media_object_id?: InputMaybe<Order_By>;
+  meemoo_original_cp?: InputMaybe<Order_By>;
   meemoofilm_base?: InputMaybe<Order_By>;
   meemoofilm_color?: InputMaybe<Order_By>;
   meemoofilm_contains_embedded_caption?: InputMaybe<Order_By>;
@@ -7555,9 +7577,17 @@ export enum Object_Ie_Select_Column {
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
   /** column name */
+  MeemooDescriptionCast = 'meemoo_description_cast',
+  /** column name */
+  MeemooDescriptionProgramme = 'meemoo_description_programme',
+  /** column name */
   MeemooIdentifier = 'meemoo_identifier',
   /** column name */
+  MeemooLocalId = 'meemoo_local_id',
+  /** column name */
   MeemooMediaObjectId = 'meemoo_media_object_id',
+  /** column name */
+  MeemooOriginalCp = 'meemoo_original_cp',
   /** column name */
   MeemoofilmBase = 'meemoofilm_base',
   /** column name */
@@ -7646,9 +7676,17 @@ export type Object_Ie_Set_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
+  /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
+  meemoo_description_cast?: InputMaybe<Scalars['String']>;
+  /** Beschrijving van het programma. */
+  meemoo_description_programme?: InputMaybe<Scalars['String']>;
   /** De meemoo PID (external_id) voor een IE */
   meemoo_identifier?: InputMaybe<Scalars['String']>;
+  /** Hoofd lokale identifier van de CP. */
+  meemoo_local_id?: InputMaybe<Scalars['String']>;
   meemoo_media_object_id?: InputMaybe<Scalars['String']>;
+  /** Aka oorsprong. De naam van de beherende CP. */
+  meemoo_original_cp?: InputMaybe<Scalars['String']>;
   meemoofilm_base?: InputMaybe<Scalars['String']>;
   meemoofilm_color?: InputMaybe<Scalars['Boolean']>;
   meemoofilm_contains_embedded_caption?: InputMaybe<Scalars['Boolean']>;
@@ -7762,9 +7800,17 @@ export enum Object_Ie_Update_Column {
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
   /** column name */
+  MeemooDescriptionCast = 'meemoo_description_cast',
+  /** column name */
+  MeemooDescriptionProgramme = 'meemoo_description_programme',
+  /** column name */
   MeemooIdentifier = 'meemoo_identifier',
   /** column name */
+  MeemooLocalId = 'meemoo_local_id',
+  /** column name */
   MeemooMediaObjectId = 'meemoo_media_object_id',
+  /** column name */
+  MeemooOriginalCp = 'meemoo_original_cp',
   /** column name */
   MeemoofilmBase = 'meemoofilm_base',
   /** column name */
