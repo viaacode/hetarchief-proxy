@@ -4,6 +4,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	Headers,
 	Logger,
 	Post,
 	Query,
@@ -167,7 +168,10 @@ export class ContentPagesController {
 
 	@Post('update-published-dates')
 	@UseGuards(ApiKeyGuard)
-	async updatePublishDates(): Promise<{ message: string }> {
+	async updatePublishDates(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		@Headers('apiKey') apiKey: string
+	): Promise<{ message: string }> {
 		const response = await this.contentPagesService.updatePublishDates();
 
 		return {
