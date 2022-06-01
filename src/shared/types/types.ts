@@ -15,8 +15,8 @@ export interface Address {
 }
 
 export interface ContactInfo {
-	email: string;
-	telephone: string;
+	email?: string | null;
+	telephone?: string | null;
 	address: Address;
 }
 
