@@ -3363,11 +3363,13 @@ export enum Maintainer_Index_Update_Column {
 export type Maintainer_Organisation = {
   __typename?: 'maintainer_organisation';
   contact_point: Scalars['jsonb'];
+  created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
   logo: Scalars['jsonb'];
   primary_site: Scalars['jsonb'];
   schema_identifier: Scalars['String'];
   schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 
@@ -3423,11 +3425,13 @@ export type Maintainer_Organisation_Bool_Exp = {
   _not?: InputMaybe<Maintainer_Organisation_Bool_Exp>;
   _or?: InputMaybe<Array<Maintainer_Organisation_Bool_Exp>>;
   contact_point?: InputMaybe<Jsonb_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   logo?: InputMaybe<Jsonb_Comparison_Exp>;
   primary_site?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_identifier?: InputMaybe<String_Comparison_Exp>;
   schema_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "maintainer.organisation" */
@@ -3460,27 +3464,33 @@ export type Maintainer_Organisation_Delete_Key_Input = {
 /** input type for inserting data into table "maintainer.organisation" */
 export type Maintainer_Organisation_Insert_Input = {
   contact_point?: InputMaybe<Scalars['jsonb']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
 /** aggregate max on columns */
 export type Maintainer_Organisation_Max_Fields = {
   __typename?: 'maintainer_organisation_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** aggregate min on columns */
 export type Maintainer_Organisation_Min_Fields = {
   __typename?: 'maintainer_organisation_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
 /** response of any mutation on the table "maintainer.organisation" */
@@ -3509,11 +3519,13 @@ export type Maintainer_Organisation_On_Conflict = {
 /** Ordering options when selecting data from "maintainer.organisation". */
 export type Maintainer_Organisation_Order_By = {
   contact_point?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   logo?: InputMaybe<Order_By>;
   primary_site?: InputMaybe<Order_By>;
   schema_identifier?: InputMaybe<Order_By>;
   schema_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: maintainer_organisation */
@@ -3533,6 +3545,8 @@ export enum Maintainer_Organisation_Select_Column {
   /** column name */
   ContactPoint = 'contact_point',
   /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
   Description = 'description',
   /** column name */
   Logo = 'logo',
@@ -3541,17 +3555,21 @@ export enum Maintainer_Organisation_Select_Column {
   /** column name */
   SchemaIdentifier = 'schema_identifier',
   /** column name */
-  SchemaName = 'schema_name'
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "maintainer.organisation" */
 export type Maintainer_Organisation_Set_Input = {
   contact_point?: InputMaybe<Scalars['jsonb']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
 /** update columns of table "maintainer.organisation" */
@@ -3559,6 +3577,8 @@ export enum Maintainer_Organisation_Update_Column {
   /** column name */
   ContactPoint = 'contact_point',
   /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
   Description = 'description',
   /** column name */
   Logo = 'logo',
@@ -3567,7 +3587,9 @@ export enum Maintainer_Organisation_Update_Column {
   /** column name */
   SchemaIdentifier = 'schema_identifier',
   /** column name */
-  SchemaName = 'schema_name'
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
 }
 
 /** The user profiles that will manage this reading room */
