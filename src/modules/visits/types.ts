@@ -60,6 +60,7 @@ export interface Visit {
 	spaceAddress?: string;
 	spaceId: string;
 	spaceMail: string;
+	spaceTelephone: string;
 	spaceName: string;
 	spaceSlug: string;
 	spaceColor?: string;

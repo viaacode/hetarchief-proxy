@@ -58,6 +58,7 @@ const mockVisit: Visit = {
 	spaceName: 'VRT',
 	spaceSlug: 'or-rf5kf25',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
+	spaceTelephone: '0412 34 56 78',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',

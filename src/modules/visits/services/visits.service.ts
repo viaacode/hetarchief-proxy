@@ -112,6 +112,11 @@ export class VisitsService {
 		return contactPoint?.email || null;
 	}
 
+	public adaptTelehone(graphQlInfo: any): string {
+		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+		return contactPoint?.telephone || null;
+	}
+
 	public adapt(graphQlVisit: GqlVisit): Visit | null {
 		if (!graphQlVisit) {
 			return null;
@@ -128,6 +133,9 @@ export class VisitsService {
 			),
 			spaceId: graphQlVisit?.cp_space_id,
 			spaceMail: this.adaptEmail(graphQlVisit?.visitor_space?.content_partner?.information),
+			spaceTelephone: this.adaptTelehone(
+				graphQlVisit?.visitor_space?.content_partner?.information
+			),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
