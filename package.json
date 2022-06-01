@@ -16,6 +16,7 @@
     "build": "nest build",
     "start": "nest start",
     "prestart:dev": "npm run generate-database-types",
+    "prestart:debug": "npm run generate-database-types",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

@@ -8,6 +8,7 @@ query findObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
 		dcterms_available
 		schema_thumbnail_url
 		dcterms_format
+		dcterms_medium
 		schema_number_of_pages
 		schema_is_part_of
 		schema_date_published
