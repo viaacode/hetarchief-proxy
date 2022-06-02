@@ -51,6 +51,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -107,13 +108,15 @@ export class VisitsService {
 		return '';
 	}
 
-	public adaptEmail(graphQlInfo: any): string {
-		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+	public adaptEmail(graphQlInfo: OrganisationInfoV2): string {
+		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
+		console.log(contactPoint);
 		return contactPoint?.email || null;
 	}
 
-	public adaptTelehone(graphQlInfo: any): string {
-		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+	public adaptTelephone(graphQlInfo: OrganisationInfoV2): string {
+		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
+		console.log(contactPoint);
 		return contactPoint?.telephone || null;
 	}
 
@@ -132,9 +135,11 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.content_partner?.information?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
-			spaceMail: this.adaptEmail(graphQlVisit?.visitor_space?.content_partner?.information),
-			spaceTelephone: this.adaptTelehone(
-				graphQlVisit?.visitor_space?.content_partner?.information
+			spaceMail: this.adaptEmail(
+				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
+			),
+			spaceTelephone: this.adaptTelephone(
+				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
 			),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
