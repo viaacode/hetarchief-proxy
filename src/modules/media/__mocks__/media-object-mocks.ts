@@ -21,7 +21,6 @@ export const mockElasticObject1: ElasticsearchHit = {
 		schema_duration: '00:00:22',
 		dcterms_medium: null,
 		premis_is_part_of: null,
-		schema_alternate_name: null,
 		schema_abstract: null,
 		premis_identifier: {
 			MEDIA_ID: ['AIM10053310'],
@@ -70,7 +69,6 @@ export const mockElasticObject2: ElasticsearchHit = {
 		schema_duration: '00:02:52',
 		dcterms_medium: null,
 		premis_is_part_of: null,
-		schema_alternate_name: null,
 		schema_abstract: null,
 		premis_identifier: {
 			MEDIA_ID: ['AIM10072170'],
@@ -111,15 +109,12 @@ export const mockMediaObject1: Media = {
 		Distributeur: ['belga'],
 	},
 	duration: '00:00:22',
-	alternateName: null,
 	abstract: null,
 	premisIdentifier: {
 		MEDIA_ID: ['AIM10053310'],
 	},
 	keywords: [],
-	isPartOf: {
-		serie: ['Belga'],
-	},
+	series: ['Belga'],
 	genre: [],
 	datePublished: '2020-06-19',
 	license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
