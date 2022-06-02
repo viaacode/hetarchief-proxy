@@ -12,6 +12,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessStatus, Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -51,6 +52,7 @@ const mockVisit: Visit = {
 	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
+	spaceTelephone: '0412 34 56 78',
 	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
 	reason: 'Ik wil graag deze zaal bezoeken 7',
@@ -140,11 +142,15 @@ describe('VisitsService', () => {
 	describe('adaptEmail', () => {
 		it('returns the correct email address', () => {
 			const email = visitsService.adaptEmail({
-				contactPoint: [
-					{ contact_type: 'primary', email: 'wrong@mail.be' },
-					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				contact_point: [
+					{ contact_type: 'primary', email: 'wrong@mail.be', telephone: '051334455' },
+					{
+						contact_type: 'ontsluiting',
+						email: 'correct@mail.be',
+						telephone: '051334455',
+					},
 				],
-			});
+			} as OrganisationInfoV2);
 			expect(email).toEqual('correct@mail.be');
 		});
 

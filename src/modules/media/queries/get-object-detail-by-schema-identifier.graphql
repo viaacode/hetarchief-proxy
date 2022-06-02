@@ -29,6 +29,7 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		schema_spatial_coverage
 		schema_keywords
 		dcterms_format
+		dcterms_medium
 		schema_in_language
 		schema_thumbnail_url
 		schema_alternate_name

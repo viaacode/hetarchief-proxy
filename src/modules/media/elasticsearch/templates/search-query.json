@@ -37,7 +37,10 @@
         "schema_spatial_coverage.lemma_split_spell^10",
         "schema_temporal_coverage^20",
         "schema_temporal_coverage.lemma_split^15",
-        "schema_temporal_coverage.lemma_split_spell^10"
+        "schema_temporal_coverage.lemma_split_spell^10",
+        "dcterms_medium^20",
+        "dcterms_medium.lemma_split^15",
+        "dcterms_medium.lemma_split_spell^10"
       ],
       "type": "phrase",
       "operator": "and",
@@ -82,7 +85,10 @@
         "schema_spatial_coverage.lemma_split_spell^10",
         "schema_temporal_coverage^20",
         "schema_temporal_coverage.lemma_split^15",
-        "schema_temporal_coverage.lemma_split_spell^10"
+        "schema_temporal_coverage.lemma_split_spell^10",
+        "dcterms_medium^20",
+        "dcterms_medium.lemma_split^15",
+        "dcterms_medium.lemma_split_spell^10"
       ],
       "type": "cross_fields",
       "operator": "and"

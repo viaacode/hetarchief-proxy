@@ -89,6 +89,7 @@ export class MediaService {
 			// temporal: graphQlObject?.schema_temporal,
 			keywords: graphQlObject?.schema_keywords,
 			dctermsFormat: graphQlObject?.dcterms_format,
+			dctermsMedium: graphQlObject?.dcterms_medium,
 			inLanguage: graphQlObject?.schema_in_language,
 			thumbnailUrl: graphQlObject?.schema_thumbnail_url,
 			// embedUrl: graphQlObject?.schema_embed_url,
@@ -222,7 +223,7 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e.response.body);
+			this.logger.error(e?.response?.body);
 			throw e;
 		}
 	}

@@ -4,6 +4,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	Headers,
 	Logger,
 	Post,
 	Query,
@@ -29,7 +30,6 @@ import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { SpecialPermissionGroups } from '~shared/types/types';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('ContentPages')
 @Controller('admin/content-pages')
 export class ContentPagesController {
@@ -61,14 +61,13 @@ export class ContentPagesController {
 	public async getContentPageByPath(
 		@Query('path') path: string,
 		@Req() request,
-		@Session() session
+		@SessionUser() user: SessionUserEntity
 	): Promise<ContentPage> {
-		const user = SessionHelper.getArchiefUserInfo(session);
 		const contentPage: ContentPage | undefined =
 			await this.contentPagesService.getContentPageByPath(path);
 
-		const permissions = get(user, 'permissions', []);
-		const userId = get(user, 'id', []);
+		const permissions = get(user.getUser(), 'permissions', []);
+		const userId = user.getId();
 		const canEditContentPage =
 			permissions.includes(Permission.EDIT_ANY_CONTENT_PAGES) ||
 			(permissions.includes(Permission.EDIT_OWN_CONTENT_PAGES) &&
@@ -109,7 +108,7 @@ export class ContentPagesController {
 		if (
 			!intersection(
 				contentPage.userGroupIds.map((id) => String(id)),
-				SessionHelper.getUserGroupIds(user)
+				SessionHelper.getUserGroupIds(user.getUser())
 			).length
 		) {
 			return null;
@@ -128,12 +127,14 @@ export class ContentPagesController {
 
 	@Get('path-exist')
 	async doesContentPageExist(
-		@Query('path') path: string
+		@Query('path') path: string,
+		@Req() request,
+		@SessionUser() user
 	): Promise<{ exists: boolean; title: string; id: number }> {
-		const contentPage = await this.contentPagesService.getContentPageByPath(path);
+		const contentPage = await this.getContentPageByPath(path, request, user);
 		return {
 			exists: !!contentPage,
-			title: get(contentPage, 'title') || null,
+			title: get(contentPage, 'title', null),
 			id: get(contentPage, 'id', null),
 		};
 	}
@@ -167,7 +168,10 @@ export class ContentPagesController {
 
 	@Post('update-published-dates')
 	@UseGuards(ApiKeyGuard)
-	async updatePublishDates(): Promise<{ message: string }> {
+	async updatePublishDates(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		@Headers('apiKey') apiKey: string
+	): Promise<{ message: string }> {
 		const response = await this.contentPagesService.updatePublishDates();
 
 		return {
