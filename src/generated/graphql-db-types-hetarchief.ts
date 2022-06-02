@@ -3032,6 +3032,8 @@ export type Maintainer_Content_Partner = {
   maintainer_users_profiles_aggregate: Maintainer_Users_Profile_Aggregate;
   schema_identifier: Scalars['String'];
   schema_name?: Maybe<Scalars['String']>;
+  /** lowercase version of the schema_name column */
+  schema_name_lower?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamp'];
   /** An object relationship */
   visitor_space?: Maybe<Maintainer_Visitor_Space>;
@@ -3090,6 +3092,7 @@ export type Maintainer_Content_Partner_Bool_Exp = {
   maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
   schema_identifier?: InputMaybe<String_Comparison_Exp>;
   schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_name_lower?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   visitor_space?: InputMaybe<Maintainer_Visitor_Space_Bool_Exp>;
 };
@@ -3161,6 +3164,7 @@ export type Maintainer_Content_Partner_Order_By = {
   maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Order_By>;
   schema_identifier?: InputMaybe<Order_By>;
   schema_name?: InputMaybe<Order_By>;
+  schema_name_lower?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   visitor_space?: InputMaybe<Maintainer_Visitor_Space_Order_By>;
 };
