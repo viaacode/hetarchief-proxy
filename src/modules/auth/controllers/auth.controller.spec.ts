@@ -12,6 +12,7 @@ import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { SessionService } from '~shared/services/session.service';
 
 const getNewMockSession = () => ({
 	idp: Idp.HETARCHIEF,
@@ -23,6 +24,11 @@ const getNewMockSession = () => ({
 	},
 });
 
+const mockSessionService: Partial<Record<keyof SessionService, jest.SpyInstance>> = {
+	clearRedis: jest.fn(),
+	getSessionConfig: jest.fn(),
+};
+
 describe('AuthController', () => {
 	let authController: AuthController;
 
@@ -30,7 +36,13 @@ describe('AuthController', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [AuthController],
 			imports: [ConfigModule, SpacesModule, UsersModule],
-			providers: [IdpService],
+			providers: [
+				IdpService,
+				{
+					provide: SessionService,
+					useValue: mockSessionService,
+				},
+			],
 		})
 			.setLogger(new TestingLogger())
 			.compile();

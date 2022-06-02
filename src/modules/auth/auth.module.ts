@@ -12,6 +12,7 @@ import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
+import { SessionService } from '~shared/services/session.service';
 
 export const archiefServiceFactory = {
 	provide: HetArchiefService,
@@ -36,6 +37,6 @@ export const meemooServiceFactory = {
 @Module({
 	controllers: [AuthController, HetArchiefController, MeemooController],
 	imports: [ConfigModule, UsersModule, CollectionsModule, SpacesModule, EventsModule],
-	providers: [archiefServiceFactory, meemooServiceFactory, IdpService],
+	providers: [archiefServiceFactory, meemooServiceFactory, IdpService, SessionService],
 })
 export class AuthModule {}

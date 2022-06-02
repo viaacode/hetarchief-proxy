@@ -1,12 +1,16 @@
 import {
 	Controller,
+	Delete,
 	Get,
+	Headers,
 	HttpStatus,
+	InternalServerErrorException,
 	Logger,
 	Post,
 	Query,
 	Redirect,
 	Session,
+	UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -18,6 +22,8 @@ import { LoginMessage, LoginResponse } from '../types';
 
 import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { SessionService } from '~shared/services/session.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,7 +33,8 @@ export class AuthController {
 	constructor(
 		private idpService: IdpService,
 		private usersService: UsersService,
-		private configService: ConfigService
+		private configService: ConfigService,
+		private sessionService: SessionService
 	) {}
 
 	@Get('check-login')
@@ -90,5 +97,15 @@ export class AuthController {
 		if (getConfig(this.configService, 'environment') !== 'production') {
 			return session;
 		}
+	}
+
+	@Delete('clear-sessions')
+	@UseGuards(ApiKeyGuard)
+	async clearSessions(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		@Headers('apiKey') apiKey: string
+	): Promise<{ message: string }> {
+		await this.sessionService.clearRedis();
+		return { message: 'User sessions have been cleared' };
 	}
 }
