@@ -12,6 +12,7 @@ import {
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessStatus, Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -141,11 +142,15 @@ describe('VisitsService', () => {
 	describe('adaptEmail', () => {
 		it('returns the correct email address', () => {
 			const email = visitsService.adaptEmail({
-				contactPoint: [
-					{ contact_type: 'primary', email: 'wrong@mail.be' },
-					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				contact_point: [
+					{ contact_type: 'primary', email: 'wrong@mail.be', telephone: '051334455' },
+					{
+						contact_type: 'ontsluiting',
+						email: 'correct@mail.be',
+						telephone: '051334455',
+					},
 				],
-			});
+			} as OrganisationInfoV2);
 			expect(email).toEqual('correct@mail.be');
 		});
 
