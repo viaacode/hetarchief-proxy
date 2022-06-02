@@ -151,6 +151,7 @@ export class VisitsController {
 				visitorId: user.getId(),
 				visitorMail: user.getMail(),
 				spaceMail: spaceInfo.contactInfo.email,
+				spaceTelephone: spaceInfo.contactInfo.telephone,
 				updatedById: '',
 				updatedByName: '',
 				spaceSlug: spaceInfo.slug,

@@ -36,6 +36,7 @@ const getMockVisit = (): Visit => ({
 	spaceSlug: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
+	spaceTelephone: '0412 34 56 78',
 	userProfileId: 'user-1',
 	timeframe: 'july 2022',
 	reason: 'fake news investigation',
