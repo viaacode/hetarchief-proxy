@@ -110,13 +110,11 @@ export class VisitsService {
 
 	public adaptEmail(graphQlInfo: OrganisationInfoV2): string {
 		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		console.log(contactPoint);
 		return contactPoint?.email || null;
 	}
 
 	public adaptTelephone(graphQlInfo: OrganisationInfoV2): string {
 		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		console.log(contactPoint);
 		return contactPoint?.telephone || null;
 	}
 
