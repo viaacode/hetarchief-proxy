@@ -32,7 +32,6 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		dcterms_medium
 		schema_in_language
 		schema_thumbnail_url
-		schema_alternate_name
 		schema_duration
 		schema_license
 		meemoo_media_object_id

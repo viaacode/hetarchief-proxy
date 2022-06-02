@@ -52,6 +52,7 @@ export interface IeObject {
 	description: string;
 	format: string;
 	name: string;
+	alternateName?: string;
 	numberOfPages: any;
 	termsAvailable: string;
 	thumbnailUrl: string;

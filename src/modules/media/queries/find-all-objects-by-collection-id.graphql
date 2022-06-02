@@ -12,7 +12,6 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 				schema_name
 			}
 			schema_name
-			schema_alternate_name
 			dcterms_format
 			schema_date_created_lower_bound
 			schema_date_published
