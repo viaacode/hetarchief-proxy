@@ -223,7 +223,7 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e.response.body);
+			this.logger.error(e?.response?.body);
 			throw e;
 		}
 	}
