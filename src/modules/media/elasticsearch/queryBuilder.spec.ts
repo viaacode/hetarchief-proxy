@@ -269,7 +269,7 @@ describe('QueryBuilder', () => {
 				requestedAggs: [SearchFilterField.MEDIUM],
 			});
 			expect(esQuery.aggs.dcterms_medium.terms).toEqual({
-				field: 'dcterms_medium.keyword',
+				field: 'dcterms_medium',
 				size: 40,
 			});
 		});

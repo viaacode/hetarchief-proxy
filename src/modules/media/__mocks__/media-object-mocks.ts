@@ -130,5 +130,6 @@ export const mockMediaObject1: Media = {
 	thumbnailUrl:
 		'https://media-qas.viaa.be/play/v2/VRT/0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
 	dctermsFormat: 'video',
+	dctermsMedium: '16mm',
 	name: 'Une centaine de policiers poussent "un cri contre la stigmatisation" à Charleroi',
 };
