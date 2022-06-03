@@ -102,6 +102,13 @@ export class MediaService {
 			dateCreatedLowerBound: graphQlObject?.schema_date_created_lower_bound,
 			genre: graphQlObject?.schema_genre,
 			ebucoreObjectType: graphQlObject?.ebucore_object_type,
+			meemoofilmColor: graphQlObject?.meemoofilm_color,
+			meemoofilmBase: graphQlObject?.meemoofilm_base,
+			meemoofilmImageOrSound: graphQlObject?.meemoofilm_image_or_sound,
+			meemooLocalId: graphQlObject?.meemoo_local_id,
+			meemooOriginalCp: graphQlObject?.meemoo_original_cp,
+			meemooDescriptionProgramme: graphQlObject?.meemoo_description_programme,
+			meemooDescriptionCast: graphQlObject?.meemoo_description_cast,
 			representations: this?.adaptRepresentations(graphQlObject?.premis_is_represented_by),
 		};
 	}
