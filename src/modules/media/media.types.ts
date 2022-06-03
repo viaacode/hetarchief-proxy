@@ -78,8 +78,8 @@ export interface Media {
 	actor?: any;
 	contributor: any;
 	publisher: any;
-	// spatial: string;
-	// temporal: string;
+	spatial: string;
+	temporal: string;
 	keywords: string[];
 	genre: string[];
 	dctermsFormat: string;
