@@ -59,10 +59,9 @@ export interface Media {
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisRelationship?: string;
-	isPartOf?: {
-		serie?: string[];
-		programma?: string[];
-	};
+	series?: string[];
+	program?: string[];
+	alternativeName?: string;
 	maintainerId: string;
 	maintainerName: string;
 	contactInfo?: ContactInfo;
@@ -84,10 +83,10 @@ export interface Media {
 	keywords: string[];
 	genre: string[];
 	dctermsFormat: string;
+	dctermsMedium: string;
 	inLanguage: string[];
 	thumbnailUrl: string;
 	// embedUrl: string;
-	alternateName: string;
 	duration: string;
 	license: any;
 	meemooMediaObjectId?: string;
@@ -195,7 +194,6 @@ export interface ElasticsearchMedia {
 	schema_duration: string;
 	dcterms_medium?: string | null;
 	premis_is_part_of?: string;
-	schema_alternate_name?: string;
 	schema_abstract: any;
 	premis_identifier?: {
 		Afbeelding?: string[];

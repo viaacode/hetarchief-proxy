@@ -6,14 +6,16 @@ export interface OrganisationInfoV2 {
 	};
 	contact_point: {
 		contact_type: string;
-		email: string;
+		email: string | null;
+		telephone: string | null;
 	}[];
 	primary_site: {
 		address: {
 			locality: string;
 			postal_code: string;
 			street: string;
-			telephone: string;
+			telephone: string | null;
+			email: string | null;
 			post_office_box_number: string;
 		};
 	};

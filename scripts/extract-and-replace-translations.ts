@@ -22,7 +22,7 @@ We can now give the src/shared/translations/nl.json file to team meemoo to enter
 
 In the future we could add a build step to replace the translate tags with the actual translations,
 so we don't have to load the translation framework anymore and do the bindings at runtime, but this is a nice to have.
-*/
+ */
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -204,7 +204,7 @@ async function updateTranslations() {
 	);
 
 	const totalTranslations = existingTranslationKeys.length + addedTranslationKeys.length;
-	console.log(
+	console.info(
 		`Wrote ${totalTranslations} src/shared/i18n/locales/nl.json file
 \t${addedTranslationKeys.length} translations added
 \t${removedTranslationKeys.length} translations deleted`

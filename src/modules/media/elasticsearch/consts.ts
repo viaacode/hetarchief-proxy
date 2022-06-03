@@ -80,7 +80,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
 	language: QueryType.TERMS,
-	medium: QueryType.MATCH,
+	medium: QueryType.TERMS,
 	name: QueryType.TERM, // used for exact (not) matching
 	description: QueryType.TERM, // used for exact (not) matching
 };
@@ -104,5 +104,4 @@ export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	genre: 'keyword',
-	medium: 'keyword',
 };

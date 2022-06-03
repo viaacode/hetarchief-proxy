@@ -55,7 +55,9 @@ export class MediaService {
 			meemooIdentifier: graphQlObject?.meemoo_identifier,
 			premisIdentifier: graphQlObject?.premis_identifier,
 			premisRelationship: graphQlObject?.premis_relationship,
-			isPartOf: graphQlObject?.schema_is_part_of,
+			series: graphQlObject?.schema_is_part_of?.serie,
+			program: graphQlObject?.schema_is_part_of?.programma,
+			alternativeName: graphQlObject?.schema_is_part_of?.alternatief,
 			maintainerId: graphQlObject?.maintainer?.schema_identifier,
 			maintainerName: graphQlObject?.maintainer?.schema_name,
 			contactInfo: {
@@ -89,10 +91,10 @@ export class MediaService {
 			// temporal: graphQlObject?.schema_temporal,
 			keywords: graphQlObject?.schema_keywords,
 			dctermsFormat: graphQlObject?.dcterms_format,
+			dctermsMedium: graphQlObject?.dcterms_medium,
 			inLanguage: graphQlObject?.schema_in_language,
 			thumbnailUrl: graphQlObject?.schema_thumbnail_url,
 			// embedUrl: graphQlObject?.schema_embed_url,
-			alternateName: graphQlObject?.schema_alternate_name,
 			duration: graphQlObject?.schema_duration,
 			license: graphQlObject?.schema_license,
 			meemooMediaObjectId: graphQlObject?.meemoo_media_object_id,
@@ -201,7 +203,6 @@ export class MediaService {
 			premisIdentifier: graphQlObject.ie?.premis_identifier,
 			maintainerName: graphQlObject.ie?.maintainer?.schema_name,
 			name: graphQlObject.ie?.schema_name,
-			alternateName: graphQlObject.ie?.schema_alternate_name,
 			dctermsFormat: graphQlObject.ie?.dcterms_format,
 			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
 			datePublished: graphQlObject.ie?.schema_date_published,
@@ -222,7 +223,7 @@ export class MediaService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e.response.body);
+			this.logger.error(e?.response?.body);
 			throw e;
 		}
 	}
@@ -333,7 +334,6 @@ export class MediaService {
 			premisIdentifier: mediaObject.premisIdentifier,
 			maintainerName: mediaObject.maintainerName,
 			name: mediaObject.name,
-			alternateName: mediaObject.alternateName,
 			dctermsFormat: mediaObject.dctermsFormat,
 			dateCreatedLowerBound: mediaObject.dateCreatedLowerBound,
 			datePublished: mediaObject.datePublished,
@@ -345,7 +345,6 @@ export class MediaService {
 			schema_identifier: mediaObject.schema_identifier,
 			premis_identifier: mediaObject.premis_identifier,
 			schema_name: mediaObject.schema_name,
-			schema_alternate_name: mediaObject.schema_alternate_name,
 			dcterms_format: mediaObject.dcterms_format,
 			schema_date_created: mediaObject.schema_date_created,
 			schema_date_published: mediaObject.schema_date_published,

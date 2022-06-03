@@ -78,26 +78,23 @@ describe('SessionService', () => {
 			expect(response.secret).toEqual('thecookiesecret');
 			expect(response.cookie.maxAge).toEqual('86400');
 			expect(response.resave).toEqual(false);
-			expect(mockSchedulerRegistry.addCronJob).toHaveBeenCalledTimes(1);
-			mockSchedulerRegistry.addCronJob.mockClear();
 		});
 	});
 
 	describe('clearRedis', () => {
-		it('should clear the redis cache', async () => {
-			const flushdb = jest.fn((callback: (err: any, response: 'OK') => void) =>
-				callback(null, 'OK')
-			);
-			await sessionService.clearRedis({ flushdb } as unknown as any);
-			expect(flushdb).toHaveBeenCalledTimes(1);
-		});
-
-		it('should handle errors during clearing the redis cache', async () => {
-			const flushdb = jest.fn((callback: (err: any, response?: 'OK') => void) =>
-				callback('error during cache clear')
-			);
-			await sessionService.clearRedis({ flushdb } as unknown as any);
-			expect(flushdb).toHaveBeenCalledTimes(1);
+		it('should throw an error when the redis client is not set', async () => {
+			let error;
+			try {
+				await sessionService.clearRedis();
+			} catch (err) {
+				error = err;
+			}
+			expect(error?.response).toEqual({
+				statusCode: 500,
+				message:
+					'Failed to clear redis session cache because redisClient was not initialised',
+				error: 'Internal Server Error',
+			});
 		});
 	});
 });

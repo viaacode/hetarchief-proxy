@@ -21,7 +21,6 @@ export const mockElasticObject1: ElasticsearchHit = {
 		schema_duration: '00:00:22',
 		dcterms_medium: null,
 		premis_is_part_of: null,
-		schema_alternate_name: null,
 		schema_abstract: null,
 		premis_identifier: {
 			MEDIA_ID: ['AIM10053310'],
@@ -70,7 +69,6 @@ export const mockElasticObject2: ElasticsearchHit = {
 		schema_duration: '00:02:52',
 		dcterms_medium: null,
 		premis_is_part_of: null,
-		schema_alternate_name: null,
 		schema_abstract: null,
 		premis_identifier: {
 			MEDIA_ID: ['AIM10072170'],
@@ -111,15 +109,12 @@ export const mockMediaObject1: Media = {
 		Distributeur: ['belga'],
 	},
 	duration: '00:00:22',
-	alternateName: null,
 	abstract: null,
 	premisIdentifier: {
 		MEDIA_ID: ['AIM10053310'],
 	},
 	keywords: [],
-	isPartOf: {
-		serie: ['Belga'],
-	},
+	series: ['Belga'],
 	genre: [],
 	datePublished: '2020-06-19',
 	license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
@@ -130,5 +125,6 @@ export const mockMediaObject1: Media = {
 	thumbnailUrl:
 		'https://media-qas.viaa.be/play/v2/VRT/0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
 	dctermsFormat: 'video',
+	dctermsMedium: '16mm',
 	name: 'Une centaine de policiers poussent "un cri contre la stigmatisation" à Charleroi',
 };

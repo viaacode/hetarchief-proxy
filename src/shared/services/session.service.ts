@@ -1,8 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import connectRedis from 'connect-redis';
-import { CronJob } from 'cron';
 import session from 'express-session';
 import { createClient, RedisClient } from 'redis';
 import SessionFileStore from 'session-file-store';
@@ -14,23 +12,31 @@ const FileStore = SessionFileStore(session);
 @Injectable()
 export class SessionService {
 	private readonly logger = new Logger(SessionService.name);
+	private redisClient: RedisClient;
 
-	constructor(
-		private configService: ConfigService,
-		private schedulerRegistry: SchedulerRegistry
-	) {}
+	constructor(private configService: ConfigService) {}
 
-	public async clearRedis(redisClient: RedisClient) {
-		try {
-			redisClient.flushdb((err: Error | null, response?: 'OK') => {
-				if (err) {
-					this.logger.error('Failed to clear redis session cache', err.stack);
+	public async clearRedis(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			try {
+				if (!this.redisClient) {
+					throw new InternalServerErrorException(
+						'Failed to clear redis session cache because redisClient was not initialised'
+					);
 				}
-				this.logger.log(`Redis clear session cache response: ${response}`);
-			});
-		} catch (e) {
-			this.logger.error('Redis session cache could not be cleared', e.stack);
-		}
+				this.redisClient.flushdb((err: Error | null, response?: 'OK') => {
+					if (err) {
+						this.logger.error('Failed to clear redis session cache', err.stack);
+						reject(err);
+					}
+					this.logger.log(`Redis clear session cache response: ${response}`);
+					resolve();
+				});
+			} catch (e) {
+				this.logger.error('Redis session cache could not be cleared', e.stack);
+				reject(e);
+			}
+		});
 	}
 
 	/**
@@ -68,19 +74,18 @@ export class SessionService {
 			// (probably the express server runs on http and https is terminated elsewhere)
 
 			const redisStore = connectRedis(session);
-			const redisClient = createClient({
+			this.redisClient = createClient({
 				url: redisConnectionString,
 			});
 
-			redisClient.on('error', (err) => this.logger.error('Redis Client Error', err.stack));
-			redisClient.on('connect', () => this.logger.log('Connected to redis successfully'));
+			this.redisClient.on('error', (err) =>
+				this.logger.error('Redis Client Error', err.stack)
+			);
+			this.redisClient.on('connect', () =>
+				this.logger.log('Connected to redis successfully')
+			);
 
-			const job = new CronJob(`0 0 05 * * *`, () => this.clearRedis(redisClient));
-
-			this.schedulerRegistry.addCronJob('FlushRedis', job);
-			job.start();
-
-			sessionConfig.store = new redisStore({ client: redisClient });
+			sessionConfig.store = new redisStore({ client: this.redisClient });
 
 			this.logger.log('isProduction: Redis Store ready');
 		} else if (process.platform !== 'win32') {
