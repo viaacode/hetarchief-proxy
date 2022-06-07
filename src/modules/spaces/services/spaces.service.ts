@@ -205,7 +205,11 @@ export class SpacesService {
 			where,
 			offset,
 			limit,
-			orderBy: set({}, orderProp, orderDirection),
+			orderBy: set(
+				{},
+				orderProp === 'status' ? 'status_info.sort_order.sort_order' : orderProp,
+				orderDirection
+			),
 		});
 
 		return Pagination<Space>({
