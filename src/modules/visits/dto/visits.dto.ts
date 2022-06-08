@@ -133,6 +133,28 @@ export class VisitsQueryDto {
 	@IsEnum(VisitTimeframe, { each: true })
 	timeframe?: VisitTimeframe;
 
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Requester user id',
+		example: '5917008f-abba-4f34-9ffa-95670d1d112d',
+		default: undefined,
+	})
+	requesterId?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Visitor space slug',
+		example: 'vrt',
+		default: undefined,
+	})
+	visitorSpaceSlug?: string;
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()

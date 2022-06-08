@@ -64,7 +64,12 @@ export class VisitsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
 		if (user.has(Permission.READ_ALL_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, {});
+			const visits = await this.visitsService.findAll(queryDto, {
+				...(queryDto.visitorSpaceSlug
+					? { visitorSpaceSlug: queryDto.visitorSpaceSlug }
+					: {}),
+				...(queryDto.requesterId ? { userProfileId: queryDto.requesterId } : {}),
+			});
 			return visits;
 		}
 		// CP_VISIT_REQUESTS (user has any of these permissions as enforced by guard)
@@ -76,7 +81,10 @@ export class VisitsController {
 			);
 		}
 
-		const visits = await this.visitsService.findAll(queryDto, { cpSpaceId: cpSpace.id });
+		const visits = await this.visitsService.findAll(queryDto, {
+			visitorSpaceSlug: cpSpace.slug,
+			...(queryDto.requesterId ? { userProfileId: queryDto.requesterId } : {}),
+		});
 		return visits;
 	}
 
