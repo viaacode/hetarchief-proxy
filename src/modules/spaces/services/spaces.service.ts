@@ -77,7 +77,7 @@ export class SpacesService {
 	}
 
 	public adaptEmail(graphQlInfo: any): string {
-		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
 		return contactPoint?.email || null;
 	}
 

@@ -117,7 +117,7 @@ describe('SpacesService', () => {
 	describe('adaptEmail', () => {
 		it('returns the correct email address', () => {
 			const email = spacesService.adaptEmail({
-				contactPoint: [
+				contact_point: [
 					{ contact_type: 'primary', email: 'wrong@mail.be' },
 					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
 				],
