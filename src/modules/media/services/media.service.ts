@@ -253,6 +253,11 @@ export class MediaService {
 			set(esQuery, 'query.bool.minimum_should_match', 1);
 		}
 
+		if (esQuery.size > 0 && getConfig(this.configService, 'elasticsearchLogQueries')) {
+			this.logger.log(
+				`Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(esQuery)}`
+			);
+		}
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
 
 		return this.adaptESResponse(mediaResponse, referer);
