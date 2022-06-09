@@ -72,7 +72,9 @@ export class VisitsController {
 
 		if (!cpSpace) {
 			throw new NotFoundException(
-				i18n.t('The current user does not seem to be linked to a cp space.')
+				i18n.t(
+					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
+				)
 			);
 		}
 
@@ -218,7 +220,7 @@ export class VisitsController {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				i18n.t(
-					'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
+					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
 				)
 			);
 		}
@@ -281,7 +283,9 @@ export class VisitsController {
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				throw new ForbiddenException(
-					i18n.t('You do not have the right permissions to call this route')
+					i18n.t(
+						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
+					)
 				);
 			}
 

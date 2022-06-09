@@ -29,8 +29,8 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockGqlNotification1: GqlNotification = {
 	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',
-	description: 'Bert2 Verhelst2 wil je leeszaal bezoeken',
-	title: 'Er is aan aanvraag om je leeszaal te bezoeken',
+	description: 'Bert2 Verhelst2 wil je bezoekersruimte bezoeken',
+	title: 'Er is aan aanvraag om je bezoekersruimte te bezoeken',
 	status: NotificationStatus.UNREAD,
 	type: NotificationType.NEW_VISIT_REQUEST,
 	recipient: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
@@ -48,7 +48,7 @@ const mockGqlNotification1: GqlNotification = {
 const mockGqlNotification2: GqlNotification = {
 	id: 'b925aca7-2e57-4f8e-a46b-13625c512fc2',
 	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
+		'Je bezoek aanvraag aan de bezoekersruimte van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd 00',
 	status: NotificationStatus.READ,
 	type: NotificationType.VISIT_REQUEST_APPROVED,
@@ -78,7 +78,7 @@ const mockGqlNotificationsResult = {
 const mockNotification: Notification = {
 	id: 'bfcae082-2370-4a2b-9f66-a55c869addfb',
 	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
+		'Je bezoek aanvraag aan de bezoekersruimte van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd 13',
 	status: NotificationStatus.UNREAD,
 	visitId: '0fb12a25-a882-42f7-9c79-9d77839c7237',

@@ -124,7 +124,9 @@ export class MediaController {
 			| Partial<Media>;
 
 		if (!limitedObject) {
-			throw new NotFoundException(i18n.t('Object not found'));
+			throw new NotFoundException(
+				i18n.t('modules/media/controllers/media___object-not-found')
+			);
 		}
 		return limitedObject;
 	}
@@ -148,7 +150,9 @@ export class MediaController {
 				!(await this.userHasAccessToVisitorSpaceOrId(user, objectMetadata.maintainerId)))
 		) {
 			throw new ForbiddenException(
-				i18n.t('You do not have access to the visitor space of this object')
+				i18n.t(
+					'modules/media/controllers/media___you-do-not-have-access-to-the-visitor-space-of-this-object'
+				)
 			);
 		}
 
@@ -181,7 +185,11 @@ export class MediaController {
 			!canSearchInAllSpaces &&
 			!(await this.userHasAccessToVisitorSpaceOrId(user, maintainerId))
 		) {
-			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+			throw new ForbiddenException(
+				i18n.t(
+					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
+				)
+			);
 		}
 
 		// We use the esIndex as the maintainerId -- no need to lowercase
@@ -204,7 +212,11 @@ export class MediaController {
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
 		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
-			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+			throw new ForbiddenException(
+				i18n.t(
+					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
+				)
+			);
 		}
 
 		return this.mediaService.getSimilar(id, esIndex.toLowerCase(), referer);
@@ -222,7 +234,11 @@ export class MediaController {
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
 		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
-			throw new ForbiddenException(i18n.t('You do not have access to this visitor space'));
+			throw new ForbiddenException(
+				i18n.t(
+					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
+				)
+			);
 		}
 
 		// Filter on format video should also include film format

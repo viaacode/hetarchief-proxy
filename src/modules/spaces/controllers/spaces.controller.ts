@@ -55,7 +55,9 @@ export class SpacesController {
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
 			throw new ForbiddenException(
-				i18n.t('You do not have the right permissions to query this data')
+				i18n.t(
+					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
+				)
 			);
 		}
 		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
