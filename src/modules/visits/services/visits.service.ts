@@ -113,9 +113,8 @@ export class VisitsService {
 		return contactPoint?.email || null;
 	}
 
-	public adaptTelephone(graphQlInfo: OrganisationInfoV2): string {
-		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		return contactPoint?.telephone || null;
+	public adaptTelephone(graphQlAddress: any): string {
+		return graphQlAddress?.telephone || '';
 	}
 
 	public adapt(graphQlVisit: GqlVisit): Visit | null {
@@ -137,7 +136,7 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
 			),
 			spaceTelephone: this.adaptTelephone(
-				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
+				graphQlVisit?.visitor_space?.content_partner?.information?.primary_site?.address
 			),
 			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
