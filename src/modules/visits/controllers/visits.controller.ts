@@ -263,7 +263,11 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Update a Visit request.',
 	})
-	@RequireAnyPermissions(Permission.UPDATE_VISIT_REQUEST, Permission.CANCEL_OWN_VISIT_REQUEST)
+	@RequireAnyPermissions(
+		Permission.APPROVE_DENY_ALL_VISIT_REQUESTS,
+		Permission.APPROVE_DENY_CP_VISIT_REQUESTS,
+		Permission.CANCEL_OWN_VISIT_REQUEST
+	)
 	public async update(
 		@Req() request: Request,
 		@Param('id') id: string,
@@ -274,7 +278,8 @@ export class VisitsController {
 
 		if (
 			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
-			user.hasNot(Permission.UPDATE_VISIT_REQUEST)
+			user.hasNot(Permission.APPROVE_DENY_ALL_VISIT_REQUESTS) &&
+			user.hasNot(Permission.APPROVE_DENY_CP_VISIT_REQUESTS)
 		) {
 			if (
 				originalVisit.userProfileId !== user.getId() ||
