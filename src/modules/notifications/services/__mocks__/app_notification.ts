@@ -7,7 +7,7 @@ import {
 export const mockGqlNotification: GqlNotification = {
 	id: 'b925aca7-2e57-4f8e-a46b-13625c512fc2',
 	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
+		'Je bezoek aanvraag aan de bezoekersruimte van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd',
 	status: NotificationStatus.UNREAD,
 	type: NotificationType.VISIT_REQUEST_APPROVED,

@@ -17,6 +17,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
@@ -251,7 +252,9 @@ describe('VisitsController', () => {
 
 			expect(error.response).toEqual({
 				statusCode: 404,
-				message: 'The current user does not seem to be linked to a cp space.',
+				message: i18n.t(
+					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
+				),
 				error: 'Not Found',
 			});
 		});
@@ -337,7 +340,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				"The space with slug 'space-1' is no longer accepting visit requests."
+				'The space with slug "space-1" is no longer accepting visit requests.'
 			);
 			expect(error.response.statusCode).toEqual(410);
 
@@ -359,7 +362,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				`You do not have access to space with slug 'space-1'.`
+				'You do not have access to space with slug "space-1".'
 			);
 			expect(error.response.statusCode).toEqual(403);
 		});
@@ -377,7 +380,7 @@ describe('VisitsController', () => {
 			} catch (err) {
 				error = err;
 			}
-			expect(error.response.message).toEqual(`Space with slug 'space-1' was not found.`);
+			expect(error.response.message).toEqual('Space with slug "space-1" was not found.');
 			expect(error.response.statusCode).toEqual(404);
 		});
 	});
@@ -491,7 +494,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				`The space with slug 'space-slug-1' was not found`
+				'The space with slug "space-slug-1" was not found'
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);

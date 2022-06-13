@@ -29,6 +29,7 @@ import { DataService } from '~modules/data/services/data.service';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import i18n from '~shared/i18n';
 import { Recipient } from '~shared/types/types';
 
 @Injectable()
@@ -305,7 +306,10 @@ export class SpacesService {
 				'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
 			) {
 				throw new InternalServerErrorException(
-					`A space already exists with slug '${inputDto.slug}'`
+					i18n.t(
+						'modules/spaces/services/spaces___a-space-already-exists-with-slug-slug',
+						{ slug: inputDto.slug }
+					)
 				);
 			}
 		}

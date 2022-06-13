@@ -108,7 +108,9 @@ export class NotificationsController {
 			accessEndedNotifications.length;
 		if (totalNotificationsSent > 0) {
 			return {
-				status: i18n.t('Notificaties verzonden'),
+				status: i18n.t(
+					'modules/notifications/controllers/notifications___notificaties-verzonden'
+				),
 				notifications: {
 					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED]:
 						accessStartsNotifications.length,
@@ -121,7 +123,9 @@ export class NotificationsController {
 			};
 		} else {
 			return {
-				status: i18n.t('No notifications had to be sent'),
+				status: i18n.t(
+					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
+				),
 				total: 0,
 			};
 		}
@@ -135,18 +139,27 @@ export class NotificationsController {
 		const visits: Visit[] =
 			await this.visitService.getApprovedAndStartedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
-			(visit): GqlCreateOrUpdateNotification => ({
-				title: i18n.t('Je hebt nu toegang tot de leeszaal {{name}}', {
-					name: visit.spaceName,
-				}),
-				description: i18n.t('Je toegang vervalt terug op {{endDate}}', {
-					endDate: formatAsBelgianDate(visit.endAt),
-				}),
-				visit_id: visit.id,
-				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
-				status: NotificationStatus.UNREAD,
-				recipient: visit.userProfileId,
-			})
+			(visit): GqlCreateOrUpdateNotification => {
+				const endDate = formatAsBelgianDate(visit.endAt);
+				return {
+					title: i18n.t(
+						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
+						{
+							name: visit.spaceName,
+						}
+					),
+					description: i18n.t(
+						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
+						{
+							endDate,
+						}
+					),
+					visit_id: visit.id,
+					type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
+					status: NotificationStatus.UNREAD,
+					recipient: visit.userProfileId,
+				};
+			}
 		);
 
 		return this.notificationsService.create(notifications);
@@ -162,13 +175,15 @@ export class NotificationsController {
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
 				title: i18n.t(
-					'Je toegang tot de leeszaal {{name}} loopt af over {{minutes}} minuten',
+					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
 						name: visit.spaceName,
 						minutes: 15,
 					}
 				),
-				description: i18n.t('Sla je werk op voor je toegang verliest'),
+				description: i18n.t(
+					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
+				),
 				visit_id: visit.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				status: NotificationStatus.UNREAD,
@@ -188,11 +203,14 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: i18n.t('Je toegang tot de leeszaal {{name}} is afgelopen', {
-					name: visit.spaceName,
-				}),
+				title: i18n.t(
+					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
+					{
+						name: visit.spaceName,
+					}
+				),
 				description: i18n.t(
-					'Om opnieuw toegang te krijgen tot deze leeszaal kan je een nieuwe aanvraag indienen'
+					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
 				),
 				visit_id: visit.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,

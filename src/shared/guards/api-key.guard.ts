@@ -5,7 +5,9 @@ import { Request } from 'express';
 import i18n from '~shared/i18n';
 
 export const API_KEY_EXCEPTION = new BadRequestException(
-	i18n.t('You need to provide an valid api key for this endpoint under the header: `apiKey`')
+	i18n.t(
+		'shared/guards/api-key___you-need-to-provide-an-valid-api-key-for-this-endpoint-under-the-header-api-key'
+	)
 );
 
 @Injectable()

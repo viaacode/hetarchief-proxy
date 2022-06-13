@@ -198,13 +198,19 @@ export class NotificationsService {
 	): Promise<Notification[]> {
 		const newVisitRequestEmail = visit.spaceMail || recipients[0]?.email;
 
+		const name = user.getFullName();
 		const [notifications] = await Promise.all([
 			this.createForMultipleRecipients(
 				{
-					title: i18n.t('Er is aan aanvraag om je leeszaal te bezoeken'),
-					description: i18n.t('{{name}} wil je leeszaal bezoeken', {
-						name: user.getFullName(),
-					}),
+					title: i18n.t(
+						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken'
+					),
+					description: i18n.t(
+						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
+						{
+							name,
+						}
+					),
 					visit_id: visit.id,
 					type: NotificationType.NEW_VISIT_REQUEST,
 					status: NotificationStatus.UNREAD,
@@ -231,18 +237,23 @@ export class NotificationsService {
 	 * Send notifications and email on approve visit request
 	 */
 	public async onApproveVisitRequest(visit: Visit, space: Space): Promise<Notification> {
+		const startDate = formatAsBelgianDate(visit.startAt);
+		const endDate = formatAsBelgianDate(visit.endAt);
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: i18n.t('Je aanvraag voor leeszaal {{name}} is goedgekeurd', {
-						name: space.name,
-					}),
-					description: i18n.t(
-						'Je aanvraag voor leeszaal {{name}} is goedgekeurd. Je zal toegang hebben van {{startDate}} tot {{endDate}}',
+					title: i18n.t(
+						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd',
 						{
 							name: space.name,
-							startDate: formatAsBelgianDate(visit.startAt),
-							endDate: formatAsBelgianDate(visit.endAt),
+						}
+					),
+					description: i18n.t(
+						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd-je-zal-toegang-hebben-van-start-date-tot-end-date',
+						{
+							name: space.name,
+							startDate,
+							endDate,
 						}
 					),
 					visit_id: visit.id,
@@ -270,15 +281,24 @@ export class NotificationsService {
 		space: Space,
 		reason?: string
 	): Promise<Notification> {
+		const reasonWithFallback =
+			reason ||
+			i18n.t('modules/notifications/services/notifications___er-werd-geen-reden-opgegeven');
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: i18n.t('Je aanvraag voor leeszaal {{name}} is afgekeurd', {
-						name: space.name,
-					}),
-					description: i18n.t('Reden: {{reason}}', {
-						reason: reason || i18n.t('Er werd geen reden opgegeven'),
-					}),
+					title: i18n.t(
+						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd',
+						{
+							name: space.name,
+						}
+					),
+					description: i18n.t(
+						'modules/notifications/services/notifications___reden-reason',
+						{
+							reason: reasonWithFallback,
+						}
+					),
 					visit_id: visit.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
@@ -302,12 +322,18 @@ export class NotificationsService {
 		recipients: Recipient[],
 		user: SessionUserEntity
 	): Promise<Notification[]> {
+		const name = user.getFullName();
 		return this.createForMultipleRecipients(
 			{
-				title: i18n.t('Een aanvraag om je leeszaal te bezoeken is geannuleerd.'),
-				description: i18n.t('{{name}} heeft zelf de aanvraag geannuleerd.', {
-					name: user.getFullName(),
-				}),
+				title: i18n.t(
+					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd'
+				),
+				description: i18n.t(
+					'modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd',
+					{
+						name,
+					}
+				),
 				visit_id: visit.id,
 				type: NotificationType.VISIT_REQUEST_CANCELLED,
 				status: NotificationStatus.UNREAD,
