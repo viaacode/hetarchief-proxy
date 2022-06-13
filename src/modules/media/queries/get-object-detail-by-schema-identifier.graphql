@@ -39,6 +39,13 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		schema_date_created_lower_bound
 		ebucore_object_type
 		schema_genre
+		meemoofilm_color
+		meemoofilm_base
+		meemoofilm_image_or_sound
+		meemoo_local_id
+		meemoo_original_cp
+		meemoo_description_programme
+		meemoo_description_cast
 		premis_is_represented_by {
 			ie_schema_identifier
 			schema_name
