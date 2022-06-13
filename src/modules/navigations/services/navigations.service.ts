@@ -46,7 +46,7 @@ export class NavigationsService {
 
 		// filter based on logged in / logged out
 		const allowedUserGroups = user
-			? [SpecialPermissionGroups.loggedInUsers]
+			? [SpecialPermissionGroups.loggedInUsers, user.groupId]
 			: [SpecialPermissionGroups.loggedOutUsers];
 
 		const visibleItems = [];
