@@ -78,7 +78,7 @@ describe('QueryBuilder', () => {
 				size: 10,
 				page: 1,
 			});
-			expect(esQuery.query.bool.must.length).toBeGreaterThanOrEqual(2);
+			expect(esQuery.query.bool.must[0].bool.should.length).toBeGreaterThanOrEqual(2);
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
@@ -115,7 +115,7 @@ describe('QueryBuilder', () => {
 				size: 10,
 				page: 1,
 			});
-			expect(esQuery.query.bool.must[0].multi_match.fields).not.toContain(
+			expect(esQuery.query.bool.must[0].bool.should[0].multi_match.fields).not.toContain(
 				'schema_transcript'
 			);
 		});
