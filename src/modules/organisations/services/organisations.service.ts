@@ -4,8 +4,11 @@ import {
 	Logger,
 	OnApplicationBootstrap,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import got from 'got';
 import { uniqBy } from 'lodash';
+
+import { getConfig } from '~config';
 
 import {
 	OrganisationInfoV2,
@@ -23,7 +26,7 @@ import { DataService } from '~modules/data/services/data.service';
 export default class OrganisationsService implements OnApplicationBootstrap {
 	private logger: Logger = new Logger(OrganisationsService.name, { timestamp: true });
 
-	constructor(private dataService: DataService) {}
+	constructor(private dataService: DataService, private configService: ConfigService) {}
 
 	public async onApplicationBootstrap() {
 		// For now you can manually trigger a refresh of the cache using /organisations/update-cache with the proxy api key
@@ -50,7 +53,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 		let url;
 
 		try {
-			url = process.env.ORGANIZATIONS_API_V2_URL;
+			url = getConfig(this.configService, 'organizationsApiV2Url');
 
 			const queryBody = {
 				query: `query contentpartners {
