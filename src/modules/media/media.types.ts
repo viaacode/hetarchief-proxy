@@ -78,8 +78,8 @@ export interface Media {
 	actor?: any;
 	contributor: any;
 	publisher: any;
-	// spatial: string;
-	// temporal: string;
+	spatial: string;
+	temporal: string;
 	keywords: string[];
 	genre: string[];
 	dctermsFormat: string;
@@ -93,6 +93,13 @@ export interface Media {
 	dateCreated: string;
 	dateCreatedLowerBound?: string;
 	ebucoreObjectType: string;
+	meemoofilmColor: boolean;
+	meemoofilmBase: string;
+	meemoofilmImageOrSound: string;
+	meemooLocalId: string;
+	meemooOriginalCp: string;
+	meemooDescriptionProgramme: string;
+	meemooDescriptionCast: string;
 	representations?: Representation[];
 }
 

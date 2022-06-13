@@ -47,6 +47,7 @@ export const configValidationSchema = Joi.object({
 	REROUTE_EMAILS_TO: Joi.string().allow(''),
 	IGNORE_OBJECT_LICENSES: Joi.boolean().default(false),
 	ORGANIZATIONS_API_V2_URL: Joi.string(),
+	ELASTICSEARCH_LOG_QUERIES: Joi.boolean().default(false),
 });
 
 export const DEFAULT_CONFIG = {

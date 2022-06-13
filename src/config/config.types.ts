@@ -54,6 +54,7 @@ export interface Configuration {
 	rerouteEmailsTo: string;
 	ignoreObjectLicenses: boolean;
 	organizationsApiV2Url: string;
+	elasticsearchLogQueries: boolean;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
