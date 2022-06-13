@@ -19,6 +19,7 @@ import { AssetFileType } from '~modules/assets/types';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import i18n from '~shared/i18n';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Assets')
@@ -53,7 +54,11 @@ export class AssetsController {
 	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 	async uploadAsset(@UploadedFile() file: Express.Multer.File): Promise<{ url: string }> {
 		if (!file) {
-			throw new BadRequestException('The request should contain a file to upload');
+			throw new BadRequestException(
+				i18n.t(
+					'modules/assets/controllers/assets___the-request-should-contain-a-file-to-upload'
+				)
+			);
 		}
 
 		try {

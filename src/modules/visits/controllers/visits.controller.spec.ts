@@ -17,6 +17,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import i18n from '~shared/i18n';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
@@ -255,7 +256,9 @@ describe('VisitsController', () => {
 
 			expect(error.response).toEqual({
 				statusCode: 404,
-				message: 'The current user does not seem to be linked to a cp space.',
+				message: i18n.t(
+					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
+				),
 				error: 'Not Found',
 			});
 		});
