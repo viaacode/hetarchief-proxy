@@ -13,7 +13,7 @@
         "schema_is_part_of.archief",
         "schema_is_part_of.deelarchief",
         "schema_is_part_of.deelreeks",
-        "schema_is_part_of.programma, ",
+        "schema_is_part_of.programma",
         "schema_is_part_of.reeks",
         "schema_is_part_of.seizoen",
         "schema_is_part_of.serie",
@@ -43,7 +43,7 @@
         "schema_is_part_of.archief.lemma_split",
         "schema_is_part_of.deelarchief.lemma_split",
         "schema_is_part_of.deelreeks.lemma_split",
-        "schema_is_part_of.programma, .lemma_split",
+        "schema_is_part_of.programma.lemma_split",
         "schema_is_part_of.reeks.lemma_split",
         "schema_is_part_of.seizoen.lemma_split",
         "schema_is_part_of.serie.lemma_split",
@@ -54,8 +54,7 @@
         "schema_creator.*.lemma_split",
         "schema_contributor.*.lemma_split",
         "schema_spatial_coverage.lemma_split",
-        "schema_temporal_coverage.lemma_split",
-        "dcterms_medium.lemma_split"
+        "schema_temporal_coverage.lemma_split"
       ]
     }
   },
@@ -74,7 +73,7 @@
         "schema_is_part_of.archief.lemma_split",
         "schema_is_part_of.deelarchief.lemma_split",
         "schema_is_part_of.deelreeks.lemma_split",
-        "schema_is_part_of.programma, .lemma_split",
+        "schema_is_part_of.programma.lemma_split",
         "schema_is_part_of.reeks.lemma_split",
         "schema_is_part_of.seizoen.lemma_split",
         "schema_is_part_of.serie.lemma_split",
@@ -85,8 +84,7 @@
         "schema_creator.*.lemma_split",
         "schema_contributor.*.lemma_split",
         "schema_spatial_coverage.lemma_split",
-        "schema_temporal_coverage.lemma_split",
-        "dcterms_medium.lemma_split"
+        "schema_temporal_coverage.lemma_split"
       ]
     }
   },
@@ -104,7 +102,7 @@
         "schema_is_part_of.archief.lemma_split_spell",
         "schema_is_part_of.deelarchief.lemma_split_spell",
         "schema_is_part_of.deelreeks.lemma_split_spell",
-        "schema_is_part_of.programma, .lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
         "schema_is_part_of.reeks.lemma_split_spell",
         "schema_is_part_of.seizoen.lemma_split_spell",
         "schema_is_part_of.serie.lemma_split_spell",
@@ -115,8 +113,7 @@
         "schema_creator.*.lemma_split_spell",
         "schema_contributor.*.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
-        "schema_temporal_coverage.lemma_split_spell",
-        "dcterms_medium.lemma_split_spell"
+        "schema_temporal_coverage.lemma_split_spell"
       ]
     }
   },
@@ -135,7 +132,7 @@
         "schema_is_part_of.archief.lemma_split_spell",
         "schema_is_part_of.deelarchief.lemma_split_spell",
         "schema_is_part_of.deelreeks.lemma_split_spell",
-        "schema_is_part_of.programma, .lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
         "schema_is_part_of.reeks.lemma_split_spell",
         "schema_is_part_of.seizoen.lemma_split_spell",
         "schema_is_part_of.serie.lemma_split_spell",
@@ -146,8 +143,7 @@
         "schema_creator.*.lemma_split_spell",
         "schema_contributor.*.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
-        "schema_temporal_coverage.lemma_split_spell",
-        "dcterms_medium.lemma_split_spell"
+        "schema_temporal_coverage.lemma_split_spell"
       ]
     }
   }
