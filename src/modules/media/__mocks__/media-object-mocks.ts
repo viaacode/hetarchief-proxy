@@ -127,4 +127,13 @@ export const mockMediaObject1: Media = {
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	name: 'Une centaine de policiers poussent "un cri contre la stigmatisation" à Charleroi',
+	spatial: null,
+	temporal: null,
+	meemoofilmColor: null,
+	meemoofilmBase: null,
+	meemoofilmImageOrSound: null,
+	meemooLocalId: null,
+	meemooOriginalCp: null,
+	meemooDescriptionProgramme: null,
+	meemooDescriptionCast: null,
 };
