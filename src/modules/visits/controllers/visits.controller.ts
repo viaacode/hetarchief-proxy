@@ -178,7 +178,7 @@ export class VisitsController {
 				if (space.status === VisitorSpaceStatus.Inactive) {
 					throw new GoneException(
 						i18n.t(
-							"The space with slug '{{name}}' is no longer accepting visit requests.",
+							'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests',
 							{ name: visitorSpaceSlug }
 						)
 					);
@@ -186,14 +186,20 @@ export class VisitsController {
 
 				// User does not have access to existing space
 				throw new ForbiddenException(
-					i18n.t("You do not have access to space with slug '{{name}}'.", {
-						name: visitorSpaceSlug,
-					})
+					i18n.t(
+						'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name',
+						{
+							name: visitorSpaceSlug,
+						}
+					)
 				);
 			} else {
 				// Space does not exist
 				throw new NotFoundException(
-					i18n.t("Space with slug '{{name}}' was not found.", { name: visitorSpaceSlug })
+					i18n.t(
+						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
+						{ name: visitorSpaceSlug }
+					)
 				);
 			}
 		}
@@ -237,9 +243,12 @@ export class VisitsController {
 
 		if (!visitorSpace) {
 			throw new BadRequestException(
-				i18n.t("The space with slug '{{name}}' was not found", {
-					name: createVisitDto.visitorSpaceSlug,
-				})
+				i18n.t(
+					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found',
+					{
+						name: createVisitDto.visitorSpaceSlug,
+					}
+				)
 			);
 		}
 

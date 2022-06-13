@@ -251,7 +251,7 @@ describe('SpacesService', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual("A space already exists with slug 'test-slug'");
+			expect(error.message).toEqual('A space already exists with slug "test-slug"');
 		});
 
 		it('throws a general Internal server exception when another error occurred', async () => {

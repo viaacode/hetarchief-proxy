@@ -76,7 +76,11 @@ export class SpacesController {
 	public async getSpaceBySlug(@Param('slug') slug: string): Promise<Space | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
-			throw new NotFoundException(i18n.t("Space with slug '{{slug}}' not found", { slug }));
+			throw new NotFoundException(
+				i18n.t('modules/spaces/controllers/spaces___space-with-slug-slug-not-found', {
+					slug,
+				})
+			);
 		}
 		return space;
 	}

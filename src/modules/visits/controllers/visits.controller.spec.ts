@@ -344,7 +344,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				"The space with slug 'space-1' is no longer accepting visit requests."
+				'The space with slug "space-1" is no longer accepting visit requests.'
 			);
 			expect(error.response.statusCode).toEqual(410);
 
@@ -366,7 +366,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				`You do not have access to space with slug 'space-1'.`
+				'You do not have access to space with slug "space-1".'
 			);
 			expect(error.response.statusCode).toEqual(403);
 		});
@@ -384,7 +384,7 @@ describe('VisitsController', () => {
 			} catch (err) {
 				error = err;
 			}
-			expect(error.response.message).toEqual(`Space with slug 'space-1' was not found.`);
+			expect(error.response.message).toEqual('Space with slug "space-1" was not found.');
 			expect(error.response.statusCode).toEqual(404);
 		});
 	});
@@ -498,7 +498,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				`The space with slug 'space-slug-1' was not found`
+				'The space with slug "space-slug-1" was not found'
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);

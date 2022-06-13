@@ -21,9 +21,15 @@
   "modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd": "{{name}} heeft zelf de aanvraag geannuleerd",
   "modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken": "{{name}} wil je bezoekersruimte bezoeken",
   "modules/notifications/services/notifications___reden-reason": "Reden {{reason}}",
+  "modules/spaces/controllers/spaces___space-with-slug-slug-not-found": "Space with slug \"{{slug}}\" not found",
   "modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data": "You do not have the right permissions to query this data",
+  "modules/spaces/services/spaces___a-space-already-exists-with-slug-slug": "A space already exists with slug \"{{slug}}\"",
+  "modules/visits/controllers/visits___space-with-slug-name-was-not-found": "Space with slug \"{{name}}\" was not found.",
   "modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space": "The current user does not seem to be linked to a cp space.",
-  "modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit": "The Terms of Service of the visitor space need to be accepted to be able to request a visit",
+  "modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests": "The space with slug \"{{name}}\" is no longer accepting visit requests.",
+  "modules/visits/controllers/visits___the-space-with-slug-name-was-not-found": "The space with slug \"{{name}}\" was not found",
+  "modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit": "The Terms of Service of the visitor space need to be accepted to be able to request a visit.",
+  "modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name": "You do not have access to space with slug \"{{name}}\".",
   "modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route": "You do not have the right permissions to call this route",
   "shared/guards/api-key___you-need-to-provide-an-valid-api-key-for-this-endpoint-under-the-header-api-key": "You need to provide an valid api key for this endpoint under the header api key"
 }
