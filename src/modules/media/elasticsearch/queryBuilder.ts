@@ -164,7 +164,14 @@ export class QueryBuilder {
 			_.set(matchObj, 'multi_match.query', escapedQueryString);
 		});
 
-		return textQueryFilterArray;
+		return [
+			{
+				bool: {
+					should: textQueryFilterArray,
+					minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
+				},
+			},
+		];
 	}
 
 	/**

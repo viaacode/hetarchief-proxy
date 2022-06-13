@@ -146,6 +146,10 @@ export class PlayerTicketService {
 		if (!path || !referer) {
 			return path;
 		}
+		if (path.startsWith('https://') || path.startsWith('http://')) {
+			// Already an absolute path => return path
+			return path;
+		}
 		const token = await this.getThumbnailToken(referer);
 		return `${this.mediaServiceUrl}/${path}?token=${token}`;
 	}

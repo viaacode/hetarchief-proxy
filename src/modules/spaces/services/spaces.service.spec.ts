@@ -18,6 +18,7 @@ import {
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessType } from '~modules/spaces/types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -117,11 +118,15 @@ describe('SpacesService', () => {
 	describe('adaptEmail', () => {
 		it('returns the correct email address', () => {
 			const email = spacesService.adaptEmail({
-				contactPoint: [
-					{ contact_type: 'primary', email: 'wrong@mail.be' },
-					{ contact_type: 'ontsluiting', email: 'correct@mail.be' },
+				contact_point: [
+					{ contact_type: 'primary', email: 'wrong@mail.be', telephone: '051123456' },
+					{
+						contact_type: 'ontsluiting',
+						email: 'correct@mail.be',
+						telephone: '051123456',
+					},
 				],
-			});
+			} as OrganisationInfoV2);
 			expect(email).toEqual('correct@mail.be');
 		});
 

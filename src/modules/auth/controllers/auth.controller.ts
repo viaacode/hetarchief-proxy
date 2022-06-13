@@ -1,10 +1,8 @@
 import {
 	Controller,
-	Delete,
 	Get,
 	Headers,
 	HttpStatus,
-	InternalServerErrorException,
 	Logger,
 	Post,
 	Query,
@@ -99,7 +97,7 @@ export class AuthController {
 		}
 	}
 
-	@Delete('clear-sessions')
+	@Post('clear-sessions')
 	@UseGuards(ApiKeyGuard)
 	async clearSessions(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
