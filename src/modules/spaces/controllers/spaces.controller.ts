@@ -54,11 +54,12 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
-			throw new ForbiddenException(
+			const error = new ForbiddenException(
 				i18n.t(
 					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
 				)
 			);
+			throw error;
 		}
 		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
