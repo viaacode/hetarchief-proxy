@@ -65,10 +65,10 @@ export class VisitsController {
 	): Promise<IPagination<Visit>> {
 		if (user.has(Permission.READ_ALL_VISIT_REQUESTS)) {
 			const visits = await this.visitsService.findAll(queryDto, {
-				...(queryDto.visitorSpaceSlug
+				...(queryDto?.visitorSpaceSlug
 					? { visitorSpaceSlug: queryDto.visitorSpaceSlug }
 					: {}),
-				...(queryDto.requesterId ? { userProfileId: queryDto.requesterId } : {}),
+				...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
 			});
 			return visits;
 		}
@@ -83,7 +83,7 @@ export class VisitsController {
 
 		const visits = await this.visitsService.findAll(queryDto, {
 			visitorSpaceSlug: cpSpace.slug,
-			...(queryDto.requesterId ? { userProfileId: queryDto.requesterId } : {}),
+			...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
 		});
 		return visits;
 	}
