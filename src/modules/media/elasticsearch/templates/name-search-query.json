@@ -8,7 +8,8 @@
       "fields": [
         "schema_name^20",
         "schema_is_part_of.alternatief^20",
-        "schema_is_part_of.serie^20"
+        "schema_is_part_of.serie^20",
+        "schema_is_part_of.programma^20"
       ]
     }
   },
@@ -21,7 +22,8 @@
       "fields": [
         "schema_name.lemma_split^20",
         "schema_is_part_of.alternatief.lemma_split^20",
-        "schema_is_part_of.serie.lemma_split^20"
+        "schema_is_part_of.serie.lemma_split^20",
+        "schema_is_part_of.programma.lemma_split^20"
       ]
     }
   },
@@ -35,7 +37,8 @@
       "fields": [
         "schema_name.lemma_split^20",
         "schema_is_part_of.alternatief.lemma_split^20",
-        "schema_is_part_of.serie.lemma_split^20"
+        "schema_is_part_of.serie.lemma_split^20",
+        "schema_is_part_of.programma.lemma_split^20"
       ]
     }
   },
@@ -48,7 +51,8 @@
       "fields": [
         "schema_name.lemma_split_spell^20",
         "schema_is_part_of.alternatief.lemma_split_spell^20",
-        "schema_is_part_of.serie.lemma_split_spell^20"
+        "schema_is_part_of.serie.lemma_split_spell^20",
+        "schema_is_part_of.programma.lemma_split_spell^20"
       ]
     }
   },
@@ -62,7 +66,8 @@
       "fields": [
         "schema_name.lemma_split_spell^20",
         "schema_is_part_of.alternatief.lemma_split_spell^20",
-        "schema_is_part_of.serie.lemma_split_spell^20"
+        "schema_is_part_of.serie.lemma_split_spell^20",
+        "schema_is_part_of.programma.lemma_split_spell^20"
       ]
     }
   }
