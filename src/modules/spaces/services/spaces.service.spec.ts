@@ -24,6 +24,7 @@ import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { SortDirection } from '~shared/types';
 
 const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
@@ -373,6 +374,18 @@ describe('SpacesService', () => {
 			expect(response.items.length).toBe(1);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(20);
+			expect(response.total).toBe(100);
+		});
+
+		it('returns a paginated response with all spaces ordered by status', async () => {
+			mockDataService.execute.mockResolvedValueOnce({ data: mockFindSpacesResponse });
+			const response = await spacesService.findAll(
+				{ orderProp: 'status', orderDirection: SortDirection.asc, page: 1, size: 10 },
+				mockUser.id
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
 		});
 	});
