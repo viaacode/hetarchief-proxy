@@ -54,9 +54,12 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
-			throw new ForbiddenException(
-				i18n.t('You do not have the right permissions to query this data')
+			const error = new ForbiddenException(
+				i18n.t(
+					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
+				)
 			);
+			throw error;
 		}
 		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
@@ -73,7 +76,11 @@ export class SpacesController {
 	public async getSpaceBySlug(@Param('slug') slug: string): Promise<Space | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
-			throw new NotFoundException(i18n.t(`Space with slug "${slug}" not found`));
+			throw new NotFoundException(
+				i18n.t('modules/spaces/controllers/spaces___space-with-slug-slug-not-found', {
+					slug,
+				})
+			);
 		}
 		return space;
 	}

@@ -29,9 +29,9 @@ import * as path from 'path';
 
 import glob from 'glob';
 import { intersection, kebabCase, keys, without } from 'lodash';
+import fetch from 'node-fetch';
 import sortObject from 'sort-object-keys';
 
-// import TranslationsController from '../src/modules/site-variables/controllers/translations.controller';
 import localTranslations from '../src/shared/i18n/locales/nl.json';
 
 type keyMap = Record<string, string>;
@@ -138,14 +138,17 @@ function extractTranslationsFromCodeFiles(codeFiles: string[]) {
 	return newTranslations;
 }
 
-// async function getOnlineTranslations() {
-// 	try {
-// 		const response = await TranslationsController.getTranslationsJSON('backend');
-// 		return response.value;
-// 	} catch (err) {
-// 		throw new Error('Failed to get translations from the database');
-// 	}
-// }
+async function getOnlineTranslations() {
+	const response = await fetch(`https://hetarchief-proxy-qas.hetarchief.be/admin/translations`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const allTranslations = await response.json();
+	return allTranslations.TRANSLATIONS_BACKEND || {};
+}
 
 function checkTranslationsForKeysAsValue(translationJson: string) {
 	// Identify  if any translations contain "___", then something went wrong with the translations
@@ -166,8 +169,7 @@ function checkTranslationsForKeysAsValue(translationJson: string) {
 }
 
 async function updateTranslations() {
-	// const onlineTranslations = await getOnlineTranslations();
-	const onlineTranslations = {};
+	const onlineTranslations = await getOnlineTranslations();
 
 	// Extract translations from code and replace code by reference to translation key
 	const codeFiles = await getFilesByGlob('**/*.@(ts|tsx)');

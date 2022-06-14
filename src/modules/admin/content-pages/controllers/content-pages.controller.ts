@@ -102,16 +102,16 @@ export class ContentPagesController {
 			if (!contentPage.isPublic) {
 				return null;
 			}
-		}
 
-		// Check if content page is accessible for the user who requested the content page
-		if (
-			!intersection(
-				contentPage.userGroupIds.map((id) => String(id)),
-				SessionHelper.getUserGroupIds(user.getUser())
-			).length
-		) {
-			return null;
+			// Check if content page is accessible for the user who requested the content page
+			if (
+				!intersection(
+					contentPage.userGroupIds.map((id) => String(id)),
+					SessionHelper.getUserGroupIds(user.getUser())
+				).length
+			) {
+				return null;
+			}
 		}
 
 		// Check if content page contains any search query content bocks (eg: media grids)

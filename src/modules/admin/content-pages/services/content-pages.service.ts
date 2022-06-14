@@ -11,7 +11,7 @@ import { Avo } from '@viaa/avo2-types';
 import { SearchResultItem } from '@viaa/avo2-types/types/search';
 import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
-import { fromPairs, get, isEmpty, keys, set } from 'lodash';
+import { compact, fromPairs, get, isEmpty, keys, set } from 'lodash';
 import moment from 'moment';
 
 import { getConfig } from '~config';
@@ -192,7 +192,7 @@ export class ContentPagesService {
 		const now = new Date().toISOString();
 		const variables = {
 			limit: size,
-			labelIds: labelIds || [],
+			labelIds: compact(labelIds || []),
 			offset: (page - 1) * size,
 			where: {
 				_and: [
@@ -345,7 +345,7 @@ export class ContentPagesService {
 		const now = new Date().toISOString();
 		const variables = {
 			limit,
-			labelIds,
+			labelIds: compact(labelIds),
 			offset,
 			where: {
 				_and: [
@@ -488,6 +488,9 @@ export class ContentPagesService {
 		contentType: string,
 		labelIds: string[]
 	): Promise<LabelObj[]> {
+		if (!labelIds.length) {
+			return [];
+		}
 		const response = await this.dataService.execute(
 			this.queries.GetContentPageLabelsByTypeAndIdsDocument,
 			{

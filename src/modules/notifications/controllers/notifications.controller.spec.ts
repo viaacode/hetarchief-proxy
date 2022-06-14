@@ -20,7 +20,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
 	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
+		'Je bezoek aanvraag aan de bezoekersruimte van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd',
 	id: 'b925aca7-2e57-4f8e-a46b-13625c512fc2',
 	status: NotificationStatus.UNREAD,
@@ -33,7 +33,7 @@ const mockNotification1: Notification = {
 
 const mockNotification2: Notification = {
 	description:
-		'Je bezoek aanvraag aan de leeszaal van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
+		'Je bezoek aanvraag aan de bezoekersruimte van Gents museum is goedgekeurd, je hebt toegang van 12:00 to 16:00 op 17 feb 2022',
 	title: 'Je bezoek aanvraag is goedgekeurd',
 	id: '84056059-c9fe-409b-844e-e7ce606c6212',
 	status: NotificationStatus.UNREAD,
@@ -228,7 +228,9 @@ describe('NotificationsController', () => {
 
 			const response = await notificationsController.checkNewNotifications(mockApiKey);
 
-			expect(response.status).toEqual(i18n.t('Notificaties verzonden'));
+			expect(response.status).toEqual(
+				i18n.t('modules/notifications/controllers/notifications___notificaties-verzonden')
+			);
 			expect(response.notifications).toEqual({
 				ACCESS_PERIOD_VISITOR_SPACE_STARTED: 2,
 				ACCESS_PERIOD_VISITOR_SPACE_END_WARNING: 1,
@@ -258,7 +260,11 @@ describe('NotificationsController', () => {
 
 			const response = await notificationsController.checkNewNotifications(mockApiKey);
 
-			expect(response.status).toEqual(i18n.t('No notifications had to be sent'));
+			expect(response.status).toEqual(
+				i18n.t(
+					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
+				)
+			);
 			expect(response.notifications).toBeUndefined();
 			expect(response.total).toEqual(0);
 		});

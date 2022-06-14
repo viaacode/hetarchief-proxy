@@ -1,5 +1,5 @@
 query getPermissions {
-	users_permission {
+	users_permission(order_by: { label: asc }) {
 		id
 		label
 		name

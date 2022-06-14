@@ -259,6 +259,7 @@ export class DataPermissionsService {
 					Permission.VIEW_USERS_IN_SAME_COMPANY
 				),
 				getUsers: or(
+					Permission.VIEW_USERS,
 					Permission.EDIT_ANY_USER,
 					Permission.EDIT_ANY_COLLECTIONS,
 					Permission.VIEW_USERS_IN_SAME_COMPANY

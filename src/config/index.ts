@@ -120,6 +120,7 @@ const config = (): Configuration => {
 		rerouteEmailsTo: getEnvValue('REROUTE_EMAILS_TO', false),
 		ignoreObjectLicenses: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 		organizationsApiV2Url: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
+		elasticsearchLogQueries: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
 	};
 };
 

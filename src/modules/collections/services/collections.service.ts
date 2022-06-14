@@ -182,6 +182,28 @@ export class CollectionsService {
 					{ ie: { dcterms_format: { _ilike: query } } },
 					{ ie: { meemoo_identifier: { _ilike: query } } },
 					{ ie: { schema_identifier: { _ilike: query } } },
+					{
+						ie: {
+							_schema_is_part_of: {
+								schema_is_part_of: {},
+								_and: {
+									schema_is_part_of: { _eq: 'serie' },
+									value: { _ilike: query },
+								},
+							},
+						},
+					},
+					{
+						ie: {
+							_schema_is_part_of: {
+								schema_is_part_of: {},
+								_and: {
+									schema_is_part_of: { _eq: 'programma' },
+									value: { _ilike: query },
+								},
+							},
+						},
+					},
 				],
 			};
 		}

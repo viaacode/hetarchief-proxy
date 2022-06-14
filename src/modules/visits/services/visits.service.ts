@@ -262,7 +262,7 @@ export class VisitsService {
 	public async findAll(
 		inputQuery: VisitsQueryDto,
 		parameters: {
-			cpSpaceId?: string | null; // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
+			visitorSpaceSlug?: string | null; // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
 			userProfileId?: string;
 		}
 	): Promise<IPagination<Visit>> {
@@ -277,7 +277,7 @@ export class VisitsService {
 			const visitorSpaceFilter: FindVisitsQueryVariables['where'] = {
 				visitor_space: { content_partner: { schema_name: { _ilike: query } } },
 			};
-			const filterBySpaceName = parameters.cpSpaceId ? [] : [visitorSpaceFilter];
+			const filterBySpaceName = parameters.visitorSpaceSlug ? [] : [visitorSpaceFilter];
 
 			where._or = [
 				{ requested_by: { full_name: { _ilike: query } } },
@@ -292,9 +292,11 @@ export class VisitsService {
 			};
 		}
 
-		if (!isEmpty(parameters.cpSpaceId)) {
-			where.cp_space_id = {
-				_eq: parameters.cpSpaceId,
+		if (!isEmpty(parameters.visitorSpaceSlug)) {
+			where.visitor_space = {
+				slug: {
+					_eq: parameters.visitorSpaceSlug,
+				},
 			};
 		}
 

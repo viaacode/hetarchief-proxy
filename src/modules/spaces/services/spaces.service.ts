@@ -1,9 +1,4 @@
-import {
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
 
@@ -31,8 +26,10 @@ import {
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { DataService } from '~modules/data/services/data.service';
+import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
+import i18n from '~shared/i18n';
 import { Recipient } from '~shared/types/types';
 
 @Injectable()
@@ -44,7 +41,7 @@ export class SpacesService {
 	 */
 	public adapt(graphQlSpace: GqlSpace): Space {
 		/* istanbul ignore next */
-		const information = graphQlSpace?.content_partner?.information;
+		const information = graphQlSpace?.content_partner?.information as OrganisationInfoV2;
 		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
@@ -61,7 +58,7 @@ export class SpacesService {
 			publicAccess: graphQlSpace?.schema_public_access,
 			contactInfo: {
 				email: this.adaptEmail(information),
-				telephone: information?.primary_site?.address?.telephone,
+				telephone: this.adaptTelephone(information),
 				address: {
 					street: information?.primary_site?.address?.street,
 					postalCode: information?.primary_site?.address?.postal_code,
@@ -76,9 +73,14 @@ export class SpacesService {
 		};
 	}
 
-	public adaptEmail(graphQlInfo: any): string {
-		const contactPoint = find(graphQlInfo?.contactPoint, { contact_type: 'ontsluiting' });
+	public adaptEmail(graphQlInfo: OrganisationInfoV2 | undefined): string {
+		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
 		return contactPoint?.email || null;
+	}
+
+	public adaptTelephone(graphQlInfo: OrganisationInfoV2 | undefined): string {
+		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
+		return contactPoint?.telephone || null;
 	}
 
 	protected buildSpaceDatabaseObject(
@@ -205,7 +207,11 @@ export class SpacesService {
 			where,
 			offset,
 			limit,
-			orderBy: set({}, orderProp, orderDirection),
+			orderBy: set(
+				{},
+				orderProp === 'status' ? 'status_info.sort_order.sort_order' : orderProp,
+				orderDirection
+			),
 		});
 
 		return Pagination<Space>({
@@ -300,7 +306,10 @@ export class SpacesService {
 				'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
 			) {
 				throw new InternalServerErrorException(
-					`A space already exists with slug '${inputDto.slug}'`
+					i18n.t(
+						'modules/spaces/services/spaces___a-space-already-exists-with-slug-slug',
+						{ slug: inputDto.slug }
+					)
 				);
 			}
 		}
