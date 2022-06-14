@@ -58,6 +58,7 @@ export interface Media {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
+	premisIsPartOf?: string;
 	premisRelationship?: string;
 	series?: string[];
 	program?: string[];

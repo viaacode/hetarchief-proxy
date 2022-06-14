@@ -54,6 +54,7 @@ export class MediaService {
 			schemaIdentifier: graphQlObject?.schema_identifier,
 			meemooIdentifier: graphQlObject?.meemoo_identifier,
 			premisIdentifier: graphQlObject?.premis_identifier,
+			premisIsPartOf: graphQlObject?.premis_is_part_of,
 			premisRelationship: graphQlObject?.premis_relationship,
 			series: graphQlObject?.schema_is_part_of?.serie,
 			program: graphQlObject?.schema_is_part_of?.programma,
