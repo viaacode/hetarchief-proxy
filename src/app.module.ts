@@ -13,6 +13,7 @@ import { AdminUserGroupsModule } from '~modules/admin/user-groups';
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
+import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
 import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
 import { DataModule } from '~modules/data';
@@ -62,6 +63,7 @@ import { SessionService } from '~shared/services/session.service';
 		TranslationsModule,
 		UsersModule,
 		VisitsModule,
+		ClientCacheModule,
 	],
 	controllers: [],
 	providers: [
