@@ -121,6 +121,7 @@ const config = (): Configuration => {
 		ignoreObjectLicenses: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 		organizationsApiV2Url: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
 		elasticsearchLogQueries: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
+		clientApiKey: getEnvValue('CLIENT_API_KEY', true),
 	};
 };
 

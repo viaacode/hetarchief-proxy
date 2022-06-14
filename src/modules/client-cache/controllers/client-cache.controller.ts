@@ -1,0 +1,46 @@
+import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import got from 'got';
+import { stringifyUrl } from 'query-string';
+
+import { getConfig } from '~config';
+
+import { Permission } from '~modules/users/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
+import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+
+@ApiTags('Client Cache')
+@Controller('client-cache')
+export class ClientCacheController {
+	constructor(private configService: ConfigService) {}
+
+	@ApiOperation({
+		description: 'Clears the nextjs cache for a specific page',
+	})
+	@Post('clear-cache')
+	@UseGuards(LoggedInGuard)
+	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
+	async getOrganisationElementsForUser(
+		@Query('path') path: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		@Headers('apiKey') apiKey: string
+	): Promise<{ message: string }> {
+		const clientHost: string = getConfig(this.configService, 'clientHost');
+		const clientApiKey: string = getConfig(this.configService, 'clientApiKey');
+
+		return got
+			.post({
+				url: stringifyUrl({
+					url: clientHost + '/api/clear-cache',
+					query: {
+						path,
+					},
+				}),
+				headers: {
+					apikey: clientApiKey, // Hide client api key in the backend, backend can check permissions for currently logged in user
+				},
+			})
+			.json();
+	}
+}
