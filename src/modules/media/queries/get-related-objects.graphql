@@ -14,6 +14,7 @@ query getRelatedObjects(
 		meemoo_identifier
 		premis_identifier
 		premis_relationship
+		premis_is_part_of
 		schema_is_part_of
 		maintainer {
 			schema_identifier
