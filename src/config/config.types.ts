@@ -55,6 +55,7 @@ export interface Configuration {
 	ignoreObjectLicenses: boolean;
 	organizationsApiV2Url: string;
 	elasticsearchLogQueries: boolean;
+	clientApiKey: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;
