@@ -1,6 +1,6 @@
 {
   "modules/assets/controllers/assets___the-request-should-contain-a-file-to-upload": "The request should contain a file to upload",
-  "modules/collections/controllers___default-collection-name": "Default collection name",
+  "modules/collections/controllers___default-collection-name": "Favorieten",
   "modules/media/controllers/media___object-not-found": "Object not found",
   "modules/media/controllers/media___you-do-not-have-access-to-the-visitor-space-of-this-object": "You do not have access to the visitor space of this object",
   "modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space": "You do not have access to this visitor space",
