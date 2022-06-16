@@ -170,7 +170,7 @@ export class ContentPagesController {
 	@UseGuards(ApiKeyGuard)
 	async updatePublishDates(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{ message: string }> {
 		const response = await this.contentPagesService.updatePublishDates();
 

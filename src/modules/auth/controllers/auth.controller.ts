@@ -101,7 +101,7 @@ export class AuthController {
 	@UseGuards(ApiKeyGuard)
 	async clearSessions(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{ message: string }> {
 		await this.sessionService.clearRedis();
 		return { message: 'User sessions have been cleared' };

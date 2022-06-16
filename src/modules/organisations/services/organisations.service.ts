@@ -65,6 +65,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
     }
     contact_point {
       contact_type
+      telephone
       email
     }
     primary_site {

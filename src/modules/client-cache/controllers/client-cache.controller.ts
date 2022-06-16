@@ -24,7 +24,7 @@ export class ClientCacheController {
 	async getOrganisationElementsForUser(
 		@Query('path') path: string,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{ message: string }> {
 		const clientHost: string = getConfig(this.configService, 'clientHost');
 		const clientApiKey: string = getConfig(this.configService, 'clientApiKey');
