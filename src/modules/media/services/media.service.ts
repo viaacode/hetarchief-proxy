@@ -267,6 +267,13 @@ export class MediaService {
 			);
 		}
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+		if (esQuery.size > 0 && getConfig(this.configService, 'elasticsearchLogQueries')) {
+			this.logger.log(
+				`Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
+					mediaResponse
+				)}`
+			);
+		}
 
 		return this.adaptESResponse(mediaResponse, referer);
 	}
