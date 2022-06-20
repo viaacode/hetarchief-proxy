@@ -13,11 +13,12 @@ import { NotificationsService } from '~modules/notifications/services/notificati
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
-import i18n from '~shared/i18n';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockVisit1: Visit = {
@@ -160,6 +161,7 @@ const mockRequest = { path: '/visits', headers: {} } as unknown as Request;
 
 describe('VisitsController', () => {
 	let visitsController: VisitsController;
+	let translationsService: TranslationsService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -182,12 +184,17 @@ describe('VisitsController', () => {
 					provide: EventsService,
 					useValue: mockEventsService,
 				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
 			.compile();
 
 		visitsController = module.get<VisitsController>(VisitsController);
+		translationsService = module.get<TranslationsService>(TranslationsService);
 	});
 
 	afterEach(() => {
@@ -252,7 +259,7 @@ describe('VisitsController', () => {
 
 			expect(error.response).toEqual({
 				statusCode: 404,
-				message: i18n.t(
+				message: translationsService.t(
 					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
 				),
 				error: 'Not Found',

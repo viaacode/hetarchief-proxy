@@ -12,9 +12,11 @@ import { MeemooController } from './meemoo.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const meemooLoginUrl = 'http://localhost:3200';
@@ -129,6 +131,10 @@ describe('MeemooController', () => {
 				{
 					provide: EventsService,
 					useValue: mockEventsService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		})

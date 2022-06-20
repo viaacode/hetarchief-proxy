@@ -4,11 +4,8 @@ import { TranslationsService } from '../services/translations.service';
 
 import { TranslationsController } from './translations.controller';
 
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
-
-const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
-	getTranslations: jest.fn(),
-};
 
 const mockTranslationsResponse = {
 	name: 'TRANSLATIONS_FRONTEND',

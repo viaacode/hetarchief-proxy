@@ -28,11 +28,11 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { Template } from '~modules/campaign-monitor/types';
 import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import i18n from '~shared/i18n';
 import { Recipient } from '~shared/types/types';
 
 @Injectable()
@@ -41,7 +41,8 @@ export class NotificationsService {
 
 	constructor(
 		protected dataService: DataService,
-		protected campaignMonitorService: CampaignMonitorService
+		protected campaignMonitorService: CampaignMonitorService,
+		protected translationsService: TranslationsService
 	) {}
 
 	/**
@@ -202,10 +203,10 @@ export class NotificationsService {
 		const [notifications] = await Promise.all([
 			this.createForMultipleRecipients(
 				{
-					title: i18n.t(
+					title: this.translationsService.t(
 						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken'
 					),
-					description: i18n.t(
+					description: this.translationsService.t(
 						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
 						{
 							name,
@@ -242,13 +243,13 @@ export class NotificationsService {
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: i18n.t(
+					title: this.translationsService.t(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd',
 						{
 							name: space.name,
 						}
 					),
-					description: i18n.t(
+					description: this.translationsService.t(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd-je-zal-toegang-hebben-van-start-date-tot-end-date',
 						{
 							name: space.name,
@@ -283,17 +284,19 @@ export class NotificationsService {
 	): Promise<Notification> {
 		const reasonWithFallback =
 			reason ||
-			i18n.t('modules/notifications/services/notifications___er-werd-geen-reden-opgegeven');
+			this.translationsService.t(
+				'modules/notifications/services/notifications___er-werd-geen-reden-opgegeven'
+			);
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: i18n.t(
+					title: this.translationsService.t(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd',
 						{
 							name: space.name,
 						}
 					),
-					description: i18n.t(
+					description: this.translationsService.t(
 						'modules/notifications/services/notifications___reden-reason',
 						{
 							reason: reasonWithFallback,
@@ -325,10 +328,10 @@ export class NotificationsService {
 		const name = user.getFullName();
 		return this.createForMultipleRecipients(
 			{
-				title: i18n.t(
+				title: this.translationsService.t(
 					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd'
 				),
-				description: i18n.t(
+				description: this.translationsService.t(
 					'modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd',
 					{
 						name,
