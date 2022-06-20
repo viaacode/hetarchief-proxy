@@ -25,19 +25,23 @@ import { Space } from '../types';
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import i18n from '~shared/i18n';
 
 @ApiTags('Spaces')
 @Controller('spaces')
 export class SpacesController {
 	private logger: Logger = new Logger(SpacesController.name, { timestamp: true });
 
-	constructor(private spacesService: SpacesService, private assetsService: AssetsService) {}
+	constructor(
+		private spacesService: SpacesService,
+		private assetsService: AssetsService,
+		private translationsService: TranslationsService
+	) {}
 
 	@Get()
 	@ApiOperation({
@@ -55,7 +59,7 @@ export class SpacesController {
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
 			const error = new ForbiddenException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
 				)
 			);
@@ -77,9 +81,12 @@ export class SpacesController {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
 			throw new NotFoundException(
-				i18n.t('modules/spaces/controllers/spaces___space-with-slug-slug-not-found', {
-					slug,
-				})
+				this.translationsService.t(
+					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found',
+					{
+						slug,
+					}
+				)
 			);
 		}
 		return space;

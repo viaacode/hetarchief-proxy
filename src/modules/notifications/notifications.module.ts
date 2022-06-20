@@ -6,6 +6,7 @@ import { NotificationsService } from './services/notifications.service';
 
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { DataModule } from '~modules/data';
+import { TranslationsModule } from '~modules/translations';
 import { VisitsModule } from '~modules/visits';
 
 @Module({
@@ -15,6 +16,7 @@ import { VisitsModule } from '~modules/visits';
 		forwardRef(() => VisitsModule),
 		ConfigModule,
 		CampaignMonitorModule,
+		TranslationsModule,
 	],
 	providers: [NotificationsService, ConfigService],
 	exports: [NotificationsService],

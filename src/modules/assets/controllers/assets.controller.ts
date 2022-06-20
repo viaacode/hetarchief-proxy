@@ -3,6 +3,7 @@ import {
 	Body,
 	Controller,
 	Delete,
+	Inject,
 	InternalServerErrorException,
 	Logger,
 	Post,
@@ -16,10 +17,10 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeleteAssetDto } from '~modules/assets/dto/assets.dto';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
-import i18n from '~shared/i18n';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Assets')
@@ -28,7 +29,10 @@ import i18n from '~shared/i18n';
 export class AssetsController {
 	private logger: Logger = new Logger(AssetsController.name, { timestamp: true });
 
-	constructor(private assetsService: AssetsService) {}
+	constructor(
+		private assetsService: AssetsService,
+		private readonly translationsService: TranslationsService
+	) {}
 
 	/**
 	 * Upload a file to the asset server and track it in the asset table in graphql
@@ -55,7 +59,7 @@ export class AssetsController {
 	async uploadAsset(@UploadedFile() file: Express.Multer.File): Promise<{ url: string }> {
 		if (!file) {
 			throw new BadRequestException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/assets/controllers/assets___the-request-should-contain-a-file-to-upload'
 				)
 			);

@@ -7,6 +7,7 @@ import { SpacesService } from './services/spaces.service';
 
 import { AssetsModule } from '~modules/assets';
 import { DataModule } from '~modules/data';
+import { TranslationsModule } from '~modules/translations';
 
 @Module({
 	controllers: [SpacesController],
@@ -18,6 +19,7 @@ import { DataModule } from '~modules/data';
 			inject: [ConfigService],
 		}),
 		AssetsModule,
+		TranslationsModule,
 	],
 	providers: [SpacesService],
 	exports: [SpacesService],
