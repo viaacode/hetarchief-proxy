@@ -5,6 +5,7 @@ import { SendMailDto } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')
 export class CampaignMonitorController {
@@ -18,7 +19,7 @@ export class CampaignMonitorController {
 	public async sendMail(
 		@Body() sendMailDto: SendMailDto,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<boolean> {
 		return this.campaignMonitorService.send(sendMailDto.templateId, sendMailDto.data);
 	}

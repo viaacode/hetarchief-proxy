@@ -19,7 +19,7 @@ export class OrganisationsController {
 	@UseGuards(ApiKeyGuard)
 	async getOrganisationElementsForUser(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{ message: string }> {
 		await this.organisationsService.updateOrganisationsCache();
 

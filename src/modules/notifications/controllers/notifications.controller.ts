@@ -92,7 +92,7 @@ export class NotificationsController {
 	@Post('check-new')
 	public async checkNewNotifications(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{
 		status: string;
 		notifications?: Partial<Record<NotificationType, number>>;

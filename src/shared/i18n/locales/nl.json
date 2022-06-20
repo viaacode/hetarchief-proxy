@@ -31,5 +31,5 @@
   "modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit": "The Terms of Service of the visitor space need to be accepted to be able to request a visit.",
   "modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name": "You do not have access to space with slug \"{{name}}\".",
   "modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route": "You do not have the right permissions to call this route",
-  "shared/guards/api-key___you-need-to-provide-an-valid-api-key-for-this-endpoint-under-the-header-api-key": "You need to provide an valid api key for this endpoint under the header api key"
+  "shared/guards/api-key___you-need-to-provide-an-valid-api-key-for-this-endpoint-under-the-header-api-key": "You need to provide an valid api key for this endpoint under the header \"apikey\""
 }
