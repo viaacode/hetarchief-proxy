@@ -115,9 +115,7 @@ describe('QueryBuilder', () => {
 				size: 10,
 				page: 1,
 			});
-			expect(esQuery.query.bool.must[0].bool.should[0].multi_match.fields).not.toContain(
-				'schema_transcript'
-			);
+			expect(JSON.stringify(esQuery.query)).not.toContain('schema_transcript');
 		});
 
 		it('should filter on format', () => {
