@@ -26,11 +26,11 @@ import { RelayState, SamlCallbackBody } from '../types';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
-import i18n from '~shared/i18n';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
@@ -43,7 +43,8 @@ export class HetArchiefController {
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
 		private configService: ConfigService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		private readonly translationsService: TranslationsService
 	) {}
 
 	@Get('login')
@@ -147,7 +148,9 @@ export class HetArchiefController {
 					{
 						is_default: true,
 						user_profile_id: archiefUser.id,
-						name: i18n.t('modules/collections/controllers___default-collection-name'),
+						name: this.translationsService.t(
+							'modules/collections/controllers___default-collection-name'
+						),
 					},
 					null // referer not important here
 				);

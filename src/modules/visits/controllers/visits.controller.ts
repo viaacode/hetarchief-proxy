@@ -7,7 +7,6 @@ import {
 	ForbiddenException,
 	Get,
 	GoneException,
-	Logger,
 	NotFoundException,
 	Param,
 	Patch,
@@ -31,6 +30,7 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -38,19 +38,17 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
-import i18n from '~shared/i18n';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Visits')
 @Controller('visits')
 export class VisitsController {
-	private logger: Logger = new Logger(VisitsController.name, { timestamp: true });
-
 	constructor(
 		private visitsService: VisitsService,
 		private notificationsService: NotificationsService,
 		private spacesService: SpacesService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		private translationsService: TranslationsService
 	) {}
 
 	@Get()
@@ -77,7 +75,7 @@ export class VisitsController {
 
 		if (!cpSpace) {
 			throw new NotFoundException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
 				)
 			);
@@ -185,7 +183,7 @@ export class VisitsController {
 			if (space) {
 				if (space.status === VisitorSpaceStatus.Inactive) {
 					throw new GoneException(
-						i18n.t(
+						this.translationsService.t(
 							'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests',
 							{ name: visitorSpaceSlug }
 						)
@@ -194,7 +192,7 @@ export class VisitsController {
 
 				// User does not have access to existing space
 				throw new ForbiddenException(
-					i18n.t(
+					this.translationsService.t(
 						'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name',
 						{
 							name: visitorSpaceSlug,
@@ -204,7 +202,7 @@ export class VisitsController {
 			} else {
 				// Space does not exist
 				throw new NotFoundException(
-					i18n.t(
+					this.translationsService.t(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
 						{ name: visitorSpaceSlug }
 					)
@@ -240,7 +238,7 @@ export class VisitsController {
 	): Promise<Visit> {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
 				)
 			);
@@ -251,7 +249,7 @@ export class VisitsController {
 
 		if (!visitorSpace) {
 			throw new BadRequestException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found',
 					{
 						name: createVisitDto.visitorSpaceSlug,
@@ -314,7 +312,7 @@ export class VisitsController {
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				throw new ForbiddenException(
-					i18n.t(
+					this.translationsService.t(
 						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
 					)
 				);

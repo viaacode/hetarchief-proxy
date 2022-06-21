@@ -30,6 +30,7 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 
 @ApiTags('Notifications')
 @Controller('notifications')
@@ -92,7 +93,7 @@ export class NotificationsController {
 	@Post('check-new')
 	public async checkNewNotifications(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apiKey') apiKey: string
+		@Headers('apikey') apikey: string
 	): Promise<{
 		status: string;
 		notifications?: Partial<Record<NotificationType, number>>;
@@ -108,7 +109,7 @@ export class NotificationsController {
 			accessEndedNotifications.length;
 		if (totalNotificationsSent > 0) {
 			return {
-				status: i18n.t(
+				status: getTranslationFallback(
 					'modules/notifications/controllers/notifications___notificaties-verzonden'
 				),
 				notifications: {
@@ -123,7 +124,7 @@ export class NotificationsController {
 			};
 		} else {
 			return {
-				status: i18n.t(
+				status: getTranslationFallback(
 					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
 				),
 				total: 0,
@@ -142,13 +143,13 @@ export class NotificationsController {
 			(visit): GqlCreateOrUpdateNotification => {
 				const endDate = formatAsBelgianDate(visit.endAt);
 				return {
-					title: i18n.t(
+					title: getTranslationFallback(
 						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 						{
 							name: visit.spaceName,
 						}
 					),
-					description: i18n.t(
+					description: getTranslationFallback(
 						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
 						{
 							endDate,
@@ -174,14 +175,14 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: i18n.t(
+				title: getTranslationFallback(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
 						name: visit.spaceName,
 						minutes: 15,
 					}
 				),
-				description: i18n.t(
+				description: getTranslationFallback(
 					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
 				),
 				visit_id: visit.id,
@@ -203,13 +204,13 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: i18n.t(
+				title: getTranslationFallback(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{
 						name: visit.spaceName,
 					}
 				),
-				description: i18n.t(
+				description: getTranslationFallback(
 					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
 				),
 				visit_id: visit.id,

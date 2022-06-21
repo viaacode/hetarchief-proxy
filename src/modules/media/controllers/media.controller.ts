@@ -37,13 +37,13 @@ import { MediaService } from '../services/media.service';
 import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
-import i18n from '~shared/i18n';
 
 @ApiTags('Media')
 @Controller('media')
@@ -56,7 +56,8 @@ export class MediaController {
 		private playerTicketService: PlayerTicketService,
 		private eventsService: EventsService,
 		private configService: ConfigService,
-		private visitsService: VisitsService
+		private visitsService: VisitsService,
+		private translationsService: TranslationsService
 	) {}
 
 	// Disabled in production since users always need to search inside one visitor space
@@ -125,7 +126,7 @@ export class MediaController {
 
 		if (!limitedObject) {
 			throw new NotFoundException(
-				i18n.t('modules/media/controllers/media___object-not-found')
+				this.translationsService.t('modules/media/controllers/media___object-not-found')
 			);
 		}
 		return limitedObject;
@@ -150,7 +151,7 @@ export class MediaController {
 				!(await this.userHasAccessToVisitorSpaceOrId(user, objectMetadata.maintainerId)))
 		) {
 			throw new ForbiddenException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/media/controllers/media___you-do-not-have-access-to-the-visitor-space-of-this-object'
 				)
 			);
@@ -186,7 +187,7 @@ export class MediaController {
 			!(await this.userHasAccessToVisitorSpaceOrId(user, maintainerId))
 		) {
 			throw new ForbiddenException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
 				)
 			);
@@ -213,7 +214,7 @@ export class MediaController {
 
 		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
 			throw new ForbiddenException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
 				)
 			);
@@ -235,7 +236,7 @@ export class MediaController {
 
 		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
 			throw new ForbiddenException(
-				i18n.t(
+				this.translationsService.t(
 					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
 				)
 			);

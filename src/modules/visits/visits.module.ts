@@ -8,6 +8,7 @@ import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { NotificationsModule } from '~modules/notifications';
 import { SpacesModule } from '~modules/spaces';
+import { TranslationsModule } from '~modules/translations';
 
 @Module({
 	controllers: [VisitsController],
@@ -17,6 +18,7 @@ import { SpacesModule } from '~modules/spaces';
 		ConfigModule,
 		forwardRef(() => NotificationsModule),
 		EventsModule,
+		TranslationsModule,
 	],
 	providers: [VisitsService],
 	exports: [VisitsService],

@@ -9,5 +9,6 @@ import { SiteVariablesModule } from '~modules/admin/site-variables';
 	controllers: [TranslationsController],
 	imports: [SiteVariablesModule, CacheModule.register()],
 	providers: [TranslationsService],
+	exports: [TranslationsService],
 })
 export class TranslationsModule {}

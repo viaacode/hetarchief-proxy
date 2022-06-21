@@ -21,10 +21,12 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { Space } from '~modules/spaces/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockGqlNotification1: GqlNotification = {
@@ -184,6 +186,10 @@ describe('NotificationsService', () => {
 				{
 					provide: CampaignMonitorService,
 					useValue: mockCampaignMonitorService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		})

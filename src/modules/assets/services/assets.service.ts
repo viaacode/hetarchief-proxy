@@ -39,7 +39,7 @@ export class AssetsService {
 		this.token = assetToken;
 	}
 
-	@Cron('0 0 04 * * *')
+	@Cron('0 4 * * *')
 	public async emptyUploadFolder(): Promise<boolean> {
 		try {
 			await fse.emptyDir(getConfig(this.configService, 'tempAssetFolder'));

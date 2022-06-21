@@ -4,6 +4,9 @@ import { AssetsService } from '../services/assets.service';
 
 import { AssetsController } from './assets.controller';
 
+import { TranslationsService } from '~modules/translations/services/translations.service';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
+
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
 	upload: jest.fn(),
 	delete: jest.fn(),
@@ -22,6 +25,10 @@ describe('AssetsController', () => {
 				{
 					provide: AssetsService,
 					useValue: mockAssetsService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		}).compile();

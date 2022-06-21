@@ -1,5 +1,25 @@
 [
   {
+    "term": {
+      "premis_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_local_id": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "premis_is_part_of": "{{query}}"
+    }
+  },
+  {
     "multi_match": {
       "query": "{{query}}",
       "type": "phrase",

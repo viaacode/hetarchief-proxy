@@ -158,16 +158,16 @@ export class QueryBuilder {
 
 	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
 		// Replace {{query}} in the template with the escaped search terms
-		const textQueryFilterArray = _.cloneDeep(searchTemplate);
-		const escapedQueryString = searchFilter.value;
-		_.forEach(textQueryFilterArray, (matchObj) => {
-			_.set(matchObj, 'multi_match.query', escapedQueryString);
-		});
+		let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
+		stringifiedSearchTemplate = stringifiedSearchTemplate.replace(
+			/\{\{query\}\}/g,
+			searchFilter.value
+		);
 
 		return [
 			{
 				bool: {
-					should: textQueryFilterArray,
+					should: JSON.parse(stringifiedSearchTemplate),
 					minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
 				},
 			},

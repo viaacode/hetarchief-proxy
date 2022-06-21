@@ -16,6 +16,7 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
@@ -229,7 +230,9 @@ describe('NotificationsController', () => {
 			const response = await notificationsController.checkNewNotifications(mockApiKey);
 
 			expect(response.status).toEqual(
-				i18n.t('modules/notifications/controllers/notifications___notificaties-verzonden')
+				getTranslationFallback(
+					'modules/notifications/controllers/notifications___notificaties-verzonden'
+				)
 			);
 			expect(response.notifications).toEqual({
 				ACCESS_PERIOD_VISITOR_SPACE_STARTED: 2,
@@ -261,7 +264,7 @@ describe('NotificationsController', () => {
 			const response = await notificationsController.checkNewNotifications(mockApiKey);
 
 			expect(response.status).toEqual(
-				i18n.t(
+				getTranslationFallback(
 					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
 				)
 			);
