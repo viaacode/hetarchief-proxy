@@ -12,7 +12,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
-import i18n from 'i18next';
 
 import {
 	GqlCreateOrUpdateNotification,

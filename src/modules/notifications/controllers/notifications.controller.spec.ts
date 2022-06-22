@@ -175,6 +175,25 @@ describe('NotificationsController', () => {
 
 			expect(notifications.items.length).toEqual(2);
 		});
+
+		it('should throw an error if the user is not logged in', async () => {
+			let error;
+			try {
+				const notifications = await notificationsController.getNotifications(
+					{ page: 1, size: 20 },
+					new SessionUserEntity({
+						...mockUser,
+						id: undefined,
+					})
+				);
+			} catch (err) {
+				error = err;
+			}
+
+			expect(error.response.message).toEqual(
+				'You need to be logged in to get your notifications'
+			);
+		});
 	});
 
 	describe('markAsRead', () => {

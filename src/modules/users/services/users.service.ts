@@ -4,14 +4,18 @@ import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users
 import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../types';
 
 import {
+	DeleteLinkUserToMaintainerDocument,
+	DeleteLinkUserToMaintainerMutation,
+	GetLinkUserToMaintainerDocument,
+	GetLinkUserToMaintainerQuery,
 	GetUserByIdentityIdDocument,
 	GetUserByIdentityIdQuery,
+	InsertLinkUserToMaintainerDocument,
+	InsertLinkUserToMaintainerMutation,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	InsertUserIdentityMutation,
 	InsertUserMutation,
-	LinkUserToMaintainerDocument,
-	LinkUserToMaintainerMutation,
 	UpdateUserLastAccessDateDocument,
 	UpdateUserLastAccessDateMutation,
 	UpdateUserProfileDocument,
@@ -144,18 +148,78 @@ export class UsersService {
 		return this.adapt(updatedUser);
 	}
 
-	public async linkUserToMaintainer(id: string, maintainerId: string): Promise<boolean> {
-		const {
-			data: { insert_maintainer_users_profile_one: inserted },
-		} = await this.dataService.execute<LinkUserToMaintainerMutation>(
-			LinkUserToMaintainerDocument,
+	/**
+	 * Link a user profile to a visitor space. This can be for a CP Admin or a Kiosk user
+	 * @param userProfileId
+	 * @param maintainerId
+	 */
+	public async linkUserToMaintainer(
+		userProfileId: string,
+		maintainerId: string
+	): Promise<boolean> {
+		// Get current link
+		const response = await this.dataService.execute<GetLinkUserToMaintainerQuery>(
+			GetLinkUserToMaintainerDocument,
 			{
-				userProfileId: id,
-				maintainerId,
+				userProfileId,
 			}
 		);
+		const maintainerUserProfiles = response?.data?.maintainer_users_profile || [];
 
-		return !!inserted?.id;
+		// Delete existing links if
+		// - More than one link exists
+		// - The existing link doesn't match the current maintainer id
+		if (
+			maintainerUserProfiles.length > 1 ||
+			(maintainerUserProfiles.length === 1 &&
+				maintainerUserProfiles[0]?.maintainer_identifier !== maintainerId)
+		) {
+			// We need to delete the existing link(s)
+			const response = await this.dataService.execute<DeleteLinkUserToMaintainerMutation>(
+				DeleteLinkUserToMaintainerDocument,
+				{
+					userProfileId,
+				}
+			);
+			if (response.errors) {
+				this.logger.error(
+					JSON.stringify({
+						message: 'Failed to delete existing link between profile and visitor space',
+						additionalInfo: {
+							graphqlErrors: response.errors,
+							userProfileId,
+							maintainerId,
+						},
+					})
+				);
+			}
+		}
+
+		// Insert a new link if
+		// - No link exists
+		// - The existing link is not for the current maintainerId
+		// - There is more than one link
+		if (
+			maintainerUserProfiles.length === 0 ||
+			(maintainerUserProfiles.length === 1 &&
+				maintainerUserProfiles[0]?.maintainer_identifier !== maintainerId) ||
+			maintainerUserProfiles.length > 1
+		) {
+			// We need to insert a new link
+			const response = await this.dataService.execute<InsertLinkUserToMaintainerMutation>(
+				InsertLinkUserToMaintainerDocument,
+				{
+					userProfileId,
+					maintainerId,
+				}
+			);
+
+			// Insert succeeded if we get a link id back
+			return !!response?.data?.insert_maintainer_users_profile_one?.id;
+		}
+
+		// Return false if the user was already linked to the visitor space
+		return false;
 	}
 
 	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {

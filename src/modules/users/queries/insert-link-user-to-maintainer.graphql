@@ -1,4 +1,4 @@
-mutation linkUserToMaintainer($maintainerId: String!, $userProfileId: uuid!) {
+mutation insertLinkUserToMaintainer($maintainerId: String!, $userProfileId: uuid!) {
 	insert_maintainer_users_profile_one(
 		object: { maintainer_identifier: $maintainerId, users_profile_id: $userProfileId }
 		on_conflict: {
