@@ -55,6 +55,7 @@ export interface Configuration {
 	ignoreObjectLicenses: boolean;
 	organizationsApiV2Url: string;
 	elasticsearchLogQueries: boolean;
+	graphqlLogQueries: boolean;
 	clientApiKey: string;
 }
 
