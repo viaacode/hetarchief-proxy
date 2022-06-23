@@ -85,6 +85,11 @@ There are a few debug env vars that can be useful:
   ELASTICSEARCH_LOG_QUERIES=true
   ```
 
+* Log queries and responses from the graphql instance:
+  ```
+  GRAPHQL_LOG_QUERIES=true
+  ```
+
 * Ignore object licenses in the database:
   ```
   IGNORE_OBJECT_LICENSES=true

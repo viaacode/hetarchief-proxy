@@ -75,7 +75,7 @@ export class TranslationsService implements OnApplicationBootstrap {
 	public t(key: string, variables: Record<string, string | number> = {}): string {
 		const translation = this.backendTranslations[key];
 		if (translation) {
-			return resolveTranslationVariables(translation);
+			return resolveTranslationVariables(translation, variables);
 		}
 		return getTranslationFallback(key, variables);
 	}

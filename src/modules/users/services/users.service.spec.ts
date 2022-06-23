@@ -47,6 +47,10 @@ describe('UsersService', () => {
 		usersService = module.get<UsersService>(UsersService);
 	});
 
+	afterEach(() => {
+		mockDataService.execute.mockRestore();
+	});
+
 	it('services should be defined', () => {
 		expect(usersService).toBeDefined();
 	});
@@ -151,28 +155,170 @@ describe('UsersService', () => {
 	});
 
 	describe('linkCpAdminToMaintainer', () => {
-		it('should link a user (cp admin) to a maintainer', async () => {
-			mockDataService.execute.mockReturnValueOnce({
-				data: {
-					insert_maintainer_users_profile_one: {
-						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
-					},
-				},
-			});
+		const mockUserProfileId = '30ea39e6-6365-4d7a-a5cc-9055d2a7aa17';
+		const mockMaintainerId = 'OR-rf5kf25';
 
-			const linked = await usersService.linkUserToMaintainer('user-123', 'OR-rf5kf25');
+		it('should link a new user (cp admin) to a maintainer', async () => {
+			mockDataService.execute
+				.mockReturnValueOnce({
+					data: {
+						maintainer_users_profile: [],
+					},
+				})
+				.mockReturnValueOnce({
+					data: {
+						insert_maintainer_users_profile_one: {
+							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+						},
+					},
+				});
+
+			const linked = await usersService.linkUserToMaintainer(
+				mockUserProfileId,
+				mockMaintainerId
+			);
+
+			expect(mockDataService.execute).toBeCalledTimes(2);
 			expect(linked).toBeTruthy();
 		});
 
 		it('should return false if the user was already linked to the maintainer', async () => {
 			mockDataService.execute.mockReturnValueOnce({
 				data: {
-					insert_maintainer_users_profile_one: null,
+					maintainer_users_profile: [
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: mockMaintainerId,
+							users_profile_id: mockUserProfileId,
+						},
+					],
 				},
 			});
 
-			const linked = await usersService.linkUserToMaintainer('user-123', 'OR-rf5kf25');
+			const linked = await usersService.linkUserToMaintainer(
+				mockUserProfileId,
+				mockMaintainerId
+			);
+
+			expect(mockDataService.execute).toBeCalledTimes(1);
 			expect(linked).toBeFalsy();
+		});
+
+		it('should delete existing links if a different link already exists, and insert the new link', async () => {
+			mockDataService.execute
+				.mockReturnValueOnce({
+					data: {
+						maintainer_users_profile: [
+							{
+								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+								maintainer_identifier: 'OR-different',
+								users_profile_id: mockUserProfileId,
+							},
+						],
+					},
+				})
+				.mockReturnValueOnce({
+					data: {
+						delete_maintainer_users_profile: {
+							affected_rows: 1,
+						},
+					},
+				})
+				.mockReturnValueOnce({
+					data: {
+						insert_maintainer_users_profile_one: {
+							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+						},
+					},
+				});
+
+			const linked = await usersService.linkUserToMaintainer(
+				mockUserProfileId,
+				mockMaintainerId
+			);
+
+			expect(mockDataService.execute).toBeCalledTimes(3);
+			expect(linked).toBeTruthy();
+		});
+
+		it('should delete existing links if multiple links already exist, and insert the new link', async () => {
+			mockDataService.execute
+				.mockReturnValueOnce({
+					data: {
+						maintainer_users_profile: [
+							{
+								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+								maintainer_identifier: mockMaintainerId,
+								users_profile_id: mockUserProfileId,
+							},
+							{
+								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+								maintainer_identifier: 'OR-different',
+								users_profile_id: mockUserProfileId,
+							},
+						],
+					},
+				})
+				.mockReturnValueOnce({
+					data: {
+						delete_maintainer_users_profile: {
+							affected_rows: 2,
+						},
+					},
+				})
+				.mockReturnValueOnce({
+					data: {
+						insert_maintainer_users_profile_one: {
+							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+						},
+					},
+				});
+
+			const linked = await usersService.linkUserToMaintainer(
+				mockUserProfileId,
+				mockMaintainerId
+			);
+
+			expect(mockDataService.execute).toBeCalledTimes(3);
+			expect(linked).toBeTruthy();
+		});
+
+		it('should log an error if errors occur during deletion of links', async () => {
+			mockDataService.execute
+				.mockReturnValueOnce({
+					data: {
+						maintainer_users_profile: [
+							{
+								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+								maintainer_identifier: mockMaintainerId,
+								users_profile_id: mockUserProfileId,
+							},
+							{
+								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+								maintainer_identifier: 'OR-different',
+								users_profile_id: mockUserProfileId,
+							},
+						],
+					},
+				})
+				.mockReturnValueOnce({
+					error: ['some serious error'],
+				})
+				.mockReturnValueOnce({
+					data: {
+						insert_maintainer_users_profile_one: {
+							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+						},
+					},
+				});
+
+			const linked = await usersService.linkUserToMaintainer(
+				mockUserProfileId,
+				mockMaintainerId
+			);
+
+			expect(mockDataService.execute).toBeCalledTimes(3);
+			expect(linked).toBeTruthy();
 		});
 	});
 

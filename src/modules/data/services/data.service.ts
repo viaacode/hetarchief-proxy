@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import {
 	ForbiddenException,
 	forwardRef,
@@ -82,10 +84,22 @@ export class DataService {
 				query: typeof query === 'string' ? query : print(query),
 				variables,
 			};
+
+			const id = randomUUID();
+			if (getConfig(this.configService, 'graphqlLogQueries')) {
+				this.logger.log(
+					`${id}, Executing graphql query: ${queryData.query}  ---  ${JSON.stringify(
+						queryData.variables
+					)}`
+				);
+			}
 			const data = await this.gotInstance.post<GraphQlResponse>({
 				json: queryData,
 				resolveBodyOnly: true, // this is duplicate but fixes a typing error
 			});
+			if (getConfig(this.configService, 'graphqlLogQueries')) {
+				this.logger.log(`${id}, Response from graphql query: ${JSON.stringify(data)}`);
+			}
 			if (data.errors) {
 				this.logger.error(`GraphQl query failed: ${JSON.stringify(data.errors)}`);
 				if (data.errors[0]?.extensions?.code === 'constraint-violation') {

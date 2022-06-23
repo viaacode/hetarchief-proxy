@@ -1,0 +1,7 @@
+query getLinkUserToMaintainer($userProfileId: uuid!) {
+	maintainer_users_profile(where: { users_profile_id: { _eq: $userProfileId } }) {
+		id
+		maintainer_identifier
+		users_profile_id
+	}
+}

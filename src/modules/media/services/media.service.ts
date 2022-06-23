@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -261,12 +263,22 @@ export class MediaService {
 			set(esQuery, 'query.bool.minimum_should_match', 1);
 		}
 
-		if (esQuery.size > 0 && getConfig(this.configService, 'elasticsearchLogQueries')) {
+		const id = randomUUID();
+		if (getConfig(this.configService, 'elasticsearchLogQueries')) {
 			this.logger.log(
-				`Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(esQuery)}`
+				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
+					esQuery
+				)}`
 			);
 		}
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
+		if (getConfig(this.configService, 'elasticsearchLogQueries')) {
+			this.logger.log(
+				`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
+					mediaResponse
+				)}`
+			);
+		}
 
 		return this.adaptESResponse(mediaResponse, referer);
 	}
