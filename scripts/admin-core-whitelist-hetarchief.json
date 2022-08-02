@@ -18,7 +18,7 @@
   "insertContentBlocks": "mutation insertContentBlocks($contentBlocks: [app_content_block_insert_input!]!) { insert_app_content_block(objects: $contentBlocks) { returning { id } } }",
   "insertContentLabelLinks": "mutation insertContentLabelLinks($objects: [app_content_page_content_label_insert_input!]!) { insert_app_content_page_content_label(objects: $objects) { affected_rows } }",
   "insertContent": "mutation insertContent($contentPage: app_content_page_insert_input!) { insert_app_content_page(objects: [$contentPage]) { returning { id } } }",
-  "softDeleteContent": "mutation softDeleteContent($id: uuid!) { update_app_content_page(where: { id: { _eq: $id } }, _set: { is_deleted: true }) { affected_rows } }",
+  "softDeleteContent": "mutation softDeleteContent($id: uuid!, $path: String) { update_app_content_page(where: { id: { _eq: $id } }, _set: { is_deleted: true, path: $path }) { affected_rows } }",
   "updateContentBlock": "mutation updateContentBlock($id: uuid!, $contentBlock: app_content_block_set_input!) { update_app_content_block(where: { id: { _eq: $id } }, _set: $contentBlock) { affected_rows } }",
   "updateContentById": "mutation updateContentById($id: uuid!, $contentPage: app_content_page_set_input!) { update_app_content_page( where: { id: { _eq: $id }, is_deleted: { _eq: false } } _set: $contentPage ) { affected_rows } }",
   "deleteNavigationItem": "mutation deleteNavigationItem($id: uuid!) { delete_app_navigation(where: { id: { _eq: $id } }) { affected_rows } }",
