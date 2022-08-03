@@ -47,6 +47,7 @@ export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
 export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID: not unique per object
+	meemooLocalId: string;
 	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
