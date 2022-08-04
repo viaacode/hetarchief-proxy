@@ -40,6 +40,7 @@ const archiefUser = {
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
 	groupId: Group.CP_ADMIN,
+	permissions: [],
 };
 
 const samlResponse = {
