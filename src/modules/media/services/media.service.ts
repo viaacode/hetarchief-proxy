@@ -218,7 +218,7 @@ export class MediaService {
 			datePublished: graphQlObject.ie?.schema_date_published,
 			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
 			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
-			series: graphQlObject.ie.schema_is_part_of?.serie || [],
+			series: graphQlObject.ie?.schema_is_part_of?.serie || [],
 			program: graphQlObject.ie?.schema_is_part_of?.programma || [],
 		};
 	}
