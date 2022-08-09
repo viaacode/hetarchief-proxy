@@ -298,7 +298,7 @@ describe('HetArchiefController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('Test error handling');
+			expect(error.response.error).toEqual('Test error handling');
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {
