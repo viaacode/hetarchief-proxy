@@ -412,7 +412,7 @@ export class VisitsController {
 	}
 
 	/**
-	 * When the a visit status changed, check if notifications should be sent
+	 * When a visit status changed, check if notifications should be sent
 	 */
 	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
 		const typesToDelete = [];

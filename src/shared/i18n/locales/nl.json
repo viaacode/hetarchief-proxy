@@ -13,7 +13,7 @@
   "modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen": "Om opnieuw toegang te krijgen tot dit digitaal materiaal kan je een nieuwe aanvraag indienen",
   "modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest": "Sla je werk op voor je toegang verliest",
   "modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd": "Een toegangsaanvraag je digitale catalogus is geannuleerd",
-  "modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken": "Er is aan toegangsaanvraag om je digitaal materiaal te raadplegen",
+  "modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken": "Er is een toegangsaanvraag om je digitaal materiaal te raadplegen",
   "modules/notifications/services/notifications___er-werd-geen-reden-opgegeven": "Er werd geen reden opgegeven",
   "modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd": "Je aanvraag voor {{name}} is afgekeurd",
   "modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd": "Je aanvraag voor {{name}} is goedgekeurd",

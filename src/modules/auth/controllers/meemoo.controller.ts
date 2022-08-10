@@ -64,7 +64,7 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during meemoo auth login route', err);
+			this.logger.error('Failed during meemoo auth login route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -169,7 +169,7 @@ export class MeemooController {
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
-			Logger.error('Failed during meemoo auth login-callback route', err);
+			this.logger.error('Failed during meemoo auth login-callback route', err);
 			throw err;
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
@@ -200,7 +200,7 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during meemoo auth logout route', err);
+			this.logger.error('Failed during meemoo auth logout route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
