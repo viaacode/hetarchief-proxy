@@ -28,6 +28,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Permission } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
@@ -174,6 +175,9 @@ export class HetArchiefController {
 					get(ldapUser, 'attributes.o[0]')
 				);
 			}
+
+			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
+			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 

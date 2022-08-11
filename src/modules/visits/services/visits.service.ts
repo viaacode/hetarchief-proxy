@@ -23,6 +23,7 @@ import {
 	VisitTimeframe,
 } from '../types';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
@@ -264,6 +265,7 @@ export class VisitsService {
 		parameters: {
 			visitorSpaceSlug?: string | null; // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
 			userProfileId?: string;
+			visitorSpaceStatus?: VisitorSpaceStatus | null;
 		}
 	): Promise<IPagination<Visit>> {
 		const { query, status, timeframe, page, size, orderProp, orderDirection } = inputQuery;
@@ -297,6 +299,13 @@ export class VisitsService {
 				slug: {
 					_eq: parameters.visitorSpaceSlug,
 				},
+			};
+		}
+
+		if (!isEmpty(parameters.visitorSpaceStatus)) {
+			where.visitor_space = {
+				...(where.visitor_space ? where.visitor_space : {}),
+				status: { _eq: VisitorSpaceStatus.Active },
 			};
 		}
 

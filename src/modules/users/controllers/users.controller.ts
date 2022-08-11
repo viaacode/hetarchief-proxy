@@ -23,7 +23,12 @@ export class UsersController {
 		@Session() session: Record<string, any>
 	): Promise<User> {
 		const user = await this.usersService.updateAcceptedTos(id, updateAcceptedTosDto);
-		SessionHelper.setArchiefUserInfo(session, user);
+
+		// update the acceptedTosAt property on the session user
+		const sessionUser = SessionHelper.getArchiefUserInfo(session);
+		sessionUser.acceptedTosAt = user.acceptedTosAt;
+		SessionHelper.setArchiefUserInfo(session, sessionUser);
+
 		return user;
 	}
 }

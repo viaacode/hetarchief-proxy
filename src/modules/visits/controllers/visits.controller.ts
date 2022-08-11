@@ -102,6 +102,7 @@ export class VisitsController {
 	): Promise<IPagination<Visit>> {
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
+			visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
 		});
 
 		return visits;
