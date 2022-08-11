@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	HttpException,
 	HttpStatus,
 	Logger,
 	Post,
@@ -170,7 +171,13 @@ export class MeemooController {
 				};
 			}
 			this.logger.error('Failed during meemoo auth login-callback route', err);
-			throw err;
+			throw new HttpException(
+				{
+					status: HttpStatus.INTERNAL_SERVER_ERROR,
+					error: err.message,
+				},
+				HttpStatus.FORBIDDEN
+			);
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}

@@ -65,6 +65,9 @@ export class IdpService {
 		if (get(ldapUser, 'attributes.organizationalStatus', []).includes('kiosk')) {
 			// organization needs to have a space to be a kiosk user
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
+			if (!maintainerId) {
+				throw new Error('Maintainer ID (or-id) cannot be empty');
+			}
 			if (await this.spacesService.findByMaintainerId(maintainerId)) {
 				return Group.KIOSK_VISITOR;
 			}
