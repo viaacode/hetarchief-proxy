@@ -46,7 +46,7 @@ export class ContentPagesController {
 			queryDto,
 			compact([
 				user?.getUser()?.groupId,
-				user
+				user?.getUser()
 					? SpecialPermissionGroups.loggedInUsers
 					: SpecialPermissionGroups.loggedOutUsers,
 			])
