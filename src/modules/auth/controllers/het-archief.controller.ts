@@ -69,7 +69,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth login route', err);
+			this.logger.error('Failed during hetarchief auth login route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -97,7 +97,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth register route', err);
+			this.logger.error('Failed during hetarchief auth register route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -244,7 +244,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth logout route', err);
+			this.logger.error('Failed during hetarchief auth logout route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}

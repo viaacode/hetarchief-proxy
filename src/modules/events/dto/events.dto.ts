@@ -13,7 +13,7 @@ export class CreateEventsDto {
 		description: `Log an event with this type. Possible types: ${Object.values(
 			LogEventType
 		).join(', ')}`,
-		example: LogEventType.ITEM_PLAY,
+		example: LogEventType.USER_AUTHENTICATE,
 		enum: LogEventType,
 	})
 	type: LogEventType;
