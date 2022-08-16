@@ -21,7 +21,7 @@
   "insertContentBlocks": "mutation insertContentBlocks($contentBlocks: [app_content_blocks_insert_input!]!) { insert_app_content_blocks(objects: $contentBlocks) { returning { id } } }",
   "insertContentLabelLinks": "mutation insertContentLabelLinks($objects: [app_content_content_labels_insert_input!]!) { insert_app_content_content_labels(objects: $objects) { affected_rows } }",
   "insertContent": "mutation insertContent($contentPage: app_content_insert_input!) { insert_app_content(objects: [$contentPage]) { returning { id } } }",
-  "softDeleteContent": "mutation softDeleteContent($id: Int!) { update_app_content(where: { id: { _eq: $id } }, _set: { is_deleted: true }) { affected_rows } }",
+  "softDeleteContent": "mutation softDeleteContent($id: Int!, $path: String) { update_app_content(where: { id: { _eq: $id } }, _set: { is_deleted: true, path: $path }) { affected_rows } }",
   "updateContentBlock": "mutation updateContentBlock($id: Int!, $contentBlock: app_content_blocks_set_input!) { update_app_content_blocks(where: { id: { _eq: $id } }, _set: $contentBlock) { affected_rows } }",
   "updateContentById": "mutation updateContentById($id: Int!, $contentPage: app_content_set_input!) { update_app_content( where: { id: { _eq: $id }, is_deleted: { _eq: false } } _set: $contentPage ) { affected_rows } }",
   "fetchItemUuidByExternalId": "query fetchItemUuidByExternalId($externalId: bpchar!) { app_item_meta(where: { external_id: { _eq: $externalId } }) { uid is_published is_deleted } }",

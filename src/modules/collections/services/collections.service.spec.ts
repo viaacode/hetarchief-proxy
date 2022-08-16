@@ -163,6 +163,7 @@ const mockCollectionObject: IeObject = {
 	maintainerId: 'OR-1v5bc86',
 	maintainerName: 'Huis van Alijn',
 	visitorSpaceSlug: 'amsab',
+	meemooLocalId: 'WP00032225',
 	series: ['Serie'],
 	programs: ['Programma'],
 };

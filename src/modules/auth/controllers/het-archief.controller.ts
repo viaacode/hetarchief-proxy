@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	HttpException,
 	HttpStatus,
 	Logger,
 	Post,
@@ -28,6 +29,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
+import { Permission } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
@@ -67,7 +69,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth login route', err);
+			this.logger.error('Failed during hetarchief auth login route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -95,7 +97,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth register route', err);
+			this.logger.error('Failed during hetarchief auth register route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}
@@ -175,6 +177,9 @@ export class HetArchiefController {
 				);
 			}
 
+			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
+			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
+
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			// Log event
@@ -203,7 +208,13 @@ export class HetArchiefController {
 				};
 			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
-			throw err;
+			throw new HttpException(
+				{
+					status: HttpStatus.INTERNAL_SERVER_ERROR,
+					error: err.message,
+				},
+				HttpStatus.FORBIDDEN
+			);
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
 	}
@@ -233,7 +244,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			Logger.error('Failed during hetarchief auth logout route', err);
+			this.logger.error('Failed during hetarchief auth logout route', err);
 		}
 		// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 	}

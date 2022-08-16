@@ -15,6 +15,9 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 			dcterms_format
 			schema_date_created_lower_bound
 			schema_date_published
+			schema_is_part_of
+			meemoo_identifier
+			meemoo_local_id
 		}
 	}
 }

@@ -102,6 +102,7 @@ export class VisitsController {
 	): Promise<IPagination<Visit>> {
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
+			visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
 		});
 
 		return visits;
@@ -412,7 +413,7 @@ export class VisitsController {
 	}
 
 	/**
-	 * When the a visit status changed, check if notifications should be sent
+	 * When a visit status changed, check if notifications should be sent
 	 */
 	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
 		const typesToDelete = [];
