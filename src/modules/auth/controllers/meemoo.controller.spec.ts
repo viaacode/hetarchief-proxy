@@ -182,7 +182,9 @@ describe('MeemooController', () => {
 	describe('login-callback', () => {
 		it('should redirect after successful login with a known user', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+			mockUsersService.getUserByIdentityId
+				.mockReturnValueOnce(archiefUser)
+				.mockReturnValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
