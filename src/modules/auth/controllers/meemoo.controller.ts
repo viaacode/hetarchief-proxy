@@ -142,6 +142,10 @@ export class MeemooController {
 					archiefUser.id,
 					get(ldapUser, 'attributes.o[0]')
 				);
+				// Refetch user to include visitor space info
+				archiefUser = await this.usersService.getUserByIdentityId(
+					ldapUser.attributes.entryUUID[0]
+				);
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
