@@ -138,6 +138,11 @@ hasura seed apply //Select database 'hetarchief'. If all went fine, you'll see t
 hasura seed apply --endpoint https://hasura-graphql-tst-hetarchief.private.cloud.meemoo.be --admin-secret <secret>
 ```
 
+secrets for databases can be found in the environment variables and secrets in openshift:
+
+* https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/configmaps
+* https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/secrets
+
 ## Deploy
 
 * The latest PR gets deployed to the INT environment
