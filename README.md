@@ -151,9 +151,12 @@ This project has been created by:
 
 - Andry Charlier: andry.charlier@studiohyperdrive.be
 
-It is currently maintained by:
+Has been worked on by:
 
 - Bart Naessens: bart.naessens@studiohyperdrive.be
+- Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
+
+It is currently maintained by:
+
 - Bert Verhelst: bert.verhelst@studiohyperdrive.be
 - Ian Emsens: ian.emsens@studiohyperdrive.be
-- Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
