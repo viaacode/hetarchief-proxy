@@ -175,6 +175,10 @@ export class HetArchiefController {
 					archiefUser.id,
 					get(ldapUser, 'attributes.o[0]')
 				);
+				// Refetch user to include visitor space info
+				archiefUser = await this.usersService.getUserByIdentityId(
+					ldapUser.attributes.entryUUID[0]
+				);
 			}
 
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
