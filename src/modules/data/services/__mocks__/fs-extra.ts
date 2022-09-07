@@ -23,9 +23,28 @@ const readFileSync = (path: string): string | null => {
 	return mockFiles[key] || null;
 };
 
+const readFile = async (path: string): Promise<string | null> => {
+	if (path.includes('404.html')) {
+		return `
+<html lang="nl" style="--vh:12.89px;">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta name="next-head-count" content="2">
+		<title>bezoekertool</title>
+	</head>
+	<body style="position: relative; top: 0;">
+		<a href="{{CLIENT_HOST}}/">Start je bezoek</a>
+	</body>
+</html>`;
+	}
+	throw new Error('Trying to read unmocked file using ("fs-extra").readFile()');
+};
+
 fse.__setMockFiles = __setMockFiles;
 fse.existsSync = (): boolean => true;
 fse.unlink = (): Promise<void> => Promise.resolve();
 fse.readFileSync = readFileSync;
+fse.readFile = readFile;
 
 module.exports = fse;

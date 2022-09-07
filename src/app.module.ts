@@ -8,7 +8,6 @@ import config, { configValidationSchema } from '~config';
 import { ContentPagesModule } from '~modules/admin/content-pages';
 import { AdminNavigationsModule } from '~modules/admin/navigations';
 import { AdminPermissionsModule } from '~modules/admin/permissions';
-import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
 import { AdminTranslationsModule } from '~modules/admin/translations';
 import { AdminUserGroupsModule } from '~modules/admin/user-groups';
 import { AssetsModule } from '~modules/assets';
@@ -21,13 +20,13 @@ import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
 import { NavigationsModule } from '~modules/navigations';
+import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
 import { TranslationsModule } from '~modules/translations';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { PermissionGuard } from '~shared/guards/permission.guard';
@@ -66,6 +65,7 @@ import { SessionService } from '~shared/services/session.service';
 		UsersModule,
 		VisitsModule,
 		ClientCacheModule,
+		NotFoundModule,
 	],
 	controllers: [],
 	providers: [
