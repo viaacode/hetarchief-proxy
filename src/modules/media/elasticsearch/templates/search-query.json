@@ -42,7 +42,6 @@
         "schema_transcript",
         "schema_captions",
         "schema_creator.*",
-        "schema_contributor.*",
         "schema_spatial_coverage",
         "schema_temporal_coverage",
         "dcterms_medium"
@@ -72,7 +71,6 @@
         "schema_transcript.lemma_split",
         "schema_captions.lemma_split",
         "schema_creator.*.lemma_split",
-        "schema_contributor.*.lemma_split",
         "schema_spatial_coverage.lemma_split",
         "schema_temporal_coverage.lemma_split"
       ]
@@ -102,7 +100,6 @@
         "schema_transcript.lemma_split",
         "schema_captions.lemma_split",
         "schema_creator.*.lemma_split",
-        "schema_contributor.*.lemma_split",
         "schema_spatial_coverage.lemma_split",
         "schema_temporal_coverage.lemma_split"
       ]
@@ -131,7 +128,6 @@
         "schema_transcript.lemma_split_spell",
         "schema_captions.lemma_split_spell",
         "schema_creator.*.lemma_split_spell",
-        "schema_contributor.*.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
         "schema_temporal_coverage.lemma_split_spell"
       ]
@@ -161,7 +157,6 @@
         "schema_transcript.lemma_split_spell",
         "schema_captions.lemma_split_spell",
         "schema_creator.*.lemma_split_spell",
-        "schema_contributor.*.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
         "schema_temporal_coverage.lemma_split_spell"
       ]

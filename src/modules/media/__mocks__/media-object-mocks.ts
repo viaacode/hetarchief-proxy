@@ -33,7 +33,6 @@ export const mockElasticObject1: ElasticsearchHit = {
 		schema_date_published: '2020-06-19',
 		schema_license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
 		schema_date_created: '2020-06-19',
-		schema_contributor: null,
 		schema_maintainer: [
 			{
 				schema_identifier: 'OR-rf5kf25',
@@ -81,7 +80,6 @@ export const mockElasticObject2: ElasticsearchHit = {
 		schema_date_published: '2020-02-10',
 		schema_license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
 		schema_date_created: '2020-02-10',
-		schema_contributor: null,
 		schema_maintainer: [
 			{
 				schema_identifier: 'OR-rf5kf25',
@@ -119,7 +117,6 @@ export const mockMediaObject1: Media = {
 	datePublished: '2020-06-19',
 	license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
 	dateCreated: '2020-06-19',
-	contributor: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'VRT',
 	thumbnailUrl:

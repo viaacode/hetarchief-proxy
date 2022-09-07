@@ -77,7 +77,6 @@ export interface Media {
 	abstract: string;
 	creator: any;
 	actor?: any;
-	contributor: any;
 	publisher: any;
 	spatial: string;
 	temporal: string;
