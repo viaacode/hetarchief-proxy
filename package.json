@@ -8,7 +8,8 @@
   "contributors": [
     "Andry Charlier <andry.charlier@studiohyperdrive.be>",
     "Bart Naessens <bart.naessens@studiohyperdrive.be>",
-    "Bert Verhelst <bert.verhelst@studiohyperdrive.be>"
+    "Bert Verhelst <bert.verhelst@studiohyperdrive.be>",
+    "Ian Emsens <ian.emsens@studiohypderive.be>"
   ],
   "scripts": {
     "prepare": "husky install",
