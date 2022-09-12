@@ -26,6 +26,9 @@ const logEvents = [
 		source: '/events',
 		subject: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
 		time: '2022-04-13T08:35:07.666Z',
+		data: {
+			folderId: '84b9cff3-9dab-423c-b8c4-37ff6da6ce4b',
+		},
 	},
 ];
 

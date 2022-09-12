@@ -158,6 +158,9 @@ export class MeemooController {
 					source: request.path,
 					subject: archiefUser.id,
 					time: new Date().toISOString(),
+					data: {
+						idp: Idp.MEEMOO,
+					},
 				},
 			]);
 
