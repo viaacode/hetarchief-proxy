@@ -88,7 +88,6 @@ export class MediaService {
 			abstract: graphQlObject?.schema_abstract,
 			creator: graphQlObject?.schema_creator,
 			actor: graphQlObject?.schema_actor,
-			contributor: graphQlObject?.schema_contributor,
 			publisher: graphQlObject?.schema_publisher,
 			spatial: graphQlObject?.schema_spatial_coverage,
 			temporal: graphQlObject?.schema_temporal_coverage,

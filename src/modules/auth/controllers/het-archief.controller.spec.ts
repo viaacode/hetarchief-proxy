@@ -157,6 +157,7 @@ describe('HetArchiefController', () => {
 	afterEach(() => {
 		(mockResponseObject.redirect as jest.Mock).mockRestore();
 		mockArchiefService.createLogoutResponseUrl.mockRestore();
+		mockUsersService.getUserByIdentityId.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -222,7 +223,7 @@ describe('HetArchiefController', () => {
 	describe('login-callback', () => {
 		it('should redirect after successful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
