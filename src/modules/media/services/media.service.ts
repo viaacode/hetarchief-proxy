@@ -27,6 +27,8 @@ import {
 	FindAllObjectsByCollectionIdQuery,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
+	GetObjectIdentifierTupleDocument,
+	GetObjectIdentifierTupleQuery,
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -412,6 +414,23 @@ export class MediaService {
 			size: mediaObjects.data.object_ie.length,
 			total: mediaObjects.data.object_ie.length,
 		});
+	}
+
+	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
+		const items = await this.dataService.execute<GetObjectIdentifierTupleQuery>(
+			GetObjectIdentifierTupleDocument,
+			{
+				meemooIdentifiers,
+			}
+		);
+
+		const count: Record<string, number> = {};
+
+		items.data?.object_ie.forEach((item) => {
+			count[item.meemoo_identifier] = count[item.meemoo_identifier]++ || 1;
+		});
+
+		return count;
 	}
 
 	public async getSimilar(
