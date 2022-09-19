@@ -21,7 +21,9 @@ query getUserByIdentityId($identityId: uuid!) {
 			maintainer_identifier
 			maintainer {
 				visitor_space {
+					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

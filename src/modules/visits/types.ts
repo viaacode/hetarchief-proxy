@@ -58,7 +58,8 @@ export interface Visit {
 	note?: Note;
 	reason: string;
 	spaceAddress?: string;
-	spaceId: string;
+	spaceId: string; // db uuid
+	spaceMaintainerId: string; // OR id
 	spaceMail: string;
 	spaceTelephone: string;
 	spaceName: string;

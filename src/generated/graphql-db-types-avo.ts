@@ -36052,8 +36052,10 @@ export enum Users_Idps_Enum {
   Klascement = 'KLASCEMENT',
   /** OAuth service van Smartschool op oauth.smartschool.be. */
   Smartschool = 'SMARTSCHOOL',
-  /** OAuth service van de Vlaamse Overheid: ACM-IDM. */
-  Vlaamseoverheid = 'VLAAMSEOVERHEID'
+  /** OAuth service van de Vlaamse Overheid: ACM-IDM using the ov_account_uuid id of the user */
+  VlaamseoverheidAccountId = 'VLAAMSEOVERHEID__ACCOUNT_ID',
+  /** OAuth service van de Vlaamse Overheid: ACM-IDM using the sub id of the user */
+  VlaamseoverheidSubId = 'VLAAMSEOVERHEID__SUB_ID'
 }
 
 /** expression to compare columns of type users_idps_enum. All fields are combined with logical 'AND'. */

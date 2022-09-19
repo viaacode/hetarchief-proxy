@@ -34,6 +34,7 @@ query findCollectionObjectsByCollectionId(
 				visitor_space {
 					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

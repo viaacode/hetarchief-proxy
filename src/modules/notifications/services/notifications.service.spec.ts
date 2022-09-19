@@ -42,7 +42,9 @@ const mockGqlNotification1: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
+			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 			slug: 'amsab',
+			schema_maintainer_id: 'OR-154dn75',
 		},
 	},
 };
@@ -61,7 +63,9 @@ const mockGqlNotification2: GqlNotification = {
 	visitor_space_request: {
 		cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 		visitor_space: {
+			id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 			slug: 'amsab',
+			schema_maintainer_id: 'OR-154dn75',
 		},
 	},
 };
@@ -106,7 +110,8 @@ const mockUser: User = {
 const mockVisit: Visit = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
-	spaceSlug: 'or-rf5kf25',
+	spaceSlug: 'vrt',
+	spaceMaintainerId: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	spaceTelephone: '0412 34 56 78',

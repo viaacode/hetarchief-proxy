@@ -152,6 +152,7 @@ export class VisitsController {
 				endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
 				visitorName: user.getFullName(),
 				spaceName: spaceInfo.name,
+				spaceMaintainerId: spaceInfo.maintainerId,
 				status: VisitStatus.APPROVED,
 				createdAt: new Date().toISOString(),
 				reason: 'permanent access',

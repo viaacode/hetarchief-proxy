@@ -32,6 +32,7 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 		visitor_space {
 			id
 			slug
+			schema_maintainer_id
 			schema_image
 			schema_color
 			schema_audience_type

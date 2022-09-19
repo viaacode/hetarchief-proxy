@@ -13,7 +13,9 @@ mutation insertNotifications($objects: [app_notification_insert_input!]!) {
 			visitor_space_request {
 				cp_space_id
 				visitor_space {
+					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

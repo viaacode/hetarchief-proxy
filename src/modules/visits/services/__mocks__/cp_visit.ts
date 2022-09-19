@@ -22,6 +22,8 @@ export const mockCpVisit: GqlVisit = {
 	updated_at: '2022-03-18T08:32:57.256264',
 	visitor_space: {
 		id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+		slug: 'bruzz',
+		schema_maintainer_id: 'OR-d79593p',
 		schema_image: null,
 		schema_color: null,
 		schema_audience_type: AudienceType.Private,

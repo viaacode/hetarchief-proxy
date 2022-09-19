@@ -30,6 +30,7 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 		visitor_space {
 			id
 			slug
+			schema_maintainer_id
 			schema_image
 			schema_color
 			schema_audience_type
