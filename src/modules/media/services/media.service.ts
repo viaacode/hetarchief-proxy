@@ -427,7 +427,7 @@ export class MediaService {
 		const count: Record<string, number> = {};
 
 		items.data?.object_ie.forEach((item) => {
-			count[item.meemoo_identifier] = count[item.meemoo_identifier]++ || 1;
+			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
 		});
 
 		return count;
