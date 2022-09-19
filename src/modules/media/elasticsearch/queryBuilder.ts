@@ -193,25 +193,51 @@ export class QueryBuilder {
 		_.forEach(filters, (searchFilter: SearchFilter) => {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
-			if (
-				this.isFuzzyOperator(searchFilter.operator) &&
-				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)
-			) {
-				if (!searchFilter.value) {
-					throw new BadRequestException(
-						`Value cannot be empty when filtering on field '${searchFilter.field}'`
-					);
-				}
-				const searchTemplate = this.config.MULTI_MATCH_QUERY_MAPPING[searchFilter.field];
-				const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
+				if (this.isFuzzyOperator(searchFilter.operator)) {
+					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
+					if (!searchFilter.value) {
+						throw new BadRequestException(
+							`Value cannot be empty when filtering on field '${searchFilter.field}'`
+						);
+					}
+					const searchTemplate =
+						this.config.MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+					const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
 
-				textFilters.forEach((filter) =>
-					this.applyFilter(filterObject, {
-						occurrenceType: this.getOccurrenceType(searchFilter.operator),
-						query: filter,
-					})
-				);
-				return;
+					textFilters.forEach((filter) =>
+						this.applyFilter(filterObject, {
+							occurrenceType: this.getOccurrenceType(searchFilter.operator),
+							query: filter,
+						})
+					);
+					return;
+				} else {
+					// Use a multi field search template to exact search in elasticsearch across multiple fields
+					if (!searchFilter.value) {
+						throw new BadRequestException(
+							`Value cannot be empty when filtering on field '${searchFilter.field}'`
+						);
+					}
+					const searchTemplate =
+						this.config.MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
+
+					if (!searchTemplate) {
+						throw new BadRequestException(
+							`An exact search is not supported for multi field: '${searchFilter.field}'`
+						);
+					}
+
+					const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+
+					textFilters.forEach((filter) =>
+						this.applyFilter(filterObject, {
+							occurrenceType: this.getOccurrenceType(searchFilter.operator),
+							query: filter,
+						})
+					);
+					return;
+				}
 			}
 			/**
 			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
