@@ -194,13 +194,14 @@ export class QueryBuilder {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
 			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
+				if (!searchFilter.value) {
+					throw new BadRequestException(
+						`Value cannot be empty when filtering on field '${searchFilter.field}'`
+					);
+				}
 				if (this.isFuzzyOperator(searchFilter.operator)) {
 					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
-					if (!searchFilter.value) {
-						throw new BadRequestException(
-							`Value cannot be empty when filtering on field '${searchFilter.field}'`
-						);
-					}
+
 					const searchTemplate =
 						this.config.MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
 					const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
@@ -214,11 +215,6 @@ export class QueryBuilder {
 					return;
 				} else {
 					// Use a multi field search template to exact search in elasticsearch across multiple fields
-					if (!searchFilter.value) {
-						throw new BadRequestException(
-							`Value cannot be empty when filtering on field '${searchFilter.field}'`
-						);
-					}
 					const searchTemplate =
 						this.config.MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
 
