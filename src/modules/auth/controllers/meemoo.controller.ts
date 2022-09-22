@@ -9,12 +9,14 @@ import {
 	Query,
 	Redirect,
 	Req,
+	Res,
 	Session,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
+import queryString from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -22,6 +24,7 @@ import { IdpService } from '../services/idp.service';
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -79,7 +82,8 @@ export class MeemooController {
 	async loginCallback(
 		@Req() request: Request,
 		@Session() session: Record<string, any>,
-		@Body() response: SamlCallbackBody
+		@Body() response: SamlCallbackBody,
+		@Res() res
 	): Promise<any> {
 		let info: RelayState;
 		try {
@@ -169,13 +173,23 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
+			const proxyHost = getConfig(this.configService, 'host');
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${getConfig(this.configService, 'host')}/auth/meemoo/login&returnToUrl=${
-						info.returnToUrl
-					}`,
+					url: `${proxyHost}/auth/meemoo/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
+			}
+			if (err.message.includes('[NO_ORG_LINKED]')) {
+				return orgNotLinkedLogoutAndRedirectToErrorPage(
+					res,
+					proxyHost,
+					Idp.MEEMOO,
+					err.message,
+					this.translationsService.t(
+						'modules/auth/controllers/meemoo___account-configuratie'
+					)
+				);
 			}
 			this.logger.error('Failed during meemoo auth login-callback route', err);
 			throw new HttpException(

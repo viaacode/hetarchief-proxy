@@ -68,7 +68,7 @@ export class AuthController {
 		if (this.idpService.hasSpecificLogoutPage(idp)) {
 			this.logger.log('-> Specific logout');
 			return {
-				url: this.idpService.getSpecificLogoutUrl(idp, returnToUrl),
+				url: this.idpService.getSpecificLogoutUrl(idp, { returnToUrl }),
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		}

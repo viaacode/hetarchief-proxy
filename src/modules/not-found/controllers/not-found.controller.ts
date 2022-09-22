@@ -1,13 +1,17 @@
 import * as path from 'path';
 
-import { Controller, Get, Header, HttpCode } from '@nestjs/common';
+import { Controller, Get, Header, HttpCode, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs-extra';
+
+import { TranslationsService } from '~modules/translations/services/translations.service';
 
 @ApiTags('Not found')
 @Controller('not-found')
 export class NotFoundController {
 	private notFoundHtml: string;
+
+	constructor(private readonly translationsService: TranslationsService) {}
 
 	@ApiOperation({
 		description: 'Returns a not found 404 page with 404 http code',
@@ -15,14 +19,27 @@ export class NotFoundController {
 	@Get('/')
 	@Header('content-type', 'text/html')
 	@HttpCode(404)
-	async getNotFoundPage(): Promise<string> {
+	async getNotFoundPage(
+		@Query('message') message: string | undefined,
+		@Query('title') title: string | undefined
+	): Promise<string> {
 		if (!this.notFoundHtml) {
 			const notFoundPagePath: string = path.join(__dirname, '../template/404.html');
 			this.notFoundHtml = (await fs.readFile(notFoundPagePath)).toString('utf8');
-			this.notFoundHtml = this.notFoundHtml.replace(
-				/\{\{CLIENT_HOST\}\}/g,
-				process.env.CLIENT_HOST
-			);
+			this.notFoundHtml = this.notFoundHtml
+				.replace(/\{\{CLIENT_HOST\}\}/g, process.env.CLIENT_HOST)
+				.replace(
+					/\{\{TITLE\}\}/g,
+					title ||
+						this.translationsService.t('modules/not-found/controllers/not-found___404')
+				)
+				.replace(
+					/\{\{MESSAGE\}\}/g,
+					message ||
+						this.translationsService.t(
+							'modules/not-found/controllers/not-found___sorry-deze-pagina-konden-we-niet-terugvinden-de-link-die-je-volgde-kan-stuk-zijn-of-de-pagina-kan-niet-meer-bestaan'
+						)
+				);
 		}
 		return this.notFoundHtml;
 	}

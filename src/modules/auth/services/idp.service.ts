@@ -6,6 +6,7 @@ import queryString from 'query-string';
 import { getConfig } from '~config';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 
@@ -16,7 +17,11 @@ export class IdpService {
 
 	protected meemooAdminOrganizationIds: string[];
 
-	constructor(protected configService: ConfigService, protected spacesService: SpacesService) {
+	constructor(
+		protected configService: ConfigService,
+		protected spacesService: SpacesService,
+		private readonly translationsService: TranslationsService
+	) {
 		this.meemooAdminOrganizationIds = getConfig(configService, 'meemooAdminOrganizationIds');
 	}
 
@@ -24,12 +29,13 @@ export class IdpService {
 		return this.idpsWithSpecificLogoutPage.includes(idp);
 	}
 
-	public getSpecificLogoutUrl(idp: Idp, returnToUrl: string): string {
+	public getSpecificLogoutUrl(idp: Idp, queryParams: Record<string, string>): string {
 		const host = getConfig(this.configService, 'host');
 
-		const url = `${host}/auth/${idp.toLowerCase()}/logout?${queryString.stringify({
-			returnToUrl,
-		})}`;
+		const url = queryString.stringifyUrl({
+			url: `${host}/auth/${idp.toLowerCase()}/logout`,
+			query: queryParams,
+		});
 		return url;
 	}
 
@@ -47,6 +53,13 @@ export class IdpService {
 		if (apps.includes('hetarchief-beheer')) {
 			// bottom section of the flowchart
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
+			if (!maintainerId) {
+				throw new Error(
+					this.translationsService.t(
+						'modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
+					)
+				);
+			}
 			if (maintainerId && (await this.spacesService.findByMaintainerId(maintainerId))) {
 				return Group.CP_ADMIN;
 			}
@@ -66,7 +79,11 @@ export class IdpService {
 			// organization needs to have a space to be a kiosk user
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
 			if (!maintainerId) {
-				throw new Error('Maintainer ID (or-id) cannot be empty');
+				throw new Error(
+					this.translationsService.t(
+						'modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
+					)
+				);
 			}
 			if (await this.spacesService.findByMaintainerId(maintainerId)) {
 				return Group.KIOSK_VISITOR;
