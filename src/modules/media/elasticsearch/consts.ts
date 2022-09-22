@@ -2,15 +2,18 @@ import _ from 'lodash';
 
 import { Operator, OrderProperty, SearchFilterField } from '../media.types';
 
-import descriptionSearchQuery from './templates/description-search-query.json';
-import nameSearchQuery from './templates/name-search-query.json';
-import searchQueryAdvanced from './templates/search-query-advanced.json';
-import searchQuery from './templates/search-query.json';
+import nameSearchQueryExact from './templates/exact/name-search-query.json';
+import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
+import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
+import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
+import searchQueryFuzzy from './templates/fuzzy/search-query.json';
 
-const searchQueryAdvancedTemplate = _.values(searchQueryAdvanced);
-const searchQueryTemplate = _.values(searchQuery);
-const nameSearchQueryTemplate = _.values(nameSearchQuery);
-const descriptionSearchQueryTemplate = _.values(descriptionSearchQuery);
+const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
+const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
+const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
+const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
+
+const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -61,11 +64,16 @@ export const MULTI_MATCH_FIELDS: Array<SearchFilterField> = [
 	SearchFilterField.DESCRIPTION,
 ];
 
-export const MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any } = {
-	query: searchQueryTemplate,
-	advancedQuery: searchQueryAdvancedTemplate,
-	name: nameSearchQueryTemplate,
-	description: descriptionSearchQueryTemplate,
+export const MULTI_MATCH_QUERY_MAPPING = {
+	fuzzy: {
+		query: searchQueryTemplateFuzzy,
+		advancedQuery: searchQueryAdvancedTemplateFuzzy,
+		name: nameSearchQueryTemplateFuzzy,
+		description: descriptionSearchQueryTemplateFuzzy,
+	},
+	exact: {
+		name: nameSearchQueryTemplateExact,
+	},
 };
 
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {

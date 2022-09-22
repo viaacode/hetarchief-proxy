@@ -1,4 +1,4 @@
-import { QueryType } from './elasticsearch/consts';
+import { MULTI_MATCH_QUERY_MAPPING, QueryType } from './elasticsearch/consts';
 
 import {
 	FindAllObjectsByCollectionIdQuery,
@@ -24,7 +24,7 @@ export interface QueryBuilderConfig {
 	VALUE_OPERATORS: Array<Operator>;
 	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
 	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
-	MULTI_MATCH_QUERY_MAPPING: { [prop in SearchFilterField]?: any };
+	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
 	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
