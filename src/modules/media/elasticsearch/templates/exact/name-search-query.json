@@ -1,0 +1,31 @@
+[
+  {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "schema_name.keyword": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "schema_is_part_of.alternatief.keyword": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "schema_is_part_of.serie.keyword": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "schema_is_part_of.programma.keyword": "{{query}}"
+          }
+        }
+      ],
+      "minimum_should_match": 1
+    }
+  }
+]
+
+

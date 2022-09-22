@@ -21,6 +21,7 @@ import { getConfig } from '~config';
 
 import {
 	MediaQueryDto,
+	MeemooIdentifiersQueryDto,
 	PlayerTicketsQueryDto,
 	SearchFilter,
 	ThumbnailQueryDto,
@@ -200,6 +201,13 @@ export class MediaController {
 			meemooIdentifier,
 			referer
 		);
+	}
+
+	@Get('related/count')
+	public async countRelated(
+		@Query() countRelatedQuery: MeemooIdentifiersQueryDto
+	): Promise<Record<string, number>> {
+		return this.mediaService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
 
 	@Get(':esIndex/:id/similar')

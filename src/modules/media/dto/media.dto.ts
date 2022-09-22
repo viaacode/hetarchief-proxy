@@ -5,6 +5,7 @@ import { isArray } from 'lodash';
 
 import { Operator, OrderProperty, SearchFilterField } from '../media.types';
 
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SearchFilter {
@@ -128,4 +129,16 @@ export class ThumbnailQueryDto {
 		description: 'Get the playable url for the object with this id',
 	})
 	id: string;
+}
+
+export class MeemooIdentifiersQueryDto {
+	@IsArray()
+	@IsOptional()
+	@Transform(commaSeparatedStringToArray)
+	@ApiPropertyOptional({
+		type: Array,
+		description: 'The identifiers to fetch corresponding schema_identifiers for',
+		default: [],
+	})
+	meemooIdentifiers: string[];
 }
