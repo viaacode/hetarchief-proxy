@@ -119,6 +119,13 @@ export class QueryBuilder {
 
 		// Always order by relevance if 2 search items have identical primary sort values
 		sortArray.push(this.config.ORDER_MAPPINGS[OrderProperty.RELEVANCE]);
+
+		// If all the above is identical, sort by most recent publish date
+		sortArray.push({
+			schema_date_created: {
+				order: 'desc',
+			},
+		});
 		return sortArray;
 	}
 
