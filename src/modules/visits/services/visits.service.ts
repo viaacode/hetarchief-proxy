@@ -134,6 +134,7 @@ export class VisitsService {
 				graphQlVisit?.visitor_space?.content_partner?.information?.primary_site?.address
 			),
 			spaceId: graphQlVisit?.cp_space_id,
+			spaceMaintainerId: graphQlVisit?.visitor_space?.schema_maintainer_id,
 			spaceMail: this.adaptEmail(
 				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
 			),

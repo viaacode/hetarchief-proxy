@@ -33,7 +33,8 @@ const mockConfigService = {
 const getMockVisit = (): Visit => ({
 	id: '1',
 	spaceId: 'space-1',
-	spaceSlug: 'or-rf5kf25',
+	spaceSlug: 'vrt',
+	spaceMaintainerId: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	spaceTelephone: '0412 34 56 78',

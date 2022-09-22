@@ -7,10 +7,17 @@ import { PlayerTicketModule } from '~modules/admin/player-ticket/player-ticket.m
 import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
+import { VisitsModule } from '~modules/visits';
 
 @Module({
 	controllers: [CollectionsController],
-	imports: [forwardRef(() => DataModule), PlayerTicketModule, MediaModule, EventsModule],
+	imports: [
+		forwardRef(() => DataModule),
+		PlayerTicketModule,
+		MediaModule,
+		EventsModule,
+		VisitsModule,
+	],
 	providers: [CollectionsService],
 	exports: [CollectionsService],
 })

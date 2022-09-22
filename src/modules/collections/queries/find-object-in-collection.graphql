@@ -24,6 +24,7 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 				visitor_space {
 					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

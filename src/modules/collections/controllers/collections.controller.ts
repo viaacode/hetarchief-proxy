@@ -21,6 +21,7 @@ import { Request } from 'express';
 
 import { Collection, IeObject } from '../types';
 
+import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	CollectionObjectsQueryDto,
 	CreateOrUpdateCollectionDto,
@@ -31,6 +32,8 @@ import { LogEventType } from '~modules/events/types';
 import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -45,6 +48,7 @@ export class CollectionsController {
 
 	constructor(
 		private collectionsService: CollectionsService,
+		private visitsService: VisitsService,
 		private eventsService: EventsService,
 		private mediaService: MediaService
 	) {}
@@ -70,13 +74,40 @@ export class CollectionsController {
 		@Query() queryDto: CollectionObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<IeObject>> {
-		const collectionObjects = await this.collectionsService.findObjectsByCollectionId(
+		const folderObjects = await this.collectionsService.findObjectsByCollectionId(
 			collectionId,
 			user.getId(),
 			queryDto,
 			referer
 		);
-		return collectionObjects;
+		const maintainerIds = folderObjects.items.map((item) => item.maintainerId);
+		const visits = await this.visitsService.findAll(
+			{ size: 1000, status: VisitStatus.APPROVED, timeframe: VisitTimeframe.ACTIVE },
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
+			}
+		);
+		const showThumbnailByMaintainerId = Object.fromEntries(
+			maintainerIds.map((maintainerId) => {
+				const hasAccessToSpace = !!visits.items.find(
+					(item) => item.spaceMaintainerId.toLowerCase() === maintainerId.toLowerCase()
+				);
+				return [maintainerId, hasAccessToSpace];
+			})
+		);
+
+		// Redact folder objects based on, if the user has access to that space at the moment
+		// TODO, see if we can merge this with the applyLicensesToObject function in MediaController
+		// These objects are IeObject from GraphQL and the one in the media controller deals with Media objects from elasticsearch
+		folderObjects.items.forEach((folderObject) => {
+			if (showThumbnailByMaintainerId[folderObject.maintainerId]) {
+				return;
+			}
+			// Redact object
+			delete folderObject.thumbnailUrl;
+		});
+		return folderObjects;
 	}
 
 	@Get(':collectionId/export')

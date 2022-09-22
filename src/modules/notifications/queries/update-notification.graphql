@@ -20,7 +20,9 @@ mutation updateNotification(
 			visitor_space_request {
 				cp_space_id
 				visitor_space {
+					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

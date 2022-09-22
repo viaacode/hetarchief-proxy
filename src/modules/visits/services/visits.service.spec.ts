@@ -49,7 +49,8 @@ const getDefaultVisitAggregateResponse = (): { data: PendingVisitCountForUserByS
 const mockVisit: Visit = {
 	id: mockCpVisit.id,
 	spaceId: mockCpVisit.cp_space_id,
-	spaceSlug: 'or-rf5kf25',
+	spaceSlug: 'vrt',
+	spaceMaintainerId: 'or-rf5kf25',
 	spaceName: 'VRT',
 	spaceMail: 'cp-VRT@studiohyperdrive.be',
 	spaceTelephone: '0412 34 56 78',
