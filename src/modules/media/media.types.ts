@@ -62,7 +62,7 @@ export interface Media {
 	premisRelationship?: string;
 	series?: string[];
 	program?: string[];
-	alternativeName?: string;
+	alternativeName?: string[];
 	maintainerId: string;
 	maintainerName: string;
 	contactInfo?: ContactInfo;
@@ -77,7 +77,6 @@ export interface Media {
 	abstract: string;
 	creator: any;
 	actor?: any;
-	contributor: any;
 	publisher: any;
 	spatial: string;
 	temporal: string;

@@ -34,7 +34,6 @@ query getRelatedObjects(
 		schema_abstract
 		schema_creator
 		schema_actor
-		schema_contributor
 		schema_publisher
 		schema_temporal_coverage
 		schema_spatial_coverage

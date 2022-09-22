@@ -182,6 +182,7 @@ export class CollectionsController {
 				time: new Date().toISOString(),
 				data: {
 					schema_identifier: objectSchemaIdentifier,
+					folder_id: collectionId,
 				},
 			},
 		]);

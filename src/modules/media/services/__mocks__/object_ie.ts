@@ -41,7 +41,6 @@ export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 					productionCompany: ['Roses Are Blue'],
 				},
 				schema_actor: null,
-				schema_contributor: null,
 				schema_publisher: null,
 				schema_spatial_coverage: null,
 				schema_temporal_coverage: null,

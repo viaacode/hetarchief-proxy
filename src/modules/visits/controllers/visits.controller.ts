@@ -280,6 +280,9 @@ export class VisitsController {
 				source: request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
+				data: {
+					visitor_space_id: visitorSpace.id,
+				},
 			},
 		]);
 
@@ -369,6 +372,7 @@ export class VisitsController {
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,
+						visitor_space_id: visit.spaceId,
 					},
 				},
 			]);
@@ -388,6 +392,7 @@ export class VisitsController {
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,
+						visitor_space_id: visit.spaceId,
 					},
 				},
 			]);
@@ -406,6 +411,7 @@ export class VisitsController {
 					time: new Date().toISOString(),
 					data: {
 						visitor_space_request_id: visit.id,
+						visitor_space_id: visit.spaceId,
 					},
 				},
 			]);
