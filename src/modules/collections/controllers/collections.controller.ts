@@ -98,6 +98,8 @@ export class CollectionsController {
 		);
 
 		// Redact folder objects based on, if the user has access to that space at the moment
+		// TODO, see if we can merge this with the applyLicensesToObject function in MediaController
+		// These objects are IeObject from GraphQL and the one in the media controller deals with Media objects from elasticsearch
 		folderObjects.items.forEach((folderObject) => {
 			if (showThumbnailByMaintainerId[folderObject.maintainerId]) {
 				return;
