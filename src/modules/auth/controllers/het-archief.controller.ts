@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import { stringifyUrl } from 'query-string';
+import queryString, { stringifyUrl } from 'query-string';
 
 import { getConfig } from '~config';
 
@@ -24,6 +24,7 @@ import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -111,7 +112,8 @@ export class HetArchiefController {
 	async loginCallback(
 		@Req() request: Request,
 		@Session() session: Record<string, any>,
-		@Body() response: SamlCallbackBody
+		@Body() response: SamlCallbackBody,
+		@Res() res
 	): Promise<any> {
 		let info: RelayState;
 		try {
@@ -205,14 +207,23 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
+			const proxyHost = getConfig(this.configService, 'host');
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
-					url: `${getConfig(
-						this.configService,
-						'host'
-					)}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
+					url: `${proxyHost}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
+			}
+			if (err.message.includes('[NO_ORG_LINKED]')) {
+				return orgNotLinkedLogoutAndRedirectToErrorPage(
+					res,
+					proxyHost,
+					Idp.HETARCHIEF,
+					err.message,
+					this.translationsService.t(
+						'modules/auth/controllers/het-archief___account-configuratie'
+					)
+				);
 			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
 			throw new HttpException(
@@ -230,10 +241,14 @@ export class HetArchiefController {
 	@Redirect()
 	async logout(
 		@Session() session: Record<string, any>,
-		@Query('returnToUrl') returnToUrl: string
+		@Query('returnToUrl') returnToUrl: string,
+		@Query('forceLogout') forceLogout: 'true' | 'false' = 'false'
 	) {
 		try {
-			if (SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)) {
+			if (
+				forceLogout === 'true' ||
+				SessionHelper.isLoggedInWithIdp(Idp.HETARCHIEF, session)
+			) {
 				const idpUser = SessionHelper.getIdpUserInfo(session);
 				const idpLogoutUrl = await this.hetArchiefService.createLogoutRequestUrl(
 					idpUser.name_id,
