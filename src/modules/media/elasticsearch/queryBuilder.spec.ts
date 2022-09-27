@@ -287,8 +287,6 @@ describe('QueryBuilder', () => {
 			const received = esQuery.sort.find((rule) => rule['schema_name.keyword']);
 			const expected = { 'schema_name.keyword': { order: orderDirection } };
 
-			console.info({ esQuery: JSON.stringify(esQuery), received, expected });
-
 			expect(received).toEqual(expected);
 		});
 	});
