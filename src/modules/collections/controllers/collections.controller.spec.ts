@@ -11,6 +11,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { MediaService } from '~modules/media/services/media.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -98,6 +99,10 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 	convertObjectsToXml: jest.fn(),
 };
 
+const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
+	findAll: jest.fn().mockReturnValue({ items: [] }),
+};
+
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
 	let sessionHelperSpy: jest.SpyInstance;
@@ -119,6 +124,10 @@ describe('CollectionsController', () => {
 					provide: MediaService,
 					useValue: mockMediaService,
 				},
+				{
+					provide: VisitsService,
+					useValue: mockVisitsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -132,7 +141,7 @@ describe('CollectionsController', () => {
 	});
 
 	afterEach(async () => {
-		sessionHelperSpy.mockRestore();
+		sessionHelperSpy?.mockRestore();
 	});
 
 	it('should be defined', () => {

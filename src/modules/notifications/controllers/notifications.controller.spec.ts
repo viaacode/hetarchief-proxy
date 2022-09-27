@@ -156,7 +156,7 @@ describe('NotificationsController', () => {
 	});
 
 	afterAll(async () => {
-		sessionHelperSpy.mockRestore();
+		sessionHelperSpy?.mockRestore();
 	});
 
 	it('should be defined', () => {
