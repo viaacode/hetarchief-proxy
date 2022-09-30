@@ -227,7 +227,12 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
-			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -249,7 +254,8 @@ describe('HetArchiefController', () => {
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
 				{},
-				samlResponseWithNullRelayState
+				samlResponseWithNullRelayState,
+				{}
 			);
 			expect(result.url).toBeUndefined();
 		});
@@ -260,7 +266,12 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -279,7 +290,12 @@ describe('HetArchiefController', () => {
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -296,7 +312,7 @@ describe('HetArchiefController', () => {
 			});
 			let error;
 			try {
-				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse);
+				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {});
 			} catch (e) {
 				error = e;
 			}
@@ -316,7 +332,8 @@ describe('HetArchiefController', () => {
 			const response = await hetArchiefController.loginCallback(
 				mockRequest,
 				{},
-				samlResponse
+				samlResponse,
+				{}
 			);
 			expect(response).toEqual({
 				url: `${configService.get(

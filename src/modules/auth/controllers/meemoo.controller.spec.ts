@@ -188,7 +188,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
-			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -210,7 +210,8 @@ describe('MeemooController', () => {
 			const result = await meemooController.loginCallback(
 				mockRequest,
 				{},
-				samlResponseWithNullRelayState
+				samlResponseWithNullRelayState,
+				{}
 			);
 			expect(result.url).toBeUndefined();
 		});
@@ -221,7 +222,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
-			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -241,7 +242,7 @@ describe('MeemooController', () => {
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
-			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse);
+			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -258,7 +259,7 @@ describe('MeemooController', () => {
 			});
 			let error;
 			try {
-				await meemooController.loginCallback(mockRequest, {}, samlResponse);
+				await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
 			} catch (e) {
 				error = e;
 			}
@@ -275,7 +276,12 @@ describe('MeemooController', () => {
 			mockMeemooService.assertSamlResponse.mockRejectedValueOnce({
 				message: 'SAML Response is no longer valid',
 			});
-			const response = await meemooController.loginCallback(mockRequest, {}, samlResponse);
+			const response = await meemooController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
 			expect(response).toEqual({
 				url: `${configService.get('host')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
