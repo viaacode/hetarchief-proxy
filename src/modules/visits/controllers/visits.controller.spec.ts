@@ -431,7 +431,7 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit1);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(1);
 			expect(mockNotificationsService.onCreateVisit).toHaveBeenCalledTimes(1);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
 		});
 
@@ -468,7 +468,7 @@ describe('VisitsController', () => {
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
 		});
@@ -507,7 +507,7 @@ describe('VisitsController', () => {
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.createForMultipleRecipients).toBeCalledTimes(0);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 			mockSpacesService.getMaintainerProfiles.mockClear();
 			mockSpacesService.findBySlug.mockClear();
 			mockNotificationsService.createForMultipleRecipients.mockClear();
@@ -535,7 +535,7 @@ describe('VisitsController', () => {
 			);
 
 			expect(visit).toEqual(mockVisit1);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 			mockNotificationsService.create.mockClear();
 		});
 
@@ -600,7 +600,7 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit1);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(1);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 		});
 
 		it('should update a visit status: denied', async () => {
@@ -624,7 +624,7 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 		});
 
 		it('should send a revoke event when an approved visit is denied', async () => {
@@ -648,7 +648,7 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(1);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 		});
 
 		it('should update a visit status: cancelled', async () => {
@@ -673,7 +673,7 @@ describe('VisitsController', () => {
 			expect(visit).toEqual(mockVisit3);
 			expect(mockNotificationsService.onApproveVisitRequest).toHaveBeenCalledTimes(0);
 			expect(mockNotificationsService.onDenyVisitRequest).toHaveBeenCalledTimes(0);
-			sessionHelperSpy.mockRestore();
+			sessionHelperSpy?.mockRestore();
 		});
 
 		it('should delete notifications when the startAt/endAt time is changed to a future date', async () => {

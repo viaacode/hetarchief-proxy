@@ -9,8 +9,10 @@ import { LoginMessage, LoginResponse } from '../types';
 import { AuthController } from './auth.controller';
 
 import { SpacesModule } from '~modules/spaces';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersModule } from '~modules/users';
 import { Idp } from '~shared/auth/auth.types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
 
@@ -41,6 +43,10 @@ describe('AuthController', () => {
 				{
 					provide: SessionService,
 					useValue: mockSessionService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		})
