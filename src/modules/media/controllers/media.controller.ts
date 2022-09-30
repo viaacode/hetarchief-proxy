@@ -130,6 +130,7 @@ export class MediaController {
 				this.translationsService.t('modules/media/controllers/media___object-not-found')
 			);
 		}
+
 		return limitedObject;
 	}
 
@@ -169,7 +170,9 @@ export class MediaController {
 			},
 		]);
 
-		return this.mediaService.convertObjectToXml(objectMetadata);
+		return this.mediaService.convertObjectToXml(
+			this.mediaService.limitMetadata(objectMetadata)
+		);
 	}
 
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
