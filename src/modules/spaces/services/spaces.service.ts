@@ -153,7 +153,7 @@ export class SpacesService {
 		if (query && query !== '%' && query !== '%%') {
 			filterArray.push({
 				_or: [
-					{ schema_description: { _ilike: query } },
+					{ content_partner: { information: { description: { _ilike: query } } } },
 					{ content_partner: { schema_name: { _ilike: query } } },
 				],
 			});
@@ -206,7 +206,7 @@ export class SpacesService {
 		const where: FindSpacesQueryVariables['where'] =
 			filterArray.length > 0 ? { _and: filterArray } : {};
 
-		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(FindSpacesDocument, {
+		const queryVariables = {
 			where,
 			offset,
 			limit,
@@ -215,7 +215,11 @@ export class SpacesService {
 				orderProp === 'status' ? 'status_info.sort_order.sort_order' : orderProp,
 				orderDirection
 			),
-		});
+		};
+		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(
+			FindSpacesDocument,
+			queryVariables
+		);
 
 		return Pagination<Space>({
 			items: spacesResponse.data.maintainer_visitor_space.map((space) => this.adapt(space)),
