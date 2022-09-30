@@ -6,7 +6,9 @@ import { Configuration } from '~config';
 import { IdpService } from './idp.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findByMaintainerId: jest.fn(),
@@ -55,6 +57,10 @@ describe('IdpService', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		}).compile();
@@ -106,12 +112,19 @@ describe('IdpService', () => {
 		});
 
 		// Bottom section of the flowchart
-		it('should assign the Visitor group if user has archief-beheer but no organization', async () => {
+		it('should throw an error if user has archief-beheer but no organization', async () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.o = [];
 
-			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.VISITOR);
+			let err;
+
+			try {
+				await idpService.determineUserGroup(ldapUser);
+			} catch (error) {
+				err = error;
+			}
+
+			expect(err).toBeDefined();
 		});
 
 		it('should assign the Visitor group if user has archief-beheer but no valid organization', async () => {

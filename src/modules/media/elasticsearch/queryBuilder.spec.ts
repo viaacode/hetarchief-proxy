@@ -184,7 +184,7 @@ describe('QueryBuilder', () => {
 				error = e;
 			}
 			expect(error.response.error.message).toEqual(
-				"Field 'query' cannot be queried with the 'is' operator."
+				"An exact search is not supported for multi field: 'query'"
 			);
 		});
 
@@ -273,14 +273,21 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should sort on a given order property', () => {
+			const orderProp = OrderProperty.NAME;
+			const orderDirection = SortDirection.asc;
+
 			const esQuery = QueryBuilder.build({
 				filters: [],
 				size: 10,
 				page: 1,
-				orderProp: OrderProperty.NAME,
-				orderDirection: SortDirection.asc,
+				orderProp,
+				orderDirection,
 			});
-			expect(esQuery.sort).toEqual([{ 'schema_name.keyword': { order: 'asc' } }, '_score']);
+
+			const received = esQuery.sort.find((rule) => rule['schema_name.keyword']);
+			const expected = { 'schema_name.keyword': { order: orderDirection } };
+
+			expect(received).toEqual(expected);
 		});
 	});
 });
