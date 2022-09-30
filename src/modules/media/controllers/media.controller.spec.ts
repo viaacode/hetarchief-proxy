@@ -91,6 +91,7 @@ const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = 
 			schema_date_published: mediaObject.schema_date_published,
 		})
 	),
+	limitMetadata: jest.fn().mockImplementation((obj: Partial<Media>): Partial<Media> => obj),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
