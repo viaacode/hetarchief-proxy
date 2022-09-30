@@ -135,7 +135,9 @@ export class CollectionsController {
 			},
 		]);
 
-		return this.mediaService.convertObjectsToXml(objects);
+		return this.mediaService.convertObjectsToXml(
+			objects.map((object) => this.mediaService.limitMetadata(object))
+		);
 	}
 
 	@Post()

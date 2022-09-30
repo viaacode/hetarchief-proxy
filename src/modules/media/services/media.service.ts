@@ -348,14 +348,36 @@ export class MediaService {
 				userProfileId,
 			}
 		);
+
 		if (!allObjects[0]) {
 			throw new NotFoundException();
 		}
+
 		const allAdapted = allObjects.map((object) => {
 			return this.adaptLimitedMetadata(object);
 		});
 
 		return allAdapted;
+	}
+
+	public limitMetadata(mediaObject: Partial<Media>): Partial<Media> {
+		const copy = { ...mediaObject };
+
+		// https://meemoo.atlassian.net/browse/ARC-1109
+		delete copy.schemaIdentifier;
+		delete copy.premisRelationship;
+		delete copy.maintainerId;
+		delete copy.contactInfo;
+		delete copy.copyrightHolder;
+		delete copy.copyrightNotice;
+		delete copy.durationInSeconds;
+		delete copy.numberOfPages;
+		delete copy.dctermsAvailable;
+		delete copy.license;
+		delete copy.meemooMediaObjectId;
+		delete copy.dateCreatedLowerBound;
+
+		return copy;
 	}
 
 	public getLimitedMetadata(mediaObject: Media): Partial<Media> {
