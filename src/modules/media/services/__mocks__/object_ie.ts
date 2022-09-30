@@ -8,7 +8,6 @@ export const mockObjectIe: { data: GetObjectDetailBySchemaIdentifierQuery } = {
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 				meemoo_identifier: '8911p09j1g',
 				premis_identifier: 'WP00178829',
-				premis_relationship: null,
 				schema_is_part_of: null,
 				schema_copyright_holder: 'vrt',
 				schema_copyright_notice:

@@ -59,7 +59,6 @@ export interface Media {
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
 	premisIsPartOf?: string;
-	premisRelationship?: string;
 	series?: string[];
 	program?: string[];
 	alternativeName?: string[];
