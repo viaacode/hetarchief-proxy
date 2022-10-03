@@ -55,8 +55,7 @@ pipeline {
         }
         stage('Test code') {
             steps {
-                sh 'Temporarily disabled, see https://studiohyperdrive.slack.com/archives/C027HPM6SCD/p1664794457939829?thread_ts=1664794114.828849&cid=C027HPM6SCD'
-                // sh 'make -f ./openshift/Makefile test'
+                sh 'make -f ./openshift/Makefile test'
             }
         }
         stage('Build code') {
