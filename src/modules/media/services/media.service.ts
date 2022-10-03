@@ -59,7 +59,6 @@ export class MediaService {
 			meemooIdentifier: graphQlObject?.meemoo_identifier,
 			premisIdentifier: graphQlObject?.premis_identifier,
 			premisIsPartOf: graphQlObject?.premis_is_part_of,
-			premisRelationship: graphQlObject?.premis_relationship,
 			series: graphQlObject?.schema_is_part_of?.serie,
 			program: graphQlObject?.schema_is_part_of?.programma,
 			alternativeName: graphQlObject?.schema_is_part_of?.alternatief,
@@ -361,11 +360,10 @@ export class MediaService {
 	}
 
 	public limitMetadata(mediaObject: Partial<Media>): Partial<Media> {
-		const copy = { ...mediaObject };
+		const copy: Partial<Media> & Record<string, any> = { ...mediaObject };
 
 		// https://meemoo.atlassian.net/browse/ARC-1109
 		delete copy.schemaIdentifier;
-		delete copy.premisRelationship;
 		delete copy.maintainerId;
 		delete copy.contactInfo;
 		delete copy.copyrightHolder;
@@ -376,6 +374,10 @@ export class MediaService {
 		delete copy.license;
 		delete copy.meemooMediaObjectId;
 		delete copy.dateCreatedLowerBound;
+
+		// https://meemoo.atlassian.net/browse/ARC-1109?focusedCommentId=34838
+		copy.PID = copy.premisIsPartOf;
+		delete copy.premisIsPartOf;
 
 		return copy;
 	}
