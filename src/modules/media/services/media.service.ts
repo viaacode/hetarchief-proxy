@@ -360,7 +360,7 @@ export class MediaService {
 	}
 
 	public limitMetadata(mediaObject: Partial<Media>): Partial<Media> {
-		const copy = { ...mediaObject };
+		const copy: Partial<Media> & Record<string, any> = { ...mediaObject };
 
 		// https://meemoo.atlassian.net/browse/ARC-1109
 		delete copy.schemaIdentifier;
@@ -374,6 +374,10 @@ export class MediaService {
 		delete copy.license;
 		delete copy.meemooMediaObjectId;
 		delete copy.dateCreatedLowerBound;
+
+		// https://meemoo.atlassian.net/browse/ARC-1109?focusedCommentId=34838
+		copy.PID = copy.premisIsPartOf;
+		delete copy.premisIsPartOf;
 
 		return copy;
 	}
