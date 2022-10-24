@@ -9,7 +9,7 @@ import got, { Got } from 'got';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { AssetFileType, AssetToken } from '../types';
 
@@ -21,16 +21,16 @@ export class AssetsService {
 	private gotInstance: Got;
 	private s3: S3;
 
-	constructor(protected configService: ConfigService) {
+	constructor(protected configService: ConfigService<Configuration>) {
 		this.gotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'assetServerTokenEndpoint'),
+			prefixUrl: this.configService.get('ASSET_SERVER_TOKEN_ENDPOINT'),
 			resolveBodyOnly: true,
-			username: getConfig(this.configService, 'assetServerTokenUsername'),
-			password: getConfig(this.configService, 'assetServerTokenPassword'),
+			username: this.configService.get('ASSET_SERVER_TOKEN_USERNAME'),
+			password: this.configService.get('ASSET_SERVER_TOKEN_PASSWORD'),
 			responseType: 'json',
 			headers: {
 				'cache-control': 'no-cache',
-				'X-User-Secret-Key-Meta': getConfig(this.configService, 'assetServerTokenSecret'),
+				'X-User-Secret-Key-Meta': this.configService.get('ASSET_SERVER_TOKEN_SECRET'),
 			},
 		});
 	}
@@ -42,15 +42,14 @@ export class AssetsService {
 	@Cron('0 4 * * *')
 	public async emptyUploadFolder(): Promise<boolean> {
 		try {
-			await fse.emptyDir(getConfig(this.configService, 'tempAssetFolder'));
+			await fse.emptyDir(this.configService.get('TEMP_ASSET_FOLDER'));
 			this.logger.log(
-				`CRON: upload folder '${getConfig(this.configService, 'tempAssetFolder')}' emptied`
+				`CRON: upload folder '${this.configService.get('TEMP_ASSET_FOLDER')}' emptied`
 			);
 		} catch (e) {
 			this.logger.error({
-				message: `CRON error emptying upload folder ${getConfig(
-					this.configService,
-					'tempAssetFolder'
+				message: `CRON error emptying upload folder ${this.configService.get(
+					'TEMP_ASSET_FOLDER'
 				)} `,
 				error: new Error(),
 			});
@@ -97,10 +96,9 @@ export class AssetsService {
 					this.s3 = new AWS.S3({
 						accessKeyId: this.token.token,
 						secretAccessKey: this.token.secret,
-						endpoint: `${getConfig(
-							this.configService,
-							'assetServerEndpoint'
-						)}/${getConfig(this.configService, 'assetServerBucketName')}`,
+						endpoint: `${this.configService.get(
+							'ASSET_SERVER_ENDPOINT'
+						)}/${this.configService.get('ASSET_SERVER_BUCKET_NAME')}`,
 						s3BucketEndpoint: true,
 					});
 				} catch (err) {
@@ -149,7 +147,7 @@ export class AssetsService {
 						Body: fileBody,
 						ACL: 'public-read',
 						ContentType: file.mimetype,
-						Bucket: getConfig(this.configService, 'assetServerBucketName'),
+						Bucket: this.configService.get('ASSET_SERVER_BUCKET_NAME'),
 					},
 					(err: AWSError) => {
 						if (err) {
@@ -160,12 +158,9 @@ export class AssetsService {
 							this.logger.error(error);
 							reject(error);
 						} else {
-							const url = new URL(
-								getConfig(this.configService, 'assetServerEndpoint')
-							);
-							url.pathname = `${getConfig(
-								this.configService,
-								'assetServerBucketName'
+							const url = new URL(this.configService.get('ASSET_SERVER_ENDPOINT'));
+							url.pathname = `${this.configService.get(
+								'ASSET_SERVER_BUCKET_NAME'
 							)}/${key}`;
 							resolve(url.href);
 						}
@@ -197,9 +192,9 @@ export class AssetsService {
 				s3Client.deleteObject(
 					{
 						Key: url
-							.split(`/${getConfig(this.configService, 'assetServerBucketName')}/`)
+							.split(`/${this.configService.get('ASSET_SERVER_BUCKET_NAME')}/`)
 							.pop(),
-						Bucket: getConfig(this.configService, 'assetServerBucketName'),
+						Bucket: this.configService.get('ASSET_SERVER_BUCKET_NAME'),
 					},
 					(err: AWSError) => {
 						if (err) {

@@ -12,7 +12,7 @@ import { Cache } from 'cache-manager';
 import { differenceInSeconds } from 'date-fns';
 import got, { Got } from 'got';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { PlayerTicket } from '../player-ticket.types';
 
@@ -38,24 +38,24 @@ export class PlayerTicketService {
 	private readonly host: string;
 
 	constructor(
-		protected configService: ConfigService,
+		protected configService: ConfigService<Configuration>,
 		@Inject(forwardRef(() => DataService)) protected dataService: DataService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {
 		this.playerTicketsGotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'ticketServiceUrl'),
+			prefixUrl: this.configService.get('TICKET_SERVICE_URL'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 			https: {
 				rejectUnauthorized: false,
-				certificate: getConfig(this.configService, 'ticketServiceCertificate'),
-				key: getConfig(this.configService, 'ticketServiceKey'),
-				passphrase: getConfig(this.configService, 'ticketServicePassphrase'),
+				certificate: this.configService.get('TICKET_SERVICE_CERTIFICATE'),
+				key: this.configService.get('TICKET_SERVICE_KEY'),
+				passphrase: this.configService.get('TICKET_SERVICE_PASSPHRASE'),
 			},
 		});
-		this.ticketServiceMaxAge = getConfig(this.configService, 'ticketServiceMaxAge');
-		this.mediaServiceUrl = getConfig(this.configService, 'mediaServiceUrl');
-		this.host = getConfig(this.configService, 'host');
+		this.ticketServiceMaxAge = this.configService.get('TICKET_SERVICE_MAX_AGE');
+		this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
+		this.host = this.configService.get('HOST');
 	}
 
 	protected async getToken(path: string, referer: string): Promise<PlayerTicket> {
@@ -111,9 +111,7 @@ export class PlayerTicketService {
 
 	public async getEmbedUrl(id: string): Promise<string> {
 		let response;
-		if (
-			getConfig(this.configService, 'databaseApplicationType') === AvoOrHetArchief.hetArchief
-		) {
+		if (this.configService.get('DATABASE_APPLICATION_TYPE') === AvoOrHetArchief.hetArchief) {
 			// Het archief
 			response = await this.dataService.execute<GetFileByRepresentationSchemaIdentifierQuery>(
 				GetFileByRepresentationSchemaIdentifierDocument,

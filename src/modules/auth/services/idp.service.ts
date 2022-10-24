@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { get, intersection } from 'lodash';
 import queryString from 'query-string';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
@@ -18,11 +18,11 @@ export class IdpService {
 	protected meemooAdminOrganizationIds: string[];
 
 	constructor(
-		protected configService: ConfigService,
+		protected configService: ConfigService<Configuration>,
 		protected spacesService: SpacesService,
 		private readonly translationsService: TranslationsService
 	) {
-		this.meemooAdminOrganizationIds = getConfig(configService, 'meemooAdminOrganizationIds');
+		this.meemooAdminOrganizationIds = configService.get('MEEMOO_ADMIN_ORGANIZATION_IDS');
 	}
 
 	public hasSpecificLogoutPage(idp: Idp): boolean {
@@ -30,7 +30,7 @@ export class IdpService {
 	}
 
 	public getSpecificLogoutUrl(idp: Idp, queryParams: Record<string, string>): string {
-		const host = getConfig(this.configService, 'host');
+		const host = this.configService.get('HOST');
 
 		const url = queryString.stringifyUrl({
 			url: `${host}/auth/${idp.toLowerCase()}/logout`,

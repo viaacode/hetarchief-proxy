@@ -17,7 +17,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { compact, find, intersection } from 'lodash';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import {
 	MediaQueryDto,
@@ -56,7 +56,7 @@ export class MediaController {
 		private mediaService: MediaService,
 		private playerTicketService: PlayerTicketService,
 		private eventsService: EventsService,
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		private visitsService: VisitsService,
 		private translationsService: TranslationsService
 	) {}
@@ -69,7 +69,7 @@ export class MediaController {
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto
 	): Promise<any> {
-		if (getConfig(this.configService, 'environment') === 'production') {
+		if (this.configService.get('ENVIRONMENT') === 'production') {
 			throw new ForbiddenException();
 		}
 		const media = await this.mediaService.findAll(queryDto, null, referer);
@@ -117,7 +117,7 @@ export class MediaController {
 			return obj;
 		}
 
-		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
+		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			return object;
 		}
 
@@ -265,7 +265,7 @@ export class MediaController {
 		const userHasAccessToSpace =
 			canSearchInAllSpaces || (await this.userHasAccessToVisitorSpaceOrId(user, esIndex));
 
-		if (getConfig(this.configService, 'ignoreObjectLicenses')) {
+		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			return searchResult;
 		}
 

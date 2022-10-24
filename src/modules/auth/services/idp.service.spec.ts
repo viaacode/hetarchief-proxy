@@ -18,7 +18,7 @@ const meemooAdminOrganizationIds = ['OR-w66976m'];
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): any => {
-		if (key === 'meemooAdminOrganizationIds') {
+		if (key === 'MEEMOO_ADMIN_ORGANIZATION_IDS') {
 			return meemooAdminOrganizationIds;
 		}
 		return key;
@@ -44,7 +44,7 @@ const getLdapUser = () => ({
 
 describe('IdpService', () => {
 	let idpService: IdpService;
-	let configService: ConfigService;
+	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -66,7 +66,7 @@ describe('IdpService', () => {
 		}).compile();
 
 		idpService = module.get<IdpService>(IdpService);
-		configService = module.get<ConfigService>(ConfigService);
+		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
 	it('services should be defined', () => {

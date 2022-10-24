@@ -18,7 +18,7 @@ import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
 import queryString, { stringifyUrl } from 'query-string';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
@@ -45,7 +45,7 @@ export class HetArchiefController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private readonly translationsService: TranslationsService
 	) {}
@@ -83,14 +83,14 @@ export class HetArchiefController {
 	) {
 		try {
 			const serverRedirectUrl = stringifyUrl({
-				url: `${getConfig(this.configService, 'host')}/auth/hetarchief/login`,
+				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
 				query: { returnToUrl },
 			});
 			const url = stringifyUrl({
-				url: getConfig(this.configService, 'ssumRegistrationPage'),
+				url: this.configService.get('SSUM_REGISTRATION_PAGE'),
 				query: {
 					redirect_to: serverRedirectUrl,
-					app_name: getConfig(this.configService, 'samlSpEntityId'),
+					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
 				},
 			});
 			return {
@@ -207,7 +207,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			const proxyHost = getConfig(this.configService, 'host');
+			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
 					url: `${proxyHost}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,

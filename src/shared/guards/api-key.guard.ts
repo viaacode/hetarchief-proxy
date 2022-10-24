@@ -2,6 +2,8 @@ import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
+import { Configuration } from '~config';
+
 export const API_KEY_EXCEPTION = new BadRequestException(
 	'You need to provide an valid api key for this endpoint under the header "apikey"'
 );
@@ -10,8 +12,8 @@ export const API_KEY_EXCEPTION = new BadRequestException(
 export class ApiKeyGuard implements CanActivate {
 	private readonly apiKey: string;
 
-	constructor(private readonly configService: ConfigService) {
-		this.apiKey = configService.get('proxyApiKey');
+	constructor(private readonly configService: ConfigService<Configuration>) {
+		this.apiKey = configService.get('PROXY_API_KEY');
 	}
 
 	private static getRequest(ctxOrReq: ExecutionContext | Request): Request {

@@ -12,10 +12,10 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'assetServerTokenEndpoint') {
+		if (key === 'ASSET_SERVER_TOKEN_ENDPOINT') {
 			return 'http://assettoken/s3';
 		}
-		if (key === 'assetServerEndpoint') {
+		if (key === 'ASSET_SERVER_ENDPOINT') {
 			return 'http://hetarchief.assets/';
 		}
 

@@ -82,13 +82,13 @@ const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'clientHost') {
+		if (key === 'CLIENT_HOST') {
 			return hetArchiefLoginUrl;
 		}
-		if (key === 'host') {
+		if (key === 'HOST') {
 			return 'http://localhost:3100';
 		}
-		if (key === 'ssumRegistrationPage') {
+		if (key === 'SSUM_REGISTRATION_PAGE') {
 			return hetArchiefRegisterUrl;
 		}
 		return key;
@@ -111,7 +111,7 @@ const getNewMockSession = () => ({
 
 describe('HetArchiefController', () => {
 	let hetArchiefController: HetArchiefController;
-	let configService: ConfigService;
+	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -151,7 +151,7 @@ describe('HetArchiefController', () => {
 			.compile();
 
 		hetArchiefController = module.get<HetArchiefController>(HetArchiefController);
-		configService = module.get<ConfigService>(ConfigService);
+		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
 	afterEach(() => {
@@ -168,14 +168,14 @@ describe('HetArchiefController', () => {
 		it('should redirect to the register url', async () => {
 			const result = await hetArchiefController.registerRoute(
 				{},
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
 			expect(result.url.split('?')[0]).toEqual(hetArchiefRegisterUrl);
 		});
 
 		it('should catch an exception when generating the register url', async () => {
-			const clientHost = configService.get('clientHost');
+			const clientHost = configService.get('CLIENT_HOST');
 			mockConfigService.get.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
@@ -189,7 +189,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
 			const result = await hetArchiefController.loginRoute(
 				{},
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -200,11 +200,11 @@ describe('HetArchiefController', () => {
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await hetArchiefController.loginRoute(
 				getNewMockSession(),
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: configService.get('clientHost'),
+				url: configService.get('CLIENT_HOST'),
 			});
 		});
 
@@ -214,7 +214,7 @@ describe('HetArchiefController', () => {
 			});
 			const result = await hetArchiefController.loginRoute(
 				{},
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toBeUndefined();
 		});
@@ -337,7 +337,7 @@ describe('HetArchiefController', () => {
 			);
 			expect(response).toEqual({
 				url: `${configService.get(
-					'host'
+					'HOST'
 				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
@@ -350,7 +350,7 @@ describe('HetArchiefController', () => {
 			const mockSession = getNewMockSession();
 			const result = await hetArchiefController.logout(
 				mockSession,
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -364,11 +364,11 @@ describe('HetArchiefController', () => {
 			mockSession.idp = null;
 			const result = await hetArchiefController.logout(
 				mockSession,
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: configService.get('clientHost'),
+				url: configService.get('CLIENT_HOST'),
 			});
 		});
 
@@ -378,7 +378,7 @@ describe('HetArchiefController', () => {
 			});
 			const result = await hetArchiefController.logout(
 				getNewMockSession(),
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toBeUndefined();
 		});

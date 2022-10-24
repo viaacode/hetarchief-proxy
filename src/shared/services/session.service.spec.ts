@@ -9,16 +9,16 @@ import { SessionService } from '~shared/services/session.service';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'environment') {
+		if (key === 'ENVIRONMENT') {
 			return 'production';
 		}
-		if (key === 'cookieSecret') {
+		if (key === 'COOKIE_SECRET') {
 			return 'thecookiesecret';
 		}
-		if (key === 'cookieMaxAge') {
+		if (key === 'COOKIE_MAX_AGE') {
 			return '86400';
 		}
-		if (key === 'redisConnectionString') {
+		if (key === 'REDIS_CONNECTION_STRING') {
 			return 'redis connection string';
 		}
 		return key;

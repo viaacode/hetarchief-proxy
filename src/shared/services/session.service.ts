@@ -5,7 +5,7 @@ import session from 'express-session';
 import { createClient, RedisClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 const FileStore = SessionFileStore(session);
 
@@ -14,7 +14,7 @@ export class SessionService {
 	private readonly logger = new Logger(SessionService.name);
 	private redisClient: RedisClient;
 
-	constructor(private configService: ConfigService) {}
+	constructor(private configService: ConfigService<Configuration>) {}
 
 	public async clearRedis(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
@@ -43,10 +43,10 @@ export class SessionService {
 	 * Returns the session config for the express session middleware
 	 */
 	public async getSessionConfig(): Promise<session.SessionOptions> {
-		const environment = getConfig(this.configService, 'environment');
-		const cookieSecret = getConfig(this.configService, 'cookieSecret');
-		const cookieMaxAge = getConfig(this.configService, 'cookieMaxAge');
-		const redisConnectionString = getConfig(this.configService, 'redisConnectionString');
+		const environment = this.configService.get('ENVIRONMENT');
+		const cookieSecret = this.configService.get('COOKIE_SECRET');
+		const cookieMaxAge = this.configService.get('COOKIE_MAX_AGE');
+		const redisConnectionString = this.configService.get('REDIS_CONNECTION_STRING');
 
 		const isProduction = environment !== 'local' && environment !== 'test';
 

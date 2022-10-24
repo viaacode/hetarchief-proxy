@@ -44,7 +44,7 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'proxyApiKey') {
+		if (key === 'PROXY_API_KEY') {
 			return '';
 		}
 		return key;
