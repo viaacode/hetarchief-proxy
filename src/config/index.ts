@@ -85,7 +85,7 @@ const config = (): Configuration => {
 		TICKET_SERVICE_CERTIFICATE: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_CERT', true)),
 		TICKET_SERVICE_KEY: cleanMultilineEnv(getEnvValue('TICKET_SERVICE_KEY', true)),
 		TICKET_SERVICE_PASSPHRASE: getEnvValue('TICKET_SERVICE_PASSPHRASE', true),
-		TICKET_SERVICE_MAX_AGE: parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
+		TICKET_SERVICE_MAXAGE: parseInt(getEnvValue('TICKET_SERVICE_MAXAGE', true), 10),
 		MEDIA_SERVICE_URL: getEnvValue('MEDIA_SERVICE_URL', true),
 		ENABLE_SEND_EMAIL: getEnvValue('ENABLE_SEND_EMAIL', true) === 'true',
 		CAMPAIGN_MONITOR_API_ENDPOINT: getEnvValue('CAMPAIGN_MONITOR_API_ENDPOINT', false),

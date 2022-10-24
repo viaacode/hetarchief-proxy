@@ -53,7 +53,7 @@ export class PlayerTicketService {
 				passphrase: this.configService.get('TICKET_SERVICE_PASSPHRASE'),
 			},
 		});
-		this.ticketServiceMaxAge = this.configService.get('TICKET_SERVICE_MAX_AGE');
+		this.ticketServiceMaxAge = this.configService.get('TICKET_SERVICE_MAXAGE');
 		this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
 		this.host = this.configService.get('HOST');
 	}
