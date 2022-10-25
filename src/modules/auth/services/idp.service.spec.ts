@@ -14,7 +14,7 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findByMaintainerId: jest.fn(),
 };
 
-const meemooAdminOrganizationIds = ['OR-w66976m'];
+const meemooAdminOrganizationIds = 'OR-w66976m';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): any => {
@@ -35,7 +35,7 @@ const getLdapUser = () => ({
 		oNickname: ['Testbeeld'],
 		apps: ['hetarchief-beheer'],
 		organizationalStatus: [''],
-		o: meemooAdminOrganizationIds,
+		o: meemooAdminOrganizationIds.split(','),
 	},
 	name_id: 'test@studiohyperdrive.be',
 	session_index: 'session-index',
@@ -138,7 +138,7 @@ describe('IdpService', () => {
 
 		it('should assign the Meemoo Admin group if user has archief-beheer and the Meemoo Organization', async () => {
 			const ldapUser = getLdapUser();
-			ldapUser.attributes.o = meemooAdminOrganizationIds;
+			ldapUser.attributes.o = meemooAdminOrganizationIds.split(',');
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);

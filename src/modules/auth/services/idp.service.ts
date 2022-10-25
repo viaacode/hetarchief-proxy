@@ -22,7 +22,9 @@ export class IdpService {
 		protected spacesService: SpacesService,
 		private readonly translationsService: TranslationsService
 	) {
-		this.meemooAdminOrganizationIds = configService.get('MEEMOO_ADMIN_ORGANIZATION_IDS');
+		this.meemooAdminOrganizationIds = configService
+			.get('MEEMOO_ADMIN_ORGANIZATION_IDS')
+			.split(',');
 	}
 
 	public hasSpecificLogoutPage(idp: Idp): boolean {
