@@ -79,7 +79,7 @@ export class IdpService {
 		// check for kiosk permissions -- otherwise it's a regular user
 		if (get(ldapUser, 'attributes.organizationalStatus', []).includes('kiosk')) {
 			// organization needs to have a space to be a kiosk user
-			const maintainerId = false && get(ldapUser, 'attributes.o[0]');
+			const maintainerId = get(ldapUser, 'attributes.o[0]');
 			if (!maintainerId) {
 				throw new Error(
 					`${NO_ORG_LINKED}${this.translationsService.t(
