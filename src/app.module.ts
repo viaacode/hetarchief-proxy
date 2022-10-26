@@ -1,3 +1,4 @@
+import { AdminCoreModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -5,11 +6,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
-import { ContentPagesModule } from '~modules/admin/content-pages';
-import { AdminNavigationsModule } from '~modules/admin/navigations';
-import { AdminPermissionsModule } from '~modules/admin/permissions';
-import { AdminTranslationsModule } from '~modules/admin/translations';
-import { AdminUserGroupsModule } from '~modules/admin/user-groups';
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
@@ -35,21 +31,17 @@ import { SessionService } from '~shared/services/session.service';
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			envFilePath: '.env/.env.local',
+			ignoreEnvFile: true, // loading .env manually with dotenv so we can get correct config behavior
 			load: [config],
 			validationSchema: configValidationSchema,
 			expandVariables: true,
 		}),
 		ScheduleModule.forRoot(),
-		AdminNavigationsModule,
-		AdminPermissionsModule,
-		AdminTranslationsModule,
-		AdminUserGroupsModule,
+
 		AuthModule,
 		CampaignMonitorModule,
 		CollectionsModule,
 		ContentPartnersModule,
-		ContentPagesModule,
 		AssetsModule,
 		DataModule,
 		EventsModule,
@@ -66,6 +58,7 @@ import { SessionService } from '~shared/services/session.service';
 		VisitsModule,
 		ClientCacheModule,
 		NotFoundModule,
+		AdminCoreModule,
 	],
 	controllers: [],
 	providers: [

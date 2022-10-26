@@ -1,3 +1,4 @@
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -35,7 +36,6 @@ import {
 } from '../media.types';
 import { MediaService } from '../services/media.service';
 
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { TranslationsService } from '~modules/translations/services/translations.service';

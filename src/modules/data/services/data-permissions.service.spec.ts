@@ -1,3 +1,4 @@
+import { ContentPagesService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -7,7 +8,6 @@ import { QueryOrigin } from '../types';
 
 import { DataPermissionsService } from './data-permissions.service';
 
-import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 

@@ -56,7 +56,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 		let url;
 
 		try {
-			url = this.configService.get('ORGANIZATIONS_API_V_2_URL');
+			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
 
 			const queryBody = {
 				query: `query contentpartners {

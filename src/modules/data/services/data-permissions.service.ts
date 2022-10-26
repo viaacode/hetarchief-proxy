@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { ContentPagesService } from '@meemoo/admin-core-api';
 import {
 	forwardRef,
 	Inject,
@@ -17,7 +18,6 @@ import { Configuration } from '~config';
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { QueryOrigin } from '../types';
 
-import { ContentPagesService } from '~modules/admin/content-pages/services/content-pages.service';
 import { Permission, User } from '~modules/users/types';
 
 type IsAllowed = (user: User, query: string, variables: any) => Promise<boolean>;

@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import queryString, { stringifyUrl } from 'query-string';
+import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
 

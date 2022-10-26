@@ -1,5 +1,0 @@
-query getFileByRepresentationSchemaIdentifier($id: String) {
-	object_file(where: { representation_schema_identifier: { _eq: $id } }) {
-		schema_embed_url
-	}
-}

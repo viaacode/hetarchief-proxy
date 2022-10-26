@@ -1,10 +1,10 @@
+import { SiteVariablesService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cache } from 'cache-manager';
 
 import { TranslationsService } from './translations.service';
 
-import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSiteVariablesService: Partial<Record<keyof SiteVariablesService, jest.SpyInstance>> = {
