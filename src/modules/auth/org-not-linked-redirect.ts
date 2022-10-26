@@ -17,6 +17,7 @@ import { Idp } from '~shared/auth/auth.types';
  * Which throws a 404 not found
  *
  * This way it works, but it also throws the error :s
+ * Note: Doesn't seem to work locally
  */
 export function orgNotLinkedLogoutAndRedirectToErrorPage(
 	res: Response,
