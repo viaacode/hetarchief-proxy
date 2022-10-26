@@ -30,10 +30,10 @@ const mockContentPagesService = jest.fn();
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'GRAPHQL_URL') {
+		if (key === 'GRAPHQL_URL_HET_ARCHIEF') {
 			return 'http://localhost/v1/graphql/';
 		}
-		if (key === 'GRAPHQL_SECRET') {
+		if (key === 'GRAPHQL_SECRET_HET_ARCHIEF') {
 			return 'graphQl-$ecret';
 		}
 		if (key === 'GRAPHQL_ENABLE_WHITELIST') {
