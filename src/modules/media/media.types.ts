@@ -12,6 +12,10 @@ export enum MediaFormat {
 	AUDIO = 'audio',
 }
 
+export type SeoInfo = {
+	title: string;
+};
+
 export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<SearchFilterField>;
 	MAX_COUNT_SEARCH_RESULTS: number;
