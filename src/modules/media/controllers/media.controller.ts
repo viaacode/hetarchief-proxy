@@ -32,7 +32,7 @@ import {
 	License,
 	Media,
 	MediaFormat,
-	SeoInfo,
+	MediaSeo,
 } from '../media.types';
 import { MediaService } from '../services/media.service';
 
@@ -142,10 +142,13 @@ export class MediaController {
 	public async getMediaSeoById(
 		@Headers('referer') referer: string,
 		@Param('id') id: string
-	): Promise<SeoInfo> {
+	): Promise<MediaSeo> {
 		const object = await this.mediaService.findBySchemaIdentifier(id, referer);
+
+		const limitedObject = this.applyLicensesToObject(object, false) as Media | Partial<Media>;
+
 		return {
-			title: object?.name,
+			name: limitedObject?.name,
 		};
 	}
 

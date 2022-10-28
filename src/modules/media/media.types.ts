@@ -12,9 +12,7 @@ export enum MediaFormat {
 	AUDIO = 'audio',
 }
 
-export type SeoInfo = {
-	title: string;
-};
+export type MediaSeo = Pick<Media, 'name'>;
 
 export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<SearchFilterField>;
