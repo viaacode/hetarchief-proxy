@@ -5,6 +5,8 @@ import queryString from 'query-string';
 
 import { getConfig } from '~config';
 
+import { NO_ORG_LINKED } from '../constants';
+
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
@@ -80,9 +82,9 @@ export class IdpService {
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
 			if (!maintainerId) {
 				throw new Error(
-					this.translationsService.t(
+					`${NO_ORG_LINKED}${this.translationsService.t(
 						'modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
-					)
+					)}`
 				);
 			}
 			if (await this.spacesService.findByMaintainerId(maintainerId)) {
