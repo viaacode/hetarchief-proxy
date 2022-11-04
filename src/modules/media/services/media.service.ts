@@ -7,7 +7,7 @@ import got, { Got } from 'got';
 import { find, get, isEmpty, set, unset } from 'lodash';
 import convert from 'xml-js';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { MediaQueryDto } from '../dto/media.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
@@ -41,12 +41,12 @@ export class MediaService {
 	private gotInstance: Got;
 
 	constructor(
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService
 	) {
 		this.gotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'elasticSearchUrl'),
+			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
@@ -250,7 +250,7 @@ export class MediaService {
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		// Check licenses of objects
-		if (!getConfig(this.configService, 'ignoreObjectLicenses')) {
+		if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			unset(esQuery, 'query.match_all');
 			set(esQuery, 'query.bool.should', [
 				{
@@ -268,7 +268,7 @@ export class MediaService {
 		}
 
 		const id = randomUUID();
-		if (getConfig(this.configService, 'elasticsearchLogQueries')) {
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
 				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
 					esQuery
@@ -276,7 +276,7 @@ export class MediaService {
 			);
 		}
 		const mediaResponse = await this.executeQuery(esIndex, esQuery);
-		if (getConfig(this.configService, 'elasticsearchLogQueries')) {
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
 				`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
 					mediaResponse

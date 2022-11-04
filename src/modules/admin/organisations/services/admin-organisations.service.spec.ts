@@ -40,7 +40,7 @@ const mockGqlAvOOrganisation = {
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'databaseApplicationType') {
+		if (key === 'DATABASE_APPLICATION_TYPE') {
 			return AvoOrHetArchief.hetArchief;
 		}
 		return key;

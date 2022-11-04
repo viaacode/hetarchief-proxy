@@ -14,7 +14,7 @@ import { Request } from 'express';
 import { compact, fromPairs, get, isEmpty, keys, set } from 'lodash';
 import moment from 'moment';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import {
 	AvoOrHetArchief,
@@ -66,11 +66,11 @@ export class ContentPagesService {
 
 	constructor(
 		@Inject(forwardRef(() => DataService)) protected dataService: DataService,
-		protected configService: ConfigService,
+		protected configService: ConfigService<Configuration>,
 		protected playerTicketService: PlayerTicketService,
 		protected organisationsService: AdminOrganisationsService
 	) {
-		this.avoOrHetArchief = getConfig(this.configService, 'databaseApplicationType');
+		this.avoOrHetArchief = this.configService.get('DATABASE_APPLICATION_TYPE');
 		this.queries = CONTENT_PAGE_QUERIES[this.avoOrHetArchief];
 	}
 

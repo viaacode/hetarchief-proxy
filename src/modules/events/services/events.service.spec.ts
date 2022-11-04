@@ -12,7 +12,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'graphQlUrlLogging') {
+		if (key === 'GRAPHQL_URL_LOGGING') {
 			return 'http://localhost/v1/graphql/';
 		}
 		return key;

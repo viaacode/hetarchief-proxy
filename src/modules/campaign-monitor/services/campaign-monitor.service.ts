@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get } from 'lodash';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { CampaignMonitorData, CampaignMonitorVisitData } from '../dto/campaign-monitor.dto';
 import { Template, VisitEmailInfo } from '../types';
@@ -21,27 +21,24 @@ export class CampaignMonitorService {
 	private clientHost: string;
 	private rerouteEmailsTo: string;
 
-	constructor(private configService: ConfigService) {
+	constructor(private configService: ConfigService<Configuration>) {
 		this.gotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'campaignMonitorApiEndpoint'),
+			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
 			resolveBodyOnly: true,
-			username: getConfig(this.configService, 'campaignMonitorApiKey'),
+			username: this.configService.get('CAMPAIGN_MONITOR_API_KEY'),
 			password: '.',
 			responseType: 'json',
 		});
 
-		this.isEnabled = getConfig(this.configService, 'enableSendEmail');
-		this.rerouteEmailsTo = getConfig(this.configService, 'rerouteEmailsTo');
+		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
+		this.rerouteEmailsTo = this.configService.get('REROUTE_EMAILS_TO');
 
-		this.clientHost = getConfig(this.configService, 'clientHost');
+		this.clientHost = this.configService.get('CLIENT_HOST');
 
 		this.templateToCampaignMonitorIdMap = {
-			VISIT_REQUEST_CP: getConfig(
-				this.configService,
-				'campaignMonitorTemplateVisitRequestCp'
-			),
-			VISIT_APPROVED: getConfig(this.configService, 'campaignMonitorTemplateVisitApproved'),
-			VISIT_DENIED: getConfig(this.configService, 'campaignMonitorTemplateVisitDenied'),
+			VISIT_REQUEST_CP: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP'),
+			VISIT_APPROVED: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED'),
+			VISIT_DENIED: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED'),
 		};
 	}
 

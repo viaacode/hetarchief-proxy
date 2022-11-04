@@ -13,7 +13,7 @@ import got, { Got } from 'got';
 import { DocumentNode } from 'graphql';
 import { print } from 'graphql/language/printer';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { GraphQlResponse, QueryOrigin } from '../types';
@@ -29,14 +29,14 @@ export class DataService {
 	private gotInstance: Got;
 
 	constructor(
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		@Inject(forwardRef(() => DataPermissionsService))
 		private dataPermissionsService: DataPermissionsService
 	) {
 		this.gotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'graphQlUrl'),
+			prefixUrl: this.configService.get('GRAPHQL_URL'),
 			headers: {
-				'x-hasura-admin-secret': getConfig(this.configService, 'graphQlSecret'),
+				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET'),
 			},
 			resolveBodyOnly: true,
 			responseType: 'json',
@@ -86,7 +86,7 @@ export class DataService {
 			};
 
 			const id = randomUUID();
-			if (getConfig(this.configService, 'graphqlLogQueries')) {
+			if (this.configService.get('GRAPHQL_LOG_QUERIES')) {
 				this.logger.log(
 					`${id}, Executing graphql query: ${queryData.query}  ---  ${JSON.stringify(
 						queryData.variables
@@ -97,7 +97,7 @@ export class DataService {
 				json: queryData,
 				resolveBodyOnly: true, // this is duplicate but fixes a typing error
 			});
-			if (getConfig(this.configService, 'graphqlLogQueries')) {
+			if (this.configService.get('GRAPHQL_LOG_QUERIES')) {
 				this.logger.log(`${id}, Response from graphql query: ${JSON.stringify(data)}`);
 			}
 			if (data.errors) {

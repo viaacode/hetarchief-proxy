@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import saml2, { IdentityProvider, ServiceProvider } from 'saml2-js';
 import convert from 'xml-js';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
 
@@ -19,11 +19,11 @@ export abstract class SamlService {
 	private ssoLoginUrl: string | undefined;
 	private ssoLogoutUrl: string | undefined;
 
-	constructor(protected configService: ConfigService) {}
+	constructor(protected configService: ConfigService<Configuration>) {}
 
 	public async init(samlConfig: SamlConfig) {
 		const { url, entityId, privateKey, certificate, assertEndpoint } = samlConfig;
-		if (getConfig(this.configService, 'environment') !== 'production') {
+		if (this.configService.get('ENVIRONMENT') !== 'production') {
 			this.logger.log('SAML config ', {
 				url,
 				entityId,

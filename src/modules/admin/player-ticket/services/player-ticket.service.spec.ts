@@ -7,6 +7,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import Mock = jest.Mock;
 import {
 	GetFileByRepresentationSchemaIdentifierQuery,
 	GetThumbnailUrlByIdQuery,
@@ -17,19 +18,25 @@ import { PlayerTicketService } from '~modules/admin/player-ticket/services/playe
 import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'elasticSearchUrl') {
+const mockConfigService: Partial<Record<keyof ConfigService, Mock>> = {
+	get: jest.fn((key: keyof Configuration): string | number | boolean => {
+		if (key === 'ELASTIC_SEARCH_URL') {
 			return 'http://elasticsearch'; // should be a syntactically valid url
 		}
-		if (key === 'ticketServiceUrl') {
+		if (key === 'TICKET_SERVICE_URL') {
 			return 'http://ticketservice';
 		}
-		if (key === 'mediaServiceUrl') {
+		if (key === 'MEDIA_SERVICE_URL') {
 			return 'http://mediaservice';
 		}
-		if (key === 'databaseApplicationType') {
+		if (key === 'DATABASE_APPLICATION_TYPE') {
 			return AvoOrHetArchief.hetArchief;
+		}
+		if (key === 'HOST') {
+			return 'http://bezoek.test';
+		}
+		if (key === 'TICKET_SERVICE_MAXAGE') {
+			return 14401;
 		}
 		return key;
 	}),
@@ -95,7 +102,7 @@ describe('PlayerTicketService', () => {
 
 	describe('getPlayableUrl', () => {
 		it('returns a playable url', async () => {
-			nock('http://ticketservice/')
+			nock('http://ticketservice')
 				.get('/vrt/item-1')
 				.query(true)
 				.reply(200, { jwt: 'secret-jwt-token' });
@@ -104,13 +111,13 @@ describe('PlayerTicketService', () => {
 		});
 
 		it('uses the fallback referer if none was set', async () => {
-			nock('http://ticketservice/')
+			nock('http://ticketservice')
 				.get('/vrt/item-1')
 				.query({
 					app: 'OR-*',
 					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
+					referer: 'http://bezoek.test',
+					maxage: mockConfigService.get('TICKET_SERVICE_MAXAGE'),
 				})
 				.reply(200, { jwt: 'secret-jwt-token' });
 			const url = await playerTicketService.getPlayableUrl('vrt/item-1', undefined);
@@ -159,7 +166,7 @@ describe('PlayerTicketService', () => {
 
 	describe('getPlayerToken', () => {
 		it('returns a token for a playable item', async () => {
-			nock('http://ticketservice/')
+			nock('http://ticketservice')
 				.get('/vrt/browse.mp4')
 				.query(true)
 				.reply(200, mockPlayerTicket);
@@ -169,13 +176,13 @@ describe('PlayerTicketService', () => {
 		});
 
 		it('uses the fallback referer if none was set', async () => {
-			nock('http://ticketservice/')
+			nock('http://ticketservice')
 				.get('/vrt/browse.mp4')
 				.query({
 					app: 'OR-*',
 					client: '',
-					referer: 'host',
-					maxage: 'ticketServiceMaxAge',
+					referer: 'http://bezoek.test',
+					maxage: mockConfigService.get('TICKET_SERVICE_MAXAGE'),
 				})
 				.reply(200, mockPlayerTicket);
 			const token = await playerTicketService.getPlayerToken('vrt/browse.mp4', undefined);
@@ -185,7 +192,7 @@ describe('PlayerTicketService', () => {
 
 	describe('getThumbnailToken', () => {
 		it('returns a thumbnail token', async () => {
-			nock('http://ticketservice/')
+			nock('http://ticketservice')
 				.get('/TESTBEELD/keyframes_all')
 				.query(true)
 				.reply(200, mockPlayerTicket);

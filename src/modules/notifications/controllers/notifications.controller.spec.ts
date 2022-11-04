@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
-import i18n from 'i18next';
 
 import { Configuration } from '~config';
 
@@ -109,7 +108,7 @@ const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'proxyApiKey') {
+		if (key === 'PROXY_API_KEY') {
 			return mockApiKey;
 		}
 		return key;
@@ -180,7 +179,7 @@ describe('NotificationsController', () => {
 		it('should throw an error if the user is not logged in', async () => {
 			let error;
 			try {
-				const notifications = await notificationsController.getNotifications(
+				await notificationsController.getNotifications(
 					{ page: 1, size: 20 },
 					new SessionUserEntity({
 						...mockUser,

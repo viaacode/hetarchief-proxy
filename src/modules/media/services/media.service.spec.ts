@@ -17,13 +17,13 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'elasticSearchUrl') {
+		if (key === 'ELASTIC_SEARCH_URL') {
 			return 'http://elasticsearch'; // should be a syntactically valid url
 		}
-		if (key === 'ticketServiceUrl') {
+		if (key === 'TICKET_SERVICE_URL') {
 			return 'http://ticketservice';
 		}
-		if (key === 'mediaServiceUrl') {
+		if (key === 'MEDIA_SERVICE_URL') {
 			return 'http://mediaservice';
 		}
 		return key;

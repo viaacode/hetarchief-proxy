@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { Avo } from '@viaa/avo2-types';
 import { every, get, some, without } from 'lodash';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { GraphQlQueryDto } from '../dto/graphql-query.dto';
 import { QueryOrigin } from '../types';
@@ -85,22 +85,22 @@ export class DataPermissionsService {
 	};
 
 	constructor(
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		@Inject(forwardRef(() => ContentPagesService))
 		private contentPagesService: ContentPagesService
 	) {
-		if (configService.get('environment') !== 'production') {
+		if (configService.get('ENVIRONMENT') !== 'production') {
 			this.logger.log('GraphQl config: ', {
-				url: getConfig(this.configService, 'graphQlUrl'),
-				secret: getConfig(this.configService, 'graphQlSecret'),
-				whitelistEnabled: getConfig(this.configService, 'graphQlEnableWhitelist'),
+				url: this.configService.get('GRAPHQL_URL'),
+				secret: this.configService.get('GRAPHQL_SECRET'),
+				whitelistEnabled: this.configService.get('GRAPHQL_ENABLE_WHITELIST'),
 			});
 		}
 		this.initWhitelist();
 	}
 
 	public async initWhitelist(): Promise<void> {
-		this.whitelistEnabled = getConfig(this.configService, 'graphQlEnableWhitelist');
+		this.whitelistEnabled = this.configService.get('GRAPHQL_ENABLE_WHITELIST');
 
 		const whitelistFiles: Record<QueryOrigin, string[]> = {
 			PROXY: ['scripts/proxy-whitelist.json', 'scripts/proxy-whitelist-hetarchief.json'],
