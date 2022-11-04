@@ -11,12 +11,15 @@ import { AssetsService } from './assets.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
+	get: jest.fn((key: keyof Configuration): string => {
 		if (key === 'ASSET_SERVER_TOKEN_ENDPOINT') {
 			return 'http://assettoken/s3';
 		}
 		if (key === 'ASSET_SERVER_ENDPOINT') {
-			return 'http://hetarchief.assets/';
+			return 'http://hetarchief.assets';
+		}
+		if (key === 'ASSET_SERVER_BUCKET_NAME') {
+			return 'hetarchief';
 		}
 
 		return key;
@@ -90,11 +93,14 @@ describe('AssetsService', () => {
 
 	describe('upload', () => {
 		it('can upload a file to S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			const url = await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
-			expect(
-				url.startsWith('http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE')
-			).toBeTruthy();
+
+			expect(url.split('/SPACE_IMAGE')[0]).toEqual(
+				`${mockConfigService.get('ASSET_SERVER_ENDPOINT')}/${mockConfigService.get(
+					'ASSET_SERVER_BUCKET_NAME'
+				)}`
+			);
 		});
 
 		it('throws an exception when the S3 client could not be created', async () => {
@@ -117,15 +123,17 @@ describe('AssetsService', () => {
 				creation: '2019-12-17T19:10:38.000Z',
 				secret: 'jWX47N9Sa6v2txQDaD7kyjfXa3gA2m2m',
 			});
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			const url = await assetsService.upload(AssetFileType.SPACE_IMAGE, mockFile);
-			expect(
-				url.startsWith('http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE')
-			).toBeTruthy();
+			expect(url.split('/SPACE_IMAGE')[0]).toEqual(
+				`${mockConfigService.get('ASSET_SERVER_ENDPOINT')}/${mockConfigService.get(
+					'ASSET_SERVER_BUCKET_NAME'
+				)}`
+			);
 		});
 
 		it('throws an exception if the file could not be uploaded to S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			mockS3Instance.putObject.mockImplementationOnce(() => {
 				throw new Error('AWS error');
 			});
@@ -139,7 +147,7 @@ describe('AssetsService', () => {
 		});
 
 		it('the promise is rejected if file could not be uploaded to S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			mockS3Instance.putObject.mockImplementationOnce((obj, cb) => {
 				cb(new Error('AWS error'));
 			});
@@ -155,22 +163,26 @@ describe('AssetsService', () => {
 
 	describe('delete', () => {
 		it('can delete a file from S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			const deleted = await assetsService.delete(
-				'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
+				`${mockConfigService.get('ASSET_SERVER_ENDPOINT')}/${mockConfigService.get(
+					'ASSET_SERVER_BUCKET_NAME'
+				)}/SPACE_IMAGE/image.jpg`
 			);
 			expect(deleted).toBeTruthy();
 		});
 
 		it('throws an exception if the file could not be deleted from S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			mockS3Instance.deleteObject.mockImplementationOnce(() => {
 				throw new Error('AWS error');
 			});
 			let error;
 			try {
 				await assetsService.delete(
-					'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
+					`${mockConfigService.get('ASSET_SERVER_ENDPOINT')}/${mockConfigService.get(
+						'ASSET_SERVER_BUCKET_NAME'
+					)}/SPACE_IMAGE/image.jpg`
 				);
 			} catch (e) {
 				error = e;
@@ -179,14 +191,16 @@ describe('AssetsService', () => {
 		});
 
 		it('the promise is rejected if file could not be deleted from S3', async () => {
-			nock('http://assettoken/s3').post('/').reply(201, {});
+			nock(mockConfigService.get('ASSET_SERVER_TOKEN_ENDPOINT')).post('/').reply(201, {});
 			mockS3Instance.deleteObject.mockImplementationOnce((obj, cb) => {
 				cb(new Error('AWS error'));
 			});
 			let error;
 			try {
 				await assetsService.delete(
-					'http://hetarchief.assets/assetServerBucketName/SPACE_IMAGE/image.jpg'
+					`${mockConfigService.get('ASSET_SERVER_ENDPOINT')}/${mockConfigService.get(
+						'ASSET_SERVER_BUCKET_NAME'
+					)}/SPACE_IMAGE/image.jpg`
 				);
 			} catch (e) {
 				error = e;
