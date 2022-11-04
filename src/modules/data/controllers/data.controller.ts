@@ -17,6 +17,7 @@ export class DataController {
 		@Body() dataQueryDto: GraphQlQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
-		return this.dataService.executeClientQuery(user.getUser(), dataQueryDto);
+		// return this.dataService.executeClientQuery(user.getUser(), dataQueryDto);
+		return this.dataService.execute(dataQueryDto.query, dataQueryDto.variables);
 	}
 }

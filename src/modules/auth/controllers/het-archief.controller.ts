@@ -16,10 +16,11 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import queryString, { stringifyUrl } from 'query-string';
+import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
 
+import { NO_ORG_LINKED } from '../constants';
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
@@ -214,12 +215,14 @@ export class HetArchiefController {
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
-			if (err.message.includes('[NO_ORG_LINKED]')) {
+			if (err.message.includes(NO_ORG_LINKED)) {
+				this.logger.debug('orgNotLinkedLogoutAndRedirectToErrorPage');
+
 				return orgNotLinkedLogoutAndRedirectToErrorPage(
 					res,
 					proxyHost,
 					Idp.HETARCHIEF,
-					err.message,
+					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.t(
 						'modules/auth/controllers/het-archief___account-configuratie'
 					)
