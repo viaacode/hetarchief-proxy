@@ -16,10 +16,10 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
-import queryString from 'query-string';
 
 import { Configuration } from '~config';
 
+import { NO_ORG_LINKED } from '../constants';
 import { IdpService } from '../services/idp.service';
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
@@ -180,12 +180,12 @@ export class MeemooController {
 					statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				};
 			}
-			if (err.message.includes('[NO_ORG_LINKED]')) {
+			if (err.message.includes(NO_ORG_LINKED)) {
 				return orgNotLinkedLogoutAndRedirectToErrorPage(
 					res,
 					proxyHost,
 					Idp.MEEMOO,
-					err.message,
+					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.t(
 						'modules/auth/controllers/meemoo___account-configuratie'
 					)

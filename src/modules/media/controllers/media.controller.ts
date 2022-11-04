@@ -33,6 +33,7 @@ import {
 	License,
 	Media,
 	MediaFormat,
+	MediaSeo,
 } from '../media.types';
 import { MediaService } from '../services/media.service';
 
@@ -48,7 +49,6 @@ import { EventsHelper } from '~shared/helpers/events';
 
 @ApiTags('Media')
 @Controller('media')
-@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 export class MediaController {
 	private logger: Logger = new Logger(MediaController.name, { timestamp: true });
 
@@ -65,6 +65,7 @@ export class MediaController {
 	// handy on local environment due to limited test data in a single index
 	// Can be re-enabled in phase2 for cross-bezoekersruimte search
 	@Post()
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getMedia(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto
@@ -77,6 +78,7 @@ export class MediaController {
 	}
 
 	@Get('player-ticket')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getPlayableUrl(
 		@Headers('referer') referer: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
@@ -89,6 +91,7 @@ export class MediaController {
 	}
 
 	@Get('thumbnail-ticket')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getThumbnailUrl(
 		@Headers('referer') referer: string,
 		@Query() thumbnailQuery: ThumbnailQueryDto
@@ -98,6 +101,7 @@ export class MediaController {
 	}
 
 	@Get(':id')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getMediaById(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
@@ -134,9 +138,24 @@ export class MediaController {
 		return limitedObject;
 	}
 
+	@Get('seo/:id')
+	public async getMediaSeoById(
+		@Headers('referer') referer: string,
+		@Param('id') id: string
+	): Promise<MediaSeo> {
+		const object = await this.mediaService.findBySchemaIdentifier(id, referer);
+
+		const limitedObject = this.applyLicensesToObject(object, false) as Media | Partial<Media>;
+
+		return {
+			name: limitedObject?.name,
+		};
+	}
+
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async export(
 		@Param('id') id: string,
 		@Req() request: Request,
@@ -176,6 +195,7 @@ export class MediaController {
 	}
 
 	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getRelated(
 		@Headers('referer') referer: string,
 		@Param('esIndex') maintainerId: string,
@@ -207,6 +227,7 @@ export class MediaController {
 	}
 
 	@Get('related/count')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async countRelated(
 		@Query() countRelatedQuery: MeemooIdentifiersQueryDto
 	): Promise<Record<string, number>> {
@@ -214,6 +235,7 @@ export class MediaController {
 	}
 
 	@Get(':esIndex/:id/similar')
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
@@ -236,6 +258,7 @@ export class MediaController {
 
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getMediaOnIndex(
 		@Headers('referer') referer: string,
 		@Body() queryDto: MediaQueryDto,
