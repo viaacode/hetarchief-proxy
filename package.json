@@ -44,7 +44,7 @@
     "@nestjs/swagger": "5.2.0",
     "@studiohyperdrive/pagination": "1.0.0",
     "@viaa/avo2-types": "2.44.8",
-    "@meemoo/admin-core-api": "2.0.4",
+    "@meemoo/admin-core-api": "2.0.6",
     "app-root-path": "3.0.0",
     "aws-sdk": "2.1097.0",
     "blend-promise-utils": "1.28.0",
