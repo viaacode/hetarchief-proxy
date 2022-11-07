@@ -4,7 +4,7 @@ query getContentPages(
 	$limit: Int = 10
 	$orderBy: [app_content_order_by!] = {}
 	$labelIds: [Int!] = []
-	$orUserGroupIds: [app_content_content_labels_bool_exp] = {}
+	$orUserGroupIds: [app_content_content_labels_bool_exp!] = {}
 ) {
 	app_content(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
 		id
