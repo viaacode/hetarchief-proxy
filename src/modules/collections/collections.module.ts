@@ -1,9 +1,9 @@
+import { PlayerTicketModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 
 import { CollectionsController } from './controllers/collections.controller';
 import { CollectionsService } from './services/collections.service';
 
-import { PlayerTicketModule } from '~modules/admin/player-ticket/player-ticket.module';
 import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';

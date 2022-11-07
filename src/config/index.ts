@@ -1,10 +1,9 @@
+import { AvoOrHetArchief } from '@meemoo/admin-core-api';
 import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
 
 import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
-
-import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 const VALID_MIME_TYPES: string[] = ['image/png', 'image/gif', 'image/jpeg', 'image/bmp'];
@@ -41,11 +40,9 @@ const config = (): Configuration => {
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
 		PORT: parseInt(getEnvValue('PORT', false), 10) || DEFAULT_CONFIG.port,
 		PROXY_API_KEY: getEnvValue('PROXY_API_KEY', true),
-		GRAPHQL_URL: getEnvValue('GRAPHQL_URL', true),
-		GRAPHQL_SECRET: getEnvValue('GRAPHQL_SECRET', env !== 'local'), // Not required on localhost
+		GRAPHQL_URL_HET_ARCHIEF: getEnvValue('GRAPHQL_URL_HET_ARCHIEF', true),
+		GRAPHQL_SECRET_HET_ARCHIEF: getEnvValue('GRAPHQL_SECRET_HET_ARCHIEF', env !== 'local'), // Not required on localhost
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
-		GRAPHQL_URL_AVO: getEnvValue('GRAPHQL_URL_AVO', true),
-		GRAPHQL_SECRET_AVO: getEnvValue('GRAPHQL_SECRET_AVO', true),
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
 		DATABASE_APPLICATION_TYPE: getEnvValue(
@@ -116,12 +113,10 @@ const config = (): Configuration => {
 			},
 			fileFilter: (req, file, cb) => cb(null, VALID_MIME_TYPES.includes(file.mimetype)),
 		},
-		MEEMOO_ADMIN_ORGANIZATION_IDS: (getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '')
-			.split(',')
-			.map((orgId) => orgId.trim()),
+		MEEMOO_ADMIN_ORGANIZATION_IDS: getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '',
 		REROUTE_EMAILS_TO: getEnvValue('REROUTE_EMAILS_TO', false),
 		IGNORE_OBJECT_LICENSES: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
-		ORGANIZATIONS_API_V_2_URL: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
+		ORGANIZATIONS_API_V2_URL: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
 		GRAPHQL_LOG_QUERIES: getEnvValue('GRAPHQL_LOG_QUERIES', false) === 'true',
 		CLIENT_API_KEY: getEnvValue('CLIENT_API_KEY', true),

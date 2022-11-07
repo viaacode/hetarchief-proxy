@@ -1,3 +1,4 @@
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { get } from 'lodash';
@@ -35,7 +36,6 @@ import {
 	UpdateCollectionDocument,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { DataService } from '~modules/data/services/data.service';
 import { PaginationHelper } from '~shared/helpers/pagination';

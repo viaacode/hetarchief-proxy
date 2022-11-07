@@ -1,3 +1,4 @@
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { CollectionsService } from './collections.service';
@@ -13,7 +14,6 @@ import {
 	RemoveObjectFromCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
 import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
 import { DataService } from '~modules/data/services/data.service';

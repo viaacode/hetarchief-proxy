@@ -1,7 +1,6 @@
+import { AvoOrHetArchief } from '@meemoo/admin-core-api';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-
-import { AvoOrHetArchief } from '~modules/admin/content-pages/content-pages.types';
 
 export interface Configuration {
 	ENVIRONMENT: string;
@@ -9,11 +8,9 @@ export interface Configuration {
 	CLIENT_HOST: string;
 	PORT: number;
 	PROXY_API_KEY: string;
-	GRAPHQL_URL: string;
-	GRAPHQL_SECRET: string;
+	GRAPHQL_URL_HET_ARCHIEF: string;
+	GRAPHQL_SECRET_HET_ARCHIEF: string;
 	GRAPHQL_ENABLE_WHITELIST: boolean;
-	GRAPHQL_URL_AVO: string;
-	GRAPHQL_SECRET_AVO: string;
 	GRAPHQL_URL_LOGGING: string;
 	GRAPHQL_SECRET_LOGGING: string;
 	DATABASE_APPLICATION_TYPE: AvoOrHetArchief;
@@ -50,10 +47,10 @@ export interface Configuration {
 	ASSET_SERVER_BUCKET_NAME: string;
 	TEMP_ASSET_FOLDER: string;
 	MULTER_OPTIONS: MulterOptions;
-	MEEMOO_ADMIN_ORGANIZATION_IDS: string[];
+	MEEMOO_ADMIN_ORGANIZATION_IDS: string;
 	REROUTE_EMAILS_TO: string;
 	IGNORE_OBJECT_LICENSES: boolean;
-	ORGANIZATIONS_API_V_2_URL: string;
+	ORGANIZATIONS_API_V2_URL: string;
 	ELASTICSEARCH_LOG_QUERIES: boolean;
 	GRAPHQL_LOG_QUERIES: boolean;
 	CLIENT_API_KEY: string;

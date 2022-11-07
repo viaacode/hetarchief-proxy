@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -32,7 +33,6 @@ import {
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()

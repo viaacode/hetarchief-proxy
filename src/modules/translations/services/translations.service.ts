@@ -1,3 +1,4 @@
+import { SiteVariablesService, TranslationKey } from '@meemoo/admin-core-api';
 import {
 	CACHE_MANAGER,
 	Inject,
@@ -10,8 +11,6 @@ import { Cache } from 'cache-manager';
 
 import { Translations } from '../types';
 
-import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
-import { TranslationKey } from '~modules/admin/translations/types';
 import {
 	getTranslationFallback,
 	resolveTranslationVariables,

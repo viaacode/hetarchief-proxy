@@ -1,4 +1,5 @@
-import { TranslationKey } from '~modules/admin/translations/types';
+import { TranslationKey } from '@meemoo/admin-core-api';
+
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 

@@ -34,9 +34,9 @@ export class DataService {
 		private dataPermissionsService: DataPermissionsService
 	) {
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('GRAPHQL_URL'),
+			prefixUrl: this.configService.get('GRAPHQL_URL_HET_ARCHIEF'),
 			headers: {
-				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET'),
+				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET_HET_ARCHIEF'),
 			},
 			resolveBodyOnly: true,
 			responseType: 'json',

@@ -1,3 +1,4 @@
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
@@ -16,7 +17,6 @@ import { MediaService } from '../services/media.service';
 
 import { MediaController } from './media.controller';
 
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { EventsService } from '~modules/events/services/events.service';
 import {
 	mockElasticObject1,

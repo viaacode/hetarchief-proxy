@@ -1,9 +1,0 @@
-query getContentPageLabelsByTypeAndLabels(
-	$contentType: lookup_app_content_type_enum!
-	$labels: [String!]!
-) {
-	app_content_label(where: { label: { _in: $labels }, content_type: { _eq: $contentType } }) {
-		label
-		id
-	}
-}
