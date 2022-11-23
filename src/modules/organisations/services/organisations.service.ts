@@ -127,9 +127,17 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 			})
 		);
 
+		const uniqueOrganisations = uniqBy(parsedOrganizations, 'schema_identifier');
+		const fillLogoOrganisations = uniqueOrganisations.map((org) => {
+			return {
+				...org,
+				logo: org.logo || {}, // Hasura v2.6.0 complains about null jsonb values
+			};
+		});
+
 		try {
 			await this.dataService.execute(InsertOrganisationsDocument, {
-				organizations: uniqBy(parsedOrganizations, 'schema_identifier'),
+				organizations: fillLogoOrganisations,
 			});
 		} catch (err) {
 			throw new InternalServerErrorException({
