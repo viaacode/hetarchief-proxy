@@ -39,6 +39,13 @@ export class NotificationsController {
 		private visitService: VisitsService
 	) {}
 
+	/**
+	 * alias function so that translation script correctly identifies these translations
+	 */
+	private t(key: string, variables?: any): string {
+		return getTranslationFallback(key, variables);
+	}
+
 	@UseGuards(LoggedInGuard)
 	@Get()
 	public async getNotifications(
@@ -108,7 +115,7 @@ export class NotificationsController {
 			accessEndedNotifications.length;
 		if (totalNotificationsSent > 0) {
 			return {
-				status: getTranslationFallback(
+				status: this.t(
 					'modules/notifications/controllers/notifications___notificaties-verzonden'
 				),
 				notifications: {
@@ -123,7 +130,7 @@ export class NotificationsController {
 			};
 		} else {
 			return {
-				status: getTranslationFallback(
+				status: this.t(
 					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
 				),
 				total: 0,
@@ -142,13 +149,13 @@ export class NotificationsController {
 			(visit): GqlCreateOrUpdateNotification => {
 				const endDate = formatAsBelgianDate(visit.endAt);
 				return {
-					title: getTranslationFallback(
+					title: this.t(
 						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 						{
 							name: visit.spaceName,
 						}
 					),
-					description: getTranslationFallback(
+					description: this.t(
 						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
 						{
 							endDate,
@@ -174,14 +181,14 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: getTranslationFallback(
+				title: this.t(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
 						name: visit.spaceName,
 						minutes: 15,
 					}
 				),
-				description: getTranslationFallback(
+				description: this.t(
 					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
 				),
 				visit_id: visit.id,
@@ -203,13 +210,13 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: getTranslationFallback(
+				title: this.t(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{
 						name: visit.spaceName,
 					}
 				),
-				description: getTranslationFallback(
+				description: this.t(
 					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
 				),
 				visit_id: visit.id,

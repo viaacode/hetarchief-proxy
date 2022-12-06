@@ -254,7 +254,7 @@ export class HetArchiefController {
 			) {
 				const idpUser = SessionHelper.getIdpUserInfo(session);
 				const idpLogoutUrl = await this.hetArchiefService.createLogoutRequestUrl(
-					idpUser.name_id,
+					idpUser?.name_id || 'kiosk',
 					returnToUrl
 				);
 				SessionHelper.logout(session);
