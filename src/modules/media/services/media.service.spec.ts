@@ -1,4 +1,4 @@
-import { PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
@@ -11,7 +11,6 @@ import { ElasticsearchResponse, Media } from '../media.types';
 import { MediaService } from './media.service';
 
 import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { mockObjectIe } from '~modules/media/services/__mocks__/object_ie';
 import { TestingLogger } from '~shared/logging/test-logger';
 

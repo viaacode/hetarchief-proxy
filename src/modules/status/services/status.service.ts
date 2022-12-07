@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
 import packageJson from '../../../../package.json';
@@ -6,7 +7,6 @@ import {
 	GetFirstObjectIdDocument,
 	GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { MediaService } from '~modules/media/services/media.service';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class StatusService {
 			);
 
 			/* istanbul ignore next */
-			return !!response?.data?.object_ie?.[0]?.schema_identifier;
+			return !!response?.object_ie?.[0]?.schema_identifier;
 		} catch (err) {
 			this.logger.error(err);
 			return false;

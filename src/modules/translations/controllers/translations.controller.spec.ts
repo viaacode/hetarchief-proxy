@@ -7,11 +7,6 @@ import { TranslationsController } from './translations.controller';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockTranslationsResponse = {
-	name: 'TRANSLATIONS_FRONTEND',
-	value: { key1: 'translation 1' },
-};
-
 describe('TranslationsController', () => {
 	let translationsController: TranslationsController;
 
@@ -34,15 +29,5 @@ describe('TranslationsController', () => {
 
 	it('should be defined', () => {
 		expect(translationsController).toBeDefined();
-	});
-
-	describe('getTranslations', () => {
-		it('should return the translations', async () => {
-			mockTranslationsService.getTranslations.mockResolvedValueOnce(mockTranslationsResponse);
-
-			const translations = await translationsController.getTranslationsJson();
-
-			expect(translations).toEqual(mockTranslationsResponse);
-		});
 	});
 });

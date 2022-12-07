@@ -1,1 +1,7 @@
 export type Translations = Record<string, string>;
+
+export enum TranslationKey {
+	TRANSLATIONS_FRONTEND = 'TRANSLATIONS_FRONTEND',
+	TRANSLATIONS_BACKEND = 'TRANSLATIONS_BACKEND',
+	TRANSLATIONS_ADMIN_CORE = 'TRANSLATIONS_ADMIN_CORE',
+}

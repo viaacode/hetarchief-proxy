@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
@@ -17,7 +18,6 @@ import {
 	GetSpaceMaintainerProfilesQuery,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessType } from '~modules/spaces/types';
 import { TranslationsService } from '~modules/translations/services/translations.service';

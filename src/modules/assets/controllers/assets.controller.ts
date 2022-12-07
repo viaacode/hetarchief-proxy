@@ -3,7 +3,6 @@ import {
 	Body,
 	Controller,
 	Delete,
-	Inject,
 	InternalServerErrorException,
 	Logger,
 	Post,
@@ -31,7 +30,7 @@ export class AssetsController {
 
 	constructor(
 		private assetsService: AssetsService,
-		private readonly translationsService: TranslationsService
+		private translationsService: TranslationsService
 	) {}
 
 	/**

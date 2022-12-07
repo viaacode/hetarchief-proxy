@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import {
 	Injectable,
 	InternalServerErrorException,
@@ -20,7 +21,6 @@ import {
 	DeleteOrganisationsDocument,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export default class OrganisationsService implements OnApplicationBootstrap {

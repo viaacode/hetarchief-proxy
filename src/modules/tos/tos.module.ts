@@ -1,9 +1,8 @@
+import { DataModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 
 import { TosController } from './controllers/tos.controller';
 import { TosService } from './services/tos.service';
-
-import { DataModule } from '~modules/data';
 
 @Module({
 	controllers: [TosController],

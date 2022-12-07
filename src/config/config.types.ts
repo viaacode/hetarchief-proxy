@@ -1,6 +1,6 @@
-import { AvoOrHetArchief } from '@meemoo/admin-core-api';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import type { DatabaseType } from '@viaa/avo2-types';
 
 export interface Configuration {
 	ENVIRONMENT: string;
@@ -13,7 +13,7 @@ export interface Configuration {
 	GRAPHQL_ENABLE_WHITELIST: boolean;
 	GRAPHQL_URL_LOGGING: string;
 	GRAPHQL_SECRET_LOGGING: string;
-	DATABASE_APPLICATION_TYPE: AvoOrHetArchief;
+	DATABASE_APPLICATION_TYPE: DatabaseType;
 	COOKIE_SECRET: string;
 	COOKIE_MAX_AGE: number;
 	REDIS_CONNECTION_STRING: string;
