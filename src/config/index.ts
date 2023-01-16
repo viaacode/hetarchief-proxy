@@ -1,6 +1,6 @@
-import { AvoOrHetArchief } from '@meemoo/admin-core-api';
 import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
+import { DatabaseType } from '@viaa/avo2-types';
 
 import { DEFAULT_CONFIG } from './config.const';
 import { Configuration } from './config.types';
@@ -45,10 +45,7 @@ const config = (): Configuration => {
 		GRAPHQL_ENABLE_WHITELIST: getEnvValue('GRAPHQL_ENABLE_WHITELIST', false) === 'true',
 		GRAPHQL_URL_LOGGING: getEnvValue('GRAPHQL_URL_LOGGING', true),
 		GRAPHQL_SECRET_LOGGING: getEnvValue('GRAPHQL_SECRET_LOGGING', true),
-		DATABASE_APPLICATION_TYPE: getEnvValue(
-			'DATABASE_APPLICATION_TYPE',
-			true
-		) as AvoOrHetArchief,
+		DATABASE_APPLICATION_TYPE: getEnvValue('DATABASE_APPLICATION_TYPE', true) as DatabaseType,
 		COOKIE_SECRET: getEnvValue('COOKIE_SECRET', true),
 		COOKIE_MAX_AGE: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		REDIS_CONNECTION_STRING: getEnvValue('REDIS_CONNECTION_STRING', false),

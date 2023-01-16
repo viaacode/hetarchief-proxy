@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 
@@ -7,8 +8,8 @@ import { ContentPartner } from '../types';
 import {
 	FindContentPartnersDocument,
 	FindContentPartnersQuery,
+	FindContentPartnersQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export class ContentPartnersService {
@@ -38,18 +39,18 @@ export class ContentPartnersService {
 			where = { _not: { visitor_space: {} } };
 		}
 
-		const contentPartners = await this.dataService.execute<FindContentPartnersQuery>(
-			FindContentPartnersDocument,
-			{
-				where,
-			}
-		);
+		const contentPartners = await this.dataService.execute<
+			FindContentPartnersQuery,
+			FindContentPartnersQueryVariables
+		>(FindContentPartnersDocument, {
+			where,
+		});
 
 		return Pagination<ContentPartner>({
-			items: contentPartners.data.maintainer_content_partner.map((cp) => this.adapt(cp)),
+			items: contentPartners.maintainer_content_partner.map((cp) => this.adapt(cp)),
 			page: 1,
-			size: contentPartners.data.maintainer_content_partner_aggregate.aggregate.count,
-			total: contentPartners.data.maintainer_content_partner_aggregate.aggregate.count,
+			size: contentPartners.maintainer_content_partner_aggregate.aggregate.count,
+			total: contentPartners.maintainer_content_partner_aggregate.aggregate.count,
 		});
 	}
 }

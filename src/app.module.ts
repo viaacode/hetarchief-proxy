@@ -1,4 +1,4 @@
-import { AdminCoreModule } from '@meemoo/admin-core-api';
+import { AdminCoreModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -12,10 +12,8 @@ import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
 import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
-import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
 import { MediaModule } from '~modules/media';
-import { NavigationsModule } from '~modules/navigations';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -48,7 +46,6 @@ import { SessionService } from '~shared/services/session.service';
 		OrganisationsModule,
 		MediaModule,
 		MediaModule,
-		NavigationsModule,
 		NotificationsModule,
 		SpacesModule,
 		StatusModule,

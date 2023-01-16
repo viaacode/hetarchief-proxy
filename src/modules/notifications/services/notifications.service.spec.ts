@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, addMonths, subHours } from 'date-fns';
 
@@ -11,7 +12,6 @@ import {
 	UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { DataService } from '~modules/data/services/data.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import {
 	GqlCreateOrUpdateNotification,

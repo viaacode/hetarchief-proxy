@@ -29,32 +29,6 @@ export class TranslationsService implements OnApplicationBootstrap {
 		await this.refreshBackendTranslations();
 	}
 
-	public async getTranslations(): Promise<Translations> {
-		const translations = await this.cacheManager.wrap(
-			TranslationKey.TRANSLATIONS_FRONTEND,
-			async () => {
-				const [translationsFrontend, translationsAdminCore] = await Promise.all([
-					this.siteVariablesService.getSiteVariable<Translations>(
-						TranslationKey.TRANSLATIONS_FRONTEND
-					),
-					this.siteVariablesService.getSiteVariable<Translations>(
-						TranslationKey.TRANSLATIONS_ADMIN_CORE
-					),
-				]);
-				return {
-					...translationsAdminCore,
-					...translationsFrontend,
-				};
-			}, // cache for 1h
-			{ ttl: 3600 }
-		);
-		if (!translations) {
-			throw new NotFoundException('No translations have been set in the database');
-		}
-
-		return translations;
-	}
-
 	/**
 	 * Refresh the local cache of backend translations
 	 */

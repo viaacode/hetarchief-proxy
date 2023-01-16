@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
@@ -8,24 +9,30 @@ import { AccessType, GqlSpace, Space } from '../types';
 import {
 	CreateSpaceDocument,
 	CreateSpaceMutation,
+	CreateSpaceMutationVariables,
 	FindSpaceByCpAdminIdDocument,
 	FindSpaceByCpAdminIdQuery,
+	FindSpaceByCpAdminIdQueryVariables,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
+	FindSpaceByIdQueryVariables,
 	FindSpaceByMaintainerIdDocument,
 	FindSpaceByMaintainerIdQuery,
+	FindSpaceByMaintainerIdQueryVariables,
 	FindSpaceBySlugDocument,
 	FindSpaceBySlugQuery,
+	FindSpaceBySlugQueryVariables,
 	FindSpacesDocument,
 	FindSpacesQuery,
 	FindSpacesQueryVariables,
 	GetSpaceMaintainerProfilesDocument,
 	GetSpaceMaintainerProfilesQuery,
+	GetSpaceMaintainerProfilesQueryVariables,
 	Maintainer_Visitor_Space_Set_Input,
 	UpdateSpaceDocument,
 	UpdateSpaceMutation,
+	UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
@@ -108,13 +115,14 @@ export class SpacesService {
 	public async create(createSpaceDto: CreateSpaceDto): Promise<Space> {
 		const createSpace = this.buildSpaceDatabaseObject(createSpaceDto);
 		try {
-			const {
-				data: { insert_maintainer_visitor_space_one: createdSpace },
-			} = await this.dataService.execute<CreateSpaceMutation>(CreateSpaceDocument, {
+			const response = await this.dataService.execute<
+				CreateSpaceMutation,
+				CreateSpaceMutationVariables
+			>(CreateSpaceDocument, {
 				createSpace,
 			});
 
-			return this.adapt(createdSpace);
+			return this.adapt(response.insert_maintainer_visitor_space_one);
 		} catch (e) {
 			this.handleException(e, createSpaceDto);
 		}
@@ -123,12 +131,15 @@ export class SpacesService {
 	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
 		const updateSpace = this.buildSpaceDatabaseObject(updateSpaceDto);
 		try {
-			const {
-				data: { update_maintainer_visitor_space_by_pk: updatedSpace },
-			} = await this.dataService.execute<UpdateSpaceMutation>(UpdateSpaceDocument, {
+			const response = await this.dataService.execute<
+				UpdateSpaceMutation,
+				UpdateSpaceMutationVariables
+			>(UpdateSpaceDocument, {
 				id,
 				updateSpace,
 			});
+
+			const updatedSpace = response.update_maintainer_visitor_space_by_pk;
 
 			if (!updatedSpace) {
 				throw new NotFoundException(`Space with id '${id}' not found`);
@@ -216,77 +227,77 @@ export class SpacesService {
 				orderDirection
 			),
 		};
-		const spacesResponse = await this.dataService.execute<FindSpacesQuery>(
-			FindSpacesDocument,
-			queryVariables
-		);
+		const spacesResponse = await this.dataService.execute<
+			FindSpacesQuery,
+			FindSpacesQueryVariables
+		>(FindSpacesDocument, queryVariables);
 
 		return Pagination<Space>({
-			items: spacesResponse.data.maintainer_visitor_space.map((space) => this.adapt(space)),
+			items: spacesResponse.maintainer_visitor_space.map((space) => this.adapt(space)),
 			page,
 			size,
-			total: spacesResponse.data.maintainer_visitor_space_aggregate.aggregate.count,
+			total: spacesResponse.maintainer_visitor_space_aggregate.aggregate.count,
 		});
 	}
 
 	public async findById(id: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceByIdQuery>(
-			FindSpaceByIdDocument,
-			{ id }
-		);
-		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+		const spaceResponse = await this.dataService.execute<
+			FindSpaceByIdQuery,
+			FindSpaceByIdQueryVariables
+		>(FindSpaceByIdDocument, { id });
+		if (!spaceResponse.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
 	public async findByMaintainerId(maintainerId: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceByMaintainerIdQuery>(
-			FindSpaceByMaintainerIdDocument,
-			{ maintainerId }
-		);
-		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+		const spaceResponse = await this.dataService.execute<
+			FindSpaceByMaintainerIdQuery,
+			FindSpaceByMaintainerIdQueryVariables
+		>(FindSpaceByMaintainerIdDocument, { maintainerId });
+		if (!spaceResponse.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
 	public async findBySlug(slug: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceBySlugQuery>(
-			FindSpaceBySlugDocument,
-			{
-				slug,
-			}
-		);
-		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+		const spaceResponse = await this.dataService.execute<
+			FindSpaceBySlugQuery,
+			FindSpaceBySlugQueryVariables
+		>(FindSpaceBySlugDocument, {
+			slug,
+		});
+		if (!spaceResponse.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
 	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<FindSpaceByCpAdminIdQuery>(
-			FindSpaceByCpAdminIdDocument,
-			{
-				cpAdminId,
-			}
-		);
-		if (!spaceResponse.data.maintainer_visitor_space[0]) {
+		const spaceResponse = await this.dataService.execute<
+			FindSpaceByCpAdminIdQuery,
+			FindSpaceByCpAdminIdQueryVariables
+		>(FindSpaceByCpAdminIdDocument, {
+			cpAdminId,
+		});
+		if (!spaceResponse.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.data.maintainer_visitor_space[0]);
+		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
-		const profiles = await this.dataService.execute<GetSpaceMaintainerProfilesQuery>(
-			GetSpaceMaintainerProfilesDocument,
-			{
-				spaceId,
-			}
-		);
+		const profiles = await this.dataService.execute<
+			GetSpaceMaintainerProfilesQuery,
+			GetSpaceMaintainerProfilesQueryVariables
+		>(GetSpaceMaintainerProfilesDocument, {
+			spaceId,
+		});
 
 		/* istanbul ignore next */
-		return (profiles?.data?.maintainer_users_profile || []).map((item) => ({
+		return (profiles?.maintainer_users_profile || []).map((item) => ({
 			id: item.users_profile_id,
 			email: item.profile.mail,
 		}));

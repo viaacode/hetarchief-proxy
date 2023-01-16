@@ -1,4 +1,4 @@
-import { PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { CollectionsService } from './collections.service';
@@ -16,7 +16,6 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
 import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
-import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {

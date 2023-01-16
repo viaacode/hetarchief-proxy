@@ -17,11 +17,6 @@ const mockCacheManager: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 	}) as any,
 };
 
-const mockTranslationsResponse = {
-	name: 'TRANSLATIONS_FRONTEND',
-	value: { key1: 'translation 1' },
-};
-
 describe('TranslationsService', () => {
 	let translationsService: TranslationsService;
 
@@ -51,30 +46,5 @@ describe('TranslationsService', () => {
 
 	it('services should be defined', () => {
 		expect(translationsService).toBeDefined();
-	});
-
-	describe('getTranslations', () => {
-		it('can get translations', async () => {
-			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce(
-				mockTranslationsResponse.value
-			);
-			// mockCacheManager.wrap.mockResolvedValueOnce(mockTranslationsResponse.value);
-			const translations = await translationsService.getTranslations();
-
-			expect(translations).toEqual(mockTranslationsResponse.value);
-		});
-
-		it('throws an exception if no translations were set', async () => {
-			mockSiteVariablesService.getSiteVariable.mockResolvedValueOnce(undefined);
-			mockCacheManager.wrap.mockResolvedValueOnce(undefined);
-			let error;
-			try {
-				await translationsService.getTranslations();
-			} catch (e) {
-				error = e;
-			}
-
-			expect(error.message).toEqual('No translations have been set in the database');
-		});
 	});
 });

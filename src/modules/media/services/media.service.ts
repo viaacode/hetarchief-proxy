@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -26,14 +26,17 @@ import {
 import {
 	FindAllObjectsByCollectionIdDocument,
 	FindAllObjectsByCollectionIdQuery,
+	FindAllObjectsByCollectionIdQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
+	GetObjectDetailBySchemaIdentifierQueryVariables,
 	GetObjectIdentifierTupleDocument,
 	GetObjectIdentifierTupleQuery,
+	GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
+	GetRelatedObjectsQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export class MediaService {
@@ -292,14 +295,12 @@ export class MediaService {
 	 * (not all details are in ES)
 	 */
 	public async findBySchemaIdentifier(schemaIdentifier: string, referer: string): Promise<Media> {
-		const {
-			data: { object_ie: objectIe },
-		} = await this.dataService.execute<GetObjectDetailBySchemaIdentifierQuery>(
-			GetObjectDetailBySchemaIdentifierDocument,
-			{
-				schemaIdentifier,
-			}
-		);
+		const { object_ie: objectIe } = await this.dataService.execute<
+			GetObjectDetailBySchemaIdentifierQuery,
+			GetObjectDetailBySchemaIdentifierQueryVariables
+		>(GetObjectDetailBySchemaIdentifierDocument, {
+			schemaIdentifier,
+		});
 
 		if (!objectIe[0]) {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
@@ -338,25 +339,21 @@ export class MediaService {
 		collectionId: string,
 		userProfileId: string
 	): Promise<Partial<Media>[]> {
-		const {
-			data: { users_folder_ie: allObjects },
-		} = await this.dataService.execute<FindAllObjectsByCollectionIdQuery>(
-			FindAllObjectsByCollectionIdDocument,
-			{
-				collectionId,
-				userProfileId,
-			}
-		);
+		const { users_folder_ie: allObjects } = await this.dataService.execute<
+			FindAllObjectsByCollectionIdQuery,
+			FindAllObjectsByCollectionIdQueryVariables
+		>(FindAllObjectsByCollectionIdDocument, {
+			collectionId,
+			userProfileId,
+		});
 
 		if (!allObjects[0]) {
 			throw new NotFoundException();
 		}
 
-		const allAdapted = allObjects.map((object) => {
+		return allObjects.map((object) => {
 			return this.adaptLimitedMetadata(object);
 		});
-
-		return allAdapted;
 	}
 
 	public limitMetadata(mediaObject: Partial<Media>): Partial<Media> {
@@ -411,17 +408,17 @@ export class MediaService {
 		meemooIdentifier: string,
 		referer: string
 	): Promise<IPagination<Media>> {
-		const mediaObjects = await this.dataService.execute<GetRelatedObjectsQuery>(
-			GetRelatedObjectsDocument,
-			{
-				maintainerId,
-				schemaIdentifier,
-				meemooIdentifier,
-			}
-		);
+		const mediaObjects = await this.dataService.execute<
+			GetRelatedObjectsQuery,
+			GetRelatedObjectsQueryVariables
+		>(GetRelatedObjectsDocument, {
+			maintainerId,
+			schemaIdentifier,
+			meemooIdentifier,
+		});
 
 		const adaptedItems = await Promise.all(
-			mediaObjects.data.object_ie.map(async (object: any) => {
+			mediaObjects.object_ie.map(async (object: any) => {
 				const adapted = this.adapt(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
@@ -434,22 +431,22 @@ export class MediaService {
 		return Pagination<Media>({
 			items: adaptedItems,
 			page: 1,
-			size: mediaObjects.data.object_ie.length,
-			total: mediaObjects.data.object_ie.length,
+			size: mediaObjects.object_ie.length,
+			total: mediaObjects.object_ie.length,
 		});
 	}
 
 	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
-		const items = await this.dataService.execute<GetObjectIdentifierTupleQuery>(
-			GetObjectIdentifierTupleDocument,
-			{
-				meemooIdentifiers,
-			}
-		);
+		const items = await this.dataService.execute<
+			GetObjectIdentifierTupleQuery,
+			GetObjectIdentifierTupleQueryVariables
+		>(GetObjectIdentifierTupleDocument, {
+			meemooIdentifiers,
+		});
 
 		const count: Record<string, number> = {};
 
-		items.data?.object_ie.forEach((item) => {
+		items?.object_ie?.forEach((item) => {
 			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
 		});
 

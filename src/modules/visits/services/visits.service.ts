@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import {
 	ForbiddenException,
 	Injectable,
@@ -27,31 +28,41 @@ import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
+	FindActiveVisitByUserAndSpaceQueryVariables,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
 	FindApprovedEndedVisitsWithoutNotificationQuery,
+	FindApprovedEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedStartedVisitsWithoutNotificationDocument,
 	FindApprovedStartedVisitsWithoutNotificationQuery,
+	FindApprovedStartedVisitsWithoutNotificationQueryVariables,
 	FindPendingOrApprovedVisitRequestsForUserDocument,
 	FindPendingOrApprovedVisitRequestsForUserQuery,
+	FindPendingOrApprovedVisitRequestsForUserQueryVariables,
 	FindVisitByIdDocument,
 	FindVisitByIdQuery,
+	FindVisitByIdQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
 	GetVisitRequestForAccessDocument,
 	GetVisitRequestForAccessQuery,
+	GetVisitRequestForAccessQueryVariables,
 	InsertNoteDocument,
 	InsertNoteMutation,
+	InsertNoteMutationVariables,
 	InsertVisitDocument,
 	InsertVisitMutation,
+	InsertVisitMutationVariables,
 	PendingVisitCountForUserBySlugDocument,
 	PendingVisitCountForUserBySlugQuery,
+	PendingVisitCountForUserBySlugQueryVariables,
 	UpdateVisitDocument,
 	UpdateVisitMutation,
+	UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
@@ -189,9 +200,11 @@ export class VisitsService {
 			user_accepted_tos: createVisitDto.acceptedTos,
 		};
 
-		const {
-			data: { insert_maintainer_visitor_space_request_one: createdVisit },
-		} = await this.dataService.execute<InsertVisitMutation>(InsertVisitDocument, { newVisit });
+		const { insert_maintainer_visitor_space_request_one: createdVisit } =
+			await this.dataService.execute<InsertVisitMutation, InsertVisitMutationVariables>(
+				InsertVisitDocument,
+				{ newVisit }
+			);
 
 		this.logger.debug(`Visit ${createdVisit.id} created`);
 
@@ -233,10 +246,13 @@ export class VisitsService {
 			}
 		}
 
-		await this.dataService.execute<UpdateVisitMutation>(UpdateVisitDocument, {
-			id,
-			updateVisit,
-		});
+		await this.dataService.execute<UpdateVisitMutation, UpdateVisitMutationVariables>(
+			UpdateVisitDocument,
+			{
+				id,
+				updateVisit,
+			}
+		);
 
 		if (updateVisitDto.note) {
 			await this.insertNote(id, updateVisitDto.note, userProfileId);
@@ -250,13 +266,15 @@ export class VisitsService {
 		note: string,
 		userProfileId: string
 	): Promise<boolean> {
-		const {
-			data: { insert_maintainer_visitor_space_request_note_one: insertNote },
-		} = await this.dataService.execute<InsertNoteMutation>(InsertNoteDocument, {
-			visitId,
-			note,
-			userProfileId,
-		});
+		const { insert_maintainer_visitor_space_request_note_one: insertNote } =
+			await this.dataService.execute<InsertNoteMutation, InsertNoteMutationVariables>(
+				InsertNoteDocument,
+				{
+					visitId,
+					note,
+					userProfileId,
+				}
+			);
 
 		return !!insertNote;
 	}
@@ -339,7 +357,10 @@ export class VisitsService {
 			where.user_profile_id = { _eq: parameters.userProfileId };
 		}
 
-		const visitsResponse = await this.dataService.execute<FindVisitsQuery>(FindVisitsDocument, {
+		const visitsResponse = await this.dataService.execute<
+			FindVisitsQuery,
+			FindVisitsQueryVariables
+		>(FindVisitsDocument, {
 			where,
 			offset,
 			limit,
@@ -351,99 +372,96 @@ export class VisitsService {
 		});
 
 		return Pagination<Visit>({
-			items: visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+			items: visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 				this.adapt(visit)
 			),
 			page,
 			size,
-			total: visitsResponse.data.maintainer_visitor_space_request_aggregate.aggregate.count,
+			total: visitsResponse.maintainer_visitor_space_request_aggregate.aggregate.count,
 		});
 	}
 
 	public async findById(id: string): Promise<Visit> {
-		const visitResponse = await this.dataService.execute<FindVisitByIdQuery>(
-			FindVisitByIdDocument,
-			{ id }
-		);
+		const visitResponse = await this.dataService.execute<
+			FindVisitByIdQuery,
+			FindVisitByIdQueryVariables
+		>(FindVisitByIdDocument, { id });
 
-		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+		if (!visitResponse.maintainer_visitor_space_request[0]) {
 			throw new NotFoundException(`Visit with id '${id}' not found`);
 		}
 
-		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
+		return this.adapt(visitResponse.maintainer_visitor_space_request[0]);
 	}
 
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
 		visitorSpaceSlug: string
 	): Promise<Visit | null> {
-		const visitResponse = await this.dataService.execute<FindActiveVisitByUserAndSpaceQuery>(
-			FindActiveVisitByUserAndSpaceDocument,
-			{
-				userProfileId,
-				visitorSpaceSlug,
-				now: new Date().toISOString(),
-			}
-		);
+		const visitResponse = await this.dataService.execute<
+			FindActiveVisitByUserAndSpaceQuery,
+			FindActiveVisitByUserAndSpaceQueryVariables
+		>(FindActiveVisitByUserAndSpaceDocument, {
+			userProfileId,
+			visitorSpaceSlug,
+			now: new Date().toISOString(),
+		});
 
-		if (!visitResponse.data.maintainer_visitor_space_request[0]) {
+		if (!visitResponse.maintainer_visitor_space_request[0]) {
 			return null;
 		}
 
-		return this.adapt(visitResponse.data.maintainer_visitor_space_request[0]);
+		return this.adapt(visitResponse.maintainer_visitor_space_request[0]);
 	}
 
 	public async getPendingVisitCountForUserBySlug(
 		userProfileId: string,
 		slug: string
 	): Promise<VisitSpaceCount> {
-		const result = await this.dataService.execute<PendingVisitCountForUserBySlugQuery>(
-			PendingVisitCountForUserBySlugDocument,
-			{
-				user: userProfileId,
-				slug,
-			}
-		);
+		const result = await this.dataService.execute<
+			PendingVisitCountForUserBySlugQuery,
+			PendingVisitCountForUserBySlugQueryVariables
+		>(PendingVisitCountForUserBySlugDocument, {
+			user: userProfileId,
+			slug,
+		});
 
 		/* istanbul ignore next */
 		return {
-			count: result?.data?.maintainer_visitor_space_request_aggregate?.aggregate?.count || 0,
-			id: result?.data?.maintainer_visitor_space_request_aggregate?.nodes?.[0]?.cp_space_id,
+			count: result?.maintainer_visitor_space_request_aggregate?.aggregate?.count || 0,
+			id: result?.maintainer_visitor_space_request_aggregate?.nodes?.[0]?.cp_space_id,
 		};
 	}
 
 	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
-		const visitsResponse =
-			await this.dataService.execute<FindApprovedStartedVisitsWithoutNotificationQuery>(
-				FindApprovedStartedVisitsWithoutNotificationDocument,
-				{ now: new Date().toISOString() }
-			);
-		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+		const visitsResponse = await this.dataService.execute<
+			FindApprovedStartedVisitsWithoutNotificationQuery,
+			FindApprovedStartedVisitsWithoutNotificationQueryVariables
+		>(FindApprovedStartedVisitsWithoutNotificationDocument, { now: new Date().toISOString() });
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 			this.adapt(visit)
 		);
 	}
 
 	public async getApprovedAndAlmostEndedVisitsWithoutNotification() {
-		const visitsResponse =
-			await this.dataService.execute<FindApprovedAlmostEndedVisitsWithoutNotificationQuery>(
-				FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
-				{
-					now: new Date().toISOString(),
-					warningDate: addMinutes(new Date(), 15).toISOString(),
-				}
-			);
-		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+		const visitsResponse = await this.dataService.execute<
+			FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+			FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables
+		>(FindApprovedAlmostEndedVisitsWithoutNotificationDocument, {
+			now: new Date().toISOString(),
+			warningDate: addMinutes(new Date(), 15).toISOString(),
+		});
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 			this.adapt(visit)
 		);
 	}
 
 	public async getApprovedAndEndedVisitsWithoutNotification() {
-		const visitsResponse =
-			await this.dataService.execute<FindApprovedEndedVisitsWithoutNotificationQuery>(
-				FindApprovedEndedVisitsWithoutNotificationDocument,
-				{ now: new Date().toISOString() }
-			);
-		return visitsResponse.data.maintainer_visitor_space_request.map((visit: any) =>
+		const visitsResponse = await this.dataService.execute<
+			FindApprovedEndedVisitsWithoutNotificationQuery,
+			FindApprovedEndedVisitsWithoutNotificationQueryVariables
+		>(FindApprovedEndedVisitsWithoutNotificationDocument, { now: new Date().toISOString() });
+		return visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 			this.adapt(visit)
 		);
 	}
@@ -454,33 +472,32 @@ export class VisitsService {
 	 * @param maintainerOrId: OR-id of a maintainer
 	 */
 	async hasAccess(userProfileId: string, maintainerOrId: string): Promise<boolean> {
-		const visitsResponse = await this.dataService.execute<GetVisitRequestForAccessQuery>(
-			GetVisitRequestForAccessDocument,
-			{
-				userProfileId,
-				maintainerOrId,
-				now: new Date().toISOString(),
-			}
-		);
+		const visitsResponse = await this.dataService.execute<
+			GetVisitRequestForAccessQuery,
+			GetVisitRequestForAccessQueryVariables
+		>(GetVisitRequestForAccessDocument, {
+			userProfileId,
+			maintainerOrId,
+			now: new Date().toISOString(),
+		});
 
-		return visitsResponse.data.maintainer_visitor_space_request.length > 0;
+		return visitsResponse.maintainer_visitor_space_request.length > 0;
 	}
 
 	public async getAccessStatus(spaceSlug: string, userProfileId: string): Promise<AccessStatus> {
-		const visitResponse =
-			await this.dataService.execute<FindPendingOrApprovedVisitRequestsForUserQuery>(
-				FindPendingOrApprovedVisitRequestsForUserDocument,
-				{
-					userProfileId,
-					spaceSlug,
-					now: new Date().toISOString(),
-				}
-			);
+		const visitResponse = await this.dataService.execute<
+			FindPendingOrApprovedVisitRequestsForUserQuery,
+			FindPendingOrApprovedVisitRequestsForUserQueryVariables
+		>(FindPendingOrApprovedVisitRequestsForUserDocument, {
+			userProfileId,
+			spaceSlug,
+			now: new Date().toISOString(),
+		});
 		// return
 		// - PENDING (visit request with status pending or approved in the future)
 		// - ACCESS (approved visit request with the now() time between start and end date)
 		// - NO ACCESS (denied visit request or no visit request)
-		const visit = visitResponse.data.maintainer_visitor_space_request[0];
+		const visit = visitResponse.maintainer_visitor_space_request[0];
 
 		if (!visit) {
 			return AccessStatus.NO_ACCESS;

@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
@@ -15,18 +16,22 @@ import {
 import {
 	DeleteNotificationsDocument,
 	DeleteNotificationsMutation,
+	DeleteNotificationsMutationVariables,
 	FindNotificationsByUserDocument,
 	FindNotificationsByUserQuery,
+	FindNotificationsByUserQueryVariables,
 	InsertNotificationsDocument,
 	InsertNotificationsMutation,
+	InsertNotificationsMutationVariables,
 	UpdateAllNotificationsForUserDocument,
 	UpdateAllNotificationsForUserMutation,
+	UpdateAllNotificationsForUserMutationVariables,
 	UpdateNotificationDocument,
 	UpdateNotificationMutation,
+	UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { Template } from '~modules/campaign-monitor/types';
-import { DataService } from '~modules/data/services/data.service';
 import { Space } from '~modules/spaces/types';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -75,36 +80,36 @@ export class NotificationsService {
 		size
 	): Promise<IPagination<Notification>> {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		const notificationsResponse = await this.dataService.execute<FindNotificationsByUserQuery>(
-			FindNotificationsByUserDocument,
-			{
-				userProfileId,
-				moreRecentThan,
-				offset,
-				limit,
-			}
-		);
+		const notificationsResponse = await this.dataService.execute<
+			FindNotificationsByUserQuery,
+			FindNotificationsByUserQueryVariables
+		>(FindNotificationsByUserDocument, {
+			userProfileId,
+			moreRecentThan,
+			offset,
+			limit,
+		});
 
 		return Pagination<Notification>({
-			items: notificationsResponse.data.app_notification.map((notification: any) =>
+			items: notificationsResponse.app_notification.map((notification: any) =>
 				this.adaptNotification(notification)
 			),
 			page,
 			size,
-			total: notificationsResponse.data.app_notification_aggregate.aggregate.count,
+			total: notificationsResponse.app_notification_aggregate.aggregate.count,
 		});
 	}
 
 	public async create(
 		notifications: Partial<GqlCreateOrUpdateNotification>[]
 	): Promise<Notification[]> {
-		const response = await this.dataService.execute<InsertNotificationsMutation>(
-			InsertNotificationsDocument,
-			{
-				objects: notifications,
-			}
-		);
-		const createdNotifications = response.data.insert_app_notification.returning;
+		const response = await this.dataService.execute<
+			InsertNotificationsMutation,
+			InsertNotificationsMutationVariables
+		>(InsertNotificationsDocument, {
+			objects: notifications,
+		});
+		const createdNotifications = response.insert_app_notification.returning;
 		this.logger.debug(`${createdNotifications.length} notifications created`);
 
 		return createdNotifications.map(this.adaptNotification);
@@ -132,16 +137,16 @@ export class NotificationsService {
 		userProfileId: string,
 		notification: Partial<GqlCreateOrUpdateNotification>
 	): Promise<Notification> {
-		const response = await this.dataService.execute<UpdateNotificationMutation>(
-			UpdateNotificationDocument,
-			{
-				notificationId,
-				userProfileId,
-				notification,
-			}
-		);
+		const response = await this.dataService.execute<
+			UpdateNotificationMutation,
+			UpdateNotificationMutationVariables
+		>(UpdateNotificationDocument, {
+			notificationId,
+			userProfileId,
+			notification,
+		});
 
-		const updatedNotification = response.data.update_app_notification.returning[0];
+		const updatedNotification = response.update_app_notification.returning[0];
 		if (!updatedNotification) {
 			throw new NotFoundException(
 				'Notification not found or you are not the notifications recipient.'
@@ -156,15 +161,15 @@ export class NotificationsService {
 		userProfileId: string,
 		notification: Partial<GqlCreateOrUpdateNotification>
 	): Promise<number> {
-		const response = await this.dataService.execute<UpdateAllNotificationsForUserMutation>(
-			UpdateAllNotificationsForUserDocument,
-			{
-				userProfileId,
-				notification,
-			}
-		);
+		const response = await this.dataService.execute<
+			UpdateAllNotificationsForUserMutation,
+			UpdateAllNotificationsForUserMutationVariables
+		>(UpdateAllNotificationsForUserDocument, {
+			userProfileId,
+			notification,
+		});
 
-		const affectedRows = response.data.update_app_notification.affected_rows;
+		const affectedRows = response.update_app_notification.affected_rows;
 		this.logger.debug(`All Notifications for user ${userProfileId} updated`);
 
 		return affectedRows;
@@ -176,14 +181,14 @@ export class NotificationsService {
 			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
 		};
 
-		const response = await this.dataService.execute<DeleteNotificationsMutation>(
-			DeleteNotificationsDocument,
-			{
-				where,
-			}
-		);
+		const response = await this.dataService.execute<
+			DeleteNotificationsMutation,
+			DeleteNotificationsMutationVariables
+		>(DeleteNotificationsDocument, {
+			where,
+		});
 
-		const affectedRows = response.data.delete_app_notification.affected_rows;
+		const affectedRows = response.delete_app_notification.affected_rows;
 		this.logger.debug(`${affectedRows} notifications deleted for visit ${visitId}`);
 
 		return affectedRows;

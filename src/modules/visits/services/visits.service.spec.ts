@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
 
@@ -11,7 +12,6 @@ import {
 	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessStatus, Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
