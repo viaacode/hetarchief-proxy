@@ -3,8 +3,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
 import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import { MaterialRequest } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
-import { MaterialRequest } from '../types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';

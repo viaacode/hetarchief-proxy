@@ -1475,6 +1475,163 @@ export enum App_Content_Page_Update_Column {
   UserProfileId = 'user_profile_id'
 }
 
+/** columns and relationships of "app.material_requests" */
+export type App_Material_Requests = {
+  __typename?: 'app_material_requests';
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  object_schema_identifier: Scalars['String'];
+  profile_id: Scalars['uuid'];
+  reason: Scalars['String'];
+  updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "app.material_requests" */
+export type App_Material_Requests_Aggregate = {
+  __typename?: 'app_material_requests_aggregate';
+  aggregate?: Maybe<App_Material_Requests_Aggregate_Fields>;
+  nodes: Array<App_Material_Requests>;
+};
+
+/** aggregate fields of "app.material_requests" */
+export type App_Material_Requests_Aggregate_Fields = {
+  __typename?: 'app_material_requests_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Material_Requests_Max_Fields>;
+  min?: Maybe<App_Material_Requests_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.material_requests" */
+export type App_Material_Requests_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "app.material_requests". All fields are combined with a logical 'AND'. */
+export type App_Material_Requests_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Material_Requests_Bool_Exp>>;
+  _not?: InputMaybe<App_Material_Requests_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Material_Requests_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  object_schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+  reason?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.material_requests" */
+export enum App_Material_Requests_Constraint {
+  /** unique or primary key constraint */
+  MaterialRequestsPkey = 'material_requests_pkey'
+}
+
+/** input type for inserting data into table "app.material_requests" */
+export type App_Material_Requests_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  object_schema_identifier?: InputMaybe<Scalars['String']>;
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  reason?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type App_Material_Requests_Max_Fields = {
+  __typename?: 'app_material_requests_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  object_schema_identifier?: Maybe<Scalars['String']>;
+  profile_id?: Maybe<Scalars['uuid']>;
+  reason?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type App_Material_Requests_Min_Fields = {
+  __typename?: 'app_material_requests_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  object_schema_identifier?: Maybe<Scalars['String']>;
+  profile_id?: Maybe<Scalars['uuid']>;
+  reason?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "app.material_requests" */
+export type App_Material_Requests_Mutation_Response = {
+  __typename?: 'app_material_requests_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Material_Requests>;
+};
+
+/** on_conflict condition type for table "app.material_requests" */
+export type App_Material_Requests_On_Conflict = {
+  constraint: App_Material_Requests_Constraint;
+  update_columns?: Array<App_Material_Requests_Update_Column>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.material_requests". */
+export type App_Material_Requests_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  object_schema_identifier?: InputMaybe<Order_By>;
+  profile_id?: InputMaybe<Order_By>;
+  reason?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_material_requests */
+export type App_Material_Requests_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "app.material_requests" */
+export enum App_Material_Requests_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ObjectSchemaIdentifier = 'object_schema_identifier',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "app.material_requests" */
+export type App_Material_Requests_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  object_schema_identifier?: InputMaybe<Scalars['String']>;
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  reason?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "app.material_requests" */
+export enum App_Material_Requests_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  ObjectSchemaIdentifier = 'object_schema_identifier',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "app.navigation" */
 export type App_Navigation = {
   __typename?: 'app_navigation';
@@ -4809,6 +4966,10 @@ export type Mutation_Root = {
   delete_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
   /** delete single row from the table: "app.content_page_content_label" */
   delete_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** delete data from the table: "app.material_requests" */
+  delete_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** delete single row from the table: "app.material_requests" */
+  delete_app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** delete data from the table: "app.navigation" */
   delete_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** delete single row from the table: "app.navigation" */
@@ -4949,6 +5110,10 @@ export type Mutation_Root = {
   insert_app_content_page_content_label_one?: Maybe<App_Content_Page_Content_Label>;
   /** insert a single row into the table: "app.content_page" */
   insert_app_content_page_one?: Maybe<App_Content_Page>;
+  /** insert data into the table: "app.material_requests" */
+  insert_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** insert a single row into the table: "app.material_requests" */
+  insert_app_material_requests_one?: Maybe<App_Material_Requests>;
   /** insert data into the table: "app.navigation" */
   insert_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** insert a single row into the table: "app.navigation" */
@@ -5089,6 +5254,10 @@ export type Mutation_Root = {
   update_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
   /** update single row of the table: "app.content_page_content_label" */
   update_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** update data of the table: "app.material_requests" */
+  update_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** update single row of the table: "app.material_requests" */
+  update_app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** update data of the table: "app.navigation" */
   update_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** update single row of the table: "app.navigation" */
@@ -5268,6 +5437,18 @@ export type Mutation_RootDelete_App_Content_Page_Content_LabelArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_App_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_RequestsArgs = {
+  where: App_Material_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_Requests_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -5700,6 +5881,20 @@ export type Mutation_RootInsert_App_Content_Page_Content_Label_OneArgs = {
 export type Mutation_RootInsert_App_Content_Page_OneArgs = {
   object: App_Content_Page_Insert_Input;
   on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_RequestsArgs = {
+  objects: Array<App_Material_Requests_Insert_Input>;
+  on_conflict?: InputMaybe<App_Material_Requests_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_Requests_OneArgs = {
+  object: App_Material_Requests_Insert_Input;
+  on_conflict?: InputMaybe<App_Material_Requests_On_Conflict>;
 };
 
 
@@ -6232,6 +6427,20 @@ export type Mutation_RootUpdate_App_Content_Page_Content_LabelArgs = {
 export type Mutation_RootUpdate_App_Content_Page_Content_Label_By_PkArgs = {
   _set?: InputMaybe<App_Content_Page_Content_Label_Set_Input>;
   pk_columns: App_Content_Page_Content_Label_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_RequestsArgs = {
+  _set?: InputMaybe<App_Material_Requests_Set_Input>;
+  where: App_Material_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_Requests_By_PkArgs = {
+  _set?: InputMaybe<App_Material_Requests_Set_Input>;
+  pk_columns: App_Material_Requests_Pk_Columns_Input;
 };
 
 
@@ -8558,6 +8767,12 @@ export type Query_Root = {
   app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
   /** fetch data from the table: "app.content_page_content_label" using primary key columns */
   app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.material_requests" */
+  app_material_requests: Array<App_Material_Requests>;
+  /** fetch aggregated fields from the table: "app.material_requests" */
+  app_material_requests_aggregate: App_Material_Requests_Aggregate;
+  /** fetch data from the table: "app.material_requests" using primary key columns */
+  app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** fetch data from the table: "app.navigation" */
   app_navigation: Array<App_Navigation>;
   /** fetch aggregated fields from the table: "app.navigation" */
@@ -8860,6 +9075,29 @@ export type Query_RootApp_Content_Page_Content_Label_AggregateArgs = {
 
 
 export type Query_RootApp_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_Material_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Requests_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -9622,6 +9860,12 @@ export type Subscription_Root = {
   app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
   /** fetch data from the table: "app.content_page_content_label" using primary key columns */
   app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.material_requests" */
+  app_material_requests: Array<App_Material_Requests>;
+  /** fetch aggregated fields from the table: "app.material_requests" */
+  app_material_requests_aggregate: App_Material_Requests_Aggregate;
+  /** fetch data from the table: "app.material_requests" using primary key columns */
+  app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** fetch data from the table: "app.navigation" */
   app_navigation: Array<App_Navigation>;
   /** fetch aggregated fields from the table: "app.navigation" */
@@ -9924,6 +10168,29 @@ export type Subscription_RootApp_Content_Page_Content_Label_AggregateArgs = {
 
 
 export type Subscription_RootApp_Content_Page_Content_Label_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_Material_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Requests_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -13144,6 +13411,16 @@ export type FindContentPartnersQueryVariables = Exact<{
 
 export type FindContentPartnersQuery = { __typename?: 'query_root', maintainer_content_partner: Array<{ __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null }>, maintainer_content_partner_aggregate: { __typename?: 'maintainer_content_partner_aggregate', aggregate?: { __typename?: 'maintainer_content_partner_aggregate_fields', count: number } | null } };
 
+export type FindMaterialRequestsQueryVariables = Exact<{
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+  orderBy?: App_Material_Requests_Order_By;
+}>;
+
+
+export type FindMaterialRequestsQuery = { __typename?: 'query_root', app_material_requests: Array<{ __typename?: 'app_material_requests', id: any, object_schema_identifier: string, profile_id: any, reason: string, created_at: any, updated_at: any }>, app_material_requests_aggregate: { __typename?: 'app_material_requests_aggregate', aggregate?: { __typename?: 'app_material_requests_aggregate_fields', count: number } | null } };
+
 export type FindAllObjectsByCollectionIdQueryVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -13475,6 +13752,7 @@ export const InsertObjectIntoCollectionDocument = {"kind":"Document","definition
 export const RemoveObjectFromCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeObjectFromCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveObjectFromCollectionMutation, RemoveObjectFromCollectionMutationVariables>;
 export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
 export const FindContentPartnersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findContentPartners"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_content_partner_bool_exp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindContentPartnersQuery, FindContentPartnersQueryVariables>;
+export const FindMaterialRequestsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequests"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_requests_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsQuery, FindMaterialRequestsQueryVariables>;
 export const FindAllObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}}]}}]}}]}}]} as unknown as DocumentNode<FindAllObjectsByCollectionIdQuery, FindAllObjectsByCollectionIdQueryVariables>;
 export const GetObjectDetailBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_color"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_base"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_image_or_sound"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_original_cp"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_description_programme"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_description_cast"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifierQuery, GetObjectDetailBySchemaIdentifierQueryVariables>;
 export const GetObjectIdentifierTupleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectIdentifierTuple"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifiers"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifiers"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}}]}}]}}]} as unknown as DocumentNode<GetObjectIdentifierTupleQuery, GetObjectIdentifierTupleQueryVariables>;
