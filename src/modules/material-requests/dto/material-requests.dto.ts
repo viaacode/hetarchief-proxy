@@ -31,26 +31,8 @@ export class MaterialRequestsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'startAt',
-		enum: [
-			'id',
-			'spaceId',
-			'spaceName',
-			'userProfileId',
-			'timeframe',
-			'reason',
-			'acceptedTos',
-			'status',
-			'startAt',
-			'endAt',
-			'createdAt',
-			'updatedAt',
-			'visitorName',
-			'visitorMail',
-			'visitorId',
-			'updatedById',
-			'updatedByName',
-		],
+		default: 'createdAt',
+		enum: ['id', 'objectSchemaIdentifier', 'profileId', 'reason', 'createdAt', 'updatedAt'],
 	})
 	orderProp? = 'startAt';
 
