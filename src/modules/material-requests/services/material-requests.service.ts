@@ -1,17 +1,20 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isEmpty, set } from 'lodash';
 
-import {
-	FindMaterialRequestsDocument,
-	FindMaterialRequestsQuery,
-	FindMaterialRequestsQueryVariables,
-} from '../../../generated/graphql-db-types-hetarchief';
 import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
 
+import {
+	FindMaterialRequestsByIdDocument,
+	FindMaterialRequestsByIdQuery,
+	FindMaterialRequestsByIdQueryVariables,
+	FindMaterialRequestsDocument,
+	FindMaterialRequestsQuery,
+	FindMaterialRequestsQueryVariables,
+} from '~generated/graphql-db-types-hetarchief';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -75,5 +78,18 @@ export class MaterialRequestsService {
 			size,
 			total: materialRequestsResponse.app_material_requests_aggregate.aggregate.count,
 		});
+	}
+
+	public async findById(id: string): Promise<MaterialRequest> {
+		const materialRequestResponse = await this.dataService.execute<
+			FindMaterialRequestsByIdQuery,
+			FindMaterialRequestsByIdQueryVariables
+		>(FindMaterialRequestsByIdDocument, { id });
+
+		if (!materialRequestResponse.app_material_requests[0]) {
+			throw new NotFoundException(`Material Request with id '${id}' not found`);
+		}
+
+		return this.adapt(materialRequestResponse.app_material_requests[0]);
 	}
 }

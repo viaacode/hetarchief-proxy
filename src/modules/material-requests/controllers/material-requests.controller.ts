@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
@@ -8,6 +8,7 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -35,5 +36,14 @@ export class MaterialRequestsController {
 		});
 
 		return visits;
+	}
+
+	@Get(':id')
+	@RequireAnyPermissions(
+		Permission.READ_ALL_VISIT_REQUESTS,
+		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
+	)
+	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
+		return await this.materialRequestsService.findById(id);
 	}
 }
