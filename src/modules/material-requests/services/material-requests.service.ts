@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { isEmpty, set } from 'lodash';
+import { isEmpty, isNil, set } from 'lodash';
 
 import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
@@ -86,7 +86,7 @@ export class MaterialRequestsService {
 			FindMaterialRequestsByIdQueryVariables
 		>(FindMaterialRequestsByIdDocument, { id });
 
-		if (!materialRequestResponse.app_material_requests[0]) {
+		if (isNil(materialRequestResponse) || !materialRequestResponse.app_material_requests[0]) {
 			throw new NotFoundException(`Material Request with id '${id}' not found`);
 		}
 

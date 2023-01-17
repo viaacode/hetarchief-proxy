@@ -111,4 +111,34 @@ describe('MaterialRequestsService', () => {
 			expect(response.total).toBe(100);
 		});
 	});
+
+	describe('findById', () => {
+		it('returns a single material request', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
+			const response = await materialRequestsService.findById('1');
+			expect(response.id).toBe(mockMaterialRequest.id);
+		});
+
+		it('throws a notfoundexception if the material request was not found', async () => {
+			const mockData: FindMaterialRequestsQuery = {
+				app_material_requests: [],
+				app_material_requests_aggregate: {
+					aggregate: {
+						count: 0,
+					},
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await materialRequestsService.findById('unknown-id');
+			} catch (error) {
+				expect(error.response).toEqual({
+					error: 'Not Found',
+					message: "Material Request with id 'unknown-id' not found",
+					statusCode: 404,
+				});
+			}
+		});
+	});
 });
