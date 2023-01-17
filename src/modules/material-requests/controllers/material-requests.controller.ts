@@ -40,8 +40,8 @@ export class MaterialRequestsController {
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.READ_ALL_VISIT_REQUESTS,
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
+		Permission.READ_ALL_MATERIAL_REQUESTS,
+		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS
 	)
 	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);
