@@ -25,6 +25,10 @@ export class MaterialRequestsService {
 	 * Adapt a content partner as returned by a graphQl response to our internal model
 	 */
 	public adapt(grapqhQLMaterialRequest: GqlMaterialRequest): MaterialRequest | null {
+		if (!grapqhQLMaterialRequest) {
+			return null;
+		}
+
 		return {
 			id: grapqhQLMaterialRequest.id,
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,

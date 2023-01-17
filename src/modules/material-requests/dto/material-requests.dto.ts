@@ -34,7 +34,7 @@ export class MaterialRequestsQueryDto {
 		default: 'createdAt',
 		enum: ['id', 'objectSchemaIdentifier', 'profileId', 'reason', 'createdAt', 'updatedAt'],
 	})
-	orderProp? = 'startAt';
+	orderProp? = 'createdAt';
 
 	@IsString()
 	@Type(() => String)

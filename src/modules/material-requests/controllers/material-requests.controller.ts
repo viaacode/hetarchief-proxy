@@ -26,7 +26,7 @@ export class MaterialRequestsController {
 		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS,
 		Permission.MANAGE_ACCOUNT
 	)
-	public async getPersonalVisits(
+	public async getPersonalMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
