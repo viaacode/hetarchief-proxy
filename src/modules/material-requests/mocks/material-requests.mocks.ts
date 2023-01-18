@@ -1,4 +1,8 @@
-import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
+import {
+	GqlMaterialRequest,
+	MaterialRequest,
+	MaterialRequestTypes,
+} from '../material-requests.types';
 
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -12,6 +16,21 @@ export const mockMaterialRequest: GqlMaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',
 	updated_at: '2022-03-18T08:32:57.256264',
+	type: MaterialRequestTypes.REUSE as any,
+	requested_by: {
+		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+		full_name: 'Ilya Korsakov',
+		mail: 'ilya.korsakov@example.com',
+	},
+	object: {
+		maintainer: {
+			schema_identifier: 'OR-rf5kf25',
+			schema_name: 'VRT',
+			visitor_space: {
+				slug: 'vrt',
+			},
+		},
+	},
 };
 
 export const mockMaterialRequest1: MaterialRequest = {
@@ -21,6 +40,12 @@ export const mockMaterialRequest1: MaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-03-18T08:32:57.256264',
 	updatedAt: '2022-03-18T08:32:57.256264',
+	type: MaterialRequestTypes.REUSE,
+	requesterName: 'Ilya Korsakov',
+	requesterMail: 'ilya.korsakov@example.com',
+	maintainerId: 'OR-rf5kf25',
+	maintainerName: 'vrt',
+	maintainerSlug: 'vrt',
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -30,6 +55,12 @@ const mockMaterialRequest2: MaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-02-18T08:32:57.256264',
 	updatedAt: '2022-02-18T08:32:57.256264',
+	type: MaterialRequestTypes.MORE_INFO,
+	requesterName: 'Marie Odhiambo',
+	requesterMail: 'marie.odhiambo@example.com',
+	maintainerId: 'OR-154dn75',
+	maintainerName: 'Amsab-ISG',
+	maintainerSlug: 'amsab-isg',
 };
 
 export const mockMaterialRequestsResponse = {

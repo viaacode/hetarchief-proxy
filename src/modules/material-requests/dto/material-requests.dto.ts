@@ -37,7 +37,7 @@ export class MaterialRequestsQueryDto {
 		description: 'List of maintainer ids',
 		default: [],
 	})
-	maintainerIds?: MaterialRequestType;
+	maintainerIds?: string[];
 
 	@IsNumber()
 	@Type(() => Number)
