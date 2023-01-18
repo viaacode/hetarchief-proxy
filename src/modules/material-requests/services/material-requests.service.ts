@@ -1,11 +1,16 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { isEmpty, isNil, set } from 'lodash';
+import { isArray, isEmpty, isNil, set } from 'lodash';
 
 import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
+import {
+	GqlMaterialRequest,
+	MaterialRequest,
+	MaterialRequestType,
+	MaterialRequestTypes,
+} from '../material-requests.types';
 
 import {
 	FindMaterialRequestsByIdDocument,
@@ -39,6 +44,12 @@ export class MaterialRequestsService {
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
 			updatedAt: grapqhQLMaterialRequest.updated_at,
+			type: grapqhQLMaterialRequest.type as any as MaterialRequestType,
+			requesterName: grapqhQLMaterialRequest.requested_by.full_name,
+			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
+			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
+			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
+			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
 		};
 	}
 
@@ -48,14 +59,33 @@ export class MaterialRequestsService {
 			userProfileId?: string;
 		}
 	): Promise<IPagination<MaterialRequest>> {
-		const { page, size, orderProp, orderDirection } = inputQuery;
+		const { query, type, maintainerIds, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
 		const where: FindMaterialRequestsQueryVariables['where'] = {};
 
+		if (!isEmpty(query) && query !== '%' && query !== '%%') {
+			where._or = [
+				{ requested_by: { full_name: { _ilike: query } } },
+				{ requested_by: { mail: { _ilike: query } } },
+			];
+		}
+
 		if (!isEmpty(parameters.userProfileId)) {
 			where.profile_id = { _eq: parameters.userProfileId };
+		}
+
+		if (!isEmpty(type)) {
+			where.type = {
+				_eq: MaterialRequestTypes[type],
+			};
+		}
+
+		if (!isEmpty(maintainerIds)) {
+			where.object.maintainer.schema_identifier = {
+				_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
+			};
 		}
 
 		const materialRequestsResponse = await this.dataService.execute<
@@ -90,6 +120,6 @@ export class MaterialRequestsService {
 			throw new NotFoundException(`Material Request with id '${id}' not found`);
 		}
 
-		return this.adapt(materialRequestResponse.app_material_requests[0]);
+		return this.adapt(materialRequestResponse.app_material_requests[0] as GqlMaterialRequest);
 	}
 }

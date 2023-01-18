@@ -11,6 +11,21 @@ query findMaterialRequests(
 		reason
 		created_at
 		updated_at
+		type
+		requested_by {
+			id
+			full_name
+			mail
+		}
+		object {
+			maintainer {
+				schema_identifier
+				schema_name
+				visitor_space {
+					slug
+				}
+			}
+		}
 	}
 	app_material_requests_aggregate(where: $where) {
 		aggregate {

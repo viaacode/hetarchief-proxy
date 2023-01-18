@@ -19,6 +19,21 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 export class MaterialRequestsController {
 	constructor(private materialRequestsService: MaterialRequestsService) {}
 
+	@Get()
+	@ApiOperation({
+		description:
+			'Get Materials Requests endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
+	})
+	@RequireAnyPermissions(Permission.READ_ALL_MATERIAL_REQUESTS)
+	public async getMaterialRequests(
+		@Query() queryDto: MaterialRequestsQueryDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IPagination<MaterialRequest>> {
+		return await this.materialRequestsService.findAll(queryDto, {
+			userProfileId: user.getId(),
+		});
+	}
+
 	@Get('personal')
 	@ApiOperation({
 		description: 'Get Material Requests endpoint for User.',
@@ -31,17 +46,15 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		const visits = await this.materialRequestsService.findAll(queryDto, {
+		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
-
-		return visits;
 	}
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.READ_ALL_VISIT_REQUESTS,
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
+		Permission.READ_ALL_MATERIAL_REQUESTS,
+		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS
 	)
 	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);
