@@ -18,11 +18,11 @@ export interface MaterialRequest {
 export enum MaterialRequestTypes {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
-	LOOK_INTO = 'LOOK_INTO',
+	VIEW = 'VIEW',
 }
 
 export type MaterialRequestType =
-	| MaterialRequestTypes.LOOK_INTO
+	| MaterialRequestTypes.VIEW
 	| MaterialRequestTypes.MORE_INFO
 	| MaterialRequestTypes.REUSE;
 

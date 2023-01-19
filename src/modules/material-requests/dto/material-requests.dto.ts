@@ -24,7 +24,7 @@ export class MaterialRequestsQueryDto {
 	@ApiPropertyOptional({
 		type: MaterialRequestTypes,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestTypes.LOOK_INTO,
+		default: MaterialRequestTypes.VIEW,
 	})
 	type?: string;
 
