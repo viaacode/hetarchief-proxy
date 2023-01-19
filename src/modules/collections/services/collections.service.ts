@@ -1,7 +1,7 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import {
 	Collection,
@@ -82,6 +82,7 @@ export class CollectionsService {
 			alternateName: gqlIeObject?.schema_is_part_of?.alternatief || null,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound || null,
+			duration: gqlIeObject?.schema_duration || null,
 		};
 	}
 
@@ -226,7 +227,7 @@ export class CollectionsService {
 			offset,
 			limit,
 		});
-		if (!collectionObjectsResponse.users_folder_ie[0]) {
+		if (isEmpty(collectionObjectsResponse.users_folder_ie)) {
 			throw new NotFoundException();
 		}
 		const total = collectionObjectsResponse.users_folder_ie_aggregate.aggregate.count;

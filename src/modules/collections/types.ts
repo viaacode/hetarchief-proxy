@@ -16,6 +16,7 @@ export interface Collection {
 	updatedAt: string;
 	isDefault: boolean;
 	userProfileId: string;
+	duration?: string;
 	objects?: IeObject[];
 }
 
@@ -64,4 +65,5 @@ export interface IeObject {
 	programs: string[];
 	datePublished?: string;
 	dateCreatedLowerBound?: string;
+	duration: string;
 }
