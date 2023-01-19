@@ -25,7 +25,7 @@ export class MaterialRequestsService {
 	constructor(protected dataService: DataService) {}
 
 	/**
-	 * Adapt a content partner as returned by a graphQl response to our internal model
+	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
 	public adapt(grapqhQLMaterialRequest: GqlMaterialRequest): MaterialRequest | null {
 		if (!grapqhQLMaterialRequest) {
@@ -39,6 +39,27 @@ export class MaterialRequestsService {
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
 			updatedAt: grapqhQLMaterialRequest.updated_at,
+			requestedBy: {
+				requesterId: grapqhQLMaterialRequest.requested_by.id,
+				requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
+				requesterMail: grapqhQLMaterialRequest.requested_by.mail,
+				requesterGroup: {
+					name: grapqhQLMaterialRequest.requested_by.group.name,
+					label: grapqhQLMaterialRequest.requested_by.group.label,
+					description: grapqhQLMaterialRequest.requested_by.group.description,
+					id: grapqhQLMaterialRequest.requested_by.group.id,
+				},
+			},
+			maintainer: {
+				name: grapqhQLMaterialRequest.object.maintainer.schema_name,
+				id: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
+				slug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
+				logo: grapqhQLMaterialRequest.object.maintainer.content_partner.information.logo,
+			},
+			object: {
+				name: grapqhQLMaterialRequest.object.meemoo_identifier,
+				pid: grapqhQLMaterialRequest.object.schema_name,
+			},
 		};
 	}
 
