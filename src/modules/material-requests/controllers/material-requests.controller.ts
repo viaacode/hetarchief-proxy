@@ -21,21 +21,16 @@ export class MaterialRequestsController {
 
 	@Get('personal')
 	@ApiOperation({
-		description: 'Get Material Requests endpoint for User.',
+		description: 'Get material requests for the logged in user.',
 	})
-	@RequireAllPermissions(
-		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS,
-		Permission.MANAGE_ACCOUNT
-	)
+	@RequireAllPermissions(Permission.VIEW_OWN_MATERIAL_REQUESTS, Permission.MANAGE_ACCOUNT)
 	public async getPersonalMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		const visits = await this.materialRequestsService.findAll(queryDto, {
+		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
-
-		return visits;
 	}
 
 	@Get(':id')
