@@ -55,7 +55,7 @@ describe('MaterialRequestsService', () => {
 	});
 
 	describe('adapt', () => {
-		it('can adapt a hasura response to our visit interface', () => {
+		it('can adapt a hasura response to our material request interface', () => {
 			const adapted = materialRequestsService.adapt(mockMaterialRequest);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockMaterialRequest.id);
