@@ -11,7 +11,8 @@ export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 export const mockMaterialRequest: GqlMaterialRequest = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	object_schema_identifier: 'identifier',
+	object_schema_identifier:
+		'8d4850ac51b74516aa50dc2cbed0bd20fc05e3b9ac9b471494cc93e0308156cf09ec8a302aed4adba7373d04be42d285',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',

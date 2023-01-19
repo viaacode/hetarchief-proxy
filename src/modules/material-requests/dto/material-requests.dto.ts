@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { MaterialRequestType, MaterialRequestTypes } from '../material-requests.types';
+import { MaterialRequestTypes } from '../material-requests.types';
 
 import { SortDirection } from '~shared/types';
 

@@ -83,8 +83,12 @@ export class MaterialRequestsService {
 		}
 
 		if (!isEmpty(maintainerIds)) {
-			where.object.maintainer.schema_identifier = {
-				_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
+			where.object = {
+				maintainer: {
+					schema_identifier: {
+						_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
+					},
+				},
 			};
 		}
 

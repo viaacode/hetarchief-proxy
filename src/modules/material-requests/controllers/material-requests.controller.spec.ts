@@ -50,6 +50,22 @@ describe('MaterialRequestsController', () => {
 		expect(materialRequestsController).toBeDefined();
 	});
 
+	describe('getMaterialRequests', () => {
+		it('should return all material requests for meemoo admin', async () => {
+			mockMaterialRequestsService.findAll.mockResolvedValueOnce(mockMaterialRequestsResponse);
+
+			const materialRequests = await materialRequestsController.getMaterialRequests(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.READ_ALL_MATERIAL_REQUESTS],
+				})
+			);
+
+			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
+		});
+	});
+
 	describe('getPersonalMaterialRequests', () => {
 		it('should return all material requests for a user', async () => {
 			mockMaterialRequestsService.findAll.mockResolvedValueOnce(mockMaterialRequestsResponse);

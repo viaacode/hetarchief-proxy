@@ -5,7 +5,12 @@ import {
 	FindMaterialRequestsQuery,
 	FindMaterialRequestsQueryVariables,
 } from '../../../generated/graphql-db-types-hetarchief';
-import { mockMaterialRequest, mockUserProfileId } from '../mocks/material-requests.mocks';
+import { MaterialRequestTypes } from '../material-requests.types';
+import {
+	mockMaterialRequest,
+	mockMaterialRequest1,
+	mockUserProfileId,
+} from '../mocks/material-requests.mocks';
 
 import { MaterialRequestsService } from './material-requests.service';
 
@@ -94,6 +99,55 @@ describe('MaterialRequestsService', () => {
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
+		});
+
+		it('returns a paginated response with material requests containing Ilya', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
+			const response = await materialRequestsService.findAll(
+				{
+					query: '%Ilya%',
+					page: 1,
+					size: 10,
+				},
+				{}
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.items[0]?.requesterName).toContain('Ilya Korsakov');
+			expect(response.items[0]?.requesterMail).toEqual('ilya.korsakov@example.com');
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on type "REUSE"', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
+			const response = await materialRequestsService.findAll(
+				{
+					type: MaterialRequestTypes.REUSE,
+					page: 1,
+					size: 10,
+				},
+				{}
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.items[0]?.type).toContain(MaterialRequestTypes.REUSE);
+			expect(response.page).toBe(1);
+			expect(response.size).toBe(10);
+			expect(response.total).toBe(100);
+		});
+
+		it('can filter on an array of materialIds', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
+			const response = await materialRequestsService.findAll(
+				{
+					maintainerIds: ['OR-rf5kf25'],
+					page: 1,
+					size: 10,
+				},
+				{}
+			);
+			expect(response.items.length).toBe(1);
+			expect(response.items[0]?.maintainerName).toEqual('VRT');
 		});
 
 		it('can filter on userProfileId', async () => {
