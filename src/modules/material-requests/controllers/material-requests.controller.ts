@@ -22,7 +22,7 @@ export class MaterialRequestsController {
 	@Get()
 	@ApiOperation({
 		description:
-			'Get Materials Requests endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
+			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
 	@RequireAnyPermissions(Permission.READ_ALL_MATERIAL_REQUESTS)
 	public async getMaterialRequests(

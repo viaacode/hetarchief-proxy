@@ -9,7 +9,6 @@ import {
 	GqlMaterialRequest,
 	MaterialRequest,
 	MaterialRequestType,
-	MaterialRequestTypes,
 } from '../material-requests.types';
 
 import {
@@ -78,7 +77,7 @@ export class MaterialRequestsService {
 
 		if (!isEmpty(type)) {
 			where.type = {
-				_eq: MaterialRequestTypes[type],
+				_eq: MaterialRequestType[type],
 			};
 		}
 

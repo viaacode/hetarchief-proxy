@@ -15,15 +15,10 @@ export interface MaterialRequest {
 	maintainerSlug?: string;
 }
 
-export enum MaterialRequestTypes {
+export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
 	VIEW = 'VIEW',
 }
-
-export type MaterialRequestType =
-	| MaterialRequestTypes.VIEW
-	| MaterialRequestTypes.MORE_INFO
-	| MaterialRequestTypes.REUSE;
 
 export type GqlMaterialRequest = FindMaterialRequestsQuery['app_material_requests'][0];

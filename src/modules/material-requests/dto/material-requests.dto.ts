@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { MaterialRequestTypes } from '../material-requests.types';
+import { MaterialRequestType } from '../material-requests.types';
 
 import { SortDirection } from '~shared/types';
 
@@ -22,9 +22,9 @@ export class MaterialRequestsQueryDto {
 	@Type(() => String)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: MaterialRequestTypes,
+		type: MaterialRequestType,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestTypes.VIEW,
+		default: MaterialRequestType.VIEW,
 	})
 	type?: string;
 
