@@ -49,12 +49,10 @@ export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID: not unique per object
 	meemooLocalId: string;
-	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
 	format: string;
 	name: string;
-	alternateName?: string;
 	numberOfPages: any;
 	termsAvailable: string;
 	thumbnailUrl: string;
@@ -63,7 +61,9 @@ export interface IeObject {
 	visitorSpaceSlug: string;
 	series: string[];
 	programs: string[];
+	duration: string | null;
+	alternateName?: string;
 	datePublished?: string;
 	dateCreatedLowerBound?: string;
-	duration: string;
+	collectionEntryCreatedAt?: string;
 }
