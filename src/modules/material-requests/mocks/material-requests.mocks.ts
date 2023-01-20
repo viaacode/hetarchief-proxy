@@ -12,6 +12,33 @@ export const mockMaterialRequest: GqlMaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',
 	updated_at: '2022-03-18T08:32:57.256264',
+	requested_by: {
+		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+		full_name: 'Ilya Korsakov',
+		mail: 'ilya.korsakov@example.com',
+		group: {
+			name: 'VISITOR',
+			label: 'Gebruiker',
+			description: 'Een geregistreerde gebruiker.',
+			id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
+		},
+	},
+	object: {
+		maintainer: {
+			schema_identifier: 'OR-rf5kf25',
+			schema_name: 'VRT',
+			information: {
+				logo: {
+					iri: 'https://assets.viaa.be/images/OR-rf5kf25',
+				},
+			},
+			visitor_space: {
+				slug: 'vrt',
+			},
+		},
+		meemoo_identifier: 'q23qv3wp5b',
+		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+	},
 };
 
 export const mockMaterialRequest1: MaterialRequest = {
@@ -21,6 +48,27 @@ export const mockMaterialRequest1: MaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-03-18T08:32:57.256264',
 	updatedAt: '2022-03-18T08:32:57.256264',
+	requestedBy: {
+		requesterId: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+		requesterFullName: 'Ilya Korsakov',
+		requesterMail: 'ilya.korsakov@example.com',
+		requesterGroup: {
+			name: 'VISITOR',
+			label: 'Gebruiker',
+			description: 'Een geregistreerde gebruiker.',
+			id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
+		},
+	},
+	maintainer: {
+		id: 'OR-rf5kf25',
+		name: 'VRT',
+		logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+		slug: 'vrt',
+	},
+	object: {
+		name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+		pid: 'q23qv3wp5b',
+	},
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -30,6 +78,27 @@ const mockMaterialRequest2: MaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-02-18T08:32:57.256264',
 	updatedAt: '2022-02-18T08:32:57.256264',
+	requestedBy: {
+		requesterId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+		requesterFullName: 'Marie Odhiambo',
+		requesterMail: 'marie.odhiambo@example.com',
+		requesterGroup: {
+			name: 'VISITOR',
+			label: 'Gebruiker',
+			description: 'Een geregistreerde gebruiker.',
+			id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
+		},
+	},
+	maintainer: {
+		id: 'OR-7h1dk9t',
+		name: 'Vlaams Parlement',
+		logo: 'https://assets.viaa.be/images/OR-7h1dk9t',
+		slug: 'vlaams-parlement',
+	},
+	object: {
+		name: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
+		pid: 'q23qv3wp5b',
+	},
 };
 
 export const mockMaterialRequestsResponse = {

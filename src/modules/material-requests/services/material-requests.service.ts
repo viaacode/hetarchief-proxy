@@ -54,11 +54,11 @@ export class MaterialRequestsService {
 				name: grapqhQLMaterialRequest.object.maintainer.schema_name,
 				id: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
 				slug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
-				logo: grapqhQLMaterialRequest.object.maintainer.information.logo,
+				logo: grapqhQLMaterialRequest.object.maintainer.information.logo?.iri,
 			},
 			object: {
-				name: grapqhQLMaterialRequest.object.meemoo_identifier,
-				pid: grapqhQLMaterialRequest.object.schema_name,
+				name: grapqhQLMaterialRequest.object.schema_name,
+				pid: grapqhQLMaterialRequest.object.meemoo_identifier,
 			},
 		};
 	}

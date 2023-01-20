@@ -61,6 +61,47 @@ describe('MaterialRequestsService', () => {
 			);
 			expect(adapted.profileId).toEqual(mockMaterialRequest.profile_id);
 			expect(adapted.reason).toEqual(mockMaterialRequest.reason);
+			// requestedBy
+			expect(adapted.requestedBy).toBeDefined();
+			expect(adapted.requestedBy?.requesterId).toEqual(mockMaterialRequest.requested_by.id);
+			expect(adapted.requestedBy?.requesterFullName).toEqual(
+				mockMaterialRequest.requested_by.full_name
+			);
+			expect(adapted.requestedBy?.requesterMail).toEqual(
+				mockMaterialRequest.requested_by.mail
+			);
+			// requestedBy.group
+			expect(adapted.requestedBy?.requesterGroup).toBeDefined();
+			expect(adapted.requestedBy?.requesterGroup?.id).toEqual(
+				mockMaterialRequest.requested_by.group.id
+			);
+			expect(adapted.requestedBy?.requesterGroup?.description).toEqual(
+				mockMaterialRequest.requested_by.group.description
+			);
+			expect(adapted.requestedBy?.requesterGroup?.label).toEqual(
+				mockMaterialRequest.requested_by.group.label
+			);
+			expect(adapted.requestedBy?.requesterGroup?.name).toEqual(
+				mockMaterialRequest.requested_by.group.name
+			);
+			// maintainer
+			expect(adapted.maintainer).toBeDefined();
+			expect(adapted.maintainer.id).toEqual(
+				mockMaterialRequest.object.maintainer.schema_identifier
+			);
+			expect(adapted.maintainer.name).toEqual(
+				mockMaterialRequest.object.maintainer.schema_name
+			);
+			expect(adapted.maintainer.slug).toEqual(
+				mockMaterialRequest.object.maintainer.visitor_space.slug
+			);
+			expect(adapted.maintainer.logo).toEqual(
+				mockMaterialRequest.object.maintainer.information.logo.iri
+			);
+			// object
+			expect(adapted.object).toBeDefined();
+			expect(adapted.object.name).toEqual(mockMaterialRequest.object.schema_name);
+			expect(adapted.object.pid).toEqual(mockMaterialRequest.object.meemoo_identifier);
 		});
 
 		it('should return null when the material request does not exist', () => {
