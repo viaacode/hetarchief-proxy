@@ -6,5 +6,30 @@ query findMaterialRequestsById($id: uuid!) {
 		reason
 		created_at
 		updated_at
+		requested_by {
+			id
+			full_name
+			mail
+			group {
+				name
+				label
+				description
+				id
+			}
+		}
+		object {
+			maintainer {
+				schema_identifier
+				schema_name
+				information {
+					logo
+				}
+				visitor_space {
+					slug
+				}
+			}
+			meemoo_identifier
+			schema_name
+		}
 	}
 }

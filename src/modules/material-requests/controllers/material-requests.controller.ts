@@ -24,7 +24,7 @@ export class MaterialRequestsController {
 		description:
 			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
-	@RequireAnyPermissions(Permission.READ_ALL_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -36,12 +36,9 @@ export class MaterialRequestsController {
 
 	@Get('personal')
 	@ApiOperation({
-		description: 'Get Material Requests endpoint for User.',
+		description: 'Get material requests for the logged in user.',
 	})
-	@RequireAllPermissions(
-		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS,
-		Permission.MANAGE_ACCOUNT
-	)
+	@RequireAllPermissions(Permission.VIEW_OWN_MATERIAL_REQUESTS, Permission.MANAGE_ACCOUNT)
 	public async getPersonalMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -53,8 +50,8 @@ export class MaterialRequestsController {
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.READ_ALL_MATERIAL_REQUESTS,
-		Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS
+		Permission.VIEW_ANY_MATERIAL_REQUESTS,
+		Permission.VIEW_OWN_MATERIAL_REQUESTS
 	)
 	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);

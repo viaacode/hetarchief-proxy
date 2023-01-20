@@ -1,19 +1,12 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import {
-	FindMaterialRequestsQuery,
-	FindMaterialRequestsQueryVariables,
-} from '../../../generated/graphql-db-types-hetarchief';
-import { MaterialRequestTypes } from '../material-requests.types';
-import {
-	mockMaterialRequest,
-	mockMaterialRequest1,
-	mockUserProfileId,
-} from '../mocks/material-requests.mocks';
+import { MaterialRequestType } from '../material-requests.types';
+import { mockMaterialRequest, mockUserProfileId } from '../mocks/material-requests.mocks';
 
 import { MaterialRequestsService } from './material-requests.service';
 
+import { FindMaterialRequestsQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -60,7 +53,7 @@ describe('MaterialRequestsService', () => {
 	});
 
 	describe('adapt', () => {
-		it('can adapt a hasura response to our visit interface', () => {
+		it('can adapt a hasura response to our material request interface', () => {
 			const adapted = materialRequestsService.adapt(mockMaterialRequest);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockMaterialRequest.id);
@@ -69,8 +62,47 @@ describe('MaterialRequestsService', () => {
 			);
 			expect(adapted.profileId).toEqual(mockMaterialRequest.profile_id);
 			expect(adapted.reason).toEqual(mockMaterialRequest.reason);
-			expect(adapted.createdAt).toEqual(mockMaterialRequest.created_at);
-			expect(adapted.updatedAt).toEqual(mockMaterialRequest.updated_at);
+			// requestedBy
+			expect(adapted.requestedBy).toBeDefined();
+			expect(adapted.requestedBy?.requesterId).toEqual(mockMaterialRequest.requested_by.id);
+			expect(adapted.requestedBy?.requesterFullName).toEqual(
+				mockMaterialRequest.requested_by.full_name
+			);
+			expect(adapted.requestedBy?.requesterMail).toEqual(
+				mockMaterialRequest.requested_by.mail
+			);
+			// requestedBy.group
+			expect(adapted.requestedBy?.requesterGroup).toBeDefined();
+			expect(adapted.requestedBy?.requesterGroup?.id).toEqual(
+				mockMaterialRequest.requested_by.group.id
+			);
+			expect(adapted.requestedBy?.requesterGroup?.description).toEqual(
+				mockMaterialRequest.requested_by.group.description
+			);
+			expect(adapted.requestedBy?.requesterGroup?.label).toEqual(
+				mockMaterialRequest.requested_by.group.label
+			);
+			expect(adapted.requestedBy?.requesterGroup?.name).toEqual(
+				mockMaterialRequest.requested_by.group.name
+			);
+			// maintainer
+			expect(adapted.maintainer).toBeDefined();
+			expect(adapted.maintainer.id).toEqual(
+				mockMaterialRequest.object.maintainer.schema_identifier
+			);
+			expect(adapted.maintainer.name).toEqual(
+				mockMaterialRequest.object.maintainer.schema_name
+			);
+			expect(adapted.maintainer.slug).toEqual(
+				mockMaterialRequest.object.maintainer.visitor_space.slug
+			);
+			expect(adapted.maintainer.logo).toEqual(
+				mockMaterialRequest.object.maintainer.information.logo.iri
+			);
+			// object
+			expect(adapted.object).toBeDefined();
+			expect(adapted.object.name).toEqual(mockMaterialRequest.object.schema_name);
+			expect(adapted.object.pid).toEqual(mockMaterialRequest.object.meemoo_identifier);
 		});
 
 		it('should return null when the material request does not exist', () => {
@@ -123,14 +155,14 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
-					type: MaterialRequestTypes.REUSE,
+					type: MaterialRequestType.REUSE,
 					page: 1,
 					size: 10,
 				},
 				{}
 			);
 			expect(response.items.length).toBe(1);
-			expect(response.items[0]?.type).toContain(MaterialRequestTypes.REUSE);
+			expect(response.items[0]?.type).toContain(MaterialRequestType.REUSE);
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
