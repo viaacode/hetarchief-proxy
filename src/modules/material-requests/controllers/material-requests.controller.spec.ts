@@ -58,7 +58,7 @@ describe('MaterialRequestsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.READ_ALL_MATERIAL_REQUESTS],
+					permissions: [Permission.VIEW_ANY_MATERIAL_REQUESTS],
 				})
 			);
 

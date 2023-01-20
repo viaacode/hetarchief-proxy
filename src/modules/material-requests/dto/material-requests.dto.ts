@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { MaterialRequestType } from '../material-requests.types';
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 import { SortDirection } from '~shared/types';
 
@@ -66,9 +66,9 @@ export class MaterialRequestsQueryDto {
 		type: String,
 		description: 'property to sort the results by',
 		default: 'createdAt',
-		enum: ['id', 'requesterName', 'requesterEmail', 'maintainer', 'createdAt', 'type'],
+		enum: [Object.values(MaterialRequestOrderProp)],
 	})
-	orderProp? = 'createdAt';
+	orderProp? = MaterialRequestOrderProp.CREATED_AT;
 
 	@IsString()
 	@Type(() => String)

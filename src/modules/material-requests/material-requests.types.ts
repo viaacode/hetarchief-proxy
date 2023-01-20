@@ -1,7 +1,7 @@
 import {
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
-} from './../../generated/graphql-db-types-hetarchief';
+} from '~generated/graphql-db-types-hetarchief';
 
 export interface MaterialRequest {
 	id: string;
@@ -10,10 +10,20 @@ export interface MaterialRequest {
 	reason: string;
 	createdAt: string;
 	updatedAt: string;
-	type: MaterialRequestType;
-	requestedBy: MaterialRequestRequester;
-	maintainer: MaterialRequestMaintainer;
-	object: MaterialRequestObject;
+	type: string;
+	requesterId: string;
+	requesterFullName: string;
+	requesterMail: string;
+	maintainerId: string;
+	maintainerName: string;
+	maintainerSlug: string;
+	requesterUserGroupId?: string;
+	requesterUserGroupName?: string;
+	requesterUserGroupLabel?: string;
+	requesterUserGroupDescription?: string;
+	maintainerLogo?: string;
+	objectName?: string;
+	objectPid?: string;
 }
 
 export enum MaterialRequestType {
@@ -22,30 +32,13 @@ export enum MaterialRequestType {
 	VIEW = 'VIEW',
 }
 
-export interface MaterialRequestRequester {
-	requesterId: string;
-	requesterFullName: string;
-	requesterMail: string;
-	requesterGroup: MaterialRequestRequesterUserGroup;
-}
-
-export interface MaterialRequestRequesterUserGroup {
-	id: string;
-	name: string;
-	label: string;
-	description: string;
-}
-
-export interface MaterialRequestMaintainer {
-	name: string;
-	id: string;
-	slug: string;
-	logo: string;
-}
-
-export interface MaterialRequestObject {
-	name: string;
-	pid: string;
+export enum MaterialRequestOrderProp {
+	ID = 'id',
+	CREATED_AT = 'createdAt',
+	TYPE = 'type',
+	REQUESTER_FULL_NAME = 'requesterFullName',
+	REQUESTER_MAIL = 'requesterMail',
+	MAINTAINER_NAME = 'maintainerName',
 }
 
 export type GqlMaterialRequest =
