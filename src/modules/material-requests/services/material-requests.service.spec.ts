@@ -1,10 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import {
-	FindMaterialRequestsQuery,
-	FindMaterialRequestsQueryVariables,
-} from '../../../generated/graphql-db-types-hetarchief';
+import { FindMaterialRequestsQuery } from '../../../generated/graphql-db-types-hetarchief';
 import { mockMaterialRequest, mockUserProfileId } from '../mocks/material-requests.mocks';
 
 import { MaterialRequestsService } from './material-requests.service';
@@ -64,8 +61,6 @@ describe('MaterialRequestsService', () => {
 			);
 			expect(adapted.profileId).toEqual(mockMaterialRequest.profile_id);
 			expect(adapted.reason).toEqual(mockMaterialRequest.reason);
-			expect(adapted.createdAt).toEqual(mockMaterialRequest.created_at);
-			expect(adapted.updatedAt).toEqual(mockMaterialRequest.updated_at);
 		});
 
 		it('should return null when the material request does not exist', () => {

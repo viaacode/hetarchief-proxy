@@ -21,6 +21,9 @@ query findMaterialRequestsById($id: uuid!) {
 			maintainer {
 				schema_identifier
 				schema_name
+				information {
+					logo
+				}
 				visitor_space {
 					slug
 				}

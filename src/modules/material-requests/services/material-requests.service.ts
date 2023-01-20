@@ -54,7 +54,7 @@ export class MaterialRequestsService {
 				name: grapqhQLMaterialRequest.object.maintainer.schema_name,
 				id: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
 				slug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
-				logo: grapqhQLMaterialRequest.object.maintainer.content_partner.information.logo,
+				logo: grapqhQLMaterialRequest.object.maintainer.information.logo,
 			},
 			object: {
 				name: grapqhQLMaterialRequest.object.meemoo_identifier,
