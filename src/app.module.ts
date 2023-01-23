@@ -6,6 +6,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
+import { MaterialRequestsModule } from './modules/material-requests';
+
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
@@ -45,7 +47,6 @@ import { SessionService } from '~shared/services/session.service';
 		EventsModule,
 		OrganisationsModule,
 		MediaModule,
-		MediaModule,
 		NotificationsModule,
 		SpacesModule,
 		StatusModule,
@@ -56,6 +57,7 @@ import { SessionService } from '~shared/services/session.service';
 		ClientCacheModule,
 		NotFoundModule,
 		AdminCoreModule,
+		MaterialRequestsModule,
 	],
 	controllers: [],
 	providers: [
