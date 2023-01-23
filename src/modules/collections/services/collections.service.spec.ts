@@ -97,29 +97,27 @@ const mockGqlCollectionResultEmpty: { data: FindCollectionsByUserQuery } = {
 	},
 };
 
-const mockGqlCollectionObjectsResult: { data: FindCollectionObjectsByCollectionIdQuery } = {
-	data: {
-		users_folder_ie: [
-			{
-				created_at: '2022-02-02T10:55:16.542503',
-				ie: {
-					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-					schema_creator: null,
-					dcterms_available: '2015-09-19T12:08:24',
-					schema_thumbnail_url:
-						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-					dcterms_format: 'video',
-					schema_number_of_pages: null,
-					meemoo_identifier: '8s4jm2514q',
-					schema_identifier:
-						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-				},
+const mockGqlCollectionObjectsResult = {
+	users_folder_ie: [
+		{
+			created_at: '2022-02-02T10:55:16.542503',
+			ie: {
+				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schema_creator: null,
+				dcterms_available: '2015-09-19T12:08:24',
+				schema_thumbnail_url:
+					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+				dcterms_format: 'video',
+				schema_number_of_pages: null,
+				meemoo_identifier: '8s4jm2514q',
+				schema_identifier:
+					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 			},
-		],
-		users_folder_ie_aggregate: {
-			aggregate: {
-				count: 1,
-			},
+		},
+	],
+	users_folder_ie_aggregate: {
+		aggregate: {
+			count: 1,
 		},
 	},
 };
@@ -165,6 +163,7 @@ const mockCollectionObject: IeObject = {
 	meemooLocalId: 'WP00032225',
 	series: ['Serie'],
 	programs: ['Programma'],
+	duration: '01:01:59',
 };
 
 const mockUser = {
@@ -316,7 +315,7 @@ describe('CollectionsService', () => {
 				'referer'
 			);
 			expect(response.items[0].schemaIdentifier).toBe(
-				mockGqlCollectionObjectsResult.data.users_folder_ie[0].ie.schema_identifier
+				mockGqlCollectionObjectsResult.users_folder_ie[0].ie.schema_identifier
 			);
 		});
 
