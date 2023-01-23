@@ -1,10 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import {
-	FindMaterialRequestsQuery,
-	FindMaterialRequestsQueryVariables,
-} from '../../../generated/graphql-db-types-hetarchief';
+import { FindMaterialRequestsQuery } from '../../../generated/graphql-db-types-hetarchief';
 import { mockMaterialRequest, mockUserProfileId } from '../mocks/material-requests.mocks';
 
 import { MaterialRequestsService } from './material-requests.service';
@@ -64,8 +61,47 @@ describe('MaterialRequestsService', () => {
 			);
 			expect(adapted.profileId).toEqual(mockMaterialRequest.profile_id);
 			expect(adapted.reason).toEqual(mockMaterialRequest.reason);
-			expect(adapted.createdAt).toEqual(mockMaterialRequest.created_at);
-			expect(adapted.updatedAt).toEqual(mockMaterialRequest.updated_at);
+			// requestedBy
+			expect(adapted.requestedBy).toBeDefined();
+			expect(adapted.requestedBy?.requesterId).toEqual(mockMaterialRequest.requested_by.id);
+			expect(adapted.requestedBy?.requesterFullName).toEqual(
+				mockMaterialRequest.requested_by.full_name
+			);
+			expect(adapted.requestedBy?.requesterMail).toEqual(
+				mockMaterialRequest.requested_by.mail
+			);
+			// requestedBy.group
+			expect(adapted.requestedBy?.requesterGroup).toBeDefined();
+			expect(adapted.requestedBy?.requesterGroup?.id).toEqual(
+				mockMaterialRequest.requested_by.group.id
+			);
+			expect(adapted.requestedBy?.requesterGroup?.description).toEqual(
+				mockMaterialRequest.requested_by.group.description
+			);
+			expect(adapted.requestedBy?.requesterGroup?.label).toEqual(
+				mockMaterialRequest.requested_by.group.label
+			);
+			expect(adapted.requestedBy?.requesterGroup?.name).toEqual(
+				mockMaterialRequest.requested_by.group.name
+			);
+			// maintainer
+			expect(adapted.maintainer).toBeDefined();
+			expect(adapted.maintainer.id).toEqual(
+				mockMaterialRequest.object.maintainer.schema_identifier
+			);
+			expect(adapted.maintainer.name).toEqual(
+				mockMaterialRequest.object.maintainer.schema_name
+			);
+			expect(adapted.maintainer.slug).toEqual(
+				mockMaterialRequest.object.maintainer.visitor_space.slug
+			);
+			expect(adapted.maintainer.logo).toEqual(
+				mockMaterialRequest.object.maintainer.information.logo.iri
+			);
+			// object
+			expect(adapted.object).toBeDefined();
+			expect(adapted.object.name).toEqual(mockMaterialRequest.object.schema_name);
+			expect(adapted.object.pid).toEqual(mockMaterialRequest.object.meemoo_identifier);
 		});
 
 		it('should return null when the material request does not exist', () => {
@@ -109,6 +145,36 @@ describe('MaterialRequestsService', () => {
 			expect(response.page).toBe(1);
 			expect(response.size).toBe(10);
 			expect(response.total).toBe(100);
+		});
+	});
+
+	describe('findById', () => {
+		it('returns a single material request', async () => {
+			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
+			const response = await materialRequestsService.findById('1');
+			expect(response.id).toBe(mockMaterialRequest.id);
+		});
+
+		it('throws a notfoundexception if the material request was not found', async () => {
+			const mockData: FindMaterialRequestsQuery = {
+				app_material_requests: [],
+				app_material_requests_aggregate: {
+					aggregate: {
+						count: 0,
+					},
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await materialRequestsService.findById('unknown-id');
+			} catch (error) {
+				expect(error.response).toEqual({
+					error: 'Not Found',
+					message: "Material Request with id 'unknown-id' not found",
+					statusCode: 404,
+				});
+			}
 		});
 	});
 });
