@@ -49,6 +49,8 @@ export enum Permission {
 	EDIT_TRANSLATIONS = 'EDIT_TRANSLATIONS',
 	// IDP-based permission:
 	CAN_EDIT_PROFILE_INFO = 'CAN_EDIT_PROFILE_INFO',
+	// Material Requests
+	VIEW_OWN_MATERIAL_REQUESTS = 'VIEW_OWN_MATERIAL_REQUESTS',
 }
 
 export type GqlUser =
