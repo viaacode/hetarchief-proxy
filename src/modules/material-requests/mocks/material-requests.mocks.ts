@@ -1,26 +1,91 @@
-import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
+import { MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
+import {
+	FindMaterialRequestsByIdQuery,
+	FindMaterialRequestsQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
-export const mockMaterialRequest: GqlMaterialRequest = {
+export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_requests'][0] = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	object_schema_identifier: 'identifier',
+	object_schema_identifier:
+		'8d4850ac51b74516aa50dc2cbed0bd20fc05e3b9ac9b471494cc93e0308156cf09ec8a302aed4adba7373d04be42d285',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',
 	updated_at: '2022-03-18T08:32:57.256264',
+	type: MaterialRequestType.REUSE as any,
+	requested_by: {
+		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+		full_name: 'Ilya Korsakov',
+		mail: 'ilya.korsakov@example.com',
+	},
+	object: {
+		maintainer: {
+			schema_identifier: 'OR-rf5kf25',
+			schema_name: 'VRT',
+			visitor_space: {
+				slug: 'vrt',
+			},
+		},
+	},
 };
 
-const mockMaterialRequest1: MaterialRequest = {
+export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_material_requests'][0] = {
+	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+	object_schema_identifier:
+		'8d4850ac51b74516aa50dc2cbed0bd20fc05e3b9ac9b471494cc93e0308156cf09ec8a302aed4adba7373d04be42d285',
+	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+	reason: 'voor mijn onderzoek en studie',
+	created_at: '2022-03-18T08:32:57.256264',
+	updated_at: '2022-03-18T08:32:57.256264',
+	type: MaterialRequestType.REUSE as any,
+	requested_by: {
+		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+		full_name: 'Ilya Korsakov',
+		mail: 'ilya.korsakov@example.com',
+		group: {
+			name: 'VISITOR',
+			label: 'Gebruiker',
+			description: 'Een geregistreerde gebruiker.',
+			id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
+		},
+	},
+	object: {
+		maintainer: {
+			schema_identifier: 'OR-rf5kf25',
+			schema_name: 'VRT',
+			information: {
+				logo: {
+					iri: 'https://assets.viaa.be/images/OR-rf5kf25',
+				},
+			},
+			visitor_space: {
+				slug: 'vrt',
+			},
+		},
+		meemoo_identifier: 'q23qv3wp5b',
+		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+	},
+};
+
+export const mockMaterialRequest1: MaterialRequest = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 	objectSchemaIdentifier: 'identifier',
 	profileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-03-18T08:32:57.256264',
 	updatedAt: '2022-03-18T08:32:57.256264',
+	type: MaterialRequestType.REUSE,
+	requesterId: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+	requesterFullName: 'Ilya Korsakov',
+	requesterMail: 'ilya.korsakov@example.com',
+	maintainerId: 'OR-rf5kf25',
+	maintainerName: 'VRT',
+	maintainerSlug: 'vrt',
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -30,6 +95,20 @@ const mockMaterialRequest2: MaterialRequest = {
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-02-18T08:32:57.256264',
 	updatedAt: '2022-02-18T08:32:57.256264',
+	type: MaterialRequestType.MORE_INFO,
+	requesterId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	requesterFullName: 'Marie Odhiambo',
+	requesterMail: 'marie.odhiambo@example.com',
+	requesterUserGroupName: 'VISITOR',
+	requesterUserGroupLabel: 'Gebruiker',
+	requesterUserGroupDescription: 'Een geregistreerde gebruiker.',
+	requesterUserGroupId: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
+	maintainerId: 'OR-7h1dk9t',
+	maintainerName: 'Vlaams Parlement',
+	maintainerLogo: 'https://assets.viaa.be/images/OR-7h1dk9t',
+	maintainerSlug: 'vlaams-parlement',
+	objectName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
+	objectPid: 'q23qv3wp5b',
 };
 
 export const mockMaterialRequestsResponse = {

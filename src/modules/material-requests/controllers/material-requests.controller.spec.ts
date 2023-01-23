@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { mockMaterialRequestsResponse, mockUser } from '../mocks/material-requests.mocks';
+import {
+	mockMaterialRequest1,
+	mockMaterialRequestsResponse,
+	mockUser,
+} from '../mocks/material-requests.mocks';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { MaterialRequestsController } from './material-requests.controller';
@@ -13,6 +17,7 @@ const mockMaterialRequestsService: Partial<
 	Record<keyof MaterialRequestsService, jest.SpyInstance>
 > = {
 	findAll: jest.fn(),
+	findById: jest.fn(),
 };
 
 describe('MaterialRequestsController', () => {
@@ -45,6 +50,22 @@ describe('MaterialRequestsController', () => {
 		expect(materialRequestsController).toBeDefined();
 	});
 
+	describe('getMaterialRequests', () => {
+		it('should return all material requests for meemoo admin', async () => {
+			mockMaterialRequestsService.findAll.mockResolvedValueOnce(mockMaterialRequestsResponse);
+
+			const materialRequests = await materialRequestsController.getMaterialRequests(
+				null,
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.VIEW_ANY_MATERIAL_REQUESTS],
+				})
+			);
+
+			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
+		});
+	});
+
 	describe('getPersonalMaterialRequests', () => {
 		it('should return all material requests for a user', async () => {
 			mockMaterialRequestsService.findAll.mockResolvedValueOnce(mockMaterialRequestsResponse);
@@ -53,11 +74,19 @@ describe('MaterialRequestsController', () => {
 				null,
 				new SessionUserEntity({
 					...mockUser,
-					permissions: [Permission.READ_PERSONAL_APPROVED_MATERIAL_REQUESTS],
+					permissions: [Permission.VIEW_OWN_MATERIAL_REQUESTS],
 				})
 			);
 
 			expect(materialRequests).toEqual(mockMaterialRequestsResponse);
+		});
+	});
+
+	describe('getMaterialRequestById', () => {
+		it('should return a material request by id', async () => {
+			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
+			const visit = await materialRequestsController.getMaterialRequestById('1');
+			expect(visit).toEqual(mockMaterialRequest1);
 		});
 	});
 });
