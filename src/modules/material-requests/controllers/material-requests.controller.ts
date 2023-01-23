@@ -27,7 +27,7 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		return await this.materialRequestsService.findAll(queryDto, {
+		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 		});
 	}
