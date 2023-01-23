@@ -16,6 +16,7 @@ import {
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
+	GqlVisitByFolderId,
 	GqlVisitWithNotes,
 	Note,
 	Visit,
@@ -44,6 +45,9 @@ import {
 	FindVisitByIdDocument,
 	FindVisitByIdQuery,
 	FindVisitByIdQueryVariables,
+	FindVisitsByFolderIdDocument,
+	FindVisitsByFolderIdQuery,
+	FindVisitsByFolderIdQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
@@ -392,6 +396,21 @@ export class VisitsService {
 		}
 
 		return this.adapt(visitResponse.maintainer_visitor_space_request[0]);
+	}
+
+	public async findByFolderId(folderId: string): Promise<Pick<Visit, 'endAt'>[]> {
+		const visitResponse = await this.dataService.execute<
+			FindVisitsByFolderIdQuery,
+			FindVisitsByFolderIdQueryVariables
+		>(FindVisitsByFolderIdDocument, { folderId, now: new Date().toISOString() });
+
+		if (!visitResponse.maintainer_visitor_space_request_folder_access[0]) {
+			return [];
+		}
+
+		return visitResponse.maintainer_visitor_space_request_folder_access.map(
+			(visit: GqlVisitByFolderId) => ({ endAt: visit.visitor_space_request.end_date })
+		);
 	}
 
 	public async getActiveVisitForUserAndSpace(

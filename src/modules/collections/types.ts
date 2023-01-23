@@ -18,6 +18,7 @@ export interface Collection {
 	userProfileId: string;
 	duration?: string;
 	objects?: IeObject[];
+	usedForLimitedAccessUntil?: string | null;
 }
 
 export type GqlCollectionWithObjects = FindCollectionsByUserQuery['users_folder'][0];

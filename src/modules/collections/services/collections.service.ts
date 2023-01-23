@@ -1,7 +1,8 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get, isEmpty } from 'lodash';
+import { format } from 'date-fns';
+import { get, has, isEmpty } from 'lodash';
 
 import {
 	Collection,
@@ -46,6 +47,8 @@ import {
 	UpdateCollectionMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import { Visit } from '~modules/visits/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -54,7 +57,8 @@ export class CollectionsService {
 
 	constructor(
 		protected dataService: DataService,
-		protected playerTicketService: PlayerTicketService
+		protected playerTicketService: PlayerTicketService,
+		protected visitsService: VisitsService
 	) {}
 
 	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
@@ -86,6 +90,18 @@ export class CollectionsService {
 		};
 	}
 
+	public adaptByVisitEndAt(visits: Pick<Visit, 'endAt'>[]): string | null {
+		if (isEmpty(visits) || !has(visits[0], 'endAt')) {
+			return null;
+		}
+
+		const reducedVisit = visits.reduce((accumulator, currentValue) =>
+			accumulator.endAt > currentValue.endAt ? accumulator : currentValue
+		);
+
+		return format(new Date(reducedVisit.endAt), 'yyyy-MM-dd');
+	}
+
 	/**
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
@@ -105,6 +121,9 @@ export class CollectionsService {
 			createdAt: gqlCollection.created_at,
 			updatedAt: gqlCollection.updated_at,
 			isDefault: gqlCollection.is_default,
+			usedForLimitedAccessUntil:
+				this.adaptByVisitEndAt(await this.visitsService.findByFolderId(gqlCollection.id)) ||
+				null,
 			objects: await Promise.all(
 				(gqlCollection as GqlCollectionWithObjects).ies
 					? (gqlCollection as GqlCollectionWithObjects).ies.map((object) =>
