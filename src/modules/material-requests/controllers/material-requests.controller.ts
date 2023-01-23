@@ -19,6 +19,21 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 export class MaterialRequestsController {
 	constructor(private materialRequestsService: MaterialRequestsService) {}
 
+	@Get()
+	@ApiOperation({
+		description:
+			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
+	})
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async getMaterialRequests(
+		@Query() queryDto: MaterialRequestsQueryDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IPagination<MaterialRequest>> {
+		return await this.materialRequestsService.findAll(queryDto, {
+			userProfileId: user.getId(),
+		});
+	}
+
 	@Get('personal')
 	@ApiOperation({
 		description: 'Get material requests for the logged in user.',

@@ -1,10 +1,44 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 import { SortDirection } from '~shared/types';
 
 export class MaterialRequestsQueryDto {
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			"Text to search for in the name or email af the requester. Use '%' for wildcard.",
+		default: undefined,
+	})
+	query?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: MaterialRequestType,
+		description: 'Which type of material request is requested',
+		default: MaterialRequestType.VIEW,
+	})
+	type?: string;
+
+	@IsArray()
+	@IsString({ each: true })
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		isArray: true,
+		description: 'List of maintainer ids',
+		default: [],
+	})
+	maintainerIds?: string[];
+
 	@IsNumber()
 	@Type(() => Number)
 	@IsOptional()
@@ -32,9 +66,9 @@ export class MaterialRequestsQueryDto {
 		type: String,
 		description: 'property to sort the results by',
 		default: 'createdAt',
-		enum: ['id', 'objectSchemaIdentifier', 'profileId', 'reason', 'createdAt', 'updatedAt'],
+		enum: [Object.values(MaterialRequestOrderProp)],
 	})
-	orderProp? = 'createdAt';
+	orderProp? = MaterialRequestOrderProp.CREATED_AT;
 
 	@IsString()
 	@Type(() => String)
