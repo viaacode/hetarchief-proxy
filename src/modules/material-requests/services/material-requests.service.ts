@@ -104,7 +104,8 @@ export class MaterialRequestsService {
 			userProfileId?: string;
 		}
 	): Promise<IPagination<MaterialRequest>> {
-		const { query, type, maintainerIds, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
+			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -134,6 +135,12 @@ export class MaterialRequestsService {
 						_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
 					},
 				},
+			};
+		}
+
+		if (!isEmpty(isPending)) {
+			where.is_pending = {
+				_eq: isPending,
 			};
 		}
 

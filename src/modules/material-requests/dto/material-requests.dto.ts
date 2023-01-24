@@ -1,6 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsBoolean,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from 'class-validator';
 
 import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
@@ -39,6 +47,19 @@ export class MaterialRequestsQueryDto {
 		default: [],
 	})
 	maintainerIds?: string[];
+
+	@IsBoolean()
+	@Type(() => Boolean)
+	@Transform((input) => {
+		return input.value === 'false' ? false : true;
+	})
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description: 'Is the material request pending or already requested',
+		default: false,
+	})
+	isPending?: boolean;
 
 	@IsNumber()
 	@Type(() => Number)
