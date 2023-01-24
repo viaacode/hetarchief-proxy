@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
@@ -19,14 +19,15 @@ export class MaterialRequestsQueryDto {
 	query?: string;
 
 	@IsString()
-	@Type(() => String)
+	@IsEnum(MaterialRequestType)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: typeof MaterialRequestType,
+		type: String,
 		description: 'Which type of material request is requested',
 		default: MaterialRequestType.VIEW,
+		enum: MaterialRequestType,
 	})
-	type?: string;
+	type? = undefined;
 
 	@IsArray()
 	@IsString({ each: true })
@@ -92,13 +93,14 @@ export class CreateMaterialRequestDto {
 	object_id: string;
 
 	@IsString()
-	@Type(() => String)
-	@ApiPropertyOptional({
-		type: typeof MaterialRequestType,
+	@IsEnum(MaterialRequestType)
+	@ApiProperty({
+		type: String,
 		description: 'Which type of material request is requested',
 		default: MaterialRequestType.VIEW,
+		enum: MaterialRequestType,
 	})
-	type: string = MaterialRequestType.VIEW;
+	type = undefined;
 
 	@IsString()
 	@IsNotEmpty()
@@ -113,21 +115,24 @@ export class CreateMaterialRequestDto {
 
 export class UpdateMaterialRequestDto {
 	@IsString()
-	@Type(() => String)
+	@IsEnum(MaterialRequestType)
+	@IsOptional()
 	@ApiPropertyOptional({
-		type: typeof MaterialRequestType,
+		type: String,
 		description: 'Which type of material request is requested',
 		default: MaterialRequestType.VIEW,
+		enum: MaterialRequestType,
 	})
-	type: string = MaterialRequestType.VIEW;
+	type? = undefined;
 
 	@IsString()
 	@IsNotEmpty()
-	@ApiProperty({
+	@IsOptional()
+	@ApiPropertyOptional({
 		type: String,
 		description: "The reason for this user's material request",
 		example:
 			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
-	reason: string;
+	reason?: string;
 }

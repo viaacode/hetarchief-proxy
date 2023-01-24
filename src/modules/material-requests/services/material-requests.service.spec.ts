@@ -14,6 +14,7 @@ import {
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 	InsertMaterialRequestMutation,
+	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -282,6 +283,26 @@ describe('MaterialRequestsService', () => {
 					type: mockGqlMaterialRequest1.type,
 				},
 				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' }
+			);
+			expect(response.id).toBe(mockGqlMaterialRequest1.id);
+		});
+	});
+
+	describe('update', () => {
+		it('can update a material request', async () => {
+			const mockData: UpdateMaterialRequestMutation = {
+				update_app_material_requests: {
+					returning: [mockGqlMaterialRequest1],
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const response = await materialRequestsService.updateMaterialRequest(
+				mockGqlMaterialRequest1.id,
+				mockGqlMaterialRequest1.profile_id,
+				{
+					type: mockGqlMaterialRequest1.type,
+					reason: mockGqlMaterialRequest1.reason,
+				}
 			);
 			expect(response.id).toBe(mockGqlMaterialRequest1.id);
 		});

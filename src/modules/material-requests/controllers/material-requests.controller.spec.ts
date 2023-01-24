@@ -20,6 +20,7 @@ const mockMaterialRequestsService: Partial<
 	findAll: jest.fn(),
 	findById: jest.fn(),
 	createMaterialRequest: jest.fn(),
+	updateMaterialRequest: jest.fn(),
 };
 
 describe('MaterialRequestsController', () => {
@@ -109,6 +110,23 @@ describe('MaterialRequestsController', () => {
 				})
 			);
 			expect(createdMaterialRequest).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('updateMaterialRequest', () => {
+		it('should update a collection by id', async () => {
+			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(
+				mockMaterialRequest1
+			);
+			const updatedMaterialRequest = await materialRequestsController.updateMaterialRequest(
+				mockMaterialRequest1.id,
+				{
+					type: MaterialRequestType.REUSE,
+					reason: 'test',
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(updatedMaterialRequest).toEqual(mockMaterialRequest1);
 		});
 	});
 });

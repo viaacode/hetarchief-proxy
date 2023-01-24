@@ -1,6 +1,10 @@
 import { MaterialRequestType } from '../material-requests.types';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from './material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	UpdateMaterialRequestDto,
+} from './material-requests.dto';
 
 describe('MaterialRequestsDto', () => {
 	describe('MaterialRequestsQueryDto', () => {
@@ -21,6 +25,13 @@ describe('MaterialRequestsDto', () => {
 			expect(createMaterialRequestDto).toEqual({
 				type: MaterialRequestType.VIEW,
 			});
+		});
+	});
+
+	describe('UpdateMaterialRequestDto', () => {
+		it('should be able to construct an UpdateMaterialRequestDto object', async () => {
+			const updateMaterialRequestDto = new UpdateMaterialRequestDto();
+			expect(updateMaterialRequestDto).toEqual({});
 		});
 	});
 });

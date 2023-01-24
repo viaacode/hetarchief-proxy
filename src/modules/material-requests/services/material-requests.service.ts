@@ -3,17 +3,9 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
-import {
-	CreateMaterialRequestDto,
-	MaterialRequestsQueryDto,
-	UpdateMaterialRequestDto,
-} from '../dto/material-requests.dto';
+import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import {
-	GqlMaterialRequest,
-	MaterialRequest,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
 
 import {
 	App_Material_Requests_Set_Input,
@@ -26,7 +18,6 @@ import {
 	InsertMaterialRequestDocument,
 	InsertMaterialRequestMutation,
 	InsertMaterialRequestMutationVariables,
-	Lookup_App_Material_Request_Type_Enum,
 	UpdateMaterialRequestDocument,
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
@@ -129,7 +120,7 @@ export class MaterialRequestsService {
 
 		if (!isEmpty(type)) {
 			where.type = {
-				_eq: MaterialRequestType[type],
+				_eq: type,
 			};
 		}
 
@@ -175,7 +166,7 @@ export class MaterialRequestsService {
 			throw new NotFoundException(`Material Request with id '${id}' not found`);
 		}
 
-		return this.adapt(materialRequestResponse.app_material_requests[0] as GqlMaterialRequest);
+		return this.adapt(materialRequestResponse.app_material_requests[0]);
 	}
 
 	public async createMaterialRequest(
@@ -188,7 +179,7 @@ export class MaterialRequestsService {
 			object_schema_identifier: createMaterialRequestDto.object_id,
 			profile_id: parameters.userProfileId,
 			reason: createMaterialRequestDto.reason,
-			type: createMaterialRequestDto.type as Lookup_App_Material_Request_Type_Enum,
+			type: createMaterialRequestDto.type,
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 			is_pending: true,
@@ -222,8 +213,8 @@ export class MaterialRequestsService {
 				materialRequest,
 			});
 
-		this.logger.debug(`Material request ${updatedMaterialRequest[0].returning.id} updated.`);
+		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0].id} updated.`);
 
-		return this.adapt(updatedMaterialRequest[0].returning);
+		return this.adapt(updatedMaterialRequest.returning[0]);
 	}
 }
