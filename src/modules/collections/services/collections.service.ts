@@ -1,7 +1,8 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { get, isEmpty } from 'lodash';
+import { format } from 'date-fns';
+import { get, isEmpty, maxBy } from 'lodash';
 
 import {
 	Collection,
@@ -32,6 +33,7 @@ import {
 	FindObjectInCollectionDocument,
 	FindObjectInCollectionQuery,
 	FindObjectInCollectionQueryVariables,
+	FindVisitsByFolderIdQuery,
 	InsertCollectionsDocument,
 	InsertCollectionsMutation,
 	InsertCollectionsMutationVariables,
@@ -46,6 +48,8 @@ import {
 	UpdateCollectionMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
+import { VisitsService } from '~modules/visits/services/visits.service';
+import { Visit } from '~modules/visits/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -54,7 +58,8 @@ export class CollectionsService {
 
 	constructor(
 		protected dataService: DataService,
-		protected playerTicketService: PlayerTicketService
+		protected playerTicketService: PlayerTicketService,
+		protected visitsService: VisitsService
 	) {}
 
 	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
@@ -86,6 +91,21 @@ export class CollectionsService {
 		};
 	}
 
+	public getLastEndAtDate(visits: FindVisitsByFolderIdQuery | []): string | null {
+		if (isEmpty(visits)) {
+			return null;
+		}
+
+		const visitsWithFolderAccess = (visits as FindVisitsByFolderIdQuery)
+			.maintainer_visitor_space_request_folder_access;
+
+		const reducedVisit = maxBy(visitsWithFolderAccess, (visit) =>
+			new Date(visit.visitor_space_request.end_date).getTime()
+		);
+
+		return format(new Date(reducedVisit.visitor_space_request.end_date), 'yyyy-MM-dd');
+	}
+
 	/**
 	 * Adapt a collection as returned by a typical graphQl response to our internal collection data model
 	 */
@@ -97,6 +117,15 @@ export class CollectionsService {
 			return undefined;
 		}
 
+		let usedForLimitedAccessUntil: string | null = undefined;
+		try {
+			const visitsWithFolders: FindVisitsByFolderIdQuery | [] =
+				await this.visitsService.findByFolderId(gqlCollection.id);
+			usedForLimitedAccessUntil = this.getLastEndAtDate(visitsWithFolders);
+		} catch (error) {
+			this.logger.debug(`Visits by folder id ${gqlCollection.id} could not be retrieved`);
+		}
+
 		/* istanbul ignore next */
 		return {
 			id: gqlCollection.id,
@@ -105,6 +134,7 @@ export class CollectionsService {
 			createdAt: gqlCollection.created_at,
 			updatedAt: gqlCollection.updated_at,
 			isDefault: gqlCollection.is_default,
+			usedForLimitedAccessUntil: usedForLimitedAccessUntil || null,
 			objects: await Promise.all(
 				(gqlCollection as GqlCollectionWithObjects).ies
 					? (gqlCollection as GqlCollectionWithObjects).ies.map((object) =>
