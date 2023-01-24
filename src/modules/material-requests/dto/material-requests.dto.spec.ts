@@ -1,4 +1,6 @@
-import { MaterialRequestsQueryDto } from './material-requests.dto';
+import { MaterialRequestType } from '../material-requests.types';
+
+import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from './material-requests.dto';
 
 describe('MaterialRequestsDto', () => {
 	describe('MaterialRequestsQueryDto', () => {
@@ -9,6 +11,15 @@ describe('MaterialRequestsDto', () => {
 				size: 10,
 				orderProp: 'createdAt',
 				orderDirection: 'desc',
+			});
+		});
+	});
+
+	describe('CreateMaterialRequestDto', () => {
+		it('should be able to construct a CreateMaterialRequestDto object', async () => {
+			const createMaterialRequestDto = new CreateMaterialRequestDto();
+			expect(createMaterialRequestDto).toEqual({
+				type: MaterialRequestType.VIEW,
 			});
 		});
 	});

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockMaterialRequest1,
 	mockMaterialRequestsResponse,
@@ -18,6 +19,7 @@ const mockMaterialRequestsService: Partial<
 > = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	createMaterialRequest: jest.fn(),
 };
 
 describe('MaterialRequestsController', () => {
@@ -87,6 +89,26 @@ describe('MaterialRequestsController', () => {
 			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
 			const visit = await materialRequestsController.getMaterialRequestById('1');
 			expect(visit).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('createMaterialRequest', () => {
+		it('should create a material request', async () => {
+			mockMaterialRequestsService.createMaterialRequest.mockResolvedValueOnce(
+				mockMaterialRequest1
+			);
+			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
+				{
+					object_id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+					reason: 'voor mijn onderzoek en studie',
+					type: MaterialRequestType.VIEW,
+				},
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CREATE_MATERIAL_REQUESTS],
+				})
+			);
+			expect(createdMaterialRequest).toEqual(mockMaterialRequest1);
 		});
 	});
 });

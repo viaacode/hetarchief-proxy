@@ -13,6 +13,7 @@ import { MaterialRequestsService } from './material-requests.service';
 import {
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	InsertMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -265,6 +266,24 @@ describe('MaterialRequestsService', () => {
 					statusCode: 404,
 				});
 			}
+		});
+	});
+
+	describe('create', () => {
+		it('can create a new material request', async () => {
+			const mockData: InsertMaterialRequestMutation = {
+				insert_app_material_requests_one: mockGqlMaterialRequest1,
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const response = await materialRequestsService.createMaterialRequest(
+				{
+					object_id: mockGqlMaterialRequest1.object_schema_identifier,
+					reason: mockGqlMaterialRequest1.reason,
+					type: mockGqlMaterialRequest1.type,
+				},
+				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' }
+			);
+			expect(response.id).toBe(mockGqlMaterialRequest1.id);
 		});
 	});
 });

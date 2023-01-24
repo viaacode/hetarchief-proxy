@@ -98,7 +98,7 @@ export class CreateMaterialRequestDto {
 		description: 'Which type of material request is requested',
 		default: MaterialRequestType.VIEW,
 	})
-	type: string;
+	type: string = MaterialRequestType.VIEW;
 
 	@IsString()
 	@IsNotEmpty()
