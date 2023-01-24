@@ -8,7 +8,7 @@ import {
 	FindVisitsQuery,
 	InsertVisitMutation,
 	UpdateVisitMutation,
-} from './../../generated/graphql-db-types-hetarchief';
+} from '~generated/graphql-db-types-hetarchief';
 
 export enum VisitStatus {
 	PENDING = 'PENDING',
