@@ -110,3 +110,24 @@ export class CreateMaterialRequestDto {
 	})
 	reason: string;
 }
+
+export class UpdateMaterialRequestDto {
+	@IsString()
+	@Type(() => String)
+	@ApiPropertyOptional({
+		type: typeof MaterialRequestType,
+		description: 'Which type of material request is requested',
+		default: MaterialRequestType.VIEW,
+	})
+	type: string = MaterialRequestType.VIEW;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		type: String,
+		description: "The reason for this user's material request",
+		example:
+			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
+	})
+	reason: string;
+}

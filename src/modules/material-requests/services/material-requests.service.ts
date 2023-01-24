@@ -3,7 +3,11 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	UpdateMaterialRequestDto,
+} from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -12,6 +16,7 @@ import {
 } from '../material-requests.types';
 
 import {
+	App_Material_Requests_Set_Input,
 	FindMaterialRequestsByIdDocument,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsByIdQueryVariables,
@@ -22,6 +27,9 @@ import {
 	InsertMaterialRequestMutation,
 	InsertMaterialRequestMutationVariables,
 	Lookup_App_Material_Request_Type_Enum,
+	UpdateMaterialRequestDocument,
+	UpdateMaterialRequestMutation,
+	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -197,5 +205,25 @@ export class MaterialRequestsService {
 		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
 
 		return this.adapt(createdMaterialRequest);
+	}
+
+	public async updateMaterialRequest(
+		materialRequestId: string,
+		userProfileId: string,
+		materialRequest: Pick<App_Material_Requests_Set_Input, 'type' | 'reason'>
+	): Promise<MaterialRequest> {
+		const { update_app_material_requests: updatedMaterialRequest } =
+			await this.dataService.execute<
+				UpdateMaterialRequestMutation,
+				UpdateMaterialRequestMutationVariables
+			>(UpdateMaterialRequestDocument, {
+				materialRequestId,
+				userProfileId,
+				materialRequest,
+			});
+
+		this.logger.debug(`Material request ${updatedMaterialRequest[0].returning.id} updated.`);
+
+		return this.adapt(updatedMaterialRequest[0].returning);
 	}
 }

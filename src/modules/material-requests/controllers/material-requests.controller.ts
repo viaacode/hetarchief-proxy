@@ -1,8 +1,12 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	UpdateMaterialRequestDto,
+} from '../dto/material-requests.dto';
 import { MaterialRequest } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
@@ -69,5 +73,22 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.createMaterialRequest(createMaterialRequestDto, {
 			userProfileId: user.getId(),
 		});
+	}
+
+	@Patch(':id')
+	@ApiOperation({
+		description: 'Update a material request',
+	})
+	@RequireAnyPermissions(Permission.EDIT_MATERIAL_REQUESTS)
+	public async updateMaterialRequest(
+		@Param('id') materialRequestId: string,
+		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.updateMaterialRequest(
+			materialRequestId,
+			user.getId(),
+			updateMaterialRequestDto
+		);
 	}
 }
