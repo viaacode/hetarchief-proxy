@@ -3,7 +3,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
-import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -18,6 +18,10 @@ import {
 	FindMaterialRequestsDocument,
 	FindMaterialRequestsQuery,
 	FindMaterialRequestsQueryVariables,
+	InsertMaterialRequestDocument,
+	InsertMaterialRequestMutation,
+	InsertMaterialRequestMutationVariables,
+	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -44,6 +48,7 @@ export class MaterialRequestsService {
 			createdAt: grapqhQLMaterialRequest.created_at,
 			updatedAt: grapqhQLMaterialRequest.updated_at,
 			type: grapqhQLMaterialRequest.type,
+			isPending: grapqhQLMaterialRequest.is_pending,
 			requesterId: grapqhQLMaterialRequest.requested_by.id,
 			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
 			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
@@ -163,5 +168,34 @@ export class MaterialRequestsService {
 		}
 
 		return this.adapt(materialRequestResponse.app_material_requests[0] as GqlMaterialRequest);
+	}
+
+	public async createMaterialRequest(
+		createMaterialRequestDto: CreateMaterialRequestDto,
+		parameters: {
+			userProfileId: string;
+		}
+	): Promise<MaterialRequest> {
+		const newMaterialRequest = {
+			object_schema_identifier: createMaterialRequestDto.object_id,
+			profile_id: parameters.userProfileId,
+			reason: createMaterialRequestDto.reason,
+			type: createMaterialRequestDto.type as Lookup_App_Material_Request_Type_Enum,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+			is_pending: true,
+		};
+
+		const { insert_app_material_requests_one: createdMaterialRequest } =
+			await this.dataService.execute<
+				InsertMaterialRequestMutation,
+				InsertMaterialRequestMutationVariables
+			>(InsertMaterialRequestDocument, {
+				newMaterialRequest,
+			});
+
+		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
+
+		return this.adapt(createdMaterialRequest);
 	}
 }

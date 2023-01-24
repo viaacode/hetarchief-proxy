@@ -1,6 +1,6 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
@@ -22,7 +22,7 @@ export class MaterialRequestsQueryDto {
 	@Type(() => String)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: MaterialRequestType,
+		type: typeof MaterialRequestType,
 		description: 'Which type of material request is requested',
 		default: MaterialRequestType.VIEW,
 	})
@@ -80,4 +80,33 @@ export class MaterialRequestsQueryDto {
 		enum: [SortDirection.asc, SortDirection.desc],
 	})
 	orderDirection? = SortDirection.desc;
+}
+
+export class CreateMaterialRequestDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The object schema identifier',
+		example: '9f2479c1-4489-4bd0-86b3-881b9449a8c0',
+	})
+	object_id: string;
+
+	@IsString()
+	@Type(() => String)
+	@ApiPropertyOptional({
+		type: typeof MaterialRequestType,
+		description: 'Which type of material request is requested',
+		default: MaterialRequestType.VIEW,
+	})
+	type: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		type: String,
+		description: "The reason for this user's material request",
+		example:
+			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
+	})
+	reason: string;
 }
