@@ -11,6 +11,7 @@ import {
 import { MaterialRequestsService } from './material-requests.service';
 
 import {
+	DeleteMaterialRequestMutation,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 	InsertMaterialRequestMutation,
@@ -305,6 +306,38 @@ describe('MaterialRequestsService', () => {
 				}
 			);
 			expect(response.id).toBe(mockGqlMaterialRequest1.id);
+		});
+	});
+
+	describe('delete', () => {
+		it('can delete a material request', async () => {
+			const mockData: DeleteMaterialRequestMutation = {
+				delete_app_material_requests: {
+					affected_rows: 1,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const { id, profile_id } = mockGqlMaterialRequest1;
+			const affectedRows = await materialRequestsService.deleteMaterialRequest(
+				id,
+				profile_id
+			);
+			expect(affectedRows).toBe(1);
+		});
+
+		it('can delete a non existing collection', async () => {
+			const mockData: DeleteMaterialRequestMutation = {
+				delete_app_material_requests: {
+					affected_rows: 0,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const { profile_id } = mockGqlMaterialRequest1;
+			const affectedRows = await materialRequestsService.deleteMaterialRequest(
+				'unknown-id',
+				profile_id
+			);
+			expect(affectedRows).toBe(0);
 		});
 	});
 });

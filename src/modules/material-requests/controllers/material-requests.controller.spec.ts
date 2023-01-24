@@ -21,6 +21,7 @@ const mockMaterialRequestsService: Partial<
 	findById: jest.fn(),
 	createMaterialRequest: jest.fn(),
 	updateMaterialRequest: jest.fn(),
+	deleteMaterialRequest: jest.fn(),
 };
 
 describe('MaterialRequestsController', () => {
@@ -127,6 +128,30 @@ describe('MaterialRequestsController', () => {
 				new SessionUserEntity(mockUser)
 			);
 			expect(updatedMaterialRequest).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('deleteMaterialRequest', () => {
+		it('should delete a material request by id', async () => {
+			mockMaterialRequestsService.deleteMaterialRequest.mockResolvedValueOnce(1);
+
+			const response = await materialRequestsController.deleteMaterialRequest(
+				mockMaterialRequest1.id,
+				new SessionUserEntity(mockUser)
+			);
+			expect(response).toEqual({ status: 'Material request has been deleted' });
+		});
+
+		it('should delete a material request by id', async () => {
+			mockMaterialRequestsService.deleteMaterialRequest.mockResolvedValueOnce(0);
+
+			const response = await materialRequestsController.deleteMaterialRequest(
+				mockMaterialRequest1.id,
+				new SessionUserEntity(mockUser)
+			);
+			expect(response).toEqual({
+				status: 'no material requests found with that id: 9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+			});
 		});
 	});
 });
