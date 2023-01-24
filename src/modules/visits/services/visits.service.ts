@@ -398,7 +398,7 @@ export class VisitsService {
 		return this.adapt(visitResponse.maintainer_visitor_space_request[0]);
 	}
 
-	public async findByFolderId(folderId: string): Promise<Pick<Visit, 'endAt'>[]> {
+	public async findByFolderId(folderId: string): Promise<FindVisitsByFolderIdQuery | []> {
 		const visitResponse = await this.dataService.execute<
 			FindVisitsByFolderIdQuery,
 			FindVisitsByFolderIdQueryVariables
@@ -408,9 +408,7 @@ export class VisitsService {
 			return [];
 		}
 
-		return visitResponse.maintainer_visitor_space_request_folder_access.map(
-			(visit: GqlVisitByFolderId) => ({ endAt: visit.visitor_space_request.end_date })
-		);
+		return visitResponse;
 	}
 
 	public async getActiveVisitForUserAndSpace(
