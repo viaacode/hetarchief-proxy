@@ -9,6 +9,9 @@ import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types'
 
 import {
 	App_Material_Requests_Set_Input,
+	DeleteMaterialRequestDocument,
+	DeleteMaterialRequestMutation,
+	DeleteMaterialRequestMutationVariables,
 	FindMaterialRequestsByIdDocument,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsByIdQueryVariables,
@@ -216,5 +219,22 @@ export class MaterialRequestsService {
 		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0].id} updated.`);
 
 		return this.adapt(updatedMaterialRequest.returning[0]);
+	}
+
+	public async deleteMaterialRequest(
+		materialRequestId: string,
+		userProfileId: string
+	): Promise<number> {
+		const response = await this.dataService.execute<
+			DeleteMaterialRequestMutation,
+			DeleteMaterialRequestMutationVariables
+		>(DeleteMaterialRequestDocument, {
+			materialRequestId,
+			userProfileId,
+		});
+
+		this.logger.debug(`Material request ${materialRequestId} deleted`);
+
+		return response.delete_app_material_requests.affected_rows;
 	}
 }

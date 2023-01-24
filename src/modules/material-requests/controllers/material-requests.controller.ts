@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
@@ -90,5 +90,26 @@ export class MaterialRequestsController {
 			user.getId(),
 			updateMaterialRequestDto
 		);
+	}
+
+	@Delete(':id')
+	@ApiOperation({
+		description: 'Delete a material request',
+	})
+	@RequireAnyPermissions(Permission.CANCEL_MATERIAL_REQUESTS)
+	public async deleteMaterialRequest(
+		@Param('id') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<{ status: string }> {
+		const affectedRows = await this.materialRequestsService.deleteMaterialRequest(
+			materialRequestId,
+			user.getId()
+		);
+
+		if (affectedRows > 0) {
+			return { status: 'Material request has been deleted' };
+		} else {
+			return { status: `no material requests found with that id: ${materialRequestId}` };
+		}
 	}
 }

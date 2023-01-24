@@ -1,0 +1,7 @@
+mutation deleteMaterialRequest($materialRequestId: uuid, $userProfileId: uuid) {
+	delete_app_material_requests(
+		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
+	) {
+		affected_rows
+	}
+}
