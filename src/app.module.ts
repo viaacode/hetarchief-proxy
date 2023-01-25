@@ -7,6 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import config, { configValidationSchema } from '~config';
 
 import { MaterialRequestsModule } from './modules/material-requests';
+import { ZendeskModule } from './modules/zendesk';
 
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
@@ -58,6 +59,7 @@ import { SessionService } from '~shared/services/session.service';
 		NotFoundModule,
 		AdminCoreModule,
 		MaterialRequestsModule,
+		ZendeskModule,
 	],
 	controllers: [],
 	providers: [
