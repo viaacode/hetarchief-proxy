@@ -230,6 +230,6 @@ export interface ElasticsearchObject {
 	schema_name: string;
 }
 
-export interface IeObjectWithAggregations extends IPagination<IeObject> {
+export interface IeObjectsWithAggregations extends IPagination<IeObject> {
 	aggregations: any;
 }

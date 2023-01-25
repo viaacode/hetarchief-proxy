@@ -15,7 +15,7 @@ import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	IeObject,
-	IeObjectWithAggregations,
+	IeObjectsWithAggregations,
 	License,
 	MediaFormat,
 } from '../ie-objects.types';
@@ -166,7 +166,7 @@ export class IeObjectsService {
 		inputQuery: IeObjectsQueryDto,
 		esIndex: string | null,
 		referer: string
-	): Promise<IeObjectWithAggregations> {
+	): Promise<IeObjectsWithAggregations> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		// Check licenses of objects
@@ -276,9 +276,9 @@ export class IeObjectsService {
 	}
 
 	public applyLicensesToSearchResult(
-		result: IeObjectWithAggregations,
+		result: IeObjectsWithAggregations,
 		userHasAccessToSpace: boolean
-	): IeObjectWithAggregations {
+	): IeObjectsWithAggregations {
 		result.items = compact(
 			result.items.map((objectMedia: IeObject) => {
 				objectMedia = this.applyLicensesToObject(
