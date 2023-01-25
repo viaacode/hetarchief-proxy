@@ -1,5 +1,3 @@
-import { IPagination } from '@studiohyperdrive/pagination';
-
 import { MULTI_MATCH_QUERY_MAPPING, QueryType } from './elasticsearch/consts';
 
 import {
@@ -240,8 +238,4 @@ export interface ElasticsearchMedia {
 	schema_thumbnail_url: string;
 	dcterms_format: string;
 	schema_name: string;
-}
-
-export interface MediaWithAggregations extends IPagination<Media> {
-	aggregations: any;
 }

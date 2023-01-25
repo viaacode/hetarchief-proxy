@@ -5,7 +5,6 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { number } from 'joi';
 import { find, get, isEmpty, set, unset } from 'lodash';
 import convert from 'xml-js';
 
@@ -21,7 +20,6 @@ import {
 	License,
 	Media,
 	MediaFile,
-	MediaWithAggregations,
 	Representation,
 } from '../media.types';
 
@@ -204,55 +202,6 @@ export class MediaService {
 		return esResponse;
 	}
 
-	public adaptESMediaToMedia(esMedia: ElasticsearchMedia): Media {
-		return {
-			schemaIdentifier: esMedia?.schema_identifier,
-			meemooIdentifier: esMedia?.meemoo_identifier,
-			premisIdentifier: esMedia?.premis_identifier,
-			premisIsPartOf: esMedia?.premis_is_part_of,
-			series: esMedia?.schema_is_part_of?.serie,
-			program: esMedia?.schema_is_part_of?.reeks,
-			alternativeName: esMedia.schema_is_part_of?.alternatief,
-			maintainerId: esMedia?.schema_maintainer[0]?.schema_identifier,
-			maintainerName: esMedia?.schema_maintainer[0]?.schema_name,
-			contactInfo: null,
-			copyrightHolder: null,
-			copyrightNotice: null,
-			durationInSeconds: null,
-			numberOfPages: null,
-			datePublished: esMedia?.schema_date_published,
-			dctermsAvailable: esMedia?.dcterms_available,
-			name: esMedia?.schema_name,
-			description: esMedia?.schema_description,
-			abstract: esMedia?.schema_abstract,
-			creator: esMedia?.schema_creator,
-			actor: null,
-			publisher: esMedia?.schema_publisher,
-			spatial: null, // -> REQUIRED but no data available
-			temporal: null, // -> REQUIRED but no data available
-			keywords: esMedia?.schema_keywords,
-			dctermsFormat: esMedia?.dcterms_format,
-			dctermsMedium: esMedia?.dcterms_medium,
-			inLanguage: esMedia?.schema_in_language,
-			thumbnailUrl: esMedia?.schema_thumbnail_url,
-			duration: esMedia?.schema_duration,
-			license: esMedia?.schema_license,
-			meemooMediaObjectId: null,
-			dateCreated: esMedia?.schema_date_created,
-			dateCreatedLowerBound: null,
-			genre: esMedia?.schema_genre,
-			ebucoreObjectType: esMedia?.ebucore_object_type,
-			meemoofilmColor: null, // -> REQUIRED but no data available
-			meemoofilmBase: null, // -> REQUIRED but no data available
-			meemoofilmImageOrSound: null, // -> REQUIRED but no data available
-			meemooLocalId: null, // -> REQUIRED but no data available
-			meemooOriginalCp: null, // -> REQUIRED but no data available
-			meemooDescriptionProgramme: null, // -> REQUIRED but no data available
-			meemooDescriptionCast: null, // -> REQUIRED but no data available
-			representations: null,
-		};
-	}
-
 	public adaptMetadata(object: Media): Partial<Media> {
 		// unset thumbnail and representations
 		delete object.representations;
@@ -300,7 +249,7 @@ export class MediaService {
 		inputQuery: MediaQueryDto,
 		esIndex: string | null,
 		referer: string
-	): Promise<MediaWithAggregations> {
+	): Promise<ElasticsearchResponse> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		// Check licenses of objects
@@ -338,21 +287,7 @@ export class MediaService {
 			);
 		}
 
-		// return this.adaptESResponse(mediaResponse, referer);
-
-		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
-
-		return {
-			...Pagination<Media>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESMediaToMedia(esHit._source)
-				),
-				page: 0,
-				size: adaptedESResponse.hits.total.value,
-				total: adaptedESResponse.hits.total.value,
-			}),
-			aggregations: adaptedESResponse.aggregations,
-		};
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 
 	/**
