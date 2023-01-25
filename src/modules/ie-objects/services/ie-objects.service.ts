@@ -9,23 +9,23 @@ import { compact, find, get, intersection, set, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
-import { ObjectsQueryDto, SearchFilter } from '../dto/objects.dto';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
+	IeObject,
+	IeObjectWithAggregations,
 	License,
 	MediaFormat,
-	ObjectMedia,
-	ObjectMediaWithAggregations,
-} from '../objects.types';
+} from '../ie-objects.types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
 @Injectable()
-export class ObjectsService {
-	private logger: Logger = new Logger(ObjectsService.name, { timestamp: true });
+export class IeObjectsService {
+	private logger: Logger = new Logger(IeObjectsService.name, { timestamp: true });
 	private gotInstance: Got;
 
 	constructor(
@@ -87,7 +87,7 @@ export class ObjectsService {
 		return esResponse;
 	}
 
-	public adaptESObjectToObject(esObject: ElasticsearchObject): ObjectMedia {
+	public adaptESObjectToObject(esObject: ElasticsearchObject): IeObject {
 		return {
 			schemaIdentifier: esObject?.schema_identifier,
 			meemooIdentifier: esObject?.meemoo_identifier,
@@ -136,11 +136,11 @@ export class ObjectsService {
 		};
 	}
 
-	public adaptMetadata(objectMedia: ObjectMedia): Partial<ObjectMedia> {
+	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete objectMedia.representations;
-		delete objectMedia.thumbnailUrl;
-		return objectMedia;
+		delete ieObject.representations;
+		delete ieObject.thumbnailUrl;
+		return ieObject;
 	}
 
 	public getSearchEndpoint(esIndex: string | null): string {
@@ -163,10 +163,10 @@ export class ObjectsService {
 	}
 
 	public async findAll(
-		inputQuery: ObjectsQueryDto,
+		inputQuery: IeObjectsQueryDto,
 		esIndex: string | null,
 		referer: string
-	): Promise<ObjectMediaWithAggregations> {
+	): Promise<IeObjectWithAggregations> {
 		const esQuery = QueryBuilder.build(inputQuery);
 
 		// Check licenses of objects
@@ -207,7 +207,7 @@ export class ObjectsService {
 		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer);
 
 		return {
-			...Pagination<ObjectMedia>({
+			...Pagination<IeObject>({
 				items: adaptedESResponse.hits.hits.map((esHit) =>
 					this.adaptESObjectToObject(esHit._source)
 				),
@@ -219,22 +219,22 @@ export class ObjectsService {
 		};
 	}
 
-	public getLimitedMetadata(mediaObject: ObjectMedia): Partial<ObjectMedia> {
+	public getLimitedMetadata(ieObject: IeObject): Partial<IeObject> {
 		return {
-			schemaIdentifier: mediaObject.schemaIdentifier,
-			premisIdentifier: mediaObject.premisIdentifier,
-			maintainerName: mediaObject.maintainerName,
-			name: mediaObject.name,
-			dctermsFormat: mediaObject.dctermsFormat,
-			dateCreatedLowerBound: mediaObject.dateCreatedLowerBound,
-			datePublished: mediaObject.datePublished,
+			schemaIdentifier: ieObject.schemaIdentifier,
+			premisIdentifier: ieObject.premisIdentifier,
+			maintainerName: ieObject.maintainerName,
+			name: ieObject.name,
+			dctermsFormat: ieObject.dctermsFormat,
+			dateCreatedLowerBound: ieObject.dateCreatedLowerBound,
+			datePublished: ieObject.datePublished,
 		};
 	}
 
 	protected applyLicensesToObject(
-		objectMedia: ObjectMedia,
+		objectMedia: IeObject,
 		userHasAccessToSpace: boolean
-	): ObjectMedia | Partial<ObjectMedia> | null {
+	): IeObject | Partial<IeObject> | null {
 		// check licenses
 		const licenses = objectMedia.license;
 		const schemaIdentifier = objectMedia.schemaIdentifier;
@@ -276,15 +276,15 @@ export class ObjectsService {
 	}
 
 	public applyLicensesToSearchResult(
-		result: ObjectMediaWithAggregations,
+		result: IeObjectWithAggregations,
 		userHasAccessToSpace: boolean
-	): ObjectMediaWithAggregations {
+	): IeObjectWithAggregations {
 		result.items = compact(
-			result.items.map((objectMedia: ObjectMedia) => {
+			result.items.map((objectMedia: IeObject) => {
 				objectMedia = this.applyLicensesToObject(
 					objectMedia,
 					userHasAccessToSpace
-				) as ObjectMedia;
+				) as IeObject;
 
 				return objectMedia;
 			})
@@ -309,7 +309,7 @@ export class ObjectsService {
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
 	}
 
-	public checkAndFixFormatFilter(queryDto: ObjectsQueryDto): ObjectsQueryDto {
+	public checkAndFixFormatFilter(queryDto: IeObjectsQueryDto): IeObjectsQueryDto {
 		const formatFilter = find(queryDto.filters, { field: 'format' }) as SearchFilter;
 		if (formatFilter && formatFilter.value === MediaFormat.VIDEO) {
 			// change to multivalue with video and film

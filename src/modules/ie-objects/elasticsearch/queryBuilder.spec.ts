@@ -4,7 +4,7 @@ import {
 	OrderProperty,
 	QueryBuilderConfig,
 	SearchFilterField,
-} from '../objects.types';
+} from '../ie-objects.types';
 
 import { QueryType } from './consts';
 import { QueryBuilder } from './queryBuilder';

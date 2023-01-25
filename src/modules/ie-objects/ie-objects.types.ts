@@ -25,7 +25,7 @@ export enum MediaFormat {
 	AUDIO = 'audio',
 }
 
-export interface ObjectFile {
+export interface IeObjectFile {
 	name: string;
 	alternateName: string;
 	description: string;
@@ -35,7 +35,7 @@ export interface ObjectFile {
 	embedUrl: string;
 }
 
-export interface ObjectRepresentation {
+export interface IeObjectRepresentation {
 	name: string;
 	alternateName: string;
 	description: string;
@@ -43,10 +43,10 @@ export interface ObjectRepresentation {
 	dctermsFormat: string;
 	transcript: string;
 	dateCreated: string;
-	files: ObjectFile[];
+	files: IeObjectFile[];
 }
 
-export interface ObjectMedia {
+export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
@@ -91,7 +91,7 @@ export interface ObjectMedia {
 	meemooOriginalCp: string;
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
-	representations?: ObjectRepresentation[];
+	representations?: IeObjectRepresentation[];
 }
 
 export enum SearchFilterField {
@@ -230,6 +230,6 @@ export interface ElasticsearchObject {
 	schema_name: string;
 }
 
-export interface ObjectMediaWithAggregations extends IPagination<ObjectMedia> {
+export interface IeObjectWithAggregations extends IPagination<IeObject> {
 	aggregations: any;
 }

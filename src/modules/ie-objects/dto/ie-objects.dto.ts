@@ -3,7 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { isArray } from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../objects.types';
+import { Operator, OrderProperty, SearchFilterField } from '../ie-objects.types';
 
 import { SortDirection } from '~shared/types';
 
@@ -49,7 +49,7 @@ export class SearchFilter {
 	operator: Operator;
 }
 
-export class ObjectsQueryDto {
+export class IeObjectsQueryDto {
 	@Type(() => SearchFilter)
 	@IsArray()
 	@ValidateNested()

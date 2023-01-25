@@ -4,9 +4,9 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { Configuration } from '~config';
 
-import { ObjectsQueryDto } from '../dto/objects.dto';
-import { ObjectMediaWithAggregations } from '../objects.types';
-import { ObjectsService } from '../services/objects.service';
+import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectWithAggregations } from '../ie-objects.types';
+import { IeObjectsService } from '../services/ie-objects.service';
 
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -14,13 +14,13 @@ import { Permission } from '~modules/users/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 
-@ApiTags('Objects')
-@Controller('objects')
-export class ObjectsController {
-	private logger: Logger = new Logger(ObjectsController.name, { timestamp: true });
+@ApiTags('Ie Objects')
+@Controller('ie-objects')
+export class IeObjectsController {
+	private logger: Logger = new Logger(IeObjectsController.name, { timestamp: true });
 
 	constructor(
-		private objectsService: ObjectsService,
+		private ieObjectsService: IeObjectsService,
 		private configService: ConfigService<Configuration>,
 		private translationsService: TranslationsService
 	) {}
@@ -30,16 +30,16 @@ export class ObjectsController {
 	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getObjectOnIndex(
 		@Headers('referer') referer: string,
-		@Body() queryDto: ObjectsQueryDto,
+		@Body() queryDto: IeObjectsQueryDto,
 		@Param('esIndex') esIndex: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<ObjectMediaWithAggregations> {
+	): Promise<IeObjectWithAggregations> {
 		// Check if the user can search in all index (meemoo admin)
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
 		if (
 			!canSearchInAllSpaces &&
-			!(await this.objectsService.userHasAccessToVisitorSpaceOrId(user, esIndex))
+			!(await this.ieObjectsService.userHasAccessToVisitorSpaceOrId(user, esIndex))
 		) {
 			throw new ForbiddenException(
 				this.translationsService.t(
@@ -49,9 +49,9 @@ export class ObjectsController {
 		}
 
 		// Filter on format video should also include film format
-		this.objectsService.checkAndFixFormatFilter(queryDto);
+		this.ieObjectsService.checkAndFixFormatFilter(queryDto);
 
-		const searchResult = await this.objectsService.findAll(
+		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
 			esIndex.toLowerCase(),
 			referer
@@ -59,12 +59,15 @@ export class ObjectsController {
 
 		const userHasAccessToSpace =
 			canSearchInAllSpaces ||
-			(await this.objectsService.userHasAccessToVisitorSpaceOrId(user, esIndex));
+			(await this.ieObjectsService.userHasAccessToVisitorSpaceOrId(user, esIndex));
 
 		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			return searchResult;
 		}
 
-		return this.objectsService.applyLicensesToSearchResult(searchResult, userHasAccessToSpace);
+		return this.ieObjectsService.applyLicensesToSearchResult(
+			searchResult,
+			userHasAccessToSpace
+		);
 	}
 }

@@ -1,8 +1,13 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import _ from 'lodash';
 
-import { ObjectsQueryDto, SearchFilter } from '../dto/objects.dto';
-import { Operator, OrderProperty, QueryBuilderConfig, SearchFilterField } from '../objects.types';
+import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import {
+	Operator,
+	OrderProperty,
+	QueryBuilderConfig,
+	SearchFilterField,
+} from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -54,7 +59,7 @@ export class QueryBuilder {
 	 * @param searchRequest the search query parameters
 	 * @return elastic search query
 	 */
-	public static build(searchRequest: ObjectsQueryDto): any {
+	public static build(searchRequest: IeObjectsQueryDto): any {
 		try {
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -295,7 +300,7 @@ export class QueryBuilder {
 	 * }
 	 * @param searchRequest
 	 */
-	private static buildAggsObject(searchRequest: ObjectsQueryDto): any {
+	private static buildAggsObject(searchRequest: IeObjectsQueryDto): any {
 		const aggs: any = {};
 		_.forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =

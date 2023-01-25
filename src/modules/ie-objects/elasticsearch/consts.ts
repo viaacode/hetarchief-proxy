@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../objects.types';
+import { Operator, OrderProperty, SearchFilterField } from '../ie-objects.types';
 
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
