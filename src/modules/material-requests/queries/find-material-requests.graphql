@@ -12,6 +12,7 @@ query findMaterialRequests(
 		created_at
 		updated_at
 		type
+		is_pending
 		requested_by {
 			id
 			full_name
