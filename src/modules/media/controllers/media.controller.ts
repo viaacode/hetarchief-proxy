@@ -16,7 +16,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { compact, find, intersection } from 'lodash';
+import { compact, find, intersection, isEmpty } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -34,6 +34,7 @@ import {
 	Media,
 	MediaFormat,
 	MediaSeo,
+	MediaWithAggregations,
 } from '../media.types';
 import { MediaService } from '../services/media.service';
 
@@ -330,15 +331,14 @@ export class MediaController {
 	}
 
 	protected applyLicensesToObject(
-		object: Media | ElasticsearchMedia,
+		object: Media,
 		userHasAccessToSpace: boolean
-	): Media | Partial<Media | ElasticsearchMedia> | null {
+	): Media | Partial<Media> | null {
 		// check licenses
-		const licenses = (object as Media).license || (object as ElasticsearchMedia).schema_license;
-		const schemaIdentifier =
-			(object as Media).schemaIdentifier || (object as ElasticsearchMedia).schema_identifier;
-		const maintainerId =
-			(object as Media).maintainerId || (object as ElasticsearchMedia).schema_maintainer;
+		const licenses = object.license;
+		const schemaIdentifier = object.schemaIdentifier;
+		const maintainerId = object.maintainerId;
+
 		if (
 			!licenses ||
 			intersection(licenses, [
@@ -356,10 +356,9 @@ export class MediaController {
 			this.logger.debug(
 				`User has no access to visitor space ${maintainerId}, only limited metadata allowed`
 			);
-			if ((object as Media).schemaIdentifier) {
-				return this.mediaService.getLimitedMetadata(object as Media);
-			} else {
-				return this.mediaService.getLimitedMetadataElastic(object as ElasticsearchMedia);
+
+			if (object.schemaIdentifier) {
+				return this.mediaService.getLimitedMetadata(object);
 			}
 		}
 
@@ -368,26 +367,20 @@ export class MediaController {
 			this.logger.debug(
 				`Object ${schemaIdentifier} has no content license, only metadata is returned`
 			);
-			delete (object as Media).representations; // No access to files (mp4/mp3)
-			delete (object as Media).thumbnailUrl; // Not allowed to view thumbnail
-
-			// Representations are not included in elasticsearch, so we don't need to delete them
-			delete (object as ElasticsearchMedia)?.schema_thumbnail_url; // Not allowed to view thumbnail
+			delete object.representations; // No access to files (mp4/mp3)
+			delete object.thumbnailUrl; // Not allowed to view thumbnail
 		}
 
 		return object;
 	}
 
 	protected applyLicensesToSearchResult(
-		result: ElasticsearchResponse,
+		result: MediaWithAggregations,
 		userHasAccessToSpace: boolean
-	): ElasticsearchResponse {
-		result.hits.hits = compact(
-			result.hits.hits.map((object) => {
-				object._source = this.applyLicensesToObject(
-					object._source,
-					userHasAccessToSpace
-				) as ElasticsearchMedia;
+	): MediaWithAggregations {
+		result.items = compact(
+			result.items.map((object) => {
+				object = this.applyLicensesToObject(object, userHasAccessToSpace) as Media;
 
 				return object;
 			})
