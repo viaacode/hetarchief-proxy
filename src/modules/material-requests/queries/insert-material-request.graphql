@@ -1,37 +1,26 @@
-query findMaterialRequestsById($id: uuid!) {
-	app_material_requests(where: { id: { _eq: $id } }) {
+mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert_input!) {
+	insert_app_material_requests_one(object: $newMaterialRequest) {
 		id
 		object_schema_identifier
 		profile_id
 		reason
+		type
 		created_at
 		updated_at
-		type
 		is_pending
 		requested_by {
 			id
 			full_name
 			mail
-			group {
-				name
-				label
-				description
-				id
-			}
 		}
 		object {
 			maintainer {
 				schema_identifier
 				schema_name
-				information {
-					logo
-				}
 				visitor_space {
 					slug
 				}
 			}
-			meemoo_identifier
-			schema_name
 		}
 	}
 }

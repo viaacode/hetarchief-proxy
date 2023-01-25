@@ -1,8 +1,12 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	UpdateMaterialRequestDto,
+} from '../dto/material-requests.dto';
 import { MaterialRequest } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
@@ -55,5 +59,57 @@ export class MaterialRequestsController {
 	)
 	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);
+	}
+
+	@Put()
+	@ApiOperation({
+		description: 'Create a material request',
+	})
+	@RequireAnyPermissions(Permission.CREATE_MATERIAL_REQUESTS)
+	public async createMaterialRequest(
+		@Body() createMaterialRequestDto: CreateMaterialRequestDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.createMaterialRequest(createMaterialRequestDto, {
+			userProfileId: user.getId(),
+		});
+	}
+
+	@Patch(':id')
+	@ApiOperation({
+		description: 'Update a material request',
+	})
+	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
+	public async updateMaterialRequest(
+		@Param('id') materialRequestId: string,
+		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<MaterialRequest> {
+		return await this.materialRequestsService.updateMaterialRequest(
+			materialRequestId,
+			user.getId(),
+			updateMaterialRequestDto
+		);
+	}
+
+	@Delete(':id')
+	@ApiOperation({
+		description: 'Delete a material request',
+	})
+	@RequireAnyPermissions(Permission.DELETE_OWN_MATERIAL_REQUESTS)
+	public async deleteMaterialRequest(
+		@Param('id') materialRequestId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<{ status: string }> {
+		const affectedRows = await this.materialRequestsService.deleteMaterialRequest(
+			materialRequestId,
+			user.getId()
+		);
+
+		if (affectedRows > 0) {
+			return { status: 'Material request has been deleted' };
+		} else {
+			return { status: `no material requests found with that id: ${materialRequestId}` };
+		}
 	}
 }

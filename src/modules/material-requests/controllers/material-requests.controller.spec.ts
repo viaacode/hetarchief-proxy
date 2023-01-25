@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockMaterialRequest1,
 	mockMaterialRequestsResponse,
@@ -18,6 +19,9 @@ const mockMaterialRequestsService: Partial<
 > = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	createMaterialRequest: jest.fn(),
+	updateMaterialRequest: jest.fn(),
+	deleteMaterialRequest: jest.fn(),
 };
 
 describe('MaterialRequestsController', () => {
@@ -87,6 +91,67 @@ describe('MaterialRequestsController', () => {
 			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
 			const visit = await materialRequestsController.getMaterialRequestById('1');
 			expect(visit).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('createMaterialRequest', () => {
+		it('should create a material request', async () => {
+			mockMaterialRequestsService.createMaterialRequest.mockResolvedValueOnce(
+				mockMaterialRequest1
+			);
+			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
+				{
+					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+					reason: 'voor mijn onderzoek en studie',
+					type: MaterialRequestType.VIEW,
+				},
+				new SessionUserEntity({
+					...mockUser,
+					permissions: [Permission.CREATE_MATERIAL_REQUESTS],
+				})
+			);
+			expect(createdMaterialRequest).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('updateMaterialRequest', () => {
+		it('should update a material request by id', async () => {
+			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(
+				mockMaterialRequest1
+			);
+			const updatedMaterialRequest = await materialRequestsController.updateMaterialRequest(
+				mockMaterialRequest1.id,
+				{
+					type: MaterialRequestType.REUSE,
+					reason: 'test',
+				},
+				new SessionUserEntity(mockUser)
+			);
+			expect(updatedMaterialRequest).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('deleteMaterialRequest', () => {
+		it('should delete a material request by id', async () => {
+			mockMaterialRequestsService.deleteMaterialRequest.mockResolvedValueOnce(1);
+
+			const response = await materialRequestsController.deleteMaterialRequest(
+				mockMaterialRequest1.id,
+				new SessionUserEntity(mockUser)
+			);
+			expect(response).toEqual({ status: 'Material request has been deleted' });
+		});
+
+		it('should delete a material request by id', async () => {
+			mockMaterialRequestsService.deleteMaterialRequest.mockResolvedValueOnce(0);
+
+			const response = await materialRequestsController.deleteMaterialRequest(
+				mockMaterialRequest1.id,
+				new SessionUserEntity(mockUser)
+			);
+			expect(response).toEqual({
+				status: 'no material requests found with that id: 9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+			});
 		});
 	});
 });

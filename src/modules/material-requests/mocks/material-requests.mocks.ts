@@ -18,6 +18,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	created_at: '2022-03-18T08:32:57.256264',
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
+	is_pending: true,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -43,6 +44,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	created_at: '2022-03-18T08:32:57.256264',
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
+	is_pending: true,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -80,6 +82,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	createdAt: '2022-03-18T08:32:57.256264',
 	updatedAt: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE,
+	isPending: true,
 	requesterId: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 	requesterFullName: 'Ilya Korsakov',
 	requesterMail: 'ilya.korsakov@example.com',
@@ -96,6 +99,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	createdAt: '2022-02-18T08:32:57.256264',
 	updatedAt: '2022-02-18T08:32:57.256264',
 	type: MaterialRequestType.MORE_INFO,
+	isPending: true,
 	requesterId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	requesterFullName: 'Marie Odhiambo',
 	requesterMail: 'marie.odhiambo@example.com',

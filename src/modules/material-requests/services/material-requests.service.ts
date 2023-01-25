@@ -3,21 +3,27 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
-import { MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import {
-	GqlMaterialRequest,
-	MaterialRequest,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
 
 import {
+	App_Material_Requests_Set_Input,
+	DeleteMaterialRequestDocument,
+	DeleteMaterialRequestMutation,
+	DeleteMaterialRequestMutationVariables,
 	FindMaterialRequestsByIdDocument,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsByIdQueryVariables,
 	FindMaterialRequestsDocument,
 	FindMaterialRequestsQuery,
 	FindMaterialRequestsQueryVariables,
+	InsertMaterialRequestDocument,
+	InsertMaterialRequestMutation,
+	InsertMaterialRequestMutationVariables,
+	UpdateMaterialRequestDocument,
+	UpdateMaterialRequestMutation,
+	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -44,6 +50,7 @@ export class MaterialRequestsService {
 			createdAt: grapqhQLMaterialRequest.created_at,
 			updatedAt: grapqhQLMaterialRequest.updated_at,
 			type: grapqhQLMaterialRequest.type,
+			isPending: grapqhQLMaterialRequest.is_pending,
 			requesterId: grapqhQLMaterialRequest.requested_by.id,
 			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
 			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
@@ -97,7 +104,8 @@ export class MaterialRequestsService {
 			userProfileId?: string;
 		}
 	): Promise<IPagination<MaterialRequest>> {
-		const { query, type, maintainerIds, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
+			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -116,7 +124,7 @@ export class MaterialRequestsService {
 
 		if (!isEmpty(type)) {
 			where.type = {
-				_eq: MaterialRequestType[type],
+				_eq: type,
 			};
 		}
 
@@ -127,6 +135,12 @@ export class MaterialRequestsService {
 						_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
 					},
 				},
+			};
+		}
+
+		if (!isEmpty(isPending)) {
+			where.is_pending = {
+				_eq: isPending,
 			};
 		}
 
@@ -162,6 +176,72 @@ export class MaterialRequestsService {
 			throw new NotFoundException(`Material Request with id '${id}' not found`);
 		}
 
-		return this.adapt(materialRequestResponse.app_material_requests[0] as GqlMaterialRequest);
+		return this.adapt(materialRequestResponse.app_material_requests[0]);
+	}
+
+	public async createMaterialRequest(
+		createMaterialRequestDto: CreateMaterialRequestDto,
+		parameters: {
+			userProfileId: string;
+		}
+	): Promise<MaterialRequest> {
+		const newMaterialRequest = {
+			object_schema_identifier: createMaterialRequestDto.objectId,
+			profile_id: parameters.userProfileId,
+			reason: createMaterialRequestDto.reason,
+			type: createMaterialRequestDto.type,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+			is_pending: true,
+		};
+
+		const { insert_app_material_requests_one: createdMaterialRequest } =
+			await this.dataService.execute<
+				InsertMaterialRequestMutation,
+				InsertMaterialRequestMutationVariables
+			>(InsertMaterialRequestDocument, {
+				newMaterialRequest,
+			});
+
+		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
+
+		return this.adapt(createdMaterialRequest);
+	}
+
+	public async updateMaterialRequest(
+		materialRequestId: string,
+		userProfileId: string,
+		materialRequest: Pick<App_Material_Requests_Set_Input, 'type' | 'reason'>
+	): Promise<MaterialRequest> {
+		const { update_app_material_requests: updatedMaterialRequest } =
+			await this.dataService.execute<
+				UpdateMaterialRequestMutation,
+				UpdateMaterialRequestMutationVariables
+			>(UpdateMaterialRequestDocument, {
+				materialRequestId,
+				userProfileId,
+				materialRequest,
+			});
+
+		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0].id} updated.`);
+
+		return this.adapt(updatedMaterialRequest.returning[0]);
+	}
+
+	public async deleteMaterialRequest(
+		materialRequestId: string,
+		userProfileId: string
+	): Promise<number> {
+		const response = await this.dataService.execute<
+			DeleteMaterialRequestMutation,
+			DeleteMaterialRequestMutationVariables
+		>(DeleteMaterialRequestDocument, {
+			materialRequestId,
+			userProfileId,
+		});
+
+		this.logger.debug(`Material request ${materialRequestId} deleted`);
+
+		return response.delete_app_material_requests.affected_rows;
 	}
 }

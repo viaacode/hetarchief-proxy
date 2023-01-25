@@ -1,6 +1,14 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsBoolean,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from 'class-validator';
 
 import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
@@ -19,14 +27,15 @@ export class MaterialRequestsQueryDto {
 	query?: string;
 
 	@IsString()
-	@Type(() => String)
+	@IsEnum(MaterialRequestType)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: MaterialRequestType,
+		type: String,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestType.VIEW,
+		default: undefined,
+		enum: MaterialRequestType,
 	})
-	type?: string;
+	type? = undefined;
 
 	@IsArray()
 	@IsString({ each: true })
@@ -38,6 +47,19 @@ export class MaterialRequestsQueryDto {
 		default: [],
 	})
 	maintainerIds?: string[];
+
+	@IsBoolean()
+	@Type(() => Boolean)
+	@Transform((input) => {
+		return input.value === 'true';
+	})
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: Boolean,
+		description: 'Is the material request pending or already requested',
+		default: null,
+	})
+	isPending?: boolean | null;
 
 	@IsNumber()
 	@Type(() => Number)
@@ -80,4 +102,58 @@ export class MaterialRequestsQueryDto {
 		enum: [SortDirection.asc, SortDirection.desc],
 	})
 	orderDirection? = SortDirection.desc;
+}
+
+export class CreateMaterialRequestDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'The object schema identifier',
+		example: '9f2479c1-4489-4bd0-86b3-881b9449a8c0',
+	})
+	objectId: string;
+
+	@IsString()
+	@IsEnum(MaterialRequestType)
+	@ApiProperty({
+		type: String,
+		description: 'Which type of material request is requested',
+		default: undefined,
+		enum: MaterialRequestType,
+	})
+	type = undefined;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty({
+		type: String,
+		description: "The reason for this user's material request",
+		example:
+			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
+	})
+	reason: string;
+}
+
+export class UpdateMaterialRequestDto {
+	@IsString()
+	@IsEnum(MaterialRequestType)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Which type of material request is requested',
+		default: undefined,
+		enum: MaterialRequestType,
+	})
+	type? = undefined;
+
+	@IsString()
+	@IsNotEmpty()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: "The reason for this user's material request",
+		example:
+			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
+	})
+	reason?: string;
 }

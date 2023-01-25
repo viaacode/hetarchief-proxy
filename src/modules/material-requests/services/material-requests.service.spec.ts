@@ -11,8 +11,11 @@ import {
 import { MaterialRequestsService } from './material-requests.service';
 
 import {
+	DeleteMaterialRequestMutation,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	InsertMaterialRequestMutation,
+	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -265,6 +268,76 @@ describe('MaterialRequestsService', () => {
 					statusCode: 404,
 				});
 			}
+		});
+	});
+
+	describe('create', () => {
+		it('can create a new material request', async () => {
+			const mockData: InsertMaterialRequestMutation = {
+				insert_app_material_requests_one: mockGqlMaterialRequest1,
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const response = await materialRequestsService.createMaterialRequest(
+				{
+					objectId: mockGqlMaterialRequest1.object_schema_identifier,
+					reason: mockGqlMaterialRequest1.reason,
+					type: mockGqlMaterialRequest1.type,
+				},
+				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' }
+			);
+			expect(response.id).toBe(mockGqlMaterialRequest1.id);
+		});
+	});
+
+	describe('update', () => {
+		it('can update a material request', async () => {
+			const mockData: UpdateMaterialRequestMutation = {
+				update_app_material_requests: {
+					returning: [mockGqlMaterialRequest1],
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const response = await materialRequestsService.updateMaterialRequest(
+				mockGqlMaterialRequest1.id,
+				mockGqlMaterialRequest1.profile_id,
+				{
+					type: mockGqlMaterialRequest1.type,
+					reason: mockGqlMaterialRequest1.reason,
+				}
+			);
+			expect(response.id).toBe(mockGqlMaterialRequest1.id);
+		});
+	});
+
+	describe('delete', () => {
+		it('can delete a material request', async () => {
+			const mockData: DeleteMaterialRequestMutation = {
+				delete_app_material_requests: {
+					affected_rows: 1,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const { id, profile_id } = mockGqlMaterialRequest1;
+			const affectedRows = await materialRequestsService.deleteMaterialRequest(
+				id,
+				profile_id
+			);
+			expect(affectedRows).toBe(1);
+		});
+
+		it('can delete a non existing material request', async () => {
+			const mockData: DeleteMaterialRequestMutation = {
+				delete_app_material_requests: {
+					affected_rows: 0,
+				},
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const { profile_id } = mockGqlMaterialRequest1;
+			const affectedRows = await materialRequestsService.deleteMaterialRequest(
+				'unknown-id',
+				profile_id
+			);
+			expect(affectedRows).toBe(0);
 		});
 	});
 });

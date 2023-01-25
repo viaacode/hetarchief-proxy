@@ -11,6 +11,7 @@ export interface MaterialRequest {
 	createdAt: string;
 	updatedAt: string;
 	type: string;
+	isPending: boolean;
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
