@@ -101,7 +101,7 @@ describe('MaterialRequestsController', () => {
 			);
 			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
 				{
-					object_id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
 				},
@@ -115,7 +115,7 @@ describe('MaterialRequestsController', () => {
 	});
 
 	describe('updateMaterialRequest', () => {
-		it('should update a collection by id', async () => {
+		it('should update a material request by id', async () => {
 			mockMaterialRequestsService.updateMaterialRequest.mockResolvedValueOnce(
 				mockMaterialRequest1
 			);

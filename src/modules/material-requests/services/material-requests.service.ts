@@ -186,7 +186,7 @@ export class MaterialRequestsService {
 		}
 	): Promise<MaterialRequest> {
 		const newMaterialRequest = {
-			object_schema_identifier: createMaterialRequestDto.object_id,
+			object_schema_identifier: createMaterialRequestDto.objectId,
 			profile_id: parameters.userProfileId,
 			reason: createMaterialRequestDto.reason,
 			type: createMaterialRequestDto.type,

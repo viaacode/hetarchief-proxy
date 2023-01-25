@@ -32,7 +32,7 @@ export class MaterialRequestsQueryDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestType.VIEW,
+		default: undefined,
 		enum: MaterialRequestType,
 	})
 	type? = undefined;
@@ -51,15 +51,15 @@ export class MaterialRequestsQueryDto {
 	@IsBoolean()
 	@Type(() => Boolean)
 	@Transform((input) => {
-		return input.value === 'false' ? false : true;
+		return input.value === 'true';
 	})
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: Boolean,
 		description: 'Is the material request pending or already requested',
-		default: false,
+		default: null,
 	})
-	isPending?: boolean;
+	isPending?: boolean | null;
 
 	@IsNumber()
 	@Type(() => Number)
@@ -111,14 +111,14 @@ export class CreateMaterialRequestDto {
 		description: 'The object schema identifier',
 		example: '9f2479c1-4489-4bd0-86b3-881b9449a8c0',
 	})
-	object_id: string;
+	objectId: string;
 
 	@IsString()
 	@IsEnum(MaterialRequestType)
 	@ApiProperty({
 		type: String,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestType.VIEW,
+		default: undefined,
 		enum: MaterialRequestType,
 	})
 	type = undefined;
@@ -141,7 +141,7 @@ export class UpdateMaterialRequestDto {
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which type of material request is requested',
-		default: MaterialRequestType.VIEW,
+		default: undefined,
 		enum: MaterialRequestType,
 	})
 	type? = undefined;

@@ -79,7 +79,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Update a material request',
 	})
-	@RequireAnyPermissions(Permission.EDIT_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
 	public async updateMaterialRequest(
 		@Param('id') materialRequestId: string,
 		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
@@ -96,7 +96,7 @@ export class MaterialRequestsController {
 	@ApiOperation({
 		description: 'Delete a material request',
 	})
-	@RequireAnyPermissions(Permission.CANCEL_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(Permission.DELETE_OWN_MATERIAL_REQUESTS)
 	public async deleteMaterialRequest(
 		@Param('id') materialRequestId: string,
 		@SessionUser() user: SessionUserEntity

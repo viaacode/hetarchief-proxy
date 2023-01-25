@@ -279,7 +279,7 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await materialRequestsService.createMaterialRequest(
 				{
-					object_id: mockGqlMaterialRequest1.object_schema_identifier,
+					objectId: mockGqlMaterialRequest1.object_schema_identifier,
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
 				},
@@ -325,7 +325,7 @@ describe('MaterialRequestsService', () => {
 			expect(affectedRows).toBe(1);
 		});
 
-		it('can delete a non existing collection', async () => {
+		it('can delete a non existing material request', async () => {
 			const mockData: DeleteMaterialRequestMutation = {
 				delete_app_material_requests: {
 					affected_rows: 0,
