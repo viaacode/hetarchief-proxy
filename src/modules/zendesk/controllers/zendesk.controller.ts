@@ -8,7 +8,7 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Zendesk')
-@Controller('Zendesk')
+@Controller('zendesk')
 export class ZendeskController {
 	constructor(private zendeskService: ZendeskService) {}
 
