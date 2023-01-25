@@ -5,7 +5,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Configuration } from '~config';
 
 import { ObjectsQueryDto } from '../dto/objects.dto';
-import { ObjectWithAggregations } from '../objects.types';
+import { ObjectMediaWithAggregations } from '../objects.types';
 import { ObjectsService } from '../services/objects.service';
 
 import { TranslationsService } from '~modules/translations/services/translations.service';
@@ -33,7 +33,7 @@ export class ObjectsController {
 		@Body() queryDto: ObjectsQueryDto,
 		@Param('esIndex') esIndex: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<ObjectWithAggregations> {
+	): Promise<ObjectMediaWithAggregations> {
 		// Check if the user can search in all index (meemoo admin)
 		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
 
