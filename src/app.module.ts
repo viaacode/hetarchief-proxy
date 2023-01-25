@@ -8,6 +8,7 @@ import config, { configValidationSchema } from '~config';
 
 import { MaterialRequestsModule } from './modules/material-requests';
 import { ZendeskModule } from './modules/zendesk';
+import { ZendeskService } from './modules/zendesk/services/zendesk.service';
 
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
@@ -74,4 +75,8 @@ import { SessionService } from '~shared/services/session.service';
 	],
 	exports: [ConfigService],
 })
-export class AppModule {}
+export class AppModule {
+	constructor() {
+		ZendeskService.initialize();
+	}
+}
