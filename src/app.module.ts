@@ -15,6 +15,7 @@ import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
 import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
 import { EventsModule } from '~modules/events';
+import { IeObjectsModule } from '~modules/ie-objects';
 import { MediaModule } from '~modules/media';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
@@ -58,6 +59,7 @@ import { SessionService } from '~shared/services/session.service';
 		NotFoundModule,
 		AdminCoreModule,
 		MaterialRequestsModule,
+		IeObjectsModule,
 	],
 	controllers: [],
 	providers: [
