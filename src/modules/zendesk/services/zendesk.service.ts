@@ -1,5 +1,8 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import zendesk, { Client, Requests } from 'node-zendesk';
+import zendesk, { Client } from 'node-zendesk';
+
+import { CreateTicketRequestDto } from '../dto/zendesk.dto';
+import { CreateTicketResponse } from '../zendesk.types';
 
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 
@@ -22,9 +25,9 @@ export class ZendeskService {
 	 * @param request
 	 */
 	public static async createTicket(
-		request: Requests.CreateModel
-	): Promise<Requests.ResponseModel> {
-		return new Promise<Requests.ResponseModel>((resolve, reject) => {
+		request: CreateTicketRequestDto
+	): Promise<CreateTicketResponse> {
+		return new Promise<CreateTicketResponse>((resolve, reject) => {
 			try {
 				ZendeskService.client.requests.create(
 					{ request },

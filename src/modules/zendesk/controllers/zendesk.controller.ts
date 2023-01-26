@@ -1,8 +1,9 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Requests } from 'node-zendesk';
 
+import { CreateTicketRequestDto } from '../dto/zendesk.dto';
 import { ZendeskService } from '../services/zendesk.service';
+import { CreateTicketResponse } from '../zendesk.types';
 
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -16,8 +17,8 @@ export class ZendeskController {
 	@ApiOperation({ description: 'Create ticket through Zendesk API' })
 	@RequireAnyPermissions(Permission.CREATE_TICKET_ZENDESK)
 	public async createTicket(
-		@Body() createTicketRequest: Requests.CreateModel
-	): Promise<Requests.ResponseModel> {
+		@Body() createTicketRequest: CreateTicketRequestDto
+	): Promise<CreateTicketResponse> {
 		return await ZendeskService.createTicket(createTicketRequest);
 	}
 }
