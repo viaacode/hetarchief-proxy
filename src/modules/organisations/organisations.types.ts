@@ -1,6 +1,7 @@
 export interface OrganisationInfoV2 {
 	id: string;
 	description: string;
+	sector: string;
 	logo: {
 		iri: string;
 	};
@@ -34,6 +35,7 @@ export interface ParsedOrganisation {
 		email: string;
 	}[];
 	description: string;
+	sector: string;
 	logo: {
 		iri: string;
 	};

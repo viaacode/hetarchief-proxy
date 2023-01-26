@@ -63,6 +63,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
   contentpartners {
     id
     description
+    sector
     logo {
       iri
     }
@@ -127,6 +128,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 				logo: organization?.logo,
 				contact_point: organization.contact_point,
 				primary_site: organization.primary_site,
+				sector: organization?.sector,
 			})
 		);
 
