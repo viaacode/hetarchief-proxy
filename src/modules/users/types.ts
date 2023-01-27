@@ -73,6 +73,7 @@ export interface User {
 	groupName: string;
 	permissions: Permission[];
 	idp: Idp;
+	isKeyUser: boolean;
 	maintainerId?: string;
 	visitorSpaceSlug?: string;
 }

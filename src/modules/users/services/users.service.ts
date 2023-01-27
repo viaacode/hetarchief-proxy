@@ -58,6 +58,7 @@ export class UsersService {
 				(permData: GqlPermissionData) => permData.permission.name as Permission
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
+			isKeyUser: graphQlUser?.is_key_user,
 			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
 			visitorSpaceSlug:
 				graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
