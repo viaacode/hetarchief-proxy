@@ -128,7 +128,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 				logo: organization?.logo,
 				contact_point: organization.contact_point,
 				primary_site: organization.primary_site,
-				sector: organization?.sector,
+				sector: organization?.sector || null,
 			})
 		);
 
