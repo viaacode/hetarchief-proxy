@@ -28,10 +28,10 @@ export class Comment {
 	html_body?: string | undefined;
 
 	@IsBoolean()
-	@Type(() => String)
+	@Type(() => Boolean)
 	@IsOptional()
 	@ApiPropertyOptional({
-		type: String,
+		type: Boolean,
 	})
 	public?: boolean | undefined;
 }
