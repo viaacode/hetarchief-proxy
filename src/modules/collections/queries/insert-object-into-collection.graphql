@@ -17,6 +17,7 @@ mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier
 				schema_name
 				schema_maintainer_id
 				schema_number_of_pages
+				schema_duration
 			}
 		}
 	}

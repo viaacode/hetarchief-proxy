@@ -28,6 +28,7 @@ query findCollectionObjectsByCollectionId(
 			schema_is_part_of
 			schema_date_published
 			schema_date_created_lower_bound
+			schema_duration
 			maintainer {
 				schema_identifier
 				schema_name

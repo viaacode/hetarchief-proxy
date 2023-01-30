@@ -154,6 +154,7 @@ export class CollectionsService {
 		}
 
 		/* istanbul ignore next */
+		// TODO: add union type
 		const objectIe = this.adaptIeObject(gqlCollectionObjectLink?.ie as GqlObject);
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
