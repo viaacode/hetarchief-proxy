@@ -19,6 +19,7 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		created_at

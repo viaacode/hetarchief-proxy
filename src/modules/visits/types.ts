@@ -29,6 +29,11 @@ export enum VisitTimeframe {
 	FUTURE = 'FUTURE',
 }
 
+export enum VisitAccessType {
+	FULL = 'FULL',
+	FOLDERS = 'FOLDERS',
+}
+
 export type GqlNote =
 	InsertVisitMutation['insert_maintainer_visitor_space_request_one']['visitor_space_request_notes'][0];
 
@@ -53,6 +58,7 @@ export interface GqlUpdateVisit {
 	end_date: string;
 	status: VisitStatus;
 	updated_by?: string;
+	access_type?: string;
 }
 
 export interface Visit {
@@ -76,6 +82,7 @@ export interface Visit {
 	spaceServiceDescription?: string;
 	startAt: string;
 	status: VisitStatus;
+	accessType: string;
 	timeframe: string;
 	updatedAt: string;
 	updatedById: string | null;

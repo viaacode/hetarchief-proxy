@@ -22,7 +22,7 @@ import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
+import { AccessStatus, Visit, VisitAccessType, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { EventsService } from '~modules/events/services/events.service';
@@ -168,6 +168,7 @@ export class VisitsController {
 				timeframe: '',
 				updatedAt: new Date().toISOString(),
 				userProfileId: user.getId(),
+				accessType: VisitAccessType.FULL,
 			};
 		}
 

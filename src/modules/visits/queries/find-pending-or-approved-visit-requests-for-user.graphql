@@ -18,6 +18,7 @@ query findPendingOrApprovedVisitRequestsForUser(
 		cp_space_id
 		user_profile_id
 		status
+		access_type
 		start_date
 		end_date
 	}

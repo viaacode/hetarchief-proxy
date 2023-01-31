@@ -1,0 +1,7 @@
+mutation insertVisitFolderAccess($folderId: uuid, $visitRequestId: uuid) {
+	insert_maintainer_visitor_space_request_folder_access_one(
+		object: { folder_id: $folderId, visit_request_id: $visitRequestId }
+	) {
+		id
+	}
+}
