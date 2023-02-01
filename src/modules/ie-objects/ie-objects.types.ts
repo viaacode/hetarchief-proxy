@@ -92,6 +92,7 @@ export interface IeObject {
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
 	representations?: IeObjectRepresentation[];
+	licenses?: IeObjectLicense[];
 }
 
 export enum SearchFilterField {
@@ -129,9 +130,27 @@ export enum OrderProperty {
 	NAME = 'name',
 }
 
-export enum License {
+export enum IeObjectLicense {
+	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
+	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
+	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA',
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
-	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
+	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
+	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
+}
+
+export enum IeObjectSector {
+	CULTURE = 'Cultuur',
+	OVERHEID = 'Overheid',
+	PUBLIC = 'Publieke Omroep',
+	REGIONAL = 'Regionale Omroep',
+	RURAL = 'Landelijke Private Omroep',
+}
+
+export enum IeObjectAccessThrough {
+	VISITOR_SPACE_FULL = 'VISITOR_SPACE_FULL',
+	VISITOR_SPACE_FOLDERS = 'VISITOR_SPACE_FOLDERS',
+	KEY_USER = 'KEY_USER',
 }
 
 export interface MediaSearchAggregation<T> {
