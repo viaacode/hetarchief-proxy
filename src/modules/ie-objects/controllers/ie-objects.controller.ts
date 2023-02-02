@@ -5,6 +5,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Configuration } from '~config';
 
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
+import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
 import { IeObjectsWithAggregations } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
@@ -49,7 +50,7 @@ export class IeObjectsController {
 		}
 
 		// Filter on format video should also include film format
-		this.ieObjectsService.checkAndFixFormatFilter(queryDto);
+		checkAndFixFormatFilter(queryDto);
 
 		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
@@ -60,6 +61,41 @@ export class IeObjectsController {
 		const userHasAccessToSpace =
 			canSearchInAllSpaces ||
 			(await this.ieObjectsService.userHasAccessToVisitorSpaceOrId(user, esIndex));
+
+		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
+			return searchResult;
+		}
+
+		return this.ieObjectsService.applyLicensesToSearchResult(
+			searchResult,
+			userHasAccessToSpace
+		);
+	}
+
+	@Post()
+	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
+	public async getIeObjects(
+		@Headers('referer') referer: string,
+		@Body() queryDto: IeObjectsQueryDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IeObjectsWithAggregations> {
+		// Check if the user can search in all index (meemoo admin)
+		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+
+		if (!canSearchInAllSpaces) {
+			throw new ForbiddenException(
+				this.translationsService.t(
+					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
+				)
+			);
+		}
+
+		// Filter on format video should also include film format
+		checkAndFixFormatFilter(queryDto);
+
+		const searchResult = await this.ieObjectsService.findAll(queryDto, '_all', referer);
+
+		const userHasAccessToSpace = canSearchInAllSpaces;
 
 		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			return searchResult;

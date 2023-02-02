@@ -28,6 +28,8 @@ export enum SearchFilterField {
 	LOCATION = 'location',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
+	MAINTAINER_ID = 'maintainerId',
+	VISITOR_SPACE_ID = 'visitorSpaceId',
 }
 
 export enum Operator {
