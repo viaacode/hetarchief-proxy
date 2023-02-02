@@ -138,13 +138,13 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR = new Map<
 	IeObjectSectorLicenseMatrix
 >([
 	[
-		IeObjectSector.CULTURE,
+		IeObjectSector.CULTURE, // object sector
 		new Map<IeObjectSector, IeObjectLicense[]>([
-			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
-			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
-			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
-			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_CONTENT]],
-			[IeObjectSector.RURAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]], // user sector and licenses (might be metadata set in the future)
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]], // user sector and licenses (might be metadata set in the future)
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]], // user sector and licenses (might be metadata set in the future)
+			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_CONTENT]], // user sector and licenses (might be metadata set in the future)
+			[IeObjectSector.RURAL, [IeObjectLicense.INTRA_CP_CONTENT]], // user sector and licenses (might be metadata set in the future)
 		]),
 	],
 	[
