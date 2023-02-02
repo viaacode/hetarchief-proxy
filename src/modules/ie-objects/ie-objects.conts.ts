@@ -1,15 +1,34 @@
 import { Group } from '../users/types';
 
-import { IeObjectLicense } from './ie-objects.types';
+import {
+	IeObjectExtraUserGroupType,
+	IeObjectLicense,
+	IeObjectMetadataSet,
+	IeObjectSector,
+	IeObjectSectorLicenseMatrix,
+} from './ie-objects.types';
+
+export const IE_OBJECT_EXTRA_USER_GROUPS = new Map<string, string>([
+	[IeObjectExtraUserGroupType.ANONYMOUS, 'anonymous'][
+		(IeObjectExtraUserGroupType.HAS_VISITOR_SPACE, '+hasAccessToVisitorSpace')
+	],
+	[IeObjectExtraUserGroupType.IS_KEY_USER, '+isKeyUser'],
+	[
+		IeObjectExtraUserGroupType.HAS_VISITOR_SPACE_AND_IS_KEY_USER,
+		'+hasAccessToVisitorSpace+isKeyUser',
+	],
+]);
 
 export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[]>([
-	['anonymous', [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL]],
 	[
-		`${Group.VISITOR}`,
+		IE_OBJECT_EXTRA_USER_GROUPS.get(IeObjectExtraUserGroupType.ANONYMOUS),
 		[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
 	],
+	[Group.VISITOR, [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL]],
 	[
-		`${Group.VISITOR}+hasAccessToVisitorSpace`,
+		`${Group.VISITOR}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.HAS_VISITOR_SPACE
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -18,7 +37,9 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.VISITOR}+isKeyUser`,
+		`${Group.VISITOR}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.IS_KEY_USER
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -27,7 +48,9 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.VISITOR}+hasAccessToVisitorSpace+isKeyUser`,
+		`${Group.VISITOR}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.HAS_VISITOR_SPACE_AND_IS_KEY_USER
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -38,15 +61,14 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.KIOSK_VISITOR}`,
+		Group.KIOSK_VISITOR,
 		[IeObjectLicense.BEZOEKERTOOL_METADATA, IeObjectLicense.BEZOEKERTOOL_CONTENT],
 	],
+	[Group.CP_ADMIN, [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL]],
 	[
-		`${Group.CP_ADMIN}`,
-		[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
-	],
-	[
-		`${Group.CP_ADMIN}+hasAccessToVisitorSpace`,
+		`${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.HAS_VISITOR_SPACE
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -55,7 +77,9 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.CP_ADMIN}+isKeyUser`,
+		`${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.IS_KEY_USER
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -64,7 +88,9 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.CP_ADMIN}+hasAccessToVisitorSpace+isKeyUser`,
+		`${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.HAS_VISITOR_SPACE_AND_IS_KEY_USER
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -75,7 +101,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.MEEMOO_ADMIN}`,
+		Group.MEEMOO_ADMIN,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -84,7 +110,9 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 		],
 	],
 	[
-		`${Group.MEEMOO_ADMIN}+isKeyUser`,
+		`${Group.MEEMOO_ADMIN}${IE_OBJECT_EXTRA_USER_GROUPS.get(
+			IeObjectExtraUserGroupType.IS_KEY_USER
+		)}`,
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
@@ -96,9 +124,74 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP = new Map<string, IeObjectLicense[
 	],
 ]);
 
-export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
+export const IE_OBJECT_METADATA_SET_BY_LICENSE = new Map<IeObjectLicense, IeObjectMetadataSet>([
+	[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectMetadataSet.METADATA_LTD],
+	[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectMetadataSet.METADATA_ALL],
+	[IeObjectLicense.BEZOEKERTOOL_METADATA, IeObjectMetadataSet.METADATA_ALL],
+	[IeObjectLicense.BEZOEKERTOOL_CONTENT, IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE],
+	[IeObjectLicense.INTRA_CP_METADATA_ALL, IeObjectMetadataSet.METADATA_ALL],
+	[IeObjectLicense.INTRA_CP_CONTENT, IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE],
+]);
+
+export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR = new Map<
+	IeObjectSector,
+	IeObjectSectorLicenseMatrix
+>([
 	[
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
+		IeObjectSector.CULTURE,
+		new Map<IeObjectSector, IeObjectLicense[]>([
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.RURAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+		]),
+	],
+	[
+		IeObjectSector.GOVERNMENT,
+		new Map<IeObjectSector, IeObjectLicense[]>([
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.RURAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+		]),
+	],
+	[
+		IeObjectSector.REGIONAL,
+		new Map<IeObjectSector, IeObjectLicense[]>([
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_METADATA_ALL]],
+			[IeObjectSector.RURAL, []],
+		]),
+	],
+	[
+		IeObjectSector.PUBLIC,
+		new Map<IeObjectSector, IeObjectLicense[]>([
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.PUBLIC, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.RURAL, []],
+		]),
+	],
+	[
+		IeObjectSector.RURAL,
+		new Map<IeObjectSector, IeObjectLicense[]>([
+			[IeObjectSector.CULTURE, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.GOVERNMENT, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.REGIONAL, [IeObjectLicense.INTRA_CP_CONTENT]],
+			[IeObjectSector.PUBLIC, []],
+			[IeObjectSector.RURAL, []],
+		]),
+	],
+]);
+
+export const IE_OBJECT_PROPS_BY_METADATA_SET = new Map<string, string[]>([
+	[
+		IeObjectMetadataSet.METADATA_LTD,
 		[
 			'meemooOriginalCp',
 			'premisIsPartOf',
@@ -120,19 +213,17 @@ export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
 			'genre',
 			'keywords',
 			'inLanguage',
-			// dcterms_format for film
-			// dcterms_medium for film
 			'meemoofilmBase',
 			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+			// 'meemoofilmCaption', // BESTAAT NOG NIET
+			// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+			// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 			'licenses',
 		],
 	],
 	[
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
+		IeObjectMetadataSet.METADATA_ALL,
 		[
 			'meemooOriginalCp',
 			'premisIsPartOf',
@@ -149,14 +240,14 @@ export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
 			'dctermsMedium',
 			'ebucoreObjectType',
 			'duration',
-			'serviceProvider', // BESTAAT NOG NIET
+			// 'serviceProvider', // BESTAAT NOG NIET
 			'dateCreated',
 			'datePublished',
 			'creator',
 			'publisher',
 			'description',
 			'abstract',
-			'transcript', // BESTAAT NOG NIET
+			// 'transcript', // BESTAAT NOG NIET
 			'caption',
 			'meemooDescriptionProgramme',
 			'meemooDescriptionCast',
@@ -165,66 +256,18 @@ export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
 			'temporal',
 			'keywords',
 			'inLanguage',
-			'categorie', // BESTAAT NOG NIET
-			// dcterms_format for film
-			// dcterms_medium for film
+			// 'categorie', // BESTAAT NOG NIET
 			'meemoofilmBase',
 			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+			// 'meemoofilmCaption', // BESTAAT NOG NIET
+			// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+			// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 			'licenses',
 		],
 	],
 	[
-		IeObjectLicense.BEZOEKERTOOL_METADATA,
-		[
-			'meemooOriginalCp',
-			'premisIsPartOf',
-			'meemooIdentifier',
-			'schemaIdentifier',
-			'meemooLocalId',
-			'premisIdentifier',
-			'maintainerId',
-			'name',
-			'series',
-			'program',
-			'alternativeName',
-			'dctermsFormat',
-			'dctermsMedium',
-			'ebucoreObjectType',
-			'duration',
-			'serviceProvider', // BESTAAT NOG NIET
-			'dateCreated',
-			'datePublished',
-			'creator',
-			'publisher',
-			'description',
-			'abstract',
-			'transcript', // BESTAAT NOG NIET
-			'caption',
-			'meemooDescriptionProgramme',
-			'meemooDescriptionCast',
-			'genre',
-			'spatial',
-			'temporal',
-			'keywords',
-			'inLanguage',
-			'categorie', // BESTAAT NOG NIET
-			// dcterms_format for film
-			// dcterms_medium for film
-			'meemoofilmBase',
-			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-			'licenses',
-		],
-	],
-	[
-		IeObjectLicense.BEZOEKERTOOL_CONTENT,
+		IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 		[
 			'thumbnailUrl',
 			'representations',
@@ -243,14 +286,14 @@ export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
 			'dctermsMedium',
 			'ebucoreObjectType',
 			'duration',
-			'serviceProvider', // BESTAAT NOG NIET
+			// 'serviceProvider', // BESTAAT NOG NIET
 			'dateCreated',
 			'datePublished',
 			'creator',
 			'publisher',
 			'description',
 			'abstract',
-			'transcript', // BESTAAT NOG NIET
+			// 'transcript', // BESTAAT NOG NIET
 			'caption',
 			'meemooDescriptionProgramme',
 			'meemooDescriptionCast',
@@ -259,109 +302,13 @@ export const IE_OBJECT_PROPS_BY_LICENSES = new Map<string, string[]>([
 			'temporal',
 			'keywords',
 			'inLanguage',
-			'categorie', // BESTAAT NOG NIET
-			// dcterms_format for film
-			// dcterms_medium for film
+			// 'categorie', // BESTAAT NOG NIET
 			'meemoofilmBase',
 			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+			// 'meemoofilmCaption', // BESTAAT NOG NIET
+			// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-			'licenses',
-		],
-	],
-	[
-		IeObjectLicense.INTRA_CP_METADATA_ALL,
-		[
-			'meemooOriginalCp',
-			'premisIsPartOf',
-			'meemooIdentifier',
-			'schemaIdentifier',
-			'meemooLocalId',
-			'premisIdentifier',
-			'maintainerId',
-			'name',
-			'series',
-			'program',
-			'alternativeName',
-			'dctermsFormat',
-			'dctermsMedium',
-			'ebucoreObjectType',
-			'duration',
-			'serviceProvider', // BESTAAT NOG NIET
-			'dateCreated',
-			'datePublished',
-			'creator',
-			'publisher',
-			'description',
-			'abstract',
-			'transcript', // BESTAAT NOG NIET
-			'caption',
-			'meemooDescriptionProgramme',
-			'meemooDescriptionCast',
-			'genre',
-			'spatial',
-			'temporal',
-			'keywords',
-			'inLanguage',
-			'categorie', // BESTAAT NOG NIET
-			// dcterms_format for film
-			// dcterms_medium for film
-			'meemoofilmBase',
-			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-			'licenses',
-		],
-	],
-	[
-		IeObjectLicense.INTRA_CP_CONTENT,
-		[
-			'thumbnailUrl',
-			'representations',
-			'meemooOriginalCp',
-			'premisIsPartOf',
-			'meemooIdentifier',
-			'schemaIdentifier',
-			'meemooLocalId',
-			'premisIdentifier',
-			'maintainerId',
-			'name',
-			'series',
-			'program',
-			'alternativeName',
-			'dctermsFormat',
-			'dctermsMedium',
-			'ebucoreObjectType',
-			'duration',
-			'serviceProvider', // BESTAAT NOG NIET
-			'dateCreated',
-			'datePublished',
-			'creator',
-			'publisher',
-			'description',
-			'abstract',
-			'transcript', // BESTAAT NOG NIET
-			'caption',
-			'meemooDescriptionProgramme',
-			'meemooDescriptionCast',
-			'genre',
-			'spatial',
-			'temporal',
-			'keywords',
-			'inLanguage',
-			'categorie', // BESTAAT NOG NIET
-			// dcterms_format for film
-			// dcterms_medium for film
-			'meemoofilmBase',
-			'meemoofilmColor',
-			'meemoofilmCaption', // BESTAAT NOG NIET
-			'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-			'ebucoreIsMediaFragmentOf',
-			'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+			// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 			'licenses',
 		],
 	],

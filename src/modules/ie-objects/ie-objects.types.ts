@@ -4,6 +4,84 @@ import { MULTI_MATCH_QUERY_MAPPING, QueryType } from './elasticsearch/consts';
 
 import { ContactInfo } from '~shared/types/types';
 
+export type IeObjectSectorLicenseMatrix = Map<IeObjectSector, IeObjectLicense[]>;
+
+export enum MediaFormat {
+	VIDEO = 'video',
+	AUDIO = 'audio',
+}
+
+export enum SearchFilterField {
+	QUERY = 'query',
+	ADVANCED_QUERY = 'advancedQuery',
+	FORMAT = 'format',
+	DURATION = 'duration',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	CREATOR = 'creator',
+	GENRE = 'genre',
+	KEYWORD = 'keyword',
+	NAME = 'name',
+	PUBLISHER = 'publisher',
+	DESCRIPTION = 'description',
+	ERA = 'era',
+	LOCATION = 'location',
+	LANGUAGE = 'language',
+	MEDIUM = 'medium',
+}
+
+export enum Operator {
+	CONTAINS = 'contains',
+	CONTAINS_NOT = 'containsNot',
+	IS = 'is',
+	IS_NOT = 'isNot',
+	GTE = 'gte',
+	LTE = 'lte',
+}
+
+export enum OrderProperty {
+	RELEVANCE = 'relevance',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	NAME = 'name',
+}
+
+export enum IeObjectLicense {
+	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
+	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
+	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA',
+	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
+	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
+	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
+}
+
+export enum IeObjectMetadataSet {
+	METADATA_LTD = 'METADATA_LTD',
+	METADATA_ALL = 'METADATA_ALL',
+	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
+}
+
+export enum IeObjectSector {
+	CULTURE = 'Cultuur',
+	GOVERNMENT = 'Overheid',
+	PUBLIC = 'Publieke Omroep',
+	REGIONAL = 'Regionale Omroep',
+	RURAL = 'Landelijke Private Omroep',
+}
+
+export enum IeObjectAccessThrough {
+	VISITOR_SPACE_FULL = 'VISITOR_SPACE_FULL',
+	VISITOR_SPACE_FOLDERS = 'VISITOR_SPACE_FOLDERS',
+	KEY_USER = 'KEY_USER',
+}
+
+export enum IeObjectExtraUserGroupType {
+	ANONYMOUS = 'ANONYMOUS',
+	HAS_VISITOR_SPACE = 'HAS_VISITOR_SPACE',
+	IS_KEY_USER = 'IS_KEY_USER',
+	HAS_VISITOR_SPACE_AND_IS_KEY_USER = 'HAS_VISITOR_SPACE_AND_KEY_USER',
+}
+
 export interface QueryBuilderConfig {
 	AGGS_PROPERTIES: Array<SearchFilterField>;
 	MAX_COUNT_SEARCH_RESULTS: number;
@@ -18,11 +96,6 @@ export interface QueryBuilderConfig {
 	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
 	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
 	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
-}
-
-export enum MediaFormat {
-	VIDEO = 'video',
-	AUDIO = 'audio',
 }
 
 export interface IeObjectFile {
@@ -93,64 +166,7 @@ export interface IeObject {
 	meemooDescriptionCast: string;
 	representations?: IeObjectRepresentation[];
 	licenses?: IeObjectLicense[];
-}
-
-export enum SearchFilterField {
-	QUERY = 'query',
-	ADVANCED_QUERY = 'advancedQuery',
-	FORMAT = 'format',
-	DURATION = 'duration',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	CREATOR = 'creator',
-	GENRE = 'genre',
-	KEYWORD = 'keyword',
-	NAME = 'name',
-	PUBLISHER = 'publisher',
-	DESCRIPTION = 'description',
-	ERA = 'era',
-	LOCATION = 'location',
-	LANGUAGE = 'language',
-	MEDIUM = 'medium',
-}
-
-export enum Operator {
-	CONTAINS = 'contains',
-	CONTAINS_NOT = 'containsNot',
-	IS = 'is',
-	IS_NOT = 'isNot',
-	GTE = 'gte',
-	LTE = 'lte',
-}
-
-export enum OrderProperty {
-	RELEVANCE = 'relevance',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	NAME = 'name',
-}
-
-export enum IeObjectLicense {
-	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
-	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
-	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA',
-	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
-	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
-	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
-}
-
-export enum IeObjectSector {
-	CULTURE = 'Cultuur',
-	OVERHEID = 'Overheid',
-	PUBLIC = 'Publieke Omroep',
-	REGIONAL = 'Regionale Omroep',
-	RURAL = 'Landelijke Private Omroep',
-}
-
-export enum IeObjectAccessThrough {
-	VISITOR_SPACE_FULL = 'VISITOR_SPACE_FULL',
-	VISITOR_SPACE_FOLDERS = 'VISITOR_SPACE_FOLDERS',
-	KEY_USER = 'KEY_USER',
+	sector?: IeObjectSector;
 }
 
 export interface MediaSearchAggregation<T> {

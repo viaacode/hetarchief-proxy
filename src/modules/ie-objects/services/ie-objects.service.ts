@@ -5,19 +5,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { compact, find, get, intersection, isEqual, isNil, set, unset } from 'lodash';
+import { compact, find, get, intersection, set, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
-import { IE_OBJECT_LICENSES_BY_USER_GROUP, IE_OBJECT_PROPS_BY_LICENSES } from '../ie-objects.conts';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	IeObject,
 	IeObjectLicense,
-	IeObjectSector,
 	IeObjectsWithAggregations,
 	MediaFormat,
 } from '../ie-objects.types';
@@ -326,81 +324,5 @@ export class IeObjectsService {
 			formatFilter.multiValue.push('film');
 		}
 		return queryDto;
-	}
-
-	// figure out what properties the user can see and which should be stripped
-	public limitAccessToObjectDetails(
-		ieObject: Partial<IeObject>,
-		userInfo: {
-			userId: string | null;
-			isKeyUser: boolean;
-			sector: IeObjectSector | null;
-			userGroup: string;
-			maintainerId: string;
-			accessibleObjectIdsThroughFolders: string[];
-			accessibleOrIds: string[];
-		}
-	): Partial<IeObject> {
-		// Step 1 - Determine Licenses
-		// ---------------------------------
-		let toBeUsedLicenses: IeObjectLicense[] = [];
-		let userGroup = isNil(userInfo?.userId) ? 'anonymous' : userInfo.userGroup;
-
-		// Check if user has visitor space access (own or another)
-		// maintainerId === ieObject.maintainerId => own visitor space
-		// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
-		if (
-			userInfo?.maintainerId === ieObject?.maintainerId ||
-			userInfo.accessibleOrIds.includes(ieObject?.maintainerId)
-		) {
-			userGroup = `${userGroup}+hasAccessToVisitorSpace`;
-		}
-
-		// Is user key user?
-		if (userInfo.isKeyUser) {
-			userGroup = `${userGroup}+isKeyUser`;
-		}
-
-		toBeUsedLicenses = isEqual(
-			ieObject.licenses,
-			IE_OBJECT_LICENSES_BY_USER_GROUP.get(userGroup)
-		)
-			? IE_OBJECT_LICENSES_BY_USER_GROUP.get(userGroup)
-			: [];
-
-		// Step 2 - Determine ieObject props
-		// ---------------------------------
-		let ieObjectLimitedProps = [];
-		toBeUsedLicenses.forEach(
-			(license: IeObjectLicense) =>
-				(ieObjectLimitedProps = [...IE_OBJECT_PROPS_BY_LICENSES.get(license)])
-		);
-
-		// Step 3 - Return ie object with limited access props
-		// ---------------------------------
-
-		// // #1 - Map, forEach, object.fromEntries
-		// const limitedAccessIeObject1 = new Map([]);
-		// ieObjectLimitedProps.forEach(prop => limitedAccessIeObject1.set(prop, ieObject[prop]));
-
-		// // Return ie object with limited access props
-		// return Object.fromEntries(limitedAccessIeObject);
-
-		// // #2 - forEach
-		// const limitedAccessIeObject2 = {};
-		// ieObjectLimitedProps.forEach(element => {
-		// 	limitedAccessIeObject2[element]
-		// })
-
-		// // Return ie object with limited access props
-		// return limitedAccessIeObject2;
-
-		// #3 - for ... of
-		const limitedAccessIeObject = {};
-		for (const prop of ieObjectLimitedProps) {
-			limitedAccessIeObject[prop];
-		}
-
-		return limitedAccessIeObject;
 	}
 }
