@@ -4,7 +4,7 @@ import { MULTI_MATCH_QUERY_MAPPING, QueryType } from './elasticsearch/consts';
 
 import { ContactInfo } from '~shared/types/types';
 
-export type IeObjectSectorLicenseMatrix = Map<IeObjectSector, IeObjectLicense[]>;
+export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
 
 export enum MediaFormat {
 	VIDEO = 'video',
@@ -79,7 +79,13 @@ export enum IeObjectExtraUserGroupType {
 	ANONYMOUS = 'ANONYMOUS',
 	HAS_VISITOR_SPACE = 'HAS_VISITOR_SPACE',
 	IS_KEY_USER = 'IS_KEY_USER',
-	HAS_VISITOR_SPACE_AND_IS_KEY_USER = 'HAS_VISITOR_SPACE_AND_KEY_USER',
+	VISITOR_HAS_VISITOR_SPACE = 'VISITOR_HAS_VISITOR_SPACE',
+	VISITOR_IS_KEY_USER = 'VISITOR_IS_KEY_USER',
+	VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER = 'VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER',
+	CP_ADMIN_HAS_VISITOR_SPACE = 'CP_ADMIN_HAS_VISITOR_SPACE',
+	CP_ADMIN_IS_KEY_USER = 'CP_ADMIN_IS_KEY_USER',
+	CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
+	MEEMOO_ADMIN_IS_KEY_USER = 'MEEMOO_ADMIN_IS_KEY_USER',
 }
 
 export interface QueryBuilderConfig {
@@ -152,7 +158,7 @@ export interface IeObject {
 	thumbnailUrl: string;
 	// embedUrl: string;
 	duration: string;
-	license: any;
+	license?: any;
 	meemooMediaObjectId?: string;
 	dateCreated: string;
 	dateCreatedLowerBound?: string;
@@ -167,6 +173,7 @@ export interface IeObject {
 	representations?: IeObjectRepresentation[];
 	licenses?: IeObjectLicense[];
 	sector?: IeObjectSector;
+	ebucoreIsMediaFragmentOf?: string;
 }
 
 export interface MediaSearchAggregation<T> {

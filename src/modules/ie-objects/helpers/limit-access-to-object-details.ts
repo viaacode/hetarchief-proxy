@@ -1,5 +1,6 @@
 import { difference, intersection, isEmpty, isNil, pick, union } from 'lodash';
 
+import { Group } from '../../users/types';
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
@@ -30,8 +31,9 @@ export const limitAccessToObjectDetails = (
 	// Step 1 - Determine Licenses
 	// ---------------------------------------------------
 	let userGroup = isNil(userInfo?.userId)
-		? IE_OBJECT_EXTRA_USER_GROUPS.get(IeObjectExtraUserGroupType.ANONYMOUS)
+		? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
 		: userInfo.userGroup;
+
 	// Check if user has visitor space access (own or another)
 	// maintainerId === ieObject.maintainerId => own visitor space
 	// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
@@ -39,21 +41,28 @@ export const limitAccessToObjectDetails = (
 		userInfo?.maintainerId === ieObject?.maintainerId ||
 		userInfo.accessibleVisitorSpaceOrIds.includes(ieObject?.maintainerId)
 	) {
-		userGroup = `${userGroup}${IE_OBJECT_EXTRA_USER_GROUPS.get(
-			IeObjectExtraUserGroupType.HAS_VISITOR_SPACE
-		)}`;
+		userGroup = `${userGroup}${
+			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.HAS_VISITOR_SPACE]
+		}`;
 	}
 	// Is user key user?
 	if (userInfo.isKeyUser) {
-		userGroup = `${userGroup}${IE_OBJECT_EXTRA_USER_GROUPS.get(
-			IeObjectExtraUserGroupType.IS_KEY_USER
-		)}`;
+		userGroup = `${userGroup}${
+			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.IS_KEY_USER]
+		}`;
 	}
+
+	console.log(userGroup);
+	console.log(ieObject.licenses);
+	console.log(IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]);
+
 	// Determine common ground between licenses
 	const intersectedLicenses = intersection(
 		ieObject.licenses,
-		IE_OBJECT_LICENSES_BY_USER_GROUP.get(userGroup)
+		IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]
 	);
+
+	console.log(intersectedLicenses);
 
 	// TODO: (ARC-1361) - Sector as extra filter on INTRA_CP_CONTENT
 	// ---------------------------------------------------
@@ -73,10 +82,12 @@ export const limitAccessToObjectDetails = (
 	let ieObjectLimitedProps = [];
 	for (const license of intersectedLicenses) {
 		ieObjectLimitedProps.push(
-			IE_OBJECT_PROPS_BY_METADATA_SET.get(IE_OBJECT_METADATA_SET_BY_LICENSE.get(license))
+			IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[license]]
 		);
 	}
-	ieObjectLimitedProps = union(ieObjectLimitedProps);
+	ieObjectLimitedProps = union(...ieObjectLimitedProps);
+
+	console.log(ieObjectLimitedProps);
 
 	// Step 3 - Return ie object with limited access props
 	// ---------------------------------------------------
