@@ -17,7 +17,6 @@ import {
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
-	GqlVisitByFolderId,
 	GqlVisitWithNotes,
 	Note,
 	Visit,
@@ -171,7 +170,7 @@ export class VisitsService {
 			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
 			startAt: graphQlVisit?.start_date,
 			status: graphQlVisit?.status as VisitStatus,
-			accessType: graphQlVisit?.access_type || VisitAccessType.FULL,
+			accessType: graphQlVisit?.access_type || VisitAccessType.Full,
 			timeframe: graphQlVisit?.user_timeframe,
 			updatedAt: graphQlVisit?.updated_at,
 			updatedById: graphQlVisit?.last_updated_by?.id,
@@ -263,8 +262,8 @@ export class VisitsService {
 			// THEN throw BadRequest exception
 			if (
 				isEmpty(accessType) ||
-				(isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.FOLDERS) ||
-				(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.FULL)
+				(isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) ||
+				(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Full)
 			) {
 				throw new BadRequestException(
 					`The amount of accessFolderIds (${accessFolderIds.length}) does not correspond with the accessType ${updateVisit.access_type}`
@@ -273,14 +272,18 @@ export class VisitsService {
 
 			// IF accessFolderIds is not empty and accessType is FOLDERS
 			// THEN add these folders to the folder_access table
-			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.FOLDERS) {
+			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
 				for (let index = 0; index < accessFolderIds.length; index++) {
 					await this.dataService.execute<
 						InsertVisitFolderAccessMutation,
 						InsertVisitFolderAccessMutationVariables
 					>(InsertVisitFolderAccessDocument, {
-						folderId: accessFolderIds[index],
-						visitRequestId: currentVisit.id,
+						objects: [
+							...accessFolderIds.map((accessFolderId: string) => ({
+								folder_id: accessFolderId,
+								visit_request_id: currentVisit.id,
+							})),
+						],
 					});
 				}
 			}

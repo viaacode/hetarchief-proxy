@@ -98,7 +98,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which access type does the visit hold access to',
-		default: VisitAccessType.FULL,
+		default: VisitAccessType.Full,
 		enum: VisitAccessType,
 	})
 	accessType?: string = undefined;
@@ -180,7 +180,7 @@ export class VisitsQueryDto {
 		type: String,
 		description: 'Access type of the visit',
 		enum: VisitAccessType,
-		default: VisitAccessType.FULL,
+		default: undefined,
 	})
 	accessType? = undefined;
 

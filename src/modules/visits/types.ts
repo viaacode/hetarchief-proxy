@@ -7,8 +7,11 @@ import {
 	FindVisitsByFolderIdQuery,
 	FindVisitsQuery,
 	InsertVisitMutation,
+	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
+
+export { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as VisitAccessType } from '~generated/graphql-db-types-hetarchief';
 
 export enum VisitStatus {
 	PENDING = 'PENDING',
@@ -27,11 +30,6 @@ export enum VisitTimeframe {
 	ACTIVE = 'ACTIVE',
 	PAST = 'PAST',
 	FUTURE = 'FUTURE',
-}
-
-export enum VisitAccessType {
-	FULL = 'FULL',
-	FOLDERS = 'FOLDERS',
 }
 
 export type GqlNote =
@@ -82,7 +80,7 @@ export interface Visit {
 	spaceServiceDescription?: string;
 	startAt: string;
 	status: VisitStatus;
-	accessType: string;
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
 	timeframe: string;
 	updatedAt: string;
 	updatedById: string | null;

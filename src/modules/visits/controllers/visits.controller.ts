@@ -168,7 +168,7 @@ export class VisitsController {
 				timeframe: '',
 				updatedAt: new Date().toISOString(),
 				userProfileId: user.getId(),
-				accessType: VisitAccessType.FULL,
+				accessType: VisitAccessType.Full,
 			};
 		}
 
