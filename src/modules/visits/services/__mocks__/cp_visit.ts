@@ -1,5 +1,4 @@
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
-import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { GqlVisit, GqlVisitWithNotes, VisitAccessType } from '~modules/visits/types';
 
 export const mockCpVisit: GqlVisit = {
