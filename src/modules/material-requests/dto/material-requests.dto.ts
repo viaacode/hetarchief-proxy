@@ -88,7 +88,7 @@ export class MaterialRequestsQueryDto {
 		type: String,
 		description: 'property to sort the results by',
 		default: 'createdAt',
-		enum: [Object.values(MaterialRequestOrderProp)],
+		enum: MaterialRequestOrderProp,
 	})
 	orderProp? = MaterialRequestOrderProp.CREATED_AT;
 
