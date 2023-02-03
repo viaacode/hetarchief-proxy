@@ -6,6 +6,7 @@ import { Configuration } from '~config';
 
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import { IeObjectsWithAggregations } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
@@ -55,7 +56,8 @@ export class IeObjectsController {
 		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
 			esIndex.toLowerCase(),
-			referer
+			referer,
+			user
 		);
 
 		const userHasAccessToSpace =
@@ -79,31 +81,30 @@ export class IeObjectsController {
 		@Body() queryDto: IeObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObjectsWithAggregations> {
-		// Check if the user can search in all index (meemoo admin)
-		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
-
-		if (!canSearchInAllSpaces) {
-			throw new ForbiddenException(
-				this.translationsService.t(
-					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
-				)
-			);
-		}
+		// TODO: ophalen via: user => active visitor requests => accessType === folder => folders => objects => ids
 
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
 
-		const searchResult = await this.ieObjectsService.findAll(queryDto, '_all', referer);
-
-		const userHasAccessToSpace = canSearchInAllSpaces;
+		const searchResult = await this.ieObjectsService.findAll(queryDto, '_all', referer, user);
 
 		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
 			return searchResult;
 		}
 
-		return this.ieObjectsService.applyLicensesToSearchResult(
-			searchResult,
-			userHasAccessToSpace
-		);
+		return {
+			...searchResult,
+			items: searchResult.items.map((item) =>
+				limitAccessToObjectDetails(item, {
+					userId: user.getId() || null,
+					isKeyUser: user.getIsKeyUser() || false,
+					sector: null,
+					userGroup: user.getUserGroup().name || null,
+					maintainerId: '',
+					accessibleObjectIdsThroughFolders: [],
+					accessibleVisitorSpaceOrIds: [],
+				})
+			),
+		};
 	}
 }

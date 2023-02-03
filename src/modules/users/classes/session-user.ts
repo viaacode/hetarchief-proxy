@@ -57,6 +57,14 @@ export class SessionUserEntity {
 		return get(this.user, 'visitorSpaceSlug');
 	}
 
+	public getUserGroup(): { id: string; name: string; label: string } {
+		return get(this.user, 'userGroup');
+	}
+
+	public getIsKeyUser(): boolean {
+		return get(this.user, 'isKeyUser');
+	}
+
 	public has(permission: Permission): boolean {
 		return this.permissions.includes(permission);
 	}

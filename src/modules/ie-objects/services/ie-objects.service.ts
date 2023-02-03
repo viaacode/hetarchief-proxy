@@ -9,7 +9,7 @@ import { compact, find, get, intersection, set, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
-import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import {
 	ElasticsearchObject,
@@ -17,7 +17,6 @@ import {
 	IeObject,
 	IeObjectLicense,
 	IeObjectsWithAggregations,
-	MediaFormat,
 } from '../ie-objects.types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -39,6 +38,54 @@ export class IeObjectsService {
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
+	}
+
+	public async findAll(
+		inputQuery: IeObjectsQueryDto,
+		esIndex: string | null,
+		referer: string,
+		user: SessionUserEntity
+	): Promise<IeObjectsWithAggregations> {
+		let esQueryWithLicenses = null;
+		const id = randomUUID();
+		const esQuery = QueryBuilder.build(inputQuery);
+
+		// Check licenses of objects
+		if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
+			esQueryWithLicenses = this.applyLicenseToESQuery(esQuery, user);
+		}
+
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
+					esQueryWithLicenses || esQuery
+				)}`
+			);
+		}
+
+		const objectResponse = await this.executeQuery(esIndex, esQueryWithLicenses || esQuery);
+
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
+					objectResponse
+				)}`
+			);
+		}
+
+		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer);
+
+		return {
+			...Pagination<IeObject>({
+				items: adaptedESResponse.hits.hits.map((esHit) =>
+					this.adaptESObjectToObject(esHit._source)
+				),
+				page: 0,
+				size: adaptedESResponse.hits.total.value,
+				total: adaptedESResponse.hits.total.value,
+			}),
+			aggregations: adaptedESResponse.aggregations,
+		};
 	}
 
 	public async adaptESResponse(
@@ -143,83 +190,6 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public getSearchEndpoint(esIndex: string | null): string {
-		if (!esIndex) {
-			return '_search';
-		}
-		return `${esIndex}/_search`;
-	}
-
-	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
-		try {
-			this.logger.debug(JSON.stringify(esQuery));
-			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
-				json: esQuery,
-				resolveBodyOnly: true,
-			});
-		} catch (e) {
-			this.logger.error(e?.response?.body);
-			throw e;
-		}
-	}
-
-	public async findAll(
-		inputQuery: IeObjectsQueryDto,
-		esIndex: string | null,
-		referer: string
-	): Promise<IeObjectsWithAggregations> {
-		const esQuery = QueryBuilder.build(inputQuery);
-
-		// Check licenses of objects
-		if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
-			unset(esQuery, 'query.match_all');
-			set(esQuery, 'query.bool.should', [
-				{
-					term: {
-						schema_license: IeObjectLicense.BEZOEKERTOOL_CONTENT,
-					},
-				},
-				{
-					term: {
-						schema_license: IeObjectLicense.BEZOEKERTOOL_METADATA,
-					},
-				},
-			]);
-			set(esQuery, 'query.bool.minimum_should_match', 1);
-		}
-
-		const id = randomUUID();
-		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
-			this.logger.log(
-				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
-					esQuery
-				)}`
-			);
-		}
-		const objectResponse = await this.executeQuery(esIndex, esQuery);
-		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
-			this.logger.log(
-				`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
-					objectResponse
-				)}`
-			);
-		}
-
-		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer);
-
-		return {
-			...Pagination<IeObject>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESObjectToObject(esHit._source)
-				),
-				page: 0,
-				size: adaptedESResponse.hits.total.value,
-				total: adaptedESResponse.hits.total.value,
-			}),
-			aggregations: adaptedESResponse.aggregations,
-		};
-	}
-
 	public getLimitedMetadata(ieObject: IeObject): Partial<IeObject> {
 		return {
 			schemaIdentifier: ieObject.schemaIdentifier,
@@ -281,16 +251,79 @@ export class IeObjectsService {
 		userHasAccessToSpace: boolean
 	): IeObjectsWithAggregations {
 		result.items = compact(
-			result.items.map((objectMedia: IeObject) => {
-				objectMedia = this.applyLicensesToObject(
-					objectMedia,
-					userHasAccessToSpace
-				) as IeObject;
-
-				return objectMedia;
-			})
+			result.items.map(
+				(ieObject: IeObject) =>
+					this.applyLicensesToObject(ieObject, userHasAccessToSpace) as IeObject
+			)
 		);
 		return result;
+	}
+
+	public applyLicenseToESQuery(esQuery: any, user: SessionUserEntity): any {
+		let checkSchemaLicenses = [];
+
+		unset(esQuery, 'query.match_all');
+
+		// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
+		checkSchemaLicenses = [
+			{
+				term: {
+					schema_license: IeObjectLicense.PUBLIEK_METADATA_LTD,
+				},
+			},
+			{
+				term: {
+					schema_license: IeObjectLicense.PUBLIEK_METADATA_ALL,
+				},
+			},
+		];
+
+		// 2) Check or-id is part of sectorOrIds en sleutel gebruiker -> TODO: ARC-1364
+		// 3) or-id is eigen or id en sleutel gebruiker
+		if (user.getMaintainerId() === 'maintainerId' && user.getIsKeyUser()) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				[
+					{
+						term: {
+							schema_license: IeObjectLicense.INTRA_CP_METADATA_ALL,
+						},
+					},
+					{
+						term: {
+							schema_license: IeObjectLicense.INTRA_CP_CONTENT,
+						},
+					},
+				],
+			];
+		}
+
+		// 4) Check or-id is part of visitorSpaceIds -> TODO:
+		// 5) Check object id is part of folderObjectIds -> TODO:
+		if (this.userHasAccessToVisitorSpaceOrId(user, 'maintainerId')) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				[
+					{
+						term: {
+							schema_license: IeObjectLicense.BEZOEKERTOOL_METADATA,
+						},
+					},
+					{
+						term: {
+							schema_license: IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						},
+					},
+				],
+			];
+		}
+
+		// Set schema licenses
+		set(esQuery, 'query.bool.should', [...checkSchemaLicenses]);
+		set(esQuery, 'query.bool.minimum_should_match', 1);
+
+		// Return esQuery with applied licenses
+		return esQuery;
 	}
 
 	/**
@@ -308,5 +341,25 @@ export class IeObjectsService {
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
+	}
+
+	public getSearchEndpoint(esIndex: string | null): string {
+		if (!esIndex) {
+			return '_search';
+		}
+		return `${esIndex}/_search`;
+	}
+
+	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
+		try {
+			this.logger.debug(JSON.stringify(esQuery));
+			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
+				json: esQuery,
+				resolveBodyOnly: true,
+			});
+		} catch (e) {
+			this.logger.error(e?.response?.body);
+			throw e;
+		}
 	}
 }
