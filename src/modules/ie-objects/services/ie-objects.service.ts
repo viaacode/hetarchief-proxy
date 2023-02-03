@@ -96,8 +96,8 @@ export class IeObjectsService {
 			series: esObject?.schema_is_part_of?.serie,
 			program: esObject?.schema_is_part_of?.reeks,
 			alternativeName: esObject.schema_is_part_of?.alternatief,
-			maintainerId: esObject?.schema_maintainer[0]?.schema_identifier,
-			maintainerName: esObject?.schema_maintainer[0]?.schema_name,
+			maintainerId: esObject?.schema_maintainer?.schema_identifier,
+			maintainerName: esObject?.schema_maintainer?.schema_name,
 			contactInfo: null,
 			copyrightHolder: null,
 			copyrightNotice: null,
@@ -152,6 +152,7 @@ export class IeObjectsService {
 
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
+			this.logger.debug(JSON.stringify(esQuery));
 			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
 				json: esQuery,
 				resolveBodyOnly: true,
