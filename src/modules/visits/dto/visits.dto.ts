@@ -101,7 +101,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 		default: VisitAccessType.Full,
 		enum: VisitAccessType,
 	})
-	accessType?: string = undefined;
+	accessType?: VisitAccessType = undefined;
 
 	@IsArray()
 	@IsString({ each: true })
