@@ -152,7 +152,6 @@ export class IeObjectsService {
 
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
-			this.logger.debug(JSON.stringify(esQuery));
 			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
 				json: esQuery,
 				resolveBodyOnly: true,
