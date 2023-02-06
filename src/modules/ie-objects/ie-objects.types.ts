@@ -28,6 +28,7 @@ export enum SearchFilterField {
 	LOCATION = 'location',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
+	MAINTAINER = 'maintainer',
 }
 
 export enum Operator {
@@ -268,7 +269,7 @@ export interface ElasticsearchObject {
 	schema_maintainer: {
 		schema_identifier: string;
 		schema_name: string;
-	}[];
+	};
 	schema_thumbnail_url: string;
 	dcterms_format: string;
 	schema_name: string;

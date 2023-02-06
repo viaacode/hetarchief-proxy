@@ -96,8 +96,8 @@ export class IeObjectsService {
 			series: esObject?.schema_is_part_of?.serie,
 			program: esObject?.schema_is_part_of?.reeks,
 			alternativeName: esObject.schema_is_part_of?.alternatief,
-			maintainerId: esObject?.schema_maintainer[0]?.schema_identifier,
-			maintainerName: esObject?.schema_maintainer[0]?.schema_name,
+			maintainerId: esObject?.schema_maintainer?.schema_identifier,
+			maintainerName: esObject?.schema_maintainer?.schema_name,
 			contactInfo: null,
 			copyrightHolder: null,
 			copyrightNotice: null,
@@ -277,7 +277,7 @@ export class IeObjectsService {
 
 	public applyLicensesToSearchResult(
 		result: IeObjectsWithAggregations,
-		userHasAccessToSpace: boolean
+		userHasAccessToSpace?: boolean
 	): IeObjectsWithAggregations {
 		result.items = compact(
 			result.items.map((objectMedia: IeObject) => {
@@ -307,22 +307,5 @@ export class IeObjectsService {
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
-	}
-
-	public checkAndFixFormatFilter(queryDto: IeObjectsQueryDto): IeObjectsQueryDto {
-		const formatFilter = find(queryDto.filters, { field: 'format' }) as SearchFilter;
-		if (formatFilter && formatFilter.value === MediaFormat.VIDEO) {
-			// change to multivalue with video and film
-			formatFilter.multiValue = ['video', 'film'];
-			delete formatFilter.value;
-		} else if (
-			// multiValue case
-			formatFilter &&
-			formatFilter.multiValue &&
-			formatFilter.multiValue.includes(MediaFormat.VIDEO)
-		) {
-			formatFilter.multiValue.push('film');
-		}
-		return queryDto;
 	}
 }
