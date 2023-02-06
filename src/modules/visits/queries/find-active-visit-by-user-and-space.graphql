@@ -25,6 +25,7 @@ query findActiveVisitByUserAndSpace(
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {

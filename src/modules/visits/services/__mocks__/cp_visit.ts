@@ -1,5 +1,5 @@
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
-import { GqlVisit, GqlVisitWithNotes } from '~modules/visits/types';
+import { GqlVisit, GqlVisitWithNotes, VisitAccessType } from '~modules/visits/types';
 
 export const mockCpVisit: GqlVisit = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
@@ -15,6 +15,7 @@ export const mockCpVisit: GqlVisit = {
 	user_reason: 'voor mijn onderzoek en studie',
 	user_timeframe: 'meteen',
 	status: 'PENDING',
+	access_type: VisitAccessType.Full,
 	start_date: null,
 	end_date: null,
 	visitor_space_request_notes: [] as GqlVisitWithNotes['visitor_space_request_notes'],

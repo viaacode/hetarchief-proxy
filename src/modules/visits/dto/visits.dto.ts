@@ -13,7 +13,7 @@ import {
 import { addDays, addHours } from 'date-fns';
 import { string } from 'joi';
 
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { VisitAccessType, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
@@ -92,6 +92,24 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 		example: 'A visit is limited to max. 2h',
 	})
 	note?: string;
+
+	@IsString()
+	@IsEnum(VisitAccessType)
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Which access type does the visit hold access to',
+		default: VisitAccessType.Full,
+		enum: VisitAccessType,
+	})
+	accessType?: VisitAccessType = undefined;
+
+	@IsArray()
+	@IsString({ each: true })
+	@ApiPropertyOptional({
+		type: [String],
+		description: 'Folder ids associated with the FOLDERS access type for the current visit',
+	})
+	accessFolderIds?: [string];
 }
 
 export class VisitsQueryDto {
@@ -154,6 +172,17 @@ export class VisitsQueryDto {
 		default: undefined,
 	})
 	visitorSpaceSlug?: string;
+
+	@IsString()
+	@IsEnum(VisitAccessType)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Access type of the visit',
+		enum: VisitAccessType,
+		default: undefined,
+	})
+	accessType? = undefined;
 
 	@IsNumber()
 	@Type(() => Number)
