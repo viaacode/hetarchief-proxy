@@ -75,7 +75,6 @@ export class IeObjectsController {
 	}
 
 	@Post()
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getIeObjects(
 		@Headers('referer') referer: string,
 		@Body() queryDto: IeObjectsQueryDto,
@@ -102,7 +101,7 @@ export class IeObjectsController {
 					userGroup: user.getUserGroup().name || null,
 					maintainerId: '',
 					accessibleObjectIdsThroughFolders: [],
-					accessibleVisitorSpaceOrIds: [],
+					accessibleVisitorSpaceIds: [],
 				})
 			),
 		};

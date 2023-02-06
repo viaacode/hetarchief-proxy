@@ -248,7 +248,7 @@ export class IeObjectsService {
 
 	public applyLicensesToSearchResult(
 		result: IeObjectsWithAggregations,
-		userHasAccessToSpace: boolean
+		userHasAccessToSpace?: boolean
 	): IeObjectsWithAggregations {
 		result.items = compact(
 			result.items.map(

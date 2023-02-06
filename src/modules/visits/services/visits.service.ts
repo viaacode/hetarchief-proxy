@@ -1,5 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import {
+	BadRequestException,
 	ForbiddenException,
 	Injectable,
 	InternalServerErrorException,
@@ -16,10 +17,10 @@ import {
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
-	GqlVisitByFolderId,
 	GqlVisitWithNotes,
 	Note,
 	Visit,
+	VisitAccessType,
 	VisitSpaceCount,
 	VisitStatus,
 	VisitTimeframe,
@@ -58,6 +59,9 @@ import {
 	InsertNoteMutation,
 	InsertNoteMutationVariables,
 	InsertVisitDocument,
+	InsertVisitFolderAccessDocument,
+	InsertVisitFolderAccessMutation,
+	InsertVisitFolderAccessMutationVariables,
 	InsertVisitMutation,
 	InsertVisitMutationVariables,
 	PendingVisitCountForUserBySlugDocument,
@@ -166,6 +170,7 @@ export class VisitsService {
 			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
 			startAt: graphQlVisit?.start_date,
 			status: graphQlVisit?.status as VisitStatus,
+			accessType: graphQlVisit?.access_type || VisitAccessType.Full,
 			timeframe: graphQlVisit?.user_timeframe,
 			updatedAt: graphQlVisit?.updated_at,
 			updatedById: graphQlVisit?.last_updated_by?.id,
@@ -220,7 +225,7 @@ export class VisitsService {
 		updateVisitDto: UpdateVisitDto,
 		userProfileId: string
 	): Promise<Visit> {
-		const { startAt, endAt } = updateVisitDto;
+		const { startAt, endAt, accessType, accessFolderIds } = updateVisitDto;
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
 
@@ -229,6 +234,7 @@ export class VisitsService {
 			...(endAt ? { end_date: endAt } : {}),
 			...(updateVisitDto.status ? { status: updateVisitDto.status } : {}),
 			updated_by: userProfileId,
+			access_type: accessType,
 		};
 
 		const currentVisit = await this.findById(id); // Get current visit status
@@ -250,11 +256,44 @@ export class VisitsService {
 			}
 		}
 
+		if (updateVisit.access_type) {
+			// IF accessFolderIds is empty and accessType is FOLDERS
+			// OR accessFolderIds is not empty and accessType is FULL
+			// THEN throw BadRequest exception
+			if (
+				isEmpty(accessType) ||
+				(isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) ||
+				(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Full)
+			) {
+				throw new BadRequestException(
+					`The amount of accessFolderIds (${accessFolderIds.length}) does not correspond with the accessType ${updateVisit.access_type}`
+				);
+			}
+
+			// IF accessFolderIds is not empty and accessType is FOLDERS
+			// THEN add these folders to the folder_access table
+			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
+				for (let index = 0; index < accessFolderIds.length; index++) {
+					await this.dataService.execute<
+						InsertVisitFolderAccessMutation,
+						InsertVisitFolderAccessMutationVariables
+					>(InsertVisitFolderAccessDocument, {
+						objects: [
+							...accessFolderIds.map((accessFolderId: string) => ({
+								folder_id: accessFolderId,
+								visit_request_id: currentVisit.id,
+							})),
+						],
+					});
+				}
+			}
+		}
+
 		await this.dataService.execute<UpdateVisitMutation, UpdateVisitMutationVariables>(
 			UpdateVisitDocument,
 			{
 				id,
-				updateVisit,
+				updateVisit: updateVisit as any,
 			}
 		);
 
@@ -291,7 +330,8 @@ export class VisitsService {
 			visitorSpaceStatus?: VisitorSpaceStatus | null;
 		}
 	): Promise<IPagination<Visit>> {
-		const { query, status, timeframe, page, size, orderProp, orderDirection } = inputQuery;
+		const { query, status, timeframe, accessType, page, size, orderProp, orderDirection } =
+			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
@@ -359,6 +399,10 @@ export class VisitsService {
 
 		if (!isEmpty(parameters.userProfileId)) {
 			where.user_profile_id = { _eq: parameters.userProfileId };
+		}
+
+		if (!isEmpty(accessType)) {
+			where.access_type = { _eq: accessType };
 		}
 
 		const visitsResponse = await this.dataService.execute<

@@ -10,6 +10,7 @@ import {
 } from '../ie-objects.conts';
 import {
 	IeObject,
+	IeObjectAccessThrough,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectSector,
@@ -25,7 +26,7 @@ export const limitAccessToObjectDetails = (
 		userGroup: string;
 		maintainerId: string;
 		accessibleObjectIdsThroughFolders: string[];
-		accessibleVisitorSpaceOrIds: string[];
+		accessibleVisitorSpaceIds: string[];
 	}
 ): Partial<IeObject> => {
 	// Step 1 - Determine Licenses
@@ -39,7 +40,7 @@ export const limitAccessToObjectDetails = (
 	// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
 	if (
 		userInfo?.maintainerId === ieObject?.maintainerId ||
-		userInfo.accessibleVisitorSpaceOrIds.includes(ieObject?.maintainerId)
+		userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId)
 	) {
 		userGroup = `${userGroup}${
 			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.HAS_VISITOR_SPACE]
@@ -84,5 +85,10 @@ export const limitAccessToObjectDetails = (
 
 	// Step 3 - Return ie object with limited access props
 	// ---------------------------------------------------
-	return pick(ieObject, ieObjectLimitedProps);
+	const limitedIeObject = pick(ieObject, ieObjectLimitedProps);
+
+	return {
+		...limitedIeObject,
+		accessThrough: IeObjectAccessThrough.PUBLIC_INFO,
+	};
 };

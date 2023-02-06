@@ -71,9 +71,10 @@ export enum IeObjectSector {
 }
 
 export enum IeObjectAccessThrough {
+	PUBLIC_INFO = 'PUBLIC_INFO',
 	VISITOR_SPACE_FULL = 'VISITOR_SPACE_FULL',
 	VISITOR_SPACE_FOLDERS = 'VISITOR_SPACE_FOLDERS',
-	KEY_USER = 'KEY_USER',
+	SECTOR = 'SECTOR',
 }
 
 export enum IeObjectExtraUserGroupType {
@@ -175,6 +176,7 @@ export interface IeObject {
 	licenses?: IeObjectLicense[];
 	sector?: IeObjectSector;
 	ebucoreIsMediaFragmentOf?: string;
+	accessThrough?: IeObjectAccessThrough;
 }
 
 export interface MediaSearchAggregation<T> {
