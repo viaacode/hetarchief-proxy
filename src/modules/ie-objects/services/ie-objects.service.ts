@@ -15,8 +15,8 @@ import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	IeObject,
+	IeObjectLicense,
 	IeObjectsWithAggregations,
-	License,
 	MediaFormat,
 } from '../ie-objects.types';
 
@@ -175,12 +175,12 @@ export class IeObjectsService {
 			set(esQuery, 'query.bool.should', [
 				{
 					term: {
-						schema_license: License.BEZOEKERTOOL_CONTENT,
+						schema_license: IeObjectLicense.BEZOEKERTOOL_CONTENT,
 					},
 				},
 				{
 					term: {
-						schema_license: License.BEZOEKERTOOL_METADATA_ALL,
+						schema_license: IeObjectLicense.BEZOEKERTOOL_METADATA,
 					},
 				},
 			]);
@@ -243,8 +243,8 @@ export class IeObjectsService {
 		if (
 			!licenses ||
 			intersection(licenses, [
-				License.BEZOEKERTOOL_CONTENT,
-				License.BEZOEKERTOOL_METADATA_ALL,
+				IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				IeObjectLicense.BEZOEKERTOOL_METADATA,
 			]).length === 0
 		) {
 			this.logger.debug(`Object ${schemaIdentifier} has no valid license`);
@@ -263,7 +263,7 @@ export class IeObjectsService {
 			}
 		}
 
-		if (!licenses.includes(License.BEZOEKERTOOL_CONTENT)) {
+		if (!licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT)) {
 			// unset representations - user not allowed to view essence
 			this.logger.debug(
 				`Object ${schemaIdentifier} has no content license, only metadata is returned`
