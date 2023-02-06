@@ -175,7 +175,7 @@ export interface IeObject {
 	licenses?: IeObjectLicense[];
 	sector?: IeObjectSector;
 	ebucoreIsMediaFragmentOf?: string;
-	accessThrough: IeObjectAccessThrough;
+	accessThrough?: IeObjectAccessThrough;
 }
 
 export interface MediaSearchAggregation<T> {
