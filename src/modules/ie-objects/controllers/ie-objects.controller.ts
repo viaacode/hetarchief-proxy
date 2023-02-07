@@ -1,10 +1,20 @@
-import { Body, Controller, ForbiddenException, Headers, Logger, Param, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	ForbiddenException,
+	Get,
+	Headers,
+	Logger,
+	Param,
+	Post,
+	Query,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { Configuration } from '~config';
 
-import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
+import { IeObjectMeemooIdentifiersQueryDto, IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
 import { IeObjectsWithAggregations } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
@@ -25,6 +35,13 @@ export class IeObjectsController {
 		private configService: ConfigService<Configuration>,
 		private translationsService: TranslationsService
 	) {}
+
+	@Get('related/count')
+	public async countRelated(
+		@Query() countRelatedQuery: IeObjectMeemooIdentifiersQueryDto
+	): Promise<Record<string, number>> {
+		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
+	}
 
 	@Post(':esIndex')
 	@ApiParam({ name: 'esIndex', example: 'or-154dn75' })

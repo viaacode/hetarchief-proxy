@@ -20,6 +20,11 @@ import {
 	MediaFormat,
 } from '../ie-objects.types';
 
+import {
+	GetObjectIdentifierTupleDocument,
+	GetObjectIdentifierTupleQuery,
+	GetObjectIdentifierTupleQueryVariables,
+} from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
@@ -39,6 +44,23 @@ export class IeObjectsService {
 			resolveBodyOnly: true,
 			responseType: 'json',
 		});
+	}
+
+	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
+		const items = await this.dataService.execute<
+			GetObjectIdentifierTupleQuery,
+			GetObjectIdentifierTupleQueryVariables
+		>(GetObjectIdentifierTupleDocument, {
+			meemooIdentifiers,
+		});
+
+		const count: Record<string, number> = {};
+
+		items?.object_ie?.forEach((item) => {
+			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
+		});
+
+		return count;
 	}
 
 	public async adaptESResponse(
