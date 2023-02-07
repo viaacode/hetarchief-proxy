@@ -92,7 +92,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	medium: QueryType.TERMS,
 	name: QueryType.TERM, // used for exact (not) matching
 	description: QueryType.TERM, // used for exact (not) matching
-	maintainer: QueryType.TERM,
+	maintainer: QueryType.TERMS,
 };
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {

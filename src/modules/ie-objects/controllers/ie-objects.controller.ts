@@ -80,30 +80,32 @@ export class IeObjectsController {
 		@Body() queryDto: IeObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObjectsWithAggregations> {
-		// TODO: ophalen via: user => active visitor requests => accessType === folder => folders => objects => ids
-
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
 
 		const searchResult = await this.ieObjectsService.findAll(queryDto, '_all', referer, user);
 
 		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
+			delete searchResult?.filters;
 			return searchResult;
 		}
 
-		return {
+		const licensedSearchResult = {
 			...searchResult,
 			items: searchResult.items.map((item) =>
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
 					sector: null,
-					userGroup: user.getUserGroup().name || null,
-					maintainerId: '',
-					accessibleObjectIdsThroughFolders: [],
-					accessibleVisitorSpaceIds: [],
+					groupId: user.getGroupId() || null,
+					maintainerId: user.getMaintainerId() || null,
+					accessibleObjectIdsThroughFolders: searchResult.filters.activeVisitsFolderIds,
+					accessibleVisitorSpaceIds: searchResult.filters.activeVisitsVisitorSpaceIds,
 				})
 			),
 		};
+		delete licensedSearchResult.filters;
+
+		return licensedSearchResult;
 	}
 }

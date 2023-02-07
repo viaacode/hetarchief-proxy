@@ -16,6 +16,8 @@ import {
 	IeObjectSector,
 } from '../ie-objects.types';
 
+import { getAccessThrough } from './get-access-through';
+
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
 	ieObject: Partial<IeObject>,
@@ -23,7 +25,7 @@ export const limitAccessToObjectDetails = (
 		userId: string | null;
 		isKeyUser: boolean;
 		sector: IeObjectSector | null;
-		userGroup: string;
+		groupId: string;
 		maintainerId: string;
 		accessibleObjectIdsThroughFolders: string[];
 		accessibleVisitorSpaceIds: string[];
@@ -33,7 +35,7 @@ export const limitAccessToObjectDetails = (
 	// ---------------------------------------------------
 	let userGroup = isNil(userInfo?.userId)
 		? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-		: userInfo.userGroup;
+		: userInfo.groupId;
 
 	// Check if user has visitor space access (own or another)
 	// maintainerId === ieObject.maintainerId => own visitor space
@@ -87,8 +89,11 @@ export const limitAccessToObjectDetails = (
 	// ---------------------------------------------------
 	const limitedIeObject = pick(ieObject, ieObjectLimitedProps);
 
+	// Determine access through -> TODO: how to determine FULL vs FOLDERS ??
+	const accessThrough = getAccessThrough(null, !isNil(userInfo.sector));
+
 	return {
 		...limitedIeObject,
-		accessThrough: IeObjectAccessThrough.PUBLIC_INFO,
+		accessThrough,
 	};
 };

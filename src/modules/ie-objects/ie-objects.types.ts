@@ -50,7 +50,7 @@ export enum OrderProperty {
 export enum IeObjectLicense {
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
 	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
-	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA',
+	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA-ALL',
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
 	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
@@ -160,7 +160,6 @@ export interface IeObject {
 	thumbnailUrl: string;
 	// embedUrl: string;
 	duration: string;
-	license?: any;
 	meemooMediaObjectId?: string;
 	dateCreated: string;
 	dateCreatedLowerBound?: string;
@@ -173,7 +172,7 @@ export interface IeObject {
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
 	representations?: IeObjectRepresentation[];
-	licenses?: IeObjectLicense[];
+	licenses?: string[];
 	sector?: IeObjectSector;
 	ebucoreIsMediaFragmentOf?: string;
 	accessThrough?: IeObjectAccessThrough;
@@ -277,4 +276,11 @@ export interface ElasticsearchObject {
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
 	aggregations: any;
+}
+
+export interface IeObjectsWithAggregationsAndFilters extends IeObjectsWithAggregations {
+	filters?: {
+		activeVisitsVisitorSpaceIds?: string[];
+		activeVisitsFolderIds?: string[];
+	};
 }

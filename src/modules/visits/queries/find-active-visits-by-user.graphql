@@ -1,0 +1,27 @@
+query findActiveVisitsByUser($now: timestamp, $userProfileId: uuid) {
+	maintainer_visitor_space_request(
+		where: {
+			end_date: { _gte: $now }
+			start_date: { _lte: $now }
+			status: { _eq: "APPROVED" }
+			user_profile_id: { _eq: $userProfileId }
+		}
+	) {
+		access_type
+		id
+		visitor_space {
+			id
+			content_partner {
+				information {
+					sector
+				}
+			}
+			schema_maintainer_id
+		}
+		requested_by {
+			collections {
+				id
+			}
+		}
+	}
+}

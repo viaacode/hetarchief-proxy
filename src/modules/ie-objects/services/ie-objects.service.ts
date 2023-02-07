@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { compact, find, get, intersection, set, unset } from 'lodash';
+import { compact, find, get, intersection, isEmpty, set, union, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -17,7 +17,10 @@ import {
 	IeObject,
 	IeObjectLicense,
 	IeObjectsWithAggregations,
+	IeObjectsWithAggregationsAndFilters,
 } from '../ie-objects.types';
+
+import { ActiveVisitByUser } from './../../visits/types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -45,14 +48,35 @@ export class IeObjectsService {
 		esIndex: string | null,
 		referer: string,
 		user: SessionUserEntity
-	): Promise<IeObjectsWithAggregations> {
+	): Promise<IeObjectsWithAggregationsAndFilters> {
 		let esQueryWithLicenses = null;
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery);
 
-		// Check licenses of objects
-		if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
-			esQueryWithLicenses = this.applyLicenseToESQuery(esQuery, user);
+		const activeVisits = await this.visitsService.findActiveVisitsByUser(user.getId());
+
+		let activeVisitsVisitorSpaceIds = [];
+		let activeVisitsFolderIds = [];
+		if (!isEmpty(activeVisits)) {
+			activeVisitsVisitorSpaceIds = (activeVisits as ActiveVisitByUser[]).map(
+				(activeVisit: ActiveVisitByUser) => activeVisit.visitorSpace.maintainerId
+			);
+
+			activeVisitsFolderIds = union(
+				...(activeVisits as ActiveVisitByUser[]).map(
+					(activeVisit: ActiveVisitByUser) => activeVisit.collections
+				)
+			);
+
+			// Check licenses of objects
+			if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
+				esQueryWithLicenses = this.applyLicenseToESQuery(
+					esQuery,
+					user,
+					activeVisitsVisitorSpaceIds,
+					activeVisitsFolderIds
+				);
+			}
 		}
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
@@ -85,6 +109,10 @@ export class IeObjectsService {
 				total: adaptedESResponse.hits.total.value,
 			}),
 			aggregations: adaptedESResponse.aggregations,
+			filters: {
+				activeVisitsVisitorSpaceIds,
+				activeVisitsFolderIds,
+			},
 		};
 	}
 
@@ -166,7 +194,7 @@ export class IeObjectsService {
 			inLanguage: esObject?.schema_in_language,
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			duration: esObject?.schema_duration,
-			license: esObject?.schema_license,
+			licenses: esObject?.schema_license,
 			meemooMediaObjectId: null,
 			dateCreated: esObject?.schema_date_created,
 			dateCreatedLowerBound: null,
@@ -207,7 +235,7 @@ export class IeObjectsService {
 		userHasAccessToSpace: boolean
 	): IeObject | Partial<IeObject> | null {
 		// check licenses
-		const licenses = objectMedia.license;
+		const licenses = objectMedia.licenses;
 		const schemaIdentifier = objectMedia.schemaIdentifier;
 		const maintainerId = objectMedia.maintainerId;
 
@@ -259,62 +287,85 @@ export class IeObjectsService {
 		return result;
 	}
 
-	public applyLicenseToESQuery(esQuery: any, user: SessionUserEntity): any {
+	public applyLicenseToESQuery(
+		esQuery: any,
+		user: SessionUserEntity,
+		visitorSpaceIds: string[],
+		visitorFolderIds: string[]
+	): any {
 		let checkSchemaLicenses = [];
 
 		unset(esQuery, 'query.match_all');
 
-		// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
 		checkSchemaLicenses = [
+			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
 			{
-				term: {
-					schema_license: IeObjectLicense.PUBLIEK_METADATA_LTD,
+				terms: {
+					schema_license: [
+						IeObjectLicense.PUBLIEK_METADATA_LTD,
+						IeObjectLicense.PUBLIEK_METADATA_ALL,
+					],
+				},
+			},
+			// 4) Check or-id is part of visitorSpaceIds
+			// separate because can't have 2 terms in same object
+			{
+				terms: {
+					maintainer: visitorSpaceIds,
 				},
 			},
 			{
-				term: {
-					schema_license: IeObjectLicense.PUBLIEK_METADATA_ALL,
+				terms: {
+					schema_license: [
+						IeObjectLicense.BEZOEKERTOOL_METADATA,
+						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					],
+				},
+			},
+			// 5) Check object id is part of folderObjectIds
+			// "[ids] malformed query, expected [END_OBJECT] but found [FIELD_NAME]",
+			{
+				ids: {
+					values: visitorFolderIds,
+				},
+			},
+			{
+				terms: {
+					schema_license: [
+						IeObjectLicense.BEZOEKERTOOL_METADATA,
+						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					],
 				},
 			},
 		];
 
-		// 2) Check or-id is part of sectorOrIds en sleutel gebruiker -> TODO: ARC-1364
-		// 3) or-id is eigen or id en sleutel gebruiker
-		if (user.getMaintainerId() === 'maintainerId' && user.getIsKeyUser()) {
+		if (user.getIsKeyUser()) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
-				[
-					{
-						term: {
-							schema_license: IeObjectLicense.INTRA_CP_METADATA_ALL,
-						},
+				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
+				{
+					sector: {
+						values: [user.getMaintainerId()],
 					},
-					{
-						term: {
-							schema_license: IeObjectLicense.INTRA_CP_CONTENT,
-						},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
+						],
 					},
-				],
-			];
-		}
-
-		// 4) Check or-id is part of visitorSpaceIds -> TODO:
-		// 5) Check object id is part of folderObjectIds -> TODO:
-		if (this.userHasAccessToVisitorSpaceOrId(user, 'maintainerId')) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				[
-					{
-						term: {
-							schema_license: IeObjectLicense.BEZOEKERTOOL_METADATA,
-						},
+				},
+				// 3) or-id is eigen or id en sleutel gebruiker
+				{
+					term: {
+						schema_maintainer: user.getMaintainerId(),
 					},
-					{
-						term: {
-							schema_license: IeObjectLicense.BEZOEKERTOOL_CONTENT,
-						},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
+						],
 					},
-				],
+				},
 			];
 		}
 
