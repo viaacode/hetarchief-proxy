@@ -166,10 +166,10 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		'inLanguage',
 		'meemoofilmBase',
 		'meemoofilmColor',
-		// 'meemoofilmCaption', // BESTAAT NOG NIET
-		// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+		'meemoofilmCaption', // BESTAAT NOG NIET
+		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 		'ebucoreIsMediaFragmentOf',
-		// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 		'licenses',
 	],
 	[IeObjectMetadataSet.METADATA_ALL]: [
@@ -188,15 +188,15 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		'dctermsMedium',
 		'ebucoreObjectType',
 		'duration',
-		// 'serviceProvider', // BESTAAT NOG NIET
+		'serviceProvider', // BESTAAT NOG NIET
 		'dateCreated',
 		'datePublished',
 		'creator',
 		'publisher',
 		'description',
 		'abstract',
-		// 'transcript', // BESTAAT NOG NIET
-		// 'caption', // BESTAAT NOG
+		'transcript', // BESTAAT NOG NIET
+		'caption', // BESTAAT NOG
 		'meemooDescriptionProgramme',
 		'meemooDescriptionCast',
 		'genre',
@@ -204,13 +204,13 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		'temporal',
 		'keywords',
 		'inLanguage',
-		// 'categorie', // BESTAAT NOG NIET
+		'categorie', // BESTAAT NOG NIET
 		'meemoofilmBase',
 		'meemoofilmColor',
-		// 'meemoofilmCaption', // BESTAAT NOG NIET
-		// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+		'meemoofilmCaption', // BESTAAT NOG NIET
+		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 		'ebucoreIsMediaFragmentOf',
-		// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 		'licenses',
 	],
 	[IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE]: [
@@ -231,15 +231,15 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		'dctermsMedium',
 		'ebucoreObjectType',
 		'duration',
-		// 'serviceProvider', // BESTAAT NOG NIET
+		'serviceProvider', // BESTAAT NOG NIET
 		'dateCreated',
 		'datePublished',
 		'creator',
 		'publisher',
 		'description',
 		'abstract',
-		// 'transcript', // BESTAAT NOG NIET
-		'caption',
+		'transcript', // BESTAAT NOG NIET
+		'caption', // BESTAAT NOG NIET
 		'meemooDescriptionProgramme',
 		'meemooDescriptionCast',
 		'genre',
@@ -247,13 +247,13 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		'temporal',
 		'keywords',
 		'inLanguage',
-		// 'categorie', // BESTAAT NOG NIET
+		'categorie', // BESTAAT NOG NIET
 		'meemoofilmBase',
 		'meemoofilmColor',
-		// 'meemoofilmCaption', // BESTAAT NOG NIET
-		// 'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+		'meemoofilmCaption', // BESTAAT NOG NIET
+		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 		'ebucoreIsMediaFragmentOf',
-		// 'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 		'licenses',
 	],
 };

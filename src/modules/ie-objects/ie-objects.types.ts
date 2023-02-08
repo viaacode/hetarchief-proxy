@@ -131,17 +131,8 @@ export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
-	premisIsPartOf?: string;
-	series?: string[];
-	program?: string[];
-	alternativeName?: string[];
 	maintainerId: string;
 	maintainerName: string;
-	contactInfo?: ContactInfo;
-	copyrightHolder?: string;
-	copyrightNotice?: string;
-	durationInSeconds?: number;
-	numberOfPages?: number;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
@@ -158,11 +149,8 @@ export interface IeObject {
 	dctermsMedium: string;
 	inLanguage: string[];
 	thumbnailUrl: string;
-	// embedUrl: string;
 	duration: string;
-	meemooMediaObjectId?: string;
 	dateCreated: string;
-	dateCreatedLowerBound?: string;
 	ebucoreObjectType: string;
 	meemoofilmColor: boolean;
 	meemoofilmBase: string;
@@ -171,11 +159,29 @@ export interface IeObject {
 	meemooOriginalCp: string;
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
-	representations?: IeObjectRepresentation[];
-	licenses?: string[];
-	sector?: IeObjectSector;
-	ebucoreIsMediaFragmentOf?: string;
+	licenses: string[];
+	series?: string[];
 	accessThrough?: IeObjectAccessThrough;
+	program?: string[];
+	alternativeName?: string[];
+	premisIsPartOf?: string;
+	contactInfo?: ContactInfo;
+	copyrightHolder?: string;
+	copyrightNotice?: string;
+	durationInSeconds?: number;
+	numberOfPages?: number;
+	meemooMediaObjectId?: string;
+	sector?: IeObjectSector;
+	representations?: IeObjectRepresentation[];
+	dateCreatedLowerBound?: string;
+	ebucoreIsMediaFragmentOf?: string;
+	meemoofilmCaption?: string;
+	meemoofilmCaptionLanguage?: string;
+	ebucoreHasMediaFragmentOf?: boolean;
+	serviceProvider?: any; // type onbekend
+	transcript?: string;
+	caption?: string;
+	categorie?: any; // type onbekend
 }
 
 export interface MediaSearchAggregation<T> {
