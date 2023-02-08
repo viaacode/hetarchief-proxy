@@ -1,6 +1,7 @@
 import { Group } from '../users/types';
 
 import {
+	IeObjectExtraUserGroupSubType,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectMetadataSet,
@@ -8,17 +9,21 @@ import {
 	IeObjectSectorLicenseMatrix,
 } from './ie-objects.types';
 
-export const IE_OBJECT_EXTRA_USER_GROUPS = {
+const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
+	[IeObjectExtraUserGroupSubType.IS_KEY_USER]: '+isKeyUser',
+	[IeObjectExtraUserGroupSubType.HAS_VISITOR_SPACE]: '+hasAccessToVisitorSpace',
 	[IeObjectExtraUserGroupType.ANONYMOUS]: 'anonymous',
-	[IeObjectExtraUserGroupType.HAS_VISITOR_SPACE]: '+hasAccessToVisitorSpace',
-	[IeObjectExtraUserGroupType.IS_KEY_USER]: '+isKeyUser',
-	[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE]: `${Group.VISITOR}+hasAccessToVisitorSpace`,
-	[IeObjectExtraUserGroupType.VISITOR_IS_KEY_USER]: `${Group.VISITOR}+isKeyUser`,
-	[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER]: `${Group.VISITOR}+hasAccessToVisitorSpace+isKeyUser`,
-	[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE]: `${Group.CP_ADMIN}+hasAccessToVisitorSpace`,
-	[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]: `${Group.CP_ADMIN}+isKeyUser`,
-	[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER]: `${Group.CP_ADMIN}+hasAccessToVisitorSpace+isKeyUser`,
-	[IeObjectExtraUserGroupType.MEEMOO_ADMIN_IS_KEY_USER]: `${Group.MEEMOO_ADMIN}+isKeyUser`,
+};
+
+export const IE_OBJECT_EXTRA_USER_GROUPS = {
+	[IeObjectExtraUserGroupType.ANONYMOUS]: IE_OBJECT_EXTRA_USER_SUB_GROUPS.ANONYMOUS,
+	[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE]: `${Group.VISITOR}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}`,
+	[IeObjectExtraUserGroupType.VISITOR_IS_KEY_USER]: `${Group.VISITOR}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
+	[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER]: `${Group.VISITOR}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
+	[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE]: `${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}`,
+	[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]: `${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
+	[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER]: `${Group.CP_ADMIN}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
+	[IeObjectExtraUserGroupType.MEEMOO_ADMIN_IS_KEY_USER]: `${Group.MEEMOO_ADMIN}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
 };
 
 export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]> = {
@@ -142,118 +147,60 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Record<
 	},
 };
 
+const IE_OBJECT_PROPS_METADATA_SET_LTD = [
+	'meemooOriginalCp',
+	'premisIsPartOf',
+	'meemooIdentifier',
+	'schemaIdentifier',
+	'meemooLocalId',
+	'maintainerId',
+	'name',
+	'series',
+	'program',
+	'alternativeName',
+	'dctermsFormat',
+	'dctermsMedium',
+	'duration',
+	'dateCreated',
+	'datePublished',
+	'creator',
+	'description',
+	'genre',
+	'keywords',
+	'inLanguage',
+	'meemoofilmBase',
+	'meemoofilmColor',
+	'meemoofilmCaption', // BESTAAT NOG NIET
+	'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
+	'ebucoreIsMediaFragmentOf',
+	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
+	'licenses',
+];
+const IE_OBJECT_PROPS_METADATA_SET_ALL = [
+	'premisIdentifier',
+	'ebucoreObjectType',
+	'serviceProvider', // BESTAAT NOG NIET
+	'abstract',
+	'transcript', // BESTAAT NOG NIET
+	'caption', // BESTAAT NOG NIET
+	'meemooDescriptionProgramme',
+	'meemooDescriptionCast',
+	'spatial',
+	'temporal',
+	'categorie', // BESTAAT NOG NIET
+	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET
+];
+const IE_OBJECT_PROPS_METADATA_SET_ESSENCE = ['thumbnailUrl', 'representations'];
+
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
-	[IeObjectMetadataSet.METADATA_LTD]: [
-		'meemooOriginalCp',
-		'premisIsPartOf',
-		'meemooIdentifier',
-		'schemaIdentifier',
-		'meemooLocalId',
-		'maintainerId',
-		'name',
-		'series',
-		'program',
-		'alternativeName',
-		'dctermsFormat',
-		'dctermsMedium',
-		'duration',
-		'dateCreated',
-		'datePublished',
-		'creator',
-		'description',
-		'genre',
-		'keywords',
-		'inLanguage',
-		'meemoofilmBase',
-		'meemoofilmColor',
-		'meemoofilmCaption', // BESTAAT NOG NIET
-		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-		'ebucoreIsMediaFragmentOf',
-		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-		'licenses',
-	],
+	[IeObjectMetadataSet.METADATA_LTD]: [...IE_OBJECT_PROPS_METADATA_SET_LTD],
 	[IeObjectMetadataSet.METADATA_ALL]: [
-		'meemooOriginalCp',
-		'premisIsPartOf',
-		'meemooIdentifier',
-		'schemaIdentifier',
-		'meemooLocalId',
-		'premisIdentifier',
-		'maintainerId',
-		'name',
-		'series',
-		'program',
-		'alternativeName',
-		'dctermsFormat',
-		'dctermsMedium',
-		'ebucoreObjectType',
-		'duration',
-		'serviceProvider', // BESTAAT NOG NIET
-		'dateCreated',
-		'datePublished',
-		'creator',
-		'publisher',
-		'description',
-		'abstract',
-		'transcript', // BESTAAT NOG NIET
-		'caption', // BESTAAT NOG
-		'meemooDescriptionProgramme',
-		'meemooDescriptionCast',
-		'genre',
-		'spatial',
-		'temporal',
-		'keywords',
-		'inLanguage',
-		'categorie', // BESTAAT NOG NIET
-		'meemoofilmBase',
-		'meemoofilmColor',
-		'meemoofilmCaption', // BESTAAT NOG NIET
-		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-		'ebucoreIsMediaFragmentOf',
-		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-		'licenses',
+		...IE_OBJECT_PROPS_METADATA_SET_LTD,
+		...IE_OBJECT_PROPS_METADATA_SET_ALL,
 	],
 	[IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE]: [
-		'thumbnailUrl',
-		'representations',
-		'meemooOriginalCp',
-		'premisIsPartOf',
-		'meemooIdentifier',
-		'schemaIdentifier',
-		'meemooLocalId',
-		'premisIdentifier',
-		'maintainerId',
-		'name',
-		'series',
-		'program',
-		'alternativeName',
-		'dctermsFormat',
-		'dctermsMedium',
-		'ebucoreObjectType',
-		'duration',
-		'serviceProvider', // BESTAAT NOG NIET
-		'dateCreated',
-		'datePublished',
-		'creator',
-		'publisher',
-		'description',
-		'abstract',
-		'transcript', // BESTAAT NOG NIET
-		'caption', // BESTAAT NOG NIET
-		'meemooDescriptionProgramme',
-		'meemooDescriptionCast',
-		'genre',
-		'spatial',
-		'temporal',
-		'keywords',
-		'inLanguage',
-		'categorie', // BESTAAT NOG NIET
-		'meemoofilmBase',
-		'meemoofilmColor',
-		'meemoofilmCaption', // BESTAAT NOG NIET
-		'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
-		'ebucoreIsMediaFragmentOf',
-		'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
-		'licenses',
+		...IE_OBJECT_PROPS_METADATA_SET_LTD,
+		...IE_OBJECT_PROPS_METADATA_SET_ALL,
+		...IE_OBJECT_PROPS_METADATA_SET_ESSENCE,
 	],
 };

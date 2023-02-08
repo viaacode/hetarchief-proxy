@@ -39,10 +39,13 @@ export enum IeObjectAccessThrough {
 	SECTOR = 'SECTOR',
 }
 
-export enum IeObjectExtraUserGroupType {
-	ANONYMOUS = 'ANONYMOUS',
+export enum IeObjectExtraUserGroupSubType {
 	HAS_VISITOR_SPACE = 'HAS_VISITOR_SPACE',
 	IS_KEY_USER = 'IS_KEY_USER',
+}
+
+export enum IeObjectExtraUserGroupType {
+	ANONYMOUS = 'ANONYMOUS',
 	VISITOR_HAS_VISITOR_SPACE = 'VISITOR_HAS_VISITOR_SPACE',
 	VISITOR_IS_KEY_USER = 'VISITOR_IS_KEY_USER',
 	VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER = 'VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER',
