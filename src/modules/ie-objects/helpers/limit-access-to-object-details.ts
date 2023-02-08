@@ -3,6 +3,7 @@ import { difference, intersection, isEmpty, isNil, pick, union } from 'lodash';
 import { Group } from '../../users/types';
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
+	IE_OBJECT_EXTRA_USER_SUB_GROUPS,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
 	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
@@ -11,6 +12,7 @@ import {
 import {
 	IeObject,
 	IeObjectAccessThrough,
+	IeObjectExtraUserGroupSubType,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectSector,
@@ -49,14 +51,14 @@ export const limitAccessToObjectDetails = (
 	const hasFullAccess = userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId);
 	if (userInfo?.maintainerId === ieObject?.maintainerId || hasFolderAccess || hasFullAccess) {
 		userGroup = `${userGroup}${
-			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.HAS_VISITOR_SPACE]
+			IE_OBJECT_EXTRA_USER_SUB_GROUPS[IeObjectExtraUserGroupSubType.HAS_VISITOR_SPACE]
 		}`;
 	}
 
 	// Is user key user?
 	if (userInfo.isKeyUser) {
 		userGroup = `${userGroup}${
-			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.IS_KEY_USER]
+			IE_OBJECT_EXTRA_USER_SUB_GROUPS[IeObjectExtraUserGroupSubType.IS_KEY_USER]
 		}`;
 	}
 

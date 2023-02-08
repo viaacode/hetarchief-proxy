@@ -9,7 +9,7 @@ import {
 	IeObjectSectorLicenseMatrix,
 } from './ie-objects.types';
 
-const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
+export const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
 	[IeObjectExtraUserGroupSubType.IS_KEY_USER]: '+isKeyUser',
 	[IeObjectExtraUserGroupSubType.HAS_VISITOR_SPACE]: '+hasAccessToVisitorSpace',
 	[IeObjectExtraUserGroupType.ANONYMOUS]: 'anonymous',
