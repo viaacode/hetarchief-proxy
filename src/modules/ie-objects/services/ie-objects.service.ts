@@ -311,32 +311,42 @@ export class IeObjectsService {
 				},
 			},
 			// 4) Check or-id is part of visitorSpaceIds
-			// separate because can't have 2 terms in same object
 			{
-				terms: {
-					maintainer: visitorSpaceIds,
-				},
-			},
-			{
-				terms: {
-					schema_license: [
-						IeObjectLicense.BEZOEKERTOOL_METADATA,
-						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				bool: {
+					should: [
+						{
+							terms: {
+								maintainer: visitorSpaceIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
 					],
 				},
 			},
 			// 5) Check object id is part of folderObjectIds
-			// "[ids] malformed query, expected [END_OBJECT] but found [FIELD_NAME]",
 			{
-				ids: {
-					values: visitorFolderIds,
-				},
-			},
-			{
-				terms: {
-					schema_license: [
-						IeObjectLicense.BEZOEKERTOOL_METADATA,
-						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				bool: {
+					should: [
+						{
+							ids: {
+								values: visitorFolderIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
 					],
 				},
 			},
@@ -347,25 +357,41 @@ export class IeObjectsService {
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
 				{
-					sector: {
-						values: [user.getMaintainerId()],
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
+					bool: {
+						should: [
+							{
+								sector: {
+									values: [user.getMaintainerId()],
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
 						],
 					},
 				},
 				// 3) or-id is eigen or id en sleutel gebruiker
 				{
-					term: {
-						schema_maintainer: user.getMaintainerId(),
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
+					bool: {
+						should: [
+							{
+								term: {
+									schema_maintainer: user.getMaintainerId(),
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
 						],
 					},
 				},

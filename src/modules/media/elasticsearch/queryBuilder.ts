@@ -2,7 +2,6 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import _ from 'lodash';
 
 import { MediaQueryDto, SearchFilter } from '../dto/media.dto';
-import { Operator, OrderProperty, SearchFilterField } from '../media.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -15,10 +14,13 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
+	Operator,
 	ORDER_MAPPINGS,
+	OrderProperty,
 	QueryBuilderConfig,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	SearchFilterField,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 

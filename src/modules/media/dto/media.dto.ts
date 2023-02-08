@@ -3,7 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { isArray } from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../media.types';
+import { Operator, OrderProperty, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';

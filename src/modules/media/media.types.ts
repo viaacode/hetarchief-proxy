@@ -86,41 +86,6 @@ export interface Media {
 	representations?: Representation[];
 }
 
-export enum SearchFilterField {
-	QUERY = 'query',
-	ADVANCED_QUERY = 'advancedQuery',
-	FORMAT = 'format',
-	DURATION = 'duration',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	CREATOR = 'creator',
-	GENRE = 'genre',
-	KEYWORD = 'keyword',
-	NAME = 'name',
-	PUBLISHER = 'publisher',
-	DESCRIPTION = 'description',
-	ERA = 'era',
-	LOCATION = 'location',
-	LANGUAGE = 'language',
-	MEDIUM = 'medium',
-}
-
-export enum Operator {
-	CONTAINS = 'contains',
-	CONTAINS_NOT = 'containsNot',
-	IS = 'is',
-	IS_NOT = 'isNot',
-	GTE = 'gte',
-	LTE = 'lte',
-}
-
-export enum OrderProperty {
-	RELEVANCE = 'relevance',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	NAME = 'name',
-}
-
 export enum License {
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
