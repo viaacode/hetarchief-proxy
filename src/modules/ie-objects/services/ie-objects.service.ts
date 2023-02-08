@@ -9,7 +9,7 @@ import { compact, find, get, intersection, set, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
-import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import {
 	ElasticsearchObject,
@@ -17,7 +17,6 @@ import {
 	IeObject,
 	IeObjectLicense,
 	IeObjectsWithAggregations,
-	MediaFormat,
 } from '../ie-objects.types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';

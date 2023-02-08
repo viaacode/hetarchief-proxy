@@ -2,12 +2,6 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import _ from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import {
-	Operator,
-	OrderProperty,
-	QueryBuilderConfig,
-	SearchFilterField,
-} from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -20,11 +14,15 @@ import {
 	NEEDS_FILTER_SUFFIX,
 	NUMBER_OF_FILTER_OPTIONS,
 	OCCURRENCE_TYPE,
+	Operator,
 	ORDER_MAPPINGS,
+	OrderProperty,
+	QueryBuilderConfig,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
+	SearchFilterField,
 	VALUE_OPERATORS,
-} from './consts';
+} from './elasticsearch.consts';
 
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';

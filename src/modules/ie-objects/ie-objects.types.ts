@@ -1,7 +1,5 @@
 import { IPagination } from '@studiohyperdrive/pagination';
 
-import { MULTI_MATCH_QUERY_MAPPING, QueryType } from './elasticsearch/consts';
-
 import { ContactInfo } from '~shared/types/types';
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
@@ -9,42 +7,6 @@ export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense
 export enum MediaFormat {
 	VIDEO = 'video',
 	AUDIO = 'audio',
-}
-
-export enum SearchFilterField {
-	QUERY = 'query',
-	ADVANCED_QUERY = 'advancedQuery',
-	FORMAT = 'format',
-	DURATION = 'duration',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	CREATOR = 'creator',
-	GENRE = 'genre',
-	KEYWORD = 'keyword',
-	NAME = 'name',
-	PUBLISHER = 'publisher',
-	DESCRIPTION = 'description',
-	ERA = 'era',
-	LOCATION = 'location',
-	LANGUAGE = 'language',
-	MEDIUM = 'medium',
-	MAINTAINER = 'maintainer',
-}
-
-export enum Operator {
-	CONTAINS = 'contains',
-	CONTAINS_NOT = 'containsNot',
-	IS = 'is',
-	IS_NOT = 'isNot',
-	GTE = 'gte',
-	LTE = 'lte',
-}
-
-export enum OrderProperty {
-	RELEVANCE = 'relevance',
-	CREATED = 'created',
-	PUBLISHED = 'published',
-	NAME = 'name',
 }
 
 export enum IeObjectLicense {
@@ -88,22 +50,6 @@ export enum IeObjectExtraUserGroupType {
 	CP_ADMIN_IS_KEY_USER = 'CP_ADMIN_IS_KEY_USER',
 	CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
 	MEEMOO_ADMIN_IS_KEY_USER = 'MEEMOO_ADMIN_IS_KEY_USER',
-}
-
-export interface QueryBuilderConfig {
-	AGGS_PROPERTIES: Array<SearchFilterField>;
-	MAX_COUNT_SEARCH_RESULTS: number;
-	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
-	NUMBER_OF_FILTER_OPTIONS: number;
-	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
-	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
-	OCCURRENCE_TYPE: { [prop in Operator]?: string };
-	VALUE_OPERATORS: Array<Operator>;
-	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
-	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
-	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
-	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
 export interface IeObjectFile {
