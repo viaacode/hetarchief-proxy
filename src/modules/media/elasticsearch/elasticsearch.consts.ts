@@ -1,7 +1,5 @@
 import _ from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../ie-objects.types';
-
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
@@ -14,6 +12,93 @@ const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
 const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
 
 const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
+
+export enum SearchFilterField {
+	QUERY = 'query',
+	ADVANCED_QUERY = 'advancedQuery',
+	FORMAT = 'format',
+	DURATION = 'duration',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	CREATOR = 'creator',
+	GENRE = 'genre',
+	KEYWORD = 'keyword',
+	NAME = 'name',
+	PUBLISHER = 'publisher',
+	DESCRIPTION = 'description',
+	ERA = 'era',
+	LOCATION = 'location',
+	LANGUAGE = 'language',
+	MEDIUM = 'medium',
+}
+
+export enum Operator {
+	CONTAINS = 'contains',
+	CONTAINS_NOT = 'containsNot',
+	IS = 'is',
+	IS_NOT = 'isNot',
+	GTE = 'gte',
+	LTE = 'lte',
+}
+
+export enum OrderProperty {
+	RELEVANCE = 'relevance',
+	CREATED = 'created',
+	PUBLISHED = 'published',
+	NAME = 'name',
+}
+
+export enum QueryType {
+	TERM = 'term', // Search for a single term exactly
+	TERMS = 'terms', // Must match at least one term exactly
+	RANGE = 'range', // Date range or duration range
+	MATCH = 'match', // Text based fuzzy search
+}
+
+export const MULTI_MATCH_QUERY_MAPPING = {
+	fuzzy: {
+		query: searchQueryTemplateFuzzy,
+		advancedQuery: searchQueryAdvancedTemplateFuzzy,
+		name: nameSearchQueryTemplateFuzzy,
+		description: descriptionSearchQueryTemplateFuzzy,
+	},
+	exact: {
+		name: nameSearchQueryTemplateExact,
+	},
+};
+
+export interface QueryBuilderConfig {
+	AGGS_PROPERTIES: Array<SearchFilterField>;
+	MAX_COUNT_SEARCH_RESULTS: number;
+	MAX_NUMBER_SEARCH_RESULTS: number;
+	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
+	NUMBER_OF_FILTER_OPTIONS: number;
+	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
+	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
+	OCCURRENCE_TYPE: { [prop in Operator]?: string };
+	VALUE_OPERATORS: Array<Operator>;
+	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
+	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
+	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
+	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
+}
+
+export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
+	format: QueryType.TERMS, // es keyword
+	duration: QueryType.RANGE,
+	created: QueryType.RANGE,
+	published: QueryType.RANGE,
+	creator: QueryType.TERMS, // es flattened
+	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	publisher: QueryType.TERMS,
+	era: QueryType.MATCH,
+	location: QueryType.MATCH,
+	language: QueryType.TERMS,
+	medium: QueryType.TERMS,
+	name: QueryType.TERM, // used for exact (not) matching
+	description: QueryType.TERM, // used for exact (not) matching
+};
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -41,7 +126,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	location: 'schema_spatial_coverage',
 	language: 'schema_in_language',
 	medium: 'dcterms_medium',
-	maintainer: 'schema_maintainer.schema_identifier',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -51,49 +135,12 @@ export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
 	name: 'schema_name.keyword',
 };
 
-export enum QueryType {
-	TERM = 'term', // Search for a single term exactly
-	TERMS = 'terms', // Must match at least one term exactly
-	RANGE = 'range', // Date range or duration range
-	MATCH = 'match', // Text based fuzzy search
-}
-
 export const MULTI_MATCH_FIELDS: Array<SearchFilterField> = [
 	SearchFilterField.QUERY,
 	SearchFilterField.ADVANCED_QUERY,
 	SearchFilterField.NAME,
 	SearchFilterField.DESCRIPTION,
 ];
-
-export const MULTI_MATCH_QUERY_MAPPING = {
-	fuzzy: {
-		query: searchQueryTemplateFuzzy,
-		advancedQuery: searchQueryAdvancedTemplateFuzzy,
-		name: nameSearchQueryTemplateFuzzy,
-		description: descriptionSearchQueryTemplateFuzzy,
-	},
-	exact: {
-		name: nameSearchQueryTemplateExact,
-	},
-};
-
-export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
-	format: QueryType.TERMS, // es keyword
-	duration: QueryType.RANGE,
-	created: QueryType.RANGE,
-	published: QueryType.RANGE,
-	creator: QueryType.TERMS, // es flattened
-	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	publisher: QueryType.TERMS,
-	era: QueryType.MATCH,
-	location: QueryType.MATCH,
-	language: QueryType.TERMS,
-	medium: QueryType.TERMS,
-	name: QueryType.TERM, // used for exact (not) matching
-	description: QueryType.TERM, // used for exact (not) matching
-	maintainer: QueryType.TERM,
-};
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 	contains: 'must',
