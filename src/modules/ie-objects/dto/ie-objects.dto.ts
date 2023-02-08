@@ -5,6 +5,7 @@ import { isArray } from 'lodash';
 
 import { Operator, OrderProperty, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
 
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SearchFilter {
@@ -110,4 +111,16 @@ export class IeObjectsQueryDto {
 		enum: SortDirection,
 	})
 	orderDirection? = SortDirection.asc;
+}
+
+export class IeObjectMeemooIdentifiersQueryDto {
+	@IsArray()
+	@IsOptional()
+	@Transform(commaSeparatedStringToArray)
+	@ApiPropertyOptional({
+		type: Array,
+		description: 'The identifiers to fetch corresponding schema_identifiers for',
+		default: [],
+	})
+	meemooIdentifiers: string[];
 }
