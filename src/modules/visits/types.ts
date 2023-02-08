@@ -112,7 +112,6 @@ export interface ActiveVisitByUser {
 	};
 	visitorSpace: {
 		id: string;
-		sector: string;
 		maintainerId: string;
 	};
 	collections: Array<string>;
@@ -123,11 +122,6 @@ export interface GqlActiveVisitByUser {
 	id: string;
 	visitor_space: {
 		id: string;
-		content_partner: {
-			information?: {
-				sector?: string;
-			};
-		};
 		schema_maintainer_id: string;
 	};
 	requested_by: {

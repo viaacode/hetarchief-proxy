@@ -11,11 +11,6 @@ query findActiveVisitsByUser($now: timestamp, $userProfileId: uuid) {
 		id
 		visitor_space {
 			id
-			content_partner {
-				information {
-					sector
-				}
-			}
 			schema_maintainer_id
 		}
 		requested_by {

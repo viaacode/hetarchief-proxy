@@ -1,20 +1,19 @@
 import { IeObjectAccessThrough } from '../ie-objects.types';
 
-import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as AccessType } from '~generated/graphql-db-types-hetarchief';
-
 export const getAccessThrough = (
-	hasFolderAccess: AccessType | null = null,
+	hasFolderAccess: boolean,
+	hasFullAccess: boolean,
 	isSector = false
 ): IeObjectAccessThrough => {
 	if (isSector) {
 		return IeObjectAccessThrough.SECTOR;
 	}
 
-	if (hasFolderAccess === AccessType.Full) {
+	if (hasFolderAccess) {
 		return IeObjectAccessThrough.VISITOR_SPACE_FULL;
 	}
 
-	if (hasFolderAccess === AccessType.Folders) {
+	if (hasFullAccess) {
 		return IeObjectAccessThrough.VISITOR_SPACE_FOLDERS;
 	}
 

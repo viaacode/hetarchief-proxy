@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { compact, find, get, intersection, isEmpty, set, union, unset } from 'lodash';
+import { compact, find, get, intersection, isEmpty, isNil, set, union, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -20,7 +20,7 @@ import {
 	IeObjectsWithAggregationsAndFilters,
 } from '../ie-objects.types';
 
-import { ActiveVisitByUser } from './../../visits/types';
+import { ActiveVisitByUser, VisitAccessType } from './../../visits/types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -58,9 +58,12 @@ export class IeObjectsService {
 		let activeVisitsVisitorSpaceIds = [];
 		let activeVisitsFolderIds = [];
 		if (!isEmpty(activeVisits)) {
-			activeVisitsVisitorSpaceIds = (activeVisits as ActiveVisitByUser[]).map(
-				(activeVisit: ActiveVisitByUser) => activeVisit.visitorSpace.maintainerId
-			);
+			activeVisitsVisitorSpaceIds = (activeVisits as ActiveVisitByUser[])
+				.filter(
+					(activeVisit: ActiveVisitByUser) =>
+						activeVisit.visitorSpaceRequest.accessType === VisitAccessType.Full
+				)
+				.map((activeVisit: ActiveVisitByUser) => activeVisit.visitorSpace.maintainerId);
 
 			activeVisitsFolderIds = union(
 				...(activeVisits as ActiveVisitByUser[]).map(
@@ -339,7 +342,7 @@ export class IeObjectsService {
 			},
 		];
 
-		if (user.getIsKeyUser()) {
+		if (user.getIsKeyUser() && !isNil(user.getMaintainerId())) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker

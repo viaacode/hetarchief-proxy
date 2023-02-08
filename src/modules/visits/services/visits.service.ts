@@ -468,7 +468,6 @@ export class VisitsService {
 			},
 			visitorSpace: {
 				id: activeVisit.visitor_space.id,
-				sector: activeVisit.visitor_space.content_partner.information.sector,
 				maintainerId: activeVisit.visitor_space.schema_maintainer_id,
 			},
 			collections: activeVisit.requested_by.collections.map((collection) => collection.id),
