@@ -169,6 +169,7 @@ export class VisitsController {
 				updatedAt: new Date().toISOString(),
 				userProfileId: user.getId(),
 				accessType: VisitAccessType.Full,
+				collectionsIeSchemaIds: null,
 			};
 		}
 

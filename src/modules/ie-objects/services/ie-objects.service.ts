@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { compact, find, get, intersection, isEmpty, isNil, set, union, unset } from 'lodash';
+import { find, get, isNil, set, unset } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -16,11 +16,9 @@ import {
 	ElasticsearchResponse,
 	IeObject,
 	IeObjectLicense,
+	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
-	IeObjectsWithAggregationsAndFilters,
 } from '../ie-objects.types';
-
-import { ActiveVisitByUser, VisitAccessType } from './../../visits/types';
 
 import {
 	GetObjectIdentifierTupleDocument,
@@ -52,50 +50,27 @@ export class IeObjectsService {
 		inputQuery: IeObjectsQueryDto,
 		esIndex: string | null,
 		referer: string,
-		user: SessionUserEntity
-	): Promise<IeObjectsWithAggregationsAndFilters> {
-		let esQueryWithLicenses = null;
+		user: SessionUserEntity,
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
+	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
-		const esQuery = QueryBuilder.build(inputQuery);
-
-		const activeVisits = await this.visitsService.findActiveVisitsByUser(user.getId());
-
-		let activeVisitsVisitorSpaceIds = [];
-		let activeVisitsFolderIds = [];
-		if (!isEmpty(activeVisits)) {
-			activeVisitsVisitorSpaceIds = (activeVisits as ActiveVisitByUser[])
-				.filter(
-					(activeVisit: ActiveVisitByUser) =>
-						activeVisit.visitorSpaceRequest.accessType === VisitAccessType.Full
-				)
-				.map((activeVisit: ActiveVisitByUser) => activeVisit.visitorSpace.maintainerId);
-
-			activeVisitsFolderIds = union(
-				...(activeVisits as ActiveVisitByUser[]).map(
-					(activeVisit: ActiveVisitByUser) => activeVisit.collections
-				)
-			);
-
-			// Check licenses of objects
-			if (!this.configService.get('IGNORE_OBJECT_LICENSES')) {
-				esQueryWithLicenses = this.applyLicenseToESQuery(
-					esQuery,
-					user,
-					activeVisitsVisitorSpaceIds,
-					activeVisitsFolderIds
-				);
-			}
-		}
+		const esQuery = QueryBuilder.build(inputQuery, {
+			user: {
+				isKeyUser: user.getIsKeyUser(),
+				maintainerId: user.getMaintainerId(),
+			},
+			visitorSpaceInfo,
+		});
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
 				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
-					esQueryWithLicenses || esQuery
+					esQuery
 				)}`
 			);
 		}
 
-		const objectResponse = await this.executeQuery(esIndex, esQueryWithLicenses || esQuery);
+		const objectResponse = await this.executeQuery(esIndex, esQuery);
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
@@ -112,15 +87,11 @@ export class IeObjectsService {
 				items: adaptedESResponse.hits.hits.map((esHit) =>
 					this.adaptESObjectToObject(esHit._source)
 				),
-				page: 0,
-				size: adaptedESResponse.hits.total.value,
+				page: 1,
+				size: adaptedESResponse.hits.hits.length,
 				total: adaptedESResponse.hits.total.value,
 			}),
 			aggregations: adaptedESResponse.aggregations,
-			filters: {
-				activeVisitsVisitorSpaceIds,
-				activeVisitsFolderIds,
-			},
 		};
 	}
 
@@ -253,63 +224,6 @@ export class IeObjectsService {
 			dateCreatedLowerBound: ieObject.dateCreatedLowerBound,
 			datePublished: ieObject.datePublished,
 		};
-	}
-
-	protected applyLicensesToObject(
-		objectMedia: IeObject,
-		userHasAccessToSpace: boolean
-	): IeObject | Partial<IeObject> | null {
-		// check licenses
-		const licenses = objectMedia.licenses;
-		const schemaIdentifier = objectMedia.schemaIdentifier;
-		const maintainerId = objectMedia.maintainerId;
-
-		if (
-			!licenses ||
-			intersection(licenses, [
-				IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				IeObjectLicense.BEZOEKERTOOL_METADATA,
-			]).length === 0
-		) {
-			this.logger.debug(`Object ${schemaIdentifier} has no valid license`);
-			// no valid license throws a not found exception(ARC-670)
-			return null;
-		}
-
-		// no access to visitor space == limited metadata
-		if (!userHasAccessToSpace) {
-			this.logger.debug(
-				`User has no access to visitor space ${maintainerId}, only limited metadata allowed`
-			);
-
-			if (objectMedia.schemaIdentifier) {
-				return this.getLimitedMetadata(objectMedia);
-			}
-		}
-
-		if (!licenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT)) {
-			// unset representations - user not allowed to view essence
-			this.logger.debug(
-				`Object ${schemaIdentifier} has no content license, only metadata is returned`
-			);
-			delete objectMedia.representations; // No access to files (mp4/mp3)
-			delete objectMedia.thumbnailUrl; // Not allowed to view thumbnail
-		}
-
-		return objectMedia;
-	}
-
-	public applyLicensesToSearchResult(
-		result: IeObjectsWithAggregations,
-		userHasAccessToSpace?: boolean
-	): IeObjectsWithAggregations {
-		result.items = compact(
-			result.items.map(
-				(ieObject: IeObject) =>
-					this.applyLicensesToObject(ieObject, userHasAccessToSpace) as IeObject
-			)
-		);
-		return result;
 	}
 
 	public applyLicenseToESQuery(
@@ -447,12 +361,12 @@ export class IeObjectsService {
 
 	public getSearchEndpoint(esIndex: string | null): string {
 		if (!esIndex) {
-			return '_search';
+			return '_all/_search';
 		}
 		return `${esIndex}/_search`;
 	}
 
-	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
+	public async executeQuery(esIndex: string, esQuery: ElasticsearchResponse): Promise<any> {
 		try {
 			this.logger.debug(JSON.stringify(esQuery));
 			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {

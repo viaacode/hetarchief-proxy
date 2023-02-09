@@ -1,7 +1,8 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import _ from 'lodash';
+import _, { isNil } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -57,7 +58,13 @@ export class QueryBuilder {
 	 * @param searchRequest the search query parameters
 	 * @return elastic search query
 	 */
-	public static build(searchRequest: IeObjectsQueryDto): any {
+	public static build(
+		searchRequest: IeObjectsQueryDto,
+		inputInfo: {
+			user: { isKeyUser: boolean; maintainerId: string };
+			visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
+		}
+	): any {
 		try {
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -72,7 +79,15 @@ export class QueryBuilder {
 			queryObject.from = _.clamp(offset, 0, max);
 
 			// Add the filters and search terms to the query object
-			_.set(queryObject, 'query', this.buildFilterObject(searchRequest.filters));
+			_.set(
+				queryObject,
+				'query.bool.should[0]',
+				this.buildFilterObject(searchRequest.filters)
+			);
+
+			// Add the licenses to the query object
+			_.set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
+			_.set(queryObject, 'query.bool.minimum_should_match', 2);
 
 			// Specify the aggs objects with optional search terms
 			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
@@ -163,6 +178,121 @@ export class QueryBuilder {
 				[this.getQueryType(searchFilter, value)]: {
 					[elasticKey + this.filterSuffix(searchFilter.field)]: value,
 				},
+			},
+		};
+	}
+
+	protected static buildLicensesFilter(inputInfo: {
+		user: {
+			isKeyUser: boolean;
+			maintainerId: string;
+		};
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
+	}): any {
+		const { user, visitorSpaceInfo } = inputInfo;
+
+		let checkSchemaLicenses: any = [
+			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
+			{
+				terms: {
+					schema_license: [
+						IeObjectLicense.PUBLIEK_METADATA_LTD,
+						IeObjectLicense.PUBLIEK_METADATA_ALL,
+					],
+				},
+			},
+			// 4) Check or-id is part of visitorSpaceIds
+			{
+				bool: {
+					should: [
+						{
+							terms: {
+								maintainer: visitorSpaceInfo.visitorSpaceIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+					],
+				},
+			},
+			// 5) Check object id is part of folderObjectIds
+			{
+				bool: {
+					should: [
+						{
+							ids: {
+								values: visitorSpaceInfo.objectIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+					],
+				},
+			},
+		];
+
+		if (user.isKeyUser && !isNil(user.maintainerId)) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
+				{
+					bool: {
+						should: [
+							{
+								sector: {
+									values: [user.maintainerId],
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
+						],
+					},
+				},
+				// 3) or-id is eigen or id en sleutel gebruiker
+				{
+					bool: {
+						should: [
+							{
+								term: {
+									schema_maintainer: user.maintainerId,
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
+						],
+					},
+				},
+			];
+		}
+
+		return {
+			bool: {
+				should: checkSchemaLicenses,
+				minimum_should_match: 1,
 			},
 		};
 	}

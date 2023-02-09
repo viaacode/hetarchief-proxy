@@ -9,13 +9,11 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, set } from 'lodash';
+import { find, isArray, isEmpty, isNil, set, union } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
 	AccessStatus,
-	ActiveVisitByUser,
-	GqlActiveVisitByUser,
 	GqlNote,
 	GqlUpdateVisit,
 	GqlVisit,
@@ -33,9 +31,6 @@ import {
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
 	FindActiveVisitByUserAndSpaceQueryVariables,
-	FindActiveVisitsByUserDocument,
-	FindActiveVisitsByUserQuery,
-	FindActiveVisitsByUserQueryVariables,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
 	FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
@@ -186,6 +181,11 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
+			collectionsIeSchemaIds: union(
+				...graphQlVisit.requested_by.collections.map((collection) =>
+					collection.ies?.map((ie) => ie.ie_schema_identifier)
+				)
+			),
 		};
 	}
 
@@ -458,35 +458,6 @@ export class VisitsService {
 		}
 
 		return visitResponse;
-	}
-
-	public adaptActiveVisitByUser(activeVisit: GqlActiveVisitByUser): ActiveVisitByUser {
-		return {
-			visitorSpaceRequest: {
-				id: activeVisit.id,
-				accessType: activeVisit.access_type,
-			},
-			visitorSpace: {
-				id: activeVisit.visitor_space.id,
-				maintainerId: activeVisit.visitor_space.schema_maintainer_id,
-			},
-			collections: activeVisit.requested_by.collections.map((collection) => collection.id),
-		};
-	}
-
-	public async findActiveVisitsByUser(userProfileId: string): Promise<ActiveVisitByUser[] | []> {
-		const visitResponse = await this.dataService.execute<
-			FindActiveVisitsByUserQuery,
-			FindActiveVisitsByUserQueryVariables
-		>(FindActiveVisitsByUserDocument, { userProfileId, now: new Date().toISOString() });
-
-		if (!visitResponse.maintainer_visitor_space_request[0]) {
-			return [];
-		}
-
-		return visitResponse.maintainer_visitor_space_request.map((visit) =>
-			this.adaptActiveVisitByUser(visit)
-		);
 	}
 
 	public async getActiveVisitForUserAndSpace(

@@ -1,6 +1,7 @@
 import { Group } from '../users/types';
 
 import {
+	IeObject,
 	IeObjectExtraUserGroupSubType,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
@@ -147,7 +148,7 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Record<
 	},
 };
 
-const IE_OBJECT_PROPS_METADATA_SET_LTD = [
+const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'meemooOriginalCp',
 	'premisIsPartOf',
 	'meemooIdentifier',
@@ -176,7 +177,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD = [
 	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 	'licenses',
 ];
-const IE_OBJECT_PROPS_METADATA_SET_ALL = [
+const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'premisIdentifier',
 	'ebucoreObjectType',
 	'serviceProvider', // BESTAAT NOG NIET
@@ -190,7 +191,10 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL = [
 	'categorie', // BESTAAT NOG NIET
 	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET
 ];
-const IE_OBJECT_PROPS_METADATA_SET_ESSENCE = ['thumbnailUrl', 'representations'];
+const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: (keyof IeObject)[] = [
+	'thumbnailUrl',
+	'representations',
+];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 	[IeObjectMetadataSet.METADATA_LTD]: [...IE_OBJECT_PROPS_METADATA_SET_LTD],

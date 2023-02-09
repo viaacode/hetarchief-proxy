@@ -11,6 +11,15 @@ export const mockCpVisit: GqlVisit = {
 		first_name: 'Ineke',
 		last_name: 'van Dams',
 		mail: 'ineke.vandam@meemoo.be',
+		collections: [
+			{
+				ies: [
+					{
+						ie_schema_identifier: '',
+					},
+				],
+			},
+		],
 	},
 	user_reason: 'voor mijn onderzoek en studie',
 	user_timeframe: 'meteen',

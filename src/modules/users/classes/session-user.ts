@@ -30,7 +30,7 @@ export class SessionUserEntity {
 	}
 
 	public getId(): string {
-		return get(this.user, 'id');
+		return get(this.user, 'id') || null;
 	}
 
 	public getFirstName(): string {
@@ -50,7 +50,7 @@ export class SessionUserEntity {
 	}
 
 	public getMaintainerId(): string {
-		return get(this.user, 'maintainerId');
+		return this.user?.maintainerId || null;
 	}
 
 	public getVisitorSpaceSlug(): string {
@@ -58,15 +58,15 @@ export class SessionUserEntity {
 	}
 
 	public getGroupName(): string {
-		return get(this.user, 'groupName');
+		return this.user?.groupName || null;
 	}
 
 	public getGroupId(): string {
-		return get(this.user, 'groupId');
+		return this.user?.groupId || null;
 	}
 
 	public getIsKeyUser(): boolean {
-		return get(this.user, 'isKeyUser');
+		return this.user?.isKeyUser || null;
 	}
 
 	public has(permission: Permission): boolean {

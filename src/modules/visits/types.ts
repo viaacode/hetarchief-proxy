@@ -91,6 +91,7 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
+	collectionsIeSchemaIds?: string[];
 }
 
 export interface VisitSpaceCount {
@@ -103,30 +104,4 @@ export interface Note {
 	authorName?: string;
 	note: string;
 	createdAt: string;
-}
-
-export interface ActiveVisitByUser {
-	visitorSpaceRequest: {
-		id: string;
-		accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
-	};
-	visitorSpace: {
-		id: string;
-		maintainerId: string;
-	};
-	collections: Array<string>;
-}
-
-export interface GqlActiveVisitByUser {
-	access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
-	id: string;
-	visitor_space: {
-		id: string;
-		schema_maintainer_id: string;
-	};
-	requested_by: {
-		collections: Array<{
-			id: string;
-		}>;
-	};
 }

@@ -233,9 +233,7 @@ export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>
 	aggregations: any;
 }
 
-export interface IeObjectsWithAggregationsAndFilters extends IeObjectsWithAggregations {
-	filters?: {
-		activeVisitsVisitorSpaceIds?: string[];
-		activeVisitsFolderIds?: string[];
-	};
+export interface IeObjectsVisitorSpaceInfo {
+	visitorSpaceIds: string[];
+	objectIds: string[];
 }
