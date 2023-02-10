@@ -1,8 +1,17 @@
 import { IPagination } from '@studiohyperdrive/pagination';
 
+import {
+	GetObjectDetailBySchemaIdentifierQuery,
+	GetRelatedObjectsQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { ContactInfo } from '~shared/types/types';
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
+
+export type IeObjectSeo = Pick<IeObject, 'name'>;
+
+export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
+	GetRelatedObjectsQuery['object_ie'][0];
 
 export enum MediaFormat {
 	VIDEO = 'video',

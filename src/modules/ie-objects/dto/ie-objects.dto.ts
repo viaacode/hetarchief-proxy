@@ -113,6 +113,24 @@ export class IeObjectsQueryDto {
 	orderDirection? = SortDirection.asc;
 }
 
+export class PlayerTicketsQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Get the playable url for the file with this representation schemaIdentifier',
+	})
+	id: string;
+}
+
+export class ThumbnailQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		description: 'Get the playable url for the object with this id',
+	})
+	id: string;
+}
+
 export class IeObjectMeemooIdentifiersQueryDto {
 	@IsArray()
 	@IsOptional()

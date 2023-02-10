@@ -1,29 +1,38 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Pagination } from '@studiohyperdrive/pagination';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isNil, set, unset } from 'lodash';
+import { find, get, isEmpty } from 'lodash';
 
 import { Configuration } from '~config';
 
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
+import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
+	GqlIeObject,
 	IeObject,
-	IeObjectLicense,
+	IeObjectFile,
+	IeObjectRepresentation,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
 
 import {
+	GetObjectDetailBySchemaIdentifierDocument,
+	GetObjectDetailBySchemaIdentifierQuery,
+	GetObjectDetailBySchemaIdentifierQueryVariables,
 	GetObjectIdentifierTupleDocument,
 	GetObjectIdentifierTupleQuery,
 	GetObjectIdentifierTupleQueryVariables,
+	GetRelatedObjectsDocument,
+	GetRelatedObjectsQuery,
+	GetRelatedObjectsQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -110,6 +119,67 @@ export class IeObjectsService {
 		});
 
 		return count;
+	}
+
+	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
+		return {
+			schemaIdentifier: gqlIeObject?.schema_identifier,
+			meemooIdentifier: gqlIeObject?.meemoo_identifier,
+			premisIdentifier: gqlIeObject?.premis_identifier,
+			premisIsPartOf: gqlIeObject?.premis_is_part_of,
+			series: gqlIeObject?.schema_is_part_of?.serie,
+			program: gqlIeObject?.schema_is_part_of?.reeks,
+			alternativeName: gqlIeObject.schema_is_part_of?.alternatief,
+			maintainerId: gqlIeObject?.maintainer.schema_identifier,
+			maintainerName: gqlIeObject?.maintainer?.schema_name,
+			contactInfo: {
+				email: gqlIeObject?.maintainer?.information?.primary_site.address?.email,
+				telephone: gqlIeObject?.maintainer?.information?.primary_site?.address?.telephone,
+				address: {
+					street: gqlIeObject?.maintainer?.information?.primary_site?.address?.street,
+					postalCode:
+						gqlIeObject?.maintainer?.information?.primary_site?.address?.postal_code,
+					locality: gqlIeObject?.maintainer?.information?.primary_site?.address?.locality,
+					postOfficeBoxNumber:
+						gqlIeObject?.maintainer?.information?.primary_site?.address
+							?.post_office_box_number,
+				},
+			},
+			copyrightHolder: gqlIeObject?.schema_copyright_holder,
+			copyrightNotice: gqlIeObject?.schema_copyright_notice,
+			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
+			numberOfPages: gqlIeObject?.schema_number_of_pages,
+			datePublished: gqlIeObject?.schema_date_published,
+			dctermsAvailable: gqlIeObject?.dcterms_available,
+			name: gqlIeObject?.schema_name,
+			description: gqlIeObject?.schema_description,
+			abstract: gqlIeObject?.schema_abstract,
+			creator: gqlIeObject?.schema_creator,
+			actor: gqlIeObject?.schema_actor,
+			publisher: gqlIeObject?.schema_publisher,
+			spatial: gqlIeObject?.schema_spatial_coverage, // -> REQUIRED but no data available
+			temporal: gqlIeObject?.schema_temporal_coverage, // -> REQUIRED but no data available
+			keywords: gqlIeObject?.schema_keywords,
+			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsMedium: gqlIeObject?.dcterms_medium,
+			inLanguage: gqlIeObject?.schema_in_language,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
+			duration: gqlIeObject?.schema_duration,
+			licenses: gqlIeObject?.schema_license,
+			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
+			dateCreated: gqlIeObject?.schema_date_created,
+			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
+			genre: gqlIeObject?.schema_genre,
+			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
+			meemoofilmColor: gqlIeObject?.meemoofilm_color, // -> REQUIRED but no data available
+			meemoofilmBase: gqlIeObject?.meemoofilm_base, // -> REQUIRED but no data available
+			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound, // -> REQUIRED but no data available
+			meemooLocalId: gqlIeObject?.meemoo_local_id, // -> REQUIRED but no data available
+			meemooOriginalCp: gqlIeObject?.meemoo_original_cp, // -> REQUIRED but no data available
+			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme, // -> REQUIRED but no data available
+			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast, // -> REQUIRED but no data available
+			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
+		};
 	}
 
 	public async adaptESResponse(
@@ -214,133 +284,45 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public getLimitedMetadata(ieObject: IeObject): Partial<IeObject> {
-		return {
-			schemaIdentifier: ieObject.schemaIdentifier,
-			premisIdentifier: ieObject.premisIdentifier,
-			maintainerName: ieObject.maintainerName,
-			name: ieObject.name,
-			dctermsFormat: ieObject.dctermsFormat,
-			dateCreatedLowerBound: ieObject.dateCreatedLowerBound,
-			datePublished: ieObject.datePublished,
-		};
-	}
-
-	public applyLicenseToESQuery(
-		esQuery: any,
-		user: SessionUserEntity,
-		visitorSpaceIds: string[],
-		visitorFolderIds: string[]
-	): any {
-		let checkSchemaLicenses = [];
-
-		unset(esQuery, 'query.match_all');
-
-		checkSchemaLicenses = [
-			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
-			{
-				terms: {
-					schema_license: [
-						IeObjectLicense.PUBLIEK_METADATA_LTD,
-						IeObjectLicense.PUBLIEK_METADATA_ALL,
-					],
-				},
-			},
-			// 4) Check or-id is part of visitorSpaceIds
-			{
-				bool: {
-					should: [
-						{
-							terms: {
-								maintainer: visitorSpaceIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-				},
-			},
-			// 5) Check object id is part of folderObjectIds
-			{
-				bool: {
-					should: [
-						{
-							ids: {
-								values: visitorFolderIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-				},
-			},
-		];
-
-		if (user.getIsKeyUser() && !isNil(user.getMaintainerId())) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
-				{
-					bool: {
-						should: [
-							{
-								sector: {
-									values: [user.getMaintainerId()],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
-						],
-					},
-				},
-				// 3) or-id is eigen or id en sleutel gebruiker
-				{
-					bool: {
-						should: [
-							{
-								term: {
-									schema_maintainer: user.getMaintainerId(),
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
-						],
-					},
-				},
-			];
+	public adaptRepresentations(graphQlRepresentations: any): IeObjectRepresentation[] {
+		if (isEmpty(graphQlRepresentations)) {
+			return [];
 		}
 
-		// Set schema licenses
-		set(esQuery, 'query.bool.should', [...checkSchemaLicenses]);
-		set(esQuery, 'query.bool.minimum_should_match', 1);
-
-		// Return esQuery with applied licenses
-		return esQuery;
+		/* istanbul ignore next */
+		return graphQlRepresentations.map((representation) => ({
+			name: representation?.schema_name,
+			alternateName: representation?.schema_alternate_name,
+			description: representation?.schema_description,
+			schemaIdentifier: representation?.ie_schema_identifier,
+			dctermsFormat: representation?.dcterms_format,
+			transcript: representation?.schema_transcript,
+			dateCreated: representation?.schema_date_created,
+			files: this.adaptFiles(representation?.premis_includes),
+		}));
 	}
+
+	public adaptFiles(graphQlFiles: any): IeObjectFile[] {
+		if (isEmpty(graphQlFiles)) {
+			return [];
+		}
+
+		/* istanbul ignore next */
+		return graphQlFiles.map(
+			(file): IeObjectFile => ({
+				name: file?.schema_name,
+				alternateName: file?.schema_alternate_name,
+				description: file?.schema_description,
+				schemaIdentifier: file?.representation_schema_identifier,
+				ebucoreMediaType: file?.ebucore_media_type,
+				ebucoreIsMediaFragmentOf: file?.ebucore_is_media_fragment_of,
+				embedUrl: file?.schema_embed_url,
+			})
+		);
+	}
+
+	// Helpers
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Helper function to return if the user has access to a visitor space (or-id) / esIndex
@@ -359,17 +341,47 @@ export class IeObjectsService {
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
 	}
 
-	public getSearchEndpoint(esIndex: string | null): string {
-		if (!esIndex) {
-			return '_all/_search';
+	/**
+	 * Find by id returns all details as stored in DB
+	 * (not all details are in ES)
+	 */
+	public async findBySchemaIdentifier(
+		schemaIdentifier: string,
+		referer: string
+	): Promise<IeObject> {
+		const { object_ie: objectIe } = await this.dataService.execute<
+			GetObjectDetailBySchemaIdentifierQuery,
+			GetObjectDetailBySchemaIdentifierQueryVariables
+		>(GetObjectDetailBySchemaIdentifierDocument, {
+			schemaIdentifier,
+		});
+
+		if (!objectIe[0]) {
+			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
-		return `${esIndex}/_search`;
+
+		const adapted = this.adaptFromDB(objectIe[0]);
+		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+			adapted.thumbnailUrl,
+			referer
+		);
+		return adapted;
 	}
 
-	public async executeQuery(esIndex: string, esQuery: ElasticsearchResponse): Promise<any> {
+	/**
+	 * Get the object detail fields that are exposed as metadata
+	 */
+	public async findMetadataBySchemaIdentifier(
+		schemaIdentifier: string
+	): Promise<Partial<IeObject>> {
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
+		return this.adaptMetadata(object);
+	}
+
+	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
 			this.logger.debug(JSON.stringify(esQuery));
-			return await this.gotInstance.post(this.getSearchEndpoint(esIndex), {
+			return await this.gotInstance.post(getSearchEndpoint(esIndex), {
 				json: esQuery,
 				resolveBodyOnly: true,
 			});
@@ -377,5 +389,67 @@ export class IeObjectsService {
 			this.logger.error(e?.response?.body);
 			throw e;
 		}
+	}
+
+	public async getRelated(
+		maintainerId: string,
+		schemaIdentifier: string,
+		meemooIdentifier: string,
+		referer: string
+	): Promise<IPagination<IeObject>> {
+		const mediaObjects = await this.dataService.execute<
+			GetRelatedObjectsQuery,
+			GetRelatedObjectsQueryVariables
+		>(GetRelatedObjectsDocument, {
+			maintainerId,
+			schemaIdentifier,
+			meemooIdentifier,
+		});
+
+		const adaptedItems = await Promise.all(
+			mediaObjects.object_ie.map(async (object: any) => {
+				const adapted = this.adaptFromDB(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer
+				);
+				return adapted;
+			})
+		);
+
+		return Pagination<IeObject>({
+			items: adaptedItems,
+			page: 1,
+			size: mediaObjects.object_ie.length,
+			total: mediaObjects.object_ie.length,
+		});
+	}
+
+	public async getSimilar(
+		schemaIdentifier: string,
+		esIndex: string,
+		referer: string,
+		limit = 4
+	): Promise<any> {
+		const likeFilter = {
+			_index: esIndex,
+			_id: schemaIdentifier,
+		};
+
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				more_like_this: {
+					fields: ['schema_name', 'schema_description'],
+					like: [likeFilter],
+					min_term_freq: 1,
+					max_query_terms: 12,
+				},
+			},
+		};
+
+		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		return this.adaptESResponse(mediaResponse, referer);
 	}
 }
