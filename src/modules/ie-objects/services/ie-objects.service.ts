@@ -58,6 +58,7 @@ export class IeObjectsService {
 			user: {
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
+				sector: null,
 			},
 			visitorSpaceInfo,
 		});

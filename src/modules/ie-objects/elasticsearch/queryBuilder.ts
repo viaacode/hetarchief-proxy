@@ -1,8 +1,13 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import _, { isNil } from 'lodash';
+import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import { IeObjectLicense, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import {
+	IeObjectLicense,
+	IeObjectSector,
+	IeObjectSectorLicenseMatrix,
+	IeObjectsVisitorSpaceInfo,
+} from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -61,7 +66,7 @@ export class QueryBuilder {
 	public static build(
 		searchRequest: IeObjectsQueryDto,
 		inputInfo: {
-			user: { isKeyUser: boolean; maintainerId: string };
+			user: { isKeyUser: boolean; maintainerId: string; sector: IeObjectSector };
 			visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 		}
 	): any {
@@ -76,24 +81,21 @@ export class QueryBuilder {
 			// Avoid huge queries
 			queryObject.size = Math.min(searchRequest.size, this.config.MAX_NUMBER_SEARCH_RESULTS);
 			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
-			queryObject.from = _.clamp(offset, 0, max);
+			queryObject.from = clamp(offset, 0, max);
 
 			// Add the filters and search terms to the query object
-			_.set(
-				queryObject,
-				'query.bool.should[0]',
-				this.buildFilterObject(searchRequest.filters)
-			);
+			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequest.filters));
 
 			// Add the licenses to the query object
-			_.set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
-			_.set(queryObject, 'query.bool.minimum_should_match', 2);
+			set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
+			// Both the filters the user selected and the access to the object should match, before we return the object as a search result
+			set(queryObject, 'query.bool.minimum_should_match', 2);
 
 			// Specify the aggs objects with optional search terms
-			_.set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
+			set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
 
 			// Add sorting
-			_.set(
+			set(
 				queryObject,
 				'sort',
 				this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection)
@@ -163,7 +165,7 @@ export class QueryBuilder {
 
 	protected static getQueryType(searchFilter: SearchFilter, value: any): any {
 		const defaultQueryType = this.config.DEFAULT_QUERY_TYPE[searchFilter.field];
-		if (defaultQueryType === QueryType.TERMS && !_.isArray(value)) {
+		if (defaultQueryType === QueryType.TERMS && !isArray(value)) {
 			return QueryType.TERM;
 		}
 		return defaultQueryType;
@@ -186,6 +188,7 @@ export class QueryBuilder {
 		user: {
 			isKeyUser: boolean;
 			maintainerId: string;
+			sector: IeObjectSector;
 		};
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	}): any {
@@ -223,66 +226,39 @@ export class QueryBuilder {
 			},
 			// 5) Check object id is part of folderObjectIds
 			{
-				bool: {
-					should: [
-						{
-							ids: {
-								values: visitorSpaceInfo.objectIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
+				// ids: {
+				// 	values: visitorSpaceInfo.objectIds,
+				// },
+				terms: {
+					schema_license: [
+						IeObjectLicense.BEZOEKERTOOL_METADATA,
+						IeObjectLicense.BEZOEKERTOOL_CONTENT,
 					],
 				},
 			},
 		];
 
-		if (user.isKeyUser && !isNil(user.maintainerId)) {
+		if (user.isKeyUser && !isNil(user.sector)) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
 				{
-					bool: {
-						should: [
-							{
-								sector: {
-									values: [user.maintainerId],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
 						],
 					},
 				},
 				// 3) or-id is eigen or id en sleutel gebruiker
 				{
-					bool: {
-						should: [
-							{
-								term: {
-									schema_maintainer: user.maintainerId,
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
+					term: {
+						schema_maintainer: user.maintainerId,
+					},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
 						],
 					},
 				},
@@ -321,7 +297,7 @@ export class QueryBuilder {
 	 * @param filters
 	 */
 	private static buildFilterObject(filters: SearchFilter[] | undefined) {
-		if (!filters || _.isEmpty(filters)) {
+		if (!filters || isEmpty(filters)) {
 			// Return query object that will match all results
 			return { match_all: {} };
 		}
@@ -330,8 +306,8 @@ export class QueryBuilder {
 
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
-		_.set(filterObject, 'bool.filter', filterArray);
-		_.forEach(filters, (searchFilter: SearchFilter) => {
+		set(filterObject, 'bool.filter', filterArray);
+		forEach(filters, (searchFilter: SearchFilter) => {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
 			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
@@ -430,7 +406,7 @@ export class QueryBuilder {
 	 */
 	private static buildAggsObject(searchRequest: IeObjectsQueryDto): any {
 		const aggs: any = {};
-		_.forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
+		forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
 				this.config.READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as SearchFilterField];
 			if (!elasticProperty) {

@@ -68,6 +68,10 @@ export const limitAccessToObjectDetails = (
 		IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]
 	);
 
+	if (isEmpty(intersectedLicenses)) {
+		return null;
+	}
+
 	// TODO: (ARC-1361) - Sector as extra filter on INTRA_CP_CONTENT
 	// ---------------------------------------------------
 	// if (intersectedLicenses.includes(IeObjectLicense.INTRA_CP_CONTENT)) {

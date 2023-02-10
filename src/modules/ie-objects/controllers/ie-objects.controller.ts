@@ -60,7 +60,7 @@ export class IeObjectsController {
 				visitorSpaceStatus: VisitorSpaceStatus.Active,
 			}
 		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
 
 		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
