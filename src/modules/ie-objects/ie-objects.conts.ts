@@ -16,6 +16,7 @@ export const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
 	[IeObjectExtraUserGroupType.ANONYMOUS]: 'anonymous',
 };
 
+// TODO: Check if we can make a more dynamic lookup table instead of this
 export const IE_OBJECT_EXTRA_USER_GROUPS = {
 	[IeObjectExtraUserGroupType.ANONYMOUS]: IE_OBJECT_EXTRA_USER_SUB_GROUPS.ANONYMOUS,
 	[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE]: `${Group.VISITOR}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}`,
