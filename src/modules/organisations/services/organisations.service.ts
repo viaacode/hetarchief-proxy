@@ -7,11 +7,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got from 'got';
-import { uniqBy } from 'lodash';
+import { isNil, uniqBy } from 'lodash';
 
 import { Configuration } from '~config';
 
 import {
+	GqlOrganisation,
+	Organisation,
 	OrganisationInfoV2,
 	OrganisationResponse,
 	ParsedOrganisation,
@@ -19,6 +21,9 @@ import {
 
 import {
 	DeleteOrganisationsDocument,
+	FindOrganisationBySchemaIdDocument,
+	FindOrganisationBySchemaIdQuery,
+	FindOrganisationBySchemaIdQueryVariables,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
 
@@ -50,6 +55,38 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 				})
 			);
 		}
+	}
+
+	public async findOrganisationBySchemaIdentifier(
+		schemaIdentifier: string
+	): Promise<Organisation | null> {
+		const organisationResponse = await this.dataService.execute<
+			FindOrganisationBySchemaIdQuery,
+			FindOrganisationBySchemaIdQueryVariables
+		>(FindOrganisationBySchemaIdDocument, { schemaIdentifier });
+
+		if (isNil(organisationResponse) || !organisationResponse.maintainer_organisation[0]) {
+			return null;
+		}
+
+		return this.adapt(organisationResponse.maintainer_organisation[0] as GqlOrganisation);
+	}
+
+	public adapt(gqlOrganisation: GqlOrganisation): Organisation {
+		return {
+			schemaIdentifier: gqlOrganisation?.schema_identifier,
+			contactPoint: gqlOrganisation?.contact_point.map((contactPoint) => ({
+				contactType: contactPoint.contact_type,
+				email: contactPoint.email,
+			})),
+			description: gqlOrganisation?.description,
+			logo: gqlOrganisation?.logo,
+			primarySite: gqlOrganisation?.primary_site,
+			schemaName: gqlOrganisation?.schema_name,
+			createdAt: gqlOrganisation?.created_at,
+			updatedAt: gqlOrganisation?.updated_at,
+			sector: gqlOrganisation?.sector,
+		};
 	}
 
 	public async updateOrganisationsCache() {

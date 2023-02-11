@@ -36,9 +36,10 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import OrganisationsService from '~modules/organisations/services/organisations.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { Group, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
@@ -56,7 +57,8 @@ export class IeObjectsController {
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
-		private playerTicketService: PlayerTicketService
+		private playerTicketService: PlayerTicketService,
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('player-ticket')
@@ -248,6 +250,14 @@ export class IeObjectsController {
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
 
+		// Get sector from Organisation when user is part of CP_ADMIN Group
+		let organisation = null;
+		if (user.getGroupId() === Group.CP_ADMIN) {
+			organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+				user.getMaintainerId()
+			);
+		}
+
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
 		const activeVisits = await this.visitsService.findAll(
@@ -262,23 +272,26 @@ export class IeObjectsController {
 				visitorSpaceStatus: VisitorSpaceStatus.Active,
 			}
 		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
 
+		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
 			'_all',
 			referer,
 			user,
-			visitorSpaceAccessInfo
+			visitorSpaceAccessInfo,
+			organisation
 		);
 
+		// Limit the amount of props returned for an ie object based on licenses and sector
 		const licensedSearchResult = {
 			...searchResult,
 			items: searchResult.items.map((item) =>
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
-					sector: null,
+					sector: organisation?.sector || null,
 					groupId: user.getGroupId() || null,
 					maintainerId: user.getMaintainerId() || null,
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,

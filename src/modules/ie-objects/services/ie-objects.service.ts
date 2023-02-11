@@ -34,7 +34,9 @@ import {
 	GetRelatedObjectsQuery,
 	GetRelatedObjectsQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { Organisation } from '~modules/organisations/organisations.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
 @Injectable()
@@ -60,13 +62,15 @@ export class IeObjectsService {
 		esIndex: string | null,
 		referer: string,
 		user: SessionUserEntity,
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo,
+		organisation?: Organisation
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user: {
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
+				sector: organisation?.sector || null,
 			},
 			visitorSpaceInfo,
 		});

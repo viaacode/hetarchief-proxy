@@ -3,7 +3,7 @@ import { IeObjectAccessThrough } from '../ie-objects.types';
 export const getAccessThrough = (
 	hasFolderAccess: boolean,
 	hasFullAccess: boolean,
-	isSector = false
+	isSector: boolean
 ): IeObjectAccessThrough => {
 	if (isSector) {
 		return IeObjectAccessThrough.SECTOR;
