@@ -16,6 +16,7 @@ import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	GqlIeObject,
+	GqlLimitedIeObject,
 	IeObject,
 	IeObjectFile,
 	IeObjectRepresentation,
@@ -24,6 +25,9 @@ import {
 } from '../ie-objects.types';
 
 import {
+	FindAllObjectsByCollectionIdDocument,
+	FindAllObjectsByCollectionIdQuery,
+	FindAllObjectsByCollectionIdQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -36,7 +40,6 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { Organisation } from '~modules/organisations/organisations.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
 @Injectable()
@@ -194,6 +197,69 @@ export class IeObjectsService {
 				total: adaptedESResponse.hits.total.value,
 			}),
 		};
+	}
+
+	/**
+	 * Find by id returns all details as stored in DB
+	 * (not all details are in ES)
+	 */
+	public async findBySchemaIdentifier(
+		schemaIdentifier: string,
+		referer: string
+	): Promise<IeObject> {
+		const { object_ie: objectIe } = await this.dataService.execute<
+			GetObjectDetailBySchemaIdentifierQuery,
+			GetObjectDetailBySchemaIdentifierQueryVariables
+		>(GetObjectDetailBySchemaIdentifierDocument, {
+			schemaIdentifier,
+		});
+
+		if (!objectIe[0]) {
+			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
+		}
+
+		const adapted = this.adaptFromDB(objectIe[0]);
+		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+			adapted.thumbnailUrl,
+			referer
+		);
+		return adapted;
+	}
+
+	/**
+	 * Get the object detail fields that are exposed as metadata
+	 */
+	public async findMetadataBySchemaIdentifier(
+		schemaIdentifier: string
+	): Promise<Partial<IeObject>> {
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
+		return this.adaptMetadata(object);
+	}
+
+	/**
+	 * Returns a limited set of metadata fields for export
+	 */
+	public async findAllObjectMetadataByCollectionId(
+		collectionId: string,
+		userProfileId: string
+	): Promise<Partial<IeObject>[]> {
+		const { users_folder_ie: allObjects } = await this.dataService.execute<
+			FindAllObjectsByCollectionIdQuery,
+			FindAllObjectsByCollectionIdQueryVariables
+		>(FindAllObjectsByCollectionIdDocument, {
+			collectionId,
+			userProfileId,
+		});
+
+		if (!allObjects[0]) {
+			throw new NotFoundException();
+		}
+
+		const allAdapted = allObjects.map((object) => {
+			return this.adaptLimitedMetadata(object);
+		});
+
+		return allAdapted;
 	}
 
 	// Adapt
@@ -355,6 +421,23 @@ export class IeObjectsService {
 		};
 	}
 
+	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<IeObject> {
+		/* istanbul ignore next */
+		return {
+			schemaIdentifier: graphQlObject.ie?.schema_identifier,
+			premisIdentifier: graphQlObject.ie?.premis_identifier,
+			maintainerName: graphQlObject.ie?.maintainer?.schema_name,
+			name: graphQlObject.ie?.schema_name,
+			dctermsFormat: graphQlObject.ie?.dcterms_format,
+			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
+			datePublished: graphQlObject.ie?.schema_date_published,
+			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
+			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
+			series: graphQlObject.ie?.schema_is_part_of?.serie || [],
+			program: graphQlObject.ie?.schema_is_part_of?.programma || [],
+		};
+	}
+
 	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
 		// unset thumbnail and representations
 		delete ieObject.representations;
@@ -417,43 +500,6 @@ export class IeObjectsService {
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
-	}
-
-	/**
-	 * Find by id returns all details as stored in DB
-	 * (not all details are in ES)
-	 */
-	public async findBySchemaIdentifier(
-		schemaIdentifier: string,
-		referer: string
-	): Promise<IeObject> {
-		const { object_ie: objectIe } = await this.dataService.execute<
-			GetObjectDetailBySchemaIdentifierQuery,
-			GetObjectDetailBySchemaIdentifierQueryVariables
-		>(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
-		});
-
-		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
-		}
-
-		const adapted = this.adaptFromDB(objectIe[0]);
-		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-			adapted.thumbnailUrl,
-			referer
-		);
-		return adapted;
-	}
-
-	/**
-	 * Get the object detail fields that are exposed as metadata
-	 */
-	public async findMetadataBySchemaIdentifier(
-		schemaIdentifier: string
-	): Promise<Partial<IeObject>> {
-		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
-		return this.adaptMetadata(object);
 	}
 
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {

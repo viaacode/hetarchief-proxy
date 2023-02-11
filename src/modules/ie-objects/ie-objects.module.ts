@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { IeObjectsController } from './controllers/ie-objects.controller';
 import { IeObjectsService } from './services/ie-objects.service';
 
+import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { TranslationsModule } from '~modules/translations';
 import { VisitsModule } from '~modules/visits';
@@ -14,6 +15,7 @@ import { VisitsModule } from '~modules/visits';
 	imports: [
 		ConfigModule,
 		DataModule,
+		EventsModule,
 		PlayerTicketModule,
 		VisitsModule,
 		TranslationsModule,

@@ -7,13 +7,13 @@ import {
 	GetFirstObjectIdDocument,
 	GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { MediaService } from '~modules/media/services/media.service';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
 @Injectable()
 export class StatusService {
 	private logger: Logger = new Logger(StatusService.name, { timestamp: true });
 
-	constructor(private dataService: DataService, private mediaService: MediaService) {}
+	constructor(private dataService: DataService, private mediaService: IeObjectsService) {}
 
 	getStatus(): Record<string, string> {
 		return {
