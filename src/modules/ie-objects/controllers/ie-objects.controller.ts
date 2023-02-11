@@ -7,17 +7,14 @@ import {
 	Header,
 	Headers,
 	Logger,
-	NotFoundException,
 	Param,
 	Post,
 	Query,
 	Req,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-
-import { Configuration } from '~config';
 
 import {
 	IeObjectMeemooIdentifiersQueryDto,
@@ -29,13 +26,20 @@ import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter'
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { getVisitorSpaceAccessInfo } from '../helpers/get-visitor-space-access-info';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import { getLimitedMetadata, limitMetadata } from '../helpers/limit-metadata';
-import { IeObject, IeObjectSeo, IeObjectsWithAggregations } from '../ie-objects.types';
+import { limitMetadata } from '../helpers/limit-metadata';
+import {
+	IeObject,
+	IeObjectLicense,
+	IeObjectSeo,
+	IeObjectsVisitorSpaceInfo,
+	IeObjectsWithAggregations,
+} from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { Organisation } from '~modules/organisations/organisations.types';
 import OrganisationsService from '~modules/organisations/services/organisations.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -53,7 +57,6 @@ export class IeObjectsController {
 
 	constructor(
 		private ieObjectsService: IeObjectsService,
-		private configService: ConfigService<Configuration>,
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
@@ -62,7 +65,6 @@ export class IeObjectsController {
 	) {}
 
 	@Get('player-ticket')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getPlayableUrl(
 		@Headers('referer') referer: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
@@ -75,7 +77,6 @@ export class IeObjectsController {
 	}
 
 	@Get('thumbnail-ticket')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getThumbnailUrl(
 		@Headers('referer') referer: string,
 		@Query() thumbnailQuery: ThumbnailQueryDto
@@ -84,9 +85,7 @@ export class IeObjectsController {
 		return url;
 	}
 
-	// TODO: rework
 	@Get(':id')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
 	public async getIeObjectById(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
@@ -94,54 +93,42 @@ export class IeObjectsController {
 	): Promise<IeObject | Partial<IeObject>> {
 		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
 
-		// Check if the user can search in all index (meemoo admin)
-		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+		const { organisation, visitorSpaceAccessInfo } =
+			await this.getVistorSpaceAccessInfoAndOrganisation(user);
 
-		const userHasAccessToSpace =
-			canSearchInAllSpaces ||
-			(await this.userHasAccessToVisitorSpaceOrId(user, object.maintainerId));
-
-		if (!userHasAccessToSpace) {
-			return getLimitedMetadata(object);
-		}
-
-		if (this.configService.get('IGNORE_OBJECT_LICENSES')) {
-			return object;
-		}
-
-		const limitedObject = this.applyLicensesToObject(object, userHasAccessToSpace) as
-			| IeObject
-			| Partial<IeObject>;
-
-		if (!limitedObject) {
-			throw new NotFoundException(
-				this.translationsService.t('modules/media/controllers/media___object-not-found')
-			);
-		}
+		const limitedObject = limitAccessToObjectDetails(object, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: organisation?.sector || null,
+			groupId: user.getGroupId(),
+			maintainerId: user.getMaintainerId() || null,
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		});
 
 		return limitedObject;
 	}
 
-	// TODO: rework
 	@Get('seo/:id')
 	public async getIeObjectSeoById(
 		@Headers('referer') referer: string,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
 
-		const limitedObject = this.applyLicensesToObject(object, false) as
-			| IeObject
-			| Partial<IeObject>;
-
+		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
+			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
+				license
+			)
+		);
 		return {
-			name: limitedObject?.name,
+			name: hasPublicAccess ? ieObject?.name : null,
 		};
 	}
 
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS, Permission.EXPORT_OBJECT)
+	@RequireAllPermissions(Permission.EXPORT_OBJECT)
 	public async export(
 		@Param('id') id: string,
 		@Req() request: Request,
@@ -178,37 +165,40 @@ export class IeObjectsController {
 		return convertObjectToXml(limitMetadata(objectMetadata));
 	}
 
-	// TODO: rework
-	@Get(':esIndex/:schemaIdentifier/related/:meemooIdentifier')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
+	@Get(':schemaIdentifier/related/:meemooIdentifier')
 	public async getRelated(
 		@Headers('referer') referer: string,
-		@Param('esIndex') maintainerId: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<any> {
-		// Check if the user can search in all index (meemoo admin)
-		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
-
-		if (
-			!canSearchInAllSpaces &&
-			!(await this.userHasAccessToVisitorSpaceOrId(user, maintainerId))
-		) {
-			throw new ForbiddenException(
-				this.translationsService.t(
-					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
-				)
-			);
-		}
+	): Promise<IPagination<Partial<IeObject>>> {
+		const { organisation, visitorSpaceAccessInfo } =
+			await this.getVistorSpaceAccessInfoAndOrganisation(user);
 
 		// We use the esIndex as the maintainerId -- no need to lowercase
-		return this.ieObjectsService.getRelated(
-			maintainerId,
+		const relatedIeObjects = await this.ieObjectsService.getRelated(
 			schemaIdentifier,
 			meemooIdentifier,
 			referer
 		);
+
+		// Limit the amount of props returned for an ie object based on licenses and sector
+		const licensedRelatedIeObjects = {
+			...relatedIeObjects,
+			items: relatedIeObjects.items.map((item) =>
+				limitAccessToObjectDetails(item, {
+					userId: user.getId() || null,
+					isKeyUser: user.getIsKeyUser() || false,
+					sector: organisation?.sector || null,
+					groupId: user.getGroupId() || null,
+					maintainerId: user.getMaintainerId() || null,
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				})
+			),
+		};
+
+		return licensedRelatedIeObjects;
 	}
 
 	@Get('related/count')
@@ -218,27 +208,34 @@ export class IeObjectsController {
 		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
 
-	// TODO: rework
-	@Get(':esIndex/:id/similar')
-	@RequireAllPermissions(Permission.SEARCH_OBJECTS)
+	@Get(':id/similar')
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
-		@Param('esIndex') esIndex: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<any> {
-		// Check if the user can search in all index (meemoo admin)
-		const canSearchInAllSpaces = user.has(Permission.SEARCH_ALL_OBJECTS);
+	): Promise<IPagination<Partial<IeObject>>> {
+		const { organisation, visitorSpaceAccessInfo } =
+			await this.getVistorSpaceAccessInfoAndOrganisation(user);
 
-		if (!canSearchInAllSpaces && !(await this.userHasAccessToVisitorSpaceOrId(user, esIndex))) {
-			throw new ForbiddenException(
-				this.translationsService.t(
-					'modules/media/controllers/media___you-do-not-have-access-to-this-visitor-space'
-				)
-			);
-		}
+		const similarIeObjects = await this.ieObjectsService.getSimilar(id, '_all', referer);
 
-		return this.ieObjectsService.getSimilar(id, esIndex.toLowerCase(), referer);
+		// Limit the amount of props returned for an ie object based on licenses and sector
+		const licensedSimilarIeObjects = {
+			...similarIeObjects,
+			items: similarIeObjects.items.map((item) =>
+				limitAccessToObjectDetails(item, {
+					userId: user.getId() || null,
+					isKeyUser: user.getIsKeyUser() || false,
+					sector: organisation?.sector || null,
+					groupId: user.getGroupId() || null,
+					maintainerId: user.getMaintainerId() || null,
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				})
+			),
+		};
+
+		return licensedSimilarIeObjects;
 	}
 
 	@Post()
@@ -250,29 +247,8 @@ export class IeObjectsController {
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
 
-		// Get sector from Organisation when user is part of CP_ADMIN Group
-		let organisation = null;
-		if (user.getGroupId() === Group.CP_ADMIN) {
-			organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-				user.getMaintainerId()
-			);
-		}
-
-		// Get active visits for the current user
-		// Need this to retrieve visitorSpaceAccessInfo
-		const activeVisits = await this.visitsService.findAll(
-			{
-				page: 1,
-				size: 100,
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-			},
-			{
-				userProfileId: user.getId(),
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
-			}
-		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
+		const { organisation, visitorSpaceAccessInfo } =
+			await this.getVistorSpaceAccessInfoAndOrganisation(user);
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
@@ -318,5 +294,42 @@ export class IeObjectsController {
 			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
 
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
+	}
+
+	protected async getVistorSpaceAccessInfoAndOrganisation(user: SessionUserEntity): Promise<{
+		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo;
+		organisation: Organisation;
+	}> {
+		// Get sector from Organisation when user is part of CP_ADMIN Group
+		let organisation = null;
+		if (user.getGroupId() === Group.CP_ADMIN) {
+			organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+				user.getMaintainerId()
+			);
+		}
+
+		// Get active visits for the current user
+		// Need this to retrieve visitorSpaceAccessInfo
+		const activeVisits = await this.visitsService.findAll(
+			{
+				page: 1,
+				size: 100,
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+			},
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active,
+			}
+		);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
+
+		return {
+			organisation,
+			visitorSpaceAccessInfo: {
+				objectIds: visitorSpaceAccessInfo.objectIds,
+				visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			},
+		};
 	}
 }

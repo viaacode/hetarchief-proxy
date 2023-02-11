@@ -125,6 +125,80 @@ export class IeObjectsService {
 		return count;
 	}
 
+	public async getRelated(
+		schemaIdentifier: string,
+		meemooIdentifier: string,
+		referer: string
+	): Promise<IPagination<IeObject>> {
+		const mediaObjects = await this.dataService.execute<
+			GetRelatedObjectsQuery,
+			GetRelatedObjectsQueryVariables
+		>(GetRelatedObjectsDocument, {
+			schemaIdentifier,
+			meemooIdentifier,
+		});
+
+		const adaptedItems = await Promise.all(
+			mediaObjects.object_ie.map(async (object: any) => {
+				const adapted = this.adaptFromDB(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer
+				);
+				return adapted;
+			})
+		);
+
+		return Pagination<IeObject>({
+			items: adaptedItems,
+			page: 1,
+			size: mediaObjects.object_ie.length,
+			total: mediaObjects.object_ie.length,
+		});
+	}
+
+	public async getSimilar(
+		schemaIdentifier: string,
+		esIndex: string,
+		referer: string,
+		limit = 4
+	): Promise<IPagination<IeObject>> {
+		const likeFilter = {
+			_index: esIndex,
+			_id: schemaIdentifier,
+		};
+
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				more_like_this: {
+					fields: ['schema_name', 'schema_description'],
+					like: [likeFilter],
+					min_term_freq: 1,
+					max_query_terms: 12,
+				},
+			},
+		};
+
+		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
+
+		return {
+			...Pagination<IeObject>({
+				items: adaptedESResponse.hits.hits.map((esHit) =>
+					this.adaptESObjectToObject(esHit._source)
+				),
+				page: 1,
+				size: adaptedESResponse.hits.hits.length,
+				total: adaptedESResponse.hits.total.value,
+			}),
+		};
+	}
+
+	// Adapt
+	// ------------------------------------------------------------------------
+
 	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
@@ -393,67 +467,5 @@ export class IeObjectsService {
 			this.logger.error(e?.response?.body);
 			throw e;
 		}
-	}
-
-	public async getRelated(
-		maintainerId: string,
-		schemaIdentifier: string,
-		meemooIdentifier: string,
-		referer: string
-	): Promise<IPagination<IeObject>> {
-		const mediaObjects = await this.dataService.execute<
-			GetRelatedObjectsQuery,
-			GetRelatedObjectsQueryVariables
-		>(GetRelatedObjectsDocument, {
-			maintainerId,
-			schemaIdentifier,
-			meemooIdentifier,
-		});
-
-		const adaptedItems = await Promise.all(
-			mediaObjects.object_ie.map(async (object: any) => {
-				const adapted = this.adaptFromDB(object);
-				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-					adapted.thumbnailUrl,
-					referer
-				);
-				return adapted;
-			})
-		);
-
-		return Pagination<IeObject>({
-			items: adaptedItems,
-			page: 1,
-			size: mediaObjects.object_ie.length,
-			total: mediaObjects.object_ie.length,
-		});
-	}
-
-	public async getSimilar(
-		schemaIdentifier: string,
-		esIndex: string,
-		referer: string,
-		limit = 4
-	): Promise<any> {
-		const likeFilter = {
-			_index: esIndex,
-			_id: schemaIdentifier,
-		};
-
-		const esQueryObject = {
-			size: limit,
-			from: 0,
-			query: {
-				more_like_this: {
-					fields: ['schema_name', 'schema_description'],
-					like: [likeFilter],
-					min_term_freq: 1,
-					max_query_terms: 12,
-				},
-			},
-		};
-
-		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
-		return this.adaptESResponse(mediaResponse, referer);
 	}
 }
