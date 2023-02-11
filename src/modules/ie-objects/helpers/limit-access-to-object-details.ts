@@ -1,26 +1,20 @@
-import { difference, intersection, isEmpty, isNil, pick, union } from 'lodash';
+import { intersection, isEmpty, isNil, pick, union } from 'lodash';
 
-import { Group } from '../../users/types';
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
 	IE_OBJECT_EXTRA_USER_SUB_GROUPS,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
-	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 } from '../ie-objects.conts';
 import {
 	IeObject,
-	IeObjectAccessThrough,
 	IeObjectExtraUserGroupSubType,
 	IeObjectExtraUserGroupType,
-	IeObjectLicense,
 	IeObjectSector,
 } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
-
-import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as AccessType } from '~generated/graphql-db-types-hetarchief';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
@@ -28,12 +22,14 @@ export const limitAccessToObjectDetails = (
 	userInfo: {
 		userId: string | null;
 		isKeyUser: boolean;
-		sector: IeObjectSector | null; // sector
+		sector: IeObjectSector | null;
 		groupId: string;
 		maintainerId: string;
-		accessibleObjectIdsThroughFolders: string[]; // folders -> als het ie object id hierin voorkomt dan is het visitor space folders
-		// MAG enkel full access bevatten
-		accessibleVisitorSpaceIds: string[]; // full -> als object.maintainerId in deze lijst voorkomt dan is het viistor space full
+		// folders -> if ie object id is in here than the user has folder access to this vistor space
+		accessibleObjectIdsThroughFolders: string[];
+		// May only contain FULL ACCESS Visitor space ids
+		// full -> if object.maintainerId is in this list than the user has full access to visitor space
+		accessibleVisitorSpaceIds: string[];
 	}
 ): Partial<IeObject> => {
 	// Step 1 - Determine Licenses
@@ -41,14 +37,14 @@ export const limitAccessToObjectDetails = (
 	let userGroup = isNil(userInfo?.userId)
 		? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
 		: userInfo.groupId;
-
-	// Check if user has visitor space access (own or another)
-	// maintainerId === ieObject.maintainerId => own visitor space
-	// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
 		ieObject?.schemaIdentifier
 	);
 	const hasFullAccess = userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId);
+
+	// Check if user has visitor space access (own or another)
+	// maintainerId === ieObject.maintainerId => own visitor space
+	// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
 	if (userInfo?.maintainerId === ieObject?.maintainerId || hasFolderAccess || hasFullAccess) {
 		userGroup = `${userGroup}${
 			IE_OBJECT_EXTRA_USER_SUB_GROUPS[IeObjectExtraUserGroupSubType.HAS_VISITOR_SPACE]

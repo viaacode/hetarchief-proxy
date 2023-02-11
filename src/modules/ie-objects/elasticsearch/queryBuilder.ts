@@ -2,12 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import {
-	IeObjectLicense,
-	IeObjectSector,
-	IeObjectSectorLicenseMatrix,
-	IeObjectsVisitorSpaceInfo,
-} from '../ie-objects.types';
+import { IeObjectLicense, IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -188,7 +183,7 @@ export class QueryBuilder {
 		user: {
 			isKeyUser: boolean;
 			maintainerId: string;
-			sector: IeObjectSector;
+			sector: IeObjectSector | null;
 		};
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	}): any {
@@ -205,6 +200,7 @@ export class QueryBuilder {
 				},
 			},
 			// 4) Check or-id is part of visitorSpaceIds
+			// Remark: ES does not allow maintainer and schema license to be both under 1 terms object
 			{
 				bool: {
 					should: [
@@ -225,14 +221,23 @@ export class QueryBuilder {
 				},
 			},
 			// 5) Check object id is part of folderObjectIds
+			// Remark: ES does not allow ids and should be added under bool should
 			{
-				// ids: {
-				// 	values: visitorSpaceInfo.objectIds,
-				// },
-				terms: {
-					schema_license: [
-						IeObjectLicense.BEZOEKERTOOL_METADATA,
-						IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				bool: {
+					should: [
+						{
+							ids: {
+								values: visitorSpaceInfo.objectIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
 					],
 				},
 			},
