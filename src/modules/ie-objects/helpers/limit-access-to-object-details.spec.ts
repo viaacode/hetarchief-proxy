@@ -20,7 +20,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject = limitAccessToObjectDetails(
 			{
 				...mockIeObject,
-				licenses: [...mockIeObject.licenses, IeObjectLicense.BEZOEKERTOOL_METADATA],
+				licenses: [...mockIeObject.licenses, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 			},
 			mockUserInfo
 		);

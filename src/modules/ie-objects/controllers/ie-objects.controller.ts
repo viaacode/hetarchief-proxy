@@ -61,7 +61,7 @@ export class IeObjectsController {
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
 		private playerTicketService: PlayerTicketService,
-		private organisationService: OrganisationsService
+		private organisationsService: OrganisationsService
 	) {}
 
 	@Get('player-ticket')
@@ -126,6 +126,7 @@ export class IeObjectsController {
 		};
 	}
 
+	// TODO: rewrite export with limited access
 	@Get(':id/export')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
@@ -303,7 +304,7 @@ export class IeObjectsController {
 		// Get sector from Organisation when user is part of CP_ADMIN Group
 		let organisation = null;
 		if (user.getGroupId() === Group.CP_ADMIN) {
-			organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+			organisation = await this.organisationsService.findOrganisationBySchemaIdentifier(
 				user.getMaintainerId()
 			);
 		}

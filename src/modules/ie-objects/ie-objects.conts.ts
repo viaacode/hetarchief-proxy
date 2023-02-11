@@ -39,7 +39,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // indien toegang
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]]: [
@@ -52,20 +52,20 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 		[
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
-			IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang
+			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // indien toegang
 			IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang
 			IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
 			IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
 		],
 	[Group.KIOSK_VISITOR]: [
-		IeObjectLicense.BEZOEKERTOOL_METADATA,
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 		IeObjectLicense.BEZOEKERTOOL_CONTENT,
 	],
 	[Group.CP_ADMIN]: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang of eigen tenant
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // indien toegang of eigen tenant
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang of eigen tenant
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]]: [
@@ -79,7 +79,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 	]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang of eigen tenant
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // indien toegang of eigen tenant
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang of eigen tenant
 		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
 		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
@@ -87,19 +87,19 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 	[Group.MEEMOO_ADMIN]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA,
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 		IeObjectLicense.BEZOEKERTOOL_CONTENT,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.MEEMOO_ADMIN_HAS_VISITOR_SPACE]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // altijd
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.MEEMOO_ADMIN_IS_KEY_USER]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // altijd
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
 		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
 		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
@@ -109,7 +109,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 	]]: [
 		IeObjectLicense.PUBLIEK_METADATA_LTD,
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
+		IeObjectLicense.BEZOEKERTOOL_METADATA_ALL, // altijd
 		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
 		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
 		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
@@ -119,7 +119,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 export const IE_OBJECT_METADATA_SET_BY_LICENSE: Record<IeObjectLicense, IeObjectMetadataSet> = {
 	[IeObjectLicense.PUBLIEK_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
 	[IeObjectLicense.PUBLIEK_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
-	[IeObjectLicense.BEZOEKERTOOL_METADATA]: IeObjectMetadataSet.METADATA_ALL,
+	[IeObjectLicense.BEZOEKERTOOL_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[IeObjectLicense.BEZOEKERTOOL_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 	[IeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[IeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
