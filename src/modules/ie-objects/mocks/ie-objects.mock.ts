@@ -158,7 +158,7 @@ export const mockIeObjectWithMetadataSetALL = {
 	meemoofilmBase: null,
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA],
+	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 	accessThrough: IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 };
 

@@ -3,8 +3,10 @@ import { intersection, isEmpty, isNil, pick, union } from 'lodash';
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
 	IE_OBJECT_EXTRA_USER_SUB_GROUPS,
+	IE_OBJECT_INTRA_CP_LICENSES,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
+	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 } from '../ie-objects.conts';
 import {
@@ -15,6 +17,8 @@ import {
 } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
+
+import { Group } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
@@ -32,7 +36,7 @@ export const limitAccessToObjectDetails = (
 		accessibleVisitorSpaceIds: string[];
 	}
 ): Partial<IeObject> => {
-	// Step 1 - Determine Licenses
+	// Step 1a - Determine Licenses
 	// ---------------------------------------------------
 	let userGroup = isNil(userInfo?.userId)
 		? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
@@ -59,7 +63,7 @@ export const limitAccessToObjectDetails = (
 	}
 
 	// Determine common ground between licenses
-	const intersectedLicenses = intersection(
+	let intersectedLicenses = intersection(
 		ieObject.licenses,
 		IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]
 	);
@@ -68,18 +72,23 @@ export const limitAccessToObjectDetails = (
 		return null;
 	}
 
-	// TODO: (ARC-1361) - Sector as extra filter on INTRA_CP_CONTENT
+	// Step 1b = (ARC-1361) - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
 	// ---------------------------------------------------
-	// if (intersectedLicenses.includes(IeObjectLicense.INTRA_CP_CONTENT)) {
-	// 	const licensesBySector = (IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR.get(ieObject.sector)).get(userInfo.sector);
+	const hasIntraCPLicenses = intersection(intersectedLicenses, IE_OBJECT_INTRA_CP_LICENSES);
 
-	// 	if (isEmpty(licensesBySector)) {
-	// 		intersectedLicenses = difference(
-	// 			intersectedLicenses,
-	// 			[IeObjectLicense.INTRA_CP_CONTENT, IeObjectLicense.INTRA_CP_METADATA_ALL]
-	// 		);
-	// 	}
-	// }
+	if (
+		[Group.CP_ADMIN, Group.MEEMOO_ADMIN].includes(userInfo.groupId as Group) &&
+		userInfo?.sector &&
+		ieObject?.sector &&
+		userInfo.isKeyUser &&
+		hasIntraCPLicenses
+	) {
+		// User from sector X can view an ieObject with sector Y
+		const licensesBySector =
+			IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userInfo.sector][ieObject.sector];
+
+		intersectedLicenses = intersection(intersectedLicenses, licensesBySector);
+	}
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------

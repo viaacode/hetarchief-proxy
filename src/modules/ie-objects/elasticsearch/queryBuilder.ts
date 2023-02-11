@@ -212,7 +212,7 @@ export class QueryBuilder {
 						{
 							terms: {
 								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 									IeObjectLicense.BEZOEKERTOOL_CONTENT,
 								],
 							},
@@ -233,7 +233,7 @@ export class QueryBuilder {
 						{
 							terms: {
 								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA,
+									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 									IeObjectLicense.BEZOEKERTOOL_CONTENT,
 								],
 							},

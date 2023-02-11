@@ -1,5 +1,3 @@
-import { Group } from '../users/types';
-
 import {
 	IeObject,
 	IeObjectExtraUserGroupSubType,
@@ -9,6 +7,8 @@ import {
 	IeObjectSector,
 	IeObjectSectorLicenseMatrix,
 } from './ie-objects.types';
+
+import { Group } from '~modules/users/types';
 
 export const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
 	[IeObjectExtraUserGroupSubType.IS_KEY_USER]: '+isKeyUser',
@@ -30,96 +30,80 @@ export const IE_OBJECT_EXTRA_USER_GROUPS = {
 	[IeObjectExtraUserGroupType.MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER]: `${Group.MEEMOO_ADMIN}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.HAS_VISITOR_SPACE}${IE_OBJECT_EXTRA_USER_SUB_GROUPS.IS_KEY_USER}`,
 };
 
+export const IE_OBJECT_INTRA_CP_LICENSES = [
+	IeObjectLicense.INTRA_CP_CONTENT,
+	IeObjectLicense.INTRA_CP_METADATA_ALL,
+];
+
+export const IE_OBJECT_PUBLIC_LICENSES = [
+	IeObjectLicense.PUBLIEK_METADATA_LTD,
+	IeObjectLicense.PUBLIEK_METADATA_ALL,
+];
+
+export const IE_OBJECT_VISITOR_LICENSES = [
+	IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+	IeObjectLicense.BEZOEKERTOOL_CONTENT,
+];
+
 export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]> = {
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
+		...IE_OBJECT_PUBLIC_LICENSES,
 	],
-	[Group.VISITOR]: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+	[Group.VISITOR]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_INTRA_CP_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER]]:
 		[
-			IeObjectLicense.PUBLIEK_METADATA_LTD,
-			IeObjectLicense.PUBLIEK_METADATA_ALL,
-			IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang
-			IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang
-			IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-			IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
 		],
-	[Group.KIOSK_VISITOR]: [
-		IeObjectLicense.BEZOEKERTOOL_METADATA,
-		IeObjectLicense.BEZOEKERTOOL_CONTENT,
-	],
-	[Group.CP_ADMIN]: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+	[Group.KIOSK_VISITOR]: [...IE_OBJECT_VISITOR_LICENSES],
+	[Group.CP_ADMIN]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang of eigen tenant
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang of eigen tenant
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.CP_ADMIN_IS_KEY_USER]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_INTRA_CP_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[
 		IeObjectExtraUserGroupType.CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER
 	]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // indien toegang of eigen tenant
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // indien toegang of eigen tenant
-		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
+		...IE_OBJECT_INTRA_CP_LICENSES,
 	],
-	[Group.MEEMOO_ADMIN]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA,
-		IeObjectLicense.BEZOEKERTOOL_CONTENT,
-	],
+	[Group.MEEMOO_ADMIN]: [...IE_OBJECT_PUBLIC_LICENSES, ...IE_OBJECT_VISITOR_LICENSES],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.MEEMOO_ADMIN_HAS_VISITOR_SPACE]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.MEEMOO_ADMIN_IS_KEY_USER]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
-		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
+		...IE_OBJECT_INTRA_CP_LICENSES,
 	],
 	[IE_OBJECT_EXTRA_USER_GROUPS[
 		IeObjectExtraUserGroupType.MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER
 	]]: [
-		IeObjectLicense.PUBLIEK_METADATA_LTD,
-		IeObjectLicense.PUBLIEK_METADATA_ALL,
-		IeObjectLicense.BEZOEKERTOOL_METADATA, // altijd
-		IeObjectLicense.BEZOEKERTOOL_CONTENT, // altijd
-		IeObjectLicense.INTRA_CP_METADATA_ALL, // indien keyuser
-		IeObjectLicense.INTRA_CP_CONTENT, // indien keyuser
+		...IE_OBJECT_PUBLIC_LICENSES,
+		...IE_OBJECT_VISITOR_LICENSES,
+		...IE_OBJECT_INTRA_CP_LICENSES,
 	],
 };
 
 export const IE_OBJECT_METADATA_SET_BY_LICENSE: Record<IeObjectLicense, IeObjectMetadataSet> = {
 	[IeObjectLicense.PUBLIEK_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
 	[IeObjectLicense.PUBLIEK_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
-	[IeObjectLicense.BEZOEKERTOOL_METADATA]: IeObjectMetadataSet.METADATA_ALL,
+	[IeObjectLicense.BEZOEKERTOOL_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[IeObjectLicense.BEZOEKERTOOL_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 	[IeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[IeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
@@ -131,39 +115,127 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Record<
 > = {
 	// object sector: user sector: licenses
 	[IeObjectSector.CULTURE]: {
-		[IeObjectSector.CULTURE]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.GOVERNMENT]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.REGIONAL]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_CONTENT],
+		[IeObjectSector.CULTURE]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.GOVERNMENT]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.REGIONAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.PUBLIC]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.RURAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
 	},
 	[IeObjectSector.GOVERNMENT]: {
-		[IeObjectSector.CULTURE]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.GOVERNMENT]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.REGIONAL]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_CONTENT],
+		[IeObjectSector.CULTURE]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.GOVERNMENT]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.REGIONAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.PUBLIC]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.RURAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
 	},
 	[IeObjectSector.REGIONAL]: {
-		[IeObjectSector.CULTURE]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.GOVERNMENT]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.REGIONAL]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_METADATA_ALL],
-		[IeObjectSector.RURAL]: [],
+		[IeObjectSector.CULTURE]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.GOVERNMENT]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.REGIONAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.PUBLIC]: [
+			IeObjectLicense.PUBLIEK_METADATA_ALL,
+			IeObjectLicense.INTRA_CP_METADATA_ALL,
+			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+		],
+		[IeObjectSector.RURAL]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	},
 	[IeObjectSector.PUBLIC]: {
-		[IeObjectSector.CULTURE]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.GOVERNMENT]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.REGIONAL]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.RURAL]: [],
+		[IeObjectSector.CULTURE]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.GOVERNMENT]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.REGIONAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.PUBLIC]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.RURAL]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	},
 	[IeObjectSector.RURAL]: {
-		[IeObjectSector.CULTURE]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.GOVERNMENT]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.REGIONAL]: [IeObjectLicense.INTRA_CP_CONTENT],
-		[IeObjectSector.PUBLIC]: [],
-		[IeObjectSector.RURAL]: [],
+		[IeObjectSector.CULTURE]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.GOVERNMENT]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.REGIONAL]: [
+			...IE_OBJECT_PUBLIC_LICENSES,
+			...IE_OBJECT_VISITOR_LICENSES,
+			...IE_OBJECT_INTRA_CP_LICENSES,
+		],
+		[IeObjectSector.PUBLIC]: [
+			IeObjectLicense.PUBLIEK_METADATA_ALL,
+			IeObjectLicense.INTRA_CP_METADATA_ALL,
+			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+		],
+		[IeObjectSector.RURAL]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	},
 };
 
