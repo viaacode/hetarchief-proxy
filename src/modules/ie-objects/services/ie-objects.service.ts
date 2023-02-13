@@ -16,6 +16,7 @@ import {
 	ElasticsearchResponse,
 	IeObject,
 	IeObjectLicense,
+	IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -54,14 +55,14 @@ export class IeObjectsService {
 		referer: string,
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo,
-		organisation?: Organisation
+		sector?: IeObjectSector | null
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user: {
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
-				sector: organisation?.sector || null,
+				sector: sector || null,
 			},
 			visitorSpaceInfo,
 		});
