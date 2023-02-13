@@ -35,7 +35,7 @@ describe('Limit access to object details', () => {
 			},
 			{
 				...mockUserInfo,
-				userGroup: Group.CP_ADMIN,
+				groupId: Group.CP_ADMIN,
 				isKeyUser: true,
 			}
 		);

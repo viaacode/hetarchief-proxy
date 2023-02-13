@@ -1,20 +1,20 @@
-import { difference, intersection, isEmpty, isNil, pick, union } from 'lodash';
+import { intersection, isEmpty, isNil, pick, union } from 'lodash';
 
-import { Group } from '../../users/types';
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
+	IE_OBJECT_EXTRA_USER_SUB_GROUPS,
 	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
-	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 } from '../ie-objects.conts';
 import {
 	IeObject,
-	IeObjectAccessThrough,
+	IeObjectExtraUserGroupSubType,
 	IeObjectExtraUserGroupType,
-	IeObjectLicense,
 	IeObjectSector,
 } from '../ie-objects.types';
+
+import { getAccessThrough } from './get-access-through';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
@@ -23,9 +23,12 @@ export const limitAccessToObjectDetails = (
 		userId: string | null;
 		isKeyUser: boolean;
 		sector: IeObjectSector | null;
-		userGroup: string;
+		groupId: string;
 		maintainerId: string;
+		// folders -> if ie object id is in here then the user has folder access to this visitor space
 		accessibleObjectIdsThroughFolders: string[];
+		// May only contain FULL ACCESS Visitor space ids
+		// full -> if object.maintainerId is in this list than the user has full access to visitor space
 		accessibleVisitorSpaceIds: string[];
 	}
 ): Partial<IeObject> => {
@@ -33,24 +36,25 @@ export const limitAccessToObjectDetails = (
 	// ---------------------------------------------------
 	let userGroup = isNil(userInfo?.userId)
 		? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-		: userInfo.userGroup;
+		: userInfo.groupId;
+	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
+		ieObject?.schemaIdentifier
+	);
+	const hasFullAccess = userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId);
 
 	// Check if user has visitor space access (own or another)
 	// maintainerId === ieObject.maintainerId => own visitor space
 	// || accessibleOrIds === ieObject.maintainerId => other accessible visitor space
-	if (
-		userInfo?.maintainerId === ieObject?.maintainerId ||
-		userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId)
-	) {
+	if (userInfo?.maintainerId === ieObject?.maintainerId || hasFolderAccess || hasFullAccess) {
 		userGroup = `${userGroup}${
-			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.HAS_VISITOR_SPACE]
+			IE_OBJECT_EXTRA_USER_SUB_GROUPS[IeObjectExtraUserGroupSubType.HAS_VISITOR_SPACE]
 		}`;
 	}
 
 	// Is user key user?
 	if (userInfo.isKeyUser) {
 		userGroup = `${userGroup}${
-			IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.IS_KEY_USER]
+			IE_OBJECT_EXTRA_USER_SUB_GROUPS[IeObjectExtraUserGroupSubType.IS_KEY_USER]
 		}`;
 	}
 
@@ -59,6 +63,10 @@ export const limitAccessToObjectDetails = (
 		ieObject.licenses,
 		IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]
 	);
+
+	if (isEmpty(intersectedLicenses)) {
+		return null;
+	}
 
 	// TODO: (ARC-1361) - Sector as extra filter on INTRA_CP_CONTENT
 	// ---------------------------------------------------
@@ -87,8 +95,11 @@ export const limitAccessToObjectDetails = (
 	// ---------------------------------------------------
 	const limitedIeObject = pick(ieObject, ieObjectLimitedProps);
 
+	// Determine access through
+	const accessThrough = getAccessThrough(hasFolderAccess, hasFullAccess, !isNil(userInfo.sector));
+
 	return {
 		...limitedIeObject,
-		accessThrough: IeObjectAccessThrough.PUBLIC_INFO,
+		accessThrough,
 	};
 };

@@ -12,7 +12,7 @@ export enum MediaFormat {
 export enum IeObjectLicense {
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
 	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
-	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA',
+	BEZOEKERTOOL_METADATA = 'BEZOEKERTOOL-METADATA-ALL',
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
 	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
@@ -39,17 +39,22 @@ export enum IeObjectAccessThrough {
 	SECTOR = 'SECTOR',
 }
 
-export enum IeObjectExtraUserGroupType {
-	ANONYMOUS = 'ANONYMOUS',
+export enum IeObjectExtraUserGroupSubType {
 	HAS_VISITOR_SPACE = 'HAS_VISITOR_SPACE',
 	IS_KEY_USER = 'IS_KEY_USER',
+}
+
+export enum IeObjectExtraUserGroupType {
+	ANONYMOUS = 'ANONYMOUS',
 	VISITOR_HAS_VISITOR_SPACE = 'VISITOR_HAS_VISITOR_SPACE',
 	VISITOR_IS_KEY_USER = 'VISITOR_IS_KEY_USER',
 	VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER = 'VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER',
 	CP_ADMIN_HAS_VISITOR_SPACE = 'CP_ADMIN_HAS_VISITOR_SPACE',
 	CP_ADMIN_IS_KEY_USER = 'CP_ADMIN_IS_KEY_USER',
 	CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
+	MEEMOO_ADMIN_HAS_VISITOR_SPACE = 'MEEMOO_ADMIN_HAS_VISITOR_SPACE',
 	MEEMOO_ADMIN_IS_KEY_USER = 'MEEMOO_ADMIN_IS_KEY_USER',
+	MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
 }
 
 export interface IeObjectFile {
@@ -77,17 +82,8 @@ export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID (not unique per object)
 	premisIdentifier: any;
-	premisIsPartOf?: string;
-	series?: string[];
-	program?: string[];
-	alternativeName?: string[];
 	maintainerId: string;
 	maintainerName: string;
-	contactInfo?: ContactInfo;
-	copyrightHolder?: string;
-	copyrightNotice?: string;
-	durationInSeconds?: number;
-	numberOfPages?: number;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
@@ -104,12 +100,8 @@ export interface IeObject {
 	dctermsMedium: string;
 	inLanguage: string[];
 	thumbnailUrl: string;
-	// embedUrl: string;
 	duration: string;
-	license?: any;
-	meemooMediaObjectId?: string;
 	dateCreated: string;
-	dateCreatedLowerBound?: string;
 	ebucoreObjectType: string;
 	meemoofilmColor: boolean;
 	meemoofilmBase: string;
@@ -118,11 +110,29 @@ export interface IeObject {
 	meemooOriginalCp: string;
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
-	representations?: IeObjectRepresentation[];
-	licenses?: IeObjectLicense[];
-	sector?: IeObjectSector;
-	ebucoreIsMediaFragmentOf?: string;
+	licenses: string[];
+	series?: string[];
 	accessThrough?: IeObjectAccessThrough;
+	program?: string[];
+	alternativeName?: string[];
+	premisIsPartOf?: string;
+	contactInfo?: ContactInfo;
+	copyrightHolder?: string;
+	copyrightNotice?: string;
+	durationInSeconds?: number;
+	numberOfPages?: number;
+	meemooMediaObjectId?: string;
+	sector?: IeObjectSector;
+	representations?: IeObjectRepresentation[];
+	dateCreatedLowerBound?: string;
+	ebucoreIsMediaFragmentOf?: string;
+	meemoofilmCaption?: string;
+	meemoofilmCaptionLanguage?: string;
+	ebucoreHasMediaFragmentOf?: boolean;
+	serviceProvider?: any; // type onbekend
+	transcript?: string;
+	caption?: string;
+	categorie?: any; // type onbekend
 }
 
 export interface MediaSearchAggregation<T> {
@@ -221,6 +231,11 @@ export interface ElasticsearchObject {
 	schema_name: string;
 }
 
-export interface IeObjectsWithAggregations extends IPagination<IeObject> {
+export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
 	aggregations: any;
+}
+
+export interface IeObjectsVisitorSpaceInfo {
+	visitorSpaceIds: string[];
+	objectIds: string[];
 }

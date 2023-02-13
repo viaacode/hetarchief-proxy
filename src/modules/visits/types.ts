@@ -91,6 +91,7 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
+	collectionsIeSchemaIds?: string[];
 }
 
 export interface VisitSpaceCount {

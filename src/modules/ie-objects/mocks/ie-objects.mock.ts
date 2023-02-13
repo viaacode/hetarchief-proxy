@@ -1,5 +1,10 @@
 import { Group } from '../../users/types';
-import { IeObject, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
+import {
+	IeObject,
+	IeObjectAccessThrough,
+	IeObjectLicense,
+	IeObjectSector,
+} from '../ie-objects.types';
 
 export const mockIeObject: IeObject = {
 	schemaIdentifier:
@@ -104,6 +109,7 @@ export const mockIeObjectWithMetadataSetLTD = {
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	accessThrough: IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 };
 
 export const mockIeObjectWithMetadataSetALL = {
@@ -135,7 +141,6 @@ export const mockIeObjectWithMetadataSetALL = {
 	genre: ['program'],
 	spatial: null,
 	temporal: null,
-	publisher: null,
 	keywords: [
 		'INTERVIEW',
 		'ZIEKTE',
@@ -154,6 +159,7 @@ export const mockIeObjectWithMetadataSetALL = {
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA],
+	accessThrough: IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 };
 
 export const mockIeObjectWithMetadataSetALLWithEssence = {
@@ -178,7 +184,6 @@ export const mockIeObjectWithMetadataSetALLWithEssence = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
-	publisher: null,
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -207,22 +212,23 @@ export const mockIeObjectWithMetadataSetALLWithEssence = {
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
 	licenses: [IeObjectLicense.INTRA_CP_CONTENT],
+	accessThrough: IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 };
 
 export const mockUserInfo: {
 	userId: string | null;
 	isKeyUser: boolean;
 	sector: IeObjectSector | null;
-	userGroup: string;
+	groupId: string;
 	maintainerId: string;
 	accessibleObjectIdsThroughFolders: string[];
-	accessibleVisitorSpaceOrIds: string[];
+	accessibleVisitorSpaceIds: string[];
 } = {
 	userId: '2ca2fcad-0ef1-4b0c-ad14-ea83984161c9',
 	isKeyUser: false,
 	sector: null,
-	userGroup: Group.VISITOR,
+	groupId: Group.VISITOR,
 	maintainerId: '2f6553e3-e06d-45c0-9a4b-d5ad6f2120f4',
 	accessibleObjectIdsThroughFolders: [],
-	accessibleVisitorSpaceOrIds: ['OR-rf5kf25'],
+	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };

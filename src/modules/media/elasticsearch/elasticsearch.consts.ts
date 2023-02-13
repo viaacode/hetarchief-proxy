@@ -30,6 +30,7 @@ export enum SearchFilterField {
 	LOCATION = 'location',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
+	MAINTAINER = 'maintainer',
 }
 
 export enum Operator {
@@ -98,6 +99,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	medium: QueryType.TERMS,
 	name: QueryType.TERM, // used for exact (not) matching
 	description: QueryType.TERM, // used for exact (not) matching
+	maintainer: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
@@ -126,6 +128,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	location: 'schema_spatial_coverage',
 	language: 'schema_in_language',
 	medium: 'dcterms_medium',
+	maintainer: 'schema_maintainer.schema_identifier',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {

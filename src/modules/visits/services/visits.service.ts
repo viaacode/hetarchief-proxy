@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, set } from 'lodash';
+import { find, isArray, isEmpty, isNil, set, union } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -181,6 +181,11 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
+			collectionsIeSchemaIds: union(
+				...graphQlVisit.requested_by.collections.map((collection) =>
+					collection.ies?.map((ie) => ie.ie_schema_identifier)
+				)
+			),
 		};
 	}
 

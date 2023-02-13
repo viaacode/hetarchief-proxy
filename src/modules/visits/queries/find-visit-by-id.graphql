@@ -9,6 +9,11 @@ query findVisitById($id: uuid!) {
 			first_name
 			last_name
 			mail
+			collections {
+				ies {
+					ie_schema_identifier
+				}
+			}
 		}
 		user_reason
 		user_timeframe
