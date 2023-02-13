@@ -258,7 +258,7 @@ export class IeObjectsController {
 			referer,
 			user,
 			visitorSpaceAccessInfo,
-			organisation
+			organisation?.sector || null
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
@@ -302,6 +302,9 @@ export class IeObjectsController {
 		organisation: Organisation;
 	}> {
 		// Get sector from Organisation when user is part of CP_ADMIN Group
+		// TODO: It might be useful to also select sector when the user is first logged in,
+		//		so the sector is always available on the session user object.
+		//		/src/modules/auth/controllers/het-archief.controller.ts#L128-L130
 		let organisation = null;
 		if (user.getGroupId() === Group.CP_ADMIN) {
 			organisation = await this.organisationsService.findOrganisationBySchemaIdentifier(
