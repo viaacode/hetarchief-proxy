@@ -61,7 +61,7 @@ describe('Limit access to object details', () => {
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [
 				IeObjectAccessThrough.SECTOR,
-				IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
 				IeObjectAccessThrough.PUBLIC_INFO,
 			],
 		});
@@ -97,7 +97,7 @@ describe('Limit access to object details', () => {
 			],
 			accessThrough: [
 				IeObjectAccessThrough.SECTOR,
-				IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
 				IeObjectAccessThrough.PUBLIC_INFO,
 			],
 		});
@@ -134,7 +134,7 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			],
 			accessThrough: [
-				IeObjectAccessThrough.VISITOR_SPACE_FULL,
+				IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 				IeObjectAccessThrough.PUBLIC_INFO,
 			],
 		});
@@ -259,7 +259,7 @@ describe('Limit access to object details', () => {
 			],
 			accessThrough: [
 				IeObjectAccessThrough.SECTOR,
-				IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
 				IeObjectAccessThrough.PUBLIC_INFO,
 			],
 		});

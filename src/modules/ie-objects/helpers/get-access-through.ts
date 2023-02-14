@@ -12,11 +12,11 @@ export const getAccessThrough = (
 	}
 
 	if (hasFolderAccess) {
-		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FOLDERS);
 	}
 
 	if (hasFullAccess) {
-		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FOLDERS);
+		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
 	}
 
 	if (hasPublicLicenses) {
