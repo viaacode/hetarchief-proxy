@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
-import i18n from 'i18next';
 
 import { Configuration } from '~config';
 
@@ -10,6 +9,7 @@ import { NotificationsService } from '../services/notifications.service';
 import { NotificationsController } from './notifications.controller';
 
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -17,6 +17,7 @@ import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
+import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
@@ -105,6 +106,13 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onCancelVisitRequest: jest.fn(),
 };
 
+const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
+	getTranslations: jest.fn(),
+	t: jest.fn((translationKey: string) => nlJson[translationKey]),
+	refreshBackendTranslations: jest.fn(),
+	onApplicationBootstrap: jest.fn(),
+};
+
 const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -138,6 +146,10 @@ describe('NotificationsController', () => {
 				{
 					provide: VisitsService,
 					useValue: mockVisitsService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 				{
 					provide: ConfigService,
@@ -180,7 +192,7 @@ describe('NotificationsController', () => {
 		it('should throw an error if the user is not logged in', async () => {
 			let error;
 			try {
-				const notifications = await notificationsController.getNotifications(
+				await notificationsController.getNotifications(
 					{ page: 1, size: 20 },
 					new SessionUserEntity({
 						...mockUser,
