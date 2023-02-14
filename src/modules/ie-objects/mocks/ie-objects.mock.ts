@@ -158,7 +158,7 @@ export const mockIeObjectWithMetadataSetALL = {
 	meemoofilmBase: null,
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
-	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA],
+	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 	accessThrough: IeObjectAccessThrough.VISITOR_SPACE_FOLDERS,
 };
 
@@ -228,7 +228,7 @@ export const mockUserInfo: {
 	isKeyUser: false,
 	sector: null,
 	groupId: Group.VISITOR,
-	maintainerId: '2f6553e3-e06d-45c0-9a4b-d5ad6f2120f4',
+	maintainerId: 'OR-rf5kf25',
 	accessibleObjectIdsThroughFolders: [],
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
