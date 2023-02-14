@@ -1,4 +1,3 @@
-import { Group } from '../../users/types';
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
 import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 import {
@@ -10,6 +9,8 @@ import {
 } from '../mocks/ie-objects.mock';
 
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
+
+import { Group } from '~modules/users/types';
 
 describe('Limit access to object details', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen - https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
