@@ -20,6 +20,7 @@ export const IE_OBJECT_EXTRA_USER_GROUPS = {
 export const IE_OBJECT_INTRA_CP_LICENSES = [
 	IeObjectLicense.INTRA_CP_CONTENT,
 	IeObjectLicense.INTRA_CP_METADATA_ALL,
+	IeObjectLicense.INTRA_CP_METADATA_LTD,
 ];
 
 export const IE_OBJECT_PUBLIC_LICENSES = [

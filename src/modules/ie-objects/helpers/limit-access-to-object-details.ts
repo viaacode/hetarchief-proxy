@@ -1,4 +1,4 @@
-import { intersection, isEmpty, isNil, pick, union, uniq } from 'lodash';
+import { intersection, isEmpty, isNil, pick, uniq } from 'lodash';
 
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
@@ -40,7 +40,6 @@ export const limitAccessToObjectDetails = (
 	let ieObjectLicenses: IeObjectLicense[] = [...ieObject.licenses];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
-	const objectPublicLicenses = intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
 		ieObject?.schemaIdentifier
 	);
@@ -154,8 +153,12 @@ export const limitAccessToObjectDetails = (
 	const accessThrough = getAccessThrough(
 		hasFullAccess,
 		hasFolderAccess,
-		!isEmpty(objectIntraCpLicenses),
-		!isEmpty(objectPublicLicenses)
+		ieObjectLicenses.some((license: IeObjectLicense) =>
+			IE_OBJECT_INTRA_CP_LICENSES.includes(license)
+		),
+		ieObjectLicenses.some((license: IeObjectLicense) =>
+			IE_OBJECT_PUBLIC_LICENSES.includes(license)
+		)
 	);
 
 	return {
