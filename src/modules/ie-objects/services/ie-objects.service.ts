@@ -195,7 +195,7 @@ export class IeObjectsService {
 			inLanguage: esObject?.schema_in_language,
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			duration: esObject?.schema_duration,
-			licenses: esObject?.schema_license,
+			licenses: esObject?.schema_license as IeObjectLicense[],
 			meemooMediaObjectId: null,
 			dateCreated: esObject?.schema_date_created,
 			dateCreatedLowerBound: null,

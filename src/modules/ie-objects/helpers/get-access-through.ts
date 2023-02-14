@@ -1,21 +1,27 @@
 import { IeObjectAccessThrough } from '../ie-objects.types';
 
 export const getAccessThrough = (
-	hasFolderAccess: boolean,
 	hasFullAccess: boolean,
-	isSector: boolean
-): IeObjectAccessThrough => {
-	if (isSector) {
-		return IeObjectAccessThrough.SECTOR;
+	hasFolderAccess: boolean,
+	hasIntraCPLicenses: boolean,
+	hasPublicLicenses: boolean
+): IeObjectAccessThrough[] => {
+	const accessThrough = [];
+	if (hasIntraCPLicenses) {
+		accessThrough.push(IeObjectAccessThrough.SECTOR);
 	}
 
 	if (hasFolderAccess) {
-		return IeObjectAccessThrough.VISITOR_SPACE_FULL;
+		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
 	}
 
 	if (hasFullAccess) {
-		return IeObjectAccessThrough.VISITOR_SPACE_FOLDERS;
+		accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FOLDERS);
 	}
 
-	return IeObjectAccessThrough.PUBLIC_INFO;
+	if (hasPublicLicenses) {
+		accessThrough.push(IeObjectAccessThrough.PUBLIC_INFO);
+	}
+
+	return accessThrough;
 };
