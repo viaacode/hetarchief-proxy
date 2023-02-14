@@ -1,4 +1,4 @@
-import { intersection, isEmpty, isNil, pick, union } from 'lodash';
+import { intersection, isEmpty, isNil, pick, union, uniq } from 'lodash';
 
 import {
 	IE_OBJECT_EXTRA_USER_GROUPS,
@@ -39,8 +39,8 @@ export const limitAccessToObjectDetails = (
 ): Partial<IeObject> => {
 	let ieObjectLicenses: IeObjectLicense[] = [...ieObject.licenses];
 
-	const hasIntraCPLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
-	const hasPublicLicenses = intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES);
+	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
+	const objectPublicLicenses = intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
 		ieObject?.schemaIdentifier
 	);
@@ -58,7 +58,7 @@ export const limitAccessToObjectDetails = (
 	}
 
 	// Check if user
-	// - has visitor space access through own, Full or folder
+	// - has visitor space access through own, full or folder
 	// - maintainerId === ieObject.maintainerId => own visitor space
 	// - accessibleOrIds === ieObject.maintainerId => other accessible visitor space
 	if (ieObject?.maintainerId === userInfo.maintainerId || hasFolderAccess || hasFullAccess) {
@@ -78,7 +78,7 @@ export const limitAccessToObjectDetails = (
 		userInfo?.sector &&
 		ieObject?.sector &&
 		userInfo?.isKeyUser &&
-		!isEmpty(hasIntraCPLicenses)
+		!isEmpty(objectIntraCpLicenses)
 	) {
 		// User from sector X can view an ieObject with sector Y
 		const licensesBySector =
@@ -136,19 +136,15 @@ export const limitAccessToObjectDetails = (
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------
-	let ieObjectLimitedProps = [];
-
 	if (isEmpty(ieObjectLicenses)) {
 		return null;
 	}
 
-	for (const license of ieObjectLicenses) {
-		ieObjectLimitedProps.push(
-			IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[license]]
-		);
-	}
-
-	ieObjectLimitedProps = union(...ieObjectLimitedProps);
+	const ieObjectLimitedProps: string[] = uniq(
+		ieObjectLicenses.flatMap((license: IeObjectLicense) => {
+			return IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[license]];
+		})
+	);
 
 	// Step 3 - Return ie object with limited access props
 	// ---------------------------------------------------
@@ -158,8 +154,8 @@ export const limitAccessToObjectDetails = (
 	const accessThrough = getAccessThrough(
 		hasFullAccess,
 		hasFolderAccess,
-		!isEmpty(hasIntraCPLicenses),
-		!isEmpty(hasPublicLicenses)
+		!isEmpty(objectIntraCpLicenses),
+		!isEmpty(objectPublicLicenses)
 	);
 
 	return {

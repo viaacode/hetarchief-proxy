@@ -2,7 +2,7 @@ import { IeObjectAccessThrough, IeObjectLicense } from './../ie-objects.types';
 import { getAccessThrough } from './get-access-through';
 
 describe('Access Through', () => {
-	const hasIntraCPLicenses = [
+	const hasIntraCpLicenses = [
 		IeObjectLicense.PUBLIEK_METADATA_ALL,
 		IeObjectLicense.INTRA_CP_CONTENT,
 		IeObjectLicense.INTRA_CP_METADATA_ALL,
@@ -27,7 +27,7 @@ describe('Access Through', () => {
 		expect(accessThrough).toEqual([IeObjectAccessThrough.PUBLIC_INFO]);
 	});
 	it('Should return SECTOR', () => {
-		const accessThrough = getAccessThrough(false, false, hasIntraCPLicenses, false);
+		const accessThrough = getAccessThrough(false, false, hasIntraCpLicenses, false);
 
 		expect(accessThrough).toEqual([IeObjectAccessThrough.SECTOR]);
 	});
@@ -42,7 +42,7 @@ describe('Access Through', () => {
 		expect(accessThrough).toEqual([IeObjectAccessThrough.VISITOR_SPACE_FULL]);
 	});
 	it('Should return PUBLIC INFO & SECTOR & VISITOR_SPACE_FULL', () => {
-		const accessThrough = getAccessThrough(true, false, hasIntraCPLicenses, hasPublicLicenses);
+		const accessThrough = getAccessThrough(true, false, hasIntraCpLicenses, hasPublicLicenses);
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -51,7 +51,7 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return PUBLIC INFO & SECTOR & VISITOR_SPACE_FOLDERS', () => {
-		const accessThrough = getAccessThrough(false, true, hasIntraCPLicenses, hasPublicLicenses);
+		const accessThrough = getAccessThrough(false, true, hasIntraCpLicenses, hasPublicLicenses);
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -60,7 +60,7 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return SECTOR & VISITOR_SPACE_FULL', () => {
-		const accessThrough = getAccessThrough(true, false, hasIntraCPLicenses, false);
+		const accessThrough = getAccessThrough(true, false, hasIntraCpLicenses, false);
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -68,7 +68,7 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return SECTOR & VISITOR_SPACE_FOLDERS', () => {
-		const accessThrough = getAccessThrough(false, true, hasIntraCPLicenses, false);
+		const accessThrough = getAccessThrough(false, true, hasIntraCpLicenses, false);
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
