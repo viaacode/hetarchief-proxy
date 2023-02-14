@@ -22,6 +22,7 @@ import {
 
 import { NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
+import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
@@ -29,22 +30,15 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
-import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 
 @ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationsController {
 	constructor(
 		private notificationsService: NotificationsService,
-		private visitService: VisitsService
+		private visitService: VisitsService,
+		private translationsService: TranslationsService
 	) {}
-
-	/**
-	 * alias function so that translation script correctly identifies these translations
-	 */
-	private t(key: string, variables?: any): string {
-		return getTranslationFallback(key, variables);
-	}
 
 	@UseGuards(LoggedInGuard)
 	@Get()
@@ -55,13 +49,12 @@ export class NotificationsController {
 		if (!user.getId()) {
 			throw new ForbiddenException('You need to be logged in to get your notifications');
 		}
-		const notifications = await this.notificationsService.findNotificationsByUser(
+		return await this.notificationsService.findNotificationsByUser(
 			user.getId(),
 			addMonths(new Date(), -1).toISOString(),
 			queryDto.page,
 			queryDto.size
 		);
-		return notifications;
 	}
 
 	@UseGuards(LoggedInGuard)
@@ -70,10 +63,9 @@ export class NotificationsController {
 		@Param('notificationId') notificationId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Notification> {
-		const notification = await this.notificationsService.update(notificationId, user.getId(), {
+		return await this.notificationsService.update(notificationId, user.getId(), {
 			status: NotificationStatus.READ,
 		});
-		return notification;
 	}
 
 	@UseGuards(LoggedInGuard)
@@ -93,7 +85,7 @@ export class NotificationsController {
 	 * This api call will be triggered by a cron job somewhere in openshift. We do this as a route for 2 reasons:
 	 *     - We can test these easily by triggering them using postman
 	 *     - They can be triggered once on a single pod if the proxy every has to be load balanced across multiple pods
-	 * @param apiKey
+	 * @param apikey
 	 */
 	@UseGuards(ApiKeyGuard)
 	@Post('check-new')
@@ -115,7 +107,7 @@ export class NotificationsController {
 			accessEndedNotifications.length;
 		if (totalNotificationsSent > 0) {
 			return {
-				status: this.t(
+				status: this.translationsService.t(
 					'modules/notifications/controllers/notifications___notificaties-verzonden'
 				),
 				notifications: {
@@ -130,7 +122,7 @@ export class NotificationsController {
 			};
 		} else {
 			return {
-				status: this.t(
+				status: this.translationsService.t(
 					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
 				),
 				total: 0,
@@ -149,13 +141,13 @@ export class NotificationsController {
 			(visit): GqlCreateOrUpdateNotification => {
 				const endDate = formatAsBelgianDate(visit.endAt);
 				return {
-					title: this.t(
+					title: this.translationsService.t(
 						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 						{
 							name: visit.spaceName,
 						}
 					),
-					description: this.t(
+					description: this.translationsService.t(
 						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
 						{
 							endDate,
@@ -181,14 +173,14 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: this.t(
+				title: this.translationsService.t(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
 						name: visit.spaceName,
 						minutes: 15,
 					}
 				),
-				description: this.t(
+				description: this.translationsService.t(
 					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
 				),
 				visit_id: visit.id,
@@ -210,13 +202,13 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: this.t(
+				title: this.translationsService.t(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{
 						name: visit.spaceName,
 					}
 				),
-				description: this.t(
+				description: this.translationsService.t(
 					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
 				),
 				visit_id: visit.id,
@@ -227,5 +219,37 @@ export class NotificationsController {
 		);
 
 		return this.notificationsService.create(notifications);
+	}
+
+	/**
+	 * Endpoint used for debugging the translations that are used for sending out notifications
+	 */
+	@Get('translations')
+	public async checkNotificationTranslations(): Promise<Record<string, string>> {
+		const notificationTranslationKeys = [
+			'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
+			'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
+			'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
+			'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
+			'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent',
+			'modules/notifications/controllers/notifications___notificaties-verzonden',
+			'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen',
+			'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest',
+			'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd',
+			'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken',
+			'modules/notifications/services/notifications___er-werd-geen-reden-opgegeven',
+			'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd',
+			'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd',
+			'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd-je-zal-toegang-hebben-van-start-date-tot-end-date',
+			'modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd',
+			'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
+			'modules/notifications/services/notifications___reden-reason',
+		];
+		return Object.fromEntries(
+			notificationTranslationKeys.map((translationKey) => [
+				translationKey,
+				this.translationsService.t(translationKey),
+			])
+		);
 	}
 }
