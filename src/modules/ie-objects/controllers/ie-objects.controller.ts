@@ -10,7 +10,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { Organisation } from '~modules/organisations/organisations.types';
-import OrganisationsService from '~modules/organisations/services/organisations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';

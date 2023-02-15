@@ -1,7 +1,7 @@
 import { Controller, Headers, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import OrganisationsService from '~modules/organisations/services/organisations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 @ApiTags('Organisations')

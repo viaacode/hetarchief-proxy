@@ -29,7 +29,7 @@ import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import OrganisationsService from '~modules/organisations/services/organisations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';

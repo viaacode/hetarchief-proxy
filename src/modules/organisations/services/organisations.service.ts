@@ -28,7 +28,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()
-export default class OrganisationsService implements OnApplicationBootstrap {
+export class OrganisationsService implements OnApplicationBootstrap {
 	private logger: Logger = new Logger(OrganisationsService.name, { timestamp: true });
 
 	constructor(
