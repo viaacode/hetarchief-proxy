@@ -174,6 +174,7 @@ export class IeObjectsService {
 			alternativeName: esObject.schema_is_part_of?.alternatief,
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
+			sector: esObject?.schema_maintainer?.organization_type,
 			contactInfo: null,
 			copyrightHolder: null,
 			copyrightNotice: null,

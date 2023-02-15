@@ -3,6 +3,7 @@ import {
 	InsertUserMutation,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Idp } from '~shared/auth/auth.types';
 
 export enum Permission {
@@ -76,6 +77,7 @@ export interface User {
 	isKeyUser: boolean;
 	maintainerId?: string;
 	visitorSpaceSlug?: string;
+	sector?: IeObjectSector | null;
 }
 
 export interface GqlPermission {

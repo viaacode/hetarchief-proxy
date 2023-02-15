@@ -53,6 +53,10 @@ export class SessionUserEntity {
 		return this.user?.maintainerId || null;
 	}
 
+	public getSector(): string {
+		return this.user?.sector || null;
+	}
+
 	public getVisitorSpaceSlug(): string {
 		return get(this.user, 'visitorSpaceSlug');
 	}
