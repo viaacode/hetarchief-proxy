@@ -49,7 +49,6 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit } from '~modules/visits/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
 @Injectable()
@@ -88,6 +87,7 @@ export class CollectionsService {
 			datePublished: gqlIeObject?.schema_date_published || null,
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound || null,
 			duration: gqlIeObject?.schema_duration || null,
+			licenses: gqlIeObject?.schema_license || null,
 		};
 	}
 
