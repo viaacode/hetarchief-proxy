@@ -3,7 +3,7 @@ import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 export interface OrganisationInfoV2 {
 	id: string;
 	description: string;
-	sector: string;
+	sector: IeObjectSector | null;
 	logo: {
 		iri: string;
 	};
@@ -37,7 +37,8 @@ export interface ParsedOrganisation {
 		email: string;
 	}[];
 	description: string;
-	sector: string;
+	// Remark here organization is with Z
+	haorg_organization_type: string;
 	logo: {
 		iri: string;
 	};
@@ -74,7 +75,8 @@ export interface GqlOrganisation {
 	updated_at?: string;
 	schema_name?: string | null;
 	description?: string;
-	sector?: IeObjectSector | null;
+	// Remark here organization is with Z
+	haorg_organization_type?: IeObjectSector | null;
 }
 
 export interface Organisation {
