@@ -26,9 +26,7 @@ import {
 	GetObjectIdentifierTupleQuery,
 	GetObjectIdentifierTupleQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { Organisation } from '~modules/organisations/organisations.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
 @Injectable()

@@ -9,10 +9,8 @@ import { IeObjectsWithAggregations } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
-import { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -22,11 +20,7 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 export class IeObjectsController {
 	private logger: Logger = new Logger(IeObjectsController.name, { timestamp: true });
 
-	constructor(
-		private ieObjectsService: IeObjectsService,
-		private visitsService: VisitsService,
-		private organisationService: OrganisationsService
-	) {}
+	constructor(private ieObjectsService: IeObjectsService, private visitsService: VisitsService) {}
 
 	@Get('related/count')
 	public async countRelated(
@@ -43,17 +37,6 @@ export class IeObjectsController {
 	): Promise<IeObjectsWithAggregations> {
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
-
-		// Get sector from Organisation when user is part of CP_ADMIN Group
-		// TODO: It might be useful to also select sector when the user is first logged in,
-		//		so the sector is always available on the session user object.
-		//		/src/modules/auth/controllers/het-archief.controller.ts#L128-L130
-		let organisation: Organisation = null;
-		if (user.getGroupId() === Group.CP_ADMIN) {
-			organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-				user.getMaintainerId()
-			);
-		}
 
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
@@ -78,7 +61,7 @@ export class IeObjectsController {
 			referer,
 			user,
 			visitorSpaceAccessInfo,
-			organisation?.sector || null
+			user.getSector() || null
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
@@ -88,7 +71,7 @@ export class IeObjectsController {
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
-					sector: organisation?.sector || null,
+					sector: user.getSector() || null,
 					groupId: user.getGroupId() || null,
 					maintainerId: user.getMaintainerId() || null,
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
