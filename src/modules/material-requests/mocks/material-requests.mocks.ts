@@ -32,6 +32,8 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 				slug: 'vrt',
 			},
 		},
+		meemoo_identifier: '',
+		schema_name: '',
 	},
 };
 
@@ -111,8 +113,8 @@ const mockMaterialRequest2: MaterialRequest = {
 	maintainerName: 'Vlaams Parlement',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-7h1dk9t',
 	maintainerSlug: 'vlaams-parlement',
-	objectName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
-	objectPid: 'q23qv3wp5b',
+	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
+	meemooIdentifier: 'q23qv3wp5b',
 };
 
 export const mockMaterialRequestsResponse = {

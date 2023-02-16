@@ -27,6 +27,7 @@ export enum IeObjectLicense {
 	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
+	INTRA_CP_METADATA_LTD = 'VIAA-INTRA_CP-METADATA-LTD',
 	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
 }
 
@@ -51,22 +52,8 @@ export enum IeObjectAccessThrough {
 	SECTOR = 'SECTOR',
 }
 
-export enum IeObjectExtraUserGroupSubType {
-	HAS_VISITOR_SPACE = 'HAS_VISITOR_SPACE',
-	IS_KEY_USER = 'IS_KEY_USER',
-}
-
 export enum IeObjectExtraUserGroupType {
 	ANONYMOUS = 'ANONYMOUS',
-	VISITOR_HAS_VISITOR_SPACE = 'VISITOR_HAS_VISITOR_SPACE',
-	VISITOR_IS_KEY_USER = 'VISITOR_IS_KEY_USER',
-	VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER = 'VISITOR_HAS_VISITOR_SPACE_IS_KEY_USER',
-	CP_ADMIN_HAS_VISITOR_SPACE = 'CP_ADMIN_HAS_VISITOR_SPACE',
-	CP_ADMIN_IS_KEY_USER = 'CP_ADMIN_IS_KEY_USER',
-	CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'CP_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
-	MEEMOO_ADMIN_HAS_VISITOR_SPACE = 'MEEMOO_ADMIN_HAS_VISITOR_SPACE',
-	MEEMOO_ADMIN_IS_KEY_USER = 'MEEMOO_ADMIN_IS_KEY_USER',
-	MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER = 'MEEMOO_ADMIN_HAS_VISITOR_SPACE_IS_KEY_USER',
 }
 
 export interface IeObjectFile {
@@ -122,9 +109,9 @@ export interface IeObject {
 	meemooOriginalCp: string;
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
-	licenses: string[];
+	licenses: IeObjectLicense[];
 	series?: string[];
-	accessThrough?: IeObjectAccessThrough;
+	accessThrough?: IeObjectAccessThrough[];
 	program?: string[];
 	alternativeName?: string[];
 	premisIsPartOf?: string;
@@ -195,17 +182,40 @@ export interface ElasticsearchObject {
 	schema_in_language: string[];
 	dcterms_available: string;
 	meemoo_identifier: string;
+	schema_identifier: string;
+	schema_publisher: any;
+	schema_duration: string;
+	schema_abstract: any;
+	schema_keywords: string[];
+	schema_genre: string[];
+	schema_license: string[];
+	schema_maintainer: {
+		schema_identifier: string;
+		schema_name: string;
+	};
+	schema_thumbnail_url: string;
+	dcterms_format: string;
+	schema_name: string;
+	meemoo_description_cast: string;
+	meemoo_description_programme: string;
+	schema_spatial_coverage: string;
+	schema_temporal_coverage: string;
+	schema_copyrightholder: string;
+	duration_seconds: number;
+	schema_number_of_pages: number;
+	meemoofilm_color: boolean;
+	meemoofilm_base: string;
+	meemoofilm_image_or_sound: string;
+	meemoofilm_contains_embedded_caption: boolean;
+	meemoo_local_id: string;
+	meemoo_original_cp: string;
 	schema_creator?: {
 		Maker?: string[];
 		Archiefvormer?: string[];
 	};
-	schema_identifier: string;
 	schema_description?: string;
-	schema_publisher: any;
-	schema_duration: string;
 	dcterms_medium?: string | null;
 	premis_is_part_of?: string;
-	schema_abstract: any;
 	premis_identifier?: {
 		Afbeelding?: string[];
 		Objectnaam?: string[];
@@ -220,27 +230,17 @@ export interface ElasticsearchObject {
 		Object_number?: string[];
 		MEDIA_ID?: string[];
 	};
-	schema_keywords: string[];
 	schema_is_part_of?: {
 		archief?: string[];
 		reeks?: string[];
 		alternatief?: string[];
 		serie?: string[];
 	};
-	schema_genre: string[];
-	schema_date_published?: string;
-	schema_license: string[];
 	schema_date_created?: string;
+	schema_date_published?: string;
 	schema_contributor?: {
 		Voorzitter: string[];
 	};
-	schema_maintainer: {
-		schema_identifier: string;
-		schema_name: string;
-	};
-	schema_thumbnail_url: string;
-	dcterms_format: string;
-	schema_name: string;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

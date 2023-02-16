@@ -6,6 +6,8 @@ import {
 export interface MaterialRequest {
 	id: string;
 	objectSchemaIdentifier: string;
+	objectSchemaName?: string;
+	meemooIdentifier?: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -23,8 +25,6 @@ export interface MaterialRequest {
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
 	maintainerLogo?: string;
-	objectName?: string;
-	objectPid?: string;
 }
 
 export enum MaterialRequestType {

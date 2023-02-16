@@ -1,0 +1,29 @@
+[
+  {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "schema_identifier": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "meemoo_identifier": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "meemoo_local_id": "{{query}}"
+          }
+        },
+        {
+          "term": {
+            "premis_is_part_of": "{{query}}"
+          }
+        }
+      ],
+      "minimum_should_match": 1
+    }
+  }
+]
