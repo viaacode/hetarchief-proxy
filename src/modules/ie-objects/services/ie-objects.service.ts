@@ -175,10 +175,10 @@ export class IeObjectsService {
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
 			contactInfo: null,
-			copyrightHolder: null,
+			copyrightHolder: esObject?.schema_copyrightholder,
 			copyrightNotice: null,
-			durationInSeconds: null,
-			numberOfPages: null,
+			durationInSeconds: esObject?.duration_seconds,
+			numberOfPages: esObject?.schema_number_of_pages,
 			datePublished: esObject?.schema_date_published,
 			dctermsAvailable: esObject?.dcterms_available,
 			name: esObject?.schema_name,
@@ -187,8 +187,8 @@ export class IeObjectsService {
 			creator: esObject?.schema_creator,
 			actor: null,
 			publisher: esObject?.schema_publisher,
-			spatial: null, // -> REQUIRED but no data available
-			temporal: null, // -> REQUIRED but no data available
+			spatial: esObject?.schema_spatial_coverage,
+			temporal: esObject?.schema_temporal_coverage,
 			keywords: esObject?.schema_keywords,
 			dctermsFormat: esObject?.dcterms_format,
 			dctermsMedium: esObject?.dcterms_medium,
@@ -201,13 +201,13 @@ export class IeObjectsService {
 			dateCreatedLowerBound: null,
 			genre: esObject?.schema_genre,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemoofilmColor: null, // -> REQUIRED but no data available
-			meemoofilmBase: null, // -> REQUIRED but no data available
-			meemoofilmImageOrSound: null, // -> REQUIRED but no data available
-			meemooLocalId: null, // -> REQUIRED but no data available
-			meemooOriginalCp: null, // -> REQUIRED but no data available
-			meemooDescriptionProgramme: null, // -> REQUIRED but no data available
-			meemooDescriptionCast: null, // -> REQUIRED but no data available
+			meemoofilmColor: esObject?.meemoofilm_color,
+			meemoofilmBase: esObject?.meemoofilm_base,
+			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
+			meemooLocalId: esObject?.meemoo_local_id,
+			meemooOriginalCp: esObject?.meemoo_original_cp,
+			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
+			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			representations: null,
 		};
 	}
