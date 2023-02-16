@@ -25,6 +25,7 @@ import {
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -46,7 +47,7 @@ export class MaterialRequestsService {
 			id: grapqhQLMaterialRequest.id,
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
 			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
-			meemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
+			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
 			profileId: grapqhQLMaterialRequest.profile_id,
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
@@ -94,6 +95,7 @@ export class MaterialRequestsService {
 		inputQuery: MaterialRequestsQueryDto,
 		parameters: {
 			userProfileId?: string;
+			userGroup?: string;
 		}
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
@@ -108,6 +110,17 @@ export class MaterialRequestsService {
 				{ requested_by: { full_name: { _ilike: query } } },
 				{ requested_by: { mail: { _ilike: query } } },
 			];
+
+			if (parameters.userGroup === Group.MEEMOO_ADMIN) {
+				where._or = [
+					...where._or,
+					{ object: { maintainer: { schema_name: { _ilike: query } } } },
+				];
+			}
+
+			if (parameters.userGroup === Group.VISITOR) {
+				where._or = [...where._or, { object: { schema_name: { _ilike: query } } }];
+			}
 		}
 
 		if (!isEmpty(parameters.userProfileId)) {

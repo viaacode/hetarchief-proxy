@@ -6,8 +6,8 @@ import {
 export interface MaterialRequest {
 	id: string;
 	objectSchemaIdentifier: string;
-	objectSchemaName?: string;
-	meemooIdentifier?: string;
+	objectSchemaName: string;
+	objectMeemooIdentifier: string;
 	profileId: string;
 	reason: string;
 	createdAt: string;
