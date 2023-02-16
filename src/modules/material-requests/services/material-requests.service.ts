@@ -47,7 +47,7 @@ export class MaterialRequestsService {
 			id: grapqhQLMaterialRequest.id,
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
 			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
-			meemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
+			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
 			profileId: grapqhQLMaterialRequest.profile_id,
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
