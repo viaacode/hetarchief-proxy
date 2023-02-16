@@ -21,6 +21,8 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 					slug
 				}
 			}
+			schema_name
+			meemoo_identifier
 		}
 	}
 }

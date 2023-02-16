@@ -45,6 +45,8 @@ export class MaterialRequestsService {
 		let transformedMaterialRequest: MaterialRequest = {
 			id: grapqhQLMaterialRequest.id,
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
+			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
+			meemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
 			profileId: grapqhQLMaterialRequest.profile_id,
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
@@ -59,7 +61,7 @@ export class MaterialRequestsService {
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
 		};
 
-		// Brecht - FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
+		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
 		const GqlMaterialRequestById =
 			grapqhQLMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0];
 
@@ -82,16 +84,6 @@ export class MaterialRequestsService {
 			transformedMaterialRequest = {
 				...transformedMaterialRequest,
 				maintainerLogo: GqlMaterialRequestById.object.maintainer.information?.logo?.iri,
-			};
-		}
-
-		// Brecht - Check if GqlMaterialRequestById has a prop object
-		// If so add object information
-		if (has(GqlMaterialRequestById, 'object')) {
-			transformedMaterialRequest = {
-				...transformedMaterialRequest,
-				objectName: GqlMaterialRequestById.object?.schema_name,
-				objectPid: GqlMaterialRequestById.object?.meemoo_identifier,
 			};
 		}
 

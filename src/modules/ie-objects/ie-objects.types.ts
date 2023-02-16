@@ -170,17 +170,40 @@ export interface ElasticsearchObject {
 	schema_in_language: string[];
 	dcterms_available: string;
 	meemoo_identifier: string;
+	schema_identifier: string;
+	schema_publisher: any;
+	schema_duration: string;
+	schema_abstract: any;
+	schema_keywords: string[];
+	schema_genre: string[];
+	schema_license: string[];
+	schema_maintainer: {
+		schema_identifier: string;
+		schema_name: string;
+	};
+	schema_thumbnail_url: string;
+	dcterms_format: string;
+	schema_name: string;
+	meemoo_description_cast: string;
+	meemoo_description_programme: string;
+	schema_spatial_coverage: string;
+	schema_temporal_coverage: string;
+	schema_copyrightholder: string;
+	duration_seconds: number;
+	schema_number_of_pages: number;
+	meemoofilm_color: boolean;
+	meemoofilm_base: string;
+	meemoofilm_image_or_sound: string;
+	meemoofilm_contains_embedded_caption: boolean;
+	meemoo_local_id: string;
+	meemoo_original_cp: string;
 	schema_creator?: {
 		Maker?: string[];
 		Archiefvormer?: string[];
 	};
-	schema_identifier: string;
 	schema_description?: string;
-	schema_publisher: any;
-	schema_duration: string;
 	dcterms_medium?: string | null;
 	premis_is_part_of?: string;
-	schema_abstract: any;
 	premis_identifier?: {
 		Afbeelding?: string[];
 		Objectnaam?: string[];
@@ -195,28 +218,17 @@ export interface ElasticsearchObject {
 		Object_number?: string[];
 		MEDIA_ID?: string[];
 	};
-	schema_keywords: string[];
 	schema_is_part_of?: {
 		archief?: string[];
 		reeks?: string[];
 		alternatief?: string[];
 		serie?: string[];
 	};
-	schema_genre: string[];
-	schema_date_published?: string;
-	schema_license: string[];
 	schema_date_created?: string;
+	schema_date_published?: string;
 	schema_contributor?: {
 		Voorzitter: string[];
 	};
-	schema_maintainer: {
-		schema_identifier: string;
-		schema_name: string;
-		organization_type: IeObjectSector | null;
-	};
-	schema_thumbnail_url: string;
-	dcterms_format: string;
-	schema_name: string;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
