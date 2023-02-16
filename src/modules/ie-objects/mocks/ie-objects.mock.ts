@@ -289,12 +289,26 @@ export const mockElasticObject1: ElasticsearchHit = {
 		schema_maintainer: {
 			schema_identifier: 'OR-rf5kf25',
 			schema_name: 'VRT',
+			organization_type: IeObjectSector.CULTURE,
 		},
 		schema_thumbnail_url:
 			'https://media-qas.viaa.be/play/v2/VRT/0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
 		dcterms_format: 'video',
 		schema_name:
 			'Une centaine de policiers poussent "un cri contre la stigmatisation" à Charleroi',
+		meemoo_description_cast: '',
+		meemoo_description_programme: '',
+		schema_spatial_coverage: '',
+		schema_temporal_coverage: '',
+		schema_copyrightholder: '',
+		duration_seconds: 3,
+		schema_number_of_pages: 3,
+		meemoofilm_color: true,
+		meemoofilm_base: '',
+		meemoofilm_image_or_sound: '',
+		meemoofilm_contains_embedded_caption: false,
+		meemoo_local_id: '',
+		meemoo_original_cp: '',
 	},
 };
 
@@ -334,11 +348,25 @@ export const mockElasticObject2: ElasticsearchHit = {
 		schema_maintainer: {
 			schema_identifier: 'OR-rf5kf25',
 			schema_name: 'VRT',
+			organization_type: IeObjectSector.CULTURE,
 		},
 		schema_thumbnail_url:
 			'https://media-qas.viaa.be/play/v2/VRT/030460fb53684214a972e1b8ae35736d535c2b2f9c424b5693450ad0db5728e2/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
 		dcterms_format: 'video',
 		schema_name: 'E2E VideoDelivery from Arvato',
+		meemoo_description_cast: '',
+		meemoo_description_programme: '',
+		schema_spatial_coverage: '',
+		schema_temporal_coverage: '',
+		schema_copyrightholder: '',
+		duration_seconds: 3,
+		schema_number_of_pages: 3,
+		meemoofilm_color: true,
+		meemoofilm_base: '',
+		meemoofilm_image_or_sound: '',
+		meemoofilm_contains_embedded_caption: false,
+		meemoo_local_id: '',
+		meemoo_original_cp: '',
 	},
 };
 

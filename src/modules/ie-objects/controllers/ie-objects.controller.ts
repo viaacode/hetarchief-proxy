@@ -39,11 +39,9 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { Organisation } from '~modules/organisations/organisations.types';
-import OrganisationsService from '~modules/organisations/services/organisations.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group, Permission } from '~modules/users/types';
+import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
@@ -60,8 +58,7 @@ export class IeObjectsController {
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
-		private playerTicketService: PlayerTicketService,
-		private organisationsService: OrganisationsService
+		private playerTicketService: PlayerTicketService
 	) {}
 
 	@Get('player-ticket')
@@ -93,13 +90,12 @@ export class IeObjectsController {
 	): Promise<IeObject | Partial<IeObject>> {
 		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
 
-		const { organisation, visitorSpaceAccessInfo } =
-			await this.getVistorSpaceAccessInfoAndOrganisation(user);
+		const visitorSpaceAccessInfo = await this.getVistorSpaceAccessInfo(user);
 
 		const limitedObject = limitAccessToObjectDetails(object, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
-			sector: organisation?.sector || null,
+			sector: user.getSector() || null,
 			groupId: user.getGroupId(),
 			maintainerId: user.getMaintainerId() || null,
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
@@ -173,8 +169,7 @@ export class IeObjectsController {
 		@Param('meemooIdentifier') meemooIdentifier: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const { organisation, visitorSpaceAccessInfo } =
-			await this.getVistorSpaceAccessInfoAndOrganisation(user);
+		const visitorSpaceAccessInfo = await this.getVistorSpaceAccessInfo(user);
 
 		// We use the esIndex as the maintainerId -- no need to lowercase
 		const relatedIeObjects = await this.ieObjectsService.getRelated(
@@ -190,7 +185,7 @@ export class IeObjectsController {
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
-					sector: organisation?.sector || null,
+					sector: user.getSector() || null,
 					groupId: user.getGroupId() || null,
 					maintainerId: user.getMaintainerId() || null,
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
@@ -215,8 +210,7 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const { organisation, visitorSpaceAccessInfo } =
-			await this.getVistorSpaceAccessInfoAndOrganisation(user);
+		const visitorSpaceAccessInfo = await this.getVistorSpaceAccessInfo(user);
 
 		const similarIeObjects = await this.ieObjectsService.getSimilar(id, '_all', referer);
 
@@ -227,7 +221,7 @@ export class IeObjectsController {
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
-					sector: organisation?.sector || null,
+					sector: user.getSector() || null,
 					groupId: user.getGroupId() || null,
 					maintainerId: user.getMaintainerId() || null,
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
@@ -248,8 +242,21 @@ export class IeObjectsController {
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
 
-		const { organisation, visitorSpaceAccessInfo } =
-			await this.getVistorSpaceAccessInfoAndOrganisation(user);
+		// Get active visits for the current user
+		// Need this to retrieve visitorSpaceAccessInfo
+		const activeVisits = await this.visitsService.findAll(
+			{
+				page: 1,
+				size: 100,
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+			},
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active,
+			}
+		);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
@@ -258,7 +265,7 @@ export class IeObjectsController {
 			referer,
 			user,
 			visitorSpaceAccessInfo,
-			organisation?.sector || null
+			user.getSector() || null
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
@@ -268,7 +275,7 @@ export class IeObjectsController {
 				limitAccessToObjectDetails(item, {
 					userId: user.getId() || null,
 					isKeyUser: user.getIsKeyUser() || false,
-					sector: organisation?.sector || null,
+					sector: user.getSector() || null,
 					groupId: user.getGroupId() || null,
 					maintainerId: user.getMaintainerId() || null,
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
@@ -297,21 +304,9 @@ export class IeObjectsController {
 		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
 	}
 
-	protected async getVistorSpaceAccessInfoAndOrganisation(user: SessionUserEntity): Promise<{
-		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo;
-		organisation: Organisation;
-	}> {
-		// Get sector from Organisation when user is part of CP_ADMIN Group
-		// TODO: It might be useful to also select sector when the user is first logged in,
-		//		so the sector is always available on the session user object.
-		//		/src/modules/auth/controllers/het-archief.controller.ts#L128-L130
-		let organisation = null;
-		if (user.getGroupId() === Group.CP_ADMIN) {
-			organisation = await this.organisationsService.findOrganisationBySchemaIdentifier(
-				user.getMaintainerId()
-			);
-		}
-
+	protected async getVistorSpaceAccessInfo(
+		user: SessionUserEntity
+	): Promise<IeObjectsVisitorSpaceInfo> {
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
 		const activeVisits = await this.visitsService.findAll(
@@ -329,11 +324,8 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfo(activeVisits.items);
 
 		return {
-			organisation,
-			visitorSpaceAccessInfo: {
-				objectIds: visitorSpaceAccessInfo.objectIds,
-				visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			},
+			objectIds: visitorSpaceAccessInfo.objectIds,
+			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		};
 	}
 }

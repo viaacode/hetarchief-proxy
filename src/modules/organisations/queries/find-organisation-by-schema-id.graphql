@@ -8,6 +8,6 @@ query findOrganisationBySchemaId($schemaIdentifier: String!) {
 		description
 		created_at
 		contact_point
-		sector
+		haorg_organization_type
 	}
 }

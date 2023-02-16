@@ -12,6 +12,7 @@ import { MeemooService } from './services/meemoo.service';
 
 import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
+import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
@@ -46,6 +47,7 @@ export const meemooServiceFactory = {
 		SpacesModule,
 		EventsModule,
 		TranslationsModule,
+		OrganisationsModule,
 	],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService, SessionService],
 })
