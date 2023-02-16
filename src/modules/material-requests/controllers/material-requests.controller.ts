@@ -35,6 +35,7 @@ export class MaterialRequestsController {
 	): Promise<IPagination<MaterialRequest>> {
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
+			userGroup: user.getGroupId(),
 		});
 	}
 
@@ -49,6 +50,7 @@ export class MaterialRequestsController {
 	): Promise<IPagination<MaterialRequest>> {
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
+			userGroup: user.getGroupId(),
 		});
 	}
 
