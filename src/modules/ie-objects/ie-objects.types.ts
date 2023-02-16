@@ -180,6 +180,7 @@ export interface ElasticsearchObject {
 	schema_maintainer: {
 		schema_identifier: string;
 		schema_name: string;
+		organization_type: IeObjectSector | null;
 	};
 	schema_thumbnail_url: string;
 	dcterms_format: string;
