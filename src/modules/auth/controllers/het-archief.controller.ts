@@ -49,7 +49,7 @@ export class HetArchiefController {
 		private collectionsService: CollectionsService,
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
-		private readonly translationsService: TranslationsService,
+		private translationsService: TranslationsService,
 		private organisationService: OrganisationsService
 	) {}
 
@@ -189,14 +189,13 @@ export class HetArchiefController {
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
-			let organisation = null;
-			if (!isNil(archiefUser?.maintainerId)) {
-				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-					archiefUser.maintainerId
-				);
+			if (archiefUser?.maintainerId) {
+				const organisation =
+					await this.organisationService.findOrganisationBySchemaIdentifier(
+						archiefUser.maintainerId
+					);
+				archiefUser.sector = organisation?.sector || null;
 			}
-
-			archiefUser.sector = organisation?.sector || null;
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
