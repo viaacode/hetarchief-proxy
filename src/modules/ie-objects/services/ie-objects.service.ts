@@ -26,9 +26,7 @@ import {
 	GetObjectIdentifierTupleQuery,
 	GetObjectIdentifierTupleQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { Organisation } from '~modules/organisations/organisations.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 
 @Injectable()
@@ -174,6 +172,7 @@ export class IeObjectsService {
 			alternativeName: esObject.schema_is_part_of?.alternatief,
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
+			sector: esObject?.schema_maintainer?.organization_type,
 			contactInfo: null,
 			copyrightHolder: esObject?.schema_copyrightholder,
 			copyrightNotice: null,

@@ -28,7 +28,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()
-export default class OrganisationsService implements OnApplicationBootstrap {
+export class OrganisationsService implements OnApplicationBootstrap {
 	private logger: Logger = new Logger(OrganisationsService.name, { timestamp: true });
 
 	constructor(
@@ -85,7 +85,7 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 			schemaName: gqlOrganisation?.schema_name,
 			createdAt: gqlOrganisation?.created_at,
 			updatedAt: gqlOrganisation?.updated_at,
-			sector: gqlOrganisation?.sector,
+			sector: gqlOrganisation?.haorg_organization_type,
 		};
 	}
 
@@ -165,7 +165,8 @@ export default class OrganisationsService implements OnApplicationBootstrap {
 				logo: organization?.logo,
 				contact_point: organization.contact_point,
 				primary_site: organization.primary_site,
-				sector: organization?.sector || null,
+				// Remark here organization is with Z
+				haorg_organization_type: organization?.sector || null,
 			})
 		);
 

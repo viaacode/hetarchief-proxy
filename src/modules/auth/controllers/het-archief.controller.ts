@@ -15,7 +15,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { get, isEqual, pick } from 'lodash';
+import { get, isEqual, isNil, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
@@ -29,6 +29,7 @@ import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
@@ -48,7 +49,8 @@ export class HetArchiefController {
 		private collectionsService: CollectionsService,
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
-		private readonly translationsService: TranslationsService
+		private translationsService: TranslationsService,
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('login')
@@ -186,6 +188,14 @@ export class HetArchiefController {
 
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
+
+			if (archiefUser?.maintainerId) {
+				const organisation =
+					await this.organisationService.findOrganisationBySchemaIdentifier(
+						archiefUser.maintainerId
+					);
+				archiefUser.sector = organisation?.sector || null;
+			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 

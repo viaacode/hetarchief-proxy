@@ -248,6 +248,9 @@ export class QueryBuilder {
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
 				{
+					term: {
+						'schema_maintainer.organization_type': user.sector,
+					},
 					terms: {
 						schema_license: [
 							IeObjectLicense.INTRA_CP_METADATA_ALL,
