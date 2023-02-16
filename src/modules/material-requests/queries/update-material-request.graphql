@@ -29,6 +29,8 @@ mutation updateMaterialRequest(
 						slug
 					}
 				}
+				meemoo_identifier
+				schema_name
 			}
 		}
 	}

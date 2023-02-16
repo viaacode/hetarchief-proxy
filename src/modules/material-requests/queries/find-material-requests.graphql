@@ -26,6 +26,8 @@ query findMaterialRequests(
 					slug
 				}
 			}
+			meemoo_identifier
+			schema_name
 		}
 	}
 	app_material_requests_aggregate(where: $where) {
