@@ -1,6 +1,9 @@
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+
 export interface OrganisationInfoV2 {
 	id: string;
 	description: string;
+	sector: IeObjectSector | null;
 	logo: {
 		iri: string;
 	};
@@ -34,6 +37,8 @@ export interface ParsedOrganisation {
 		email: string;
 	}[];
 	description: string;
+	// Remark here organization is with Z
+	haorg_organization_type: string;
 	logo: {
 		iri: string;
 	};
@@ -46,4 +51,61 @@ export interface ParsedOrganisation {
 			post_office_box_number: string;
 		};
 	};
+}
+
+export interface GqlOrganisation {
+	schema_identifier: string;
+	contact_point: {
+		contact_type: string;
+		email: string;
+	}[];
+	logo: {
+		iri: string;
+	};
+	primary_site: {
+		address: {
+			locality: string;
+			postal_code: string;
+			street: string;
+			telephone: string;
+			post_office_box_number: string;
+		};
+	};
+	created_at?: string;
+	updated_at?: string;
+	schema_name?: string | null;
+	description?: string;
+	// Remark here organization is with Z
+	haorg_organization_type?: IeObjectSector | null;
+}
+
+export interface Organisation {
+	schemaIdentifier: string;
+	contactPoint: OrganisationContactPoint[];
+	description: string;
+	logo: {
+		iri: string;
+	};
+	primarySite: OrganisationPrimarySite;
+	schemaName: string;
+	createdAt: string;
+	updatedAt: string;
+	sector: IeObjectSector | null;
+}
+
+export interface OrganisationContactPoint {
+	contactType: string;
+	email: string;
+}
+
+export interface OrganisationPrimarySite {
+	address: OrganisationPrimarySiteAddress;
+}
+
+export interface OrganisationPrimarySiteAddress {
+	locality: string;
+	postal_code: string;
+	street: string;
+	telephone: string;
+	post_office_box_number: string;
 }

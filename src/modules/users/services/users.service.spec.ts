@@ -1,9 +1,9 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
 import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { Group, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';

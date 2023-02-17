@@ -13,7 +13,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, LoginResponse } from '../types';
@@ -31,7 +31,7 @@ export class AuthController {
 	constructor(
 		private idpService: IdpService,
 		private usersService: UsersService,
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		private sessionService: SessionService
 	) {}
 
@@ -85,14 +85,14 @@ export class AuthController {
 	 */
 	@Get('session')
 	public getSession(@Session() session: Record<string, any>) {
-		if (getConfig(this.configService, 'environment') !== 'production') {
+		if (this.configService.get('ENVIRONMENT') !== 'production') {
 			return session;
 		}
 	}
 
 	@Post('session')
 	public postSession(@Session() session: Record<string, any>) {
-		if (getConfig(this.configService, 'environment') !== 'production') {
+		if (this.configService.get('ENVIRONMENT') !== 'production') {
 			return session;
 		}
 	}

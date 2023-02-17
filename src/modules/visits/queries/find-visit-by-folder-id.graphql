@@ -1,0 +1,12 @@
+query findVisitsByFolderId($folderId: uuid!, $now: timestamp!) {
+	maintainer_visitor_space_request_folder_access(
+		where: {
+			folder_id: { _eq: $folderId }
+			visitor_space_request: { end_date: { _gte: $now } }
+		}
+	) {
+		visitor_space_request {
+			end_date
+		}
+	}
+}

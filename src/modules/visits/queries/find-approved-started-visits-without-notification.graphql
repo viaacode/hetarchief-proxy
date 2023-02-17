@@ -16,10 +16,16 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			first_name
 			last_name
 			mail
+			collections {
+				ies {
+					ie_schema_identifier
+				}
+			}
 		}
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		created_at

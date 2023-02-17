@@ -1475,6 +1475,388 @@ export enum App_Content_Page_Update_Column {
   UserProfileId = 'user_profile_id'
 }
 
+/** columns and relationships of "app.maintenance_alerts" */
+export type App_Maintenance_Alerts = {
+  __typename?: 'app_maintenance_alerts';
+  from_date: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  message: Scalars['String'];
+  title: Scalars['String'];
+  type?: Maybe<Scalars['String']>;
+  until_date: Scalars['timestamp'];
+  user_groups: Scalars['jsonb'];
+};
+
+
+/** columns and relationships of "app.maintenance_alerts" */
+export type App_Maintenance_AlertsUser_GroupsArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Aggregate = {
+  __typename?: 'app_maintenance_alerts_aggregate';
+  aggregate?: Maybe<App_Maintenance_Alerts_Aggregate_Fields>;
+  nodes: Array<App_Maintenance_Alerts>;
+};
+
+/** aggregate fields of "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Aggregate_Fields = {
+  __typename?: 'app_maintenance_alerts_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Maintenance_Alerts_Max_Fields>;
+  min?: Maybe<App_Maintenance_Alerts_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Maintenance_Alerts_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type App_Maintenance_Alerts_Append_Input = {
+  user_groups?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "app.maintenance_alerts". All fields are combined with a logical 'AND'. */
+export type App_Maintenance_Alerts_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Maintenance_Alerts_Bool_Exp>>;
+  _not?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Maintenance_Alerts_Bool_Exp>>;
+  from_date?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  message?: InputMaybe<String_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  until_date?: InputMaybe<Timestamp_Comparison_Exp>;
+  user_groups?: InputMaybe<Jsonb_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.maintenance_alerts" */
+export enum App_Maintenance_Alerts_Constraint {
+  /** unique or primary key constraint */
+  MaintenanceAlertsPkey = 'maintenance_alerts_pkey'
+}
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type App_Maintenance_Alerts_Delete_At_Path_Input = {
+  user_groups?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type App_Maintenance_Alerts_Delete_Elem_Input = {
+  user_groups?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type App_Maintenance_Alerts_Delete_Key_Input = {
+  user_groups?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Insert_Input = {
+  from_date?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  message?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  until_date?: InputMaybe<Scalars['timestamp']>;
+  user_groups?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** aggregate max on columns */
+export type App_Maintenance_Alerts_Max_Fields = {
+  __typename?: 'app_maintenance_alerts_max_fields';
+  from_date?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  message?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  until_date?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type App_Maintenance_Alerts_Min_Fields = {
+  __typename?: 'app_maintenance_alerts_min_fields';
+  from_date?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  message?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  until_date?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Mutation_Response = {
+  __typename?: 'app_maintenance_alerts_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Maintenance_Alerts>;
+};
+
+/** on_conflict condition type for table "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_On_Conflict = {
+  constraint: App_Maintenance_Alerts_Constraint;
+  update_columns?: Array<App_Maintenance_Alerts_Update_Column>;
+  where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.maintenance_alerts". */
+export type App_Maintenance_Alerts_Order_By = {
+  from_date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  until_date?: InputMaybe<Order_By>;
+  user_groups?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_maintenance_alerts */
+export type App_Maintenance_Alerts_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type App_Maintenance_Alerts_Prepend_Input = {
+  user_groups?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "app.maintenance_alerts" */
+export enum App_Maintenance_Alerts_Select_Column {
+  /** column name */
+  FromDate = 'from_date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UntilDate = 'until_date',
+  /** column name */
+  UserGroups = 'user_groups'
+}
+
+/** input type for updating data in table "app.maintenance_alerts" */
+export type App_Maintenance_Alerts_Set_Input = {
+  from_date?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  message?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  until_date?: InputMaybe<Scalars['timestamp']>;
+  user_groups?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** update columns of table "app.maintenance_alerts" */
+export enum App_Maintenance_Alerts_Update_Column {
+  /** column name */
+  FromDate = 'from_date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UntilDate = 'until_date',
+  /** column name */
+  UserGroups = 'user_groups'
+}
+
+/** columns and relationships of "app.material_requests" */
+export type App_Material_Requests = {
+  __typename?: 'app_material_requests';
+  created_at: Scalars['timestamp'];
+  id: Scalars['uuid'];
+  is_pending: Scalars['Boolean'];
+  /** An object relationship */
+  object: Object_Ie;
+  object_schema_identifier: Scalars['String'];
+  profile_id: Scalars['uuid'];
+  reason: Scalars['String'];
+  /** An object relationship */
+  requested_by: Users_Profile;
+  type: Lookup_App_Material_Request_Type_Enum;
+  updated_at: Scalars['timestamp'];
+};
+
+/** aggregated selection of "app.material_requests" */
+export type App_Material_Requests_Aggregate = {
+  __typename?: 'app_material_requests_aggregate';
+  aggregate?: Maybe<App_Material_Requests_Aggregate_Fields>;
+  nodes: Array<App_Material_Requests>;
+};
+
+/** aggregate fields of "app.material_requests" */
+export type App_Material_Requests_Aggregate_Fields = {
+  __typename?: 'app_material_requests_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Material_Requests_Max_Fields>;
+  min?: Maybe<App_Material_Requests_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.material_requests" */
+export type App_Material_Requests_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "app.material_requests". All fields are combined with a logical 'AND'. */
+export type App_Material_Requests_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Material_Requests_Bool_Exp>>;
+  _not?: InputMaybe<App_Material_Requests_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Material_Requests_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  is_pending?: InputMaybe<Boolean_Comparison_Exp>;
+  object?: InputMaybe<Object_Ie_Bool_Exp>;
+  object_schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  profile_id?: InputMaybe<Uuid_Comparison_Exp>;
+  reason?: InputMaybe<String_Comparison_Exp>;
+  requested_by?: InputMaybe<Users_Profile_Bool_Exp>;
+  type?: InputMaybe<Lookup_App_Material_Request_Type_Enum_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.material_requests" */
+export enum App_Material_Requests_Constraint {
+  /** unique or primary key constraint */
+  MaterialRequestsPkey = 'material_requests_pkey'
+}
+
+/** input type for inserting data into table "app.material_requests" */
+export type App_Material_Requests_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  is_pending?: InputMaybe<Scalars['Boolean']>;
+  object?: InputMaybe<Object_Ie_Obj_Rel_Insert_Input>;
+  object_schema_identifier?: InputMaybe<Scalars['String']>;
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  reason?: InputMaybe<Scalars['String']>;
+  requested_by?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
+  type?: InputMaybe<Lookup_App_Material_Request_Type_Enum>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** aggregate max on columns */
+export type App_Material_Requests_Max_Fields = {
+  __typename?: 'app_material_requests_max_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  object_schema_identifier?: Maybe<Scalars['String']>;
+  profile_id?: Maybe<Scalars['uuid']>;
+  reason?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** aggregate min on columns */
+export type App_Material_Requests_Min_Fields = {
+  __typename?: 'app_material_requests_min_fields';
+  created_at?: Maybe<Scalars['timestamp']>;
+  id?: Maybe<Scalars['uuid']>;
+  object_schema_identifier?: Maybe<Scalars['String']>;
+  profile_id?: Maybe<Scalars['uuid']>;
+  reason?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamp']>;
+};
+
+/** response of any mutation on the table "app.material_requests" */
+export type App_Material_Requests_Mutation_Response = {
+  __typename?: 'app_material_requests_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Material_Requests>;
+};
+
+/** on_conflict condition type for table "app.material_requests" */
+export type App_Material_Requests_On_Conflict = {
+  constraint: App_Material_Requests_Constraint;
+  update_columns?: Array<App_Material_Requests_Update_Column>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.material_requests". */
+export type App_Material_Requests_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  is_pending?: InputMaybe<Order_By>;
+  object?: InputMaybe<Object_Ie_Order_By>;
+  object_schema_identifier?: InputMaybe<Order_By>;
+  profile_id?: InputMaybe<Order_By>;
+  reason?: InputMaybe<Order_By>;
+  requested_by?: InputMaybe<Users_Profile_Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_material_requests */
+export type App_Material_Requests_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "app.material_requests" */
+export enum App_Material_Requests_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsPending = 'is_pending',
+  /** column name */
+  ObjectSchemaIdentifier = 'object_schema_identifier',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "app.material_requests" */
+export type App_Material_Requests_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  is_pending?: InputMaybe<Scalars['Boolean']>;
+  object_schema_identifier?: InputMaybe<Scalars['String']>;
+  profile_id?: InputMaybe<Scalars['uuid']>;
+  reason?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Lookup_App_Material_Request_Type_Enum>;
+  updated_at?: InputMaybe<Scalars['timestamp']>;
+};
+
+/** update columns of table "app.material_requests" */
+export enum App_Material_Requests_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsPending = 'is_pending',
+  /** column name */
+  ObjectSchemaIdentifier = 'object_schema_identifier',
+  /** column name */
+  ProfileId = 'profile_id',
+  /** column name */
+  Reason = 'reason',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** columns and relationships of "app.navigation" */
 export type App_Navigation = {
   __typename?: 'app_navigation';
@@ -2218,6 +2600,7 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Eventbrite = 'EVENTBRITE',
   Heading = 'HEADING',
   Hero = 'HERO',
+  HetarchiefHeaderSearch = 'HETARCHIEF__HEADER_SEARCH',
   Iframe = 'IFRAME',
   Image = 'IMAGE',
   ImageGrid = 'IMAGE_GRID',
@@ -2225,6 +2608,7 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Klaar = 'KLAAR',
   Links = 'LINKS',
   LogoGrid = 'LOGO_GRID',
+  MaintainersGrid = 'MAINTAINERS_GRID',
   MediaGrid = 'MEDIA_GRID',
   MediaPlayer = 'MEDIA_PLAYER',
   MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
@@ -2236,12 +2620,14 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Search = 'SEARCH',
   Spotlight = 'SPOTLIGHT',
   Subtitle = 'SUBTITLE',
+  ThreeClickableTiles = 'THREE_CLICKABLE_TILES',
   Title = 'TITLE',
   TitleImageText = 'TITLE_IMAGE_TEXT',
   TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
   UspGrid = 'USP_GRID',
   Video = 'VIDEO',
-  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON'
+  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON',
+  Test = 'test'
 }
 
 /** Boolean expression to compare columns of type "lookup_app_content_block_type_enum". All fields are combined with logical 'AND'. */
@@ -2465,6 +2851,137 @@ export enum Lookup_App_Content_Type_Update_Column {
   Value = 'value'
 }
 
+/** columns and relationships of "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type = {
+  __typename?: 'lookup_app_material_request_type';
+  comment?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Aggregate = {
+  __typename?: 'lookup_app_material_request_type_aggregate';
+  aggregate?: Maybe<Lookup_App_Material_Request_Type_Aggregate_Fields>;
+  nodes: Array<Lookup_App_Material_Request_Type>;
+};
+
+/** aggregate fields of "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Aggregate_Fields = {
+  __typename?: 'lookup_app_material_request_type_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_App_Material_Request_Type_Max_Fields>;
+  min?: Maybe<Lookup_App_Material_Request_Type_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_App_Material_Request_Type_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.app_material_request_type". All fields are combined with a logical 'AND'. */
+export type Lookup_App_Material_Request_Type_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_App_Material_Request_Type_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_App_Material_Request_Type_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.app_material_request_type" */
+export enum Lookup_App_Material_Request_Type_Constraint {
+  /** unique or primary key constraint */
+  AppMaterialRequestTypePkey = 'app_material_request_type_pkey'
+}
+
+export enum Lookup_App_Material_Request_Type_Enum {
+  /** Meer info van het materiaal */
+  MoreInfo = 'MORE_INFO',
+  /** Hergebruik van materiaal */
+  Reuse = 'REUSE',
+  /** Bekijken van het materiaal */
+  View = 'VIEW'
+}
+
+/** Boolean expression to compare columns of type "lookup_app_material_request_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_App_Material_Request_Type_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_App_Material_Request_Type_Enum>;
+  _in?: InputMaybe<Array<Lookup_App_Material_Request_Type_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_App_Material_Request_Type_Enum>;
+  _nin?: InputMaybe<Array<Lookup_App_Material_Request_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_App_Material_Request_Type_Max_Fields = {
+  __typename?: 'lookup_app_material_request_type_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_App_Material_Request_Type_Min_Fields = {
+  __typename?: 'lookup_app_material_request_type_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Mutation_Response = {
+  __typename?: 'lookup_app_material_request_type_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_App_Material_Request_Type>;
+};
+
+/** on_conflict condition type for table "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_On_Conflict = {
+  constraint: Lookup_App_Material_Request_Type_Constraint;
+  update_columns?: Array<Lookup_App_Material_Request_Type_Update_Column>;
+  where?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.app_material_request_type". */
+export type Lookup_App_Material_Request_Type_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_app_material_request_type */
+export type Lookup_App_Material_Request_Type_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.app_material_request_type" */
+export enum Lookup_App_Material_Request_Type_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.app_material_request_type" */
+export type Lookup_App_Material_Request_Type_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.app_material_request_type" */
+export enum Lookup_App_Material_Request_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
 /** Types van notificaties aan eindgebruikers */
 export type Lookup_App_Notification_Type = {
   __typename?: 'lookup_app_notification_type';
@@ -2572,6 +3089,135 @@ export type Lookup_App_Notification_Type_Set_Input = {
 
 /** update columns of table "lookup.app_notification_type" */
 export enum Lookup_App_Notification_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** columns and relationships of "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type';
+  comment?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type_aggregate';
+  aggregate?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate_Fields>;
+  nodes: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
+};
+
+/** aggregate fields of "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Max_Fields>;
+  min?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.maintainer_visitor_space_request_access_type". All fields are combined with a logical 'AND'. */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.maintainer_visitor_space_request_access_type" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Access_Type_Constraint {
+  /** unique or primary key constraint */
+  MaintainerVisitorSpaceRequestAccessTypePkey = 'maintainer_visitor_space_request_access_type_pkey'
+}
+
+export enum Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum {
+  /** Toegang tot specifieke folders van de bezoekersruimte */
+  Folders = 'FOLDERS',
+  /** Volledige toegang tot de bezoekersruimte */
+  Full = 'FULL'
+}
+
+/** Boolean expression to compare columns of type "lookup_maintainer_visitor_space_request_access_type_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>;
+  _in?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>;
+  _nin?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Max_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Min_Fields = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response = {
+  __typename?: 'lookup_maintainer_visitor_space_request_access_type_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
+};
+
+/** on_conflict condition type for table "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_On_Conflict = {
+  constraint: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Constraint;
+  update_columns?: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Update_Column>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.maintainer_visitor_space_request_access_type". */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_maintainer_visitor_space_request_access_type */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.maintainer_visitor_space_request_access_type" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.maintainer_visitor_space_request_access_type" */
+export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.maintainer_visitor_space_request_access_type" */
+export enum Lookup_Maintainer_Visitor_Space_Request_Access_Type_Update_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
@@ -3416,6 +4062,86 @@ export enum Maintainer_Content_Partner_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+/** columns and relationships of "maintainer.haorg" */
+export type Maintainer_Haorg = {
+  __typename?: 'maintainer_haorg';
+  alt_label?: Maybe<Scalars['String']>;
+  identifier?: Maybe<Scalars['String']>;
+  organization_type?: Maybe<Scalars['String']>;
+  pref_label?: Maybe<Scalars['String']>;
+};
+
+/** aggregated selection of "maintainer.haorg" */
+export type Maintainer_Haorg_Aggregate = {
+  __typename?: 'maintainer_haorg_aggregate';
+  aggregate?: Maybe<Maintainer_Haorg_Aggregate_Fields>;
+  nodes: Array<Maintainer_Haorg>;
+};
+
+/** aggregate fields of "maintainer.haorg" */
+export type Maintainer_Haorg_Aggregate_Fields = {
+  __typename?: 'maintainer_haorg_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Haorg_Max_Fields>;
+  min?: Maybe<Maintainer_Haorg_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.haorg" */
+export type Maintainer_Haorg_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Haorg_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.haorg". All fields are combined with a logical 'AND'. */
+export type Maintainer_Haorg_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Haorg_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Haorg_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Haorg_Bool_Exp>>;
+  alt_label?: InputMaybe<String_Comparison_Exp>;
+  identifier?: InputMaybe<String_Comparison_Exp>;
+  organization_type?: InputMaybe<String_Comparison_Exp>;
+  pref_label?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Haorg_Max_Fields = {
+  __typename?: 'maintainer_haorg_max_fields';
+  alt_label?: Maybe<Scalars['String']>;
+  identifier?: Maybe<Scalars['String']>;
+  organization_type?: Maybe<Scalars['String']>;
+  pref_label?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Haorg_Min_Fields = {
+  __typename?: 'maintainer_haorg_min_fields';
+  alt_label?: Maybe<Scalars['String']>;
+  identifier?: Maybe<Scalars['String']>;
+  organization_type?: Maybe<Scalars['String']>;
+  pref_label?: Maybe<Scalars['String']>;
+};
+
+/** Ordering options when selecting data from "maintainer.haorg". */
+export type Maintainer_Haorg_Order_By = {
+  alt_label?: InputMaybe<Order_By>;
+  identifier?: InputMaybe<Order_By>;
+  organization_type?: InputMaybe<Order_By>;
+  pref_label?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "maintainer.haorg" */
+export enum Maintainer_Haorg_Select_Column {
+  /** column name */
+  AltLabel = 'alt_label',
+  /** column name */
+  Identifier = 'identifier',
+  /** column name */
+  OrganizationType = 'organization_type',
+  /** column name */
+  PrefLabel = 'pref_label'
+}
+
 /** Informatie over de zoekindex per CP */
 export type Maintainer_Index = {
   __typename?: 'maintainer_index';
@@ -3565,10 +4291,12 @@ export type Maintainer_Organisation = {
   contact_point: Scalars['jsonb'];
   created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   logo: Scalars['jsonb'];
   primary_site: Scalars['jsonb'];
   schema_identifier: Scalars['String'];
   schema_name?: Maybe<Scalars['String']>;
+  sector?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3627,10 +4355,12 @@ export type Maintainer_Organisation_Bool_Exp = {
   contact_point?: InputMaybe<Jsonb_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
+  haorg_organization_type?: InputMaybe<String_Comparison_Exp>;
   logo?: InputMaybe<Jsonb_Comparison_Exp>;
   primary_site?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_identifier?: InputMaybe<String_Comparison_Exp>;
   schema_name?: InputMaybe<String_Comparison_Exp>;
+  sector?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -3666,10 +4396,12 @@ export type Maintainer_Organisation_Insert_Input = {
   contact_point?: InputMaybe<Scalars['jsonb']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
+  sector?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -3678,8 +4410,10 @@ export type Maintainer_Organisation_Max_Fields = {
   __typename?: 'maintainer_organisation_max_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
+  sector?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3688,8 +4422,10 @@ export type Maintainer_Organisation_Min_Fields = {
   __typename?: 'maintainer_organisation_min_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
+  sector?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -3721,10 +4457,12 @@ export type Maintainer_Organisation_Order_By = {
   contact_point?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
+  haorg_organization_type?: InputMaybe<Order_By>;
   logo?: InputMaybe<Order_By>;
   primary_site?: InputMaybe<Order_By>;
   schema_identifier?: InputMaybe<Order_By>;
   schema_name?: InputMaybe<Order_By>;
+  sector?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 
@@ -3749,6 +4487,8 @@ export enum Maintainer_Organisation_Select_Column {
   /** column name */
   Description = 'description',
   /** column name */
+  HaorgOrganizationType = 'haorg_organization_type',
+  /** column name */
   Logo = 'logo',
   /** column name */
   PrimarySite = 'primary_site',
@@ -3756,6 +4496,8 @@ export enum Maintainer_Organisation_Select_Column {
   SchemaIdentifier = 'schema_identifier',
   /** column name */
   SchemaName = 'schema_name',
+  /** column name */
+  Sector = 'sector',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -3765,10 +4507,12 @@ export type Maintainer_Organisation_Set_Input = {
   contact_point?: InputMaybe<Scalars['jsonb']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['jsonb']>;
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
+  sector?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -3781,6 +4525,8 @@ export enum Maintainer_Organisation_Update_Column {
   /** column name */
   Description = 'description',
   /** column name */
+  HaorgOrganizationType = 'haorg_organization_type',
+  /** column name */
   Logo = 'logo',
   /** column name */
   PrimarySite = 'primary_site',
@@ -3788,6 +4534,8 @@ export enum Maintainer_Organisation_Update_Column {
   SchemaIdentifier = 'schema_identifier',
   /** column name */
   SchemaName = 'schema_name',
+  /** column name */
+  Sector = 'sector',
   /** column name */
   UpdatedAt = 'updated_at'
 }
@@ -4158,6 +4906,7 @@ export type Maintainer_Visitor_Space_Pk_Columns_Input = {
 /** Bezoekaanvragen van gebruikers */
 export type Maintainer_Visitor_Space_Request = {
   __typename?: 'maintainer_visitor_space_request';
+  access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
   cp_space_id: Scalars['uuid'];
   created_at: Scalars['timestamp'];
   end_date?: Maybe<Scalars['timestamp']>;
@@ -4269,6 +5018,7 @@ export type Maintainer_Visitor_Space_Request_Bool_Exp = {
   _and?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Bool_Exp>>;
   _not?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
   _or?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Bool_Exp>>;
+  access_type?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum_Comparison_Exp>;
   cp_space_id?: InputMaybe<Uuid_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   end_date?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -4295,8 +5045,197 @@ export enum Maintainer_Visitor_Space_Request_Constraint {
   VisitPkey = 'visit_pkey'
 }
 
+/** columns and relationships of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access = {
+  __typename?: 'maintainer_visitor_space_request_folder_access';
+  /** An object relationship */
+  folder: Users_Folder;
+  folder_id: Scalars['uuid'];
+  /** An array relationship */
+  folder_space_visitor_requests: Array<Maintainer_Visitor_Space_Request>;
+  /** An aggregate relationship */
+  folder_space_visitor_requests_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
+  id: Scalars['uuid'];
+  visit_request_id: Scalars['uuid'];
+  /** An object relationship */
+  visitor_space_request: Maintainer_Visitor_Space_Request;
+  /** An array relationship */
+  visitor_space_request_folders: Array<Users_Folder>;
+  /** An aggregate relationship */
+  visitor_space_request_folders_aggregate: Users_Folder_Aggregate;
+};
+
+
+/** columns and relationships of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_AccessFolder_Space_Visitor_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+/** columns and relationships of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_AccessFolder_Space_Visitor_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+};
+
+
+/** columns and relationships of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_AccessVisitor_Space_Request_FoldersArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
+};
+
+
+/** columns and relationships of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_AccessVisitor_Space_Request_Folders_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Folder_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Users_Folder_Order_By>>;
+  where?: InputMaybe<Users_Folder_Bool_Exp>;
+};
+
+/** aggregated selection of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Aggregate = {
+  __typename?: 'maintainer_visitor_space_request_folder_access_aggregate';
+  aggregate?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Aggregate_Fields>;
+  nodes: Array<Maintainer_Visitor_Space_Request_Folder_Access>;
+};
+
+/** aggregate fields of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Aggregate_Fields = {
+  __typename?: 'maintainer_visitor_space_request_folder_access_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Max_Fields>;
+  min?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.visitor_space_request_folder_access". All fields are combined with a logical 'AND'. */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>>;
+  folder?: InputMaybe<Users_Folder_Bool_Exp>;
+  folder_id?: InputMaybe<Uuid_Comparison_Exp>;
+  folder_space_visitor_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  visit_request_id?: InputMaybe<Uuid_Comparison_Exp>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
+  visitor_space_request_folders?: InputMaybe<Users_Folder_Bool_Exp>;
+};
+
+/** unique or primary key constraints on table "maintainer.visitor_space_request_folder_access" */
+export enum Maintainer_Visitor_Space_Request_Folder_Access_Constraint {
+  /** unique or primary key constraint */
+  VisitorSpaceRequestFolderAccessPkey = 'visitor_space_request_folder_access_pkey'
+}
+
+/** input type for inserting data into table "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Insert_Input = {
+  folder?: InputMaybe<Users_Folder_Obj_Rel_Insert_Input>;
+  folder_id?: InputMaybe<Scalars['uuid']>;
+  folder_space_visitor_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input>;
+  id?: InputMaybe<Scalars['uuid']>;
+  visit_request_id?: InputMaybe<Scalars['uuid']>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Obj_Rel_Insert_Input>;
+  visitor_space_request_folders?: InputMaybe<Users_Folder_Arr_Rel_Insert_Input>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Max_Fields = {
+  __typename?: 'maintainer_visitor_space_request_folder_access_max_fields';
+  folder_id?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  visit_request_id?: Maybe<Scalars['uuid']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Min_Fields = {
+  __typename?: 'maintainer_visitor_space_request_folder_access_min_fields';
+  folder_id?: Maybe<Scalars['uuid']>;
+  id?: Maybe<Scalars['uuid']>;
+  visit_request_id?: Maybe<Scalars['uuid']>;
+};
+
+/** response of any mutation on the table "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Mutation_Response = {
+  __typename?: 'maintainer_visitor_space_request_folder_access_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Visitor_Space_Request_Folder_Access>;
+};
+
+/** on_conflict condition type for table "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_On_Conflict = {
+  constraint: Maintainer_Visitor_Space_Request_Folder_Access_Constraint;
+  update_columns?: Array<Maintainer_Visitor_Space_Request_Folder_Access_Update_Column>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "maintainer.visitor_space_request_folder_access". */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Order_By = {
+  folder?: InputMaybe<Users_Folder_Order_By>;
+  folder_id?: InputMaybe<Order_By>;
+  folder_space_visitor_requests_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Aggregate_Order_By>;
+  id?: InputMaybe<Order_By>;
+  visit_request_id?: InputMaybe<Order_By>;
+  visitor_space_request?: InputMaybe<Maintainer_Visitor_Space_Request_Order_By>;
+  visitor_space_request_folders_aggregate?: InputMaybe<Users_Folder_Aggregate_Order_By>;
+};
+
+/** primary key columns input for table: maintainer_visitor_space_request_folder_access */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "maintainer.visitor_space_request_folder_access" */
+export enum Maintainer_Visitor_Space_Request_Folder_Access_Select_Column {
+  /** column name */
+  FolderId = 'folder_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  VisitRequestId = 'visit_request_id'
+}
+
+/** input type for updating data in table "maintainer.visitor_space_request_folder_access" */
+export type Maintainer_Visitor_Space_Request_Folder_Access_Set_Input = {
+  folder_id?: InputMaybe<Scalars['uuid']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  visit_request_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** update columns of table "maintainer.visitor_space_request_folder_access" */
+export enum Maintainer_Visitor_Space_Request_Folder_Access_Update_Column {
+  /** column name */
+  FolderId = 'folder_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  VisitRequestId = 'visit_request_id'
+}
+
 /** input type for inserting data into table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_Insert_Input = {
+  access_type?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>;
   cp_space_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamp']>;
   end_date?: InputMaybe<Scalars['timestamp']>;
@@ -4612,6 +5551,7 @@ export type Maintainer_Visitor_Space_Request_On_Conflict = {
 
 /** Ordering options when selecting data from "maintainer.visitor_space_request". */
 export type Maintainer_Visitor_Space_Request_Order_By = {
+  access_type?: InputMaybe<Order_By>;
   cp_space_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   end_date?: InputMaybe<Order_By>;
@@ -4640,6 +5580,8 @@ export type Maintainer_Visitor_Space_Request_Pk_Columns_Input = {
 /** select columns of table "maintainer.visitor_space_request" */
 export enum Maintainer_Visitor_Space_Request_Select_Column {
   /** column name */
+  AccessType = 'access_type',
+  /** column name */
   CpSpaceId = 'cp_space_id',
   /** column name */
   CreatedAt = 'created_at',
@@ -4667,6 +5609,7 @@ export enum Maintainer_Visitor_Space_Request_Select_Column {
 
 /** input type for updating data in table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_Set_Input = {
+  access_type?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>;
   cp_space_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamp']>;
   end_date?: InputMaybe<Scalars['timestamp']>;
@@ -4683,6 +5626,8 @@ export type Maintainer_Visitor_Space_Request_Set_Input = {
 
 /** update columns of table "maintainer.visitor_space_request" */
 export enum Maintainer_Visitor_Space_Request_Update_Column {
+  /** column name */
+  AccessType = 'access_type',
   /** column name */
   CpSpaceId = 'cp_space_id',
   /** column name */
@@ -4809,6 +5754,14 @@ export type Mutation_Root = {
   delete_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
   /** delete single row from the table: "app.content_page_content_label" */
   delete_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** delete data from the table: "app.maintenance_alerts" */
+  delete_app_maintenance_alerts?: Maybe<App_Maintenance_Alerts_Mutation_Response>;
+  /** delete single row from the table: "app.maintenance_alerts" */
+  delete_app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
+  /** delete data from the table: "app.material_requests" */
+  delete_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** delete single row from the table: "app.material_requests" */
+  delete_app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** delete data from the table: "app.navigation" */
   delete_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** delete single row from the table: "app.navigation" */
@@ -4825,10 +5778,18 @@ export type Mutation_Root = {
   delete_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_content_type" */
   delete_lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
+  /** delete data from the table: "lookup.app_material_request_type" */
+  delete_lookup_app_material_request_type?: Maybe<Lookup_App_Material_Request_Type_Mutation_Response>;
+  /** delete single row from the table: "lookup.app_material_request_type" */
+  delete_lookup_app_material_request_type_by_pk?: Maybe<Lookup_App_Material_Request_Type>;
   /** delete data from the table: "lookup.app_notification_type" */
   delete_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_notification_type" */
   delete_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** delete data from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  delete_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
+  /** delete single row from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  delete_lookup_maintainer_visitor_space_request_access_type_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** delete data from the table: "lookup.maintainer_visitor_space_request_status" */
   delete_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
   /** delete single row from the table: "lookup.maintainer_visitor_space_request_status" */
@@ -4869,6 +5830,10 @@ export type Mutation_Root = {
   delete_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
   /** delete single row from the table: "maintainer.visitor_space_request" */
   delete_maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** delete data from the table: "maintainer.visitor_space_request_folder_access" */
+  delete_maintainer_visitor_space_request_folder_access?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Mutation_Response>;
+  /** delete single row from the table: "maintainer.visitor_space_request_folder_access" */
+  delete_maintainer_visitor_space_request_folder_access_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** delete data from the table: "maintainer.visitor_space_request_note" */
   delete_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
   /** delete single row from the table: "maintainer.visitor_space_request_note" */
@@ -4949,6 +5914,14 @@ export type Mutation_Root = {
   insert_app_content_page_content_label_one?: Maybe<App_Content_Page_Content_Label>;
   /** insert a single row into the table: "app.content_page" */
   insert_app_content_page_one?: Maybe<App_Content_Page>;
+  /** insert data into the table: "app.maintenance_alerts" */
+  insert_app_maintenance_alerts?: Maybe<App_Maintenance_Alerts_Mutation_Response>;
+  /** insert a single row into the table: "app.maintenance_alerts" */
+  insert_app_maintenance_alerts_one?: Maybe<App_Maintenance_Alerts>;
+  /** insert data into the table: "app.material_requests" */
+  insert_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** insert a single row into the table: "app.material_requests" */
+  insert_app_material_requests_one?: Maybe<App_Material_Requests>;
   /** insert data into the table: "app.navigation" */
   insert_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** insert a single row into the table: "app.navigation" */
@@ -4965,10 +5938,18 @@ export type Mutation_Root = {
   insert_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_content_type" */
   insert_lookup_app_content_type_one?: Maybe<Lookup_App_Content_Type>;
+  /** insert data into the table: "lookup.app_material_request_type" */
+  insert_lookup_app_material_request_type?: Maybe<Lookup_App_Material_Request_Type_Mutation_Response>;
+  /** insert a single row into the table: "lookup.app_material_request_type" */
+  insert_lookup_app_material_request_type_one?: Maybe<Lookup_App_Material_Request_Type>;
   /** insert data into the table: "lookup.app_notification_type" */
   insert_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_notification_type" */
   insert_lookup_app_notification_type_one?: Maybe<Lookup_App_Notification_Type>;
+  /** insert data into the table: "lookup.maintainer_visitor_space_request_access_type" */
+  insert_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
+  /** insert a single row into the table: "lookup.maintainer_visitor_space_request_access_type" */
+  insert_lookup_maintainer_visitor_space_request_access_type_one?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** insert data into the table: "lookup.maintainer_visitor_space_request_status" */
   insert_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
   /** insert a single row into the table: "lookup.maintainer_visitor_space_request_status" */
@@ -5007,6 +5988,10 @@ export type Mutation_Root = {
   insert_maintainer_visitor_space_one?: Maybe<Maintainer_Visitor_Space>;
   /** insert data into the table: "maintainer.visitor_space_request" */
   insert_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
+  /** insert data into the table: "maintainer.visitor_space_request_folder_access" */
+  insert_maintainer_visitor_space_request_folder_access?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.visitor_space_request_folder_access" */
+  insert_maintainer_visitor_space_request_folder_access_one?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** insert data into the table: "maintainer.visitor_space_request_note" */
   insert_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
   /** insert a single row into the table: "maintainer.visitor_space_request_note" */
@@ -5089,6 +6074,14 @@ export type Mutation_Root = {
   update_app_content_page_content_label?: Maybe<App_Content_Page_Content_Label_Mutation_Response>;
   /** update single row of the table: "app.content_page_content_label" */
   update_app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** update data of the table: "app.maintenance_alerts" */
+  update_app_maintenance_alerts?: Maybe<App_Maintenance_Alerts_Mutation_Response>;
+  /** update single row of the table: "app.maintenance_alerts" */
+  update_app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
+  /** update data of the table: "app.material_requests" */
+  update_app_material_requests?: Maybe<App_Material_Requests_Mutation_Response>;
+  /** update single row of the table: "app.material_requests" */
+  update_app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** update data of the table: "app.navigation" */
   update_app_navigation?: Maybe<App_Navigation_Mutation_Response>;
   /** update single row of the table: "app.navigation" */
@@ -5105,10 +6098,18 @@ export type Mutation_Root = {
   update_lookup_app_content_type?: Maybe<Lookup_App_Content_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_content_type" */
   update_lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
+  /** update data of the table: "lookup.app_material_request_type" */
+  update_lookup_app_material_request_type?: Maybe<Lookup_App_Material_Request_Type_Mutation_Response>;
+  /** update single row of the table: "lookup.app_material_request_type" */
+  update_lookup_app_material_request_type_by_pk?: Maybe<Lookup_App_Material_Request_Type>;
   /** update data of the table: "lookup.app_notification_type" */
   update_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_notification_type" */
   update_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** update data of the table: "lookup.maintainer_visitor_space_request_access_type" */
+  update_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
+  /** update single row of the table: "lookup.maintainer_visitor_space_request_access_type" */
+  update_lookup_maintainer_visitor_space_request_access_type_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** update data of the table: "lookup.maintainer_visitor_space_request_status" */
   update_lookup_maintainer_visitor_space_request_status?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Status_Mutation_Response>;
   /** update single row of the table: "lookup.maintainer_visitor_space_request_status" */
@@ -5149,6 +6150,10 @@ export type Mutation_Root = {
   update_maintainer_visitor_space_request?: Maybe<Maintainer_Visitor_Space_Request_Mutation_Response>;
   /** update single row of the table: "maintainer.visitor_space_request" */
   update_maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** update data of the table: "maintainer.visitor_space_request_folder_access" */
+  update_maintainer_visitor_space_request_folder_access?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access_Mutation_Response>;
+  /** update single row of the table: "maintainer.visitor_space_request_folder_access" */
+  update_maintainer_visitor_space_request_folder_access_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** update data of the table: "maintainer.visitor_space_request_note" */
   update_maintainer_visitor_space_request_note?: Maybe<Maintainer_Visitor_Space_Request_Note_Mutation_Response>;
   /** update single row of the table: "maintainer.visitor_space_request_note" */
@@ -5273,6 +6278,30 @@ export type Mutation_RootDelete_App_Content_Page_Content_Label_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_App_Maintenance_AlertsArgs = {
+  where: App_Maintenance_Alerts_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Maintenance_Alerts_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_RequestsArgs = {
+  where: App_Material_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Material_Requests_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_App_NavigationArgs = {
   where: App_Navigation_Bool_Exp;
 };
@@ -5321,6 +6350,18 @@ export type Mutation_RootDelete_Lookup_App_Content_Type_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Lookup_App_Material_Request_TypeArgs = {
+  where: Lookup_App_Material_Request_Type_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_App_Material_Request_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Lookup_App_Notification_TypeArgs = {
   where: Lookup_App_Notification_Type_Bool_Exp;
 };
@@ -5328,6 +6369,18 @@ export type Mutation_RootDelete_Lookup_App_Notification_TypeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Lookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_Request_Access_TypeArgs = {
+  where: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Maintainer_Visitor_Space_Request_Access_Type_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -5448,6 +6501,18 @@ export type Mutation_RootDelete_Maintainer_Visitor_Space_RequestArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_Folder_AccessArgs = {
+  where: Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Visitor_Space_Request_Folder_Access_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -5704,6 +6769,34 @@ export type Mutation_RootInsert_App_Content_Page_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_App_Maintenance_AlertsArgs = {
+  objects: Array<App_Maintenance_Alerts_Insert_Input>;
+  on_conflict?: InputMaybe<App_Maintenance_Alerts_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Maintenance_Alerts_OneArgs = {
+  object: App_Maintenance_Alerts_Insert_Input;
+  on_conflict?: InputMaybe<App_Maintenance_Alerts_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_RequestsArgs = {
+  objects: Array<App_Material_Requests_Insert_Input>;
+  on_conflict?: InputMaybe<App_Material_Requests_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Material_Requests_OneArgs = {
+  object: App_Material_Requests_Insert_Input;
+  on_conflict?: InputMaybe<App_Material_Requests_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_App_NavigationArgs = {
   objects: Array<App_Navigation_Insert_Input>;
   on_conflict?: InputMaybe<App_Navigation_On_Conflict>;
@@ -5760,6 +6853,20 @@ export type Mutation_RootInsert_Lookup_App_Content_Type_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_Lookup_App_Material_Request_TypeArgs = {
+  objects: Array<Lookup_App_Material_Request_Type_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_App_Material_Request_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_App_Material_Request_Type_OneArgs = {
+  object: Lookup_App_Material_Request_Type_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_App_Material_Request_Type_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Lookup_App_Notification_TypeArgs = {
   objects: Array<Lookup_App_Notification_Type_Insert_Input>;
   on_conflict?: InputMaybe<Lookup_App_Notification_Type_On_Conflict>;
@@ -5770,6 +6877,20 @@ export type Mutation_RootInsert_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootInsert_Lookup_App_Notification_Type_OneArgs = {
   object: Lookup_App_Notification_Type_Insert_Input;
   on_conflict?: InputMaybe<Lookup_App_Notification_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_Request_Access_TypeArgs = {
+  objects: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Maintainer_Visitor_Space_Request_Access_Type_OneArgs = {
+  object: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_On_Conflict>;
 };
 
 
@@ -5903,6 +7024,20 @@ export type Mutation_RootInsert_Maintainer_Visitor_Space_OneArgs = {
 export type Mutation_RootInsert_Maintainer_Visitor_Space_RequestArgs = {
   objects: Array<Maintainer_Visitor_Space_Request_Insert_Input>;
   on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_Folder_AccessArgs = {
+  objects: Array<Maintainer_Visitor_Space_Request_Folder_Access_Insert_Input>;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Visitor_Space_Request_Folder_Access_OneArgs = {
+  object: Maintainer_Visitor_Space_Request_Folder_Access_Insert_Input;
+  on_conflict?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_On_Conflict>;
 };
 
 
@@ -6236,6 +7371,44 @@ export type Mutation_RootUpdate_App_Content_Page_Content_Label_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_App_Maintenance_AlertsArgs = {
+  _append?: InputMaybe<App_Maintenance_Alerts_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Maintenance_Alerts_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Maintenance_Alerts_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Maintenance_Alerts_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Maintenance_Alerts_Prepend_Input>;
+  _set?: InputMaybe<App_Maintenance_Alerts_Set_Input>;
+  where: App_Maintenance_Alerts_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Maintenance_Alerts_By_PkArgs = {
+  _append?: InputMaybe<App_Maintenance_Alerts_Append_Input>;
+  _delete_at_path?: InputMaybe<App_Maintenance_Alerts_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<App_Maintenance_Alerts_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<App_Maintenance_Alerts_Delete_Key_Input>;
+  _prepend?: InputMaybe<App_Maintenance_Alerts_Prepend_Input>;
+  _set?: InputMaybe<App_Maintenance_Alerts_Set_Input>;
+  pk_columns: App_Maintenance_Alerts_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_RequestsArgs = {
+  _set?: InputMaybe<App_Material_Requests_Set_Input>;
+  where: App_Material_Requests_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Material_Requests_By_PkArgs = {
+  _set?: InputMaybe<App_Material_Requests_Set_Input>;
+  pk_columns: App_Material_Requests_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_App_NavigationArgs = {
   _append?: InputMaybe<App_Navigation_Append_Input>;
   _delete_at_path?: InputMaybe<App_Navigation_Delete_At_Path_Input>;
@@ -6304,6 +7477,20 @@ export type Mutation_RootUpdate_Lookup_App_Content_Type_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Lookup_App_Material_Request_TypeArgs = {
+  _set?: InputMaybe<Lookup_App_Material_Request_Type_Set_Input>;
+  where: Lookup_App_Material_Request_Type_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_App_Material_Request_Type_By_PkArgs = {
+  _set?: InputMaybe<Lookup_App_Material_Request_Type_Set_Input>;
+  pk_columns: Lookup_App_Material_Request_Type_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Lookup_App_Notification_TypeArgs = {
   _set?: InputMaybe<Lookup_App_Notification_Type_Set_Input>;
   where: Lookup_App_Notification_Type_Bool_Exp;
@@ -6314,6 +7501,20 @@ export type Mutation_RootUpdate_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
   _set?: InputMaybe<Lookup_App_Notification_Type_Set_Input>;
   pk_columns: Lookup_App_Notification_Type_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_Access_TypeArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Set_Input>;
+  where: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Maintainer_Visitor_Space_Request_Access_Type_By_PkArgs = {
+  _set?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Set_Input>;
+  pk_columns: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Pk_Columns_Input;
 };
 
 
@@ -6468,6 +7669,20 @@ export type Mutation_RootUpdate_Maintainer_Visitor_Space_RequestArgs = {
 export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_By_PkArgs = {
   _set?: InputMaybe<Maintainer_Visitor_Space_Request_Set_Input>;
   pk_columns: Maintainer_Visitor_Space_Request_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_Folder_AccessArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Set_Input>;
+  where: Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Visitor_Space_Request_Folder_Access_By_PkArgs = {
+  _set?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Set_Input>;
+  pk_columns: Maintainer_Visitor_Space_Request_Folder_Access_Pk_Columns_Input;
 };
 
 
@@ -6976,6 +8191,7 @@ export type Object_Ie = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   /** An array relationship */
   ies: Array<Users_Folder_Ie>;
   /** An aggregate relationship */
@@ -7239,6 +8455,7 @@ export type Object_Ie_Bool_Exp = {
   dcterms_issued?: InputMaybe<String_Comparison_Exp>;
   dcterms_medium?: InputMaybe<String_Comparison_Exp>;
   ebucore_object_type?: InputMaybe<String_Comparison_Exp>;
+  haorg_organization_type?: InputMaybe<String_Comparison_Exp>;
   ies?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
   meemoo_description_cast?: InputMaybe<String_Comparison_Exp>;
@@ -7452,6 +8669,7 @@ export type Object_Ie_Insert_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
   ies?: InputMaybe<Users_Folder_Ie_Arr_Rel_Insert_Input>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
@@ -7646,6 +8864,7 @@ export type Object_Ie_Max_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: Maybe<Scalars['String']>;
   /** Beschrijving van het programma. */
@@ -7703,6 +8922,7 @@ export type Object_Ie_Min_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: Maybe<Scalars['String']>;
   /** Beschrijving van het programma. */
@@ -7779,6 +8999,7 @@ export type Object_Ie_Order_By = {
   dcterms_issued?: InputMaybe<Order_By>;
   dcterms_medium?: InputMaybe<Order_By>;
   ebucore_object_type?: InputMaybe<Order_By>;
+  haorg_organization_type?: InputMaybe<Order_By>;
   ies_aggregate?: InputMaybe<Users_Folder_Ie_Aggregate_Order_By>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Order_By>;
   meemoo_description_cast?: InputMaybe<Order_By>;
@@ -7866,6 +9087,8 @@ export enum Object_Ie_Select_Column {
   DctermsMedium = 'dcterms_medium',
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
+  /** column name */
+  HaorgOrganizationType = 'haorg_organization_type',
   /** column name */
   MeemooDescriptionCast = 'meemoo_description_cast',
   /** column name */
@@ -7964,6 +9187,7 @@ export type Object_Ie_Set_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: InputMaybe<Scalars['String']>;
   /** Beschrijving van het programma. */
@@ -8086,6 +9310,8 @@ export enum Object_Ie_Update_Column {
   DctermsMedium = 'dcterms_medium',
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
+  /** column name */
+  HaorgOrganizationType = 'haorg_organization_type',
   /** column name */
   MeemooDescriptionCast = 'meemoo_description_cast',
   /** column name */
@@ -8558,6 +9784,18 @@ export type Query_Root = {
   app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
   /** fetch data from the table: "app.content_page_content_label" using primary key columns */
   app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.maintenance_alerts" */
+  app_maintenance_alerts: Array<App_Maintenance_Alerts>;
+  /** fetch aggregated fields from the table: "app.maintenance_alerts" */
+  app_maintenance_alerts_aggregate: App_Maintenance_Alerts_Aggregate;
+  /** fetch data from the table: "app.maintenance_alerts" using primary key columns */
+  app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
+  /** fetch data from the table: "app.material_requests" */
+  app_material_requests: Array<App_Material_Requests>;
+  /** fetch aggregated fields from the table: "app.material_requests" */
+  app_material_requests_aggregate: App_Material_Requests_Aggregate;
+  /** fetch data from the table: "app.material_requests" using primary key columns */
+  app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** fetch data from the table: "app.navigation" */
   app_navigation: Array<App_Navigation>;
   /** fetch aggregated fields from the table: "app.navigation" */
@@ -8582,12 +9820,24 @@ export type Query_Root = {
   lookup_app_content_type_aggregate: Lookup_App_Content_Type_Aggregate;
   /** fetch data from the table: "lookup.app_content_type" using primary key columns */
   lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
+  /** fetch data from the table: "lookup.app_material_request_type" */
+  lookup_app_material_request_type: Array<Lookup_App_Material_Request_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_material_request_type" */
+  lookup_app_material_request_type_aggregate: Lookup_App_Material_Request_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_material_request_type" using primary key columns */
+  lookup_app_material_request_type_by_pk?: Maybe<Lookup_App_Material_Request_Type>;
   /** fetch data from the table: "lookup.app_notification_type" */
   lookup_app_notification_type: Array<Lookup_App_Notification_Type>;
   /** fetch aggregated fields from the table: "lookup.app_notification_type" */
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  lookup_maintainer_visitor_space_request_access_type: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  lookup_maintainer_visitor_space_request_access_type_aggregate: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" using primary key columns */
+  lookup_maintainer_visitor_space_request_access_type_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" */
   lookup_maintainer_visitor_space_request_status: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
   /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_status" */
@@ -8618,6 +9868,10 @@ export type Query_Root = {
   maintainer_content_partner_aggregate: Maintainer_Content_Partner_Aggregate;
   /** fetch data from the table: "maintainer.content_partner" using primary key columns */
   maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** fetch data from the table: "maintainer.haorg" */
+  maintainer_haorg: Array<Maintainer_Haorg>;
+  /** fetch aggregated fields from the table: "maintainer.haorg" */
+  maintainer_haorg_aggregate: Maintainer_Haorg_Aggregate;
   /** fetch data from the table: "maintainer.index" */
   maintainer_index: Array<Maintainer_Index>;
   /** fetch aggregated fields from the table: "maintainer.index" */
@@ -8648,6 +9902,12 @@ export type Query_Root = {
   maintainer_visitor_space_request_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
   /** fetch data from the table: "maintainer.visitor_space_request" using primary key columns */
   maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** fetch data from the table: "maintainer.visitor_space_request_folder_access" */
+  maintainer_visitor_space_request_folder_access: Array<Maintainer_Visitor_Space_Request_Folder_Access>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request_folder_access" */
+  maintainer_visitor_space_request_folder_access_aggregate: Maintainer_Visitor_Space_Request_Folder_Access_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request_folder_access" using primary key columns */
+  maintainer_visitor_space_request_folder_access_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** fetch data from the table: "maintainer.visitor_space_request_note" */
   maintainer_visitor_space_request_note: Array<Maintainer_Visitor_Space_Request_Note>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space_request_note" */
@@ -8864,6 +10124,52 @@ export type Query_RootApp_Content_Page_Content_Label_By_PkArgs = {
 };
 
 
+export type Query_RootApp_Maintenance_AlertsArgs = {
+  distinct_on?: InputMaybe<Array<App_Maintenance_Alerts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Maintenance_Alerts_Order_By>>;
+  where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Maintenance_Alerts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Maintenance_Alerts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Maintenance_Alerts_Order_By>>;
+  where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Maintenance_Alerts_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootApp_Material_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Material_Requests_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootApp_NavigationArgs = {
   distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -8956,6 +10262,29 @@ export type Query_RootLookup_App_Content_Type_By_PkArgs = {
 };
 
 
+export type Query_RootLookup_App_Material_Request_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Material_Request_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_App_Material_Request_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_App_Material_Request_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Material_Request_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_App_Material_Request_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_App_Material_Request_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
 export type Query_RootLookup_App_Notification_TypeArgs = {
   distinct_on?: InputMaybe<Array<Lookup_App_Notification_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -8975,6 +10304,29 @@ export type Query_RootLookup_App_Notification_Type_AggregateArgs = {
 
 
 export type Query_RootLookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_Access_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_Access_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Maintainer_Visitor_Space_Request_Access_Type_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -9094,6 +10446,24 @@ export type Query_RootMaintainer_Content_Partner_By_PkArgs = {
 };
 
 
+export type Query_RootMaintainer_HaorgArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Haorg_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Haorg_Order_By>>;
+  where?: InputMaybe<Maintainer_Haorg_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Haorg_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Haorg_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Haorg_Order_By>>;
+  where?: InputMaybe<Maintainer_Haorg_Bool_Exp>;
+};
+
+
 export type Query_RootMaintainer_IndexArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -9205,6 +10575,29 @@ export type Query_RootMaintainer_Visitor_Space_Request_AggregateArgs = {
 
 
 export type Query_RootMaintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_Folder_AccessArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_Folder_Access_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Visitor_Space_Request_Folder_Access_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -9622,6 +11015,18 @@ export type Subscription_Root = {
   app_content_page_content_label_aggregate: App_Content_Page_Content_Label_Aggregate;
   /** fetch data from the table: "app.content_page_content_label" using primary key columns */
   app_content_page_content_label_by_pk?: Maybe<App_Content_Page_Content_Label>;
+  /** fetch data from the table: "app.maintenance_alerts" */
+  app_maintenance_alerts: Array<App_Maintenance_Alerts>;
+  /** fetch aggregated fields from the table: "app.maintenance_alerts" */
+  app_maintenance_alerts_aggregate: App_Maintenance_Alerts_Aggregate;
+  /** fetch data from the table: "app.maintenance_alerts" using primary key columns */
+  app_maintenance_alerts_by_pk?: Maybe<App_Maintenance_Alerts>;
+  /** fetch data from the table: "app.material_requests" */
+  app_material_requests: Array<App_Material_Requests>;
+  /** fetch aggregated fields from the table: "app.material_requests" */
+  app_material_requests_aggregate: App_Material_Requests_Aggregate;
+  /** fetch data from the table: "app.material_requests" using primary key columns */
+  app_material_requests_by_pk?: Maybe<App_Material_Requests>;
   /** fetch data from the table: "app.navigation" */
   app_navigation: Array<App_Navigation>;
   /** fetch aggregated fields from the table: "app.navigation" */
@@ -9646,12 +11051,24 @@ export type Subscription_Root = {
   lookup_app_content_type_aggregate: Lookup_App_Content_Type_Aggregate;
   /** fetch data from the table: "lookup.app_content_type" using primary key columns */
   lookup_app_content_type_by_pk?: Maybe<Lookup_App_Content_Type>;
+  /** fetch data from the table: "lookup.app_material_request_type" */
+  lookup_app_material_request_type: Array<Lookup_App_Material_Request_Type>;
+  /** fetch aggregated fields from the table: "lookup.app_material_request_type" */
+  lookup_app_material_request_type_aggregate: Lookup_App_Material_Request_Type_Aggregate;
+  /** fetch data from the table: "lookup.app_material_request_type" using primary key columns */
+  lookup_app_material_request_type_by_pk?: Maybe<Lookup_App_Material_Request_Type>;
   /** fetch data from the table: "lookup.app_notification_type" */
   lookup_app_notification_type: Array<Lookup_App_Notification_Type>;
   /** fetch aggregated fields from the table: "lookup.app_notification_type" */
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  lookup_maintainer_visitor_space_request_access_type: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
+  /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_access_type" */
+  lookup_maintainer_visitor_space_request_access_type_aggregate: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Aggregate;
+  /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" using primary key columns */
+  lookup_maintainer_visitor_space_request_access_type_by_pk?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** fetch data from the table: "lookup.maintainer_visitor_space_request_status" */
   lookup_maintainer_visitor_space_request_status: Array<Lookup_Maintainer_Visitor_Space_Request_Status>;
   /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_status" */
@@ -9682,6 +11099,10 @@ export type Subscription_Root = {
   maintainer_content_partner_aggregate: Maintainer_Content_Partner_Aggregate;
   /** fetch data from the table: "maintainer.content_partner" using primary key columns */
   maintainer_content_partner_by_pk?: Maybe<Maintainer_Content_Partner>;
+  /** fetch data from the table: "maintainer.haorg" */
+  maintainer_haorg: Array<Maintainer_Haorg>;
+  /** fetch aggregated fields from the table: "maintainer.haorg" */
+  maintainer_haorg_aggregate: Maintainer_Haorg_Aggregate;
   /** fetch data from the table: "maintainer.index" */
   maintainer_index: Array<Maintainer_Index>;
   /** fetch aggregated fields from the table: "maintainer.index" */
@@ -9712,6 +11133,12 @@ export type Subscription_Root = {
   maintainer_visitor_space_request_aggregate: Maintainer_Visitor_Space_Request_Aggregate;
   /** fetch data from the table: "maintainer.visitor_space_request" using primary key columns */
   maintainer_visitor_space_request_by_pk?: Maybe<Maintainer_Visitor_Space_Request>;
+  /** fetch data from the table: "maintainer.visitor_space_request_folder_access" */
+  maintainer_visitor_space_request_folder_access: Array<Maintainer_Visitor_Space_Request_Folder_Access>;
+  /** fetch aggregated fields from the table: "maintainer.visitor_space_request_folder_access" */
+  maintainer_visitor_space_request_folder_access_aggregate: Maintainer_Visitor_Space_Request_Folder_Access_Aggregate;
+  /** fetch data from the table: "maintainer.visitor_space_request_folder_access" using primary key columns */
+  maintainer_visitor_space_request_folder_access_by_pk?: Maybe<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** fetch data from the table: "maintainer.visitor_space_request_note" */
   maintainer_visitor_space_request_note: Array<Maintainer_Visitor_Space_Request_Note>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space_request_note" */
@@ -9928,6 +11355,52 @@ export type Subscription_RootApp_Content_Page_Content_Label_By_PkArgs = {
 };
 
 
+export type Subscription_RootApp_Maintenance_AlertsArgs = {
+  distinct_on?: InputMaybe<Array<App_Maintenance_Alerts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Maintenance_Alerts_Order_By>>;
+  where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Maintenance_Alerts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Maintenance_Alerts_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Maintenance_Alerts_Order_By>>;
+  where?: InputMaybe<App_Maintenance_Alerts_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Maintenance_Alerts_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootApp_Material_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Material_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Material_Requests_Order_By>>;
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Material_Requests_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Subscription_RootApp_NavigationArgs = {
   distinct_on?: InputMaybe<Array<App_Navigation_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -10020,6 +11493,29 @@ export type Subscription_RootLookup_App_Content_Type_By_PkArgs = {
 };
 
 
+export type Subscription_RootLookup_App_Material_Request_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Material_Request_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_App_Material_Request_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_App_Material_Request_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_App_Material_Request_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_App_Material_Request_Type_Order_By>>;
+  where?: InputMaybe<Lookup_App_Material_Request_Type_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_App_Material_Request_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
 export type Subscription_RootLookup_App_Notification_TypeArgs = {
   distinct_on?: InputMaybe<Array<Lookup_App_Notification_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -10039,6 +11535,29 @@ export type Subscription_RootLookup_App_Notification_Type_AggregateArgs = {
 
 
 export type Subscription_RootLookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_Access_TypeArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_Access_Type_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By>>;
+  where?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Maintainer_Visitor_Space_Request_Access_Type_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -10158,6 +11677,24 @@ export type Subscription_RootMaintainer_Content_Partner_By_PkArgs = {
 };
 
 
+export type Subscription_RootMaintainer_HaorgArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Haorg_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Haorg_Order_By>>;
+  where?: InputMaybe<Maintainer_Haorg_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Haorg_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Haorg_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Haorg_Order_By>>;
+  where?: InputMaybe<Maintainer_Haorg_Bool_Exp>;
+};
+
+
 export type Subscription_RootMaintainer_IndexArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Index_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -10269,6 +11806,29 @@ export type Subscription_RootMaintainer_Visitor_Space_Request_AggregateArgs = {
 
 
 export type Subscription_RootMaintainer_Visitor_Space_Request_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_Folder_AccessArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_Folder_Access_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Order_By>>;
+  where?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Visitor_Space_Request_Folder_Access_By_PkArgs = {
   id: Scalars['uuid'];
 };
 
@@ -12693,6 +14253,7 @@ export type Users_Profile = {
   identities: Array<Users_Identity>;
   /** An aggregate relationship */
   identities_aggregate: Users_Identity_Aggregate;
+  is_key_user: Scalars['Boolean'];
   last_access_at?: Maybe<Scalars['timestamptz']>;
   last_name?: Maybe<Scalars['String']>;
   mail?: Maybe<Scalars['String']>;
@@ -12871,6 +14432,7 @@ export type Users_Profile_Bool_Exp = {
   group_id?: InputMaybe<Uuid_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   identities?: InputMaybe<Users_Identity_Bool_Exp>;
+  is_key_user?: InputMaybe<Boolean_Comparison_Exp>;
   last_access_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   last_name?: InputMaybe<String_Comparison_Exp>;
   mail?: InputMaybe<String_Comparison_Exp>;
@@ -12897,6 +14459,7 @@ export type Users_Profile_Insert_Input = {
   group_id?: InputMaybe<Scalars['uuid']>;
   id?: InputMaybe<Scalars['uuid']>;
   identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
+  is_key_user?: InputMaybe<Scalars['Boolean']>;
   last_access_at?: InputMaybe<Scalars['timestamptz']>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
@@ -12969,6 +14532,7 @@ export type Users_Profile_Order_By = {
   group_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
+  is_key_user?: InputMaybe<Order_By>;
   last_access_at?: InputMaybe<Order_By>;
   last_name?: InputMaybe<Order_By>;
   mail?: InputMaybe<Order_By>;
@@ -12997,6 +14561,8 @@ export enum Users_Profile_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsKeyUser = 'is_key_user',
+  /** column name */
   LastAccessAt = 'last_access_at',
   /** column name */
   LastName = 'last_name',
@@ -13013,6 +14579,7 @@ export type Users_Profile_Set_Input = {
   first_name?: InputMaybe<Scalars['String']>;
   group_id?: InputMaybe<Scalars['uuid']>;
   id?: InputMaybe<Scalars['uuid']>;
+  is_key_user?: InputMaybe<Scalars['Boolean']>;
   last_access_at?: InputMaybe<Scalars['timestamptz']>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
@@ -13031,6 +14598,8 @@ export enum Users_Profile_Update_Column {
   GroupId = 'group_id',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsKeyUser = 'is_key_user',
   /** column name */
   LastAccessAt = 'last_access_at',
   /** column name */
@@ -13053,175 +14622,6 @@ export type Uuid_Comparison_Exp = {
   _neq?: InputMaybe<Scalars['uuid']>;
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
-
-export type GetContentByIdQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type GetContentByIdQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, information?: { __typename?: 'maintainer_organisation', logo: any } | null } }>, group?: { __typename?: 'users_group', label: string, id: any } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', label: string, id: any, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
-
-export type GetContentPageByPathQueryVariables = Exact<{
-  path: Scalars['String'];
-}>;
-
-
-export type GetContentPageByPathQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, content_width: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }> };
-
-export type GetContentPageLabelsByTypeAndIdsQueryVariables = Exact<{
-  contentType: Lookup_App_Content_Type_Enum;
-  labelIds: Array<Scalars['uuid']> | Scalars['uuid'];
-}>;
-
-
-export type GetContentPageLabelsByTypeAndIdsQuery = { __typename?: 'query_root', app_content_label: Array<{ __typename?: 'app_content_label', label: string, id: any }> };
-
-export type GetContentPageLabelsByTypeAndLabelsQueryVariables = Exact<{
-  contentType: Lookup_App_Content_Type_Enum;
-  labels: Array<Scalars['String']> | Scalars['String'];
-}>;
-
-
-export type GetContentPageLabelsByTypeAndLabelsQuery = { __typename?: 'query_root', app_content_label: Array<{ __typename?: 'app_content_label', label: string, id: any }> };
-
-export type GetContentPagesWithBlocksQueryVariables = Exact<{
-  where?: InputMaybe<App_Content_Page_Bool_Exp>;
-  offset?: InputMaybe<Scalars['Int']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<App_Content_Page_Order_By> | App_Content_Page_Order_By>;
-  labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
-  orUserGroupIds?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp> | App_Content_Page_Content_Label_Bool_Exp>;
-}>;
-
-
-export type GetContentPagesWithBlocksQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, id: any, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, content_width: string, user_group_ids?: any | null, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }>, content_blocks: Array<{ __typename?: 'app_content_block', content_block_type: Lookup_App_Content_Block_Type_Enum, content_id: any, created_at: any, id: any, position: number, updated_at: any, variables?: any | null }> }>, app_content_page_aggregate: { __typename?: 'app_content_page_aggregate', aggregate?: { __typename?: 'app_content_page_aggregate_fields', count: number } | null }, app_content_label: Array<{ __typename?: 'app_content_label', id: any, content_content_labels_aggregate: { __typename?: 'app_content_page_content_label_aggregate', aggregate?: { __typename?: 'app_content_page_content_label_aggregate_fields', count: number } | null } }> };
-
-export type GetContentPagesQueryVariables = Exact<{
-  where?: InputMaybe<App_Content_Page_Bool_Exp>;
-  offset?: InputMaybe<Scalars['Int']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<App_Content_Page_Order_By> | App_Content_Page_Order_By>;
-  labelIds?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
-  orUserGroupIds?: InputMaybe<Array<App_Content_Page_Content_Label_Bool_Exp> | App_Content_Page_Content_Label_Bool_Exp>;
-}>;
-
-
-export type GetContentPagesQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', id: any, content_type: string, created_at: any, depublish_at?: any | null, description?: string | null, seo_description?: string | null, meta_description?: string | null, thumbnail_path?: string | null, is_protected: boolean, is_public?: boolean | null, path?: string | null, user_profile_id?: any | null, publish_at?: any | null, published_at?: any | null, title: string, updated_at?: any | null, user_group_ids?: any | null, content_width: string, owner_profile?: { __typename?: 'users_profile', first_name?: string | null, last_name?: string | null, group?: { __typename?: 'users_group', id: any, label: string } | null } | null, content_content_labels: Array<{ __typename?: 'app_content_page_content_label', content_label: { __typename?: 'app_content_label', id: any, label: string, link_to?: any | null } }> }>, app_content_page_aggregate: { __typename?: 'app_content_page_aggregate', aggregate?: { __typename?: 'app_content_page_aggregate_fields', count: number } | null }, app_content_label: Array<{ __typename?: 'app_content_label', id: any, content_content_labels_aggregate: { __typename?: 'app_content_page_content_label_aggregate', aggregate?: { __typename?: 'app_content_page_content_label_aggregate_fields', count: number } | null } }> };
-
-export type GetPublicContentPagesQueryVariables = Exact<{
-  where?: InputMaybe<App_Content_Page_Bool_Exp>;
-}>;
-
-
-export type GetPublicContentPagesQuery = { __typename?: 'query_root', app_content_page: Array<{ __typename?: 'app_content_page', path?: string | null, updated_at?: any | null }> };
-
-export type UpdateContentPagePublishDatesMutationVariables = Exact<{
-  now?: InputMaybe<Scalars['timestamp']>;
-  publishedAt?: InputMaybe<Scalars['timestamp']>;
-}>;
-
-
-export type UpdateContentPagePublishDatesMutation = { __typename?: 'mutation_root', publish_content_pages?: { __typename?: 'app_content_page_mutation_response', affected_rows: number } | null, unpublish_content_pages?: { __typename?: 'app_content_page_mutation_response', affected_rows: number } | null };
-
-export type DeleteNavigationMutationVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type DeleteNavigationMutation = { __typename?: 'mutation_root', delete_app_navigation?: { __typename?: 'app_navigation_mutation_response', affected_rows: number } | null };
-
-export type FindAllNavigationItemsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindAllNavigationItemsQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', content_path: string, content_type: string, link_target?: string | null, placement: string, position: number, id: any, icon_name: string, user_group_ids?: any | null, label: string, updated_at: any, description?: string | null, created_at: any, content_id?: any | null, tooltip?: string | null }> };
-
-export type FindNavigationByIdQueryVariables = Exact<{
-  id: Scalars['uuid'];
-}>;
-
-
-export type FindNavigationByIdQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }> };
-
-export type FindNavigationByPlacementQueryVariables = Exact<{
-  placement: Scalars['String'];
-}>;
-
-
-export type FindNavigationByPlacementQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null }>, app_navigation_aggregate: { __typename?: 'app_navigation_aggregate', aggregate?: { __typename?: 'app_navigation_aggregate_fields', count: number } | null } };
-
-export type FindNavigationQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindNavigationQuery = { __typename?: 'query_root', app_navigation: Array<{ __typename?: 'app_navigation', id: any, description?: string | null, placement: string, tooltip?: string | null, user_group_ids?: any | null }>, app_navigation_aggregate: { __typename?: 'app_navigation_aggregate', aggregate?: { __typename?: 'app_navigation_aggregate_fields', count: number } | null } };
-
-export type InsertNavigationMutationVariables = Exact<{
-  navigationItem: App_Navigation_Insert_Input;
-}>;
-
-
-export type InsertNavigationMutation = { __typename?: 'mutation_root', insert_app_navigation_one?: { __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
-
-export type UpdateNavigationByIdMutationVariables = Exact<{
-  id: Scalars['uuid'];
-  navigationItem: App_Navigation_Set_Input;
-}>;
-
-
-export type UpdateNavigationByIdMutation = { __typename?: 'mutation_root', update_app_navigation_by_pk?: { __typename?: 'app_navigation', id: any, created_at: any, description?: string | null, user_group_ids?: any | null, icon_name: string, label: string, link_target?: string | null, placement: string, position: number, updated_at: any, content_type: string, content_path: string, tooltip?: string | null } | null };
-
-export type GetOrganisationQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetOrganisationQuery = { __typename?: 'query_root', maintainer_content_partner: Array<{ __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', logo: any } | null }> };
-
-export type GetPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetPermissionsQuery = { __typename?: 'query_root', users_permission: Array<{ __typename?: 'users_permission', id: any, label: string, name: string, description?: string | null }> };
-
-export type GetFileByRepresentationSchemaIdentifierQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetFileByRepresentationSchemaIdentifierQuery = { __typename?: 'query_root', object_file: Array<{ __typename?: 'object_file', schema_embed_url?: string | null }> };
-
-export type GetThumbnailUrlByIdQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type GetThumbnailUrlByIdQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, schema_thumbnail_url?: string | null }> };
-
-export type GetSiteVariableByNameQueryVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type GetSiteVariableByNameQuery = { __typename?: 'query_root', app_config_by_pk?: { __typename?: 'app_config', name: string, value: any } | null };
-
-export type UpdateSiteVariableByNameMutationVariables = Exact<{
-  name: Scalars['String'];
-  data: App_Config_Set_Input;
-}>;
-
-
-export type UpdateSiteVariableByNameMutation = { __typename?: 'mutation_root', update_app_config?: { __typename?: 'app_config_mutation_response', affected_rows: number } | null };
-
-export type GetUserGroupsPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUserGroupsPermissionsQuery = { __typename?: 'query_root', users_group: Array<{ __typename?: 'users_group', id: any, label: string, name: string, permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', id: any, label: string, name: string, description?: string | null } }> }> };
-
-export type UpdateUserGroupsPermissionsMutationVariables = Exact<{
-  insertions: Array<Users_Group_Permission_Insert_Input> | Users_Group_Permission_Insert_Input;
-  deletions: Users_Group_Permission_Bool_Exp;
-}>;
-
-
-export type UpdateUserGroupsPermissionsMutation = { __typename?: 'mutation_root', delete_users_group_permission?: { __typename?: 'users_group_permission_mutation_response', affected_rows: number } | null, insert_users_group_permission?: { __typename?: 'users_group_permission_mutation_response', affected_rows: number } | null };
 
 export type DeleteCollectionMutationVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
@@ -13247,7 +14647,7 @@ export type FindCollectionObjectsByCollectionIdQueryVariables = Exact<{
 }>;
 
 
-export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, meemoo_local_id?: string | null, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null } }>, users_folder_ie_aggregate: { __typename?: 'users_folder_ie_aggregate', aggregate?: { __typename?: 'users_folder_ie_aggregate_fields', count: number } | null } };
+export type FindCollectionObjectsByCollectionIdQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, meemoo_local_id?: string | null, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, schema_duration?: any | null, schema_license?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null } }>, users_folder_ie_aggregate: { __typename?: 'users_folder_ie_aggregate', aggregate?: { __typename?: 'users_folder_ie_aggregate_fields', count: number } | null } };
 
 export type FindCollectionsByUserQueryVariables = Exact<{
   userProfileId?: InputMaybe<Scalars['uuid']>;
@@ -13263,7 +14663,7 @@ export type FindObjectBySchemaIdentifierQueryVariables = Exact<{
 }>;
 
 
-export type FindObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, meemoo_local_id?: string | null, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, dcterms_medium?: string | null, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null }> };
+export type FindObjectBySchemaIdentifierQuery = { __typename?: 'query_root', object_ie: Array<{ __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, meemoo_local_id?: string | null, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, dcterms_medium?: string | null, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, schema_duration?: any | null, schema_license?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null }> };
 
 export type FindObjectInCollectionQueryVariables = Exact<{
   collectionId?: InputMaybe<Scalars['uuid']>;
@@ -13271,7 +14671,7 @@ export type FindObjectInCollectionQueryVariables = Exact<{
 }>;
 
 
-export type FindObjectInCollectionQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null } }> };
+export type FindObjectInCollectionQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, schema_name: string, schema_creator?: any | null, schema_description?: string | null, dcterms_available?: any | null, schema_thumbnail_url?: string | null, dcterms_format: string, schema_number_of_pages?: number | null, schema_is_part_of?: any | null, schema_date_published?: any | null, schema_date_created_lower_bound?: any | null, schema_duration?: any | null, schema_license?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } | null } }> };
 
 export type InsertCollectionsMutationVariables = Exact<{
   object: Users_Folder_Insert_Input;
@@ -13286,7 +14686,7 @@ export type InsertObjectIntoCollectionMutationVariables = Exact<{
 }>;
 
 
-export type InsertObjectIntoCollectionMutation = { __typename?: 'mutation_root', insert_users_folder_ie?: { __typename?: 'users_folder_ie_mutation_response', returning: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, dcterms_format: string, dcterms_available?: any | null, schema_creator?: any | null, schema_description?: string | null, schema_name: string, schema_maintainer_id?: string | null, schema_number_of_pages?: number | null } }> } | null };
+export type InsertObjectIntoCollectionMutation = { __typename?: 'mutation_root', insert_users_folder_ie?: { __typename?: 'users_folder_ie_mutation_response', returning: Array<{ __typename?: 'users_folder_ie', created_at: any, ie: { __typename?: 'object_ie', schema_identifier: string, meemoo_identifier: string, dcterms_format: string, dcterms_available?: any | null, schema_creator?: any | null, schema_description?: string | null, schema_name: string, schema_maintainer_id?: string | null, schema_number_of_pages?: number | null, schema_duration?: any | null } }> } | null };
 
 export type RemoveObjectFromCollectionMutationVariables = Exact<{
   objectSchemaIdentifier?: InputMaybe<Scalars['String']>;
@@ -13319,7 +14719,7 @@ export type FindAllObjectsByCollectionIdQueryVariables = Exact<{
 }>;
 
 
-export type FindAllObjectsByCollectionIdQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', ie: { __typename?: 'object_ie', schema_identifier: string, premis_identifier?: any | null, schema_name: string, dcterms_format: string, schema_date_created_lower_bound?: any | null, schema_date_published?: any | null, schema_is_part_of?: any | null, meemoo_identifier: string, meemoo_local_id?: string | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_name?: string | null } | null } }> };
+export type FindAllObjectsByCollectionIdQuery = { __typename?: 'query_root', users_folder_ie: Array<{ __typename?: 'users_folder_ie', ie: { __typename?: 'object_ie', schema_identifier: string, premis_identifier?: any | null, schema_name: string, dcterms_format: string, schema_date_created_lower_bound?: any | null, schema_date_published?: any | null, schema_is_part_of?: any | null, meemoo_identifier: string, meemoo_local_id?: string | null, schema_license?: any | null, maintainer?: { __typename?: 'maintainer_content_partner', schema_name?: string | null } | null } }> };
 
 export type GetObjectDetailBySchemaIdentifierQueryVariables = Exact<{
   schemaIdentifier: Scalars['String'];
@@ -13338,7 +14738,7 @@ export type GetObjectIdentifierTupleQuery = { __typename?: 'query_root', object_
 export type GetRelatedObjectsQueryVariables = Exact<{
   schemaIdentifier: Scalars['String'];
   meemooIdentifier: Scalars['String'];
-  maintainerId: Scalars['String'];
+  maintainerId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -13352,6 +14752,47 @@ export type GetVisitRequestForAccessQueryVariables = Exact<{
 
 
 export type GetVisitRequestForAccessQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any }> };
+
+export type DeleteMaterialRequestMutationVariables = Exact<{
+  materialRequestId?: InputMaybe<Scalars['uuid']>;
+  userProfileId?: InputMaybe<Scalars['uuid']>;
+}>;
+
+
+export type DeleteMaterialRequestMutation = { __typename?: 'mutation_root', delete_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', affected_rows: number } | null };
+
+export type FindMaterialRequestsByIdQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type FindMaterialRequestsByIdQuery = { __typename?: 'query_root', app_material_requests: Array<{ __typename?: 'app_material_requests', id: any, object_schema_identifier: string, profile_id: any, reason: string, created_at: any, updated_at: any, type: Lookup_App_Material_Request_Type_Enum, is_pending: boolean, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null, group?: { __typename?: 'users_group', name: string, label: string, description?: string | null, id: any } | null }, object: { __typename?: 'object_ie', meemoo_identifier: string, schema_name: string, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, information?: { __typename?: 'maintainer_organisation', logo: any } | null, visitor_space?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null } }> };
+
+export type FindMaterialRequestsQueryVariables = Exact<{
+  where?: InputMaybe<App_Material_Requests_Bool_Exp>;
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+  orderBy?: App_Material_Requests_Order_By;
+}>;
+
+
+export type FindMaterialRequestsQuery = { __typename?: 'query_root', app_material_requests: Array<{ __typename?: 'app_material_requests', id: any, object_schema_identifier: string, profile_id: any, reason: string, created_at: any, updated_at: any, type: Lookup_App_Material_Request_Type_Enum, is_pending: boolean, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null }, object: { __typename?: 'object_ie', meemoo_identifier: string, schema_name: string, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null } }>, app_material_requests_aggregate: { __typename?: 'app_material_requests_aggregate', aggregate?: { __typename?: 'app_material_requests_aggregate_fields', count: number } | null } };
+
+export type InsertMaterialRequestMutationVariables = Exact<{
+  newMaterialRequest: App_Material_Requests_Insert_Input;
+}>;
+
+
+export type InsertMaterialRequestMutation = { __typename?: 'mutation_root', insert_app_material_requests_one?: { __typename?: 'app_material_requests', id: any, object_schema_identifier: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, is_pending: boolean, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null }, object: { __typename?: 'object_ie', schema_name: string, meemoo_identifier: string, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null } } | null };
+
+export type UpdateMaterialRequestMutationVariables = Exact<{
+  materialRequestId?: InputMaybe<Scalars['uuid']>;
+  userProfileId?: InputMaybe<Scalars['uuid']>;
+  materialRequest?: InputMaybe<App_Material_Requests_Set_Input>;
+}>;
+
+
+export type UpdateMaterialRequestMutation = { __typename?: 'mutation_root', update_app_material_requests?: { __typename?: 'app_material_requests_mutation_response', returning: Array<{ __typename?: 'app_material_requests', id: any, object_schema_identifier: string, profile_id: any, reason: string, type: Lookup_App_Material_Request_Type_Enum, created_at: any, updated_at: any, is_pending: boolean, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, mail?: string | null }, object: { __typename?: 'object_ie', meemoo_identifier: string, schema_name: string, maintainer?: { __typename?: 'maintainer_content_partner', schema_identifier: string, schema_name?: string | null, visitor_space?: { __typename?: 'maintainer_visitor_space', slug?: string | null } | null } | null } }> } | null };
 
 export type DeleteNotificationsMutationVariables = Exact<{
   where: App_Notification_Bool_Exp;
@@ -13398,6 +14839,13 @@ export type DeleteOrganisationsMutationVariables = Exact<{ [key: string]: never;
 
 
 export type DeleteOrganisationsMutation = { __typename?: 'mutation_root', delete_maintainer_organisation?: { __typename?: 'maintainer_organisation_mutation_response', affected_rows: number } | null };
+
+export type FindOrganisationBySchemaIdQueryVariables = Exact<{
+  schemaIdentifier: Scalars['String'];
+}>;
+
+
+export type FindOrganisationBySchemaIdQuery = { __typename?: 'query_root', maintainer_organisation: Array<{ __typename?: 'maintainer_organisation', schema_identifier: string, schema_name?: string | null, updated_at?: any | null, primary_site: any, logo: any, description?: string | null, created_at?: any | null, contact_point: any, haorg_organization_type?: string | null }> };
 
 export type InsertOrganisationsMutationVariables = Exact<{
   organizations: Array<Maintainer_Organisation_Insert_Input> | Maintainer_Organisation_Insert_Input;
@@ -13503,7 +14951,7 @@ export type GetUserByIdentityIdQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByIdentityIdQuery = { __typename?: 'query_root', users_profile: Array<{ __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> }> };
+export type GetUserByIdentityIdQuery = { __typename?: 'query_root', users_profile: Array<{ __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, is_key_user: boolean, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> }> };
 
 export type InsertLinkUserToMaintainerMutationVariables = Exact<{
   maintainerId: Scalars['String'];
@@ -13525,7 +14973,7 @@ export type InsertUserMutationVariables = Exact<{
 }>;
 
 
-export type InsertUserMutation = { __typename?: 'mutation_root', insert_users_profile_one?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> } | null };
+export type InsertUserMutation = { __typename?: 'mutation_root', insert_users_profile_one?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, is_key_user: boolean, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> } | null };
 
 export type UpdateUserLastAccessDateMutationVariables = Exact<{
   userProfileId: Scalars['uuid'];
@@ -13541,7 +14989,7 @@ export type UpdateUserProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserProfileMutation = { __typename?: 'mutation_root', update_users_profile_by_pk?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> } | null };
+export type UpdateUserProfileMutation = { __typename?: 'mutation_root', update_users_profile_by_pk?: { __typename?: 'users_profile', id: any, first_name?: string | null, last_name?: string | null, full_name?: string | null, mail?: string | null, is_key_user: boolean, accepted_tos_at?: any | null, group_id?: any | null, group?: { __typename?: 'users_group', permissions: Array<{ __typename?: 'users_group_permission', permission: { __typename?: 'users_permission', name: string } }> } | null, identities: Array<{ __typename?: 'users_identity', identity_provider_name: string }>, maintainer_users_profiles: Array<{ __typename?: 'maintainer_users_profile', maintainer_identifier: string, maintainer: { __typename?: 'maintainer_content_partner', visitor_space?: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string } | null } }> } | null };
 
 export type FindActiveVisitByUserAndSpaceQueryVariables = Exact<{
   userProfileId: Scalars['uuid'];
@@ -13550,7 +14998,7 @@ export type FindActiveVisitByUserAndSpaceQueryVariables = Exact<{
 }>;
 
 
-export type FindActiveVisitByUserAndSpaceQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
+export type FindActiveVisitByUserAndSpaceQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
 
 export type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables = Exact<{
   warningDate?: InputMaybe<Scalars['timestamp']>;
@@ -13558,21 +15006,21 @@ export type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables = Exa
 }>;
 
 
-export type FindApprovedAlmostEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
+export type FindApprovedAlmostEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
 
 export type FindApprovedEndedVisitsWithoutNotificationQueryVariables = Exact<{
   now?: InputMaybe<Scalars['timestamp']>;
 }>;
 
 
-export type FindApprovedEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
+export type FindApprovedEndedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
 
 export type FindApprovedStartedVisitsWithoutNotificationQueryVariables = Exact<{
   now?: InputMaybe<Scalars['timestamp']>;
 }>;
 
 
-export type FindApprovedStartedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
+export type FindApprovedStartedVisitsWithoutNotificationQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
 
 export type FindPendingOrApprovedVisitRequestsForUserQueryVariables = Exact<{
   userProfileId: Scalars['uuid'];
@@ -13581,14 +15029,22 @@ export type FindPendingOrApprovedVisitRequestsForUserQueryVariables = Exact<{
 }>;
 
 
-export type FindPendingOrApprovedVisitRequestsForUserQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, status: string, start_date?: any | null, end_date?: any | null }> };
+export type FindPendingOrApprovedVisitRequestsForUserQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null }> };
+
+export type FindVisitsByFolderIdQueryVariables = Exact<{
+  folderId: Scalars['uuid'];
+  now: Scalars['timestamp'];
+}>;
+
+
+export type FindVisitsByFolderIdQuery = { __typename?: 'query_root', maintainer_visitor_space_request_folder_access: Array<{ __typename?: 'maintainer_visitor_space_request_folder_access', visitor_space_request: { __typename?: 'maintainer_visitor_space_request', end_date?: any | null } }> };
 
 export type FindVisitByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindVisitByIdQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
+export type FindVisitByIdQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } }> };
 
 export type FindVisitsQueryVariables = Exact<{
   where?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
@@ -13598,7 +15054,7 @@ export type FindVisitsQueryVariables = Exact<{
 }>;
 
 
-export type FindVisitsQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null }>, maintainer_visitor_space_request_aggregate: { __typename?: 'maintainer_visitor_space_request_aggregate', aggregate?: { __typename?: 'maintainer_visitor_space_request_aggregate_fields', count: number } | null } };
+export type FindVisitsQuery = { __typename?: 'query_root', maintainer_visitor_space_request: Array<{ __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } }, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null }>, maintainer_visitor_space_request_aggregate: { __typename?: 'maintainer_visitor_space_request_aggregate', aggregate?: { __typename?: 'maintainer_visitor_space_request_aggregate_fields', count: number } | null } };
 
 export type InsertNoteMutationVariables = Exact<{
   visitId: Scalars['uuid'];
@@ -13609,12 +15065,19 @@ export type InsertNoteMutationVariables = Exact<{
 
 export type InsertNoteMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_note_one?: { __typename?: 'maintainer_visitor_space_request_note', id: any } | null };
 
+export type InsertVisitFolderAccessMutationVariables = Exact<{
+  objects?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Folder_Access_Insert_Input> | Maintainer_Visitor_Space_Request_Folder_Access_Insert_Input>;
+}>;
+
+
+export type InsertVisitFolderAccessMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_folder_access?: { __typename?: 'maintainer_visitor_space_request_folder_access_mutation_response', returning: Array<{ __typename?: 'maintainer_visitor_space_request_folder_access', id: any }> } | null };
+
 export type InsertVisitMutationVariables = Exact<{
   newVisit: Maintainer_Visitor_Space_Request_Insert_Input;
 }>;
 
 
-export type InsertVisitMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_one?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } } | null };
+export type InsertVisitMutation = { __typename?: 'mutation_root', insert_maintainer_visitor_space_request_one?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } } | null };
 
 export type PendingVisitCountForUserBySlugQueryVariables = Exact<{
   user?: InputMaybe<Scalars['uuid']>;
@@ -13630,54 +15093,37 @@ export type UpdateVisitMutationVariables = Exact<{
 }>;
 
 
-export type UpdateVisitMutation = { __typename?: 'mutation_root', update_maintainer_visitor_space_request_by_pk?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } } | null };
+export type UpdateVisitMutation = { __typename?: 'mutation_root', update_maintainer_visitor_space_request_by_pk?: { __typename?: 'maintainer_visitor_space_request', id: any, cp_space_id: any, user_profile_id: any, user_reason?: string | null, user_timeframe?: string | null, status: string, access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum, start_date?: any | null, end_date?: any | null, created_at: any, updated_at: any, requested_by: { __typename?: 'users_profile', id: any, full_name?: string | null, first_name?: string | null, last_name?: string | null, mail?: string | null, collections: Array<{ __typename?: 'users_folder', ies: Array<{ __typename?: 'users_folder_ie', ie_schema_identifier: string }> }> }, visitor_space_request_notes: Array<{ __typename?: 'maintainer_visitor_space_request_note', id: any, note: string, created_at: any, profile?: { __typename?: 'users_profile', full_name?: string | null } | null }>, last_updated_by?: { __typename?: 'users_profile', id: any, full_name?: string | null } | null, visitor_space: { __typename?: 'maintainer_visitor_space', id: any, slug?: string | null, schema_maintainer_id: string, schema_image?: string | null, schema_color?: string | null, schema_audience_type: Lookup_Schema_Audience_Type_Enum, schema_description?: string | null, schema_public_access?: boolean | null, schema_service_description?: string | null, status: Lookup_Maintainer_Visitor_Space_Status_Enum, published_at?: any | null, created_at?: any | null, updated_at?: any | null, content_partner: { __typename?: 'maintainer_content_partner', schema_name?: string | null, schema_identifier: string, information?: { __typename?: 'maintainer_organisation', contact_point: any, description?: string | null, logo: any, primary_site: any } | null } } } | null };
 
 
-export const GetContentByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentByIdQuery, GetContentByIdQueryVariables>;
-export const GetContentPageByPathDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageByPath"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"path"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"path"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"path"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPageByPathQuery, GetContentPageByPathQueryVariables>;
-export const GetContentPageLabelsByTypeAndIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndIdsQuery, GetContentPageLabelsByTypeAndIdsQueryVariables>;
-export const GetContentPageLabelsByTypeAndLabelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPageLabelsByTypeAndLabels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"lookup_app_content_type_enum"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labels"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"label"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labels"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"content_type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetContentPageLabelsByTypeAndLabelsQuery, GetContentPageLabelsByTypeAndLabelsQueryVariables>;
-export const GetContentPagesWithBlocksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPagesWithBlocks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_content_label_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"content_blocks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"variables"}},{"kind":"Field","name":{"kind":"Name","value":"content_block_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_page_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesWithBlocksQuery, GetContentPagesWithBlocksQueryVariables>;
-export const GetContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"10"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_order_by"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_content_label_bool_exp"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"depublish_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"seo_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_path"}},{"kind":"Field","name":{"kind":"Name","value":"is_protected"}},{"kind":"Field","name":{"kind":"Name","value":"is_public"}},{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner_profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"publish_at"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"content_width"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_label"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_to"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_page_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_content_label"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"labelIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content_content_labels_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orUserGroupIds"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetContentPagesQuery, GetContentPagesQueryVariables>;
-export const GetPublicContentPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPublicContentPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_content_page_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]} as unknown as DocumentNode<GetPublicContentPagesQuery, GetPublicContentPagesQueryVariables>;
-export const UpdateContentPagePublishDatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateContentPagePublishDates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"publish_content_pages"},"name":{"kind":"Name","value":"update_app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"publish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"published_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publishedAt"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"unpublish_content_pages"},"name":{"kind":"Name","value":"update_app_content_page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"depublish_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_deleted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"is_public"},"value":{"kind":"BooleanValue","value":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateContentPagePublishDatesMutation, UpdateContentPagePublishDatesMutationVariables>;
-export const DeleteNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteNavigationMutation, DeleteNavigationMutationVariables>;
-export const FindAllNavigationItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllNavigationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}},{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_id"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindAllNavigationItemsQuery, FindAllNavigationItemsQueryVariables>;
-export const FindNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<FindNavigationByIdQuery, FindNavigationByIdQueryVariables>;
-export const FindNavigationByPlacementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigationByPlacement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"placement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"position"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_navigation_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placement"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationByPlacementQuery, FindNavigationByPlacementQueryVariables>;
-export const FindNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNavigation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_navigation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"placement"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_navigation_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"placement"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNavigationQuery, FindNavigationQueryVariables>;
-export const InsertNavigationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNavigation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_navigation_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_navigation_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<InsertNavigationMutation, InsertNavigationMutationVariables>;
-export const UpdateNavigationByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNavigationById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_navigation_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_navigation_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"navigationItem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"user_group_ids"}},{"kind":"Field","name":{"kind":"Name","value":"icon_name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"link_target"}},{"kind":"Field","name":{"kind":"Name","value":"placement"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_type"}},{"kind":"Field","name":{"kind":"Name","value":"content_path"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}}]}}]} as unknown as DocumentNode<UpdateNavigationByIdMutation, UpdateNavigationByIdMutationVariables>;
-export const GetOrganisationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationQuery, GetOrganisationQueryVariables>;
-export const GetPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_permission"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"label"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetPermissionsQuery, GetPermissionsQueryVariables>;
-export const GetFileByRepresentationSchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFileByRepresentationSchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_file"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"representation_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]} as unknown as DocumentNode<GetFileByRepresentationSchemaIdentifierQuery, GetFileByRepresentationSchemaIdentifierQueryVariables>;
-export const GetThumbnailUrlByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getThumbnailUrlById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}}]}}]} as unknown as DocumentNode<GetThumbnailUrlByIdQuery, GetThumbnailUrlByIdQueryVariables>;
-export const GetSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetSiteVariableByNameQuery, GetSiteVariableByNameQueryVariables>;
-export const UpdateSiteVariableByNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateSiteVariableByName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_config_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_config"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateSiteVariableByNameMutation, UpdateSiteVariableByNameMutationVariables>;
-export const GetUserGroupsPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserGroupsPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserGroupsPermissionsQuery, GetUserGroupsPermissionsQueryVariables>;
-export const UpdateUserGroupsPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserGroupsPermissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"insertions"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_group_permission_insert_input"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deletions"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_group_permission_bool_exp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_group_permission"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deletions"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}},{"kind":"Field","name":{"kind":"Name","value":"insert_users_group_permission"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"insertions"}}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"group_permission_group_id_permission_id_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateUserGroupsPermissionsMutation, UpdateUserGroupsPermissionsMutationVariables>;
 export const DeleteCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteCollectionMutation, DeleteCollectionMutationVariables>;
 export const FindCollectionByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}}]}}]}}]} as unknown as DocumentNode<FindCollectionByIdQuery, FindCollectionByIdQueryVariables>;
-export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
+export const FindCollectionObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_ie_bool_exp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}}]},{"kind":"Variable","name":{"kind":"Name","value":"where"}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionObjectsByCollectionIdQuery, FindCollectionObjectsByCollectionIdQueryVariables>;
 export const FindCollectionsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findCollectionsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"asc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"users_folder_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindCollectionsByUserQuery, FindCollectionsByUserQueryVariables>;
-export const FindObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindObjectBySchemaIdentifierQuery, FindObjectBySchemaIdentifierQueryVariables>;
-export const FindObjectInCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectInCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
+export const FindObjectBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindObjectBySchemaIdentifierQuery, FindObjectBySchemaIdentifierQueryVariables>;
+export const FindObjectInCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findObjectInCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<FindObjectInCollectionQuery, FindObjectInCollectionQueryVariables>;
 export const InsertCollectionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertCollections"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"object"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"object"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<InsertCollectionsMutation, InsertCollectionsMutationVariables>;
-export const InsertObjectIntoCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertObjectIntoCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertObjectIntoCollectionMutation, InsertObjectIntoCollectionMutationVariables>;
+export const InsertObjectIntoCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertObjectIntoCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertObjectIntoCollectionMutation, InsertObjectIntoCollectionMutationVariables>;
 export const RemoveObjectFromCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeObjectFromCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"ie_schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectSchemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<RemoveObjectFromCollectionMutation, RemoveObjectFromCollectionMutationVariables>;
 export const UpdateCollectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateCollection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"users_folder_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_folder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"is_default"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCollectionMutation, UpdateCollectionMutationVariables>;
 export const FindContentPartnersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findContentPartners"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_content_partner_bool_exp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_content_partner_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindContentPartnersQuery, FindContentPartnersQueryVariables>;
-export const FindAllObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}}]}}]}}]}}]} as unknown as DocumentNode<FindAllObjectsByCollectionIdQuery, FindAllObjectsByCollectionIdQueryVariables>;
+export const FindAllObjectsByCollectionIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findAllObjectsByCollectionId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_folder_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}}]}}]}}]} as unknown as DocumentNode<FindAllObjectsByCollectionIdQuery, FindAllObjectsByCollectionIdQueryVariables>;
 export const GetObjectDetailBySchemaIdentifierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_color"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_base"}},{"kind":"Field","name":{"kind":"Name","value":"meemoofilm_image_or_sound"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_original_cp"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_description_programme"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_description_cast"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifierQuery, GetObjectDetailBySchemaIdentifierQueryVariables>;
 export const GetObjectIdentifierTupleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectIdentifierTuple"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifiers"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifiers"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}}]}}]}}]} as unknown as DocumentNode<GetObjectIdentifierTupleQuery, GetObjectIdentifierTupleQueryVariables>;
-export const GetRelatedObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getRelatedObjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRelatedObjectsQuery, GetRelatedObjectsQueryVariables>;
+export const GetRelatedObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getRelatedObjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"object_ie"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"meemoo_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"meemooIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration_in_seconds"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"schema_actor"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_temporal_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_spatial_coverage"}},{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_media_object_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created_lower_bound"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_object_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_represented_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"premis_includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"representation_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_media_type"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_embed_url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRelatedObjectsQuery, GetRelatedObjectsQueryVariables>;
 export const GetVisitRequestForAccessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getVisitRequestForAccess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetVisitRequestForAccessQuery, GetVisitRequestForAccessQueryVariables>;
+export const DeleteMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_pending"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteMaterialRequestMutation, DeleteMaterialRequestMutationVariables>;
+export const FindMaterialRequestsByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"object"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsByIdQuery, FindMaterialRequestsByIdQueryVariables>;
+export const FindMaterialRequestsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequests"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"object"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_material_requests_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsQuery, FindMaterialRequestsQueryVariables>;
+export const InsertMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newMaterialRequest"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_material_requests_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newMaterialRequest"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"object"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}}]}}]}}]}}]} as unknown as DocumentNode<InsertMaterialRequestMutation, InsertMaterialRequestMutationVariables>;
+export const UpdateMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequest"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_material_requests_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequest"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"object"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateMaterialRequestMutation, UpdateMaterialRequestMutationVariables>;
 export const DeleteNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_bool_exp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
 export const FindNotificationsByUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findNotificationsByUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"app_notification_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moreRecentThan"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"READ","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"UNREAD","block":false}}]}}]}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindNotificationsByUserQuery, FindNotificationsByUserQueryVariables>;
 export const InsertNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertNotificationsMutation, InsertNotificationsMutationVariables>;
 export const UpdateAllNotificationsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateAllNotificationsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateAllNotificationsForUserMutation, UpdateAllNotificationsForUserMutationVariables>;
 export const UpdateNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notification"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"app_notification_set_input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_app_notification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notificationId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"recipient"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notification"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"visit_id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
 export const DeleteOrganisationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteOrganisations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteOrganisationsMutation, DeleteOrganisationsMutationVariables>;
+export const FindOrganisationBySchemaIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findOrganisationBySchemaId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"haorg_organization_type"}}]}}]}}]} as unknown as DocumentNode<FindOrganisationBySchemaIdQuery, FindOrganisationBySchemaIdQueryVariables>;
 export const InsertOrganisationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertOrganisations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizations"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_organisation_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizations"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<InsertOrganisationsMutation, InsertOrganisationsMutationVariables>;
 export const CreateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateSpaceMutation, CreateSpaceMutationVariables>;
 export const FindSpaceByCpAdminIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findSpaceByCpAdminId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"content_partner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_users_profiles"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cpAdminId"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindSpaceByCpAdminIdQuery, FindSpaceByCpAdminIdQueryVariables>;
@@ -13692,20 +15138,22 @@ export const GetFirstObjectIdDocument = {"kind":"Document","definitions":[{"kind
 export const GetTosLastUpdatedAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTosLastUpdatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"TOS_LAST_UPDATED_AT","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetTosLastUpdatedAtQuery, GetTosLastUpdatedAtQueryVariables>;
 export const DeleteLinkUserToMaintainerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteLinkUserToMaintainer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteLinkUserToMaintainerMutation, DeleteLinkUserToMaintainerMutationVariables>;
 export const GetLinkUserToMaintainerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLinkUserToMaintainer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"users_profile_id"}}]}}]}}]} as unknown as DocumentNode<GetLinkUserToMaintainerQuery, GetLinkUserToMaintainerQueryVariables>;
-export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
+export const GetUserByIdentityIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserByIdentityId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"identities"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identityId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"permission"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserByIdentityIdQuery, GetUserByIdentityIdQueryVariables>;
 export const InsertLinkUserToMaintainerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertLinkUserToMaintainer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"maintainer_identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"users_profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"on_conflict"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"constraint"},"value":{"kind":"EnumValue","value":"maintainer_users_profile_maintainer_identifier_users_profil_key"}},{"kind":"ObjectField","name":{"kind":"Name","value":"update_columns"},"value":{"kind":"ListValue","values":[]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertLinkUserToMaintainerMutation, InsertLinkUserToMaintainerMutationVariables>;
 export const InsertUserIdentityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUserIdentity"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_identity_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_identity_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUserIdentity"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertUserIdentityMutation, InsertUserIdentityMutationVariables>;
-export const InsertUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertUserMutation, InsertUserMutationVariables>;
+export const InsertUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_users_profile_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertUserMutation, InsertUserMutationVariables>;
 export const UpdateUserLastAccessDateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserLastAccessDate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"date"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"last_access_at"},"value":{"kind":"Variable","name":{"kind":"Name","value":"date"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<UpdateUserLastAccessDateMutation, UpdateUserLastAccessDateMutationVariables>;
-export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
-export const FindActiveVisitByUserAndSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findActiveVisitByUserAndSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visitorSpaceSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visitorSpaceSlug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindActiveVisitByUserAndSpaceQuery, FindActiveVisitByUserAndSpaceQueryVariables>;
-export const FindApprovedAlmostEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedAlmostEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_END_WARNING","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedAlmostEndedVisitsWithoutNotificationQuery, FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables>;
-export const FindApprovedEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_ENDED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedEndedVisitsWithoutNotificationQuery, FindApprovedEndedVisitsWithoutNotificationQueryVariables>;
-export const FindApprovedStartedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedStartedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_STARTED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedStartedVisitsWithoutNotificationQuery, FindApprovedStartedVisitsWithoutNotificationQueryVariables>;
-export const FindPendingOrApprovedVisitRequestsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findPendingOrApprovedVisitRequestsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceSlug"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"PENDING","block":false}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status_info"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sort_order"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}}]}}]}}]} as unknown as DocumentNode<FindPendingOrApprovedVisitRequestsForUserQuery, FindPendingOrApprovedVisitRequestsForUserQueryVariables>;
-export const FindVisitByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisitById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitByIdQuery, FindVisitByIdQueryVariables>;
-export const FindVisitsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisits"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitsQuery, FindVisitsQueryVariables>;
+export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"users_profile_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_users_profile_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"is_key_user"}},{"kind":"Field","name":{"kind":"Name","value":"accepted_tos_at"}},{"kind":"Field","name":{"kind":"Name","value":"group_id"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"identity_provider_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_users_profiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"maintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
+export const FindActiveVisitByUserAndSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findActiveVisitByUserAndSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visitorSpaceSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visitorSpaceSlug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindActiveVisitByUserAndSpaceQuery, FindActiveVisitByUserAndSpaceQueryVariables>;
+export const FindApprovedAlmostEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedAlmostEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"warningDate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_END_WARNING","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedAlmostEndedVisitsWithoutNotificationQuery, FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables>;
+export const FindApprovedEndedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedEndedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_ENDED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedEndedVisitsWithoutNotificationQuery, FindApprovedEndedVisitsWithoutNotificationQueryVariables>;
+export const FindApprovedStartedVisitsWithoutNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findApprovedStartedVisitsWithoutNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_not"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"notifications"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"ACCESS_PERIOD_VISITOR_SPACE_STARTED","block":false}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindApprovedStartedVisitsWithoutNotificationQuery, FindApprovedStartedVisitsWithoutNotificationQueryVariables>;
+export const FindPendingOrApprovedVisitRequestsForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findPendingOrApprovedVisitRequestsForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceSlug"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"PENDING","block":false}}]}}]}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status_info"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sort_order"},"value":{"kind":"EnumValue","value":"asc"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}}]}}]}}]} as unknown as DocumentNode<FindPendingOrApprovedVisitRequestsForUserQuery, FindPendingOrApprovedVisitRequestsForUserQueryVariables>;
+export const FindVisitsByFolderIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisitsByFolderId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"folderId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_folder_access"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"folder_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"folderId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space_request"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"end_date"}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitsByFolderIdQuery, FindVisitsByFolderIdQueryVariables>;
+export const FindVisitByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisitById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitByIdQuery, FindVisitByIdQueryVariables>;
+export const FindVisitsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findVisits"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_order_by"}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindVisitsQuery, FindVisitsQueryVariables>;
 export const InsertNoteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertNote"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"note"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_note_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"visit_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visitId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"note"},"value":{"kind":"Variable","name":{"kind":"Name","value":"note"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<InsertNoteMutation, InsertNoteMutationVariables>;
-export const InsertVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertVisitMutation, InsertVisitMutationVariables>;
+export const InsertVisitFolderAccessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertVisitFolderAccess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objects"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_folder_access_insert_input"}}}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_folder_access"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objects"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returning"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<InsertVisitFolderAccessMutation, InsertVisitFolderAccessMutationVariables>;
+export const InsertVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_request_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<InsertVisitMutation, InsertVisitMutationVariables>;
 export const PendingVisitCountForUserBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"pendingVisitCountForUserBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"PENDING","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}}]}}]}}]}}]} as unknown as DocumentNode<PendingVisitCountForUserBySlugQuery, PendingVisitCountForUserBySlugQueryVariables>;
-export const UpdateVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_visitor_space_request_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateVisitMutation, UpdateVisitMutationVariables>;
+export const UpdateVisitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateVisit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_request_set_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update_maintainer_visitor_space_request_by_pk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pk_columns"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"_set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateVisit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cp_space_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ie_schema_identifier"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user_reason"}},{"kind":"Field","name":{"kind":"Name","value":"user_timeframe"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"access_type"}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space_request_notes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"created_at"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"note"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitor_space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_maintainer_id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateVisitMutation, UpdateVisitMutationVariables>;

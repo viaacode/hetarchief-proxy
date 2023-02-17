@@ -1,3 +1,4 @@
+import { AdminCoreModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -5,21 +6,18 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
-import { ContentPagesModule } from '~modules/admin/content-pages';
-import { AdminNavigationsModule } from '~modules/admin/navigations';
-import { AdminPermissionsModule } from '~modules/admin/permissions';
-import { AdminTranslationsModule } from '~modules/admin/translations';
-import { AdminUserGroupsModule } from '~modules/admin/user-groups';
+import { MaterialRequestsModule } from './modules/material-requests';
+import { ZendeskModule } from './modules/zendesk';
+import { ZendeskService } from './modules/zendesk/services/zendesk.service';
+
 import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
 import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
-import { DataModule } from '~modules/data';
 import { EventsModule } from '~modules/events';
-import { MediaModule } from '~modules/media';
-import { NavigationsModule } from '~modules/navigations';
+import { IeObjectsModule } from '~modules/ie-objects';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -35,28 +33,21 @@ import { SessionService } from '~shared/services/session.service';
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			envFilePath: '.env/.env.local',
+			ignoreEnvFile: true, // loading .env manually with dotenv so we can get correct config behavior
 			load: [config],
 			validationSchema: configValidationSchema,
 			expandVariables: true,
 		}),
 		ScheduleModule.forRoot(),
-		AdminNavigationsModule,
-		AdminPermissionsModule,
-		AdminTranslationsModule,
-		AdminUserGroupsModule,
+
 		AuthModule,
 		CampaignMonitorModule,
 		CollectionsModule,
 		ContentPartnersModule,
-		ContentPagesModule,
 		AssetsModule,
 		DataModule,
 		EventsModule,
 		OrganisationsModule,
-		MediaModule,
-		MediaModule,
-		NavigationsModule,
 		NotificationsModule,
 		SpacesModule,
 		StatusModule,
@@ -66,6 +57,10 @@ import { SessionService } from '~shared/services/session.service';
 		VisitsModule,
 		ClientCacheModule,
 		NotFoundModule,
+		AdminCoreModule,
+		MaterialRequestsModule,
+		IeObjectsModule,
+		ZendeskModule,
 	],
 	controllers: [],
 	providers: [
@@ -78,4 +73,8 @@ import { SessionService } from '~shared/services/session.service';
 	],
 	exports: [ConfigService],
 })
-export class AppModule {}
+export class AppModule {
+	constructor() {
+		ZendeskService.initialize();
+	}
+}

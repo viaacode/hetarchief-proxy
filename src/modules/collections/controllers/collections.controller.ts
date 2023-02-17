@@ -29,7 +29,9 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { MediaService } from '~modules/media/services/media.service';
+import { convertObjectsToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
+import { limitMetadata } from '~modules/ie-objects/helpers/limit-metadata';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -50,7 +52,7 @@ export class CollectionsController {
 		private collectionsService: CollectionsService,
 		private visitsService: VisitsService,
 		private eventsService: EventsService,
-		private mediaService: MediaService
+		private ieObjectsService: IeObjectsService
 	) {}
 
 	@Get()
@@ -119,7 +121,7 @@ export class CollectionsController {
 		@SessionUser() user: SessionUserEntity,
 		@Req() request: Request
 	): Promise<string> {
-		const objects = await this.mediaService.findAllObjectMetadataByCollectionId(
+		const objects = await this.ieObjectsService.findAllObjectMetadataByCollectionId(
 			collectionId,
 			user.getId()
 		);
@@ -135,9 +137,7 @@ export class CollectionsController {
 			},
 		]);
 
-		return this.mediaService.convertObjectsToXml(
-			objects.map((object) => this.mediaService.limitMetadata(object))
-		);
+		return convertObjectsToXml(objects.map((object) => limitMetadata(object)));
 	}
 
 	@Post()

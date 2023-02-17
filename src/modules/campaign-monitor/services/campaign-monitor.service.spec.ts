@@ -13,16 +13,19 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'clientHost') {
+		if (key === 'CLIENT_HOST') {
 			return 'http://bezoekerstool';
 		}
-		if (key === 'campaignMonitorApiEndpoint') {
+		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
 		}
-		if (key === 'campaignMonitorTemplateVisitDenied') {
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED') {
+			return Template.VISIT_APPROVED;
+		}
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
 		}
-		if (key === 'rerouteEmailsTo') {
+		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
 		}
 
@@ -113,9 +116,7 @@ describe('CampaignMonitorService', () => {
 
 	describe('sendForVisit', () => {
 		it('should send an email using campaign monitor', async () => {
-			nock('http://campaignmonitor/')
-				.post('/campaignMonitorTemplateVisitApproved/send')
-				.reply(201, {});
+			nock('http://campaignmonitor').post(`/${Template.VISIT_APPROVED}/send`).reply(201, {});
 			const visit = getMockVisit();
 			const result = await campaignMonitorService.sendForVisit({
 				to: [{ id: visit.visitorId, email: visit.visitorMail }],

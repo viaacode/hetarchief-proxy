@@ -4,10 +4,14 @@ import {
 	FindApprovedEndedVisitsWithoutNotificationQuery,
 	FindApprovedStartedVisitsWithoutNotificationQuery,
 	FindVisitByIdQuery,
+	FindVisitsByFolderIdQuery,
 	FindVisitsQuery,
 	InsertVisitMutation,
+	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
+
+export { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as VisitAccessType } from '~generated/graphql-db-types-hetarchief';
 
 export enum VisitStatus {
 	PENDING = 'PENDING',
@@ -44,11 +48,15 @@ export type GqlVisit =
 	| FindApprovedAlmostEndedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0]
 	| FindApprovedEndedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0];
 
+export type GqlVisitByFolderId =
+	FindVisitsByFolderIdQuery['maintainer_visitor_space_request_folder_access'][0];
+
 export interface GqlUpdateVisit {
 	start_date: string;
 	end_date: string;
 	status: VisitStatus;
 	updated_by?: string;
+	access_type?: string;
 }
 
 export interface Visit {
@@ -72,6 +80,7 @@ export interface Visit {
 	spaceServiceDescription?: string;
 	startAt: string;
 	status: VisitStatus;
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
 	timeframe: string;
 	updatedAt: string;
 	updatedById: string | null;
@@ -82,6 +91,7 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
+	collectionsIeSchemaIds?: string[];
 }
 
 export interface VisitSpaceCount {

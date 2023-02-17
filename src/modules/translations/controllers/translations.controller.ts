@@ -1,7 +1,7 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { TranslationsService } from '../services/translations.service';
 import { Translations } from '../types';
 
 @ApiTags('Translations')
@@ -13,6 +13,6 @@ export class TranslationsController {
 
 	@Get('nl.json')
 	public async getTranslationsJson(): Promise<Translations> {
-		return this.translationsService.getTranslations();
+		return this.translationsService.getFrontendTranslations();
 	}
 }

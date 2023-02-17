@@ -8,6 +8,8 @@ import helmet from 'helmet';
 
 import { ConfigService } from '~config';
 
+import packageJson from '../package.json';
+
 import { AppModule } from './app.module';
 
 import { SessionService } from '~shared/services/session.service';
@@ -15,10 +17,10 @@ import { SessionService } from '~shared/services/session.service';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const configService = app.get<ConfigService>(NestConfigService);
-	const port = configService.get('port');
+	const port = configService.get('PORT');
 
 	/** Security */
-	app.enableCors(configService.get('corsOptions'));
+	app.enableCors(configService.get('CORS_OPTIONS'));
 	app.use(helmet());
 
 	/** Api data size limitations */
@@ -35,11 +37,11 @@ async function bootstrap() {
 	app.use(session(sessionConfig));
 
 	/** Swagger docs **/
-	if (configService.get('environment') !== 'production') {
+	if (configService.get('ENVIRONMENT') !== 'production') {
 		const swaggerConfig = new DocumentBuilder()
 			.setTitle('HetArchief2.0 Leeszalen tool API docs')
 			.setDescription('Documentatie voor de leeszalen tool api calls')
-			.setVersion('0.1.0')
+			.setVersion(packageJson.version)
 			.addCookieAuth('connect.sid')
 			.build();
 		const document = SwaggerModule.createDocument(app, swaggerConfig);

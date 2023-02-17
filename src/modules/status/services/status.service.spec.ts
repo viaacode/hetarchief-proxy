@@ -1,9 +1,9 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import packageJson from '../../../../package.json';
 import { StatusService } from '../services/status.service';
 
-import { DataService } from '~modules/data/services/data.service';
 import { MediaService } from '~modules/media/services/media.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 

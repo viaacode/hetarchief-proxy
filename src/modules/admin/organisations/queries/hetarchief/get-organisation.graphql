@@ -1,9 +1,0 @@
-query getOrganisation($id: String) {
-	maintainer_content_partner(where: { schema_identifier: { _eq: $id } }) {
-		information {
-			logo
-		}
-		schema_name
-		schema_identifier
-	}
-}

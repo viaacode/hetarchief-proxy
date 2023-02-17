@@ -1,0 +1,38 @@
+query findMaterialRequests(
+	$where: app_material_requests_bool_exp
+	$offset: Int!
+	$limit: Int!
+	$orderBy: app_material_requests_order_by! = {}
+) {
+	app_material_requests(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
+		id
+		object_schema_identifier
+		profile_id
+		reason
+		created_at
+		updated_at
+		type
+		is_pending
+		requested_by {
+			id
+			full_name
+			mail
+		}
+		object {
+			maintainer {
+				schema_identifier
+				schema_name
+				visitor_space {
+					slug
+				}
+			}
+			meemoo_identifier
+			schema_name
+		}
+	}
+	app_material_requests_aggregate(where: $where) {
+		aggregate {
+			count
+		}
+	}
+}

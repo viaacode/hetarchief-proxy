@@ -9,10 +9,16 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 			first_name
 			last_name
 			mail
+			collections {
+				ies {
+					ie_schema_identifier
+				}
+			}
 		}
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {

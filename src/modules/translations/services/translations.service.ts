@@ -1,3 +1,4 @@
+import { SiteVariablesService, TranslationKey } from '@meemoo/admin-core-api';
 import {
 	CACHE_MANAGER,
 	Inject,
@@ -10,8 +11,6 @@ import { Cache } from 'cache-manager';
 
 import { Translations } from '../types';
 
-import { SiteVariablesService } from '~modules/admin/site-variables/services/site-variables.service';
-import { TranslationKey } from '~modules/admin/translations/types';
 import {
 	getTranslationFallback,
 	resolveTranslationVariables,
@@ -28,32 +27,6 @@ export class TranslationsService implements OnApplicationBootstrap {
 
 	public async onApplicationBootstrap() {
 		await this.refreshBackendTranslations();
-	}
-
-	public async getTranslations(): Promise<Translations> {
-		const translations = await this.cacheManager.wrap(
-			TranslationKey.TRANSLATIONS_FRONTEND,
-			async () => {
-				const [translationsFrontend, translationsAdminCore] = await Promise.all([
-					this.siteVariablesService.getSiteVariable<Translations>(
-						TranslationKey.TRANSLATIONS_FRONTEND
-					),
-					this.siteVariablesService.getSiteVariable<Translations>(
-						TranslationKey.TRANSLATIONS_ADMIN_CORE
-					),
-				]);
-				return {
-					...translationsAdminCore,
-					...translationsFrontend,
-				};
-			}, // cache for 1h
-			{ ttl: 3600 }
-		);
-		if (!translations) {
-			throw new NotFoundException('No translations have been set in the database');
-		}
-
-		return translations;
 	}
 
 	/**

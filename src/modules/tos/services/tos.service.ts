@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Tos } from '../types';
@@ -6,7 +7,6 @@ import {
 	GetTosLastUpdatedAtDocument,
 	GetTosLastUpdatedAtQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 
 @Injectable()
 export class TosService {
@@ -22,9 +22,8 @@ export class TosService {
 	}
 
 	public async getTosLastUpdatedAt(): Promise<Tos> {
-		const {
-			data: { app_config_by_pk: cmsSiteVariable },
-		} = await this.dataService.execute<GetTosLastUpdatedAtQuery>(GetTosLastUpdatedAtDocument);
+		const { app_config_by_pk: cmsSiteVariable } =
+			await this.dataService.execute<GetTosLastUpdatedAtQuery>(GetTosLastUpdatedAtDocument);
 
 		const gqlTosValue = cmsSiteVariable?.value;
 		if (!gqlTosValue) {

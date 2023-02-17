@@ -8,6 +8,7 @@ import {
 	InsertObjectIntoCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 
 export interface Collection {
 	id: string;
@@ -16,7 +17,9 @@ export interface Collection {
 	updatedAt: string;
 	isDefault: boolean;
 	userProfileId: string;
+	duration?: string;
 	objects?: IeObject[];
+	usedForLimitedAccessUntil?: string | null;
 }
 
 export type GqlCollectionWithObjects = FindCollectionsByUserQuery['users_folder'][0];
@@ -48,12 +51,10 @@ export interface IeObject {
 	schemaIdentifier: string; // Unique id per object
 	meemooIdentifier: string; // PID: not unique per object
 	meemooLocalId: string;
-	collectionEntryCreatedAt?: string;
 	creator: any;
 	description: string;
 	format: string;
 	name: string;
-	alternateName?: string;
 	numberOfPages: any;
 	termsAvailable: string;
 	thumbnailUrl: string;
@@ -62,6 +63,10 @@ export interface IeObject {
 	visitorSpaceSlug: string;
 	series: string[];
 	programs: string[];
+	duration: string | null;
+	alternateName?: string;
 	datePublished?: string;
 	dateCreatedLowerBound?: string;
+	collectionEntryCreatedAt?: string;
+	licenses?: IeObjectLicense[];
 }
