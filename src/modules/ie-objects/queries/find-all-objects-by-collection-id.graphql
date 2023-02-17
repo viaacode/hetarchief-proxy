@@ -18,6 +18,7 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 			schema_is_part_of
 			meemoo_identifier
 			meemoo_local_id
+			schema_license
 		}
 	}
 }

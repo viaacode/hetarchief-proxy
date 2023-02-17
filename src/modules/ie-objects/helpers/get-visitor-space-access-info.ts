@@ -1,11 +1,8 @@
+import { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+
 import { Visit, VisitAccessType } from '~modules/visits/types';
 
-export const getVisitorSpaceAccessInfo = (
-	activeVisits: Visit[]
-): {
-	visitorSpaceIds: string[];
-	objectIds: string[];
-} => {
+export const getVisitorSpaceAccessInfo = (activeVisits: Visit[]): IeObjectsVisitorSpaceInfo => {
 	return {
 		visitorSpaceIds:
 			activeVisits

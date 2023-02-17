@@ -5,7 +5,7 @@ import { CollectionsController } from './controllers/collections.controller';
 import { CollectionsService } from './services/collections.service';
 
 import { EventsModule } from '~modules/events';
-import { MediaModule } from '~modules/media';
+import { IeObjectsModule } from '~modules/ie-objects';
 import { VisitsModule } from '~modules/visits';
 
 @Module({
@@ -13,7 +13,7 @@ import { VisitsModule } from '~modules/visits';
 	imports: [
 		forwardRef(() => DataModule),
 		PlayerTicketModule,
-		MediaModule,
+		IeObjectsModule,
 		EventsModule,
 		VisitsModule,
 	],

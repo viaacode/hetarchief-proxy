@@ -8,6 +8,7 @@ import {
 	InsertObjectIntoCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 
 export interface Collection {
 	id: string;
@@ -67,4 +68,5 @@ export interface IeObject {
 	datePublished?: string;
 	dateCreatedLowerBound?: string;
 	collectionEntryCreatedAt?: string;
+	licenses?: IeObjectLicense[];
 }

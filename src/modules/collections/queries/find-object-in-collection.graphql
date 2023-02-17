@@ -19,6 +19,7 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 			schema_date_published
 			schema_date_created_lower_bound
 			schema_duration
+			schema_license
 			maintainer {
 				schema_identifier
 				schema_name

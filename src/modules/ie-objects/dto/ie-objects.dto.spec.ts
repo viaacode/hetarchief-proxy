@@ -1,16 +1,16 @@
-import { MediaQueryDto, PlayerTicketsQueryDto, SearchFilter } from '~modules/media/dto/media.dto';
+import { IeObjectsQueryDto, PlayerTicketsQueryDto, SearchFilter } from './ie-objects.dto';
 
-describe('MediaDto', () => {
+describe('IeObjectsDto', () => {
 	describe('SearchFilters', () => {
 		it('should be able to construct a SearchFilters object', async () => {
 			const searchFilter = new SearchFilter();
 			expect(searchFilter).toEqual({});
 		});
 	});
-	describe('MediaQueryDto', () => {
-		it('should be able to construct a MediaQueryDto object', async () => {
-			const mediaQueryDto = new MediaQueryDto();
-			expect(mediaQueryDto).toEqual({
+	describe('IeObjectsQueryDto', () => {
+		it('should be able to construct a IeObjectQueryDto object', async () => {
+			const ieObjectsDto = new IeObjectsQueryDto();
+			expect(ieObjectsDto).toEqual({
 				orderDirection: 'asc',
 				orderProp: 'relevance',
 				page: 1,
