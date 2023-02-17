@@ -5,6 +5,13 @@ import {
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import {
+	MULTI_MATCH_QUERY_MAPPING,
+	Operator,
+	OrderProperty,
+	QueryType,
+	SearchFilterField,
+} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { ContactInfo } from '~shared/types/types';
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
@@ -19,6 +26,22 @@ export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder
 export enum MediaFormat {
 	VIDEO = 'video',
 	AUDIO = 'audio',
+}
+
+export interface QueryBuilderConfig {
+	AGGS_PROPERTIES: Array<SearchFilterField>;
+	MAX_COUNT_SEARCH_RESULTS: number;
+	MAX_NUMBER_SEARCH_RESULTS: number;
+	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
+	NUMBER_OF_FILTER_OPTIONS: number;
+	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
+	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
+	OCCURRENCE_TYPE: { [prop in Operator]?: string };
+	VALUE_OPERATORS: Array<Operator>;
+	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
+	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
+	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
+	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
 export enum IeObjectLicense {
@@ -83,6 +106,7 @@ export interface IeObject {
 	premisIdentifier: any;
 	maintainerId: string;
 	maintainerName: string;
+	maintainerSlug: string;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
@@ -112,7 +136,7 @@ export interface IeObject {
 	licenses: IeObjectLicense[];
 	series?: string[];
 	accessThrough?: IeObjectAccessThrough[];
-	program?: string[];
+	program?: string[] | null;
 	alternativeName?: string[];
 	premisIsPartOf?: string;
 	contactInfo?: ContactInfo;
@@ -132,6 +156,8 @@ export interface IeObject {
 	transcript?: string;
 	caption?: string;
 	categorie?: any; // type onbekend
+	programs: string[];
+	alternateName: string;
 }
 
 export interface MediaSearchAggregation<T> {
@@ -192,6 +218,7 @@ export interface ElasticsearchObject {
 	schema_maintainer: {
 		schema_identifier: string;
 		schema_name: string;
+		alt_label: string;
 		organization_type: IeObjectSector | null;
 	};
 	schema_thumbnail_url: string;

@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -30,7 +31,6 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';

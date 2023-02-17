@@ -5,13 +5,14 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty } from 'lodash';
+import { find, get, isEmpty, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
 
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
+import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
@@ -39,9 +40,11 @@ import {
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 	GetRelatedObjectsQueryVariables,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -277,6 +280,7 @@ export class IeObjectsService {
 			alternativeName: gqlIeObject.schema_is_part_of?.alternatief,
 			maintainerId: gqlIeObject?.maintainer.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
+			maintainerSlug: kebabCase(gqlIeObject?.maintainer?.schema_name || '') || undefined, // TODO fetch actual slug
 			contactInfo: {
 				email: gqlIeObject?.maintainer?.information?.primary_site.address?.email,
 				telephone: gqlIeObject?.maintainer?.information?.primary_site?.address?.telephone,
@@ -324,6 +328,8 @@ export class IeObjectsService {
 			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme, // -> REQUIRED but no data available
 			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast, // -> REQUIRED but no data available
 			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
+			programs: undefined, // TODO add
+			alternateName: undefined, // TODO add
 		};
 	}
 
@@ -384,6 +390,7 @@ export class IeObjectsService {
 			alternativeName: esObject.schema_is_part_of?.alternatief,
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
+			maintainerSlug: esObject?.schema_maintainer?.alt_label,
 			sector: esObject?.schema_maintainer?.organization_type,
 			contactInfo: null,
 			copyrightHolder: esObject?.schema_copyrightholder,
@@ -420,6 +427,8 @@ export class IeObjectsService {
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			representations: null,
+			programs: undefined, // TODO add
+			alternateName: undefined, // TODO add
 		};
 	}
 
@@ -487,23 +496,6 @@ export class IeObjectsService {
 	// Helpers
 	// ------------------------------------------------------------------------
 
-	/**
-	 * Helper function to return if the user has access to a visitor space (or-id) / esIndex
-	 * The user is either a maintainer of the specified esIndex
-	 * Or the user has an approved visit request for the current timestamp
-	 */
-	public async userHasAccessToVisitorSpaceOrId(
-		user: SessionUserEntity,
-		esIndex: string
-	): Promise<boolean> {
-		const isMaintainer =
-			esIndex &&
-			user.getMaintainerId() &&
-			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
-
-		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
-	}
-
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
 			this.logger.debug(JSON.stringify(esQuery));
@@ -515,5 +507,30 @@ export class IeObjectsService {
 			this.logger.error(e?.response?.body);
 			throw e;
 		}
+	}
+
+	public async getVisitorSpaceAccessInfoFromUser(
+		user: SessionUserEntity
+	): Promise<IeObjectsVisitorSpaceInfo> {
+		// Get active visits for the current user
+		// Need this to retrieve visitorSpaceAccessInfo
+		const activeVisits = await this.visitsService.findAll(
+			{
+				page: 1,
+				size: 100,
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+			},
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active,
+			}
+		);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
+
+		return {
+			objectIds: visitorSpaceAccessInfo.objectIds,
+			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		};
 	}
 }

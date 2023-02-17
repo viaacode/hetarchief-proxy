@@ -4,9 +4,7 @@ import {
 	Delete,
 	ForbiddenException,
 	Get,
-	Header,
 	Headers,
-	Logger,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -19,9 +17,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 
-import { Collection, IeObject } from '../types';
+import { Collection } from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	CollectionObjectsQueryDto,
 	CreateOrUpdateCollectionDto,
@@ -29,13 +26,12 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { convertObjectsToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
-import { limitMetadata } from '~modules/ie-objects/helpers/limit-metadata';
+import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -46,8 +42,6 @@ import { EventsHelper } from '~shared/helpers/events';
 @Controller('collections')
 @RequireAllPermissions(Permission.MANAGE_FOLDERS)
 export class CollectionsController {
-	private logger: Logger = new Logger(CollectionsController.name, { timestamp: true });
-
 	constructor(
 		private collectionsService: CollectionsService,
 		private visitsService: VisitsService,
@@ -66,6 +60,23 @@ export class CollectionsController {
 			1,
 			1000
 		);
+
+		// Limit access to the objects in the collections
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		collections.items.forEach((collection) => {
+			collection.objects = (collection.objects ?? []).map((object) => {
+				return limitAccessToObjectDetails(object, {
+					userId: user.getId(),
+					sector: user.getSector(),
+					maintainerId: user.getMaintainerId(),
+					groupId: user.getGroupId(),
+					isKeyUser: user.getIsKeyUser(),
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				});
+			});
+		});
 		return collections;
 	}
 
@@ -75,70 +86,60 @@ export class CollectionsController {
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
 		@Query() queryDto: CollectionObjectsQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<IeObject>> {
-		const folderObjects = await this.collectionsService.findObjectsByCollectionId(
-			collectionId,
-			user.getId(),
-			queryDto,
-			referer
-		);
-		const maintainerIds = folderObjects.items.map((item) => item.maintainerId);
-		const visits = await this.visitsService.findAll(
-			{ size: 1000, status: VisitStatus.APPROVED, timeframe: VisitTimeframe.ACTIVE },
-			{
-				userProfileId: user.getId(),
-				visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
-			}
-		);
-		const showThumbnailByMaintainerId = Object.fromEntries(
-			maintainerIds.map((maintainerId) => {
-				const hasAccessToSpace = !!visits.items.find(
-					(item) => item.spaceMaintainerId.toLowerCase() === maintainerId.toLowerCase()
-				);
-				return [maintainerId, hasAccessToSpace];
-			})
-		);
+	): Promise<IPagination<Partial<IeObject>>> {
+		const folderObjects: IPagination<Partial<IeObject>> =
+			await this.collectionsService.findObjectsByCollectionId(
+				collectionId,
+				user.getId(),
+				queryDto,
+				referer
+			);
 
-		// Redact folder objects based on, if the user has access to that space at the moment
-		// TODO, see if we can merge this with the applyLicensesToObject function in MediaController
-		// These objects are IeObject from GraphQL and the one in the media controller deals with Media objects from elasticsearch
-		folderObjects.items.forEach((folderObject) => {
-			if (showThumbnailByMaintainerId[folderObject.maintainerId]) {
-				return;
-			}
-			// Redact object
-			delete folderObject.thumbnailUrl;
+		// Limit access to the objects in the collection
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		folderObjects.items = (folderObjects.items ?? []).map((object) => {
+			return limitAccessToObjectDetails(object, {
+				userId: user.getId(),
+				sector: user.getSector(),
+				maintainerId: user.getMaintainerId(),
+				groupId: user.getGroupId(),
+				isKeyUser: user.getIsKeyUser(),
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			});
 		});
 		return folderObjects;
 	}
 
-	@Get(':collectionId/export')
-	@RequireAllPermissions(Permission.EXPORT_OBJECT)
-	@Header('Content-Type', 'text/xml')
-	public async exportCollection(
-		@Headers('referer') referer: string,
-		@Param('collectionId', ParseUUIDPipe) collectionId: string,
-		@SessionUser() user: SessionUserEntity,
-		@Req() request: Request
-	): Promise<string> {
-		const objects = await this.ieObjectsService.findAllObjectMetadataByCollectionId(
-			collectionId,
-			user.getId()
-		);
-
-		// Log event
-		this.eventsService.insertEvents([
-			{
-				id: EventsHelper.getEventId(request),
-				type: LogEventType.METADATA_EXPORT,
-				source: request.path,
-				subject: user.getId(),
-				time: new Date().toISOString(),
-			},
-		]);
-
-		return convertObjectsToXml(objects.map((object) => limitMetadata(object)));
-	}
+	// Will be disabled in fase 2 => no export from folders, only from object detail page
+	// @Get(':collectionId/export')
+	// @RequireAllPermissions(Permission.EXPORT_OBJECT)
+	// @Header('Content-Type', 'text/xml')
+	// public async exportCollection(
+	// 	@Headers('referer') referer: string,
+	// 	@Param('collectionId', ParseUUIDPipe) collectionId: string,
+	// 	@SessionUser() user: SessionUserEntity,
+	// 	@Req() request: Request
+	// ): Promise<string> {
+	// 	const objects = await this.ieObjectsService.findAllObjectMetadataByCollectionId(
+	// 		collectionId,
+	// 		user.getId()
+	// 	);
+	//
+	// 	// Log event
+	// 	this.eventsService.insertEvents([
+	// 		{
+	// 			id: EventsHelper.getEventId(request),
+	// 			type: LogEventType.METADATA_EXPORT,
+	// 			source: request.path,
+	// 			subject: user.getId(),
+	// 			time: new Date().toISOString(),
+	// 		},
+	// 	]);
+	//
+	// 	return convertObjectsToXml(objects.map((object) => limitMetadata(object)));
+	// }
 
 	@Post()
 	public async createCollection(
@@ -193,7 +194,7 @@ export class CollectionsController {
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IeObject> {
+	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 		if (collection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only add objects to your own collections');
@@ -253,7 +254,7 @@ export class CollectionsController {
 		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IeObject> {
+	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
 		// Check user is owner of both collections
 		const [oldCollection, newCollection] = await Promise.all([
 			this.collectionsService.findCollectionById(oldCollectionId, referer),

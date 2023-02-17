@@ -47,7 +47,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	hasAccess: jest.fn(),
 };
 
-const mockObjectSchemaIdentifier = mockObjectIe.data.object_ie[0].schema_identifier;
+const mockObjectSchemaIdentifier = mockObjectIe.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
 	hits: {
@@ -176,7 +176,7 @@ describe('ieObjectsService', () => {
 
 		it('returns an empty array if no representations were found', async () => {
 			const objectIeMock = cloneDeep(mockObjectIe);
-			objectIeMock.data.object_ie[0].premis_is_represented_by = null;
+			objectIeMock.object_ie[0].premis_is_represented_by = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
@@ -191,7 +191,7 @@ describe('ieObjectsService', () => {
 
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockObjectIe);
-			objectIeMock.data.object_ie[0].premis_is_represented_by[0].premis_includes = null;
+			objectIeMock.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			const response = await ieObjectsService.findBySchemaIdentifier(

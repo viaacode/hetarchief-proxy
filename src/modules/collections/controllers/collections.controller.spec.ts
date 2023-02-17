@@ -8,7 +8,8 @@ import { CollectionsController } from './collections.controller';
 
 import { Collection } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
-import { MediaService } from '~modules/media/services/media.service';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -44,13 +45,16 @@ const mockCollectionsResponse: IPagination<Collection> = {
 const mockSchemaIdentifier =
 	'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5';
 
-const mockCollectionObjectsResponse = {
+const mockCollectionObjectsResponse: IPagination<
+	Partial<IeObject & { collectionEntryCreatedAt: string }>
+> = {
 	items: [
 		{
+			schemaIdentifier: '1',
 			name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-			termsAvailable: '2015-09-19T12:08:24',
+			datePublished: '2015-09-19T12:08:24',
 			creator: null,
-			format: 'video',
+			dctermsFormat: 'video',
 			numberOfPages: null,
 			thumbnailUrl:
 				'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -74,6 +78,7 @@ const mockUser: User = {
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	isKeyUser: false,
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
@@ -94,9 +99,9 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 
 const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 
-const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
-	convertObjectsToXml: jest.fn(),
+	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
@@ -121,8 +126,8 @@ describe('CollectionsController', () => {
 					useValue: mockEventsService,
 				},
 				{
-					provide: MediaService,
-					useValue: mockMediaService,
+					provide: IeObjectsService,
+					useValue: mockIeObjectsService,
 				},
 				{
 					provide: VisitsService,
@@ -166,31 +171,36 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findObjectsByCollectionId.mockResolvedValueOnce(
 				mockCollectionObjectsResponse
 			);
+			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValue({
+				objectIds: [mockCollectionObjectsResponse.items[0].schemaIdentifier],
+				visitorSpaceIds: [],
+			});
 			const collectionObjects = await collectionsController.getCollectionObjects(
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				{},
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObjects.items[0].name).toEqual(
-				mockCollectionObjectsResponse.items[0].name
+			expect(collectionObjects.items[0]?.name).toEqual(
+				mockCollectionObjectsResponse.items[0]?.name
 			);
 		});
 	});
 
-	describe('exportCollection', () => {
-		it('should export a collection as xml', async () => {
-			mockMediaService.findAllObjectMetadataByCollectionId.mockResolvedValueOnce([]);
-			mockMediaService.convertObjectsToXml.mockReturnValueOnce('</objects>');
-			const result = await collectionsController.exportCollection(
-				'referer',
-				'collection-id',
-				new SessionUserEntity(mockUser),
-				mockRequest
-			);
-			expect(result).toEqual('</objects>');
-		});
-	});
+	// Export of folders will be disabled in fase2
+	// describe('exportCollection', () => {
+	// 	it('should export a collection as xml', async () => {
+	// 		mockIeObjectsService.findAllObjectMetadataByCollectionId.mockResolvedValueOnce([]);
+	// 		mockIeObjectsService.convertObjectsToXml.mockReturnValueOnce('</objects>');
+	// 		const result = await collectionsController.exportCollection(
+	// 			'referer',
+	// 			'collection-id',
+	// 			new SessionUserEntity(mockUser),
+	// 			mockRequest
+	// 		);
+	// 		expect(result).toEqual('</objects>');
+	// 	});
+	// });
 
 	describe('createCollection', () => {
 		it('should create a collection by id', async () => {

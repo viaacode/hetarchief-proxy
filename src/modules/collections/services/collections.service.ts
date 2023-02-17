@@ -2,7 +2,7 @@ import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
-import { get, isEmpty, maxBy } from 'lodash';
+import { isEmpty, maxBy } from 'lodash';
 
 import {
 	Collection,
@@ -11,7 +11,6 @@ import {
 	GqlCollectionWithObjects,
 	GqlObject,
 	GqlUpdateCollection,
-	IeObject,
 } from '../types';
 
 import {
@@ -33,7 +32,6 @@ import {
 	FindObjectInCollectionDocument,
 	FindObjectInCollectionQuery,
 	FindObjectInCollectionQueryVariables,
-	FindVisitsByFolderIdQuery,
 	InsertCollectionsDocument,
 	InsertCollectionsMutation,
 	InsertCollectionsMutationVariables,
@@ -48,6 +46,7 @@ import {
 	UpdateCollectionMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -61,7 +60,7 @@ export class CollectionsService {
 		protected visitsService: VisitsService
 	) {}
 
-	public adaptIeObject(gqlIeObject: GqlObject | undefined): IeObject | undefined {
+	public adaptIeObject(gqlIeObject: GqlObject | undefined): Partial<IeObject> | undefined {
 		if (!gqlIeObject) {
 			return undefined;
 		}
@@ -70,16 +69,17 @@ export class CollectionsService {
 		return {
 			maintainerId: gqlIeObject?.maintainer?.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
-			visitorSpaceSlug: gqlIeObject?.maintainer?.visitor_space?.slug,
+			maintainerSlug: gqlIeObject?.maintainer?.visitor_space?.slug,
 			creator: gqlIeObject?.schema_creator,
 			description: gqlIeObject?.schema_description,
-			format: gqlIeObject?.dcterms_format,
+			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsAvailable: gqlIeObject?.dcterms_available,
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
 			meemooIdentifier: gqlIeObject?.meemoo_identifier,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			termsAvailable: gqlIeObject?.dcterms_available,
+			dateCreated: undefined,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
 			series: gqlIeObject?.schema_is_part_of?.serie || [],
 			programs: gqlIeObject?.schema_is_part_of?.programma || [],
@@ -91,19 +91,14 @@ export class CollectionsService {
 		};
 	}
 
-	public getLastEndAtDate(visits: FindVisitsByFolderIdQuery | []): string | null {
-		if (isEmpty(visits)) {
+	public getLastEndAtDate(visitEndDates: Date[]): string | null {
+		if (isEmpty(visitEndDates)) {
 			return null;
 		}
 
-		const visitsWithFolderAccess = (visits as FindVisitsByFolderIdQuery)
-			.maintainer_visitor_space_request_folder_access;
+		const lastEndDate = maxBy(visitEndDates, (visitEndDate) => visitEndDate.getTime());
 
-		const reducedVisit = maxBy(visitsWithFolderAccess, (visit) =>
-			new Date(visit.visitor_space_request.end_date).getTime()
-		);
-
-		return format(new Date(reducedVisit.visitor_space_request.end_date), 'yyyy-MM-dd');
+		return format(lastEndDate, 'yyyy-MM-dd');
 	}
 
 	/**
@@ -119,8 +114,9 @@ export class CollectionsService {
 
 		let usedForLimitedAccessUntil: string | null = undefined;
 		try {
-			const visitsWithFolders: FindVisitsByFolderIdQuery | [] =
-				await this.visitsService.findByFolderId(gqlCollection.id);
+			const visitsWithFolders: Date[] = await this.visitsService.findEndDatesByFolderId(
+				gqlCollection.id
+			);
 			usedForLimitedAccessUntil = this.getLastEndAtDate(visitsWithFolders);
 		} catch (error) {
 			this.logger.debug(`Visits by folder id ${gqlCollection.id} could not be retrieved`);
@@ -148,7 +144,7 @@ export class CollectionsService {
 	public async adaptCollectionObjectLink(
 		gqlCollectionObjectLink: CollectionObjectLink | undefined,
 		referer: string
-	): Promise<IeObject | undefined> {
+	): Promise<(Partial<IeObject> & { collectionEntryCreatedAt: string }) | undefined> {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
 		}
@@ -161,7 +157,7 @@ export class CollectionsService {
 			referer
 		);
 		return {
-			collectionEntryCreatedAt: get(gqlCollectionObjectLink, 'created_at'),
+			collectionEntryCreatedAt: gqlCollectionObjectLink?.created_at,
 			...objectIe,
 			thumbnailUrl: resolvedThumbnailUrl,
 		};
@@ -211,7 +207,7 @@ export class CollectionsService {
 		userProfileId: string,
 		queryDto: CollectionObjectsQueryDto,
 		referer: string
-	): Promise<IPagination<IeObject>> {
+	): Promise<IPagination<Partial<IeObject> & { collectionEntryCreatedAt: string }>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 		let where = {};
@@ -329,7 +325,7 @@ export class CollectionsService {
 		collectionId: string,
 		objectSchemaIdentifier: string,
 		referer: string
-	): Promise<IeObject | null> {
+	): Promise<(Partial<IeObject> & { collectionEntryCreatedAt: string }) | null> {
 		const response = await this.dataService.execute<
 			FindObjectInCollectionQuery,
 			FindObjectInCollectionQueryVariables
@@ -347,7 +343,7 @@ export class CollectionsService {
 
 	public async findObjectBySchemaIdentifier(
 		objectSchemaIdentifier: string
-	): Promise<IeObject | null> {
+	): Promise<Partial<IeObject> | null> {
 		const response = await this.dataService.execute<
 			FindObjectBySchemaIdentifierQuery,
 			FindObjectBySchemaIdentifierQueryVariables
@@ -364,7 +360,7 @@ export class CollectionsService {
 		collectionId: string,
 		objectSchemaIdentifier: string,
 		referer: string
-	): Promise<IeObject> {
+	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
 			objectSchemaIdentifier,

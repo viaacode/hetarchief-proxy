@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, isNil, set, union } from 'lodash';
+import { find, isArray, isEmpty, set, union } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -46,9 +46,9 @@ import {
 	FindVisitByIdDocument,
 	FindVisitByIdQuery,
 	FindVisitByIdQueryVariables,
-	FindVisitsByFolderIdDocument,
-	FindVisitsByFolderIdQuery,
-	FindVisitsByFolderIdQueryVariables,
+	FindVisitEndDatesByFolderIdDocument,
+	FindVisitEndDatesByFolderIdQuery,
+	FindVisitEndDatesByFolderIdQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
@@ -447,17 +447,15 @@ export class VisitsService {
 		return this.adapt(visitResponse.maintainer_visitor_space_request[0]);
 	}
 
-	public async findByFolderId(folderId: string): Promise<FindVisitsByFolderIdQuery | []> {
+	public async findEndDatesByFolderId(folderId: string): Promise<Date[]> {
 		const visitResponse = await this.dataService.execute<
-			FindVisitsByFolderIdQuery,
-			FindVisitsByFolderIdQueryVariables
-		>(FindVisitsByFolderIdDocument, { folderId, now: new Date().toISOString() });
+			FindVisitEndDatesByFolderIdQuery,
+			FindVisitEndDatesByFolderIdQueryVariables
+		>(FindVisitEndDatesByFolderIdDocument, { folderId, now: new Date().toISOString() });
 
-		if (!visitResponse.maintainer_visitor_space_request_folder_access[0]) {
-			return [];
-		}
-
-		return visitResponse;
+		return visitResponse.maintainer_visitor_space_request_folder_access.map(
+			(visit) => new Date(visit.visitor_space_request?.end_date)
+		);
 	}
 
 	public async getActiveVisitForUserAndSpace(

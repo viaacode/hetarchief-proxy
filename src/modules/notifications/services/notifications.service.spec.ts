@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, addMonths, subHours } from 'date-fns';
 
@@ -7,7 +7,9 @@ import { NotificationsService } from './notifications.service';
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	DeleteNotificationsMutation,
+	FindNotificationsByUserQuery,
 	InsertNotificationsMutation,
+	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	UpdateAllNotificationsForUserMutation,
 	UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -21,7 +23,6 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { Space } from '~modules/spaces/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Visit, VisitStatus } from '~modules/visits/types';
@@ -70,13 +71,14 @@ const mockGqlNotification2: GqlNotification = {
 	},
 };
 
-const mockGqlNotificationsResult = {
-	data: {
-		app_notification: [mockGqlNotification1, mockGqlNotification2],
-		app_notification_aggregate: {
-			aggregate: {
-				count: 2,
-			},
+const mockGqlNotificationsResult: FindNotificationsByUserQuery = {
+	app_notification: [
+		mockGqlNotification1,
+		mockGqlNotification2,
+	] as unknown as FindNotificationsByUserQuery['app_notification'],
+	app_notification_aggregate: {
+		aggregate: {
+			count: 2,
 		},
 	},
 };
@@ -105,6 +107,7 @@ const mockUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+	isKeyUser: false,
 };
 
 const mockVisit: Visit = {
@@ -136,6 +139,7 @@ const mockVisit: Visit = {
 	},
 	updatedById: null,
 	updatedByName: null,
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
 const mockSpace: Space = {
@@ -226,7 +230,7 @@ describe('NotificationsService', () => {
 		it('returns a paginated response with all notifications for a user', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlNotificationsResult);
 			const response = await notificationsService.findNotificationsByUser(
-				mockGqlNotificationsResult.data.app_notification[0].recipient,
+				mockGqlNotificationsResult.app_notification[0].recipient,
 				addMonths(new Date(), -1).toISOString(),
 				1,
 				20
@@ -245,7 +249,7 @@ describe('NotificationsService', () => {
 					returning: [mockGqlNotification1],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const response = await notificationsService.create([
@@ -416,7 +420,7 @@ describe('NotificationsService', () => {
 					returning: [mockGqlNotification1],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const response = await notificationsService.update(
@@ -433,7 +437,7 @@ describe('NotificationsService', () => {
 					returning: [],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			let error;
@@ -461,7 +465,7 @@ describe('NotificationsService', () => {
 					affected_rows: 5,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(
@@ -479,7 +483,7 @@ describe('NotificationsService', () => {
 					affected_rows: 5,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const affectedRows = await notificationsService.delete('visit-id', {
 				types: [NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED],
 			});
@@ -492,7 +496,7 @@ describe('NotificationsService', () => {
 					affected_rows: 9,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const affectedRows = await notificationsService.delete('visit-id', {});
 			expect(affectedRows).toBe(9);
 		});

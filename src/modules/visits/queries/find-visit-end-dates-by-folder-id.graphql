@@ -1,4 +1,4 @@
-query findVisitsByFolderId($folderId: uuid!, $now: timestamp!) {
+query findVisitEndDatesByFolderId($folderId: uuid!, $now: timestamp!) {
 	maintainer_visitor_space_request_folder_access(
 		where: {
 			folder_id: { _eq: $folderId }

@@ -144,8 +144,10 @@ describe('MaterialRequestsService', () => {
 				mockGqlMaterialRequest2.object.maintainer.information.logo.iri
 			);
 			// object
-			expect(adapted.objectName).toEqual(mockGqlMaterialRequest2.object.schema_name);
-			expect(adapted.objectPid).toEqual(mockGqlMaterialRequest2.object.meemoo_identifier);
+			expect(adapted.objectSchemaName).toEqual(mockGqlMaterialRequest2.object.schema_name);
+			expect(adapted.objectMeemooIdentifier).toEqual(
+				mockGqlMaterialRequest2.object.meemoo_identifier
+			);
 		});
 
 		it('should return null when the material request does not exist', () => {

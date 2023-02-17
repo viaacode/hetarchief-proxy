@@ -21,6 +21,7 @@ export enum SearchFilterField {
 	GENRE = 'genre',
 	KEYWORD = 'keyword',
 	NAME = 'name',
+	FORMAT = 'format',
 	PUBLISHER = 'publisher',
 	DESCRIPTION = 'description',
 	ERA = 'era',
@@ -32,6 +33,8 @@ export enum SearchFilterField {
 	TRANSCRIPT = 'transcript',
 	SERVICE_PROVIDER = 'serviceProvider',
 	CATEGORIE = 'categorie',
+	DURATION = 'schema_duration',
+	MEDIUM = 'dcterms_medium',
 }
 
 export enum Operator {
@@ -113,22 +116,25 @@ export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
-	query: 'query',
-	advancedQuery: 'query',
-	genre: 'schema_genre',
-	keyword: 'schema_keywords',
-	name: 'schema_name',
-	publisher: 'schema_publisher',
-	description: 'schema_description',
-	era: 'schema_temporal_coverage',
-	location: 'schema_spatial_coverage',
-	maintainer: 'schema_maintainer.schema_identifier',
-	cast: 'meemoo_description_cast',
-	objectType: 'ebucore_object_type',
-	caption: 'schema_caption',
-	transcript: 'schema_transcript',
-	serviceProvider: 'meemoo_service_provier',
-	categorie: 'meemoo_description_categorie',
+	[SearchFilterField.QUERY]: 'query',
+	[SearchFilterField.ADVANCED_QUERY]: 'query',
+	[SearchFilterField.GENRE]: 'schema_genre',
+	[SearchFilterField.KEYWORD]: 'schema_keywords',
+	[SearchFilterField.NAME]: 'schema_name',
+	[SearchFilterField.FORMAT]: 'dcterms_format',
+	[SearchFilterField.PUBLISHER]: 'schema_publisher',
+	[SearchFilterField.DESCRIPTION]: 'schema_description',
+	[SearchFilterField.ERA]: 'schema_temporal_coverage',
+	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
+	[SearchFilterField.MAINTAINER]: 'schema_maintainer.schema_identifier',
+	[SearchFilterField.CAST]: 'meemoo_description_cast',
+	[SearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
+	[SearchFilterField.CAPTION]: 'schema_caption',
+	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
+	[SearchFilterField.SERVICE_PROVIDER]: 'meemoo_service_provider',
+	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
+	[SearchFilterField.DURATION]: 'schema_duration_in_seconds',
+	[SearchFilterField.MEDIUM]: 'dcterms_medium',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
