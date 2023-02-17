@@ -37,7 +37,7 @@ export const limitAccessToObjectDetails = (
 		accessibleVisitorSpaceIds: string[];
 	}
 ): Partial<IeObject> => {
-	let ieObjectLicenses: IeObjectLicense[] = [...ieObject.licenses];
+	let ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(

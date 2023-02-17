@@ -189,6 +189,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'schemaIdentifier',
 	'meemooLocalId',
 	'maintainerId',
+	'maintainerName', // Will be replaced by the slug in the future: https://meemoo.atlassian.net/browse/ARC-1372
 	'name',
 	'series',
 	'program',
