@@ -279,7 +279,7 @@ export class CollectionsController {
 	}
 
 	@Post('/share/:collectionId')
-	public async addFolderToUser(
+	public async shareCollection(
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@SessionUser() user: SessionUserEntity
@@ -305,7 +305,7 @@ export class CollectionsController {
 
 		return {
 			status: CollectionStatus.ADDED,
-			folderId: createdCollection.id,
+			folderId: createdCollection?.id,
 			folderName: createdCollection?.name,
 		};
 	}
