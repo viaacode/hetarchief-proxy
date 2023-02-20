@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 
-import { Collection, CollectionStatus } from '../types';
+import { Collection, CollectionShared, CollectionStatus } from '../types';
 
 import {
 	CollectionObjectsQueryDto,
@@ -283,12 +283,12 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<any> {
+	): Promise<CollectionShared> {
 		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
 
 		if (collection?.userProfileId === user.getId()) {
 			return {
-				status: CollectionStatus.ALREADY_OWNED,
+				status: CollectionStatus.ALREADY_OWNER,
 				folderId: collection.id,
 				folderName: collection?.name,
 			};

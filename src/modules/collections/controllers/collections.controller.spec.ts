@@ -440,7 +440,7 @@ describe('CollectionsController', () => {
 					...mockUser,
 				})
 			);
-			expect(sharedCollection?.status).toEqual(CollectionStatus.ALREADY_OWNED);
+			expect(sharedCollection?.status).toEqual(CollectionStatus.ALREADY_OWNER);
 		});
 
 		it('Should return status ADDED', async () => {
