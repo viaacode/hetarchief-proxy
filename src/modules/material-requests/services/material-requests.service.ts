@@ -96,6 +96,7 @@ export class MaterialRequestsService {
 		parameters: {
 			userProfileId?: string;
 			userGroup?: string;
+			isPersonal?: boolean;
 		}
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
@@ -123,7 +124,7 @@ export class MaterialRequestsService {
 			}
 		}
 
-		if (!isEmpty(parameters.userProfileId)) {
+		if (parameters.isPersonal && !isEmpty(parameters.userProfileId)) {
 			where.profile_id = { _eq: parameters.userProfileId };
 		}
 
