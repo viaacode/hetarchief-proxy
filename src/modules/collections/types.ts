@@ -46,3 +46,8 @@ export type CollectionObjectLink =
 	| FindCollectionObjectsByCollectionIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
+
+export enum CollectionStatus {
+	ADDED = 'ADDED',
+	ALREADY_OWNED = 'ALREADY_OWNED',
+}
