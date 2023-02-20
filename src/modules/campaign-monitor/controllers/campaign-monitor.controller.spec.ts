@@ -11,7 +11,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
-		send: jest.fn(),
+		sendMail: jest.fn(),
 	};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -47,20 +47,16 @@ describe('CampaignMonitorController', () => {
 		expect(campaignMonitorController).toBeDefined();
 	});
 
-	describe('send', () => {
+	describe('sendMail', () => {
 		it('should send an email', async () => {
-			mockCampaignMonitorService.send.mockResolvedValueOnce(true);
+			mockCampaignMonitorService.sendMail.mockResolvedValueOnce(true);
 
-			const sent = await campaignMonitorController.send({
-				template: 'shareFolder',
-				to: 'test@studiohyperdrive.be',
+			const sent = await campaignMonitorController.sendMail({
+				templateId: 'template-id-1',
 				data: {
-					sharer_name: 'string;',
-					sharer_email: '',
-					user_hasaccount: true,
-					user_firstname: 'Johnny',
-					folder_name: 'Favorieten',
-					folder_sharelink: '',
+					to: 'test@studiohyperdrive.be',
+					consentToTrack: 'unchanged',
+					data: {},
 				},
 			});
 
