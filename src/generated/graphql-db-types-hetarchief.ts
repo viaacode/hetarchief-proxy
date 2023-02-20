@@ -2608,6 +2608,7 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Klaar = 'KLAAR',
   Links = 'LINKS',
   LogoGrid = 'LOGO_GRID',
+  MaintainersGrid = 'MAINTAINERS_GRID',
   MediaGrid = 'MEDIA_GRID',
   MediaPlayer = 'MEDIA_PLAYER',
   MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
@@ -2619,12 +2620,14 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Search = 'SEARCH',
   Spotlight = 'SPOTLIGHT',
   Subtitle = 'SUBTITLE',
+  ThreeClickableTiles = 'THREE_CLICKABLE_TILES',
   Title = 'TITLE',
   TitleImageText = 'TITLE_IMAGE_TEXT',
   TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
   UspGrid = 'USP_GRID',
   Video = 'VIDEO',
-  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON'
+  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON',
+  Test = 'test'
 }
 
 /** Boolean expression to compare columns of type "lookup_app_content_block_type_enum". All fields are combined with logical 'AND'. */
@@ -8188,7 +8191,6 @@ export type Object_Ie = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
-  haorg_alt_label?: Maybe<Scalars['String']>;
   haorg_organization_type?: Maybe<Scalars['String']>;
   /** An array relationship */
   ies: Array<Users_Folder_Ie>;
@@ -8453,7 +8455,6 @@ export type Object_Ie_Bool_Exp = {
   dcterms_issued?: InputMaybe<String_Comparison_Exp>;
   dcterms_medium?: InputMaybe<String_Comparison_Exp>;
   ebucore_object_type?: InputMaybe<String_Comparison_Exp>;
-  haorg_alt_label?: InputMaybe<String_Comparison_Exp>;
   haorg_organization_type?: InputMaybe<String_Comparison_Exp>;
   ies?: InputMaybe<Users_Folder_Ie_Bool_Exp>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Bool_Exp>;
@@ -8668,7 +8669,6 @@ export type Object_Ie_Insert_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
-  haorg_alt_label?: InputMaybe<Scalars['String']>;
   haorg_organization_type?: InputMaybe<Scalars['String']>;
   ies?: InputMaybe<Users_Folder_Ie_Arr_Rel_Insert_Input>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Obj_Rel_Insert_Input>;
@@ -8864,7 +8864,6 @@ export type Object_Ie_Max_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
-  haorg_alt_label?: Maybe<Scalars['String']>;
   haorg_organization_type?: Maybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: Maybe<Scalars['String']>;
@@ -8923,7 +8922,6 @@ export type Object_Ie_Min_Fields = {
   dcterms_issued?: Maybe<Scalars['String']>;
   dcterms_medium?: Maybe<Scalars['String']>;
   ebucore_object_type?: Maybe<Scalars['String']>;
-  haorg_alt_label?: Maybe<Scalars['String']>;
   haorg_organization_type?: Maybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: Maybe<Scalars['String']>;
@@ -9001,7 +8999,6 @@ export type Object_Ie_Order_By = {
   dcterms_issued?: InputMaybe<Order_By>;
   dcterms_medium?: InputMaybe<Order_By>;
   ebucore_object_type?: InputMaybe<Order_By>;
-  haorg_alt_label?: InputMaybe<Order_By>;
   haorg_organization_type?: InputMaybe<Order_By>;
   ies_aggregate?: InputMaybe<Users_Folder_Ie_Aggregate_Order_By>;
   maintainer?: InputMaybe<Maintainer_Content_Partner_Order_By>;
@@ -9090,8 +9087,6 @@ export enum Object_Ie_Select_Column {
   DctermsMedium = 'dcterms_medium',
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
-  /** column name */
-  HaorgAltLabel = 'haorg_alt_label',
   /** column name */
   HaorgOrganizationType = 'haorg_organization_type',
   /** column name */
@@ -9192,7 +9187,6 @@ export type Object_Ie_Set_Input = {
   dcterms_issued?: InputMaybe<Scalars['String']>;
   dcterms_medium?: InputMaybe<Scalars['String']>;
   ebucore_object_type?: InputMaybe<Scalars['String']>;
-  haorg_alt_label?: InputMaybe<Scalars['String']>;
   haorg_organization_type?: InputMaybe<Scalars['String']>;
   /** Beschrijving van de cast: de voornaamste acteurs/performers en hun respectievelijke rol. */
   meemoo_description_cast?: InputMaybe<Scalars['String']>;
@@ -9316,8 +9310,6 @@ export enum Object_Ie_Update_Column {
   DctermsMedium = 'dcterms_medium',
   /** column name */
   EbucoreObjectType = 'ebucore_object_type',
-  /** column name */
-  HaorgAltLabel = 'haorg_alt_label',
   /** column name */
   HaorgOrganizationType = 'haorg_organization_type',
   /** column name */

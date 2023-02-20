@@ -79,9 +79,9 @@ export class IeObjectsController {
 		const limitedObject = limitAccessToObjectDetails(object, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
-			sector: user.getSector() || null,
+			sector: user.getSector(),
 			groupId: user.getGroupId(),
-			maintainerId: user.getMaintainerId() || null,
+			maintainerId: user.getMaintainerId(),
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
@@ -166,11 +166,11 @@ export class IeObjectsController {
 			...relatedIeObjects,
 			items: relatedIeObjects.items.map((item) =>
 				limitAccessToObjectDetails(item, {
-					userId: user.getId() || null,
-					isKeyUser: user.getIsKeyUser() || false,
-					sector: user.getSector() || null,
-					groupId: user.getGroupId() || null,
-					maintainerId: user.getMaintainerId() || null,
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
@@ -203,11 +203,11 @@ export class IeObjectsController {
 			...similarIeObjects,
 			items: (similarIeObjects.items || []).map((item) =>
 				limitAccessToObjectDetails(item, {
-					userId: user.getId() || null,
-					isKeyUser: user.getIsKeyUser() || false,
-					sector: user.getSector() || null,
-					groupId: user.getGroupId() || null,
-					maintainerId: user.getMaintainerId() || null,
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
@@ -249,7 +249,7 @@ export class IeObjectsController {
 			referer,
 			user,
 			visitorSpaceAccessInfo,
-			user?.getSector() || null
+			user?.getSector()
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
@@ -257,11 +257,11 @@ export class IeObjectsController {
 			...searchResult,
 			items: searchResult.items.map((item) =>
 				limitAccessToObjectDetails(item, {
-					userId: user.getId() || null,
-					isKeyUser: user.getIsKeyUser() || false,
-					sector: user.getSector() || null,
-					groupId: user.getGroupId() || null,
-					maintainerId: user.getMaintainerId() || null,
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
