@@ -83,7 +83,7 @@ export class CollectionsService {
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
 			series: gqlIeObject?.schema_is_part_of?.serie || [],
 			programs: gqlIeObject?.schema_is_part_of?.programma || [],
-			alternateName: gqlIeObject?.schema_is_part_of?.alternatief || null,
+			alternativeName: gqlIeObject?.schema_is_part_of?.alternatief || null,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound || null,
 			duration: gqlIeObject?.schema_duration || null,

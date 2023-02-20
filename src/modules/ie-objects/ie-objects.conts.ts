@@ -193,7 +193,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'maintainerSlug',
 	'name',
 	'series',
-	'program',
+	'programs',
 	'alternativeName',
 	'dctermsFormat',
 	'dctermsMedium',
@@ -216,7 +216,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'premisIdentifier',
 	'ebucoreObjectType',
-	'serviceProvider', // BESTAAT NOG NIET
 	'abstract',
 	'transcript', // BESTAAT NOG NIET
 	'caption', // BESTAAT NOG NIET

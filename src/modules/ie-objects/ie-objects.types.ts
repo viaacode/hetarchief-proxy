@@ -5,13 +5,6 @@ import {
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import {
-	MULTI_MATCH_QUERY_MAPPING,
-	Operator,
-	OrderProperty,
-	QueryType,
-	SearchFilterField,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { ContactInfo } from '~shared/types/types';
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
@@ -26,22 +19,6 @@ export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder
 export enum MediaFormat {
 	VIDEO = 'video',
 	AUDIO = 'audio',
-}
-
-export interface QueryBuilderConfig {
-	AGGS_PROPERTIES: Array<SearchFilterField>;
-	MAX_COUNT_SEARCH_RESULTS: number;
-	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
-	NUMBER_OF_FILTER_OPTIONS: number;
-	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
-	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
-	OCCURRENCE_TYPE: { [prop in Operator]?: string };
-	VALUE_OPERATORS: Array<Operator>;
-	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
-	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
-	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
-	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
 }
 
 export enum IeObjectLicense {
@@ -113,7 +90,6 @@ export interface IeObject {
 	description: string;
 	abstract: string;
 	creator: any;
-	actor?: any;
 	publisher: any;
 	spatial: string;
 	temporal: string;
@@ -134,9 +110,10 @@ export interface IeObject {
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
 	licenses: IeObjectLicense[];
+	actor?: any;
 	series?: string[];
 	accessThrough?: IeObjectAccessThrough[];
-	program?: string[] | null;
+	programs?: string[] | null;
 	alternativeName?: string[];
 	premisIsPartOf?: string;
 	contactInfo?: ContactInfo;
@@ -152,12 +129,9 @@ export interface IeObject {
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;
 	ebucoreHasMediaFragmentOf?: boolean;
-	serviceProvider?: any; // type onbekend
 	transcript?: string;
 	caption?: string;
-	categorie?: any; // type onbekend
-	programs: string[];
-	alternateName: string;
+	categorie?: string[];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -269,6 +243,7 @@ export interface ElasticsearchObject {
 	schema_contributor?: {
 		Voorzitter: string[];
 	};
+	premis_is_represented_by?: any;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

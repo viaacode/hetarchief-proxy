@@ -1,16 +1,5 @@
 import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
-import {
-	Body,
-	Controller,
-	Get,
-	Header,
-	Headers,
-	Logger,
-	Param,
-	Post,
-	Query,
-	Req,
-} from '@nestjs/common';
+import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';

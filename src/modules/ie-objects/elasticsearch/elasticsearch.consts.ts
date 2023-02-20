@@ -31,7 +31,6 @@ export enum SearchFilterField {
 	OBJECT_TYPE = 'objectType',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
-	SERVICE_PROVIDER = 'serviceProvider',
 	CATEGORIE = 'categorie',
 	DURATION = 'schema_duration',
 	MEDIUM = 'dcterms_medium',
@@ -102,7 +101,6 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	objectType: QueryType.TERMS,
 	caption: QueryType.TERM,
 	transcript: QueryType.TERM,
-	serviceProvider: QueryType.TERM,
 	categorie: QueryType.TERMS,
 };
 
@@ -131,7 +129,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	[SearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
 	[SearchFilterField.CAPTION]: 'schema_caption',
 	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
-	[SearchFilterField.SERVICE_PROVIDER]: 'meemoo_service_provider',
 	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
 	[SearchFilterField.DURATION]: 'schema_duration_in_seconds',
 	[SearchFilterField.MEDIUM]: 'dcterms_medium',
