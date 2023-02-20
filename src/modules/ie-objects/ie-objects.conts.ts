@@ -190,9 +190,10 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'meemooLocalId',
 	'maintainerId',
 	'maintainerName', // Will be replaced by the slug in the future: https://meemoo.atlassian.net/browse/ARC-1372
+	'maintainerSlug',
 	'name',
 	'series',
-	'program',
+	'programs',
 	'alternativeName',
 	'dctermsFormat',
 	'dctermsMedium',
@@ -215,7 +216,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'premisIdentifier',
 	'ebucoreObjectType',
-	'serviceProvider', // BESTAAT NOG NIET
 	'abstract',
 	'transcript', // BESTAAT NOG NIET
 	'caption', // BESTAAT NOG NIET

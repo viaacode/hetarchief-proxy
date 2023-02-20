@@ -83,13 +83,13 @@ export interface IeObject {
 	premisIdentifier: any;
 	maintainerId: string;
 	maintainerName: string;
+	maintainerSlug: string;
 	datePublished: string;
 	dctermsAvailable: string;
 	name: string;
 	description: string;
 	abstract: string;
 	creator: any;
-	actor?: any;
 	publisher: any;
 	spatial: string;
 	temporal: string;
@@ -110,9 +110,10 @@ export interface IeObject {
 	meemooDescriptionProgramme: string;
 	meemooDescriptionCast: string;
 	licenses: IeObjectLicense[];
+	actor?: any;
 	series?: string[];
 	accessThrough?: IeObjectAccessThrough[];
-	program?: string[];
+	programs?: string[] | null;
 	alternativeName?: string[];
 	premisIsPartOf?: string;
 	contactInfo?: ContactInfo;
@@ -128,10 +129,9 @@ export interface IeObject {
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;
 	ebucoreHasMediaFragmentOf?: boolean;
-	serviceProvider?: any; // type onbekend
 	transcript?: string;
 	caption?: string;
-	categorie?: any; // type onbekend
+	categorie?: string[];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -192,6 +192,7 @@ export interface ElasticsearchObject {
 	schema_maintainer: {
 		schema_identifier: string;
 		schema_name: string;
+		alt_label: string;
 		organization_type: IeObjectSector | null;
 	};
 	schema_thumbnail_url: string;
@@ -242,6 +243,7 @@ export interface ElasticsearchObject {
 	schema_contributor?: {
 		Voorzitter: string[];
 	};
+	premis_is_represented_by?: any;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

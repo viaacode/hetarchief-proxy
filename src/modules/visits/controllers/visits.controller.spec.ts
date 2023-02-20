@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
 import { Request } from 'express';
@@ -8,12 +9,12 @@ import { Visit, VisitSpaceCount, VisitStatus } from '../types';
 import { VisitsController } from './visits.controller';
 
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -50,6 +51,7 @@ const mockVisit1: Visit = {
 	},
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
 const mockVisit2: Visit = {
@@ -75,6 +77,7 @@ const mockVisit2: Visit = {
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	updatedById: null,
 	updatedByName: null,
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
 const mockVisitsResponse = {
@@ -92,6 +95,7 @@ const mockUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
+	isKeyUser: false,
 };
 
 const mockSpace: Space = {

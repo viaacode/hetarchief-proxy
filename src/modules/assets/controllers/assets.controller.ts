@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -16,7 +17,6 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeleteAssetDto } from '~modules/assets/dto/assets.dto';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';

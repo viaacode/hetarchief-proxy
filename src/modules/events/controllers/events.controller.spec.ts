@@ -25,6 +25,7 @@ const mockUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+	isKeyUser: false,
 };
 
 const mockRequest = { path: '/events', headers: {} } as unknown as Request;

@@ -72,7 +72,7 @@ export class SessionUserEntity {
 	}
 
 	public getIsKeyUser(): boolean {
-		return this.user?.isKeyUser || null;
+		return this.user?.isKeyUser || false;
 	}
 
 	public has(permission: Permission): boolean {

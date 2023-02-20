@@ -9,9 +9,12 @@ export const mockGqlCollection: GqlCollectionWithObjects = {
 	updated_at: '2022-02-18T09:19:09.487977',
 	ies: [
 		{
+			created_at: '2022-02-19T09:19:09.487977',
 			ie: {
 				schema_identifier:
-					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+					'5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534236bf4ccd04741f1a35b5240a69f758b',
+				meemoo_identifier: '8s4jm2514q',
+				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 			},
 		},
 	],

@@ -1,8 +1,11 @@
-import { AdminTranslationsModule, SiteVariablesModule } from '@meemoo/admin-core-api';
+import {
+	AdminTranslationsModule,
+	SiteVariablesModule,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { CacheModule, Module } from '@nestjs/common';
 
 import { TranslationsController } from './controllers/translations.controller';
-import { TranslationsService } from './services/translations.service';
 
 @Module({
 	controllers: [TranslationsController],

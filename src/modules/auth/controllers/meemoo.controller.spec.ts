@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -12,7 +13,6 @@ import { MeemooController } from './meemoo.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';

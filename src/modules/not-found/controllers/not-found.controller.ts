@@ -1,10 +1,9 @@
 import * as path from 'path';
 
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Controller, Get, Header, HttpCode, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs-extra';
-
-import { TranslationsService } from '~modules/translations/services/translations.service';
 
 @ApiTags('Not found')
 @Controller('not-found')

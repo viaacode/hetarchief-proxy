@@ -8,6 +8,7 @@ import { Template } from '../types';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -62,6 +63,7 @@ const getMockVisit = (): Visit => ({
 	visitorName: 'Tom Testerom',
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 });
 
 describe('CampaignMonitorService', () => {

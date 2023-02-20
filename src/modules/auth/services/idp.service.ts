@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get, intersection } from 'lodash';
@@ -8,7 +9,6 @@ import { Configuration } from '~config';
 import { NO_ORG_LINKED } from '../constants';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 

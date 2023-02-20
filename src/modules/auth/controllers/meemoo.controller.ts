@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -28,7 +29,6 @@ import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';

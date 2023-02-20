@@ -52,7 +52,7 @@ describe('TosService', () => {
 					value: updatedAtIsoDate,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await tosService.getTosLastUpdatedAt();
 			expect(response.updatedAt).toEqual(updatedAtIsoDate);
@@ -62,7 +62,7 @@ describe('TosService', () => {
 			const mockData: GetTosLastUpdatedAtQuery = {
 				app_config_by_pk: null,
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
 				await tosService.getTosLastUpdatedAt();
