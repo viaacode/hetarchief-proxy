@@ -1,25 +1,23 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get } from 'lodash';
+import { isArray } from 'lodash';
 
 import { Configuration } from '~config';
 
-import { CampaignMonitorData, CampaignMonitorVisitData } from '../dto/campaign-monitor.dto';
-import { Template, VisitEmailInfo } from '../types';
-
-import { Visit } from '~modules/visits/types';
-import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { templateIds } from '../campaign-monitor.consts';
+import { CampaignMonitorEmailInfo } from '../campaign-monitor.types';
 
 @Injectable()
 export class CampaignMonitorService {
 	private logger: Logger = new Logger(CampaignMonitorService.name, { timestamp: true });
 
 	private gotInstance: Got;
-	private templateToCampaignMonitorIdMap: Record<Template, any>;
-	private isEnabled: boolean;
-	private clientHost: string;
-	private rerouteEmailsTo: string;
 
 	constructor(private configService: ConfigService<Configuration>) {
 		this.gotInstance = got.extend({
@@ -29,104 +27,52 @@ export class CampaignMonitorService {
 			password: '.',
 			responseType: 'json',
 		});
-
-		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
-		this.rerouteEmailsTo = this.configService.get('REROUTE_EMAILS_TO');
-
-		this.clientHost = this.configService.get('CLIENT_HOST');
-
-		this.templateToCampaignMonitorIdMap = {
-			VISIT_REQUEST_CP: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP'),
-			VISIT_APPROVED: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED'),
-			VISIT_DENIED: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED'),
-		};
 	}
 
-	public setIsEnabled(enabled: boolean): void {
-		this.isEnabled = enabled;
-	}
+	public async send(emailInfo: CampaignMonitorEmailInfo): Promise<void | BadRequestException> {
+		let url: string | null = null;
 
-	public setRerouteEmailsTo(rerouteEmailsTo: string): void {
-		this.rerouteEmailsTo = rerouteEmailsTo;
-	}
-
-	public buildUrlToAdminVisit(): string {
-		const url = new URL(this.clientHost);
-		url.pathname = 'beheer/aanvragen';
-		return url.href;
-	}
-
-	public getAdminEmail(email: string): string {
-		return this.rerouteEmailsTo ? this.rerouteEmailsTo : email;
-	}
-
-	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
-		return {
-			client_firstname: visit.visitorFirstName,
-			client_lastname: visit.visitorLastName,
-			client_email: visit.visitorMail,
-			contentpartner_name: visit.spaceName,
-			contentpartner_email: visit.spaceMail,
-			request_reason: visit.reason,
-			request_time: visit.timeframe,
-			request_url: this.buildUrlToAdminVisit(), // TODO deeplink to visit & extract to shared url builder?
-			request_remark: get(visit.note, 'note', ''),
-			start_date: visit.startAt ? formatAsBelgianDate(visit.startAt, 'd MMMM yyyy') : '',
-			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
-			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
-			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
-		};
-	}
-
-	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
-		const recipients: string[] = [];
-		emailInfo.to.forEach((recipient) => {
-			if (!recipient.email) {
-				// Throw exception will break too much
+		try {
+			if (!templateIds[emailInfo.template]) {
 				this.logger.error(
-					`Mail will not be sent to user id ${recipient.id} - empty email address`
+					new InternalServerErrorException(
+						{
+							templateName: emailInfo.template,
+							envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
+						},
+						'Cannot send email since the requested email template id has not been set as an environment variable'
+					)
 				);
-			} else {
-				recipients.push(recipient.email);
+				return;
 			}
-		});
 
-		if (recipients.length === 0) {
-			this.logger.error(
-				`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
-			);
-			return false;
-		}
+			url = `${process.env.CAMPAIGN_MONITOR_API_ENDPOINT as string}/${
+				templateIds[emailInfo.template]
+			}/send`;
 
-		const cmTemplateId = this.templateToCampaignMonitorIdMap[emailInfo.template];
-		if (!cmTemplateId) {
-			this.logger.error(
-				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
-			);
-			return false;
-		}
+			const data: any = {
+				Data: emailInfo.data,
+				ConsentToTrack: 'unchanged',
+			};
 
-		const data: CampaignMonitorData = {
-			To: recipients,
-			ConsentToTrack: 'unchanged',
-			Data: this.convertVisitToEmailTemplateData(emailInfo.visit),
-		};
-		return this.send(cmTemplateId, data);
-	}
+			if (isArray(emailInfo.to)) {
+				data.BCC = emailInfo.to;
+			} else {
+				data.To = [emailInfo.to];
+			}
 
-	public async send(template: string, data: CampaignMonitorData): Promise<boolean> {
-		if (this.isEnabled) {
-			await this.gotInstance.post(`${template}/send`, {
+			// TODO: replace with node fetch
+			await this.gotInstance({
+				url,
+				method: 'post',
+				throwHttpErrors: true,
 				json: data,
-			});
-		} else {
-			this.logger.log(
-				`Mock email sent. To: '${data.To}'. Template: ${template}, data: ${JSON.stringify(
-					data
-				)}`
+			}).json<void>();
+		} catch (err) {
+			throw new BadRequestException(
+				err,
+				'Failed to send email using the campaign monitor api'
 			);
-			return false;
 		}
-		return true;
 	}
 }

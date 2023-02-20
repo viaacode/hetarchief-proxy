@@ -47,21 +47,22 @@ describe('CampaignMonitorController', () => {
 		expect(campaignMonitorController).toBeDefined();
 	});
 
-	describe('sendMail', () => {
+	describe('send', () => {
 		it('should send an email', async () => {
 			mockCampaignMonitorService.send.mockResolvedValueOnce(true);
 
-			const sent = await campaignMonitorController.sendMail(
-				{
-					templateId: 'template-id-1',
-					data: {
-						To: 'test@studiohyperdrive.be',
-						ConsentToTrack: 'unchanged',
-						Data: {},
-					},
+			const sent = await campaignMonitorController.send({
+				template: 'shareFolder',
+				to: 'test@studiohyperdrive.be',
+				data: {
+					sharer_name: 'string;',
+					sharer_email: '',
+					user_hasaccount: true,
+					user_firstname: 'Johnny',
+					folder_name: 'Favorieten',
+					folder_sharelink: '',
 				},
-				'mySecretApiKey'
-			);
+			});
 
 			expect(sent).toBeTruthy();
 		});
