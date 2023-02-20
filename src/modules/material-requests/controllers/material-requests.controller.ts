@@ -36,6 +36,7 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
+			isPersonal: false,
 		});
 	}
 
@@ -51,6 +52,7 @@ export class MaterialRequestsController {
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
+			isPersonal: true,
 		});
 	}
 
