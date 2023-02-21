@@ -2,12 +2,14 @@ import {
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 
 export interface MaterialRequest {
 	id: string;
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
 	objectMeemooIdentifier: string;
+	objectType: MediaFormat;
 	profileId: string;
 	reason: string;
 	createdAt: string;
@@ -17,6 +19,7 @@ export interface MaterialRequest {
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
+	requesterCapacity: string;
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;
@@ -25,6 +28,7 @@ export interface MaterialRequest {
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
 	maintainerLogo?: string;
+	organisation?: string | null;
 }
 
 export enum MaterialRequestType {
@@ -40,6 +44,13 @@ export enum MaterialRequestOrderProp {
 	REQUESTER_FULL_NAME = 'requesterFullName',
 	REQUESTER_MAIL = 'requesterMail',
 	MAINTAINER_NAME = 'maintainerName',
+}
+
+export enum MaterialRequestRequesterCapacity {
+	OTHER = 'OTHER',
+	WORK = 'WORK',
+	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
+	EDUCATION = 'EDUCATION',
 }
 
 export type GqlMaterialRequest =

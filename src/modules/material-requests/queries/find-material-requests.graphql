@@ -13,6 +13,8 @@ query findMaterialRequests(
 		updated_at
 		type
 		is_pending
+		requester_capacity
+		organisation
 		requested_by {
 			id
 			full_name
@@ -28,6 +30,7 @@ query findMaterialRequests(
 			}
 			meemoo_identifier
 			schema_name
+			dcterms_format
 		}
 	}
 	app_material_requests_aggregate(where: $where) {

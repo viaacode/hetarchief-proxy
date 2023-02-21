@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MaterialRequestType } from '../material-requests.types';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '../material-requests.types';
 import {
 	mockMaterialRequest1,
 	mockMaterialRequestsResponse,
@@ -104,6 +104,7 @@ describe('MaterialRequestsController', () => {
 					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
+					requesterCapacity: MaterialRequestRequesterCapacity.EDUCATION,
 				},
 				new SessionUserEntity({
 					...mockUser,
