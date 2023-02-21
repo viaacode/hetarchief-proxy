@@ -39,6 +39,7 @@ export interface Configuration {
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP: string;
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED: string;
 	CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED: string;
+	CAMPAIGN_MONITOR_TEMPLATE_SHARE_FOLDER: string;
 	ASSET_SERVER_ENDPOINT: string;
 	ASSET_SERVER_TOKEN_ENDPOINT: string;
 	ASSET_SERVER_TOKEN_SECRET: string;
@@ -54,6 +55,9 @@ export interface Configuration {
 	ELASTICSEARCH_LOG_QUERIES: boolean;
 	GRAPHQL_LOG_QUERIES: boolean;
 	CLIENT_API_KEY: string;
+	ZENDESK_ENDPOINT: string;
+	ZENDESK_USERNAME: string;
+	ZENDESK_TOKEN: string;
 }
 
 export type ConfigService = NestConfigService<Configuration>;

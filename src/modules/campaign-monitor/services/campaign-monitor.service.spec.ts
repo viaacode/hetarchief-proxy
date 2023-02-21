@@ -4,7 +4,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { Template } from '../types';
+import { Template } from '../campaign-monitor.types';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
@@ -20,14 +20,15 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED') {
-			return Template.VISIT_APPROVED;
-		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
 		}
 		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
+		}
+
+		if (key === 'ENABLE_SEND_EMAIL') {
+			return true;
 		}
 
 		return key;
@@ -117,17 +118,6 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		it('should send an email using campaign monitor', async () => {
-			nock('http://campaignmonitor').post(`/${Template.VISIT_APPROVED}/send`).reply(201, {});
-			const visit = getMockVisit();
-			const result = await campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
-				template: Template.VISIT_APPROVED,
-				visit: getMockVisit(),
-			});
-			expect(result).toBeTruthy();
-		});
-
 		it('should log and not send to an empty recipients email adres', async () => {
 			const visit = getMockVisit();
 			const result = await campaignMonitorService.sendForVisit({

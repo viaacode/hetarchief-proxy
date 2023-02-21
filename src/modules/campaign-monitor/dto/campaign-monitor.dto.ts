@@ -2,6 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
+import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
+
 export class CampaignMonitorVisitData {
 	@IsString()
 	@IsOptional()
@@ -76,7 +78,7 @@ export class CampaignMonitorData {
 		type: String,
 		description: 'The recipient of the email',
 	})
-	To: string | Array<string>;
+	to: string | Array<string>;
 
 	@IsString()
 	@IsNotEmpty()
@@ -85,7 +87,7 @@ export class CampaignMonitorData {
 		description: 'Consent to track setting for CM. Possible values: yes/no/unchanged',
 		default: 'unchanged',
 	})
-	ConsentToTrack: string;
+	consentToTrack: string;
 
 	@Type(() => CampaignMonitorVisitData)
 	@IsObject()
@@ -94,10 +96,10 @@ export class CampaignMonitorData {
 		type: Object,
 		description: 'The data object with placeholder values for Campaign Monitor',
 	})
-	Data: CampaignMonitorVisitData;
+	data: CampaignMonitorVisitData | CampaignMonitorShareFolderInfo;
 }
 
-export class SendMailDto {
+export class CampaignMonitorSendMailDto {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -114,9 +116,9 @@ export class SendMailDto {
 		type: Object,
 		description: 'The data object with placeholder values for Campaign Monitor',
 		example: {
-			To: 'test.testers@meemoo.be',
-			ConsentToTrack: 'unchanged',
-			Data: {
+			to: 'test.testers@meemoo.be',
+			consentToTrack: 'unchanged',
+			data: {
 				client_firstname: 'Test',
 				client_lastname: 'Testers',
 				client_email: 'test.testers@meemoo.be',
@@ -131,6 +133,12 @@ export class SendMailDto {
 				start_time: '14:00',
 				end_date: '18 maart 2022',
 				end_time: '17:00',
+				sharer_name: 'John',
+				sharer_email: 'johndoe@gmail.com',
+				user_hasaccount: true,
+				user_firstname: 'Billy',
+				folder_name: 'Favorieten',
+				folder_sharelink: '',
 			},
 		},
 	})

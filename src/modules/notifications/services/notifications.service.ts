@@ -30,8 +30,8 @@ import {
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { Template } from '~modules/campaign-monitor/types';
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
