@@ -1,5 +1,3 @@
-import { MaterialRequestType } from '../material-requests.types';
-
 import {
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,

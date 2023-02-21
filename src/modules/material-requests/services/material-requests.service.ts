@@ -5,7 +5,11 @@ import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
-import { GqlMaterialRequest, MaterialRequest } from '../material-requests.types';
+import {
+	GqlMaterialRequest,
+	MaterialRequest,
+	MaterialRequestRequesterCapacity,
+} from '../material-requests.types';
 
 import {
 	App_Material_Requests_Set_Input,
@@ -25,6 +29,7 @@ import {
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -48,6 +53,7 @@ export class MaterialRequestsService {
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
 			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
 			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
+			objectType: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
 			profileId: grapqhQLMaterialRequest.profile_id,
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
@@ -57,9 +63,11 @@ export class MaterialRequestsService {
 			requesterId: grapqhQLMaterialRequest.requested_by.id,
 			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
 			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
+			requesterCapacity: grapqhQLMaterialRequest.requester_capacity,
 			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
 			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
+			organisation: grapqhQLMaterialRequest.organisation || null,
 		};
 
 		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
@@ -199,6 +207,10 @@ export class MaterialRequestsService {
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 			is_pending: true,
+			organisation: createMaterialRequestDto?.organisation,
+			requester_capacity:
+				createMaterialRequestDto?.requesterCapacity ||
+				MaterialRequestRequesterCapacity.OTHER,
 		};
 
 		const { insert_app_material_requests_one: createdMaterialRequest } =
@@ -217,7 +229,10 @@ export class MaterialRequestsService {
 	public async updateMaterialRequest(
 		materialRequestId: string,
 		userProfileId: string,
-		materialRequest: Pick<App_Material_Requests_Set_Input, 'type' | 'reason'>
+		materialRequest: Pick<
+			App_Material_Requests_Set_Input,
+			'type' | 'reason' | 'organisation' | 'requester_capacity'
+		>
 	): Promise<MaterialRequest> {
 		const { update_app_material_requests: updatedMaterialRequest } =
 			await this.dataService.execute<

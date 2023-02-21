@@ -284,6 +284,7 @@ describe('MaterialRequestsService', () => {
 					objectId: mockGqlMaterialRequest1.object_schema_identifier,
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
+					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,
 				},
 				{ userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54' }
 			);
