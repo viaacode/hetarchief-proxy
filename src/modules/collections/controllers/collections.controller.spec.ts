@@ -6,7 +6,7 @@ import { CollectionsService } from '../services/collections.service';
 
 import { CollectionsController } from './collections.controller';
 
-import { Collection } from '~modules/collections/types';
+import { Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
@@ -424,6 +424,40 @@ describe('CollectionsController', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('You can only move objects to your own collections');
+		});
+	});
+
+	describe('Share collection', () => {
+		it('Should return status ALREADY OWNED', async () => {
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+
+			const sharedCollection = await collectionsController.shareCollection(
+				'referer',
+				mockCollectionsResponse.items[0].id,
+				new SessionUserEntity({
+					...mockUser,
+				})
+			);
+			expect(sharedCollection?.status).toEqual(CollectionStatus.ALREADY_OWNER);
+		});
+
+		it('Should return status ADDED', async () => {
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce({
+				...mockCollectionsResponse.items[0],
+				userProfileId: '65e73ab2-4f2d-4603-a764-d27a3f9fa735',
+			});
+
+			mockCollectionsService.create.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
+
+			const sharedCollection = await collectionsController.shareCollection(
+				'referer',
+				mockCollectionsResponse.items[0].id,
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(sharedCollection?.status).toEqual(CollectionStatus.ADDED);
 		});
 	});
 });

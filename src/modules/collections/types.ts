@@ -46,3 +46,14 @@ export type CollectionObjectLink =
 	| FindCollectionObjectsByCollectionIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
+
+export interface CollectionShared {
+	status: CollectionStatus;
+	folderId: string;
+	folderName: string;
+}
+
+export enum CollectionStatus {
+	ADDED = 'ADDED',
+	ALREADY_OWNER = 'ALREADY_OWNER',
+}

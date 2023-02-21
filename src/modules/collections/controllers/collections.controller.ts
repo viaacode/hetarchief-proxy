@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 
-import { Collection } from '../types';
+import { Collection, CollectionShared, CollectionStatus } from '../types';
 
 import {
 	CollectionObjectsQueryDto,
@@ -31,7 +31,6 @@ import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
-import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -44,7 +43,6 @@ import { EventsHelper } from '~shared/helpers/events';
 export class CollectionsController {
 	constructor(
 		private collectionsService: CollectionsService,
-		private visitsService: VisitsService,
 		private eventsService: EventsService,
 		private ieObjectsService: IeObjectsService
 	) {}
@@ -278,5 +276,37 @@ export class CollectionsController {
 			user.getId()
 		);
 		return collectionObject;
+	}
+
+	@Post('/share/:collectionId')
+	public async shareCollection(
+		@Headers('referer') referer: string,
+		@Param('collectionId') collectionId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<CollectionShared> {
+		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
+
+		if (collection?.userProfileId === user.getId()) {
+			return {
+				status: CollectionStatus.ALREADY_OWNER,
+				folderId: collection.id,
+				folderName: collection?.name,
+			};
+		}
+
+		const createdCollection = await this.collectionsService.create(
+			{
+				name: collection?.name,
+				user_profile_id: user.getId(),
+				is_default: false,
+			},
+			referer
+		);
+
+		return {
+			status: CollectionStatus.ADDED,
+			folderId: createdCollection?.id,
+			folderName: createdCollection?.name,
+		};
 	}
 }
