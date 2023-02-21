@@ -24,10 +24,10 @@ export interface CampaignMonitorEmailInfo {
 }
 
 export interface CampaignMonitorShareFolderInfo {
-	sharer_name: string; // voor- en achternaam van de persoon die een map deelt
-	sharer_email: string; // e-mailadres van de persoon die een map deelt
-	user_hasaccount: boolean; // of de ontvanger gekend is bij meemoo
-	user_firstname: string; // voornaam van de ontvanger, indien gekend
-	folder_name: string; // naam van de map
-	folder_sharelink: string; // url om de map te accepteren
+	sharer_name: string; // first and lastname of the user sharing the folder
+	sharer_email: string; // email of the user that is shareing the folder
+	user_hasaccount: boolean; // check to see of the user is known to meemoo
+	user_firstname: string; // firstname of that user
+	folder_name: string; // folder name
+	folder_sharelink: string; // the url for the shared folder
 }

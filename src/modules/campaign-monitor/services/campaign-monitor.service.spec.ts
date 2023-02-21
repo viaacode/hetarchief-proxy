@@ -118,20 +118,6 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		// TODO: investigate why this returns false
-		// it('should send an email using campaign monitor', async () => {
-		// 	nock('http://campaignmonitor/')
-		// 		.post('/campaignMonitorTemplateVisitApproved/send')
-		// 		.reply(201, {});
-		// 	const visit = getMockVisit();
-		// 	const result = await campaignMonitorService.sendForVisit({
-		// 		to: [{ id: visit.visitorId, email: visit.visitorMail }],
-		// 		template: Template.VISIT_APPROVED,
-		// 		visit: getMockVisit(),
-		// 	});
-		// 	expect(result).toBeTruthy();
-		// });
-
 		it('should log and not send to an empty recipients email adres', async () => {
 			const visit = getMockVisit();
 			const result = await campaignMonitorService.sendForVisit({
