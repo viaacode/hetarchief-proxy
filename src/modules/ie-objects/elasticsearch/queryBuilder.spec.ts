@@ -1,4 +1,4 @@
-import { MediaFormat } from '../ie-objects.types';
+import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
 import {
 	Operator,
@@ -42,8 +42,15 @@ const incompleteConfig: QueryBuilderConfig = {
 } as unknown as QueryBuilderConfig;
 
 const mockInputInfo = {
-	user: null,
-	visitorSpaceInfo: null,
+	user: {
+		isKeyUser: false,
+		maintainerId: '',
+		sector: IeObjectSector.CULTURE,
+	},
+	visitorSpaceInfo: {
+		visitorSpaceIds: [],
+		objectIds: [],
+	},
 };
 
 describe('QueryBuilder', () => {
@@ -57,7 +64,59 @@ describe('QueryBuilder', () => {
 
 		it('should return a match_all query when no filters are specified', () => {
 			const esQuery = QueryBuilder.build({ size: 10, page: 1 }, mockInputInfo);
-			expect(esQuery.query).toEqual({ match_all: {} });
+			expect(esQuery.query).toEqual({
+				bool: {
+					should: [
+						{ match_all: {} },
+						{
+							bool: {
+								should: [
+									{
+										terms: {
+											schema_license: [
+												'VIAA-PUBLIEK-METADATA-LTD',
+												'VIAA-PUBLIEK-METADATA-ALL',
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ ids: { values: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+								],
+								minimum_should_match: 1,
+							},
+						},
+					],
+					minimum_should_match: 2,
+				},
+			});
 			expect(esQuery.from).toEqual(0);
 			expect(esQuery.size).toEqual(10);
 		});
@@ -70,7 +129,60 @@ describe('QueryBuilder', () => {
 
 		it('should return a match_all query when empty filters are specified', () => {
 			const esQuery = QueryBuilder.build({ filters: [], size: 10, page: 1 }, mockInputInfo);
-			expect(esQuery.query).toEqual({ match_all: {} });
+
+			expect(esQuery.query).toEqual({
+				bool: {
+					should: [
+						{ match_all: {} },
+						{
+							bool: {
+								should: [
+									{
+										terms: {
+											schema_license: [
+												'VIAA-PUBLIEK-METADATA-LTD',
+												'VIAA-PUBLIEK-METADATA-ALL',
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ ids: { values: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+								],
+								minimum_should_match: 1,
+							},
+						},
+					],
+					minimum_should_match: 2,
+				},
+			});
 		});
 
 		it('should return a search query when a query filter is specified', () => {
@@ -88,7 +200,10 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo
 			);
-			expect(esQuery.query.bool.must[0].bool.should.length).toBeGreaterThanOrEqual(2);
+
+			expect(
+				esQuery.query.bool.should[0].bool.must[0].bool.should.length
+			).toBeGreaterThanOrEqual(2);
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
@@ -152,14 +267,60 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					filter: [],
-					must: [
+					should: [
 						{
-							term: {
-								dcterms_format: 'video',
+							bool: {
+								filter: [],
+								must: [{ term: { dcterms_format: 'video' } }],
+							},
+						},
+						{
+							bool: {
+								should: [
+									{
+										terms: {
+											schema_license: [
+												'VIAA-PUBLIEK-METADATA-LTD',
+												'VIAA-PUBLIEK-METADATA-ALL',
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ ids: { values: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+								],
+								minimum_should_match: 1,
 							},
 						},
 					],
+					minimum_should_match: 2,
 				},
 			});
 		});
@@ -183,7 +344,65 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
-					filter: [{ range: { schema_duration: rangeQuery } }],
+					should: [
+						{
+							bool: {
+								filter: [
+									{
+										range: {
+											schema_duration_in_seconds: { gte: '01:00:00' },
+										},
+									},
+								],
+							},
+						},
+						{
+							bool: {
+								should: [
+									{
+										terms: {
+											schema_license: [
+												'VIAA-PUBLIEK-METADATA-LTD',
+												'VIAA-PUBLIEK-METADATA-ALL',
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+									{
+										bool: {
+											should: [
+												{ ids: { values: [] } },
+												{
+													terms: {
+														schema_license: [
+															'BEZOEKERTOOL-METADATA-ALL',
+															'BEZOEKERTOOL-CONTENT',
+														],
+													},
+												},
+											],
+										},
+									},
+								],
+								minimum_should_match: 1,
+							},
+						},
+					],
+					minimum_should_match: 2,
 				},
 			});
 		});
@@ -282,7 +501,8 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo
 			);
-			expect(esQuery.query.bool.must[0]).toEqual({
+
+			expect(esQuery.query.bool.should[0].bool.must[0]).toEqual({
 				term: { 'schema_genre.keyword': 'interview' },
 			});
 		});

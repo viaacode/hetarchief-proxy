@@ -71,7 +71,6 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		console.log(user);
 		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
 
 		const visitorSpaceAccessInfo =

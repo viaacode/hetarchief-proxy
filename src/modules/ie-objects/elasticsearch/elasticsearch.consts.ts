@@ -32,8 +32,8 @@ export enum SearchFilterField {
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
 	CATEGORIE = 'categorie',
-	DURATION = 'schema_duration',
-	MEDIUM = 'dcterms_medium',
+	DURATION = 'duration',
+	MEDIUM = 'medium',
 }
 
 export enum Operator {
@@ -91,17 +91,20 @@ export interface QueryBuilderConfig {
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
 	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	name: QueryType.TERM, // used for exact (not) matching
+	format: QueryType.TERMS, // es keyword
 	publisher: QueryType.TERMS,
+	description: QueryType.TERM, // used for exact (not) matching
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
-	name: QueryType.TERM, // used for exact (not) matching
-	description: QueryType.TERM, // used for exact (not) matching
 	maintainer: QueryType.TERMS,
 	cast: QueryType.TERMS,
 	objectType: QueryType.TERMS,
 	caption: QueryType.TERM,
 	transcript: QueryType.TERM,
 	categorie: QueryType.TERMS,
+	duration: QueryType.RANGE,
+	medium: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
