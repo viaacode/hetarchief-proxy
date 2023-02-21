@@ -20,7 +20,11 @@ describe('MaterialRequestsDto', () => {
 	describe('CreateMaterialRequestDto', () => {
 		it('should be able to construct a CreateMaterialRequestDto object', async () => {
 			const createMaterialRequestDto = new CreateMaterialRequestDto();
-			expect(createMaterialRequestDto).toEqual({});
+			expect(createMaterialRequestDto).toEqual({
+				organisation: null,
+				requesterCapacity: undefined,
+				type: undefined,
+			});
 		});
 	});
 

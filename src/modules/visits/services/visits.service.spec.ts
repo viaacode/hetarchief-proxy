@@ -396,7 +396,7 @@ describe('VisitsService', () => {
 				},
 				'user-1'
 			);
-			expect(response.id).toBe('1');
+			expect(response.id).toBe('9471f49f-5ac0-43f5-a74a-09c4c56463a4');
 		});
 	});
 

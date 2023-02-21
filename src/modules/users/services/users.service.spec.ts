@@ -34,7 +34,7 @@ const archiefUser: User = {
 	groupName: 'VISITOR',
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
-	isKeyUser: false,
+	isKeyUser: true,
 };
 
 describe('UsersService', () => {

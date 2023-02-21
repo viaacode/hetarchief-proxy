@@ -1,12 +1,14 @@
-import { QueryBuilder } from './queryBuilder';
+import { MediaFormat } from '../ie-objects.types';
 
 import {
 	Operator,
 	OrderProperty,
+	QueryBuilderConfig,
 	QueryType,
 	SearchFilterField,
-} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
-import { MediaFormat, QueryBuilderConfig } from '~modules/ie-objects/ie-objects.types';
+} from './elasticsearch.consts';
+import { QueryBuilder } from './queryBuilder';
+
 import { SortDirection } from '~shared/types';
 
 const incompleteConfig: QueryBuilderConfig = {

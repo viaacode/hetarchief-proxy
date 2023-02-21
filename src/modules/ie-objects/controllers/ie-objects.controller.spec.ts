@@ -6,8 +6,6 @@ import { cloneDeep } from 'lodash';
 
 import { IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
-	mockElasticObject1,
-	mockElasticObject2,
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetLTD,
@@ -20,7 +18,7 @@ import { IeObjectsController } from './ie-objects.controller';
 import { EventsService } from '~modules/events/services/events.service';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { mockGqlVisitRequest, mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
+import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
@@ -73,7 +71,7 @@ const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.
 	findOrganisationBySchemaIdentifier: jest.fn(),
 };
 
-describe('MediaController', () => {
+describe('IeObjectsController', () => {
 	let ieObjectsController: IeObjectsController;
 
 	beforeEach(async () => {
@@ -135,9 +133,12 @@ describe('MediaController', () => {
 				pages: 1,
 			} as IPagination<Visit>);
 			mockIeObjectsService.findAll.mockResolvedValueOnce(getMockMediaResponse());
-			const ieObjects = await ieObjectsController.getIeObjects('referer', null, null);
-			expect(ieObjects.items.length).toEqual(2);
-			expect(ieObjects.items.length).toEqual(2);
+			const ieObjects = await ieObjectsController.getIeObjects(
+				'referer',
+				null,
+				mockSessionUser
+			);
+			expect(ieObjects.items.length).toEqual(3);
 		});
 	});
 
@@ -157,14 +158,13 @@ describe('MediaController', () => {
 		});
 	});
 
-	describe('getMediaById', () => {
+	describe('getIeObjectById', () => {
 		it('should return a ie object item by id', async () => {
 			const mockResponse = {
 				...mockIeObject,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -181,8 +181,6 @@ describe('MediaController', () => {
 				licenses: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const object = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -200,7 +198,6 @@ describe('MediaController', () => {
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -220,8 +217,6 @@ describe('MediaController', () => {
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -238,8 +233,6 @@ describe('MediaController', () => {
 				license: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
-			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -250,24 +243,6 @@ describe('MediaController', () => {
 			expect(ieObject.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
 			expect(ieObject.representations).toBeUndefined();
-		});
-
-		it('should return the object without a valid license if licenses are ignored', async () => {
-			const mockResponse = {
-				...mockIeObject,
-				license: [],
-			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
-
-			const result = await ieObjectsController.getIeObjectById(
-				'referer',
-				'1',
-				mockSessionUser
-			);
-
-			expect(result).toEqual(mockResponse);
 		});
 	});
 
