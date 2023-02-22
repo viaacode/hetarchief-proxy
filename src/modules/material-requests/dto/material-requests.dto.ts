@@ -30,11 +30,12 @@ export class MaterialRequestsQueryDto {
 	})
 	query?: string;
 
-	@IsString()
-	@IsEnum(MaterialRequestType)
+	@IsArray()
+	@IsEnum(MaterialRequestType, { each: true })
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
+		isArray: true,
 		description: 'Which type of material request is requested',
 		default: undefined,
 		enum: MaterialRequestType,
