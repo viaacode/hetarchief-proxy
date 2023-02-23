@@ -1,0 +1,6 @@
+query findMaintainersWithMaterialRequests {
+	maintainer_content_partners_with_material_requests {
+		schema_identifier
+		schema_name
+	}
+}

@@ -3,8 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { MaterialRequestType } from '../material-requests.types';
 import {
+	mockGqlMaintainers,
 	mockGqlMaterialRequest1,
 	mockGqlMaterialRequest2,
+	mockMaintainerWithMaterialRequest,
 	mockUserProfileId,
 } from '../mocks/material-requests.mocks';
 
@@ -12,6 +14,7 @@ import { MaterialRequestsService } from './material-requests.service';
 
 import {
 	DeleteMaterialRequestMutation,
+	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 	InsertMaterialRequestMutation,
@@ -41,6 +44,18 @@ const getDefaultMaterialRequestByIdResponse = (): {
 } => ({
 	app_material_requests: [mockGqlMaterialRequest2 as any],
 	app_material_requests_aggregate: {
+		aggregate: {
+			count: 100,
+		},
+	},
+});
+
+const getDefaultMaintainersWithMaterialRequestsResponse = (): {
+	maintainer_content_partners_with_material_requests: FindMaintainersWithMaterialRequestsQuery[];
+	maintainer_content_partners_with_material_requests_aggregate: { aggregate: { count: number } };
+} => ({
+	maintainer_content_partners_with_material_requests: [mockGqlMaintainers as any],
+	maintainer_content_partners_with_material_requests_aggregate: {
 		aggregate: {
 			count: 100,
 		},
@@ -270,6 +285,18 @@ describe('MaterialRequestsService', () => {
 					statusCode: 404,
 				});
 			}
+		});
+	});
+
+	describe('findMaintainers', () => {
+		it('returns maintainers for existing material requests', async () => {
+			mockDataService.execute.mockResolvedValueOnce(
+				getDefaultMaintainersWithMaterialRequestsResponse()
+			);
+			const response = await materialRequestsService.findMaintainers();
+
+			expect(response[0].id).toBe(mockMaintainerWithMaterialRequest[0].id);
+			expect(response[0].name).toBe(mockMaintainerWithMaterialRequest[0].name);
 		});
 	});
 

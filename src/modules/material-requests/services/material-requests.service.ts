@@ -7,7 +7,9 @@ import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/mater
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
+	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
 } from '../material-requests.types';
 
@@ -16,6 +18,9 @@ import {
 	DeleteMaterialRequestDocument,
 	DeleteMaterialRequestMutation,
 	DeleteMaterialRequestMutationVariables,
+	FindMaintainersWithMaterialRequestsDocument,
+	FindMaintainersWithMaterialRequestsQuery,
+	FindMaintainersWithMaterialRequestsQueryVariables,
 	FindMaterialRequestsByIdDocument,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsByIdQueryVariables,
@@ -39,65 +44,6 @@ export class MaterialRequestsService {
 	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
 
 	constructor(protected dataService: DataService) {}
-
-	/**
-	 * Adapt a material request as returned by a graphQl response to our internal model
-	 */
-	public adapt(grapqhQLMaterialRequest: GqlMaterialRequest): MaterialRequest | null {
-		if (!grapqhQLMaterialRequest) {
-			return null;
-		}
-
-		let transformedMaterialRequest: MaterialRequest = {
-			id: grapqhQLMaterialRequest.id,
-			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
-			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
-			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
-			objectType: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
-			profileId: grapqhQLMaterialRequest.profile_id,
-			reason: grapqhQLMaterialRequest.reason,
-			createdAt: grapqhQLMaterialRequest.created_at,
-			updatedAt: grapqhQLMaterialRequest.updated_at,
-			type: grapqhQLMaterialRequest.type,
-			isPending: grapqhQLMaterialRequest.is_pending,
-			requesterId: grapqhQLMaterialRequest.requested_by.id,
-			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
-			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
-			requesterCapacity: grapqhQLMaterialRequest.requester_capacity,
-			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
-			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
-			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
-			organisation: grapqhQLMaterialRequest.organisation || null,
-		};
-
-		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
-		const GqlMaterialRequestById =
-			grapqhQLMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0];
-
-		// Brecht - Check if GqlMaterialRequestById has a prop group
-		// If so add user group information
-		if (has(GqlMaterialRequestById.requested_by, 'group')) {
-			transformedMaterialRequest = {
-				...transformedMaterialRequest,
-				requesterUserGroupId: GqlMaterialRequestById.requested_by.group?.id || null,
-				requesterUserGroupName: GqlMaterialRequestById.requested_by.group?.name || null,
-				requesterUserGroupLabel: GqlMaterialRequestById.requested_by.group?.label || null,
-				requesterUserGroupDescription:
-					GqlMaterialRequestById.requested_by.group?.description || null,
-			};
-		}
-
-		// Brecht - Check if GqlMaterialRequestById.object.maintainer has a prop information
-		// If so add user group information
-		if (has(GqlMaterialRequestById.object.maintainer, 'information')) {
-			transformedMaterialRequest = {
-				...transformedMaterialRequest,
-				maintainerLogo: GqlMaterialRequestById.object.maintainer.information?.logo?.iri,
-			};
-		}
-
-		return transformedMaterialRequest;
-	}
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
@@ -193,6 +139,22 @@ export class MaterialRequestsService {
 		return this.adapt(materialRequestResponse.app_material_requests[0]);
 	}
 
+	public async findMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
+		const response = await this.dataService.execute<
+			FindMaintainersWithMaterialRequestsQuery,
+			FindMaintainersWithMaterialRequestsQueryVariables
+		>(FindMaintainersWithMaterialRequestsDocument, {});
+
+		if (isNil(response) || !response.maintainer_content_partners_with_material_requests[0]) {
+			return [];
+		}
+
+		const maintainers = response.maintainer_content_partners_with_material_requests;
+		return maintainers.map((maintainer: GqlMaterialRequestMaintainer) =>
+			this.adaptMaintainers(maintainer)
+		);
+	}
+
 	public async createMaterialRequest(
 		createMaterialRequestDto: CreateMaterialRequestDto,
 		parameters: {
@@ -264,5 +226,73 @@ export class MaterialRequestsService {
 		this.logger.debug(`Material request ${materialRequestId} deleted`);
 
 		return response.delete_app_material_requests.affected_rows;
+	}
+
+	/**
+	 * Adapt a material request as returned by a graphQl response to our internal model
+	 */
+	public adapt(grapqhQLMaterialRequest: GqlMaterialRequest): MaterialRequest | null {
+		if (!grapqhQLMaterialRequest) {
+			return null;
+		}
+
+		let transformedMaterialRequest: MaterialRequest = {
+			id: grapqhQLMaterialRequest.id,
+			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
+			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
+			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
+			objectType: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
+			profileId: grapqhQLMaterialRequest.profile_id,
+			reason: grapqhQLMaterialRequest.reason,
+			createdAt: grapqhQLMaterialRequest.created_at,
+			updatedAt: grapqhQLMaterialRequest.updated_at,
+			type: grapqhQLMaterialRequest.type,
+			isPending: grapqhQLMaterialRequest.is_pending,
+			requesterId: grapqhQLMaterialRequest.requested_by.id,
+			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
+			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
+			requesterCapacity: grapqhQLMaterialRequest.requester_capacity,
+			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
+			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
+			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
+			organisation: grapqhQLMaterialRequest.organisation || null,
+		};
+
+		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
+		const GqlMaterialRequestById =
+			grapqhQLMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0];
+
+		// Brecht - Check if GqlMaterialRequestById has a prop group
+		// If so add user group information
+		if (has(GqlMaterialRequestById.requested_by, 'group')) {
+			transformedMaterialRequest = {
+				...transformedMaterialRequest,
+				requesterUserGroupId: GqlMaterialRequestById.requested_by.group?.id || null,
+				requesterUserGroupName: GqlMaterialRequestById.requested_by.group?.name || null,
+				requesterUserGroupLabel: GqlMaterialRequestById.requested_by.group?.label || null,
+				requesterUserGroupDescription:
+					GqlMaterialRequestById.requested_by.group?.description || null,
+			};
+		}
+
+		// Brecht - Check if GqlMaterialRequestById.object.maintainer has a prop information
+		// If so add user group information
+		if (has(GqlMaterialRequestById.object.maintainer, 'information')) {
+			transformedMaterialRequest = {
+				...transformedMaterialRequest,
+				maintainerLogo: GqlMaterialRequestById.object.maintainer.information?.logo?.iri,
+			};
+		}
+
+		return transformedMaterialRequest;
+	}
+
+	public adaptMaintainers(
+		grapqhQLMaterialRequestMaintainer: GqlMaterialRequestMaintainer
+	): MaterialRequestMaintainer {
+		return {
+			id: grapqhQLMaterialRequestMaintainer.schema_identifier,
+			name: grapqhQLMaterialRequestMaintainer.schema_name,
+		};
 	}
 }

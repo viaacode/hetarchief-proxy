@@ -5,6 +5,7 @@ import {
 } from '../material-requests.types';
 
 import {
+	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -153,3 +154,16 @@ export const mockUser: User = {
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
 };
+
+export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['maintainer_content_partners_with_material_requests'][0] =
+	{
+		schema_identifier: 'OR-rf5kf25',
+		schema_name: 'VRT',
+	};
+
+export const mockMaintainerWithMaterialRequest = [
+	{
+		id: 'OR-rf5kf25',
+		name: 'VRT',
+	},
+];

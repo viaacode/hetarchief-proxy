@@ -1,4 +1,5 @@
 import {
+	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -31,6 +32,11 @@ export interface MaterialRequest {
 	organisation?: string | null;
 }
 
+export interface MaterialRequestMaintainer {
+	id: string;
+	name: string;
+}
+
 export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
@@ -56,3 +62,6 @@ export enum MaterialRequestRequesterCapacity {
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];
+
+export type GqlMaterialRequestMaintainer =
+	FindMaintainersWithMaterialRequestsQuery['maintainer_content_partners_with_material_requests'][0];
