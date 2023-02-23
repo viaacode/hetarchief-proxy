@@ -56,6 +56,12 @@ export class MaterialRequestsController {
 		});
 	}
 
+	@Get('/maintainers')
+	// @RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async getMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
+		return await this.materialRequestsService.findMaintainers();
+	}
+
 	@Get(':id')
 	@RequireAnyPermissions(
 		Permission.VIEW_ANY_MATERIAL_REQUESTS,
@@ -63,12 +69,6 @@ export class MaterialRequestsController {
 	)
 	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);
-	}
-
-	@Get('/maintainers')
-	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
-	public async getMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
-		return await this.materialRequestsService.findMaintainers();
 	}
 
 	@Put()
