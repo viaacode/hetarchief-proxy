@@ -16,6 +16,7 @@ import {
 	MaterialRequestType,
 } from '../material-requests.types';
 
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class MaterialRequestsQueryDto {
@@ -30,15 +31,17 @@ export class MaterialRequestsQueryDto {
 	})
 	query?: string;
 
-	@IsString()
-	@IsEnum(MaterialRequestType)
+	@IsArray()
+	@IsEnum(MaterialRequestType, { each: true })
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
+		isArray: true,
 		description: 'Which type of material request is requested',
 		default: undefined,
 		enum: MaterialRequestType,
 	})
+	@Transform(commaSeparatedStringToArray)
 	type? = undefined;
 
 	@IsArray()
@@ -50,6 +53,7 @@ export class MaterialRequestsQueryDto {
 		description: 'List of maintainer ids',
 		default: [],
 	})
+	@Transform(commaSeparatedStringToArray)
 	maintainerIds?: string[];
 
 	@IsBoolean()

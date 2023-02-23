@@ -63,6 +63,7 @@ export class MaterialRequestsService {
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			where._or = [
 				{ requested_by: { full_name: { _ilike: query } } },
+				{ requested_by: { full_name_reversed: { _ilike: query } } },
 				{ requested_by: { mail: { _ilike: query } } },
 			];
 
@@ -84,7 +85,7 @@ export class MaterialRequestsService {
 
 		if (!isEmpty(type)) {
 			where.type = {
-				_eq: type,
+				_in: isArray(type) ? type : [type],
 			};
 		}
 
