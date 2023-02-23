@@ -262,7 +262,6 @@ describe('MaterialRequestsService', () => {
 		it('returns a single material request', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestByIdResponse());
 			const response = await materialRequestsService.findById('1');
-			console.log(response);
 			expect(response.id).toBe(mockGqlMaterialRequest2.id);
 		});
 
@@ -295,7 +294,7 @@ describe('MaterialRequestsService', () => {
 				getDefaultMaintainersWithMaterialRequestsResponse()
 			);
 			const response = await materialRequestsService.findMaintainers();
-			console.log(response);
+
 			expect(response[0].id).toBe(mockMaintainerWithMaterialRequest[0].id);
 			expect(response[0].name).toBe(mockMaintainerWithMaterialRequest[0].name);
 		});
