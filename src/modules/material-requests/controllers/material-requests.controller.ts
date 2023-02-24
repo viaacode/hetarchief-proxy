@@ -56,7 +56,7 @@ export class MaterialRequestsController {
 		});
 	}
 
-	@Get('/maintainers')
+	@Get('maintainers')
 	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
 		return await this.materialRequestsService.findMaintainers();
