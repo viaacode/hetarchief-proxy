@@ -23,6 +23,7 @@ export enum SearchFilterField {
 	NAME = 'name',
 	FORMAT = 'format',
 	PUBLISHER = 'publisher',
+	CREATOR = 'creator',
 	DESCRIPTION = 'description',
 	ERA = 'era',
 	LOCATION = 'location',
@@ -33,6 +34,7 @@ export enum SearchFilterField {
 	TRANSCRIPT = 'transcript',
 	CATEGORIE = 'categorie',
 	DURATION = 'duration',
+	LANGUAGE = 'language',
 	MEDIUM = 'medium',
 }
 
@@ -94,6 +96,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	name: QueryType.TERM, // used for exact (not) matching
 	format: QueryType.TERMS, // es keyword
 	publisher: QueryType.TERMS,
+	creator: QueryType.TERMS,
 	description: QueryType.TERM, // used for exact (not) matching
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
@@ -104,6 +107,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	transcript: QueryType.TERM,
 	categorie: QueryType.TERMS,
 	duration: QueryType.RANGE,
+	language: QueryType.TERMS,
 	medium: QueryType.TERMS,
 };
 
@@ -124,6 +128,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	[SearchFilterField.NAME]: 'schema_name',
 	[SearchFilterField.FORMAT]: 'dcterms_format',
 	[SearchFilterField.PUBLISHER]: 'schema_publisher',
+	[SearchFilterField.CREATOR]: 'schema_creator',
 	[SearchFilterField.DESCRIPTION]: 'schema_description',
 	[SearchFilterField.ERA]: 'schema_temporal_coverage',
 	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
@@ -134,6 +139,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
 	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
 	[SearchFilterField.DURATION]: 'schema_duration_in_seconds',
+	[SearchFilterField.LANGUAGE]: 'schema_in_language',
 	[SearchFilterField.MEDIUM]: 'dcterms_medium',
 };
 
