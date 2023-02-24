@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
@@ -30,10 +30,9 @@ import {
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { Template } from '~modules/campaign-monitor/types';
 import { Space } from '~modules/spaces/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';

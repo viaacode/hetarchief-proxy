@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
@@ -34,7 +34,6 @@ import {
 	UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { Recipient } from '~shared/types/types';

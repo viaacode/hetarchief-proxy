@@ -10,8 +10,13 @@ import {
 	IsString,
 } from 'class-validator';
 
-import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
+import {
+	MaterialRequestOrderProp,
+	MaterialRequestRequesterCapacity,
+	MaterialRequestType,
+} from '../material-requests.types';
 
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class MaterialRequestsQueryDto {
@@ -26,15 +31,17 @@ export class MaterialRequestsQueryDto {
 	})
 	query?: string;
 
-	@IsString()
-	@IsEnum(MaterialRequestType)
+	@IsArray()
+	@IsEnum(MaterialRequestType, { each: true })
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
+		isArray: true,
 		description: 'Which type of material request is requested',
 		default: undefined,
 		enum: MaterialRequestType,
 	})
+	@Transform(commaSeparatedStringToArray)
 	type? = undefined;
 
 	@IsArray()
@@ -46,6 +53,7 @@ export class MaterialRequestsQueryDto {
 		description: 'List of maintainer ids',
 		default: [],
 	})
+	@Transform(commaSeparatedStringToArray)
 	maintainerIds?: string[];
 
 	@IsBoolean()
@@ -132,6 +140,25 @@ export class CreateMaterialRequestDto {
 			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
 	reason: string;
+
+	@IsString()
+	@IsEnum(MaterialRequestRequesterCapacity)
+	@ApiProperty({
+		type: String,
+		description: 'Which capacity the requester is part of',
+		default: undefined,
+		enum: MaterialRequestRequesterCapacity,
+	})
+	requesterCapacity = undefined;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to',
+		default: null,
+	})
+	organisation?: string | null = null;
 }
 
 export class UpdateMaterialRequestDto {
@@ -156,4 +183,23 @@ export class UpdateMaterialRequestDto {
 			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
 	reason?: string;
+
+	@IsString()
+	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Which capacity the requester is part of',
+		default: undefined,
+		enum: MaterialRequestRequesterCapacity,
+	})
+	requesterCapacity? = undefined;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to',
+	})
+	organisation?: string | null;
 }

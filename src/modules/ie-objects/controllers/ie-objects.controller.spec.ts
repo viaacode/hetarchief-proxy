@@ -1,13 +1,14 @@
-import { PlayerTicketService } from '@meemoo/admin-core-api';
+import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { IPagination } from '@studiohyperdrive/pagination';
 import { cloneDeep } from 'lodash';
 
-import { IeObjectLicense } from '../ie-objects.types';
+import { IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
-	mockElasticObject1,
-	mockElasticObject2,
 	mockIeObject,
+	mockIeObjectWithMetadataSetALL,
+	mockIeObjectWithMetadataSetLTD,
 	mockUser,
 } from '../mocks/ie-objects.mock';
 import { IeObjectsService } from '../services/ie-objects.service';
@@ -15,22 +16,22 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { IeObjectsController } from './ie-objects.controller';
 
 import { EventsService } from '~modules/events/services/events.service';
-import OrganisationsService from '~modules/organisations/services/organisations.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { Visit } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
-const getMockMediaResponse = () =>
+const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
 	cloneDeep({
-		hits: {
-			total: {
-				value: 2,
-			},
-			hits: [mockElasticObject1, mockElasticObject2],
-		},
+		items: [mockIeObject, mockIeObjectWithMetadataSetLTD, mockIeObjectWithMetadataSetALL],
+		page: 1,
+		size: 3,
+		total: 3,
+		pages: 1,
 	});
 
 const mockSessionUser: SessionUserEntity = new SessionUserEntity(mockUser);
@@ -45,6 +46,10 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findMetadataBySchemaIdentifier: jest.fn(),
 	getRelated: jest.fn(),
 	getSimilar: jest.fn(),
+	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
+		objectIds: [],
+		visitorSpaceIds: [],
+	})),
 };
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
@@ -59,13 +64,14 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	hasAccess: jest.fn(),
+	findAll: jest.fn(),
 };
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
 	findOrganisationBySchemaIdentifier: jest.fn(),
 };
 
-describe('MediaController', () => {
+describe('IeObjectsController', () => {
 	let ieObjectsController: IeObjectsController;
 
 	beforeEach(async () => {
@@ -119,10 +125,20 @@ describe('MediaController', () => {
 
 	describe('getIeObjects', () => {
 		it('should return all ie objects items', async () => {
+			mockVisitsService.findAll.mockResolvedValue({
+				items: [mockVisitRequest],
+				page: 1,
+				size: 1,
+				total: 1,
+				pages: 1,
+			} as IPagination<Visit>);
 			mockIeObjectsService.findAll.mockResolvedValueOnce(getMockMediaResponse());
-			const ieObjects = await ieObjectsController.getIeObjects('referer', null, null);
-			expect(ieObjects.items.length).toEqual(2);
-			expect(ieObjects.items.length).toEqual(2);
+			const ieObjects = await ieObjectsController.getIeObjects(
+				'referer',
+				null,
+				mockSessionUser
+			);
+			expect(ieObjects.items.length).toEqual(3);
 		});
 	});
 
@@ -142,14 +158,13 @@ describe('MediaController', () => {
 		});
 	});
 
-	describe('getMediaById', () => {
+	describe('getIeObjectById', () => {
 		it('should return a ie object item by id', async () => {
 			const mockResponse = {
 				...mockIeObject,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -163,20 +178,17 @@ describe('MediaController', () => {
 		it('should throw a notfound exception if the object has no valid license', async () => {
 			const mockResponse = {
 				...mockIeObject,
-				license: [],
+				licenses: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
-			let error: any;
-			try {
-				await ieObjectsController.getIeObjectById('referer', '1', mockSessionUser);
-			} catch (err) {
-				error = err;
-			}
+			const object = await ieObjectsController.getIeObjectById(
+				'referer',
+				'1',
+				mockSessionUser
+			);
 
-			expect(error.response.message).toEqual('Object not found');
+			expect(object).toBeNull();
 		});
 
 		it('should return limited metadata if the user no longer has access', async () => {
@@ -186,7 +198,6 @@ describe('MediaController', () => {
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -206,8 +217,6 @@ describe('MediaController', () => {
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -224,8 +233,6 @@ describe('MediaController', () => {
 				license: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(false);
-			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -236,24 +243,6 @@ describe('MediaController', () => {
 			expect(ieObject.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
 			expect(ieObject.representations).toBeUndefined();
-		});
-
-		it('should return the object without a valid license if licenses are ignored', async () => {
-			const mockResponse = {
-				...mockIeObject,
-				license: [],
-			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
-			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(true); // Ignore licenses
-
-			const result = await ieObjectsController.getIeObjectById(
-				'referer',
-				'1',
-				mockSessionUser
-			);
-
-			expect(result).toEqual(mockResponse);
 		});
 	});
 
@@ -293,7 +282,7 @@ describe('MediaController', () => {
 			mockIeObjectsService.getSimilar.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const ieObject = await ieObjectsController.getSimilar('referer', '1', mockSessionUser);
-			expect(ieObject.items).toEqual(2);
+			expect(ieObject.items.length).toEqual(3);
 		});
 	});
 });

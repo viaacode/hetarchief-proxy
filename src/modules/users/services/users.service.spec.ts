@@ -3,7 +3,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
-import { GetUserByIdentityIdQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	DeleteLinkUserToMaintainerMutation,
+	GetLinkUserToMaintainerQuery,
+	GetUserByIdentityIdQuery,
+	InsertLinkUserToMaintainerMutation,
+	InsertUserMutation,
+	UpdateUserLastAccessDateMutation,
+	UpdateUserProfileMutation,
+} from '~generated/graphql-db-types-hetarchief';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { Group, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -13,7 +21,7 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const mockUser = mockUserResponse.data.users_profile[0];
+const mockUser = mockUserResponse.users_profile[0];
 
 const archiefUser: User = {
 	id: mockUser.id,
@@ -26,6 +34,7 @@ const archiefUser: User = {
 	groupName: 'VISITOR',
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
+	isKeyUser: true,
 };
 
 describe('UsersService', () => {
@@ -62,7 +71,7 @@ describe('UsersService', () => {
 		});
 
 		it('can adapt a user object', () => {
-			const result = usersService.adapt(mockUserResponse.data.users_profile[0]);
+			const result = usersService.adapt(mockUserResponse.users_profile[0]);
 			expect(result).toBeDefined();
 			expect(result.email).toBeDefined();
 		});
@@ -91,7 +100,7 @@ describe('UsersService', () => {
 			const mockData: GetUserByIdentityIdQuery = {
 				users_profile: [],
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const user = await usersService.getUserByIdentityId('unknown-id');
 
@@ -104,10 +113,8 @@ describe('UsersService', () => {
 			// Mock insert user
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: {
-						insert_users_profile_one: mockUser,
-					},
-				})
+					insert_users_profile_one: mockUser,
+				} as InsertUserMutation)
 				.mockReturnValueOnce({}); // insert idp
 
 			const result = await usersService.createUserWithIdp(
@@ -128,8 +135,8 @@ describe('UsersService', () => {
 		it('should update a user', async () => {
 			// Mock insert user
 			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: mockUser },
-			});
+				update_users_profile_by_pk: mockUser,
+			} as UpdateUserProfileMutation);
 
 			const result = await usersService.updateUser('123', {
 				firstName: 'Tom',
@@ -144,8 +151,8 @@ describe('UsersService', () => {
 	describe('updateAcceptedTos', () => {
 		it('should update if a user accepted the terms of service', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: { update_users_profile_by_pk: mockUser },
-			});
+				update_users_profile_by_pk: mockUser,
+			} as UpdateUserProfileMutation);
 
 			const result = await usersService.updateAcceptedTos('123', {
 				acceptedTosAt: '2022-02-21T18:00:00',
@@ -161,17 +168,13 @@ describe('UsersService', () => {
 		it('should link a new user (cp admin) to a maintainer', async () => {
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: {
-						maintainer_users_profile: [],
-					},
-				})
+					maintainer_users_profile: [],
+				} as GetLinkUserToMaintainerQuery)
 				.mockReturnValueOnce({
-					data: {
-						insert_maintainer_users_profile_one: {
-							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
-						},
+					insert_maintainer_users_profile_one: {
+						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
 					},
-				});
+				} as InsertLinkUserToMaintainerMutation);
 
 			const linked = await usersService.linkUserToMaintainer(
 				mockUserProfileId,
@@ -184,16 +187,14 @@ describe('UsersService', () => {
 
 		it('should return false if the user was already linked to the maintainer', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: {
-					maintainer_users_profile: [
-						{
-							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-							maintainer_identifier: mockMaintainerId,
-							users_profile_id: mockUserProfileId,
-						},
-					],
-				},
-			});
+				maintainer_users_profile: [
+					{
+						id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+						maintainer_identifier: mockMaintainerId,
+						users_profile_id: mockUserProfileId,
+					},
+				],
+			} as DeleteLinkUserToMaintainerMutation);
 
 			const linked = await usersService.linkUserToMaintainer(
 				mockUserProfileId,
@@ -207,30 +208,24 @@ describe('UsersService', () => {
 		it('should delete existing links if a different link already exists, and insert the new link', async () => {
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: {
-						maintainer_users_profile: [
-							{
-								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-								maintainer_identifier: 'OR-different',
-								users_profile_id: mockUserProfileId,
-							},
-						],
-					},
-				})
-				.mockReturnValueOnce({
-					data: {
-						delete_maintainer_users_profile: {
-							affected_rows: 1,
+					maintainer_users_profile: [
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: 'OR-different',
+							users_profile_id: mockUserProfileId,
 						},
-					},
-				})
+					],
+				} as GetLinkUserToMaintainerQuery)
 				.mockReturnValueOnce({
-					data: {
-						insert_maintainer_users_profile_one: {
-							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
-						},
+					delete_maintainer_users_profile: {
+						affected_rows: 1,
 					},
-				});
+				} as DeleteLinkUserToMaintainerMutation)
+				.mockReturnValueOnce({
+					insert_maintainer_users_profile_one: {
+						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+					},
+				} as InsertLinkUserToMaintainerMutation);
 
 			const linked = await usersService.linkUserToMaintainer(
 				mockUserProfileId,
@@ -244,35 +239,29 @@ describe('UsersService', () => {
 		it('should delete existing links if multiple links already exist, and insert the new link', async () => {
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: {
-						maintainer_users_profile: [
-							{
-								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-								maintainer_identifier: mockMaintainerId,
-								users_profile_id: mockUserProfileId,
-							},
-							{
-								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-								maintainer_identifier: 'OR-different',
-								users_profile_id: mockUserProfileId,
-							},
-						],
-					},
-				})
-				.mockReturnValueOnce({
-					data: {
-						delete_maintainer_users_profile: {
-							affected_rows: 2,
+					maintainer_users_profile: [
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: mockMaintainerId,
+							users_profile_id: mockUserProfileId,
 						},
-					},
-				})
-				.mockReturnValueOnce({
-					data: {
-						insert_maintainer_users_profile_one: {
-							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: 'OR-different',
+							users_profile_id: mockUserProfileId,
 						},
+					],
+				} as GetLinkUserToMaintainerQuery)
+				.mockReturnValueOnce({
+					delete_maintainer_users_profile: {
+						affected_rows: 2,
 					},
-				});
+				} as DeleteLinkUserToMaintainerMutation)
+				.mockReturnValueOnce({
+					insert_maintainer_users_profile_one: {
+						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
+					},
+				} as InsertLinkUserToMaintainerMutation);
 
 			const linked = await usersService.linkUserToMaintainer(
 				mockUserProfileId,
@@ -286,31 +275,27 @@ describe('UsersService', () => {
 		it('should log an error if errors occur during deletion of links', async () => {
 			mockDataService.execute
 				.mockReturnValueOnce({
-					data: {
-						maintainer_users_profile: [
-							{
-								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-								maintainer_identifier: mockMaintainerId,
-								users_profile_id: mockUserProfileId,
-							},
-							{
-								id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
-								maintainer_identifier: 'OR-different',
-								users_profile_id: mockUserProfileId,
-							},
-						],
-					},
-				})
+					maintainer_users_profile: [
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: mockMaintainerId,
+							users_profile_id: mockUserProfileId,
+						},
+						{
+							id: '74e56950-0ee9-47ff-b0d6-a525295eeea3',
+							maintainer_identifier: 'OR-different',
+							users_profile_id: mockUserProfileId,
+						},
+					],
+				} as GetLinkUserToMaintainerQuery)
 				.mockReturnValueOnce({
 					error: ['some serious error'],
 				})
 				.mockReturnValueOnce({
-					data: {
-						insert_maintainer_users_profile_one: {
-							id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
-						},
+					insert_maintainer_users_profile_one: {
+						id: '87bd1763-3ff0-427e-aabe-0460a6785c34',
 					},
-				});
+				} as InsertLinkUserToMaintainerMutation);
 
 			const linked = await usersService.linkUserToMaintainer(
 				mockUserProfileId,
@@ -325,12 +310,10 @@ describe('UsersService', () => {
 	describe('updateLastAccessDate', () => {
 		it('should update a users last access date', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: {
-					update_users_profile: {
-						affected_rows: 1,
-					},
+				update_users_profile: {
+					affected_rows: 1,
 				},
-			});
+			} as UpdateUserLastAccessDateMutation);
 
 			const response = await usersService.updateLastAccessDate('user-123');
 			expect(response).toEqual({ affectedRows: 1 });
@@ -338,10 +321,8 @@ describe('UsersService', () => {
 
 		it('should catch and not throw an error', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: {
-					errors: 'Something went wrong',
-				},
-			});
+				errors: 'Something went wrong',
+			} as UpdateUserLastAccessDateMutation);
 
 			const response = await usersService.updateLastAccessDate('user-123');
 			expect(response).toBeUndefined();

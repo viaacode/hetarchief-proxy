@@ -8,6 +8,7 @@ import { NotificationsService } from '../services/notifications.service';
 
 import { NotificationsController } from './notifications.controller';
 
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -81,6 +82,7 @@ const mockVisit: Visit = {
 	},
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
 const mockUser: User = {
@@ -94,6 +96,7 @@ const mockUser: User = {
 	groupId: Group.CP_ADMIN,
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
+	isKeyUser: false,
 };
 
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {

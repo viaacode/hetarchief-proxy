@@ -7,7 +7,7 @@ import {
 	MaterialRequestsQueryDto,
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
-import { MaterialRequest } from '../material-requests.types';
+import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -36,6 +36,7 @@ export class MaterialRequestsController {
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
+			isPersonal: false,
 		});
 	}
 
@@ -51,7 +52,14 @@ export class MaterialRequestsController {
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
+			isPersonal: true,
 		});
+	}
+
+	@Get('maintainers')
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	public async getMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
+		return await this.materialRequestsService.findMaintainers();
 	}
 
 	@Get(':id')

@@ -21,6 +21,7 @@ export enum SearchFilterField {
 	GENRE = 'genre',
 	KEYWORD = 'keyword',
 	NAME = 'name',
+	FORMAT = 'format',
 	PUBLISHER = 'publisher',
 	DESCRIPTION = 'description',
 	ERA = 'era',
@@ -30,8 +31,9 @@ export enum SearchFilterField {
 	OBJECT_TYPE = 'objectType',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
-	SERVICE_PROVIDER = 'serviceProvider',
 	CATEGORIE = 'categorie',
+	DURATION = 'duration',
+	MEDIUM = 'medium',
 }
 
 export enum Operator {
@@ -89,18 +91,20 @@ export interface QueryBuilderConfig {
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
 	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	name: QueryType.TERM, // used for exact (not) matching
+	format: QueryType.TERMS, // es keyword
 	publisher: QueryType.TERMS,
+	description: QueryType.TERM, // used for exact (not) matching
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
-	name: QueryType.TERM, // used for exact (not) matching
-	description: QueryType.TERM, // used for exact (not) matching
 	maintainer: QueryType.TERMS,
 	cast: QueryType.TERMS,
 	objectType: QueryType.TERMS,
 	caption: QueryType.TERM,
 	transcript: QueryType.TERM,
-	serviceProvider: QueryType.TERM,
 	categorie: QueryType.TERMS,
+	duration: QueryType.RANGE,
+	medium: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
@@ -113,22 +117,24 @@ export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
-	query: 'query',
-	advancedQuery: 'query',
-	genre: 'schema_genre',
-	keyword: 'schema_keywords',
-	name: 'schema_name',
-	publisher: 'schema_publisher',
-	description: 'schema_description',
-	era: 'schema_temporal_coverage',
-	location: 'schema_spatial_coverage',
-	maintainer: 'schema_maintainer.schema_identifier',
-	cast: 'meemoo_description_cast',
-	objectType: 'ebucore_object_type',
-	caption: 'schema_caption',
-	transcript: 'schema_transcript',
-	serviceProvider: 'meemoo_service_provier',
-	categorie: 'meemoo_description_categorie',
+	[SearchFilterField.QUERY]: 'query',
+	[SearchFilterField.ADVANCED_QUERY]: 'query',
+	[SearchFilterField.GENRE]: 'schema_genre',
+	[SearchFilterField.KEYWORD]: 'schema_keywords',
+	[SearchFilterField.NAME]: 'schema_name',
+	[SearchFilterField.FORMAT]: 'dcterms_format',
+	[SearchFilterField.PUBLISHER]: 'schema_publisher',
+	[SearchFilterField.DESCRIPTION]: 'schema_description',
+	[SearchFilterField.ERA]: 'schema_temporal_coverage',
+	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
+	[SearchFilterField.MAINTAINER]: 'schema_maintainer.schema_identifier',
+	[SearchFilterField.CAST]: 'meemoo_description_cast',
+	[SearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
+	[SearchFilterField.CAPTION]: 'schema_caption',
+	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
+	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
+	[SearchFilterField.DURATION]: 'schema_duration_in_seconds',
+	[SearchFilterField.MEDIUM]: 'dcterms_medium',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -155,7 +161,7 @@ export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
 // By default add the 'format' aggregation
-export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.NAME];
+export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
 
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	genre: 'keyword',

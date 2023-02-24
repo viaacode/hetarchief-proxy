@@ -1,9 +1,15 @@
-import { MaterialRequest, MaterialRequestType } from '../material-requests.types';
+import {
+	MaterialRequest,
+	MaterialRequestRequesterCapacity,
+	MaterialRequestType,
+} from '../material-requests.types';
 
 import {
+	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
@@ -19,6 +25,8 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
+	organisation: null,
+	requester_capacity: MaterialRequestRequesterCapacity.EDUCATION as any,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -34,6 +42,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		},
 		meemoo_identifier: '',
 		schema_name: '',
+		dcterms_format: '',
 	},
 };
 
@@ -47,6 +56,8 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	updated_at: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
+	organisation: null,
+	requester_capacity: MaterialRequestRequesterCapacity.EDUCATION as any,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -73,6 +84,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		},
 		meemoo_identifier: 'q23qv3wp5b',
 		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
+		dcterms_format: 'audio',
 	},
 };
 
@@ -85,6 +97,8 @@ export const mockMaterialRequest1: MaterialRequest = {
 	updatedAt: '2022-03-18T08:32:57.256264',
 	type: MaterialRequestType.REUSE,
 	isPending: true,
+	organisation: null,
+	requesterCapacity: MaterialRequestRequesterCapacity.EDUCATION,
 	requesterId: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 	requesterFullName: 'Ilya Korsakov',
 	requesterMail: 'ilya.korsakov@example.com',
@@ -93,6 +107,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	maintainerSlug: 'vrt',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
+	objectType: MediaFormat.AUDIO,
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -104,6 +119,8 @@ const mockMaterialRequest2: MaterialRequest = {
 	updatedAt: '2022-02-18T08:32:57.256264',
 	type: MaterialRequestType.MORE_INFO,
 	isPending: true,
+	organisation: null,
+	requesterCapacity: MaterialRequestRequesterCapacity.EDUCATION,
 	requesterId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	requesterFullName: 'Marie Odhiambo',
 	requesterMail: 'marie.odhiambo@example.com',
@@ -117,6 +134,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	maintainerSlug: 'vlaams-parlement',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
+	objectType: MediaFormat.AUDIO,
 };
 
 export const mockMaterialRequestsResponse = {
@@ -136,3 +154,16 @@ export const mockUser: User = {
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
 };
+
+export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['maintainer_content_partners_with_material_requests'][0] =
+	{
+		schema_identifier: 'OR-rf5kf25',
+		schema_name: 'VRT',
+	};
+
+export const mockMaintainerWithMaterialRequest = [
+	{
+		id: 'OR-rf5kf25',
+		name: 'VRT',
+	},
+];

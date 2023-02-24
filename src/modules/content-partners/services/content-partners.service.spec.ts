@@ -61,7 +61,7 @@ describe('ContentPartnersService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({});
 			expect(response.items.length).toBe(1);
@@ -83,7 +83,7 @@ describe('ContentPartnersService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({ hasSpace: false });
 			expect(response.items.length).toBe(1);

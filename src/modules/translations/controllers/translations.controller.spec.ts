@@ -1,6 +1,5 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { TranslationsService } from '../services/translations.service';
 
 import { TranslationsController } from './translations.controller';
 

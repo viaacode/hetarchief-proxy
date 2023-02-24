@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MaterialRequestType } from '../material-requests.types';
+import { MaterialRequestRequesterCapacity, MaterialRequestType } from '../material-requests.types';
 import {
+	mockMaintainerWithMaterialRequest,
 	mockMaterialRequest1,
 	mockMaterialRequestsResponse,
 	mockUser,
@@ -19,6 +20,7 @@ const mockMaterialRequestsService: Partial<
 > = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
+	findMaintainers: jest.fn(),
 	createMaterialRequest: jest.fn(),
 	updateMaterialRequest: jest.fn(),
 	deleteMaterialRequest: jest.fn(),
@@ -89,8 +91,18 @@ describe('MaterialRequestsController', () => {
 	describe('getMaterialRequestById', () => {
 		it('should return a material request by id', async () => {
 			mockMaterialRequestsService.findById.mockResolvedValueOnce(mockMaterialRequest1);
-			const visit = await materialRequestsController.getMaterialRequestById('1');
-			expect(visit).toEqual(mockMaterialRequest1);
+			const response = await materialRequestsController.getMaterialRequestById('1');
+			expect(response).toEqual(mockMaterialRequest1);
+		});
+	});
+
+	describe('getMaintainersWithMaterialRequests', () => {
+		it('should return maintainers with material requests', async () => {
+			mockMaterialRequestsService.findMaintainers.mockResolvedValueOnce(
+				mockMaintainerWithMaterialRequest
+			);
+			const response = await materialRequestsController.getMaintainers();
+			expect(response).toEqual(mockMaintainerWithMaterialRequest);
 		});
 	});
 
@@ -104,6 +116,7 @@ describe('MaterialRequestsController', () => {
 					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
+					requesterCapacity: MaterialRequestRequesterCapacity.EDUCATION,
 				},
 				new SessionUserEntity({
 					...mockUser,

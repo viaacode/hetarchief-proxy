@@ -4,7 +4,7 @@ import {
 	FindApprovedEndedVisitsWithoutNotificationQuery,
 	FindApprovedStartedVisitsWithoutNotificationQuery,
 	FindVisitByIdQuery,
-	FindVisitsByFolderIdQuery,
+	FindVisitEndDatesByFolderIdQuery,
 	FindVisitsQuery,
 	InsertVisitMutation,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
@@ -49,7 +49,7 @@ export type GqlVisit =
 	| FindApprovedEndedVisitsWithoutNotificationQuery['maintainer_visitor_space_request'][0];
 
 export type GqlVisitByFolderId =
-	FindVisitsByFolderIdQuery['maintainer_visitor_space_request_folder_access'][0];
+	FindVisitEndDatesByFolderIdQuery['maintainer_visitor_space_request_folder_access'][0];
 
 export interface GqlUpdateVisit {
 	start_date: string;

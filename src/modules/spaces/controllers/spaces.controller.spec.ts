@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { SpacesService } from '../services/spaces.service';
@@ -6,7 +7,6 @@ import { SpacesController } from './spaces.controller';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -41,6 +41,7 @@ const mockUser: User = {
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	maintainerId: 'OR-rf5kf25',
+	isKeyUser: false,
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {

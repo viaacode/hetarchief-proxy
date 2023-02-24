@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -12,7 +13,7 @@ import { HetArchiefController } from './het-archief.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -99,6 +100,10 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
+	findOrganisationBySchemaIdentifier: jest.fn(),
+};
+
 const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
 
 const getNewMockSession = () => ({
@@ -144,6 +149,10 @@ describe('HetArchiefController', () => {
 				{
 					provide: TranslationsService,
 					useValue: mockTranslationsService,
+				},
+				{
+					provide: OrganisationsService,
+					useValue: mockOrganisationsService,
 				},
 			],
 		})

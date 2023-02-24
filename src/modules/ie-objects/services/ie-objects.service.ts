@@ -5,13 +5,14 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty } from 'lodash';
+import { find, get, isEmpty, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
 
 import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
+import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
@@ -39,9 +40,11 @@ import {
 	GetRelatedObjectsDocument,
 	GetRelatedObjectsQuery,
 	GetRelatedObjectsQueryVariables,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -273,10 +276,11 @@ export class IeObjectsService {
 			premisIdentifier: gqlIeObject?.premis_identifier,
 			premisIsPartOf: gqlIeObject?.premis_is_part_of,
 			series: gqlIeObject?.schema_is_part_of?.serie,
-			program: gqlIeObject?.schema_is_part_of?.reeks,
+			programs: gqlIeObject?.schema_is_part_of?.reeks,
 			alternativeName: gqlIeObject.schema_is_part_of?.alternatief,
 			maintainerId: gqlIeObject?.maintainer.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
+			maintainerSlug: kebabCase(gqlIeObject?.maintainer?.schema_name || '') || undefined, // TODO fetch actual slug
 			contactInfo: {
 				email: gqlIeObject?.maintainer?.information?.primary_site.address?.email,
 				telephone: gqlIeObject?.maintainer?.information?.primary_site?.address?.telephone,
@@ -302,8 +306,8 @@ export class IeObjectsService {
 			creator: gqlIeObject?.schema_creator,
 			actor: gqlIeObject?.schema_actor,
 			publisher: gqlIeObject?.schema_publisher,
-			spatial: gqlIeObject?.schema_spatial_coverage, // -> REQUIRED but no data available
-			temporal: gqlIeObject?.schema_temporal_coverage, // -> REQUIRED but no data available
+			spatial: gqlIeObject?.schema_spatial_coverage,
+			temporal: gqlIeObject?.schema_temporal_coverage,
 			keywords: gqlIeObject?.schema_keywords,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
@@ -316,13 +320,13 @@ export class IeObjectsService {
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
 			genre: gqlIeObject?.schema_genre,
 			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
-			meemoofilmColor: gqlIeObject?.meemoofilm_color, // -> REQUIRED but no data available
-			meemoofilmBase: gqlIeObject?.meemoofilm_base, // -> REQUIRED but no data available
-			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound, // -> REQUIRED but no data available
-			meemooLocalId: gqlIeObject?.meemoo_local_id, // -> REQUIRED but no data available
-			meemooOriginalCp: gqlIeObject?.meemoo_original_cp, // -> REQUIRED but no data available
-			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme, // -> REQUIRED but no data available
-			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast, // -> REQUIRED but no data available
+			meemoofilmColor: gqlIeObject?.meemoofilm_color,
+			meemoofilmBase: gqlIeObject?.meemoofilm_base,
+			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
+			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			meemooOriginalCp: gqlIeObject?.meemoo_original_cp,
+			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme,
+			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast,
 			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
 		};
 	}
@@ -380,10 +384,11 @@ export class IeObjectsService {
 			premisIdentifier: esObject?.premis_identifier,
 			premisIsPartOf: esObject?.premis_is_part_of,
 			series: esObject?.schema_is_part_of?.serie,
-			program: esObject?.schema_is_part_of?.reeks,
+			programs: esObject?.schema_is_part_of?.reeks,
 			alternativeName: esObject.schema_is_part_of?.alternatief,
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
+			maintainerSlug: esObject?.schema_maintainer?.alt_label,
 			sector: esObject?.schema_maintainer?.organization_type,
 			contactInfo: null,
 			copyrightHolder: esObject?.schema_copyrightholder,
@@ -419,7 +424,7 @@ export class IeObjectsService {
 			meemooOriginalCp: esObject?.meemoo_original_cp,
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
-			representations: null,
+			representations: this?.adaptRepresentations(esObject?.premis_is_represented_by),
 		};
 	}
 
@@ -436,7 +441,7 @@ export class IeObjectsService {
 			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
 			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
 			series: graphQlObject.ie?.schema_is_part_of?.serie || [],
-			program: graphQlObject.ie?.schema_is_part_of?.programma || [],
+			programs: graphQlObject.ie?.schema_is_part_of?.programma || [],
 		};
 	}
 
@@ -487,23 +492,6 @@ export class IeObjectsService {
 	// Helpers
 	// ------------------------------------------------------------------------
 
-	/**
-	 * Helper function to return if the user has access to a visitor space (or-id) / esIndex
-	 * The user is either a maintainer of the specified esIndex
-	 * Or the user has an approved visit request for the current timestamp
-	 */
-	public async userHasAccessToVisitorSpaceOrId(
-		user: SessionUserEntity,
-		esIndex: string
-	): Promise<boolean> {
-		const isMaintainer =
-			esIndex &&
-			user.getMaintainerId() &&
-			user.getMaintainerId().toLowerCase() === esIndex.toLowerCase();
-
-		return isMaintainer || (await this.visitsService.hasAccess(user.getId(), esIndex));
-	}
-
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
 			this.logger.debug(JSON.stringify(esQuery));
@@ -515,5 +503,30 @@ export class IeObjectsService {
 			this.logger.error(e?.response?.body);
 			throw e;
 		}
+	}
+
+	public async getVisitorSpaceAccessInfoFromUser(
+		user: SessionUserEntity
+	): Promise<IeObjectsVisitorSpaceInfo> {
+		// Get active visits for the current user
+		// Need this to retrieve visitorSpaceAccessInfo
+		const activeVisits = await this.visitsService.findAll(
+			{
+				page: 1,
+				size: 100,
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+			},
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active,
+			}
+		);
+		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
+
+		return {
+			objectIds: visitorSpaceAccessInfo.objectIds,
+			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		};
 	}
 }

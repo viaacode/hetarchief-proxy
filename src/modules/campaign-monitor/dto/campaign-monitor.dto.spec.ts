@@ -1,9 +1,13 @@
-import { CampaignMonitorData, CampaignMonitorVisitData, SendMailDto } from './campaign-monitor.dto';
+import {
+	CampaignMonitorData,
+	CampaignMonitorSendMailDto,
+	CampaignMonitorVisitData,
+} from './campaign-monitor.dto';
 
 describe('CampaignMonitorDto', () => {
-	describe('SendMailDto', () => {
-		it('should be able to construct a SendMailDto object', async () => {
-			const sendMailDto = new SendMailDto();
+	describe('CampaignMonitorSendMailDto', () => {
+		it('should be able to construct a CampaignMonitorSendMailDto object', async () => {
+			const sendMailDto = new CampaignMonitorSendMailDto();
 			expect(sendMailDto).toEqual({});
 		});
 	});

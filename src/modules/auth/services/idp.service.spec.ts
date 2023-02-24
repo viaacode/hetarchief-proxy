@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -6,7 +7,6 @@ import { Configuration } from '~config';
 import { IdpService } from './idp.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 

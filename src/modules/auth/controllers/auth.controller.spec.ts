@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -11,7 +12,6 @@ import { LoginMessage, LoginResponse } from '../types';
 import { AuthController } from './auth.controller';
 
 import { SpacesModule } from '~modules/spaces';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersModule } from '~modules/users';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';

@@ -96,6 +96,10 @@ const config = (): Configuration => {
 			'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED',
 			false
 		),
+		CAMPAIGN_MONITOR_TEMPLATE_SHARE_FOLDER: getEnvValue(
+			'CAMPAIGN_MONITOR_TEMPLATE_SHARE_FOLDER',
+			false
+		),
 		ASSET_SERVER_ENDPOINT: getEnvValue('ASSET_SERVER_ENDPOINT', true),
 		ASSET_SERVER_TOKEN_ENDPOINT: getEnvValue('ASSET_SERVER_TOKEN_ENDPOINT', true),
 		ASSET_SERVER_TOKEN_SECRET: getEnvValue('ASSET_SERVER_TOKEN_SECRET', true),
@@ -117,6 +121,9 @@ const config = (): Configuration => {
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
 		GRAPHQL_LOG_QUERIES: getEnvValue('GRAPHQL_LOG_QUERIES', false) === 'true',
 		CLIENT_API_KEY: getEnvValue('CLIENT_API_KEY', true),
+		ZENDESK_ENDPOINT: getEnvValue('ZENDESK_ENDPOINT', true),
+		ZENDESK_USERNAME: getEnvValue('ZENDESK_USERNAME', true),
+		ZENDESK_TOKEN: getEnvValue('ZENDESK_TOKEN', true),
 	};
 };
 

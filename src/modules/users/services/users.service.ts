@@ -44,8 +44,7 @@ export class UsersService {
 			return null;
 		}
 
-		/* istanbul ignore next */
-		return {
+		let adpatedUser: User = {
 			id: graphQlUser?.id,
 			fullName: graphQlUser?.full_name,
 			firstName: graphQlUser?.first_name,
@@ -59,10 +58,25 @@ export class UsersService {
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 			isKeyUser: graphQlUser?.is_key_user,
-			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
-			visitorSpaceSlug:
-				graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
 		};
+
+		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {
+			adpatedUser = {
+				...adpatedUser,
+				maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+			};
+		}
+
+		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug) {
+			adpatedUser = {
+				...adpatedUser,
+				visitorSpaceSlug:
+					graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
+			};
+		}
+
+		/* istanbul ignore next */
+		return adpatedUser;
 	}
 
 	public groupIdToName(groupId: keyof typeof GroupIdToName): string {

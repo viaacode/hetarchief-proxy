@@ -2,13 +2,16 @@ import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
 
-import { mockCpVisit } from './__mocks__/cp_visit';
+import { mockGqlVisitRequest } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import {
+	FindPendingOrApprovedVisitRequestsForUserQuery,
 	FindVisitsQuery,
 	GetVisitRequestForAccessQuery,
+	InsertNoteMutation,
 	InsertVisitMutation,
+	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 	PendingVisitCountForUserBySlugQuery,
 	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
@@ -20,35 +23,31 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const getDefaultVisitsResponse = (): { data: FindVisitsQuery } => ({
-	data: {
-		maintainer_visitor_space_request: [mockCpVisit as any],
-		maintainer_visitor_space_request_aggregate: {
-			aggregate: {
-				count: 100,
-			},
+const getDefaultVisitsResponse = (): FindVisitsQuery => ({
+	maintainer_visitor_space_request: [mockGqlVisitRequest as any],
+	maintainer_visitor_space_request_aggregate: {
+		aggregate: {
+			count: 100,
 		},
 	},
 });
 
-const getDefaultVisitAggregateResponse = (): { data: PendingVisitCountForUserBySlugQuery } => ({
-	data: {
-		maintainer_visitor_space_request_aggregate: {
-			aggregate: {
-				count: 1,
-			},
-			nodes: [
-				{
-					cp_space_id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
-				},
-			],
+const getDefaultVisitAggregateResponse = (): PendingVisitCountForUserBySlugQuery => ({
+	maintainer_visitor_space_request_aggregate: {
+		aggregate: {
+			count: 1,
 		},
+		nodes: [
+			{
+				cp_space_id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
+			},
+		],
 	},
 });
 
 const mockVisit: Visit = {
-	id: mockCpVisit.id,
-	spaceId: mockCpVisit.cp_space_id,
+	id: mockGqlVisitRequest.id,
+	spaceId: mockGqlVisitRequest.cp_space_id,
 	spaceSlug: 'vrt',
 	spaceMaintainerId: 'or-rf5kf25',
 	spaceName: 'VRT',
@@ -69,6 +68,7 @@ const mockVisit: Visit = {
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	updatedById: null,
 	updatedByName: null,
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
 const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
@@ -76,9 +76,11 @@ const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 const mockVisitorSpaceRequestResponse: FindVisitsQuery = {
 	maintainer_visitor_space_request: [
 		{
+			...mockGqlVisitRequest,
 			id: '1',
 			status: 'APPROVED',
 			requested_by: {
+				...mockGqlVisitRequest.requested_by,
 				full_name: 'Marie Odhiambo',
 			},
 			cp_space_id: '1',
@@ -120,12 +122,12 @@ describe('VisitsService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a hasura response to our visit interface', () => {
-			const adapted = visitsService.adapt(mockCpVisit);
+			const adapted = visitsService.adapt(mockGqlVisitRequest);
 			// test some sample keys
-			expect(adapted.id).toEqual(mockCpVisit.id);
-			expect(adapted.spaceId).toEqual(mockCpVisit.cp_space_id);
-			expect(adapted.userProfileId).toEqual(mockCpVisit.user_profile_id);
-			expect(adapted.status).toEqual(mockCpVisit.status);
+			expect(adapted.id).toEqual(mockGqlVisitRequest.id);
+			expect(adapted.spaceId).toEqual(mockGqlVisitRequest.cp_space_id);
+			expect(adapted.userProfileId).toEqual(mockGqlVisitRequest.user_profile_id);
+			expect(adapted.status).toEqual(mockGqlVisitRequest.status);
 		});
 
 		it('should return null when the visit does not exist', () => {
@@ -180,9 +182,7 @@ describe('VisitsService', () => {
 		});
 
 		it('returns a paginated response with visits containing maria across all cpSpaces', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: mockVisitorSpaceRequestResponse,
-			});
+			mockDataService.execute.mockResolvedValueOnce(mockVisitorSpaceRequestResponse);
 			const response = await visitsService.findAll(
 				{
 					query: '%Marie%',
@@ -201,9 +201,7 @@ describe('VisitsService', () => {
 		});
 
 		it('returns a paginated response with visits containing maria within one cpSpace', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				data: mockVisitorSpaceRequestResponse,
-			});
+			mockDataService.execute.mockResolvedValueOnce(mockVisitorSpaceRequestResponse);
 			const response = await visitsService.findAll(
 				{
 					query: '%Marie%',
@@ -317,7 +315,7 @@ describe('VisitsService', () => {
 		it('returns a single visit', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.findById('1');
-			expect(response.id).toBe(mockCpVisit.id);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
 		});
 
 		it('throws a notfoundexception if the visit was not found', async () => {
@@ -329,7 +327,7 @@ describe('VisitsService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
 				await visitsService.findById('unknown-id');
@@ -348,7 +346,7 @@ describe('VisitsService', () => {
 		it('returns the active visit for the given user and space', async () => {
 			mockDataService.execute.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.getActiveVisitForUserAndSpace('user-1', 'space-1');
-			expect(response.id).toBe(mockCpVisit.id);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
 		});
 
 		it('returns null if the visit was not found', async () => {
@@ -360,7 +358,7 @@ describe('VisitsService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const activeVisit = await visitsService.getActiveVisitForUserAndSpace(
 				'user-1',
@@ -385,11 +383,10 @@ describe('VisitsService', () => {
 	describe('create', () => {
 		it('can create a new visit', async () => {
 			const mockData: InsertVisitMutation = {
-				insert_maintainer_visitor_space_request_one: {
-					id: '1',
-				} as InsertVisitMutation['insert_maintainer_visitor_space_request_one'],
+				insert_maintainer_visitor_space_request_one:
+					mockGqlVisitRequest as InsertVisitMutation['insert_maintainer_visitor_space_request_one'],
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await visitsService.create(
 				{
 					visitorSpaceSlug: 'space-slug-1',
@@ -399,7 +396,7 @@ describe('VisitsService', () => {
 				},
 				'user-1'
 			);
-			expect(response.id).toBe('1');
+			expect(response.id).toBe('9471f49f-5ac0-43f5-a74a-09c4c56463a4');
 		});
 	});
 
@@ -409,7 +406,7 @@ describe('VisitsService', () => {
 			const mockData: UpdateVisitMutation = {
 				update_maintainer_visitor_space_request_by_pk: null,
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			let error;
 			try {
@@ -433,15 +430,13 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					data: {
-						update_cp_visit_by_pk: {
-							id: mockCpVisit.id,
-						},
+					update_maintainer_visitor_space_request_by_pk: {
+						id: mockGqlVisitRequest.id,
 					},
-				})
+				} as UpdateVisitMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				mockCpVisit.id,
+				mockGqlVisitRequest.id,
 				{
 					startAt: new Date().toISOString(),
 					endAt: addHours(new Date(), 2).toISOString(),
@@ -449,7 +444,7 @@ describe('VisitsService', () => {
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(mockCpVisit.id);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
 			findVisitSpy.mockRestore();
 		});
 
@@ -457,26 +452,24 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					data: {
-						update_cp_visit_by_pk: {
-							id: mockCpVisit.id,
-						},
+					update_maintainer_visitor_space_request_by_pk: {
+						id: mockGqlVisitRequest.id,
 					},
-				})
+				} as UpdateVisitMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const response = await visitsService.update(
-				mockCpVisit.id,
+				mockGqlVisitRequest.id,
 				{
 					status: VisitStatus.APPROVED,
 				},
 				mockUserProfileId
 			);
-			expect(response.id).toBe(mockCpVisit.id);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
 		});
 
 		it('throws an error when you update to an invalid status', async () => {
 			const initialVisit = getDefaultVisitsResponse();
-			initialVisit.data.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
+			initialVisit.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
 			mockDataService.execute.mockResolvedValueOnce(initialVisit);
 
 			let error;
@@ -517,31 +510,27 @@ describe('VisitsService', () => {
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
-					data: {
-						update_cp_visit_by_pk: {
-							id: mockCpVisit.id,
-						},
+					update_maintainer_visitor_space_request_by_pk: {
+						id: mockGqlVisitRequest.id,
 					},
-				})
+				} as UpdateVisitMutation)
 				.mockResolvedValueOnce({
-					data: {
-						insert_cp_visit_note_one: {
-							id: 'note-id',
-						},
+					insert_maintainer_visitor_space_request_note_one: {
+						id: 'note-id',
 					},
-				})
+				} as InsertNoteMutation)
 				.mockResolvedValueOnce(getDefaultVisitsResponse());
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 
 			const response = await visitsService.update(
-				mockCpVisit.id,
+				mockGqlVisitRequest.id,
 				{
 					note: 'Test note',
 				},
 				mockUserProfileId
 			);
 
-			expect(response.id).toBe(mockCpVisit.id);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
 			findVisitSpy.mockRestore();
 		});
 	});
@@ -592,7 +581,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndStartedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(mockCpVisit.id);
+			expect(visits[0].id).toEqual(mockGqlVisitRequest.id);
 		});
 	});
 
@@ -603,7 +592,7 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(mockCpVisit.id);
+			expect(visits[0].id).toEqual(mockGqlVisitRequest.id);
 		});
 	});
 
@@ -614,17 +603,15 @@ describe('VisitsService', () => {
 			const visits = await visitsService.getApprovedAndEndedVisitsWithoutNotification();
 
 			expect(visits).toHaveLength(1);
-			expect(visits[0].id).toEqual(mockCpVisit.id);
+			expect(visits[0].id).toEqual(mockGqlVisitRequest.id);
 		});
 	});
 
 	describe('hasAccess', () => {
 		it('should allow access if approved visit request exists', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					maintainer_visitor_space_request: [{ id: '1' }],
-				} as GetVisitRequestForAccessQuery,
-			});
+				maintainer_visitor_space_request: [{ id: '1' }],
+			} as GetVisitRequestForAccessQuery);
 
 			const hasAccess: boolean = await visitsService.hasAccess(
 				mockUserProfileId,
@@ -636,10 +623,8 @@ describe('VisitsService', () => {
 
 		it('should deny access if no approved visit request exists', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					maintainer_visitor_space_request: [],
-				} as GetVisitRequestForAccessQuery,
-			});
+				maintainer_visitor_space_request: [],
+			} as GetVisitRequestForAccessQuery);
 
 			const hasAccess: boolean = await visitsService.hasAccess(
 				mockUserProfileId,
@@ -653,8 +638,8 @@ describe('VisitsService', () => {
 	describe('getAccessStatus', () => {
 		it('should get the access status for a space and user', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { maintainer_visitor_space_request: [{ status: VisitStatus.PENDING }] },
-			});
+				maintainer_visitor_space_request: [{ status: VisitStatus.PENDING }],
+			} as FindPendingOrApprovedVisitRequestsForUserQuery);
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
@@ -663,16 +648,14 @@ describe('VisitsService', () => {
 
 		it('should return ACCESS on APPROVED request that is valid now', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					maintainer_visitor_space_request: [
-						{
-							status: VisitStatus.APPROVED,
-							start_date: subHours(new Date(), 1).toISOString(),
-							end_date: addHours(new Date(), 1).toISOString(),
-						},
-					],
-				},
-			});
+				maintainer_visitor_space_request: [
+					{
+						status: VisitStatus.APPROVED,
+						start_date: subHours(new Date(), 1).toISOString(),
+						end_date: addHours(new Date(), 1).toISOString(),
+					},
+				],
+			} as FindPendingOrApprovedVisitRequestsForUserQuery);
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
@@ -681,16 +664,14 @@ describe('VisitsService', () => {
 
 		it('should return PENDING on APPROVED request that is valid in the future', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: {
-					maintainer_visitor_space_request: [
-						{
-							status: VisitStatus.APPROVED,
-							start_date: addHours(new Date(), 1).toISOString(),
-							end_date: addHours(new Date(), 2).toISOString(),
-						},
-					],
-				},
-			});
+				maintainer_visitor_space_request: [
+					{
+						status: VisitStatus.APPROVED,
+						start_date: addHours(new Date(), 1).toISOString(),
+						end_date: addHours(new Date(), 2).toISOString(),
+					},
+				],
+			} as FindPendingOrApprovedVisitRequestsForUserQuery);
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 
@@ -699,8 +680,8 @@ describe('VisitsService', () => {
 
 		it('should return the access status denied if no actual visit requests were found', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { maintainer_visitor_space_request: [] },
-			});
+				maintainer_visitor_space_request: [],
+			} as FindPendingOrApprovedVisitRequestsForUserQuery);
 
 			const accessStatus = await visitsService.getAccessStatus('space-1', 'user-1');
 

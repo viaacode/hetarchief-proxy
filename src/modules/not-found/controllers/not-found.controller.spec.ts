@@ -1,8 +1,8 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { NotFoundController } from './not-found.controller';
 
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
 describe('NotFoundController', () => {

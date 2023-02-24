@@ -8,7 +8,7 @@ import {
 	InsertObjectIntoCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
 
 export interface Collection {
 	id: string;
@@ -18,7 +18,7 @@ export interface Collection {
 	isDefault: boolean;
 	userProfileId: string;
 	duration?: string;
-	objects?: IeObject[];
+	objects?: Partial<IeObject>[];
 	usedForLimitedAccessUntil?: string | null;
 }
 
@@ -47,26 +47,13 @@ export type CollectionObjectLink =
 
 export type GqlObject = FindObjectBySchemaIdentifierQuery['object_ie'][0];
 
-export interface IeObject {
-	schemaIdentifier: string; // Unique id per object
-	meemooIdentifier: string; // PID: not unique per object
-	meemooLocalId: string;
-	creator: any;
-	description: string;
-	format: string;
-	name: string;
-	numberOfPages: any;
-	termsAvailable: string;
-	thumbnailUrl: string;
-	maintainerId: string;
-	maintainerName: string;
-	visitorSpaceSlug: string;
-	series: string[];
-	programs: string[];
-	duration: string | null;
-	alternateName?: string;
-	datePublished?: string;
-	dateCreatedLowerBound?: string;
-	collectionEntryCreatedAt?: string;
-	licenses?: IeObjectLicense[];
+export interface CollectionShared {
+	status: CollectionStatus;
+	folderId: string;
+	folderName: string;
+}
+
+export enum CollectionStatus {
+	ADDED = 'ADDED',
+	ALREADY_OWNER = 'ALREADY_OWNER',
 }
