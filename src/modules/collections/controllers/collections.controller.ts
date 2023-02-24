@@ -14,8 +14,9 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
+import { isNil } from 'lodash';
 
 import { Collection, CollectionShared, CollectionStatus } from '../types';
 
@@ -36,10 +37,8 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('Collections')
 @Controller('collections')
-@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 export class CollectionsController {
 	constructor(
 		private collectionsService: CollectionsService,
@@ -52,6 +51,16 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Collection>> {
+		// For Anonymous users it should return empty array
+		if (isNil(user.getId())) {
+			return Pagination<Collection>({
+				items: [],
+				page: 1,
+				size: 10,
+				total: 0,
+			});
+		}
+
 		const collections = await this.collectionsService.findCollectionsByUser(
 			user.getId(),
 			referer,
@@ -79,6 +88,8 @@ export class CollectionsController {
 	}
 
 	@Get(':collectionId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async getCollectionObjects(
 		@Headers('referer') referer: string,
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
@@ -140,6 +151,8 @@ export class CollectionsController {
 	// }
 
 	@Post()
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async createCollection(
 		@Headers('referer') referer: string,
 		@Body() createCollectionDto: CreateOrUpdateCollectionDto,
@@ -157,6 +170,8 @@ export class CollectionsController {
 	}
 
 	@Patch(':collectionId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async updateCollection(
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
@@ -173,6 +188,8 @@ export class CollectionsController {
 	}
 
 	@Delete(':collectionId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async deleteCollection(
 		@Param('collectionId') collectionId: string,
 		@SessionUser() user: SessionUserEntity
@@ -186,6 +203,8 @@ export class CollectionsController {
 	}
 
 	@Post(':collectionId/objects/:objectId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async addObjectToCollection(
 		@Req() request: Request,
 		@Headers('referer') referer: string,
@@ -223,6 +242,8 @@ export class CollectionsController {
 	}
 
 	@Delete(':collectionId/objects/:objectId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async removeObjectFromCollection(
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
@@ -246,6 +267,8 @@ export class CollectionsController {
 	}
 
 	@Patch(':oldCollectionId/objects/:objectId/move')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async moveObjectToAnotherCollection(
 		@Headers('referer') referer: string,
 		@Param('oldCollectionId') oldCollectionId: string,
@@ -279,6 +302,8 @@ export class CollectionsController {
 	}
 
 	@Post('/share/:collectionId')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async shareCollection(
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,

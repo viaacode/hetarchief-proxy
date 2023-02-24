@@ -161,7 +161,7 @@ export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
 // By default add the 'format' aggregation
-export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.NAME];
+export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
 
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	genre: 'keyword',
