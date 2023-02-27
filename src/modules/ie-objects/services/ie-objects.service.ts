@@ -563,6 +563,7 @@ export class IeObjectsService {
 		});
 
 		return {
+			accessThrough: [],
 			...(limitedObjectDetails ?? {}),
 			...this.defaultLimitedMetadata(folderObjectItem),
 		};
