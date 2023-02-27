@@ -72,18 +72,21 @@ export class CollectionsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 		collections.items.forEach((collection) => {
-			collection.objects = (collection.objects ?? []).map((object) => {
-				return limitAccessToObjectDetails(object, {
-					userId: user.getId(),
-					sector: user.getSector(),
-					maintainerId: user.getMaintainerId(),
-					groupId: user.getGroupId(),
-					isKeyUser: user.getIsKeyUser(),
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				});
-			});
+			collection.objects = (collection.objects ?? [])
+				.map((object) => {
+					return limitAccessToObjectDetails(object, {
+						userId: user.getId(),
+						sector: user.getSector(),
+						maintainerId: user.getMaintainerId(),
+						groupId: user.getGroupId(),
+						isKeyUser: user.getIsKeyUser(),
+						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					});
+				})
+				.filter((o) => o !== null);
 		});
+
 		return collections;
 	}
 
