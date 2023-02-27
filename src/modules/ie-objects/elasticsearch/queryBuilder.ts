@@ -19,6 +19,7 @@ import {
 	ORDER_MAPPINGS,
 	OrderProperty,
 	QueryBuilderConfig,
+	QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	SearchFilterField,
@@ -58,13 +59,7 @@ export class QueryBuilder {
 	 * @param searchRequest the search query parameters
 	 * @return elastic search query
 	 */
-	public static build(
-		searchRequest: IeObjectsQueryDto,
-		inputInfo: {
-			user: { isKeyUser: boolean; maintainerId: string; sector: IeObjectSector };
-			visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-		}
-	): any {
+	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
 		try {
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -77,6 +72,35 @@ export class QueryBuilder {
 			queryObject.size = Math.min(searchRequest.size, this.config.MAX_NUMBER_SEARCH_RESULTS);
 			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = clamp(offset, 0, max);
+
+			if (
+				searchRequest.filters.some((filter: SearchFilter) =>
+					[
+						SearchFilterField.CONSULTABLE_REMOTE,
+						SearchFilterField.CONSULTABLE_MEDIA,
+					].includes(filter.field)
+				)
+			) {
+				inputInfo = {
+					...inputInfo,
+					isConsultableRemote: searchRequest.filters.some(
+						(filter: SearchFilter) =>
+							filter.field === SearchFilterField.CONSULTABLE_REMOTE
+					),
+					isConsultableMedia: searchRequest.filters.some(
+						(filter: SearchFilter) =>
+							filter.field === SearchFilterField.CONSULTABLE_MEDIA
+					),
+				};
+
+				searchRequest.filters = searchRequest.filters.filter(
+					(filter: SearchFilter) =>
+						![
+							SearchFilterField.CONSULTABLE_REMOTE,
+							SearchFilterField.CONSULTABLE_MEDIA,
+						].includes(filter.field)
+				);
+			}
 
 			// Add the filters and search terms to the query object
 			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequest.filters));
@@ -179,15 +203,8 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildLicensesFilter(inputInfo: {
-		user: {
-			isKeyUser: boolean;
-			maintainerId: string;
-			sector: IeObjectSector | null;
-		};
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-	}): any {
-		const { user, visitorSpaceInfo } = inputInfo;
+	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
+		const { user, visitorSpaceInfo, isConsultableRemote, isConsultableMedia } = inputInfo;
 
 		let checkSchemaLicenses: any = [
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
@@ -243,7 +260,18 @@ export class QueryBuilder {
 			},
 		];
 
-		if (user.isKeyUser && !isNil(user.sector)) {
+		if (isConsultableRemote || isConsultableMedia) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					terms: {
+						schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+					},
+				},
+			];
+		}
+
+		if (user.isKeyUser && !isNil(user.sector) && isConsultableRemote) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
