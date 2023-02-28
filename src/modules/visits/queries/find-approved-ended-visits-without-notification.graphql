@@ -58,5 +58,8 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 				}
 			}
 		}
+		accessible_folders {
+			folder_id
+		}
 	}
 }

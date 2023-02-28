@@ -72,5 +72,8 @@ query findActiveVisitByUserAndSpace(
 				}
 			}
 		}
+		accessible_folders {
+			folder_id
+		}
 	}
 }

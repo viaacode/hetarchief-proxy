@@ -60,5 +60,8 @@ query findVisitById($id: uuid!) {
 				}
 			}
 		}
+		accessible_folders {
+			folder_id
+		}
 	}
 }

@@ -58,5 +58,8 @@ query findApprovedAlmostEndedVisitsWithoutNotification($warningDate: timestamp, 
 				}
 			}
 		}
+		accessible_folders {
+			folder_id
+		}
 	}
 }
