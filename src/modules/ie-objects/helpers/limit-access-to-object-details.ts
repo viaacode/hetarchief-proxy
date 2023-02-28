@@ -109,21 +109,13 @@ export const limitAccessToObjectDetails = (
 			? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
 			: userInfo.groupId;
 
-		// If user is part of KIOSK && does not have full or folder access -> return null = user should not see object
-		if (userInfo.groupId === Group.KIOSK_VISITOR && (!hasFullAccess || !hasFolderAccess)) {
-			return null;
-		}
-
 		// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
-		if (userInfo.groupId === Group.VISITOR && hasFolderAccess) {
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL
-			);
-		}
-
 		// If user is part of VISITOR && has full access -> add visitor content license to licenses
-		if (userInfo.groupId === Group.VISITOR && hasFullAccess) {
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(IeObjectLicense.BEZOEKERTOOL_CONTENT);
+		if (hasFolderAccess || hasFullAccess) {
+			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+				IeObjectLicense.BEZOEKERTOOL_CONTENT
+			);
 		}
 
 		// Determine common ground between ie object licenses and user group licenses
