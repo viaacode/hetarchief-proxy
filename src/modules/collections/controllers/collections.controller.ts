@@ -102,21 +102,14 @@ export class CollectionsController {
 				referer
 			);
 
-		// Limit access to the objects in the collection
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
+		// Limit access to the objects in the collection
 		folderObjects.items = (folderObjects.items ?? []).map((object) => {
-			return limitAccessToObjectDetails(object, {
-				userId: user.getId(),
-				sector: user.getSector(),
-				maintainerId: user.getMaintainerId(),
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			});
+			return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
 		});
+
 		return folderObjects;
 	}
 
