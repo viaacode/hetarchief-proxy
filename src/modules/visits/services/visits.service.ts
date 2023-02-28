@@ -181,10 +181,10 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
-			accessibleFolderCollectionIds: union(
-				...graphQlVisit.accessible_folders.map((accessibleFolder) =>
-					accessibleFolder.folder.ies.map(
-						(accessibleFolderIe) => accessibleFolderIe.ie.schema_identifier
+			accessibleFolderIds: union(
+				...graphQlVisit.accessible_folders.map((accessibleFolderLink) =>
+					accessibleFolderLink.folder.ies.map(
+						(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
 					)
 				)
 			),

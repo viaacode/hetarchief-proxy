@@ -169,7 +169,7 @@ export class VisitsController {
 				updatedAt: new Date().toISOString(),
 				userProfileId: user.getId(),
 				accessType: VisitAccessType.Full,
-				accessibleFolderCollectionIds: null,
+				accessibleFolderIds: null,
 			};
 		}
 

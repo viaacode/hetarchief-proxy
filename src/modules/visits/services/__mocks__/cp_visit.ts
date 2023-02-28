@@ -81,7 +81,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 
 export const mockVisitRequest: Visit = {
 	accessType: VisitAccessType.Full,
-	accessibleFolderCollectionIds: [],
+	accessibleFolderIds: [],
 	createdAt: '2022-03-18T08:32:57.256264',
 	endAt: null,
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
