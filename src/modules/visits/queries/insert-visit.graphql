@@ -60,5 +60,14 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 				}
 			}
 		}
+		accessible_folders {
+			folder {
+				ies {
+					ie {
+						schema_identifier
+					}
+				}
+			}
+		}
 	}
 }
