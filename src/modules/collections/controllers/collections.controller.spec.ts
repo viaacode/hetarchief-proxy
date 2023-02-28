@@ -8,7 +8,7 @@ import { CollectionsController } from './collections.controller';
 
 import { Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
@@ -102,6 +102,7 @@ const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
+	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
