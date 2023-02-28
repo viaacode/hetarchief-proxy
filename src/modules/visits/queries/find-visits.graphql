@@ -70,6 +70,15 @@ query findVisits(
 			id
 			full_name
 		}
+		accessible_folders {
+			folder {
+				ies {
+					ie {
+						schema_identifier
+					}
+				}
+			}
+		}
 	}
 	maintainer_visitor_space_request_aggregate(where: $where) {
 		aggregate {

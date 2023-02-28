@@ -13,6 +13,7 @@ import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
@@ -526,6 +527,45 @@ export class IeObjectsService {
 		return {
 			objectIds: visitorSpaceAccessInfo.objectIds,
 			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		};
+	}
+
+	public defaultLimitedMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
+		return {
+			name: ieObject?.name,
+			maintainerName: ieObject?.maintainerName,
+			maintainerId: ieObject?.maintainerId,
+			series: ieObject?.series || [],
+			dctermsFormat: ieObject?.dctermsFormat,
+			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
+			datePublished: ieObject?.datePublished,
+			meemooIdentifier: ieObject?.meemooIdentifier,
+			meemooLocalId: ieObject?.meemooLocalId,
+			premisIdentifier: ieObject?.premisIsPartOf,
+			schemaIdentifier: ieObject?.schemaIdentifier,
+			programs: ieObject?.programs || [],
+		};
+	}
+
+	public limitObjectInFolder(
+		folderObjectItem: Partial<IeObject>,
+		user: SessionUserEntity,
+		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo
+	): Partial<IeObject> {
+		const limitedObjectDetails = limitAccessToObjectDetails(folderObjectItem, {
+			userId: user.getId(),
+			sector: user.getSector(),
+			maintainerId: user.getMaintainerId(),
+			groupId: user.getGroupId(),
+			isKeyUser: user.getIsKeyUser(),
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+		});
+
+		return {
+			accessThrough: [],
+			...(limitedObjectDetails ?? {}),
+			...this.defaultLimitedMetadata(folderObjectItem),
 		};
 	}
 }

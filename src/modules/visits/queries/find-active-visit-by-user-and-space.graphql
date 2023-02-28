@@ -72,5 +72,14 @@ query findActiveVisitByUserAndSpace(
 				}
 			}
 		}
+		accessible_folders {
+			folder {
+				ies {
+					ie {
+						schema_identifier
+					}
+				}
+			}
+		}
 	}
 }
