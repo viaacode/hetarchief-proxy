@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import { IeObjectLicense, IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import { IeObjectLicense } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -73,12 +73,13 @@ export class QueryBuilder {
 			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = clamp(offset, 0, max);
 
+			const consultableSearchFilterFields: SearchFilterField[] = [
+				SearchFilterField.CONSULTABLE_REMOTE,
+				SearchFilterField.CONSULTABLE_MEDIA,
+			];
 			if (
 				searchRequest.filters.some((filter: SearchFilter) =>
-					[
-						SearchFilterField.CONSULTABLE_REMOTE,
-						SearchFilterField.CONSULTABLE_MEDIA,
-					].includes(filter.field)
+					consultableSearchFilterFields.includes(filter.field)
 				)
 			) {
 				inputInfo = {
@@ -93,12 +94,10 @@ export class QueryBuilder {
 					),
 				};
 
+				// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
+				// since they have been handled above and should not be handled by the standard field filtering logic.
 				searchRequest.filters = searchRequest.filters.filter(
-					(filter: SearchFilter) =>
-						![
-							SearchFilterField.CONSULTABLE_REMOTE,
-							SearchFilterField.CONSULTABLE_MEDIA,
-						].includes(filter.field)
+					(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
 				);
 			}
 
@@ -260,7 +259,7 @@ export class QueryBuilder {
 			},
 		];
 
-		if (isConsultableRemote || isConsultableMedia) {
+		if (isConsultableRemote) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				{
@@ -271,7 +270,18 @@ export class QueryBuilder {
 			];
 		}
 
-		if (user.isKeyUser && !isNil(user.sector) && isConsultableRemote) {
+		if (isConsultableMedia) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					terms: {
+						schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+					},
+				},
+			];
+		}
+
+		if (user.isKeyUser && !isNil(user.sector) && (!isConsultableRemote || isConsultableMedia)) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
