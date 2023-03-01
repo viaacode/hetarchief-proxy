@@ -56,14 +56,6 @@ export const limitAccessToObjectDetails = (
 		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_LTD);
 	}
 
-	// Check if user
-	// - has visitor space access through own, full or folder
-	// - maintainerId === ieObject.maintainerId => own visitor space
-	// - accessibleOrIds === ieObject.maintainerId => other accessible visitor space
-	if (ieObject?.maintainerId === userInfo.maintainerId || hasFolderAccess || hasFullAccess) {
-		ieObjectLicenses.push(...IE_OBJECT_VISITOR_LICENSES);
-	}
-
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
 	// ---------------------------------------------------
 
