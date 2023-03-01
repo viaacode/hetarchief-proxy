@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
@@ -17,6 +18,7 @@ import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
+import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockNotification1: Notification = {
@@ -107,6 +109,13 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 	onCancelVisitRequest: jest.fn(),
 };
 
+const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
+	getTranslations: jest.fn(),
+	t: jest.fn((translationKey: string) => nlJson[translationKey]),
+	refreshBackendTranslations: jest.fn(),
+	onApplicationBootstrap: jest.fn(),
+};
+
 const mockApiKey = 'MySecretApiKey';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -140,6 +149,10 @@ describe('NotificationsController', () => {
 				{
 					provide: VisitsService,
 					useValue: mockVisitsService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 				{
 					provide: ConfigService,
