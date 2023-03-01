@@ -16,7 +16,7 @@ describe('Limit access to object details', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen
 	// https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
 	it('Test case 1 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1a = limitAccessToObjectDetails(
 			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
 				...mockIeObject,
@@ -32,7 +32,7 @@ describe('Limit access to object details', () => {
 				accessibleVisitorSpaceIds: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.PUBLIC_INFO],
@@ -40,7 +40,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 2 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1b = limitAccessToObjectDetails(
 			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
 				...mockIeObject,
@@ -55,7 +55,7 @@ describe('Limit access to object details', () => {
 				sector: IeObjectSector.CULTURE,
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1b).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [
@@ -67,7 +67,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 3 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1c = limitAccessToObjectDetails(
 			// VRT - VIAA-PUBLIEK_METADATA_LTD + VIAA-INTRA_CP-METADATA-ALL + BEZOEKERTOOL-CONTENT
 			{
 				...mockIeObject,
@@ -86,7 +86,7 @@ describe('Limit access to object details', () => {
 				sector: IeObjectSector.CULTURE,
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1c).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -102,7 +102,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 4 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1d = limitAccessToObjectDetails(
 			// Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
 				...mockIeObject,
@@ -122,7 +122,7 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -136,7 +136,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 4b - user ziet gelimiteerde metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1da = limitAccessToObjectDetails(
 			// Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
 				...mockIeObject,
@@ -158,7 +158,7 @@ describe('Limit access to object details', () => {
 				],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1da).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -169,7 +169,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 5 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1e = limitAccessToObjectDetails(
 			// DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
@@ -191,7 +191,7 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1e).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -203,7 +203,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 6 - user ziet object niet', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1f = limitAccessToObjectDetails(
 			// Letterenhuis (Culture sector)
 			{
 				...mockIeObject,
@@ -223,11 +223,11 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual(null);
+		expect(limitedAccessIeObject1f).toEqual(null);
 	});
 
 	it('Test case 7 - user ziet gelimiteerde metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1g = limitAccessToObjectDetails(
 			// SBS Belgium (Rural)
 			{
 				...mockIeObject,
@@ -244,7 +244,7 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1g).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
 			licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			accessThrough: [IeObjectAccessThrough.SECTOR],
@@ -252,7 +252,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 8 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject1h = limitAccessToObjectDetails(
 			// SBS Belgium (Rural)
 			{
 				...mockIeObject,
@@ -273,7 +273,7 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject1h).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -288,7 +288,7 @@ describe('Limit access to object details', () => {
 	// -------------------------------------------------------------------------
 
 	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject2a = limitAccessToObjectDetails(
 			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
 				...mockIeObject,
@@ -306,15 +306,15 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject2a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
 
-	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset en essence op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+	it('USER GEEN SECTOR - user (CP Admin) ziet gelimiteerd metadataset op de detailpagina', () => {
+		const limitedAccessIeObject2b = limitAccessToObjectDetails(
 			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
 				...mockIeObject,
@@ -332,49 +332,15 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject2b).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
 
-	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset en essence op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
-			// VRT - VIAA-PUBLIEK_METADATA_LTD + VIAA-INTRA_CP-METADATA-ALL + BEZOEKERTOOL-CONTENT
-			{
-				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
-				licenses: [
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-					IeObjectLicense.INTRA_CP_METADATA_ALL,
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				],
-			},
-			// Basis gebruiker
-			{
-				...mockUserInfo,
-				groupId: Group.VISITOR,
-				isKeyUser: false,
-				sector: null,
-				maintainerId: null,
-				accessibleVisitorSpaceIds: [],
-				accessibleObjectIdsThroughFolders: [],
-			}
-		);
-		expect(limitedAccessIeObject).toEqual({
-			...mockIeObjectWithMetadataSetLTD,
-			licenses: [
-				IeObjectLicense.PUBLIEK_METADATA_LTD,
-				IeObjectLicense.INTRA_CP_METADATA_ALL,
-				IeObjectLicense.BEZOEKERTOOL_CONTENT,
-			],
-			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
-		});
-	});
-
 	it('USER GEEN SECTOR - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject2d = limitAccessToObjectDetails(
 			// DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
@@ -396,7 +362,7 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual({
+		expect(limitedAccessIeObject2d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -408,7 +374,7 @@ describe('Limit access to object details', () => {
 	});
 
 	it('USER GEEN SECTOR - user ziet object niet', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject2e = limitAccessToObjectDetails(
 			// Letterenhuis (Culture sector)
 			{
 				...mockIeObject,
@@ -429,11 +395,11 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual(null);
+		expect(limitedAccessIeObject2e).toEqual(null);
 	});
 
 	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset op de detailpagina', () => {
-		const limitedAccessIeObject = limitAccessToObjectDetails(
+		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			// SBS Belgium (Rural)
 			{
 				...mockIeObject,
@@ -451,6 +417,6 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [],
 			}
 		);
-		expect(limitedAccessIeObject).toEqual(null);
+		expect(limitedAccessIeObject2f).toEqual(null);
 	});
 });

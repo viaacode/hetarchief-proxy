@@ -56,14 +56,6 @@ export const limitAccessToObjectDetails = (
 		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_LTD);
 	}
 
-	// Check if user
-	// - has visitor space access through own, full or folder
-	// - maintainerId === ieObject.maintainerId => own visitor space
-	// - accessibleOrIds === ieObject.maintainerId => other accessible visitor space
-	if (ieObject?.maintainerId === userInfo.maintainerId || hasFolderAccess || hasFullAccess) {
-		ieObjectLicenses.push(...IE_OBJECT_VISITOR_LICENSES);
-	}
-
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
 	// ---------------------------------------------------
 
@@ -109,21 +101,13 @@ export const limitAccessToObjectDetails = (
 			? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
 			: userInfo.groupId;
 
-		// If user is part of KIOSK && does not have full or folder access -> return null = user should not see object
-		if (userInfo.groupId === Group.KIOSK_VISITOR && (!hasFullAccess || !hasFolderAccess)) {
-			return null;
-		}
-
 		// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
-		if (userInfo.groupId === Group.VISITOR && hasFolderAccess) {
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL
-			);
-		}
-
 		// If user is part of VISITOR && has full access -> add visitor content license to licenses
-		if (userInfo.groupId === Group.VISITOR && hasFullAccess) {
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(IeObjectLicense.BEZOEKERTOOL_CONTENT);
+		if (hasFolderAccess || hasFullAccess) {
+			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+				IeObjectLicense.BEZOEKERTOOL_CONTENT
+			);
 		}
 
 		// Determine common ground between ie object licenses and user group licenses

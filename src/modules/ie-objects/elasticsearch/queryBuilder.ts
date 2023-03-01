@@ -199,6 +199,26 @@ export class QueryBuilder {
 					],
 				},
 			},
+			// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
+			{
+				bool: {
+					should: [
+						{
+							terms: {
+								maintainer: [user.maintainerId],
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+					],
+				},
+			},
 			// 4) Check or-id is part of visitorSpaceIds
 			// Remark: ES does not allow maintainer and schema license to be both under 1 terms object
 			{
