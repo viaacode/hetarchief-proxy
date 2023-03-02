@@ -92,6 +92,7 @@ export interface Visit {
 	visitorFirstName: string;
 	visitorLastName: string;
 	accessibleFolderIds?: string[];
+	accessibleObjectIds?: string[];
 }
 
 export interface VisitSpaceCount {

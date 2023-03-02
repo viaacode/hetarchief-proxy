@@ -62,6 +62,7 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 		}
 		accessible_folders {
 			folder {
+				id
 				ies {
 					ie {
 						schema_identifier
