@@ -40,7 +40,7 @@ export type GqlVisitWithNotes =
 	| FindVisitsQuery['maintainer_visitor_space_request'][0]
 	| FindVisitByIdQuery['maintainer_visitor_space_request'][0]
 	| FindActiveVisitByUserAndSpaceQuery['maintainer_visitor_space_request'][0]
-	| UpdateVisitMutation['update_maintainer_visitor_space_request_by_pk'];
+	| UpdateVisitMutation['update_maintainer_visitor_space_request'];
 
 export type GqlVisit =
 	| GqlVisitWithNotes
