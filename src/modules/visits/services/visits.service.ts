@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, set, union } from 'lodash';
+import { find, isArray, isEmpty, set, union, uniq } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -181,11 +181,13 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
-			accessibleFolderIds: graphQlVisit.accessible_folders.map(
-				(accessibleFolderLink) => accessibleFolderLink.folder.id
+			accessibleFolderIds: uniq(
+				graphQlVisit.accessible_folders.map(
+					(accessibleFolderLink) => accessibleFolderLink.folder.id
+				)
 			),
-			accessibleObjectIds: union(
-				...graphQlVisit.accessible_folders.map((accessibleFolderLink) =>
+			accessibleObjectIds: uniq(
+				graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
 					accessibleFolderLink.folder.ies.map(
 						(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
 					)
