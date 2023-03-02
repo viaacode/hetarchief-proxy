@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { Expression } from 'jsep';
+import { baseTypes, Expression } from 'jsep';
 
 import { SearchFilter } from '../dto/ie-objects.dto';
 
@@ -23,17 +23,17 @@ export const convertNodeToEsQueryFilterObjects = (
 				bool: {
 					should: [
 						convertNodeToEsQueryFilterObjects(
-							node.left as any,
+							node.left as Expression,
 							searchTemplate,
 							searchFilter
 						),
 						convertNodeToEsQueryFilterObjects(
-							node.right as any,
+							node.right as Expression,
 							searchTemplate,
 							searchFilter
 						),
 					],
-					minimum_should_match: (node.operator as any) === 'AND' ? 2 : 1,
+					minimum_should_match: (node.operator as baseTypes) === 'AND' ? 2 : 1,
 				},
 			};
 
@@ -41,7 +41,7 @@ export const convertNodeToEsQueryFilterObjects = (
 			return {
 				bool: {
 					must_not: convertNodeToEsQueryFilterObjects(
-						node.argument as any,
+						node.argument as Expression,
 						searchTemplate,
 						searchFilter
 					),
@@ -78,16 +78,4 @@ const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchFilter):
 			minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
 		},
 	};
-};
-
-enum LOGICAL_OPERATOR {
-	AND = 'AND',
-	OR = 'OR',
-	NOT = 'NOT',
-}
-
-export const LOGICAL_OCCURRENCE_TYPE: { [prop in LOGICAL_OPERATOR]?: string } = {
-	[LOGICAL_OPERATOR.AND]: 'must',
-	[LOGICAL_OPERATOR.OR]: 'should',
-	[LOGICAL_OPERATOR.NOT]: 'must_not',
 };

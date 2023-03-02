@@ -1,7 +1,9 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import jsep from 'jsep';
 import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
 import { IeObjectLicense, IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import {
@@ -329,7 +331,19 @@ export class QueryBuilder {
 
 					const searchTemplate =
 						this.config.MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
-					const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+
+					let textFilters;
+					if (searchFilter.field === SearchFilterField.QUERY) {
+						textFilters = [
+							convertNodeToEsQueryFilterObjects(
+								jsep(searchFilter.value),
+								searchTemplate,
+								searchFilter
+							),
+						];
+					} else {
+						textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+					}
 
 					textFilters.forEach((filter) =>
 						this.applyFilter(filterObject, {
