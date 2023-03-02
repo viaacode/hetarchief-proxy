@@ -1,0 +1,7 @@
+query findVisitFolderAccess($folderId: uuid!, $visitorSpaceRequestId: uuid!) {
+	maintainer_visitor_space_request_folder_access(
+		where: { folder_id: { _eq: $folderId }, visit_request_id: { _eq: $visitorSpaceRequestId } }
+	) {
+		id
+	}
+}
