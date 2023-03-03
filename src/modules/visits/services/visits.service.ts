@@ -288,18 +288,17 @@ export class VisitsService {
 				);
 			}
 
-			// IF accessFolderIds is not empty and accessType is FOLDERS
-			// THEN
-			// - remove existing access folders
-			// - add new folders to the folder_access table
-			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
-				await this.dataService.execute<
-					DeleteVisitFolderAccessMutation,
-					DeleteVisitFolderAccessMutationVariables
-				>(DeleteVisitFolderAccessDocument, {
-					visitRequestId: currentVisit.id,
-				});
+			// Always delete the old access folders
+			await this.dataService.execute<
+				DeleteVisitFolderAccessMutation,
+				DeleteVisitFolderAccessMutationVariables
+			>(DeleteVisitFolderAccessDocument, {
+				visitRequestId: currentVisit.id,
+			});
 
+			// IF accessFolderIds is not empty and accessType is FOLDERS
+			// THEN add new folders to the folder_access table
+			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
 				await this.dataService.execute<
 					InsertVisitFolderAccessMutation,
 					InsertVisitFolderAccessMutationVariables
@@ -310,18 +309,6 @@ export class VisitsService {
 							visit_request_id: currentVisit.id,
 						})),
 					],
-				});
-			}
-
-			// IF accessType is FULL
-			// THEN
-			// - remove existing access folders
-			if (updateVisit.access_type === VisitAccessType.Full) {
-				await this.dataService.execute<
-					DeleteVisitFolderAccessMutation,
-					DeleteVisitFolderAccessMutationVariables
-				>(DeleteVisitFolderAccessDocument, {
-					visitRequestId: currentVisit.id,
 				});
 			}
 		}
