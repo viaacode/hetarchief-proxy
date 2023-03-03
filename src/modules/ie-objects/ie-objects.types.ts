@@ -112,7 +112,7 @@ export interface IeObject {
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
 	// OPTIONAL
-	meemoofilmEmbeddedCaption?: boolean;
+	meemoofilmContainsEmbeddedCaption?: boolean;
 	premisIsPartOf?: string;
 	alternativeName?: string;
 	contributor?: any;
@@ -120,13 +120,9 @@ export interface IeObject {
 	schemaIsPartOf?: any;
 	series?: string[];
 	programs?: string[] | null;
-	contactInfo?: ContactInfo;
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
-	transcript?: string;
-	caption?: string;
-	categorie?: string[];
 	// FROM DB
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;
@@ -140,6 +136,12 @@ export interface IeObject {
 	ebucoreHasMediaFragmentOf?: boolean;
 	dateCreatedLowerBound?: string;
 	actor?: string | null;
+	// Not yet available
+	transcript?: string;
+	caption?: string;
+	meemooDescriptionCategory?: string[];
+	meemoofilmEmbeddedCaption?: string;
+	meemoofilmEmbeddedCaptionLanguage?: string;
 }
 
 export interface MediaSearchAggregation<T> {
@@ -261,6 +263,12 @@ export interface ElasticsearchObject {
 	meemoo_original_cp?: string | null; // only exists in QAS + always null (not INT)
 	duration_seconds?: number; // Missing in both _mapping and values (QAS & INT)
 	premis_is_represented_by?: any; // Missing in both _mapping and values (QAS & INT)
+	// Not yet available
+	schema_transcript?: string;
+	schema_caption?: string;
+	meemoo_description_category?: string[];
+	meemoofilm_embedded_caption?: string;
+	meemoofilm_embedded_caption_language?: string;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

@@ -374,7 +374,7 @@ export class IeObjectsService {
 			meemooIdentifier: esObject?.meemoo_identifier,
 			meemoofilmBase: esObject?.meemoofilm_base,
 			meemoofilmColor: esObject?.meemoofilm_color,
-			meemoofilmEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
+			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
 			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
 			premisIsPartOf: esObject?.premis_is_part_of,
 			premisIdentifier: esObject?.premis_identifier,
@@ -413,6 +413,12 @@ export class IeObjectsService {
 			// Other
 			series: esObject?.schema_is_part_of?.serie,
 			programs: esObject?.schema_is_part_of?.reeks,
+			// Not yet available
+			transcript: esObject?.schema_transcript,
+			caption: esObject?.schema_caption,
+			meemooDescriptionCategory: esObject?.meemoo_description_category,
+			meemoofilmEmbeddedCaption: esObject?.meemoofilm_embedded_caption,
+			meemoofilmEmbeddedCaptionLanguage: esObject?.meemoofilm_embedded_caption_language,
 		};
 	}
 
