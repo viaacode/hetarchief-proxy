@@ -5,6 +5,7 @@ import {
 	mockConvertNodeToEsQueryFilterObject1,
 	mockConvertNodeToEsQueryFilterObject2,
 	mockConvertNodeToEsQueryFilterObject3,
+	mockConvertNodeToEsQueryFilterObject4,
 } from '../mocks/elasticsearch.mock';
 
 import { Operator, SearchFilterField } from './../elasticsearch/elasticsearch.consts';
@@ -66,5 +67,22 @@ describe('Convert node to es query filter objects', () => {
 		);
 
 		expect(convertedNodesToEsQueryFilterObjects).toEqual(mockConvertNodeToEsQueryFilterObject3);
+	});
+
+	it('Use case 4 - genetics test AND ("dna sequencing" test AND crispr AND (cloning OR genomics) AND NOT dna brecht tafel)', () => {
+		const node =
+			"genetics test AND ('dna sequencing' test AND crispr AND (cloning OR genomics) AND NOT dna brecht tafel)";
+
+		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
+			jsep(node),
+			esQuerySearchTemplate,
+			{
+				field: SearchFilterField.QUERY,
+				value: node,
+				operator: Operator.CONTAINS,
+			}
+		);
+
+		expect(convertedNodesToEsQueryFilterObjects).toEqual(mockConvertNodeToEsQueryFilterObject4);
 	});
 });
