@@ -404,7 +404,7 @@ describe('VisitsService', () => {
 		it('throws an exception if the visit request was not found', async () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
 			const mockData: UpdateVisitMutation = {
-				update_maintainer_visitor_space_request_by_pk: null,
+				update_maintainer_visitor_space_request: null,
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
