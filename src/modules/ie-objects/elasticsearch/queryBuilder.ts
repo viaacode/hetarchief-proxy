@@ -30,6 +30,14 @@ import {
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
+(jsep as any).removeAllBinaryOps();
+(jsep as any).removeAllUnaryOps();
+
+jsep.addBinaryOp('AND', 2);
+jsep.addBinaryOp('OR', 1);
+
+jsep.addUnaryOp('NOT');
+
 export class QueryBuilder {
 	private static config: QueryBuilderConfig = {
 		AGGS_PROPERTIES,
