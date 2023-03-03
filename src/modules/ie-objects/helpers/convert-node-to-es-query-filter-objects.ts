@@ -18,6 +18,15 @@ export const convertNodeToEsQueryFilterObjects = (
 				},
 			};
 
+		case 'SequenceExpression':
+			return {
+				bool: {
+					should: ((node.expressions || []) as Expression[]).map((bodyNode) =>
+						convertNodeToEsQueryFilterObjects(bodyNode)
+					),
+				},
+			};
+
 		case 'BinaryExpression':
 			return {
 				bool: {
