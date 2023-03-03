@@ -22,6 +22,8 @@ export enum SearchFilterField {
 	KEYWORD = 'keyword',
 	NAME = 'name',
 	FORMAT = 'format',
+	CREATED = 'created',
+	PUBLISHED = 'published',
 	PUBLISHER = 'publisher',
 	CREATOR = 'creator',
 	DESCRIPTION = 'description',
@@ -97,6 +99,8 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	format: QueryType.TERMS, // es keyword
 	publisher: QueryType.TERMS,
 	creator: QueryType.TERMS,
+	created: QueryType.RANGE,
+	published: QueryType.RANGE,
 	description: QueryType.TERM, // used for exact (not) matching
 	era: QueryType.MATCH,
 	location: QueryType.MATCH,
@@ -129,6 +133,8 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	[SearchFilterField.FORMAT]: 'dcterms_format',
 	[SearchFilterField.PUBLISHER]: 'schema_publisher',
 	[SearchFilterField.CREATOR]: 'schema_creator',
+	[SearchFilterField.CREATED]: 'schema_date_created',
+	[SearchFilterField.PUBLISHED]: 'schema_date_published',
 	[SearchFilterField.DESCRIPTION]: 'schema_description',
 	[SearchFilterField.ERA]: 'schema_temporal_coverage',
 	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
