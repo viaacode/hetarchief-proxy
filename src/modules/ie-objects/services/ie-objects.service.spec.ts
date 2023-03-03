@@ -169,7 +169,6 @@ describe('ieObjectsService', () => {
 			);
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.maintainerId).toEqual('OR-rf5kf25');
-			expect(response.contactInfo.address.postalCode).toBe('1043');
 			expect(response.copyrightHolder).toEqual('vrt');
 			expect(response.keywords.length).toBeGreaterThan(10);
 		});

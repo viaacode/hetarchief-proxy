@@ -223,7 +223,6 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'meemooDescriptionCast',
 	'spatial',
 	'temporal',
-	'categorie', // BESTAAT NOG NIET
 	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: (keyof IeObject)[] = [
