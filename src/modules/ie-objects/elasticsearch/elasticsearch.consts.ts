@@ -138,7 +138,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: st
 	[SearchFilterField.CAPTION]: 'schema_caption',
 	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
 	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
-	[SearchFilterField.DURATION]: 'schema_duration_in_seconds',
+	[SearchFilterField.DURATION]: 'schema_duration',
 	[SearchFilterField.LANGUAGE]: 'schema_in_language',
 	[SearchFilterField.MEDIUM]: 'dcterms_medium',
 };

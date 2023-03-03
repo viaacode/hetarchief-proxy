@@ -350,7 +350,7 @@ describe('QueryBuilder', () => {
 								filter: [
 									{
 										range: {
-											schema_duration_in_seconds: { gte: '01:00:00' },
+											schema_duration: { gte: '01:00:00' },
 										},
 									},
 								],
