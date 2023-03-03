@@ -25,7 +25,7 @@ export const convertNodeToEsQueryFilterObjects = (
 					should: ((node.expressions || []) as Expression[]).map((bodyNode) =>
 						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplate, searchFilter)
 					),
-					minimum_should_match: ((node.body || []) as Expression[]).length,
+					minimum_should_match: ((node.expressions || []) as Expression[]).length,
 				},
 			};
 
