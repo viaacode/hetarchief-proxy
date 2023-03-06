@@ -20,6 +20,21 @@
     }
   },
   {
+    "term": {
+      "meemoo_original_cp": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_maintainer_id": "{{query}}"
+    }
+  },
+  {
     "multi_match": {
       "query": "{{query}}",
       "type": "phrase",
@@ -44,7 +59,13 @@
         "schema_creator",
         "schema_spatial_coverage",
         "schema_temporal_coverage",
-        "dcterms_medium"
+        "dcterms_medium",
+        "dcterm_format",
+        "ebucore_object_type",
+        "schema_publisher",
+        "meemoo_description_programme",
+        "meemoo_description_cast",
+        "meemoofilm_base"
       ]
     }
   },
@@ -72,7 +93,10 @@
         "schema_captions.lemma_split",
         "schema_creator.lemma_split",
         "schema_spatial_coverage.lemma_split",
-        "schema_temporal_coverage.lemma_split"
+        "schema_temporal_coverage.lemma_split",
+        "ebucore_object_type.lemma_split",
+        "meemoo_description_programme.lemma_split",
+        "meemoo_description_cast.lemma_split"
       ]
     }
   },
@@ -101,7 +125,10 @@
         "schema_captions.lemma_split",
         "schema_creator.lemma_split",
         "schema_spatial_coverage.lemma_split",
-        "schema_temporal_coverage.lemma_split"
+        "schema_temporal_coverage.lemma_split",
+        "ebucore_object_type.lemma_split",
+        "meemoo_description_programme.lemma_split",
+        "meemoo_description_cast.lemma_split"
       ]
     }
   },
@@ -129,7 +156,10 @@
         "schema_captions.lemma_split_spell",
         "schema_creator.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
-        "schema_temporal_coverage.lemma_split_spell"
+        "schema_temporal_coverage.lemma_split_spell",
+        "ebucore_object_type.lemma_split_spell",
+        "meemoo_description_programme.lemma_split_spell",
+        "meemoo_description_cast.lemma_split_spell"
       ]
     }
   },
@@ -158,7 +188,10 @@
         "schema_captions.lemma_split_spell",
         "schema_creator.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
-        "schema_temporal_coverage.lemma_split_spell"
+        "schema_temporal_coverage.lemma_split_spell",
+        "ebucore_object_type.lemma_split_spell",
+        "meemoo_description_programme.lemma_split_spell",
+        "meemoo_description_cast.lemma_split_spell"
       ]
     }
   }
