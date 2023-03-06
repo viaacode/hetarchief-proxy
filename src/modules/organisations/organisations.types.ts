@@ -4,6 +4,7 @@ export interface OrganisationInfoV2 {
 	id: string;
 	description: string;
 	sector: IeObjectSector | null;
+	form_url: string | null;
 	logo: {
 		iri: string;
 	};

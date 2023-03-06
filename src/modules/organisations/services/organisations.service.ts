@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got from 'got';
-import { isNil, uniqBy } from 'lodash';
+import { isEmpty, isNil, uniqBy } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -101,6 +101,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
     id
     description
     sector
+	form_url
     logo {
       iri
     }
@@ -167,6 +168,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				primary_site: organization.primary_site,
 				// Remark here organization is with Z
 				haorg_organization_type: organization?.sector || null,
+				form_url: isEmpty(organization?.form_url) ? null : organization?.form_url,
 			})
 		);
 
