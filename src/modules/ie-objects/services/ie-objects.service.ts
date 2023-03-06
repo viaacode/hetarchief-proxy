@@ -279,6 +279,7 @@ export class IeObjectsService {
 			meemooIdentifier: gqlIeObject?.meemoo_identifier,
 			meemoofilmBase: gqlIeObject?.meemoofilm_base,
 			meemoofilmColor: gqlIeObject?.meemoofilm_color,
+			meemoofilmContainsEmbeddedCaption: gqlIeObject?.meemoofilm_contains_embedded_caption,
 			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
 			premisIdentifier: gqlIeObject?.premis_identifier,
 			abstract: gqlIeObject?.schema_abstract,
