@@ -107,10 +107,10 @@ export class IeObjectsController {
 	}
 
 	// TODO: rewrite export with limited access
-	@Get(':id/export')
+	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
-	public async export(
+	public async exportXml(
 		@Param('id') id: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
@@ -142,6 +142,15 @@ export class IeObjectsController {
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			})
 		);
+	}
+	@Get(':id/export/csv') //ID FOR TEST: b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79c3609554ce4f43d182ca36be53584d60
+	@Header('Content-Type', 'text/csv')
+	@RequireAllPermissions(Permission.EXPORT_OBJECT)
+	public async exportCsv(): // @Param('id') id: string,
+	// @Req() request: Request,
+	// @SessionUser() user: SessionUserEntity
+	Promise<string> {
+		return null;
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
