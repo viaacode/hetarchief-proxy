@@ -1,70 +1,72 @@
 mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_set_input!) {
-	update_maintainer_visitor_space_request_by_pk(pk_columns: { id: $id }, _set: $updateVisit) {
-		id
-		cp_space_id
-		user_profile_id
-		requested_by {
+	update_maintainer_visitor_space_request(where: { id: { _eq: $id } }, _set: $updateVisit) {
+		returning {
 			id
-			full_name
-			first_name
-			last_name
-			mail
-			collections {
-				ies {
-					ie_schema_identifier
+			cp_space_id
+			user_profile_id
+			requested_by {
+				id
+				full_name
+				first_name
+				last_name
+				mail
+				collections {
+					ies {
+						ie_schema_identifier
+					}
 				}
 			}
-		}
-		user_reason
-		user_timeframe
-		status
-		access_type
-		start_date
-		end_date
-		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
-			id
-			note
-			profile {
-				full_name
-			}
-			created_at
-		}
-		created_at
-		updated_at
-		last_updated_by {
-			id
-			full_name
-		}
-		visitor_space {
-			id
-			slug
-			schema_maintainer_id
-			schema_image
-			schema_color
-			schema_audience_type
-			schema_description
-			schema_public_access
-			schema_service_description
+			user_reason
+			user_timeframe
 			status
-			published_at
+			access_type
+			start_date
+			end_date
+			visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
+				id
+				note
+				profile {
+					full_name
+				}
+				created_at
+			}
 			created_at
 			updated_at
-			content_partner {
-				schema_name
-				schema_identifier
-				information {
-					contact_point
-					description
-					logo
-					primary_site
+			last_updated_by {
+				id
+				full_name
+			}
+			visitor_space {
+				id
+				slug
+				schema_maintainer_id
+				schema_image
+				schema_color
+				schema_audience_type
+				schema_description
+				schema_public_access
+				schema_service_description
+				status
+				published_at
+				created_at
+				updated_at
+				content_partner {
+					schema_name
+					schema_identifier
+					information {
+						contact_point
+						description
+						logo
+						primary_site
+					}
 				}
 			}
-		}
-		accessible_folders {
-			folder {
-				ies {
-					ie {
-						schema_identifier
+			accessible_folders {
+				folder {
+					ies {
+						ie {
+							schema_identifier
+						}
 					}
 				}
 			}

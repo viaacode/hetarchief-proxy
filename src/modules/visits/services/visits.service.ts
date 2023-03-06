@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, set, union } from 'lodash';
+import { find, isArray, isEmpty, set, uniq } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -28,6 +28,9 @@ import {
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
+	DeleteVisitFolderAccessDocument,
+	DeleteVisitFolderAccessMutation,
+	DeleteVisitFolderAccessMutationVariables,
 	FindActiveVisitByUserAndSpaceDocument,
 	FindActiveVisitByUserAndSpaceQuery,
 	FindActiveVisitByUserAndSpaceQueryVariables,
@@ -49,6 +52,9 @@ import {
 	FindVisitEndDatesByFolderIdDocument,
 	FindVisitEndDatesByFolderIdQuery,
 	FindVisitEndDatesByFolderIdQueryVariables,
+	FindVisitFolderAccessDocument,
+	FindVisitFolderAccessQuery,
+	FindVisitFolderAccessQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
@@ -181,8 +187,13 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
-			accessibleFolderIds: union(
-				...graphQlVisit.accessible_folders.map((accessibleFolderLink) =>
+			accessibleFolderIds: uniq(
+				graphQlVisit.accessible_folders.map(
+					(accessibleFolderLink) => accessibleFolderLink.folder.id
+				)
+			),
+			accessibleObjectIds: uniq(
+				graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
 					accessibleFolderLink.folder.ies.map(
 						(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
 					)
@@ -277,22 +288,28 @@ export class VisitsService {
 				);
 			}
 
+			// Always delete the old access folders
+			await this.dataService.execute<
+				DeleteVisitFolderAccessMutation,
+				DeleteVisitFolderAccessMutationVariables
+			>(DeleteVisitFolderAccessDocument, {
+				visitRequestId: currentVisit.id,
+			});
+
 			// IF accessFolderIds is not empty and accessType is FOLDERS
-			// THEN add these folders to the folder_access table
+			// THEN add new folders to the folder_access table
 			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
-				for (let index = 0; index < accessFolderIds.length; index++) {
-					await this.dataService.execute<
-						InsertVisitFolderAccessMutation,
-						InsertVisitFolderAccessMutationVariables
-					>(InsertVisitFolderAccessDocument, {
-						objects: [
-							...accessFolderIds.map((accessFolderId: string) => ({
-								folder_id: accessFolderId,
-								visit_request_id: currentVisit.id,
-							})),
-						],
-					});
-				}
+				await this.dataService.execute<
+					InsertVisitFolderAccessMutation,
+					InsertVisitFolderAccessMutationVariables
+				>(InsertVisitFolderAccessDocument, {
+					objects: [
+						...accessFolderIds.map((accessFolderId: string) => ({
+							folder_id: accessFolderId,
+							visit_request_id: currentVisit.id,
+						})),
+					],
+				});
 			}
 		}
 

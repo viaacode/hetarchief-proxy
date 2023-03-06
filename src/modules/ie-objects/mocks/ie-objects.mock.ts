@@ -318,6 +318,8 @@ export const mockElasticObject1: ElasticsearchHit = {
 		meemoofilm_contains_embedded_caption: false,
 		meemoo_local_id: '',
 		meemoo_original_cp: '',
+		schema_alternate_name: '',
+		schema_contributor: {},
 	},
 };
 
@@ -377,6 +379,8 @@ export const mockElasticObject2: ElasticsearchHit = {
 		meemoofilm_contains_embedded_caption: false,
 		meemoo_local_id: '',
 		meemoo_original_cp: '',
+		schema_alternate_name: '',
+		schema_contributor: {},
 	},
 };
 
