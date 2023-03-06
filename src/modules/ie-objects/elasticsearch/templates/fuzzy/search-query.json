@@ -65,7 +65,9 @@
         "schema_publisher",
         "meemoo_description_programme",
         "meemoo_description_cast",
-        "meemoofilm_base"
+        "meemoofilm_base",
+        "schema_creator_text",
+        "schema_publisher_text"
       ]
     }
   },
@@ -91,13 +93,13 @@
         "schema_genre.lemma_split",
         "schema_transcript.lemma_split",
         "schema_captions.lemma_split",
-        "schema_creator.lemma_split",
+        "schema_creator_text.lemma_split",
         "schema_spatial_coverage.lemma_split",
         "schema_temporal_coverage.lemma_split",
         "ebucore_object_type.lemma_split",
         "meemoo_description_programme.lemma_split",
         "meemoo_description_cast.lemma_split",
-        "schema_publisher.lemma_split"
+        "schema_publisher_text.lemma_split"
       ]
     }
   },
@@ -124,13 +126,13 @@
         "schema_genre.lemma_split",
         "schema_transcript.lemma_split",
         "schema_captions.lemma_split",
-        "schema_creator.lemma_split",
+        "schema_creator_text.lemma_split",
         "schema_spatial_coverage.lemma_split",
         "schema_temporal_coverage.lemma_split",
         "ebucore_object_type.lemma_split",
         "meemoo_description_programme.lemma_split",
         "meemoo_description_cast.lemma_split",
-        "schema_publisher.lemma_split"
+        "schema_publisher_text.lemma_split"
       ]
     }
   },
@@ -156,13 +158,13 @@
         "schema_genre.lemma_split_spell",
         "schema_transcript.lemma_split_spell",
         "schema_captions.lemma_split_spell",
-        "schema_creator.lemma_split_spell",
+        "schema_creator_text.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
         "schema_temporal_coverage.lemma_split_spell",
         "ebucore_object_type.lemma_split_spell",
         "meemoo_description_programme.lemma_split_spell",
         "meemoo_description_cast.lemma_split_spell",
-        "schema_publisher.lemma_split_spell"
+        "schema_publisher_text.lemma_split_spell"
       ]
     }
   },
@@ -189,13 +191,13 @@
         "schema_genre.lemma_split_spell",
         "schema_transcript.lemma_split_spell",
         "schema_captions.lemma_split_spell",
-        "schema_creator.lemma_split_spell",
+        "schema_creator_text.lemma_split_spell",
         "schema_spatial_coverage.lemma_split_spell",
         "schema_temporal_coverage.lemma_split_spell",
         "ebucore_object_type.lemma_split_spell",
         "meemoo_description_programme.lemma_split_spell",
         "meemoo_description_cast.lemma_split_spell",
-        "schema_publisher.lemma_split_spell"
+        "schema_publisher_text.lemma_split_spell"
       ]
     }
   }
