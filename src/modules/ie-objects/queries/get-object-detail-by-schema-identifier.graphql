@@ -45,6 +45,7 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		meemoo_original_cp
 		meemoo_description_programme
 		meemoo_description_cast
+		meemoofilm_contains_embedded_caption
 		premis_is_represented_by {
 			ie_schema_identifier
 			schema_name
