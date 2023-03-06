@@ -86,6 +86,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			createdAt: gqlOrganisation?.created_at,
 			updatedAt: gqlOrganisation?.updated_at,
 			sector: gqlOrganisation?.haorg_organization_type,
+			formUrl: gqlOrganisation?.form_url,
 		};
 	}
 

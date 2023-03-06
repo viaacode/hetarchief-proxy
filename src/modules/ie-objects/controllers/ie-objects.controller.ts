@@ -248,8 +248,7 @@ export class IeObjectsController {
 			'_all',
 			referer,
 			user,
-			visitorSpaceAccessInfo,
-			user?.getSector()
+			visitorSpaceAccessInfo
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
