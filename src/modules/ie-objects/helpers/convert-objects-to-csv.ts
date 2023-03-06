@@ -4,7 +4,8 @@ import Papa from 'papaparse';
 import { IeObject } from '../ie-objects.types';
 
 export const convertObjectsToCsv = (objects: Partial<IeObject>[]): string => {
-	return Papa.unparse([flatten(objects)], { delimiter: ';' });
+	const csvData = objects.map(({ accessThrough, ...csvData }) => csvData);
+	return Papa.unparse([flatten(csvData)], { delimiter: ';' });
 };
 
 export const convertObjectToCsv = (object: Partial<IeObject>): string => {
