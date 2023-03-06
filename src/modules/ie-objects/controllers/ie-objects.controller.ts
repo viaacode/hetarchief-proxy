@@ -11,6 +11,7 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
+import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
@@ -143,14 +144,43 @@ export class IeObjectsController {
 			})
 		);
 	}
+
 	@Get(':id/export/csv') //ID FOR TEST: b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79c3609554ce4f43d182ca36be53584d60
 	@Header('Content-Type', 'text/csv')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
-	public async exportCsv(): // @Param('id') id: string,
-	// @Req() request: Request,
-	// @SessionUser() user: SessionUserEntity
-	Promise<string> {
-		return null;
+	public async exportCsv(
+		@Param('id') id: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
+		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.METADATA_EXPORT,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
+		// Limit access to the objects in the collection
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return convertObjectToCsv(
+			limitAccessToObjectDetails(objectMetadata, {
+				userId: user.getId(),
+				sector: user.getSector(),
+				maintainerId: user.getMaintainerId(),
+				groupId: user.getGroupId(),
+				isKeyUser: user.getIsKeyUser(),
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			})
+		);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
