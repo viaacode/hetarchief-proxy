@@ -1,4 +1,4 @@
-import { flatten } from 'flat'; //toch flat gebruiken
+import { flatten } from 'flat';
 import _ from 'lodash';
 import Papa from 'papaparse';
 

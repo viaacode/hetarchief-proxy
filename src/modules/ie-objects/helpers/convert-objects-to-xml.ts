@@ -12,7 +12,6 @@ export const convertObjectsToXml = (objects: Partial<IeObject>[]): string => {
 };
 
 export const convertObjectToXml = (object: Partial<IeObject>): string => {
-	// const { accessThrough, ...xmlData } = object;
 	return convert.js2xml(
 		{ object: _.pick(object, IE_OBJECT_PROPS_METADATA_EXPORT) },
 		{ compact: true, spaces: 2 }
