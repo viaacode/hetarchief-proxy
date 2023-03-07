@@ -243,3 +243,44 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Record<string, string[]> = {
 		...IE_OBJECT_PROPS_METADATA_SET_ESSENCE,
 	],
 };
+
+export const IE_OBJECT_PROPS_METADATA_EXPORT: (keyof IeObject)[] = [
+	'meemooOriginalCp',
+	'premisIsPartOf',
+	'schemaIdentifier',
+	'meemooIdentifier',
+	'meemooLocalId',
+	'meemooMediaObjectId',
+	'maintainerId',
+	'name',
+	'series',
+	'programs',
+	'alternativeName',
+	'ebucoreObjectType',
+	'duration',
+	'durationInSeconds',
+	'dateCreated',
+	'datePublished',
+	'creator',
+	'publisher',
+	'description',
+	'abstract',
+	//transcript => Not currently available in DB
+	//caption => Not currently available in DB
+	'meemooDescriptionProgramme',
+	'meemooDescriptionCast',
+	'genre',
+	'spatial',
+	'temporal',
+	'keywords',
+	'inLanguage',
+	//meemoo_description_categorie => Not currently available in DB
+	'dctermsMedium',
+	'dctermsFormat',
+	'meemoofilmColor',
+	'meemoofilmBase',
+	'meemoofilmImageOrSound',
+	//meemoo_contains_embedded_caption => Not currently available in DB
+	//language_subtitles => Not currently available in DB
+	//ebucore_is_media_fragment_of => Not currently available in DB
+];

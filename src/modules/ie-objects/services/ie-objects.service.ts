@@ -231,7 +231,7 @@ export class IeObjectsService {
 	}
 
 	/**
-	 * Get the object detail fields that are exposed as metadata
+	 * Get the objeµt detail fields that are exposed as metadata
 	 */
 	public async findMetadataBySchemaIdentifier(
 		schemaIdentifier: string

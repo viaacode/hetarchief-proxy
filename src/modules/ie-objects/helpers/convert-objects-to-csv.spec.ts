@@ -4,29 +4,42 @@ import { convertObjectsToCsv, convertObjectToCsv } from './convert-objects-to-cs
 
 describe('convertObjectToCsv', () => {
 	it('returns the csv version of an object', () => {
-		const csv = convertObjectToCsv({ id: '1' } as unknown as IeObject);
-		expect(csv.startsWith('id')).toBeTruthy();
+		const csv = convertObjectToCsv({
+			otherKey: 'otherValue',
+			meemooOriginalCp: '1',
+		} as unknown as IeObject);
+		expect(csv.startsWith('meemooOriginalCp')).toBeTruthy();
 	});
 
 	it('returns the csv version of a nested object', () => {
-		const csv = convertObjectToCsv({ id: '1', nest: { name: 'test' } } as unknown as IeObject);
-		expect(csv.startsWith('id;nest.name')).toBeTruthy();
+		const csv = convertObjectToCsv({
+			otherKey: 'otherValue',
+			meemooOriginalCp: '1',
+			creator: { Maker: 'test' },
+		} as unknown as IeObject);
+		expect(csv.startsWith('meemooOriginalCp;creator.Maker')).toBeTruthy();
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});
 });
 
 describe('convertObjectsToCsv', () => {
 	it('returns the csv version of an array of objects', () => {
-		const csv = convertObjectsToCsv([{ id: '1' }] as unknown as IeObject[]);
-		expect(csv.startsWith('0.id')).toBeTruthy();
+		const csv = convertObjectsToCsv([
+			{ otherKey: 'otherValue', meemooOriginalCp: '1' },
+		] as unknown as IeObject[]);
+		expect(csv.startsWith('0.meemooOriginalCp')).toBeTruthy();
 	});
 
 	it('returns the csv version of an array of nested objects', () => {
 		const csv = convertObjectsToCsv([
-			{ id: '1', nest: { name: 'test' } },
+			{
+				otherKey: 'otherValue',
+				meemooOriginalCp: '1',
+				creator: { Maker: 'test' },
+			},
 		] as unknown as IeObject[]);
 		console.log(csv);
-		expect(csv.startsWith('0.id;0.nest.name')).toBeTruthy();
+		expect(csv.startsWith('0.meemooOriginalCp;0.creator.Maker')).toBeTruthy();
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});
 });
