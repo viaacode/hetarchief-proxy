@@ -129,20 +129,7 @@ export class IeObjectsController {
 			},
 		]);
 
-		// Limit access to the objects in the collection
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-		return convertObjectToXml(
-			limitAccessToObjectDetails(objectMetadata, {
-				userId: user.getId(),
-				sector: user.getSector(),
-				maintainerId: user.getMaintainerId(),
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			})
-		);
+		return convertObjectToXml(objectMetadata);
 	}
 
 	@Get(':id/export/csv')
@@ -166,21 +153,7 @@ export class IeObjectsController {
 			},
 		]);
 
-		// Limit access to the objects in the collection
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-
-		return convertObjectToCsv(
-			limitAccessToObjectDetails(objectMetadata, {
-				userId: user.getId(),
-				sector: user.getSector(),
-				maintainerId: user.getMaintainerId(),
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			})
-		);
+		return convertObjectToCsv(objectMetadata);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
