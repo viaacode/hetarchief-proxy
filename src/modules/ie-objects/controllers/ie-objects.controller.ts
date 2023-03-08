@@ -12,23 +12,21 @@ import {
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
-import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	IeObject,
+	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
-import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
@@ -40,7 +38,6 @@ export class IeObjectsController {
 		private ieObjectsService: IeObjectsService,
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
-		private visitsService: VisitsService,
 		private playerTicketService: PlayerTicketService
 	) {}
 
@@ -84,6 +81,10 @@ export class IeObjectsController {
 			maintainerId: user.getMaintainerId(),
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			licensesByUserGroup:
+				IE_OBJECT_LICENSES_BY_USER_GROUP[
+					user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+				],
 		});
 
 		return limitedObject;
@@ -140,6 +141,10 @@ export class IeObjectsController {
 				isKeyUser: user.getIsKeyUser(),
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			})
 		);
 	}
@@ -173,6 +178,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};
@@ -210,6 +219,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};
@@ -228,19 +241,8 @@ export class IeObjectsController {
 
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
-		const activeVisits = await this.visitsService.findAll(
-			{
-				page: 1,
-				size: 100,
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-			},
-			{
-				userProfileId: user?.getId() || null,
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
-			}
-		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
@@ -264,6 +266,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};

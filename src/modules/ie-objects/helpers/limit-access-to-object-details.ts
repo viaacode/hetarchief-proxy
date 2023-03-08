@@ -1,21 +1,13 @@
-import { intersection, isEmpty, isNil, pick, uniq } from 'lodash';
+import { intersection, isEmpty, pick, uniq } from 'lodash';
 
 import {
-	IE_OBJECT_EXTRA_USER_GROUPS,
 	IE_OBJECT_INTRA_CP_LICENSES,
-	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
 	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
-	IE_OBJECT_VISITOR_LICENSES,
 } from '../ie-objects.conts';
-import {
-	IeObject,
-	IeObjectExtraUserGroupType,
-	IeObjectLicense,
-	IeObjectSector,
-} from '../ie-objects.types';
+import { IeObject, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
@@ -35,6 +27,7 @@ export const limitAccessToObjectDetails = (
 		// May only contain FULL ACCESS Visitor space ids
 		// full -> if object.maintainerId is in this list than the user has full access to visitor space
 		accessibleVisitorSpaceIds: string[];
+		licensesByUserGroup: IeObjectLicense[];
 	}
 ): Partial<IeObject> => {
 	let ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
@@ -96,25 +89,21 @@ export const limitAccessToObjectDetails = (
 
 		ieObjectLicenses = intersection(ieObjectLicenses, licensesBySector);
 	} else {
-		// Determine userGroup based on presence of userId
-		const userGroup = isNil(userInfo?.userId)
-			? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-			: userInfo.groupId;
+		const licensesByUserGroup = userInfo.licensesByUserGroup
+			? [...userInfo.licensesByUserGroup]
+			: [];
 
 		// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
 		// If user is part of VISITOR && has full access -> add visitor content license to licenses
 		if (hasFolderAccess || hasFullAccess) {
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup].push(
+			licensesByUserGroup.push(
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 				IeObjectLicense.BEZOEKERTOOL_CONTENT
 			);
 		}
 
 		// Determine common ground between ie object licenses and user group licenses
-		ieObjectLicenses = intersection(
-			ieObjectLicenses,
-			IE_OBJECT_LICENSES_BY_USER_GROUP[userGroup]
-		);
+		ieObjectLicenses = intersection(ieObjectLicenses, licensesByUserGroup);
 	}
 
 	// Step 2 - Determine ieObject limited props
