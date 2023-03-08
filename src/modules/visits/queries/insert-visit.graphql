@@ -66,6 +66,9 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}
