@@ -108,6 +108,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
 	objectType: MediaFormat.AUDIO,
+	objectDctermsFormat: 'video',
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -135,6 +136,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
 	objectType: MediaFormat.AUDIO,
+	objectDctermsFormat: 'video',
 };
 
 export const mockMaterialRequestsResponse = {

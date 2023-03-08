@@ -257,6 +257,8 @@ export class MaterialRequestsService {
 			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
 			organisation: grapqhQLMaterialRequest.organisation || null,
+			objectDctermsFormat: grapqhQLMaterialRequest.object.dcterms_format,
+			objectThumbnailUrl: grapqhQLMaterialRequest.object.schema_thumbnail_url,
 		};
 
 		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery

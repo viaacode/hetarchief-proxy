@@ -30,6 +30,8 @@ export interface MaterialRequest {
 	requesterUserGroupDescription?: string;
 	maintainerLogo?: string;
 	organisation?: string | null;
+	objectDctermsFormat: string;
+	objectThumbnailUrl?: string;
 }
 
 export interface MaterialRequestMaintainer {
