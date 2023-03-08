@@ -243,7 +243,7 @@ export class VisitsService {
 		updateVisitDto: UpdateVisitDto,
 		userProfileId: string
 	): Promise<Visit> {
-		const { startAt, endAt, accessType /*, accessFolderIds*/ } = updateVisitDto;
+		const { startAt, endAt, accessType } = updateVisitDto;
 		let { accessFolderIds } = updateVisitDto;
 		// if any of these is set, both must be set (db constraint)
 		this.validateDates(startAt, endAt);
