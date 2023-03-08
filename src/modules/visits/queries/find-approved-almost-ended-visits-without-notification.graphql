@@ -64,6 +64,9 @@ query findApprovedAlmostEndedVisitsWithoutNotification($warningDate: timestamp, 
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}

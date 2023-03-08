@@ -52,9 +52,6 @@ import {
 	FindVisitEndDatesByFolderIdDocument,
 	FindVisitEndDatesByFolderIdQuery,
 	FindVisitEndDatesByFolderIdQueryVariables,
-	FindVisitFolderAccessDocument,
-	FindVisitFolderAccessQuery,
-	FindVisitFolderAccessQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
@@ -194,9 +191,17 @@ export class VisitsService {
 			),
 			accessibleObjectIds: uniq(
 				graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
-					accessibleFolderLink.folder.ies.map(
-						(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
-					)
+					accessibleFolderLink.folder.ies
+						.filter(
+							(accessibleFolderIeLink) =>
+								graphQlVisit?.access_type === VisitAccessType.Full ||
+								(graphQlVisit?.access_type === VisitAccessType.Folders &&
+									graphQlVisit?.visitor_space?.schema_maintainer_id ===
+										accessibleFolderIeLink?.ie?.maintainer?.schema_identifier)
+						)
+						.map(
+							(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
+						)
 				)
 			),
 		};
