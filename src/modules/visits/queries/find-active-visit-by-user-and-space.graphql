@@ -78,6 +78,9 @@ query findActiveVisitByUserAndSpace(
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}
