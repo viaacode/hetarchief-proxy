@@ -38,7 +38,6 @@ describe('convertObjectsToCsv', () => {
 				creator: { Maker: 'test' },
 			},
 		] as unknown as IeObject[]);
-		console.log(csv);
 		expect(csv.startsWith('0.meemooOriginalCp;0.creator.Maker')).toBeTruthy();
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});

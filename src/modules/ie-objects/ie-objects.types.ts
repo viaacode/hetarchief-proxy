@@ -132,6 +132,9 @@ export interface IeObject {
 	transcript?: string;
 	caption?: string;
 	categorie?: string[];
+	meemooDescriptionCategory?: string;
+	meemooContainsEmbeddedCaption?: string;
+	languageSubtitles?: string;
 }
 
 export interface MediaSearchAggregation<T> {

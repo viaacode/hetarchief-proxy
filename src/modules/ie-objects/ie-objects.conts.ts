@@ -265,8 +265,8 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: (keyof IeObject)[] = [
 	'publisher',
 	'description',
 	'abstract',
-	//transcript => Not currently available in DB
-	//caption => Not currently available in DB
+	'transcript',
+	'caption',
 	'meemooDescriptionProgramme',
 	'meemooDescriptionCast',
 	'genre',
@@ -274,13 +274,13 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: (keyof IeObject)[] = [
 	'temporal',
 	'keywords',
 	'inLanguage',
-	//meemoo_description_categorie => Not currently available in DB
+	'meemooDescriptionCategory',
 	'dctermsMedium',
 	'dctermsFormat',
 	'meemoofilmColor',
 	'meemoofilmBase',
 	'meemoofilmImageOrSound',
-	//meemoo_contains_embedded_caption => Not currently available in DB
-	//language_subtitles => Not currently available in DB
-	//ebucore_is_media_fragment_of => Not currently available in DB
+	'meemooContainsEmbeddedCaption',
+	'languageSubtitles',
+	'ebucoreIsMediaFragmentOf',
 ];
