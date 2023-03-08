@@ -1063,7 +1063,7 @@ export const mockConvertNodeToEsQueryFilterObject4 = {
 										},
 									},
 								],
-								minimum_should_match: 0,
+								minimum_should_match: 4,
 							},
 						},
 					],
