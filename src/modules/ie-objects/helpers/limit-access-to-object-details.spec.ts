@@ -1,5 +1,10 @@
-import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
+import { IE_OBJECT_INTRA_CP_LICENSES, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
+import {
+	IeObjectAccessThrough,
+	IeObjectExtraUserGroupType,
+	IeObjectLicense,
+	IeObjectSector,
+} from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -30,6 +35,10 @@ describe('Limit access to object details', () => {
 				isKeyUser: true,
 				sector: IeObjectSector.PUBLIC,
 				accessibleVisitorSpaceIds: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1a).toEqual({
@@ -53,6 +62,10 @@ describe('Limit access to object details', () => {
 				groupId: Group.CP_ADMIN,
 				isKeyUser: true,
 				sector: IeObjectSector.CULTURE,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.CP_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1b).toEqual({
@@ -84,6 +97,10 @@ describe('Limit access to object details', () => {
 				groupId: Group.VISITOR,
 				isKeyUser: true,
 				sector: IeObjectSector.CULTURE,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1c).toEqual({
@@ -120,6 +137,10 @@ describe('Limit access to object details', () => {
 				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1d).toEqual({
@@ -156,10 +177,14 @@ describe('Limit access to object details', () => {
 				accessibleObjectIdsThroughFolders: [
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6743',
 				],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1da).toEqual({
-			...mockIeObjectWithMetadataSetALL,
+			...mockIeObjectWithMetadataSetLTD,
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -189,6 +214,10 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-rf4kf25',
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.MEEMOO_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1e).toEqual({
@@ -221,6 +250,10 @@ describe('Limit access to object details', () => {
 				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.KIOSK_VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1f).toEqual(null);
@@ -242,6 +275,10 @@ describe('Limit access to object details', () => {
 				sector: IeObjectSector.REGIONAL,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.CP_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1g).toEqual({
@@ -271,6 +308,10 @@ describe('Limit access to object details', () => {
 				isKeyUser: true,
 				sector: IeObjectSector.RURAL,
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject1h).toEqual({
@@ -304,6 +345,10 @@ describe('Limit access to object details', () => {
 				maintainerId: null,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject2a).toEqual({
@@ -330,6 +375,10 @@ describe('Limit access to object details', () => {
 				maintainerId: null,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.CP_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject2b).toEqual({
@@ -360,6 +409,10 @@ describe('Limit access to object details', () => {
 				maintainerId: null,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.MEEMOO_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject2d).toEqual({
@@ -393,6 +446,10 @@ describe('Limit access to object details', () => {
 				maintainerId: null,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.KIOSK_VISITOR ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject2e).toEqual(null);
@@ -415,6 +472,10 @@ describe('Limit access to object details', () => {
 				maintainerId: null,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						Group.CP_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			}
 		);
 		expect(limitedAccessIeObject2f).toEqual(null);

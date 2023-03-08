@@ -89,9 +89,7 @@ export class IeObjectsController {
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			licensesByUserGroup:
 				IE_OBJECT_LICENSES_BY_USER_GROUP[
-					isNil(user.getId())
-						? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-						: user.getGroupId()
+					user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
 				],
 		});
 
@@ -151,9 +149,7 @@ export class IeObjectsController {
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 				licensesByUserGroup:
 					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						isNil(user.getId())
-							? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-							: user.getGroupId()
+						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
 					],
 			})
 		);
@@ -190,9 +186,7 @@ export class IeObjectsController {
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 					licensesByUserGroup:
 						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							isNil(user.getId())
-								? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-								: user.getGroupId()
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
 						],
 				})
 			),
@@ -233,9 +227,7 @@ export class IeObjectsController {
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 					licensesByUserGroup:
 						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							isNil(user.getId())
-								? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-								: user.getGroupId()
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
 						],
 				})
 			),
@@ -255,19 +247,8 @@ export class IeObjectsController {
 
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
-		const activeVisits = await this.visitsService.findAll(
-			{
-				page: 1,
-				size: 100,
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-			},
-			{
-				userProfileId: user?.getId() || null,
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
-			}
-		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
@@ -293,9 +274,7 @@ export class IeObjectsController {
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 					licensesByUserGroup:
 						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							isNil(user.getId())
-								? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-								: user.getGroupId()
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
 						],
 				})
 			),
