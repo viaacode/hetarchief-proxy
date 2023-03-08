@@ -41,7 +41,7 @@
     "@nestjs/schedule": "1.0.2",
     "@nestjs/swagger": "5.2.0",
     "@studiohyperdrive/pagination": "1.0.0",
-    "@viaa/avo2-types": "2.46.3",
+    "@viaa/avo2-types": "2.48.2",
     "app-root-path": "3.0.0",
     "aws-sdk": "2.1097.0",
     "blend-promise-utils": "1.28.0",

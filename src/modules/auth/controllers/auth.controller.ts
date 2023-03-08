@@ -1,3 +1,4 @@
+import { convertUserInfoToCommonUser, HetArchiefUser, UserInfoType } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	Get,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
+import { Avo } from '@viaa/avo2-types';
 
 import { Configuration } from '~config';
 
@@ -49,6 +51,10 @@ export class AuthController {
 
 			return {
 				userInfo,
+				commonUserInfo: convertUserInfoToCommonUser(
+					userInfo as unknown as HetArchiefUser,
+					UserInfoType.HetArchiefUser
+				) as Avo.User.CommonUser,
 				message: LoginMessage.LOGGED_IN,
 				sessionExpiresAt: SessionHelper.getExpiresAt(new Date()),
 			};
