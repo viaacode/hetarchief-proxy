@@ -3,6 +3,7 @@ import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from 
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
+import { isNil } from 'lodash';
 
 import {
 	IeObjectMeemooIdentifiersQueryDto,
@@ -14,8 +15,10 @@ import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter'
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { IE_OBJECT_EXTRA_USER_GROUPS, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	IeObject,
+	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
@@ -84,6 +87,10 @@ export class IeObjectsController {
 			maintainerId: user.getMaintainerId(),
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			licensesByUserGroup:
+				IE_OBJECT_LICENSES_BY_USER_GROUP[
+					user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+				],
 		});
 
 		return limitedObject;
@@ -140,6 +147,10 @@ export class IeObjectsController {
 				isKeyUser: user.getIsKeyUser(),
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
 			})
 		);
 	}
@@ -173,6 +184,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};
@@ -210,6 +225,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};
@@ -228,19 +247,8 @@ export class IeObjectsController {
 
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
-		const activeVisits = await this.visitsService.findAll(
-			{
-				page: 1,
-				size: 100,
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-			},
-			{
-				userProfileId: user?.getId() || null,
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
-			}
-		);
-		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
@@ -264,6 +272,10 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					licensesByUserGroup:
+						IE_OBJECT_LICENSES_BY_USER_GROUP[
+							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+						],
 				})
 			),
 		};

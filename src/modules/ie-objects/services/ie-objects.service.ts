@@ -5,7 +5,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty, kebabCase } from 'lodash';
+import { find, get, isEmpty, isNil, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -14,12 +14,14 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { IE_OBJECT_EXTRA_USER_GROUPS, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	GqlIeObject,
 	GqlLimitedIeObject,
 	IeObject,
+	IeObjectExtraUserGroupType,
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
@@ -554,6 +556,12 @@ export class IeObjectsService {
 			isKeyUser: user.getIsKeyUser(),
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			licensesByUserGroup:
+				IE_OBJECT_LICENSES_BY_USER_GROUP[
+					isNil(user.getId())
+						? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
+						: user.getGroupId()
+				],
 		});
 
 		return {
