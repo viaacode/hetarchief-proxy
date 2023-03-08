@@ -101,6 +101,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
     id
     description
     sector
+    form_url
     logo {
       iri
     }
@@ -167,6 +168,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				primary_site: organization.primary_site,
 				// Remark here organization is with Z
 				haorg_organization_type: organization?.sector || null,
+				form_url: organization?.form_url || null,
 			})
 		);
 
