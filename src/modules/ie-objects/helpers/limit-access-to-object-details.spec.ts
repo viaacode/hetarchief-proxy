@@ -355,7 +355,7 @@ describe('Limit access to object details', () => {
 
 	// -------------------------------------------------------------------------
 
-	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset op de detailpagina', () => {
+	it('USER GEEN SECTOR - user ziet metadataset op de detailpagina', () => {
 		const mockUserInfoTestCaseNoSectorA = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
@@ -498,7 +498,7 @@ describe('Limit access to object details', () => {
 		expect(limitedAccessIeObject2e).toEqual(null);
 	});
 
-	it('USER GEEN SECTOR - user ziet gelimiteerd metadataset op de detailpagina', () => {
+	it('USER GEEN SECTOR - user ziet object niet', () => {
 		const mockUserInfoTestCaseNoSectorE = {
 			...mockUserInfo,
 			groupId: Group.CP_ADMIN,
