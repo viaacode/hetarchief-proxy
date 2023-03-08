@@ -52,9 +52,6 @@ import {
 	FindVisitEndDatesByFolderIdDocument,
 	FindVisitEndDatesByFolderIdQuery,
 	FindVisitEndDatesByFolderIdQueryVariables,
-	FindVisitFolderAccessDocument,
-	FindVisitFolderAccessQuery,
-	FindVisitFolderAccessQueryVariables,
 	FindVisitsDocument,
 	FindVisitsQuery,
 	FindVisitsQueryVariables,
@@ -283,6 +280,19 @@ export class VisitsService {
 		}
 
 		if (updateVisit.access_type) {
+			// IF accessFolderIds is empty and accessType is FOLDERS
+			// OR accessFolderIds is not empty and accessType is FULL
+			// THEN throw BadRequest exception
+			if (
+				isEmpty(accessType) ||
+				(isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) ||
+				(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Full)
+			) {
+				throw new BadRequestException(
+					`The amount of accessFolderIds (${accessFolderIds.length}) does not correspond with the accessType ${updateVisit.access_type}`
+				);
+			}
+
 			// Always delete the old access folders
 			await this.dataService.execute<
 				DeleteVisitFolderAccessMutation,
@@ -291,39 +301,20 @@ export class VisitsService {
 				visitRequestId: currentVisit.id,
 			});
 
-			if (updateVisit.status !== VisitStatus.DENIED) {
-				// IF accessFolderIds is empty and accessType is FOLDERS
-				// OR accessFolderIds is not empty and accessType is FULL
-				// THEN throw BadRequest exception
-				if (
-					isEmpty(accessType) ||
-					(isEmpty(accessFolderIds) &&
-						updateVisit.access_type === VisitAccessType.Folders) ||
-					(!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Full)
-				) {
-					throw new BadRequestException(
-						`The amount of accessFolderIds does not correspond with the accessType ${updateVisit.access_type}`
-					);
-				}
-
-				// IF accessFolderIds is not empty and accessType is FOLDERS
-				// THEN add new folders to the folder_access table
-				if (
-					!isEmpty(accessFolderIds) &&
-					updateVisit.access_type === VisitAccessType.Folders
-				) {
-					await this.dataService.execute<
-						InsertVisitFolderAccessMutation,
-						InsertVisitFolderAccessMutationVariables
-					>(InsertVisitFolderAccessDocument, {
-						objects: [
-							...accessFolderIds.map((accessFolderId: string) => ({
-								folder_id: accessFolderId,
-								visit_request_id: currentVisit.id,
-							})),
-						],
-					});
-				}
+			// IF accessFolderIds is not empty and accessType is FOLDERS
+			// THEN add new folders to the folder_access table
+			if (!isEmpty(accessFolderIds) && updateVisit.access_type === VisitAccessType.Folders) {
+				await this.dataService.execute<
+					InsertVisitFolderAccessMutation,
+					InsertVisitFolderAccessMutationVariables
+				>(InsertVisitFolderAccessDocument, {
+					objects: [
+						...accessFolderIds.map((accessFolderId: string) => ({
+							folder_id: accessFolderId,
+							visit_request_id: currentVisit.id,
+						})),
+					],
+				});
 			}
 		}
 
