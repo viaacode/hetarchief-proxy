@@ -42,7 +42,6 @@ import {
 	GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
@@ -56,8 +55,7 @@ export class IeObjectsService {
 		private configService: ConfigService<Configuration>,
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
-		protected visitsService: VisitsService,
-		protected organisationService: OrganisationsService
+		protected visitsService: VisitsService
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -106,19 +104,9 @@ export class IeObjectsService {
 		return {
 			...Pagination<IeObject>({
 				items: await Promise.all(
-					adaptedESResponse.hits.hits
-						.map((esHit) => this.adaptESObjectToObject(esHit._source))
-						.map(async (ieObject) => {
-							const organisation =
-								await this.organisationService.findOrganisationBySchemaIdentifier(
-									ieObject.schemaIdentifier
-								);
-
-							return {
-								...ieObject,
-								maintainerFromUrl: organisation?.formUrl || null,
-							};
-						})
+					adaptedESResponse.hits.hits.map((esHit) =>
+						this.adaptESObjectToObject(esHit._source)
+					)
 				),
 				page: 1,
 				size: adaptedESResponse.hits.hits.length,

@@ -25,6 +25,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -41,7 +42,8 @@ export class IeObjectsController {
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
-		private playerTicketService: PlayerTicketService
+		private playerTicketService: PlayerTicketService,
+		protected organisationService: OrganisationsService
 	) {}
 
 	@Get('player-ticket')
@@ -71,12 +73,21 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+		let ieObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+
+		const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+			ieObject.schemaIdentifier
+		);
+
+		ieObject = {
+			...ieObject,
+			maintainerFromUrl: organisation?.formUrl || null,
+		};
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const limitedObject = limitAccessToObjectDetails(object, {
+		const limitedObject = limitAccessToObjectDetails(ieObject, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
