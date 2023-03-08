@@ -3,7 +3,6 @@ import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from 
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-import { isNil } from 'lodash';
 
 import {
 	IeObjectMeemooIdentifiersQueryDto,
@@ -13,9 +12,8 @@ import {
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
-import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import { IE_OBJECT_EXTRA_USER_GROUPS, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
+import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	IeObject,
 	IeObjectExtraUserGroupType,
@@ -25,13 +23,10 @@ import {
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
-import { Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
-import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
@@ -43,7 +38,6 @@ export class IeObjectsController {
 		private ieObjectsService: IeObjectsService,
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
-		private visitsService: VisitsService,
 		private playerTicketService: PlayerTicketService
 	) {}
 
