@@ -2,7 +2,7 @@ import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
 
-import { mockGqlVisitRequest } from './__mocks__/cp_visit';
+import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import {
@@ -404,7 +404,7 @@ describe('VisitsService', () => {
 		it('throws an exception if the visit request was not found', async () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(null);
 			const mockData: UpdateVisitMutation = {
-				update_maintainer_visitor_space_request_by_pk: null,
+				update_maintainer_visitor_space_request: null,
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
@@ -449,6 +449,7 @@ describe('VisitsService', () => {
 		});
 
 		it('can update a visit with a status', async () => {
+			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValue(mockVisit);
 			mockDataService.execute
 				.mockResolvedValueOnce(getDefaultVisitsResponse())
 				.mockResolvedValueOnce({
@@ -465,6 +466,31 @@ describe('VisitsService', () => {
 				mockUserProfileId
 			);
 			expect(response.id).toBe(mockGqlVisitRequest.id);
+			findVisitSpy.mockRestore();
+		});
+
+		it('can deny approval for visit request that was previously approved with folders', async () => {
+			const findVisitSpy = jest
+				.spyOn(visitsService, 'findById')
+				.mockResolvedValue(mockVisitApproved);
+			mockDataService.execute
+				.mockResolvedValueOnce(getDefaultVisitsResponse())
+				.mockResolvedValueOnce({
+					update_maintainer_visitor_space_request_by_pk: {
+						id: mockGqlVisitRequest.id,
+					},
+				} as UpdateVisitMutation)
+				.mockResolvedValueOnce(getDefaultVisitsResponse());
+			const response = await visitsService.update(
+				mockGqlVisitRequest.id,
+				{
+					status: VisitStatus.DENIED,
+					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Folders,
+				},
+				mockUserProfileId
+			);
+			expect(response.id).toBe(mockGqlVisitRequest.id);
+			findVisitSpy.mockRestore();
 		});
 
 		it('throws an error when you update to an invalid status', async () => {

@@ -5,7 +5,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty, kebabCase } from 'lodash';
+import { find, get, isEmpty, isNil, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -13,16 +13,18 @@ import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
+import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
+import { IE_OBJECT_EXTRA_USER_GROUPS, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	GqlIeObject,
 	GqlLimitedIeObject,
 	IeObject,
+	IeObjectExtraUserGroupType,
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
-	IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -55,7 +57,7 @@ export class IeObjectsService {
 		private configService: ConfigService<Configuration>,
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
-		private visitsService: VisitsService
+		protected visitsService: VisitsService
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -69,15 +71,14 @@ export class IeObjectsService {
 		esIndex: string | null,
 		referer: string,
 		user: SessionUserEntity,
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo,
-		sector?: IeObjectSector | null
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user: {
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
-				sector: sector || null,
+				sector: user.getSector(),
 			},
 			visitorSpaceInfo,
 		});
@@ -104,8 +105,10 @@ export class IeObjectsService {
 
 		return {
 			...Pagination<IeObject>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESObjectToObject(esHit._source)
+				items: await Promise.all(
+					adaptedESResponse.hits.hits.map((esHit) =>
+						this.adaptESObjectToObject(esHit._source)
+					)
 				),
 				page: 1,
 				size: adaptedESResponse.hits.hits.length,
@@ -271,63 +274,51 @@ export class IeObjectsService {
 
 	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
 		return {
-			schemaIdentifier: gqlIeObject?.schema_identifier,
+			dctermsAvailable: gqlIeObject?.dcterms_available,
+			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsMedium: gqlIeObject?.dcterms_medium,
+			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
 			meemooIdentifier: gqlIeObject?.meemoo_identifier,
+			meemoofilmBase: gqlIeObject?.meemoofilm_base,
+			meemoofilmColor: gqlIeObject?.meemoofilm_color,
+			meemoofilmContainsEmbeddedCaption: gqlIeObject?.meemoofilm_contains_embedded_caption,
+			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
 			premisIdentifier: gqlIeObject?.premis_identifier,
-			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			series: gqlIeObject?.schema_is_part_of?.serie,
-			programs: gqlIeObject?.schema_is_part_of?.reeks,
-			alternativeName: gqlIeObject.schema_is_part_of?.alternatief,
+			abstract: gqlIeObject?.schema_abstract,
+			creator: gqlIeObject?.schema_creator,
+			dateCreated: gqlIeObject?.schema_date_created,
+			datePublished: gqlIeObject?.schema_date_published,
+			description: gqlIeObject?.schema_description,
+			duration: gqlIeObject?.schema_duration,
+			genre: gqlIeObject?.schema_genre,
+			schemaIdentifier: gqlIeObject?.schema_identifier,
+			inLanguage: gqlIeObject?.schema_in_language,
+			keywords: gqlIeObject?.schema_keywords,
+			licenses: gqlIeObject?.schema_license,
 			maintainerId: gqlIeObject?.maintainer.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
 			maintainerSlug: kebabCase(gqlIeObject?.maintainer?.schema_name || '') || undefined, // TODO fetch actual slug
-			contactInfo: {
-				email: gqlIeObject?.maintainer?.information?.primary_site.address?.email,
-				telephone: gqlIeObject?.maintainer?.information?.primary_site?.address?.telephone,
-				address: {
-					street: gqlIeObject?.maintainer?.information?.primary_site?.address?.street,
-					postalCode:
-						gqlIeObject?.maintainer?.information?.primary_site?.address?.postal_code,
-					locality: gqlIeObject?.maintainer?.information?.primary_site?.address?.locality,
-					postOfficeBoxNumber:
-						gqlIeObject?.maintainer?.information?.primary_site?.address
-							?.post_office_box_number,
-				},
-			},
-			copyrightHolder: gqlIeObject?.schema_copyright_holder,
-			copyrightNotice: gqlIeObject?.schema_copyright_notice,
-			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
-			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			datePublished: gqlIeObject?.schema_date_published,
-			dctermsAvailable: gqlIeObject?.dcterms_available,
 			name: gqlIeObject?.schema_name,
-			description: gqlIeObject?.schema_description,
-			abstract: gqlIeObject?.schema_abstract,
-			creator: gqlIeObject?.schema_creator,
-			actor: gqlIeObject?.schema_actor,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
 			temporal: gqlIeObject?.schema_temporal_coverage,
-			keywords: gqlIeObject?.schema_keywords,
-			dctermsFormat: gqlIeObject?.dcterms_format,
-			dctermsMedium: gqlIeObject?.dcterms_medium,
-			inLanguage: gqlIeObject?.schema_in_language,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
-			duration: gqlIeObject?.schema_duration,
-			licenses: gqlIeObject?.schema_license,
-			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
-			dateCreated: gqlIeObject?.schema_date_created,
-			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
-			genre: gqlIeObject?.schema_genre,
-			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
-			meemoofilmColor: gqlIeObject?.meemoofilm_color,
-			meemoofilmBase: gqlIeObject?.meemoofilm_base,
-			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
-			meemooOriginalCp: gqlIeObject?.meemoo_original_cp,
-			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme,
+			premisIsPartOf: gqlIeObject?.premis_is_part_of,
+			alternativeName: gqlIeObject?.schema_is_part_of?.alternatief,
+			copyrightHolder: gqlIeObject?.schema_copyright_holder,
+			series: gqlIeObject?.schema_is_part_of?.serie,
+			programs: gqlIeObject?.schema_is_part_of?.reeks,
+			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast,
 			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
+			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme,
+			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			meemooOriginalCp: gqlIeObject?.meemoo_original_cp,
+			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
+			copyrightNotice: gqlIeObject?.schema_copyright_notice,
+			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
+			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
+			actor: gqlIeObject?.schema_actor,
 		};
 	}
 
@@ -379,52 +370,58 @@ export class IeObjectsService {
 
 	public adaptESObjectToObject(esObject: ElasticsearchObject): IeObject {
 		return {
-			schemaIdentifier: esObject?.schema_identifier,
+			dctermsAvailable: esObject?.dcterms_available,
+			dctermsFormat: esObject?.dcterms_format,
+			dctermsMedium: esObject?.dcterms_medium,
+			ebucoreObjectType: esObject?.ebucore_object_type,
 			meemooIdentifier: esObject?.meemoo_identifier,
-			premisIdentifier: esObject?.premis_identifier,
+			meemoofilmBase: esObject?.meemoofilm_base,
+			meemoofilmColor: esObject?.meemoofilm_color,
+			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
+			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
 			premisIsPartOf: esObject?.premis_is_part_of,
-			series: esObject?.schema_is_part_of?.serie,
-			programs: esObject?.schema_is_part_of?.reeks,
-			alternativeName: esObject.schema_is_part_of?.alternatief,
+			premisIdentifier: esObject?.premis_identifier,
+			abstract: esObject?.schema_abstract,
+			alternativeName: esObject?.schema_alternate_name,
+			contributor: esObject?.schema_contributor,
+			copyrightHolder: esObject?.schema_copyrightholder,
+			creator: esObject?.schema_creator,
+			dateCreated: esObject?.schema_date_created,
+			datePublished: esObject?.schema_date_published,
+			description: esObject?.schema_description,
+			duration: esObject?.schema_duration,
+			genre: esObject?.schema_genre,
+			schemaIdentifier: esObject?.schema_identifier,
+			inLanguage: esObject?.schema_in_language,
+			schemaIsPartOf: esObject?.schema_is_part_of,
+			keywords: esObject?.schema_keywords,
+			licenses: esObject?.schema_license as IeObjectLicense[],
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
 			maintainerSlug: esObject?.schema_maintainer?.alt_label,
-			sector: esObject?.schema_maintainer?.organization_type,
-			contactInfo: null,
-			copyrightHolder: esObject?.schema_copyrightholder,
-			copyrightNotice: null,
-			durationInSeconds: esObject?.duration_seconds,
-			numberOfPages: esObject?.schema_number_of_pages,
-			datePublished: esObject?.schema_date_published,
-			dctermsAvailable: esObject?.dcterms_available,
 			name: esObject?.schema_name,
-			description: esObject?.schema_description,
-			abstract: esObject?.schema_abstract,
-			creator: esObject?.schema_creator,
-			actor: null,
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			keywords: esObject?.schema_keywords,
-			dctermsFormat: esObject?.dcterms_format,
-			dctermsMedium: esObject?.dcterms_medium,
-			inLanguage: esObject?.schema_in_language,
 			thumbnailUrl: esObject?.schema_thumbnail_url,
-			duration: esObject?.schema_duration,
-			licenses: esObject?.schema_license as IeObjectLicense[],
-			meemooMediaObjectId: null,
-			dateCreated: esObject?.schema_date_created,
-			dateCreatedLowerBound: null,
-			genre: esObject?.schema_genre,
-			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemoofilmColor: esObject?.meemoofilm_color,
-			meemoofilmBase: esObject?.meemoofilm_base,
-			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
+			numberOfPages: esObject?.schema_number_of_pages,
+			meemooDescriptionCast: esObject?.meemoo_description_cast,
+			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
 			meemooLocalId: esObject?.meemoo_local_id,
 			meemooOriginalCp: esObject?.meemoo_original_cp,
-			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
-			meemooDescriptionCast: esObject?.meemoo_description_cast,
+			durationInSeconds: esObject?.duration_seconds,
 			representations: this?.adaptRepresentations(esObject?.premis_is_represented_by),
+			// Extra
+			sector: esObject?.schema_maintainer?.organization_type,
+			// Other
+			series: esObject?.schema_is_part_of?.serie,
+			programs: esObject?.schema_is_part_of?.reeks,
+			// Not yet available
+			transcript: esObject?.schema_transcript,
+			caption: esObject?.schema_caption,
+			meemooDescriptionCategory: esObject?.meemoo_description_category,
+			meemoofilmEmbeddedCaption: esObject?.meemoofilm_embedded_caption,
+			meemoofilmEmbeddedCaptionLanguage: esObject?.meemoofilm_embedded_caption_language,
 		};
 	}
 
@@ -526,6 +523,51 @@ export class IeObjectsService {
 		return {
 			objectIds: visitorSpaceAccessInfo.objectIds,
 			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		};
+	}
+
+	public defaultLimitedMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
+		return {
+			name: ieObject?.name,
+			maintainerName: ieObject?.maintainerName,
+			maintainerId: ieObject?.maintainerId,
+			series: ieObject?.series || [],
+			dctermsFormat: ieObject?.dctermsFormat,
+			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
+			datePublished: ieObject?.datePublished,
+			meemooIdentifier: ieObject?.meemooIdentifier,
+			meemooLocalId: ieObject?.meemooLocalId,
+			premisIdentifier: ieObject?.premisIsPartOf,
+			schemaIdentifier: ieObject?.schemaIdentifier,
+			programs: ieObject?.programs || [],
+		};
+	}
+
+	public limitObjectInFolder(
+		folderObjectItem: Partial<IeObject>,
+		user: SessionUserEntity,
+		visitorSpaceAccessInfo: IeObjectsVisitorSpaceInfo
+	): Partial<IeObject> {
+		const limitedObjectDetails = limitAccessToObjectDetails(folderObjectItem, {
+			userId: user.getId(),
+			sector: user.getSector(),
+			maintainerId: user.getMaintainerId(),
+			groupId: user.getGroupId(),
+			isKeyUser: user.getIsKeyUser(),
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			licensesByUserGroup:
+				IE_OBJECT_LICENSES_BY_USER_GROUP[
+					isNil(user.getId())
+						? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
+						: user.getGroupId()
+				],
+		});
+
+		return {
+			accessThrough: [],
+			...(limitedObjectDetails ?? {}),
+			...this.defaultLimitedMetadata(folderObjectItem),
 		};
 	}
 }

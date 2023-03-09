@@ -27,7 +27,6 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { limitAccessToObjectDetails } from '~modules/ie-objects/helpers/limit-access-to-object-details';
 import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -71,19 +70,17 @@ export class CollectionsController {
 		// Limit access to the objects in the collections
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
 		collections.items.forEach((collection) => {
 			collection.objects = (collection.objects ?? []).map((object) => {
-				return limitAccessToObjectDetails(object, {
-					userId: user.getId(),
-					sector: user.getSector(),
-					maintainerId: user.getMaintainerId(),
-					groupId: user.getGroupId(),
-					isKeyUser: user.getIsKeyUser(),
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				});
+				return this.ieObjectsService.limitObjectInFolder(
+					object,
+					user,
+					visitorSpaceAccessInfo
+				);
 			});
 		});
+
 		return collections;
 	}
 
@@ -104,20 +101,14 @@ export class CollectionsController {
 				referer
 			);
 
-		// Limit access to the objects in the collection
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		// Limit access to the objects in the collection
 		folderObjects.items = (folderObjects.items ?? []).map((object) => {
-			return limitAccessToObjectDetails(object, {
-				userId: user.getId(),
-				sector: user.getSector(),
-				maintainerId: user.getMaintainerId(),
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			});
+			return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
 		});
+
 		return folderObjects;
 	}
 

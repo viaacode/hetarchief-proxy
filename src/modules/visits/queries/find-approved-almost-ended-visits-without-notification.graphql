@@ -58,5 +58,18 @@ query findApprovedAlmostEndedVisitsWithoutNotification($warningDate: timestamp, 
 				}
 			}
 		}
+		accessible_folders {
+			folder {
+				id
+				ies {
+					ie {
+						schema_identifier
+						maintainer {
+							schema_identifier
+						}
+					}
+				}
+			}
+		}
 	}
 }

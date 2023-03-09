@@ -38,7 +38,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]>
 		...IE_OBJECT_PUBLIC_LICENSES,
 	],
 	[Group.VISITOR]: [...IE_OBJECT_PUBLIC_LICENSES],
-	[Group.KIOSK_VISITOR]: [...IE_OBJECT_VISITOR_LICENSES],
+	[Group.KIOSK_VISITOR]: [],
 	[Group.CP_ADMIN]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[Group.MEEMOO_ADMIN]: [...IE_OBJECT_PUBLIC_LICENSES, ...IE_OBJECT_VISITOR_LICENSES],
 };
@@ -223,7 +223,6 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'meemooDescriptionCast',
 	'spatial',
 	'temporal',
-	'categorie', // BESTAAT NOG NIET
 	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: (keyof IeObject)[] = [

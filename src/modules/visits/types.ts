@@ -39,8 +39,7 @@ export type GqlVisitWithNotes =
 	| InsertVisitMutation['insert_maintainer_visitor_space_request_one']
 	| FindVisitsQuery['maintainer_visitor_space_request'][0]
 	| FindVisitByIdQuery['maintainer_visitor_space_request'][0]
-	| FindActiveVisitByUserAndSpaceQuery['maintainer_visitor_space_request'][0]
-	| UpdateVisitMutation['update_maintainer_visitor_space_request_by_pk'];
+	| FindActiveVisitByUserAndSpaceQuery['maintainer_visitor_space_request'][0];
 
 export type GqlVisit =
 	| GqlVisitWithNotes
@@ -91,7 +90,8 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
-	collectionsIeSchemaIds?: string[];
+	accessibleFolderIds?: string[];
+	accessibleObjectIds?: string[];
 }
 
 export interface VisitSpaceCount {

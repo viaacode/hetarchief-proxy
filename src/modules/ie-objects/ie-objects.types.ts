@@ -56,6 +56,8 @@ export enum IeObjectExtraUserGroupType {
 	ANONYMOUS = 'ANONYMOUS',
 }
 
+export type EbucoreObjectType = 'footage' | 'program';
+
 export interface IeObjectFile {
 	name: string;
 	alternateName: string;
@@ -78,63 +80,72 @@ export interface IeObjectRepresentation {
 }
 
 export interface IeObject {
-	schemaIdentifier: string; // Unique id per object
+	dctermsAvailable: string;
+	dctermsFormat: string;
+	dctermsMedium: string;
+	ebucoreObjectType: string;
 	meemooIdentifier: string; // PID (not unique per object)
+	meemoofilmBase: string;
+	meemoofilmColor: boolean;
+	meemoofilmImageOrSound: string;
 	premisIdentifier: any;
+	abstract: string;
+	creator: any;
+	dateCreated: string;
+	datePublished: string;
+	description: string;
+	duration: string;
+	genre: string[];
+	schemaIdentifier: string; // Unique id per object
+	inLanguage: string[];
+	keywords: string[];
+	licenses: IeObjectLicense[];
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;
-	datePublished: string;
-	dctermsAvailable: string;
 	name: string;
-	description: string;
-	abstract: string;
-	creator: any;
 	publisher: any;
 	spatial: string;
 	temporal: string;
-	keywords: string[];
-	genre: string[];
-	dctermsFormat: string;
-	dctermsMedium: string;
-	inLanguage: string[];
 	thumbnailUrl: string;
-	duration: string;
-	dateCreated: string;
-	ebucoreObjectType: string;
-	meemoofilmColor: boolean;
-	meemoofilmBase: string;
-	meemoofilmImageOrSound: string;
-	meemooLocalId: string;
-	meemooOriginalCp: string;
-	meemooDescriptionProgramme: string;
-	meemooDescriptionCast: string;
-	licenses: IeObjectLicense[];
-	actor?: any;
-	series?: string[];
-	accessThrough?: IeObjectAccessThrough[];
-	programs?: string[] | null;
-	alternativeName?: string[];
-	premisIsPartOf?: string;
-	contactInfo?: ContactInfo;
-	copyrightHolder?: string;
-	copyrightNotice?: string;
-	durationInSeconds?: number;
-	numberOfPages?: number;
-	meemooMediaObjectId?: string;
+	// EXTRA
 	sector?: IeObjectSector;
+	accessThrough?: IeObjectAccessThrough[];
+	// OPTIONAL
+	meemoofilmContainsEmbeddedCaption?: boolean;
+	premisIsPartOf?: string;
+	alternativeName?: string;
+	contributor?: any;
+	copyrightHolder?: string;
+	schemaIsPartOf?: any;
+	series?: string[];
+	programs?: string[] | null;
+	numberOfPages?: number;
+	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
-	dateCreatedLowerBound?: string;
-	ebucoreIsMediaFragmentOf?: string;
+	maintainerFromUrl?: string | null;
+	// FROM DB
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;
+	meemooDescriptionProgramme?: string;
+	meemooLocalId?: string;
+	meemooOriginalCp?: string;
+	durationInSeconds?: number;
+	copyrightNotice?: string;
+	meemooMediaObjectId?: string;
+	ebucoreIsMediaFragmentOf?: string;
 	ebucoreHasMediaFragmentOf?: boolean;
+	dateCreatedLowerBound?: string;
+	actor?: string | null;
+	// Not yet available
 	transcript?: string;
 	caption?: string;
 	categorie?: string[];
-	meemooDescriptionCategory?: string;
 	meemooContainsEmbeddedCaption?: string;
 	languageSubtitles?: string;
+	meemooDescriptionCategory?: string[];
+	meemoofilmEmbeddedCaption?: string;
+	meemoofilmEmbeddedCaptionLanguage?: string;
 }
 
 export interface MediaSearchAggregation<T> {
@@ -181,47 +192,18 @@ export interface ElasticsearchHit {
 }
 
 export interface ElasticsearchObject {
-	ebucore_object_type: any;
-	schema_in_language: string[];
+	// According to _mapping
 	dcterms_available: string;
-	meemoo_identifier: string;
-	schema_identifier: string;
-	schema_publisher: any;
-	schema_duration: string;
-	schema_abstract: any;
-	schema_keywords: string[];
-	schema_genre: string[];
-	schema_license: string[];
-	schema_maintainer: {
-		schema_identifier: string;
-		schema_name: string;
-		alt_label: string;
-		organization_type: IeObjectSector | null;
-	};
-	schema_thumbnail_url: string;
 	dcterms_format: string;
-	schema_name: string;
-	meemoo_description_cast: string;
-	meemoo_description_programme: string;
-	schema_spatial_coverage: string;
-	schema_temporal_coverage: string;
-	schema_copyrightholder: string;
-	duration_seconds: number;
-	schema_number_of_pages: number;
-	meemoofilm_color: boolean;
-	meemoofilm_base: string;
-	meemoofilm_image_or_sound: string;
-	meemoofilm_contains_embedded_caption: boolean;
-	meemoo_local_id: string;
-	meemoo_original_cp: string;
-	schema_creator?: {
-		Maker?: string[];
-		Archiefvormer?: string[];
-	};
-	schema_description?: string;
-	dcterms_medium?: string | null;
-	premis_is_part_of?: string;
-	premis_identifier?: {
+	dcterms_medium: string | null;
+	ebucore_object_type: EbucoreObjectType | null;
+	meemoo_identifier: string;
+	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
+	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
+	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
+	meemoofilm_image_or_sound: string; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
+	premis_is_part_of: string;
+	premis_identifier: {
 		Afbeelding?: string[];
 		Objectnaam?: string[];
 		object_nummer?: string[];
@@ -234,19 +216,63 @@ export interface ElasticsearchObject {
 		Api?: string[];
 		Object_number?: string[];
 		MEDIA_ID?: string[];
-	};
-	schema_is_part_of?: {
+	} | null;
+	schema_abstract: string | null; // always null in values (QAS & INT)
+	schema_alternate_name: string | null; // only exists as value in INT (not QAS)
+	schema_contributor: {
+		presenter?: string[];
+		Producer?: string[];
+		director?: string[];
+		onbepaald?: string[];
+		Voorzitter?: string[];
+	} | null;
+	schema_copyrightholder: string; // exists in _mapping but does not exist in values (QAS & INT)
+	schema_creator: {
+		Maker?: string[];
+		Archiefvormer?: string[];
+	} | null;
+	schema_date_created: string | null;
+	schema_date_published: string | null;
+	schema_description: string | null;
+	schema_duration: string;
+	schema_genre: string[];
+	schema_identifier: string;
+	schema_in_language: string[];
+	schema_is_part_of: {
 		archief?: string[];
 		reeks?: string[];
 		alternatief?: string[];
 		serie?: string[];
+	} | null;
+	schema_keywords: string[];
+	schema_license: string[] | null;
+	schema_maintainer: {
+		schema_identifier?: string;
+		schema_name?: string;
+		alt_label?: string | null; // not always available
+		organization_type?: IeObjectSector | null; // not always available
 	};
-	schema_date_created?: string;
-	schema_date_published?: string;
-	schema_contributor?: {
-		Voorzitter: string[];
-	};
-	premis_is_represented_by?: any;
+	schema_name: string;
+	schema_publisher: {
+		Distributeur?: string[];
+	} | null;
+	schema_spatial_coverage: string;
+	schema_temporal_coverage: string;
+	schema_thumbnail_url: string;
+	// Discrepancy props in QAS & INT
+	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)
+	meemoo_description_cast?: string; // only exists in QAS (not INT)
+	meemoo_description_programme?: string | null; // only exists in QAS (not INT)
+	meemoo_local_id?: string | null; // only exists in QAS (not INT)
+	meemoo_original_cp?: string | null; // only exists in QAS + always null (not INT)
+	duration_seconds?: number; // Missing in both _mapping and values (QAS & INT)
+	premis_is_represented_by?: any; // Missing in both _mapping and values (QAS & INT)
+	// Not yet available
+	schema_transcript?: string;
+	schema_caption?: string;
+	meemoo_description_category?: string[];
+	meemoofilm_embedded_caption?: string;
+	meemoofilm_embedded_caption_language?: string;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

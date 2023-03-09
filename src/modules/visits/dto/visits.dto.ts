@@ -95,6 +95,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 
 	@IsString()
 	@IsEnum(VisitAccessType)
+	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which access type does the visit hold access to',
@@ -105,6 +106,7 @@ export class UpdateVisitDto extends PartialType<UpdateVisitStatusDto>(UpdateVisi
 
 	@IsArray()
 	@IsString({ each: true })
+	@IsOptional()
 	@ApiPropertyOptional({
 		type: [String],
 		description: 'Folder ids associated with the FOLDERS access type for the current visit',

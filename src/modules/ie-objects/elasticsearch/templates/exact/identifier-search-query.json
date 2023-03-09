@@ -26,6 +26,11 @@
           "term": {
             "premis_identifier": "{{query}}"
           }
+        },
+        {
+          "term": {
+            "schema_maintainer_id": "{{query}}"
+          }
         }
       ],
       "minimum_should_match": 1

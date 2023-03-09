@@ -1,0 +1,7 @@
+mutation deleteVisitFolderAccess($visitRequestId: uuid!) {
+	delete_maintainer_visitor_space_request_folder_access(
+		where: { visit_request_id: { _eq: $visitRequestId } }
+	) {
+		affected_rows
+	}
+}
