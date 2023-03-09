@@ -1,12 +1,14 @@
 import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
 import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 
 import {
-	IeObjectMeemooIdentifiersQueryDto,
+	IeObjectsMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
+	IeObjectsRelatedQueryDto,
+	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
@@ -171,10 +173,15 @@ export class IeObjectsController {
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
+	@ApiOperation({
+		description:
+			'Get objects that cover the same subject as the passed object schema identifier.',
+	})
 	public async getRelated(
 		@Headers('referer') referer: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string,
+		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
@@ -184,7 +191,8 @@ export class IeObjectsController {
 		const relatedIeObjects = await this.ieObjectsService.getRelated(
 			schemaIdentifier,
 			meemooIdentifier,
-			referer
+			referer,
+			ieObjectRelatedQueryDto
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
@@ -212,21 +220,29 @@ export class IeObjectsController {
 
 	@Get('related/count')
 	public async countRelated(
-		@Query() countRelatedQuery: IeObjectMeemooIdentifiersQueryDto
+		@Query() countRelatedQuery: IeObjectsMeemooIdentifiersQueryDto
 	): Promise<Record<string, number>> {
 		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
 
 	@Get(':id/similar')
+	@ApiOperation({
+		description: 'Get objects that are similar based on the maintainerId.',
+	})
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
+		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjects = await this.ieObjectsService.getSimilar(id, '_all', referer);
+		const similarIeObjects = await this.ieObjectsService.getSimilar(
+			id,
+			referer,
+			ieObjectSimilarQueryDto
+		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
 		const licensedSimilarIeObjects = {

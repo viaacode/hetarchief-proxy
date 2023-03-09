@@ -131,7 +131,7 @@ export class ThumbnailQueryDto {
 	id: string;
 }
 
-export class IeObjectMeemooIdentifiersQueryDto {
+export class IeObjectsMeemooIdentifiersQueryDto {
 	@IsArray()
 	@IsOptional()
 	@Transform(commaSeparatedStringToArray)
@@ -141,4 +141,24 @@ export class IeObjectMeemooIdentifiersQueryDto {
 		default: [],
 	})
 	meemooIdentifiers: string[];
+}
+
+export class IeObjectsSimilarQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Fetch similar object with the same maintainerId',
+	})
+	maintainerId?: string;
+}
+
+export class IeObjectsRelatedQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Fetch related object with the same maintainerId',
+	})
+	maintainerId?: string;
 }
