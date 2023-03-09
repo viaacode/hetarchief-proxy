@@ -43,6 +43,8 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		meemoo_identifier: '',
 		schema_name: '',
 		dcterms_format: '',
+		schema_thumbnail_url:
+			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	},
 };
 
@@ -85,7 +87,8 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		meemoo_identifier: 'q23qv3wp5b',
 		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
 		dcterms_format: 'audio',
-		// schema_thumbnail_url:
+		schema_thumbnail_url:
+			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 	},
 };
 
@@ -110,6 +113,8 @@ export const mockMaterialRequest1: MaterialRequest = {
 	objectMeemooIdentifier: 'q23qv3wp5b',
 	objectType: MediaFormat.AUDIO,
 	objectDctermsFormat: 'video',
+	objectThumbnailUrl:
+		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };
 
 const mockMaterialRequest2: MaterialRequest = {
@@ -138,6 +143,8 @@ const mockMaterialRequest2: MaterialRequest = {
 	objectMeemooIdentifier: 'q23qv3wp5b',
 	objectType: MediaFormat.AUDIO,
 	objectDctermsFormat: 'video',
+	objectThumbnailUrl:
+		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };
 
 export const mockMaterialRequestsResponse = {

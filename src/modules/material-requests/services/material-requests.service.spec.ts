@@ -166,6 +166,9 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.object.dcterms_format
 			);
+			expect(adapted.objectThumbnailUrl).toEqual(
+				mockGqlMaterialRequest2.object.schema_thumbnail_url
+			);
 		});
 
 		it('should return null when the material request does not exist', () => {
