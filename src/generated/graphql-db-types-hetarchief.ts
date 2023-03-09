@@ -2612,12 +2612,44 @@ export enum Lookup_App_Content_Block_Type_Constraint {
 }
 
 export enum Lookup_App_Content_Block_Type_Enum {
+  Accordions = 'ACCORDIONS',
+  AnchorLinks = 'ANCHOR_LINKS',
+  Buttons = 'BUTTONS',
   Cards = 'CARDS',
   CardsNoDescription = 'CARDS_NO_DESCRIPTION',
+  ContentPageMeta = 'CONTENT_PAGE_META',
+  Ctas = 'CTAS',
+  Eventbrite = 'EVENTBRITE',
+  Heading = 'HEADING',
+  Hero = 'HERO',
   HetarchiefHeader = 'HETARCHIEF_HEADER',
   HetarchiefHeaderSearch = 'HETARCHIEF__HEADER_SEARCH',
+  Iframe = 'IFRAME',
+  Image = 'IMAGE',
+  ImageGrid = 'IMAGE_GRID',
+  Intro = 'INTRO',
+  Klaar = 'KLAAR',
+  Links = 'LINKS',
+  LogoGrid = 'LOGO_GRID',
+  MediaGrid = 'MEDIA_GRID',
+  MediaPlayer = 'MEDIA_PLAYER',
+  MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
+  PageOverview = 'PAGE_OVERVIEW',
+  ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
+  Quote = 'QUOTE',
+  RichText = 'RICH_TEXT',
+  RichTextTwoColumns = 'RICH_TEXT_TWO_COLUMNS',
+  Search = 'SEARCH',
+  Spotlight = 'SPOTLIGHT',
+  Subtitle = 'SUBTITLE',
   TagsWithLinks = 'TAGS_WITH_LINKS',
-  TextInSpotlight = 'TEXT_IN_SPOTLIGHT'
+  TextInSpotlight = 'TEXT_IN_SPOTLIGHT',
+  Title = 'TITLE',
+  TitleImageText = 'TITLE_IMAGE_TEXT',
+  TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
+  UspGrid = 'USP_GRID',
+  Video = 'VIDEO',
+  VideoTitleTextButton = 'VIDEO_TITLE_TEXT_BUTTON'
 }
 
 /** Boolean expression to compare columns of type "lookup_app_content_block_type_enum". All fields are combined with logical 'AND'. */
@@ -8673,7 +8705,6 @@ export type Object_Ie = {
   schema_copyright_notice?: Maybe<Scalars['String']>;
   /** Personen die hebben bijgedragen aan de creatie van de IE, aka author */
   schema_creator?: Maybe<Scalars['jsonb']>;
-  schema_creator_flattened?: Maybe<Scalars['_text']>;
   /** Datum waarop de IE werd aangemaakt */
   schema_date_created?: Maybe<Scalars['daterange']>;
   schema_date_created_lower_bound?: Maybe<Scalars['date']>;
@@ -8705,7 +8736,6 @@ export type Object_Ie = {
   schema_number_of_pages?: Maybe<Scalars['Int']>;
   /** Persoon of organisatie die verantwoordelijk was voor de publicatie van de IE */
   schema_publisher?: Maybe<Scalars['jsonb']>;
-  schema_publisher_flattened?: Maybe<Scalars['_text']>;
   /** Plaatsen of locaties waarover de IE handelt of betrekking op heeft */
   schema_spatial_coverage?: Maybe<Scalars['_text']>;
   /** Datums, tijdstippen of periodes waarover de IE handelt of betrekking op heeft */
@@ -8919,7 +8949,6 @@ export type Object_Ie_Bool_Exp = {
   schema_copyright_holder?: InputMaybe<String_Comparison_Exp>;
   schema_copyright_notice?: InputMaybe<String_Comparison_Exp>;
   schema_creator?: InputMaybe<Jsonb_Comparison_Exp>;
-  schema_creator_flattened?: InputMaybe<_Text_Comparison_Exp>;
   schema_date_created?: InputMaybe<Daterange_Comparison_Exp>;
   schema_date_created_lower_bound?: InputMaybe<Date_Comparison_Exp>;
   schema_date_published?: InputMaybe<Date_Comparison_Exp>;
@@ -8938,7 +8967,6 @@ export type Object_Ie_Bool_Exp = {
   schema_name?: InputMaybe<String_Comparison_Exp>;
   schema_number_of_pages?: InputMaybe<Int_Comparison_Exp>;
   schema_publisher?: InputMaybe<Jsonb_Comparison_Exp>;
-  schema_publisher_flattened?: InputMaybe<_Text_Comparison_Exp>;
   schema_spatial_coverage?: InputMaybe<_Text_Comparison_Exp>;
   schema_temporal_coverage?: InputMaybe<_Text_Comparison_Exp>;
   schema_thumbnail_url?: InputMaybe<String_Comparison_Exp>;
@@ -9469,7 +9497,6 @@ export type Object_Ie_Order_By = {
   schema_copyright_holder?: InputMaybe<Order_By>;
   schema_copyright_notice?: InputMaybe<Order_By>;
   schema_creator?: InputMaybe<Order_By>;
-  schema_creator_flattened?: InputMaybe<Order_By>;
   schema_date_created?: InputMaybe<Order_By>;
   schema_date_created_lower_bound?: InputMaybe<Order_By>;
   schema_date_published?: InputMaybe<Order_By>;
@@ -9488,7 +9515,6 @@ export type Object_Ie_Order_By = {
   schema_name?: InputMaybe<Order_By>;
   schema_number_of_pages?: InputMaybe<Order_By>;
   schema_publisher?: InputMaybe<Order_By>;
-  schema_publisher_flattened?: InputMaybe<Order_By>;
   schema_spatial_coverage?: InputMaybe<Order_By>;
   schema_temporal_coverage?: InputMaybe<Order_By>;
   schema_thumbnail_url?: InputMaybe<Order_By>;
@@ -9580,8 +9606,6 @@ export enum Object_Ie_Select_Column {
   /** column name */
   SchemaCreator = 'schema_creator',
   /** column name */
-  SchemaCreatorFlattened = 'schema_creator_flattened',
-  /** column name */
   SchemaDateCreated = 'schema_date_created',
   /** column name */
   SchemaDateCreatedLowerBound = 'schema_date_created_lower_bound',
@@ -9617,8 +9641,6 @@ export enum Object_Ie_Select_Column {
   SchemaNumberOfPages = 'schema_number_of_pages',
   /** column name */
   SchemaPublisher = 'schema_publisher',
-  /** column name */
-  SchemaPublisherFlattened = 'schema_publisher_flattened',
   /** column name */
   SchemaSpatialCoverage = 'schema_spatial_coverage',
   /** column name */
