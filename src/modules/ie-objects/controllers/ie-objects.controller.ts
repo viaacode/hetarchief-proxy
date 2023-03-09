@@ -9,6 +9,7 @@ import {
 	IeObjectsQueryDto,
 	PlayerTicketsQueryDto,
 	RelatedQueryDto,
+	SimilarQueryDto,
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
@@ -224,12 +225,17 @@ export class IeObjectsController {
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Query() similarQueryDto: SimilarQueryDto
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjects = await this.ieObjectsService.getSimilar(id, '_all', referer);
+		const similarIeObjects = await this.ieObjectsService.getSimilar(
+			id,
+			similarQueryDto.maintainerId ? similarQueryDto.maintainerId.toLowerCase() : '_all',
+			referer
+		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
 		const licensedSimilarIeObjects = {
