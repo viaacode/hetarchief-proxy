@@ -271,6 +271,7 @@ describe('IeObjectsController', () => {
 				'referer',
 				'1',
 				'8911p09j1g',
+				{ maintainerId: '' },
 				mockSessionUser
 			);
 			expect(ieObject.items.length).toEqual(2);
@@ -281,7 +282,12 @@ describe('IeObjectsController', () => {
 		it('should get similar ieObject items', async () => {
 			mockIeObjectsService.getSimilar.mockResolvedValueOnce(getMockMediaResponse());
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			const ieObject = await ieObjectsController.getSimilar('referer', '1', mockSessionUser);
+			const ieObject = await ieObjectsController.getSimilar(
+				'referer',
+				'1',
+				{ maintainerId: '' },
+				mockSessionUser
+			);
 			expect(ieObject.items.length).toEqual(3);
 		});
 	});

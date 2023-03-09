@@ -10,9 +10,9 @@ import { find, get, isEmpty, isNil, kebabCase } from 'lodash';
 import { Configuration } from '~config';
 
 import {
-	IeObjectRelatedQueryDto,
-	IeObjectSimilarQueryDto,
 	IeObjectsQueryDto,
+	IeObjectsRelatedQueryDto,
+	IeObjectsSimilarQueryDto,
 } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -143,7 +143,7 @@ export class IeObjectsService {
 		schemaIdentifier: string,
 		meemooIdentifier: string,
 		referer: string,
-		ieObjectRelatedQueryDto?: IeObjectRelatedQueryDto
+		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
 	): Promise<IPagination<IeObject>> {
 		const mediaObjects = await this.dataService.execute<
 			GetRelatedObjectsQuery,
@@ -151,7 +151,7 @@ export class IeObjectsService {
 		>(GetRelatedObjectsDocument, {
 			schemaIdentifier,
 			meemooIdentifier,
-			maintainerId: ieObjectRelatedQueryDto.maintainerId,
+			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
 		});
 
 		const adaptedItems = await Promise.all(
@@ -176,10 +176,10 @@ export class IeObjectsService {
 	public async getSimilar(
 		schemaIdentifier: string,
 		referer: string,
-		ieObjectSimilarQueryDto?: IeObjectSimilarQueryDto,
+		ieObjectSimilarQueryDto?: IeObjectsSimilarQueryDto,
 		limit = 4
 	): Promise<IPagination<IeObject>> {
-		const esIndex = ieObjectSimilarQueryDto.maintainerId.toLowerCase() ?? '_all';
+		const esIndex = ieObjectSimilarQueryDto?.maintainerId.toLowerCase() ?? '_all';
 		const likeFilter = {
 			_index: esIndex,
 			_id: schemaIdentifier,

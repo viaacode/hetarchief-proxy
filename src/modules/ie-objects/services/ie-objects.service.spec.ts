@@ -209,7 +209,8 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getRelated(
 				mockObjectSchemaIdentifier,
 				'8911p09j1g',
-				'referer'
+				'referer',
+				{ maintainerId: 'my-index' }
 			);
 			expect(response.items.length).toEqual(1);
 		});
@@ -222,8 +223,8 @@ describe('ieObjectsService', () => {
 				.reply(201, getMockMediaResponse());
 			const response = await ieObjectsService.getSimilar(
 				mockObjectSchemaIdentifier,
-				'my-index',
-				'referer'
+				'referer',
+				{ maintainerId: 'my-index' }
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.items.length).toBe(2);

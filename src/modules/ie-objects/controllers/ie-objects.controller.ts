@@ -5,10 +5,10 @@ import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 
 import {
-	IeObjectMeemooIdentifiersQueryDto,
-	IeObjectRelatedQueryDto,
-	IeObjectSimilarQueryDto,
+	IeObjectsMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
+	IeObjectsRelatedQueryDto,
+	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
@@ -181,7 +181,7 @@ export class IeObjectsController {
 		@Headers('referer') referer: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string,
-		@Query() ieObjectRelatedQueryDto: IeObjectRelatedQueryDto,
+		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
@@ -220,7 +220,7 @@ export class IeObjectsController {
 
 	@Get('related/count')
 	public async countRelated(
-		@Query() countRelatedQuery: IeObjectMeemooIdentifiersQueryDto
+		@Query() countRelatedQuery: IeObjectsMeemooIdentifiersQueryDto
 	): Promise<Record<string, number>> {
 		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
@@ -232,7 +232,7 @@ export class IeObjectsController {
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Param('id') id: string,
-		@Query() ieObjectSimilarQueryDto: IeObjectSimilarQueryDto,
+		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
