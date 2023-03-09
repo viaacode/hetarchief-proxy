@@ -85,6 +85,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		meemoo_identifier: 'q23qv3wp5b',
 		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
 		dcterms_format: 'audio',
+		// schema_thumbnail_url:
 	},
 };
 
