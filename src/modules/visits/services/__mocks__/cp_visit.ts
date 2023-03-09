@@ -1,3 +1,5 @@
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	GqlVisit,
@@ -113,4 +115,30 @@ export const mockVisitRequest: Visit = {
 	visitorLastName: 'van Dams',
 	visitorMail: 'ineke.vandam@meemoo.be',
 	visitorName: 'Ineke van Dams',
+};
+
+export const mockVisitApproved: Visit = {
+	id: mockGqlVisitRequest.id,
+	spaceId: mockGqlVisitRequest.cp_space_id,
+	spaceSlug: 'vrt',
+	spaceMaintainerId: 'or-rf5kf25',
+	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
+	spaceTelephone: '0412 34 56 78',
+	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
+	reason: 'Ik wil graag deze zaal bezoeken 7',
+	status: VisitStatus.APPROVED,
+	startAt: '2022-03-03T16:00:00',
+	endAt: '2022-03-03T17:00:00',
+	createdAt: '2022-02-11T15:28:40.676',
+	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
+	visitorName: 'Marie Odhiambo',
+	visitorMail: 'marie.odhiambo@example.com',
+	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	updatedById: null,
+	updatedByName: null,
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Folders,
 };
