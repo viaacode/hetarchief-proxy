@@ -23,7 +23,7 @@ async function bootstrap() {
 	app.enableCors(configService.get('CORS_OPTIONS'));
 	app.use(helmet());
 
-	/** Api data size limitations */
+	/** Increase POST json body size */
 	app.use(json({ limit: '500kb' }));
 
 	/** Validation */
