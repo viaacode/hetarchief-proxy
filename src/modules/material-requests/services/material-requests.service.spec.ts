@@ -163,6 +163,9 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.objectMeemooIdentifier).toEqual(
 				mockGqlMaterialRequest2.object.meemoo_identifier
 			);
+			expect(adapted.objectDctermsFormat).toEqual(
+				mockGqlMaterialRequest2.object.dcterms_format
+			);
 		});
 
 		it('should return null when the material request does not exist', () => {
