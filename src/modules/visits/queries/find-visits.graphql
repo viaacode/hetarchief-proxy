@@ -76,6 +76,9 @@ query findVisits(
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}

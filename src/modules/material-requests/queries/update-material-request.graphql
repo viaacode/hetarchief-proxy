@@ -1,11 +1,11 @@
 mutation updateMaterialRequest(
 	$materialRequestId: uuid
 	$userProfileId: uuid
-	$materialRequest: app_material_requests_set_input
+	$updateMaterialRequest: app_material_requests_set_input
 ) {
 	update_app_material_requests(
 		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
-		_set: $materialRequest
+		_set: $updateMaterialRequest
 	) {
 		returning {
 			id

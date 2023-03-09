@@ -66,6 +66,9 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 					ies {
 						ie {
 							schema_identifier
+							maintainer {
+								schema_identifier
+							}
 						}
 					}
 				}

@@ -123,6 +123,7 @@ export interface IeObject {
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
+	maintainerFromUrl?: string | null;
 	// FROM DB
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;
@@ -139,6 +140,9 @@ export interface IeObject {
 	// Not yet available
 	transcript?: string;
 	caption?: string;
+	categorie?: string[];
+	meemooContainsEmbeddedCaption?: string;
+	languageSubtitles?: string;
 	meemooDescriptionCategory?: string[];
 	meemoofilmEmbeddedCaption?: string;
 	meemoofilmEmbeddedCaptionLanguage?: string;

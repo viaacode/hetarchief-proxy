@@ -1,5 +1,5 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
@@ -192,11 +192,20 @@ export class MaterialRequestsService {
 	public async updateMaterialRequest(
 		materialRequestId: string,
 		userProfileId: string,
-		materialRequest: Pick<
+		materialRequestDto: Pick<
 			App_Material_Requests_Set_Input,
 			'type' | 'reason' | 'organisation' | 'requester_capacity'
 		>
 	): Promise<MaterialRequest> {
+		const { type, reason, organisation, requester_capacity } = materialRequestDto;
+
+		const updateMaterialRequest = {
+			type,
+			reason,
+			organisation,
+			requester_capacity,
+		};
+
 		const { update_app_material_requests: updatedMaterialRequest } =
 			await this.dataService.execute<
 				UpdateMaterialRequestMutation,
@@ -204,10 +213,16 @@ export class MaterialRequestsService {
 			>(UpdateMaterialRequestDocument, {
 				materialRequestId,
 				userProfileId,
-				materialRequest,
+				updateMaterialRequest,
 			});
 
-		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0].id} updated.`);
+		if (isEmpty(updatedMaterialRequest.returning[0])) {
+			throw new BadRequestException(
+				`Material request (${materialRequestId}) could not be updated.`
+			);
+		}
+
+		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0]?.id} updated.`);
 
 		return this.adapt(updatedMaterialRequest.returning[0]);
 	}

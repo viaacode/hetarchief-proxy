@@ -66,6 +66,9 @@ query findVisitById($id: uuid!) {
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}

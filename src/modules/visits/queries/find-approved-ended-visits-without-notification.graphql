@@ -64,6 +64,9 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 				ies {
 					ie {
 						schema_identifier
+						maintainer {
+							schema_identifier
+						}
 					}
 				}
 			}

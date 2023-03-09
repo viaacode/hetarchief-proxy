@@ -11,6 +11,7 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
+import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
@@ -25,8 +26,10 @@ import { IeObjectsService } from '../services/ie-objects.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
+import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
@@ -38,7 +41,9 @@ export class IeObjectsController {
 		private ieObjectsService: IeObjectsService,
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
-		private playerTicketService: PlayerTicketService
+		private visitsService: VisitsService,
+		private playerTicketService: PlayerTicketService,
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('player-ticket')
@@ -68,12 +73,21 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const object = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+		let ieObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+
+		const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+			ieObject.schemaIdentifier
+		);
+
+		ieObject = {
+			...ieObject,
+			maintainerFromUrl: organisation?.formUrl || null,
+		};
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const limitedObject = limitAccessToObjectDetails(object, {
+		const limitedObject = limitAccessToObjectDetails(ieObject, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
@@ -108,10 +122,10 @@ export class IeObjectsController {
 	}
 
 	// TODO: rewrite export with limited access
-	@Get(':id/export')
+	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
-	public async export(
+	public async exportXml(
 		@Param('id') id: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
@@ -129,24 +143,31 @@ export class IeObjectsController {
 			},
 		]);
 
-		// Limit access to the objects in the collection
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-		return convertObjectToXml(
-			limitAccessToObjectDetails(objectMetadata, {
-				userId: user.getId(),
-				sector: user.getSector(),
-				maintainerId: user.getMaintainerId(),
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			})
-		);
+		return convertObjectToXml(objectMetadata);
+	}
+
+	@Get(':id/export/csv')
+	@Header('Content-Type', 'text/csv')
+	@RequireAllPermissions(Permission.EXPORT_OBJECT)
+	public async exportCsv(
+		@Param('id') id: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<string> {
+		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
+
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.METADATA_EXPORT,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+			},
+		]);
+
+		return convertObjectToCsv(objectMetadata);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
@@ -250,8 +271,7 @@ export class IeObjectsController {
 			'_all',
 			referer,
 			user,
-			visitorSpaceAccessInfo,
-			user?.getSector()
+			visitorSpaceAccessInfo
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector

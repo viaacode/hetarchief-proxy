@@ -25,7 +25,6 @@ import {
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
-	IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -58,7 +57,7 @@ export class IeObjectsService {
 		private configService: ConfigService<Configuration>,
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
-		private visitsService: VisitsService
+		protected visitsService: VisitsService
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -72,15 +71,14 @@ export class IeObjectsService {
 		esIndex: string | null,
 		referer: string,
 		user: SessionUserEntity,
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo,
-		sector?: IeObjectSector | null
+		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user: {
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
-				sector: sector || null,
+				sector: user.getSector(),
 			},
 			visitorSpaceInfo,
 		});
@@ -107,8 +105,10 @@ export class IeObjectsService {
 
 		return {
 			...Pagination<IeObject>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESObjectToObject(esHit._source)
+				items: await Promise.all(
+					adaptedESResponse.hits.hits.map((esHit) =>
+						this.adaptESObjectToObject(esHit._source)
+					)
 				),
 				page: 1,
 				size: adaptedESResponse.hits.hits.length,
