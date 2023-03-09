@@ -187,7 +187,7 @@ export class IeObjectsController {
 			schemaIdentifier,
 			meemooIdentifier,
 			referer,
-			relatedQueryDto.esIndex
+			relatedQueryDto.maintainerId
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector

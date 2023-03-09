@@ -150,5 +150,5 @@ export class RelatedQueryDto {
 		type: String,
 		description: 'Fetch related object with the same maintainerId',
 	})
-	esIndex?;
+	maintainerId?;
 }
