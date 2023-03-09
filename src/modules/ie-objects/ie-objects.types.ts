@@ -140,6 +140,9 @@ export interface IeObject {
 	// Not yet available
 	transcript?: string;
 	caption?: string;
+	categorie?: string[];
+	meemooContainsEmbeddedCaption?: string;
+	languageSubtitles?: string;
 	meemooDescriptionCategory?: string[];
 	meemoofilmEmbeddedCaption?: string;
 	meemoofilmEmbeddedCaptionLanguage?: string;
