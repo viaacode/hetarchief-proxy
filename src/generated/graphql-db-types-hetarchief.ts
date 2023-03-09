@@ -2644,7 +2644,6 @@ export enum Lookup_App_Content_Block_Type_Enum {
   Subtitle = 'SUBTITLE',
   TagsWithLinks = 'TAGS_WITH_LINKS',
   TextInSpotlight = 'TEXT_IN_SPOTLIGHT',
-  ThreeClickableTiles = 'THREE_CLICKABLE_TILES',
   Title = 'TITLE',
   TitleImageText = 'TITLE_IMAGE_TEXT',
   TitleImageTextButton = 'TITLE_IMAGE_TEXT_BUTTON',
@@ -3048,16 +3047,12 @@ export enum Lookup_App_Material_Request_Type_Constraint {
 }
 
 export enum Lookup_App_Material_Request_Type_Enum {
-  Education = 'EDUCATION',
   /** Meer info van het materiaal */
   MoreInfo = 'MORE_INFO',
-  Other = 'OTHER',
-  PrivateResearch = 'PRIVATE_RESEARCH',
   /** Hergebruik van materiaal */
   Reuse = 'REUSE',
   /** Bekijken van het materiaal */
-  View = 'VIEW',
-  Work = 'WORK'
+  View = 'VIEW'
 }
 
 /** Boolean expression to compare columns of type "lookup_app_material_request_type_enum". All fields are combined with logical 'AND'. */
