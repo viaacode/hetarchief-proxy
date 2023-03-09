@@ -143,22 +143,22 @@ export class IeObjectMeemooIdentifiersQueryDto {
 	meemooIdentifiers: string[];
 }
 
-export class SimilarQueryDto {
+export class IeObjectSimilarQueryDto {
 	@IsString()
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Fetch similar object with the same maintainerId',
 	})
-	maintainerId?;
+	maintainerId?: string;
 }
 
-export class RelatedQueryDto {
+export class IeObjectRelatedQueryDto {
 	@IsString()
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Fetch related object with the same maintainerId',
 	})
-	maintainerId?;
+	maintainerId?: string;
 }
