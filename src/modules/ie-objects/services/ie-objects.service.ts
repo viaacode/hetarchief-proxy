@@ -138,7 +138,8 @@ export class IeObjectsService {
 	public async getRelated(
 		schemaIdentifier: string,
 		meemooIdentifier: string,
-		referer: string
+		referer: string,
+		maintainerId?: string
 	): Promise<IPagination<IeObject>> {
 		const mediaObjects = await this.dataService.execute<
 			GetRelatedObjectsQuery,
@@ -146,6 +147,7 @@ export class IeObjectsService {
 		>(GetRelatedObjectsDocument, {
 			schemaIdentifier,
 			meemooIdentifier,
+			maintainerId,
 		});
 
 		const adaptedItems = await Promise.all(

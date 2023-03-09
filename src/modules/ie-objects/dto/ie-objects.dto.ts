@@ -142,3 +142,13 @@ export class IeObjectMeemooIdentifiersQueryDto {
 	})
 	meemooIdentifiers: string[];
 }
+
+export class RelatedQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Fetch related object with the same maintainerId',
+	})
+	esIndex?;
+}

@@ -8,6 +8,7 @@ import {
 	IeObjectMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
 	PlayerTicketsQueryDto,
+	RelatedQueryDto,
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
@@ -170,12 +171,13 @@ export class IeObjectsController {
 		return convertObjectToCsv(objectMetadata);
 	}
 
-	@Get(':schemaIdentifier/related/:meemooIdentifier')
+	@Get(':schemaIdentifier/related/:meemooIdentifier/')
 	public async getRelated(
 		@Headers('referer') referer: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Query() relatedQueryDto: RelatedQueryDto
 	): Promise<IPagination<Partial<IeObject>>> {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
@@ -184,7 +186,8 @@ export class IeObjectsController {
 		const relatedIeObjects = await this.ieObjectsService.getRelated(
 			schemaIdentifier,
 			meemooIdentifier,
-			referer
+			referer,
+			relatedQueryDto.esIndex
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
