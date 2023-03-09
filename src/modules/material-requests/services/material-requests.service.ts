@@ -257,7 +257,8 @@ export class MaterialRequestsService {
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
 			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
 			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
-			objectType: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
+			objectDctermsFormat: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
+			objectThumbnailUrl: grapqhQLMaterialRequest.object.schema_thumbnail_url,
 			profileId: grapqhQLMaterialRequest.profile_id,
 			reason: grapqhQLMaterialRequest.reason,
 			createdAt: grapqhQLMaterialRequest.created_at,
@@ -292,7 +293,7 @@ export class MaterialRequestsService {
 		}
 
 		// Brecht - Check if GqlMaterialRequestById.object.maintainer has a prop information
-		// If so add user group information
+		// If so add information props
 		if (has(GqlMaterialRequestById.object.maintainer, 'information')) {
 			transformedMaterialRequest = {
 				...transformedMaterialRequest,

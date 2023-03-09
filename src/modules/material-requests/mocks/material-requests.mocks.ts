@@ -111,8 +111,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	maintainerSlug: 'vrt',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
-	objectType: MediaFormat.AUDIO,
-	objectDctermsFormat: 'video',
+	objectDctermsFormat: MediaFormat.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };
@@ -141,8 +140,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	maintainerSlug: 'vlaams-parlement',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
 	objectMeemooIdentifier: 'q23qv3wp5b',
-	objectType: MediaFormat.AUDIO,
-	objectDctermsFormat: 'video',
+	objectDctermsFormat: MediaFormat.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };

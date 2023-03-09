@@ -26,6 +26,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 			schema_name
 			meemoo_identifier
 			dcterms_format
+			schema_thumbnail_url
 		}
 	}
 }
