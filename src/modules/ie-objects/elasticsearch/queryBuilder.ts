@@ -66,6 +66,7 @@ export class QueryBuilder {
 	/**
 	 * Convert filters, order, aggs properties (created by the ui) to elasticsearch query object
 	 * @param searchRequest the search query parameters
+	 * @param inputInfo
 	 * @return elastic search query
 	 */
 	public static build(
@@ -93,6 +94,7 @@ export class QueryBuilder {
 
 			// Add the licenses to the query object
 			set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
+
 			// Both the filters the user selected and the access to the object should match, before we return the object as a search result
 			set(queryObject, 'query.bool.minimum_should_match', 2);
 
@@ -228,6 +230,7 @@ export class QueryBuilder {
 							},
 						},
 					],
+					minimum_should_match: 2,
 				},
 			},
 			// 5) Check object id is part of folderObjectIds
@@ -249,6 +252,7 @@ export class QueryBuilder {
 							},
 						},
 					],
+					minimum_should_match: 2,
 				},
 			},
 		];
@@ -274,6 +278,7 @@ export class QueryBuilder {
 								},
 							},
 						],
+						minimum_should_match: 2,
 					},
 				},
 			];
@@ -282,7 +287,7 @@ export class QueryBuilder {
 		if (user.isKeyUser && !isNil(user.sector)) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
-				// 2) Check or-id is part of sectorOrIds en sleutel gebruiker
+				// 2) Check or-id is part of sectorOrIds and key user
 				{
 					term: {
 						'schema_maintainer.organization_type': user.sector,
@@ -294,7 +299,7 @@ export class QueryBuilder {
 						],
 					},
 				},
-				// 3) or-id is eigen or id en sleutel gebruiker
+				// 3) or-id is its own or-id and key user
 				{
 					term: {
 						schema_maintainer: user.maintainerId,

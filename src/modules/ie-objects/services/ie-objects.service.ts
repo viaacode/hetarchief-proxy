@@ -5,7 +5,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, get, isEmpty, isNil, kebabCase } from 'lodash';
+import { find, isEmpty, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -18,14 +18,12 @@ import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import { IE_OBJECT_EXTRA_USER_GROUPS, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
 	GqlIeObject,
 	GqlLimitedIeObject,
 	IeObject,
-	IeObjectExtraUserGroupType,
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
@@ -109,10 +107,8 @@ export class IeObjectsService {
 
 		return {
 			...Pagination<IeObject>({
-				items: await Promise.all(
-					adaptedESResponse.hits.hits.map((esHit) =>
-						this.adaptESObjectToObject(esHit._source)
-					)
+				items: adaptedESResponse.hits.hits.map((esHit) =>
+					this.adaptESObjectToObject(esHit._source)
 				),
 				page: 1,
 				size: adaptedESResponse.hits.hits.length,
@@ -355,7 +351,7 @@ export class IeObjectsService {
 		}
 
 		// sanity check
-		const nrHits = get(esResponse, 'hits.total.value');
+		const nrHits = esResponse?.hits?.total?.value;
 		if (!nrHits) {
 			return esResponse;
 		}
@@ -511,6 +507,13 @@ export class IeObjectsService {
 	public async getVisitorSpaceAccessInfoFromUser(
 		user: SessionUserEntity
 	): Promise<IeObjectsVisitorSpaceInfo> {
+		// If user is not logged in, he cannot have any visitor space access
+		if (!user.getId()) {
+			return {
+				objectIds: [],
+				visitorSpaceIds: [],
+			};
+		}
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
 		const activeVisits = await this.visitsService.findAll(
@@ -563,12 +566,6 @@ export class IeObjectsService {
 			isKeyUser: user.getIsKeyUser(),
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			licensesByUserGroup:
-				IE_OBJECT_LICENSES_BY_USER_GROUP[
-					isNil(user.getId())
-						? IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]
-						: user.getGroupId()
-				],
 		});
 
 		return {
