@@ -97,10 +97,6 @@ export class IeObjectsController {
 			maintainerId: user.getMaintainerId(),
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			licensesByUserGroup:
-				IE_OBJECT_LICENSES_BY_USER_GROUP[
-					user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
-				],
 		});
 
 		return limitedObject;
@@ -207,10 +203,6 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					licensesByUserGroup:
-						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
-						],
 				})
 			),
 		};
@@ -256,10 +248,6 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					licensesByUserGroup:
-						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
-						],
 				})
 			),
 		};
@@ -302,10 +290,6 @@ export class IeObjectsController {
 					maintainerId: user.getMaintainerId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					licensesByUserGroup:
-						IE_OBJECT_LICENSES_BY_USER_GROUP[
-							user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
-						],
 				})
 			),
 		};
