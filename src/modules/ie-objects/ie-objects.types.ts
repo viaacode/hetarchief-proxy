@@ -5,7 +5,6 @@ import {
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { ContactInfo } from '~shared/types/types';
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
 
