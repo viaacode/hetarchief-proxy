@@ -92,6 +92,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 									{
@@ -107,6 +108,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 								],
@@ -158,6 +160,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 									{
@@ -173,6 +176,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 								],
@@ -298,6 +302,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 									{
@@ -313,6 +318,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 								],
@@ -326,7 +332,6 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should use a range filter to filter on duration', () => {
-			const rangeQuery = { gte: '01:00:00' };
 			const esQuery = QueryBuilder.build(
 				{
 					filters: [
@@ -380,6 +385,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 									{
@@ -395,6 +401,7 @@ describe('QueryBuilder', () => {
 													},
 												},
 											],
+											minimum_should_match: 2,
 										},
 									},
 								],
