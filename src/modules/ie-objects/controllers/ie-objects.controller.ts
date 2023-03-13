@@ -13,7 +13,7 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
-import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
+import { convertObjectsToCsv, convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
@@ -145,7 +145,24 @@ export class IeObjectsController {
 			},
 		]);
 
-		return convertObjectToXml(objectMetadata);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return convertObjectToXml(
+			limitAccessToObjectDetails(objectMetadata, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getMaintainerId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
+			})
+		);
 	}
 
 	@Get(':id/export/csv')
@@ -169,7 +186,24 @@ export class IeObjectsController {
 			},
 		]);
 
-		return convertObjectToCsv(objectMetadata);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return convertObjectToCsv(
+			limitAccessToObjectDetails(objectMetadata, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getMaintainerId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				licensesByUserGroup:
+					IE_OBJECT_LICENSES_BY_USER_GROUP[
+						user.getGroupId() ?? IeObjectExtraUserGroupType.ANONYMOUS
+					],
+			})
+		);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
