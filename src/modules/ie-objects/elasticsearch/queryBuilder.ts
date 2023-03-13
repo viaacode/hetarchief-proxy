@@ -4,7 +4,7 @@ import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
-import { IeObjectLicense, IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import { IeObjectLicense } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -28,6 +28,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
+import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -214,15 +215,8 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildLicensesFilter(inputInfo: {
-		user: {
-			isKeyUser: boolean;
-			maintainerId: string;
-			sector: IeObjectSector | null;
-		};
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-	}): any {
-		const { user, visitorSpaceInfo } = inputInfo;
+	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
+		const { user, visitorSpaceInfo, isConsultableRemote, isConsultableMedia } = inputInfo;
 
 		let checkSchemaLicenses: any = [
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
@@ -332,6 +326,60 @@ export class QueryBuilder {
 							IeObjectLicense.INTRA_CP_METADATA_ALL,
 							IeObjectLicense.INTRA_CP_CONTENT,
 						],
+					},
+				},
+			];
+		}
+
+		// Only viewable on site in combo with
+		// Object that has BEZOEKERTOOL_CONTENT license
+		// maintainer of object has active visitor space
+		// User cannot be part of KIOSK user group
+		if (!isConsultableRemote && user.groupId !== Group.KIOSK_VISITOR) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					bool: {
+						should: [
+							{
+								terms: {
+									maintainer: visitorSpaceInfo.visitorSpaceIds,
+								},
+							},
+							{
+								terms: {
+									schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+								},
+							},
+						],
+						minimum_should_match: 2,
+					},
+				},
+			];
+		}
+
+		// User can access anything in combo with
+		// Object has VIAA_INTRA_CP-CONTENT license
+		// ACM: user has catpro
+		// ACM: sector or id the user connected to
+		if (isConsultableMedia && user.isKeyUser && !isNil(user.sector)) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					bool: {
+						should: [
+							{
+								term: {
+									'schema_maintainer.organization_type': user.sector,
+								},
+							},
+							{
+								terms: {
+									schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
+								},
+							},
+						],
+						minimum_should_match: 2,
 					},
 				},
 			];

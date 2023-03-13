@@ -67,6 +67,7 @@ export enum QueryType {
 }
 
 export interface QueryBuilderUserInfo {
+	groupId: string;
 	isKeyUser: boolean;
 	maintainerId: string;
 	sector: IeObjectSector;

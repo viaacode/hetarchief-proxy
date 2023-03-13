@@ -78,6 +78,7 @@ export class IeObjectsService {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user: {
+				groupId: user.getGroupId(),
 				isKeyUser: user.getIsKeyUser(),
 				maintainerId: user.getMaintainerId(),
 				sector: user.getSector(),
