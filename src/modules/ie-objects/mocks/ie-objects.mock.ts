@@ -479,3 +479,12 @@ export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
 		},
 	],
 };
+
+export const mockIeObjectWithMetadataSetLTDCsvHeaders =
+	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;maintainerId;name;series;programs;alternativeName;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;ebucoreIsMediaFragmentOf';
+
+export const mockIeObjectWithMetadataSetALLCsvHeaders =
+	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;maintainerId;name;series;programs;alternativeName;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;ebucoreIsMediaFragmentOf';
+
+export const mockIeObjectWithMetadataSetALLWithEssenceCsvHeaders =
+	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;maintainerId;name;series;programs;alternativeName;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;ebucoreIsMediaFragmentOf';

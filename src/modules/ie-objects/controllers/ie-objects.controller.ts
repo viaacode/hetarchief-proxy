@@ -13,7 +13,7 @@ import {
 	ThumbnailQueryDto,
 } from '../dto/ie-objects.dto';
 import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter';
-import { convertObjectsToCsv, convertObjectToCsv } from '../helpers/convert-objects-to-csv';
+import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
@@ -123,7 +123,6 @@ export class IeObjectsController {
 		};
 	}
 
-	// TODO: rewrite export with limited access
 	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
