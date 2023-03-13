@@ -29,15 +29,15 @@ describe('convertObjectToCsv', () => {
 		expect(csv.endsWith('1;test')).toBeTruthy();
 	});
 
-	it('returns the csv version of an object with metadate set LTD', () => {
+	it('returns the csv version of an object with metadata set LTD', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetLTD);
 		expect(csv).toEqual(mockIeObjectWithMetadataSetLTDCsv);
 	});
-	it('returns the csv version of an object with metadate set ALL', () => {
+	it('returns the csv version of an object with metadata set ALL', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetALL);
 		expect(csv).toEqual(mockIeObjectWithMetadataSetALLCsv);
 	});
-	it('returns the csv version of an object with metadate set ALL with Essence', () => {
+	it('returns the csv version of an object with metadata set ALL with Essence', () => {
 		const csv = convertObjectToCsv(
 			mockIeObjectWithMetadataSetALLWithEssence as unknown as IeObject
 		);

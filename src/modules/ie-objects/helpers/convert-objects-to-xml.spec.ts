@@ -15,15 +15,15 @@ describe('convertObjectToXml', () => {
 		expect(xml.startsWith('<object>')).toBeTruthy();
 	});
 
-	it('returns the xml version of an object with metadate set LTD', () => {
+	it('returns the xml version of an object with metadata set LTD', () => {
 		const xml = convertObjectToXml(mockIeObjectWithMetadataSetLTD);
 		expect(xml).toEqual(mockIeObjectWithMetadataSetLTDXml);
 	});
-	it('returns the xml version of an object with metadate set ALL', () => {
+	it('returns the xml version of an object with metadata set ALL', () => {
 		const xml = convertObjectToXml(mockIeObjectWithMetadataSetALL);
 		expect(xml).toEqual(mockIeObjectWithMetadataSetALLXml);
 	});
-	it('returns the xml version of an object with metadate set ALL with Essence', () => {
+	it('returns the xml version of an object with metadata set ALL with Essence', () => {
 		const xml = convertObjectToXml(
 			mockIeObjectWithMetadataSetALLWithEssence as unknown as IeObject
 		);
