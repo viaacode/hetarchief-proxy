@@ -252,7 +252,7 @@ export class MaterialRequestsService {
 			return null;
 		}
 
-		let transformedMaterialRequest: MaterialRequest = {
+		const transformedMaterialRequest: MaterialRequest = {
 			id: grapqhQLMaterialRequest.id,
 			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
 			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
@@ -269,37 +269,17 @@ export class MaterialRequestsService {
 			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
 			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
 			requesterCapacity: grapqhQLMaterialRequest.requester_capacity,
+			requesterUserGroupId: grapqhQLMaterialRequest.requested_by.group?.id || null,
+			requesterUserGroupName: grapqhQLMaterialRequest.requested_by.group?.name || null,
+			requesterUserGroupLabel: grapqhQLMaterialRequest.requested_by.group?.label || null,
+			requesterUserGroupDescription:
+				grapqhQLMaterialRequest.requested_by.group?.description || null,
 			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
 			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
+			maintainerLogo: grapqhQLMaterialRequest.object.maintainer.information?.logo?.iri,
 			organisation: grapqhQLMaterialRequest.organisation || null,
 		};
-
-		// FindMaterialRequestsByIdQuery has more detailed props than would be returned with FindMaterialRequestsQuery
-		const GqlMaterialRequestById =
-			grapqhQLMaterialRequest as FindMaterialRequestsByIdQuery['app_material_requests'][0];
-
-		// Brecht - Check if GqlMaterialRequestById has a prop group
-		// If so add user group information
-		if (has(GqlMaterialRequestById.requested_by, 'group')) {
-			transformedMaterialRequest = {
-				...transformedMaterialRequest,
-				requesterUserGroupId: GqlMaterialRequestById.requested_by.group?.id || null,
-				requesterUserGroupName: GqlMaterialRequestById.requested_by.group?.name || null,
-				requesterUserGroupLabel: GqlMaterialRequestById.requested_by.group?.label || null,
-				requesterUserGroupDescription:
-					GqlMaterialRequestById.requested_by.group?.description || null,
-			};
-		}
-
-		// Brecht - Check if GqlMaterialRequestById.object.maintainer has a prop information
-		// If so add information props
-		if (has(GqlMaterialRequestById.object.maintainer, 'information')) {
-			transformedMaterialRequest = {
-				...transformedMaterialRequest,
-				maintainerLogo: GqlMaterialRequestById.object.maintainer.information?.logo?.iri,
-			};
-		}
 
 		return transformedMaterialRequest;
 	}
