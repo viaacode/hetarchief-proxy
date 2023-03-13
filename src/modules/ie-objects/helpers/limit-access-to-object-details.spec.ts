@@ -1,10 +1,5 @@
-import { IE_OBJECT_INTRA_CP_LICENSES, IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
-import {
-	IeObjectAccessThrough,
-	IeObjectExtraUserGroupType,
-	IeObjectLicense,
-	IeObjectSector,
-} from '../ie-objects.types';
+import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -14,14 +9,15 @@ import {
 } from '../mocks/ie-objects.mock';
 
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
+import { LimitAccessUserInfo } from './limit-access-to-object-details.types';
 
 import { Group } from '~modules/users/types';
 
 describe('Limit access to object details', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen
 	// https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
-	it('Test case 1 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const mockUserInfoTestCase1a = {
+	it('Test case 1 - user sees metadataset all on detail page', () => {
+		const mockUserInfoTestCase1a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: true,
@@ -36,13 +32,7 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// Basic user - isKeyUser - Public Sector
-			{
-				...mockUserInfoTestCase1a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase1a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase1a
 		);
 		expect(limitedAccessIeObject1a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
@@ -51,8 +41,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 2 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const mockUserInfoTestCase2a = {
+	it('Test case 2 - user sees metadataset all en essence on detail page', () => {
+		const mockUserInfoTestCase2a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.CP_ADMIN,
 			isKeyUser: true,
@@ -66,13 +56,7 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// CP admin works for ADVN - hasVisitorSpace - Culture sector
-			{
-				...mockUserInfoTestCase2a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase2a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase2a
 		);
 		expect(limitedAccessIeObject1b).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
@@ -85,8 +69,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 3 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const mockUserInfoTestCase3a = {
+	it('Test case 3 - user sees metadataset all en essence on detail page', () => {
+		const mockUserInfoTestCase3a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: true,
@@ -104,13 +88,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// Basis gebruiker - isKeyUser - Culture sector - temporary access visitor space VRT
-			{
-				...mockUserInfoTestCase3a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase3a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase3a
 		);
 		expect(limitedAccessIeObject1c).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
@@ -127,8 +105,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 4 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const mockUserInfoTestCase4a = {
+	it('Test case 4 - user sees metadataset all on detail page', () => {
+		const mockUserInfoTestCase4a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: false,
@@ -147,13 +125,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// Basis gebruiker - temporary access visitor space Amsab-ISG - Culture sector
-			{
-				...mockUserInfoTestCase4a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase4a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase4a
 		);
 		expect(limitedAccessIeObject1d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
@@ -168,8 +140,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 4b - user ziet gelimiteerde metadataset op de detailpagina', () => {
-		const mockUserInfoTestCase4b = {
+	it('Test case 4b - user sees metadataset limited on detail page', () => {
+		const mockUserInfoTestCase4b: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: false,
@@ -190,13 +162,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// Basis gebruiker - temporary access visitor space MAAR NIET VOOR Amsab-ISG - Culture sector
-			{
-				...mockUserInfoTestCase4b,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase4b.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase4b
 		);
 		expect(limitedAccessIeObject1da).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
@@ -208,8 +174,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 5 - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const mockUserInfoTestCase5a = {
+	it('Test case 5 - user sees metadataset all on detail page', () => {
+		const mockUserInfoTestCase5a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.MEEMOO_ADMIN,
 			isKeyUser: false,
@@ -230,13 +196,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// MEEMOO ADMIN
-			{
-				...mockUserInfoTestCase5a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase5a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase5a
 		);
 		expect(limitedAccessIeObject1e).toEqual({
 			...mockIeObjectWithMetadataSetALL,
@@ -249,8 +209,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 6 - user ziet object niet', () => {
-		const mockUserInfoTestCase6a = {
+	it("Test case 6 - user doesn't see object", () => {
+		const mockUserInfoTestCase6a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.KIOSK_VISITOR,
 			isKeyUser: false,
@@ -269,19 +229,13 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// KIOSK - ADVN (Culture sector)
-			{
-				...mockUserInfoTestCase6a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase6a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase6a
 		);
 		expect(limitedAccessIeObject1f).toEqual(null);
 	});
 
-	it('Test case 7 - user ziet gelimiteerde metadataset op de detailpagina', () => {
-		const mockUserInfoTestCase7a = {
+	it('Test case 7 - user sees limited metadataset on detail page', () => {
+		const mockUserInfoTestCase7a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.CP_ADMIN,
 			isKeyUser: true,
@@ -297,13 +251,7 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// CP admin - isKeyUser - AVS (Regional sector)
-			{
-				...mockUserInfoTestCase7a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase7a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase7a
 		);
 		expect(limitedAccessIeObject1g).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
@@ -312,8 +260,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('Test case 8 - user ziet uitgebreide metadataset en essence op de detailpagina', () => {
-		const mockUserInfoTestCase8a = {
+	it('Test case 8 - user sees metadataset all and essence on detail page', () => {
+		const mockUserInfoTestCase8a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: true,
@@ -333,13 +281,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// Basis gebruiker - isKeyUser - SBS Belgium (Rural)
-			{
-				...mockUserInfoTestCase8a,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCase8a.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCase8a
 		);
 		expect(limitedAccessIeObject1h).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
@@ -355,8 +297,8 @@ describe('Limit access to object details', () => {
 
 	// -------------------------------------------------------------------------
 
-	it('USER GEEN SECTOR - user ziet metadataset op de detailpagina', () => {
-		const mockUserInfoTestCaseNoSectorA = {
+	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
+		const mockUserInfoTestCaseNoSectorA: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.VISITOR,
 			isKeyUser: false,
@@ -373,14 +315,7 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// Basic user
-			{
-				...mockUserInfoTestCaseNoSectorA,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCaseNoSectorA.groupId ??
-							IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCaseNoSectorA
 		);
 		expect(limitedAccessIeObject2a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
@@ -389,8 +324,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('USER GEEN SECTOR - user (CP Admin) ziet gelimiteerd metadataset op de detailpagina', () => {
-		const mockUserInfoTestCaseNoSectorB = {
+	it('USER NO SECTOR - user (CP Admin) sees metadataset limited on detail page', () => {
+		const mockUserInfoTestCaseNoSectorB: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.CP_ADMIN,
 			isKeyUser: false,
@@ -407,14 +342,7 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// CP admin
-			{
-				...mockUserInfoTestCaseNoSectorB,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCaseNoSectorB.groupId ??
-							IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCaseNoSectorB
 		);
 		expect(limitedAccessIeObject2b).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
@@ -423,8 +351,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('USER GEEN SECTOR - user ziet uitgebreide metadataset op de detailpagina', () => {
-		const mockUserInfoTestCaseNoSectorC = {
+	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
+		const mockUserInfoTestCaseNoSectorC: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.MEEMOO_ADMIN,
 			isKeyUser: false,
@@ -445,14 +373,7 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// MEEMOO ADMIN
-			{
-				...mockUserInfoTestCaseNoSectorC,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCaseNoSectorC.groupId ??
-							IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCaseNoSectorC
 		);
 		expect(limitedAccessIeObject2d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
@@ -465,8 +386,8 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('USER GEEN SECTOR - user ziet object niet', () => {
-		const mockUserInfoTestCaseNoSectorD = {
+	it("USER NO SECTOR - user doesn't see object", () => {
+		const mockUserInfoTestCaseNoSectorD: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.KIOSK_VISITOR,
 			isKeyUser: false,
@@ -486,20 +407,13 @@ describe('Limit access to object details', () => {
 				],
 			},
 			// KIOSK
-			{
-				...mockUserInfoTestCaseNoSectorD,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCaseNoSectorD.groupId ??
-							IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+			mockUserInfoTestCaseNoSectorD
 		);
 		expect(limitedAccessIeObject2e).toEqual(null);
 	});
 
-	it('USER GEEN SECTOR - user ziet object niet', () => {
-		const mockUserInfoTestCaseNoSectorE = {
+	it("USER NO SECTOR - user doesn't see object", () => {
+		const mockUserInfoTestCaseNoSectorE: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: Group.CP_ADMIN,
 			isKeyUser: false,
@@ -507,10 +421,6 @@ describe('Limit access to object details', () => {
 			maintainerId: null,
 			accessibleVisitorSpaceIds: [],
 			accessibleObjectIdsThroughFolders: [],
-			licensesByUserGroup:
-				IE_OBJECT_LICENSES_BY_USER_GROUP[
-					Group.CP_ADMIN ?? IeObjectExtraUserGroupType.ANONYMOUS
-				],
 		};
 		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			// SBS Belgium (Rural)
@@ -520,14 +430,52 @@ describe('Limit access to object details', () => {
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// CP admin
+			mockUserInfoTestCaseNoSectorE
+		);
+		expect(limitedAccessIeObject2f).toEqual(null);
+	});
+
+	it('ANONYMOUS USER, LIMITED METADATA - user sees object with limited metadata', () => {
+		const mockUserInfoTestCaseNoSectorF: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			isKeyUser: false,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			{
-				...mockUserInfoTestCaseNoSectorE,
-				licensesByUserGroup:
-					IE_OBJECT_LICENSES_BY_USER_GROUP[
-						mockUserInfoTestCaseNoSectorE.groupId ??
-							IeObjectExtraUserGroupType.ANONYMOUS
-					],
-			}
+				...mockIeObject,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+			},
+			// CP admin
+			mockUserInfoTestCaseNoSectorF
+		);
+		expect(limitedAccessIeObject2f).toEqual({
+			...mockIeObjectWithMetadataSetLTD,
+			accessThrough: ['PUBLIC_INFO'],
+		});
+	});
+
+	it('ANONYMOUS USER, LICENSES NULL - user should not see the object', () => {
+		const mockUserInfoTestCaseNoSectorG: LimitAccessUserInfo = {
+			...mockUserInfo,
+			groupId: undefined,
+			isKeyUser: false,
+			sector: null,
+			maintainerId: null,
+			accessibleVisitorSpaceIds: [],
+			accessibleObjectIdsThroughFolders: [],
+		};
+		const limitedAccessIeObject2f = limitAccessToObjectDetails(
+			{
+				...mockIeObject,
+				licenses: null,
+			},
+			// CP admin
+			mockUserInfoTestCaseNoSectorG
 		);
 		expect(limitedAccessIeObject2f).toEqual(null);
 	});

@@ -2,34 +2,34 @@ import { intersection, isEmpty, pick, uniq } from 'lodash';
 
 import {
 	IE_OBJECT_INTRA_CP_LICENSES,
+	IE_OBJECT_LICENSES_BY_USER_GROUP,
 	IE_OBJECT_METADATA_SET_BY_LICENSE,
 	IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR,
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
 } from '../ie-objects.conts';
-import { IeObject, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
+import {
+	IeObject,
+	IeObjectExtraUserGroupType,
+	IeObjectLicense,
+	IeObjectSector,
+} from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
+import { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
 import { Group } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
 	ieObject: Partial<IeObject>,
-	userInfo: {
-		userId: string | null;
-		isKeyUser: boolean;
-		sector: IeObjectSector | null;
-		groupId: string;
-		maintainerId: string;
-		// folders -> if ie object id is in here then the user has folder access to this visitor space
-		accessibleObjectIdsThroughFolders: string[];
-		// May only contain FULL ACCESS Visitor space ids
-		// full -> if object.maintainerId is in this list than the user has full access to visitor space
-		accessibleVisitorSpaceIds: string[];
-		licensesByUserGroup: IeObjectLicense[];
-	}
+	userInfo: LimitAccessUserInfo
 ): Partial<IeObject> => {
+	const licensesByUserGroup = [
+		...(IE_OBJECT_LICENSES_BY_USER_GROUP[
+			userInfo.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
+		] ?? []),
+	];
 	let ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
@@ -89,10 +89,6 @@ export const limitAccessToObjectDetails = (
 
 		ieObjectLicenses = intersection(ieObjectLicenses, licensesBySector);
 	} else {
-		const licensesByUserGroup = userInfo.licensesByUserGroup
-			? [...userInfo.licensesByUserGroup]
-			: [];
-
 		// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
 		// If user is part of VISITOR && has full access -> add visitor content license to licenses
 		if (hasFolderAccess || hasFullAccess) {

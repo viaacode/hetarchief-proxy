@@ -9,14 +9,6 @@ import {
 
 import { Group } from '~modules/users/types';
 
-export const IE_OBJECT_EXTRA_USER_SUB_GROUPS = {
-	[IeObjectExtraUserGroupType.ANONYMOUS]: 'anonymous',
-};
-
-export const IE_OBJECT_EXTRA_USER_GROUPS = {
-	[IeObjectExtraUserGroupType.ANONYMOUS]: IE_OBJECT_EXTRA_USER_SUB_GROUPS.ANONYMOUS,
-};
-
 export const IE_OBJECT_INTRA_CP_LICENSES = [
 	IeObjectLicense.INTRA_CP_CONTENT,
 	IeObjectLicense.INTRA_CP_METADATA_ALL,
@@ -34,9 +26,7 @@ export const IE_OBJECT_VISITOR_LICENSES = [
 ];
 
 export const IE_OBJECT_LICENSES_BY_USER_GROUP: Record<string, IeObjectLicense[]> = {
-	[IE_OBJECT_EXTRA_USER_GROUPS[IeObjectExtraUserGroupType.ANONYMOUS]]: [
-		...IE_OBJECT_PUBLIC_LICENSES,
-	],
+	[IeObjectExtraUserGroupType.ANONYMOUS]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[Group.VISITOR]: [...IE_OBJECT_PUBLIC_LICENSES],
 	[Group.KIOSK_VISITOR]: [],
 	[Group.CP_ADMIN]: [...IE_OBJECT_PUBLIC_LICENSES],
