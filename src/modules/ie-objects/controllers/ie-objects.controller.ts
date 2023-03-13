@@ -16,10 +16,8 @@ import { checkAndFixFormatFilter } from '../helpers/check-and-fix-format-filter'
 import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
-import { IE_OBJECT_LICENSES_BY_USER_GROUP } from '../ie-objects.conts';
 import {
 	IeObject,
-	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
