@@ -1,11 +1,11 @@
 import { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
-	mockIeObjectWithMetadataSetALLCsvHeaders,
+	mockIeObjectWithMetadataSetALLCsv,
 	mockIeObjectWithMetadataSetALLWithEssence,
-	mockIeObjectWithMetadataSetALLWithEssenceCsvHeaders,
+	mockIeObjectWithMetadataSetALLWithEssenceCsv,
 	mockIeObjectWithMetadataSetLTD,
-	mockIeObjectWithMetadataSetLTDCsvHeaders,
+	mockIeObjectWithMetadataSetLTDCsv,
 } from '../mocks/ie-objects.mock';
 
 import { convertObjectsToCsv, convertObjectToCsv } from './convert-objects-to-csv';
@@ -31,17 +31,17 @@ describe('convertObjectToCsv', () => {
 
 	it('returns the csv version of an object with metadate set LTD', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetLTD);
-		expect(csv.startsWith(mockIeObjectWithMetadataSetLTDCsvHeaders)).toBeTruthy();
+		expect(csv).toEqual(mockIeObjectWithMetadataSetLTDCsv);
 	});
 	it('returns the csv version of an object with metadate set ALL', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetALL);
-		expect(csv.startsWith(mockIeObjectWithMetadataSetALLCsvHeaders)).toBeTruthy();
+		expect(csv).toEqual(mockIeObjectWithMetadataSetALLCsv);
 	});
 	it('returns the csv version of an object with metadate set ALL with Essence', () => {
 		const csv = convertObjectToCsv(
 			mockIeObjectWithMetadataSetALLWithEssence as unknown as IeObject
 		);
-		expect(csv.startsWith(mockIeObjectWithMetadataSetALLWithEssenceCsvHeaders)).toBeTruthy();
+		expect(csv).toEqual(mockIeObjectWithMetadataSetALLWithEssenceCsv);
 	});
 });
 
