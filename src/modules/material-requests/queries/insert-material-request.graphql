@@ -1,0 +1,32 @@
+mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert_input!) {
+	insert_app_material_requests_one(object: $newMaterialRequest) {
+		id
+		object_schema_identifier
+		profile_id
+		reason
+		type
+		created_at
+		updated_at
+		is_pending
+		requester_capacity
+		organisation
+		requested_by {
+			id
+			full_name
+			mail
+		}
+		object {
+			maintainer {
+				schema_identifier
+				schema_name
+				visitor_space {
+					slug
+				}
+			}
+			schema_name
+			meemoo_identifier
+			dcterms_format
+			schema_thumbnail_url
+		}
+	}
+}

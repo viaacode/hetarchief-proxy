@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
 import packageJson from '../../../../package.json';
@@ -6,14 +7,13 @@ import {
 	GetFirstObjectIdDocument,
 	GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
-import { MediaService } from '~modules/media/services/media.service';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
 @Injectable()
 export class StatusService {
 	private logger: Logger = new Logger(StatusService.name, { timestamp: true });
 
-	constructor(private dataService: DataService, private mediaService: MediaService) {}
+	constructor(private dataService: DataService, private mediaService: IeObjectsService) {}
 
 	getStatus(): Record<string, string> {
 		return {
@@ -38,7 +38,7 @@ export class StatusService {
 			);
 
 			/* istanbul ignore next */
-			return !!response?.data?.object_ie?.[0]?.schema_identifier;
+			return !!response?.object_ie?.[0]?.schema_identifier;
 		} catch (err) {
 			this.logger.error(err);
 			return false;

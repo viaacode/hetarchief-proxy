@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -18,7 +19,7 @@ import { Request, Response } from 'express';
 import { get, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 import { HetArchiefService } from '../services/het-archief.service';
@@ -29,7 +30,7 @@ import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
@@ -46,9 +47,10 @@ export class HetArchiefController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
-		private readonly translationsService: TranslationsService
+		private translationsService: TranslationsService,
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('login')
@@ -84,14 +86,14 @@ export class HetArchiefController {
 	) {
 		try {
 			const serverRedirectUrl = stringifyUrl({
-				url: `${getConfig(this.configService, 'host')}/auth/hetarchief/login`,
+				url: `${this.configService.get('HOST')}/auth/hetarchief/login`,
 				query: { returnToUrl },
 			});
 			const url = stringifyUrl({
-				url: getConfig(this.configService, 'ssumRegistrationPage'),
+				url: this.configService.get('SSUM_REGISTRATION_PAGE'),
 				query: {
 					redirect_to: serverRedirectUrl,
-					app_name: getConfig(this.configService, 'samlSpEntityId'),
+					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
 				},
 			});
 			return {
@@ -187,6 +189,14 @@ export class HetArchiefController {
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
+			if (archiefUser?.maintainerId) {
+				const organisation =
+					await this.organisationService.findOrganisationBySchemaIdentifier(
+						archiefUser.maintainerId
+					);
+				archiefUser.sector = organisation?.sector || null;
+			}
+
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			// Log event
@@ -208,7 +218,7 @@ export class HetArchiefController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			const proxyHost = getConfig(this.configService, 'host');
+			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
 					url: `${proxyHost}/auth/hetarchief/login&returnToUrl=${info.returnToUrl}`,

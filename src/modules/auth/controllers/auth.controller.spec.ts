@@ -1,7 +1,10 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { isFuture } from 'date-fns';
+
+import { Configuration } from '~config';
 
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, LoginResponse } from '../types';
@@ -9,7 +12,6 @@ import { LoginMessage, LoginResponse } from '../types';
 import { AuthController } from './auth.controller';
 
 import { SpacesModule } from '~modules/spaces';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersModule } from '~modules/users';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
@@ -31,6 +33,18 @@ const mockSessionService: Partial<Record<keyof SessionService, jest.SpyInstance>
 	getSessionConfig: jest.fn(),
 };
 
+const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
+	get: jest.fn((key: keyof Configuration): string | boolean => {
+		if (key === 'MEEMOO_ADMIN_ORGANIZATION_IDS') {
+			return '1,2';
+		}
+		if (key === 'HOST') {
+			return 'http://bezoek.test';
+		}
+		return key;
+	}),
+};
+
 describe('AuthController', () => {
 	let authController: AuthController;
 
@@ -40,6 +54,10 @@ describe('AuthController', () => {
 			imports: [ConfigModule, SpacesModule, UsersModule],
 			providers: [
 				IdpService,
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 				{
 					provide: SessionService,
 					useValue: mockSessionService,
@@ -85,7 +103,7 @@ describe('AuthController', () => {
 				'http://hetarchief.be/start'
 			);
 			expect(result).toEqual({
-				url: 'undefined/auth/hetarchief/logout?returnToUrl=http%3A%2F%2Fhetarchief.be%2Fstart',
+				url: 'http://bezoek.test/auth/hetarchief/logout?returnToUrl=http%3A%2F%2Fhetarchief.be%2Fstart',
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});

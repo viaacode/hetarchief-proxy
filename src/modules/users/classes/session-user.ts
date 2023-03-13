@@ -3,6 +3,8 @@ import { get } from 'lodash';
 
 import { Permission, User } from '../types';
 
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+
 export class SessionUserEntity {
 	private logger = new Logger(SessionUserEntity.name, { timestamp: true });
 
@@ -30,7 +32,7 @@ export class SessionUserEntity {
 	}
 
 	public getId(): string {
-		return get(this.user, 'id');
+		return get(this.user, 'id') || null;
 	}
 
 	public getFirstName(): string {
@@ -50,11 +52,27 @@ export class SessionUserEntity {
 	}
 
 	public getMaintainerId(): string {
-		return get(this.user, 'maintainerId');
+		return this.user?.maintainerId || null;
+	}
+
+	public getSector(): IeObjectSector | null {
+		return this.user?.sector || null;
 	}
 
 	public getVisitorSpaceSlug(): string {
 		return get(this.user, 'visitorSpaceSlug');
+	}
+
+	public getGroupName(): string {
+		return this.user?.groupName || null;
+	}
+
+	public getGroupId(): string {
+		return this.user?.groupId || null;
+	}
+
+	public getIsKeyUser(): boolean {
+		return this.user?.isKeyUser || false;
 	}
 
 	public has(permission: Permission): boolean {

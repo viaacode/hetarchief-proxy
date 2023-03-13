@@ -15,10 +15,16 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 			first_name
 			last_name
 			mail
+			collections {
+				ies {
+					ie_schema_identifier
+				}
+			}
 		}
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		created_at
@@ -49,6 +55,19 @@ query findApprovedEndedVisitsWithoutNotification($now: timestamp) {
 					description
 					logo
 					primary_site
+				}
+			}
+		}
+		accessible_folders {
+			folder {
+				id
+				ies {
+					ie {
+						schema_identifier
+						maintainer {
+							schema_identifier
+						}
+					}
 				}
 			}
 		}

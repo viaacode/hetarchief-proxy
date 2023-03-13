@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -17,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { get, isEqual, pick } from 'lodash';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 import { IdpService } from '../services/idp.service';
@@ -28,7 +29,6 @@ import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -44,7 +44,7 @@ export class MeemooController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private collectionsService: CollectionsService,
-		private configService: ConfigService,
+		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private translationsService: TranslationsService
 	) {}
@@ -173,7 +173,7 @@ export class MeemooController {
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			};
 		} catch (err) {
-			const proxyHost = getConfig(this.configService, 'host');
+			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {
 				return {
 					url: `${proxyHost}/auth/meemoo/login&returnToUrl=${info.returnToUrl}`,

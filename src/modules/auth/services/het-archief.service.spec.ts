@@ -2,20 +2,22 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import got from 'got';
 
+import { Configuration } from '~config';
+
 import { HetArchiefService } from './het-archief.service';
 
 import { IDP_XML_RESPONSE } from '~modules/collections/services/__mocks__/idpXmlResponse';
 
 describe('HetArchiefService', () => {
 	let hetArchiefService: HetArchiefService;
-	let configService: ConfigService;
+	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
 		jest.spyOn(got, 'post').mockResolvedValue(IDP_XML_RESPONSE);
 
 		const archiefServiceFactory = {
 			provide: HetArchiefService,
-			useFactory: async (configService: ConfigService) => {
+			useFactory: async (configService: ConfigService<Configuration>) => {
 				const archiefService = new HetArchiefService(configService);
 				await archiefService.initialize();
 				return archiefService;
@@ -28,7 +30,7 @@ describe('HetArchiefService', () => {
 		}).compile();
 
 		hetArchiefService = module.get<HetArchiefService>(HetArchiefService);
-		configService = module.get<ConfigService>(ConfigService);
+		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
 	it('services should be defined', () => {

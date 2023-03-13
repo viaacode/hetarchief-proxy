@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -6,7 +7,6 @@ import { Configuration } from '~config';
 import { IdpService } from './idp.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { Group } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
@@ -14,11 +14,11 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findByMaintainerId: jest.fn(),
 };
 
-const meemooAdminOrganizationIds = ['OR-w66976m'];
+const meemooAdminOrganizationIds = 'OR-w66976m';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): any => {
-		if (key === 'meemooAdminOrganizationIds') {
+		if (key === 'MEEMOO_ADMIN_ORGANIZATION_IDS') {
 			return meemooAdminOrganizationIds;
 		}
 		return key;
@@ -35,7 +35,7 @@ const getLdapUser = () => ({
 		oNickname: ['Testbeeld'],
 		apps: ['hetarchief-beheer'],
 		organizationalStatus: [''],
-		o: meemooAdminOrganizationIds,
+		o: meemooAdminOrganizationIds.split(','),
 	},
 	name_id: 'test@studiohyperdrive.be',
 	session_index: 'session-index',
@@ -44,7 +44,7 @@ const getLdapUser = () => ({
 
 describe('IdpService', () => {
 	let idpService: IdpService;
-	let configService: ConfigService;
+	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -66,7 +66,7 @@ describe('IdpService', () => {
 		}).compile();
 
 		idpService = module.get<IdpService>(IdpService);
-		configService = module.get<ConfigService>(ConfigService);
+		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
 	it('services should be defined', () => {
@@ -138,7 +138,7 @@ describe('IdpService', () => {
 
 		it('should assign the Meemoo Admin group if user has archief-beheer and the Meemoo Organization', async () => {
 			const ldapUser = getLdapUser();
-			ldapUser.attributes.o = meemooAdminOrganizationIds;
+			ldapUser.attributes.o = meemooAdminOrganizationIds.split(',');
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);

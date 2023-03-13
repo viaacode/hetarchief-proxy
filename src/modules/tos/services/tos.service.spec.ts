@@ -1,9 +1,9 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { TosService } from './tos.service';
 
 import { GetTosLastUpdatedAtQuery } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -52,7 +52,7 @@ describe('TosService', () => {
 					value: updatedAtIsoDate,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await tosService.getTosLastUpdatedAt();
 			expect(response.updatedAt).toEqual(updatedAtIsoDate);
@@ -62,7 +62,7 @@ describe('TosService', () => {
 			const mockData: GetTosLastUpdatedAtQuery = {
 				app_config_by_pk: null,
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
 				await tosService.getTosLastUpdatedAt();

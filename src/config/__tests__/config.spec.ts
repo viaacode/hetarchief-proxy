@@ -23,11 +23,11 @@ describe('Configuration', () => {
 			PORT: customPort.toString(),
 		};
 		const testConfig = config();
-		expect(testConfig.port).toBe(customPort);
+		expect(testConfig.PORT).toBe(customPort);
 	});
 
 	it('Should return a default configuration if no environment is set', () => {
 		const testConfig = config();
-		expect(testConfig.port).toBe(DEFAULT_CONFIG.port);
+		expect(testConfig.PORT).toBe(DEFAULT_CONFIG.port);
 	});
 });

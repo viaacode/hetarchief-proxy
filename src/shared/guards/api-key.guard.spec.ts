@@ -7,14 +7,14 @@ import { API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 const mockApiKey = 'MySecretApiKey';
 
-const mockConfigService: ConfigService = {
+const mockConfigService: ConfigService<Configuration> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'proxyApiKey') {
+		if (key === 'PROXY_API_KEY') {
 			return mockApiKey;
 		}
 		return key;
 	}),
-} as Partial<Record<keyof ConfigService, jest.SpyInstance>> as unknown as ConfigService;
+} as unknown as ConfigService<Configuration>;
 
 const mockExecutionContextCorrect = {
 	switchToHttp: jest.fn().mockReturnValue({
@@ -57,7 +57,7 @@ const mockExecutionContextWrong = {
 describe('ApiKeyGuard', () => {
 	it('Should allow access when apiKey header is set', async () => {
 		const canActivateRoute: boolean = new ApiKeyGuard(
-			mockConfigService as unknown as ConfigService
+			mockConfigService as unknown as ConfigService<Configuration>
 		).canActivate(mockExecutionContextCorrect);
 		expect(canActivateRoute).toBe(true);
 	});
@@ -65,9 +65,9 @@ describe('ApiKeyGuard', () => {
 	it('Should not allow access when apiKey header is not set', async () => {
 		let error: any;
 		try {
-			new ApiKeyGuard(mockConfigService as unknown as ConfigService).canActivate(
-				mockExecutionContextNotSet
-			);
+			new ApiKeyGuard(
+				mockConfigService as unknown as ConfigService<Configuration>
+			).canActivate(mockExecutionContextNotSet);
 		} catch (err) {
 			error = err;
 		}
@@ -77,9 +77,9 @@ describe('ApiKeyGuard', () => {
 	it('Should not allow access when apiKey header is wrong', async () => {
 		let error: any;
 		try {
-			new ApiKeyGuard(mockConfigService as unknown as ConfigService).canActivate(
-				mockExecutionContextWrong
-			);
+			new ApiKeyGuard(
+				mockConfigService as unknown as ConfigService<Configuration>
+			).canActivate(mockExecutionContextWrong);
 		} catch (err) {
 			error = err;
 		}

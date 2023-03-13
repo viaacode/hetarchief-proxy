@@ -19,10 +19,16 @@ query findVisits(
 			first_name
 			last_name
 			mail
+			collections {
+				ies {
+					ie_schema_identifier
+				}
+			}
 		}
 		user_reason
 		user_timeframe
 		status
+		access_type
 		start_date
 		end_date
 		visitor_space_request_notes(order_by: { created_at: desc }, limit: 1) {
@@ -63,6 +69,19 @@ query findVisits(
 		last_updated_by {
 			id
 			full_name
+		}
+		accessible_folders {
+			folder {
+				id
+				ies {
+					ie {
+						schema_identifier
+						maintainer {
+							schema_identifier
+						}
+					}
+				}
+			}
 		}
 	}
 	maintainer_visitor_space_request_aggregate(where: $where) {

@@ -11,7 +11,6 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('Events')
 @Controller('events')
 export class EventsController {
@@ -29,7 +28,7 @@ export class EventsController {
 			id: EventsHelper.getEventId(request),
 			type: createEventsDto.type,
 			source: createEventsDto.path,
-			subject: user.getId(),
+			subject: user.getId() || 'anonymous',
 			time: new Date().toISOString(),
 		};
 

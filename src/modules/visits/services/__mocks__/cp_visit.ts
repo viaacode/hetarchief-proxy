@@ -1,7 +1,15 @@
-import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
-import { GqlVisit, GqlVisitWithNotes } from '~modules/visits/types';
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
-export const mockCpVisit: GqlVisit = {
+import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
+import {
+	GqlVisit,
+	GqlVisitWithNotes,
+	Visit,
+	VisitAccessType,
+	VisitStatus,
+} from '~modules/visits/types';
+
+export const mockGqlVisitRequest: GqlVisit = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 	cp_space_id: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 	user_profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
@@ -11,10 +19,20 @@ export const mockCpVisit: GqlVisit = {
 		first_name: 'Ineke',
 		last_name: 'van Dams',
 		mail: 'ineke.vandam@meemoo.be',
+		collections: [
+			{
+				ies: [
+					{
+						ie_schema_identifier: '',
+					},
+				],
+			},
+		],
 	},
 	user_reason: 'voor mijn onderzoek en studie',
 	user_timeframe: 'meteen',
 	status: 'PENDING',
+	access_type: VisitAccessType.Full,
 	start_date: null,
 	end_date: null,
 	visitor_space_request_notes: [] as GqlVisitWithNotes['visitor_space_request_notes'],
@@ -60,4 +78,67 @@ export const mockCpVisit: GqlVisit = {
 		},
 	},
 	last_updated_by: null,
+	accessible_folders: [],
+};
+
+export const mockVisitRequest: Visit = {
+	accessType: VisitAccessType.Full,
+	accessibleFolderIds: [],
+	createdAt: '2022-03-18T08:32:57.256264',
+	endAt: null,
+	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+	note: undefined,
+	reason: 'voor mijn onderzoek en studie',
+	spaceAddress: 'Eugène Flageyplein 18, 1050 Elsene',
+	spaceColor: null,
+	spaceDescription: null,
+	spaceId: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
+	spaceImage: null,
+	spaceInfo:
+		'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
+	spaceLogo: 'https://assets.viaa.be/images/OR-d79593p',
+	spaceMail: 'vrt@info.com',
+	spaceMaintainerId: 'OR-d79593p',
+	spaceName: 'vrt',
+	spaceServiceDescription: null,
+	spaceSlug: 'bruzz',
+	spaceTelephone: '054342312',
+	startAt: null,
+	status: VisitStatus.PENDING,
+	timeframe: 'meteen',
+	updatedAt: '2022-03-18T08:32:57.256264',
+	updatedById: 'a6f844e1-a7b1-48a4-906e-fa58009b567f',
+	updatedByName: 'test cp name',
+	userProfileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+	visitorFirstName: 'Ineke',
+	visitorId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
+	visitorLastName: 'van Dams',
+	visitorMail: 'ineke.vandam@meemoo.be',
+	visitorName: 'Ineke van Dams',
+};
+
+export const mockVisitApproved: Visit = {
+	id: mockGqlVisitRequest.id,
+	spaceId: mockGqlVisitRequest.cp_space_id,
+	spaceSlug: 'vrt',
+	spaceMaintainerId: 'or-rf5kf25',
+	spaceName: 'VRT',
+	spaceMail: 'cp-VRT@studiohyperdrive.be',
+	spaceTelephone: '0412 34 56 78',
+	userProfileId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	timeframe: 'Binnen 3 weken donderdag van 5 to 6',
+	reason: 'Ik wil graag deze zaal bezoeken 7',
+	status: VisitStatus.APPROVED,
+	startAt: '2022-03-03T16:00:00',
+	endAt: '2022-03-03T17:00:00',
+	createdAt: '2022-02-11T15:28:40.676',
+	updatedAt: '2022-02-11T15:28:40.676',
+	visitorFirstName: 'Marie',
+	visitorLastName: 'Odhiambo',
+	visitorName: 'Marie Odhiambo',
+	visitorMail: 'marie.odhiambo@example.com',
+	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+	updatedById: null,
+	updatedByName: null,
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Folders,
 };

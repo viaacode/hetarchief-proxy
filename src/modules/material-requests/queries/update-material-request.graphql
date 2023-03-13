@@ -1,0 +1,41 @@
+mutation updateMaterialRequest(
+	$materialRequestId: uuid
+	$userProfileId: uuid
+	$updateMaterialRequest: app_material_requests_set_input
+) {
+	update_app_material_requests(
+		where: { id: { _eq: $materialRequestId }, profile_id: { _eq: $userProfileId } }
+		_set: $updateMaterialRequest
+	) {
+		returning {
+			id
+			object_schema_identifier
+			profile_id
+			reason
+			type
+			created_at
+			updated_at
+			is_pending
+			requester_capacity
+			organisation
+			requested_by {
+				id
+				full_name
+				mail
+			}
+			object {
+				maintainer {
+					schema_identifier
+					schema_name
+					visitor_space {
+						slug
+					}
+				}
+				meemoo_identifier
+				schema_name
+				dcterms_format
+				schema_thumbnail_url
+			}
+		}
+	}
+}

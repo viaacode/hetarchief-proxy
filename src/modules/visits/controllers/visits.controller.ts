@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -22,7 +23,7 @@ import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { AccessStatus, Visit, VisitSpaceCount, VisitStatus } from '../types';
+import { AccessStatus, Visit, VisitAccessType, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { EventsService } from '~modules/events/services/events.service';
@@ -30,7 +31,6 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -168,6 +168,8 @@ export class VisitsController {
 				timeframe: '',
 				updatedAt: new Date().toISOString(),
 				userProfileId: user.getId(),
+				accessType: VisitAccessType.Full,
+				accessibleFolderIds: null,
 			};
 		}
 

@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+import { Configuration } from '~config';
+
 import { AuthController } from './controllers/auth.controller';
 import { HetArchiefController } from './controllers/het-archief.controller';
 import { MeemooController } from './controllers/meemoo.controller';
@@ -10,6 +12,7 @@ import { MeemooService } from './services/meemoo.service';
 
 import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
+import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
@@ -17,7 +20,7 @@ import { SessionService } from '~shared/services/session.service';
 
 export const archiefServiceFactory = {
 	provide: HetArchiefService,
-	useFactory: async (configService: ConfigService) => {
+	useFactory: async (configService: ConfigService<Configuration>) => {
 		const archiefService = new HetArchiefService(configService);
 		await archiefService.initialize();
 		return archiefService;
@@ -27,7 +30,7 @@ export const archiefServiceFactory = {
 
 export const meemooServiceFactory = {
 	provide: MeemooService,
-	useFactory: async (configService: ConfigService) => {
+	useFactory: async (configService: ConfigService<Configuration>) => {
 		const meemooService = new MeemooService(configService);
 		await meemooService.initialize();
 		return meemooService;
@@ -44,6 +47,7 @@ export const meemooServiceFactory = {
 		SpacesModule,
 		EventsModule,
 		TranslationsModule,
+		OrganisationsModule,
 	],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService, SessionService],
 })

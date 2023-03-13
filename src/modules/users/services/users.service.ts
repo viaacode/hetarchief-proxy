@@ -1,3 +1,4 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
@@ -6,22 +7,29 @@ import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../
 import {
 	DeleteLinkUserToMaintainerDocument,
 	DeleteLinkUserToMaintainerMutation,
+	DeleteLinkUserToMaintainerMutationVariables,
 	GetLinkUserToMaintainerDocument,
 	GetLinkUserToMaintainerQuery,
+	GetLinkUserToMaintainerQueryVariables,
 	GetUserByIdentityIdDocument,
 	GetUserByIdentityIdQuery,
+	GetUserByIdentityIdQueryVariables,
 	InsertLinkUserToMaintainerDocument,
 	InsertLinkUserToMaintainerMutation,
+	InsertLinkUserToMaintainerMutationVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	InsertUserIdentityMutation,
+	InsertUserIdentityMutationVariables,
 	InsertUserMutation,
+	InsertUserMutationVariables,
 	UpdateUserLastAccessDateDocument,
 	UpdateUserLastAccessDateMutation,
+	UpdateUserLastAccessDateMutationVariables,
 	UpdateUserProfileDocument,
 	UpdateUserProfileMutation,
+	UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { DataService } from '~modules/data/services/data.service';
 import { Idp } from '~shared/auth/auth.types';
 import { UpdateResponse } from '~shared/types/types';
 
@@ -36,8 +44,7 @@ export class UsersService {
 			return null;
 		}
 
-		/* istanbul ignore next */
-		return {
+		let adpatedUser: User = {
 			id: graphQlUser?.id,
 			fullName: graphQlUser?.full_name,
 			firstName: graphQlUser?.first_name,
@@ -50,10 +57,26 @@ export class UsersService {
 				(permData: GqlPermissionData) => permData.permission.name as Permission
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
-			maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
-			visitorSpaceSlug:
-				graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
+			isKeyUser: graphQlUser?.is_key_user,
 		};
+
+		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {
+			adpatedUser = {
+				...adpatedUser,
+				maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+			};
+		}
+
+		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug) {
+			adpatedUser = {
+				...adpatedUser,
+				visitorSpaceSlug:
+					graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
+			};
+		}
+
+		/* istanbul ignore next */
+		return adpatedUser;
 	}
 
 	public groupIdToName(groupId: keyof typeof GroupIdToName): string {
@@ -61,16 +84,16 @@ export class UsersService {
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
-		const userResponse = await this.dataService.execute<GetUserByIdentityIdQuery>(
-			GetUserByIdentityIdDocument,
-			{
-				identityId,
-			}
-		);
-		if (!userResponse.data.users_profile[0]) {
+		const userResponse = await this.dataService.execute<
+			GetUserByIdentityIdQuery,
+			GetUserByIdentityIdQueryVariables
+		>(GetUserByIdentityIdDocument, {
+			identityId,
+		});
+		if (!userResponse.users_profile[0]) {
 			return null;
 		}
-		return this.adapt(userResponse.data.users_profile[0]);
+		return this.adapt(userResponse.users_profile[0]);
 	}
 
 	public async createUserWithIdp(
@@ -85,9 +108,10 @@ export class UsersService {
 			mail: createUserDto.email,
 			group_id: createUserDto.groupId,
 		};
-		const {
-			data: { insert_users_profile_one: createdUser },
-		} = await this.dataService.execute<InsertUserMutation>(InsertUserDocument, { newUser });
+		const { insert_users_profile_one: createdUser } = await this.dataService.execute<
+			InsertUserMutation,
+			InsertUserMutationVariables
+		>(InsertUserDocument, { newUser });
 		this.logger.debug(`user ${createdUser.id} created`);
 
 		// Link the user with the identity
@@ -97,7 +121,10 @@ export class UsersService {
 			identity_provider_name: idp,
 			profile_id: createdUser.id,
 		};
-		await this.dataService.execute<InsertUserIdentityMutation>(InsertUserIdentityDocument, {
+		await this.dataService.execute<
+			InsertUserIdentityMutation,
+			InsertUserIdentityMutationVariables
+		>(InsertUserIdentityDocument, {
 			newUserIdentity,
 		});
 		this.logger.debug(`user ${createdUser.id} linked with idp '${idp}'`);
@@ -120,9 +147,10 @@ export class UsersService {
 			group_id: updateUserDto.groupId,
 		};
 
-		const {
-			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute<UpdateUserProfileMutation>(UpdateUserProfileDocument, {
+		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
+			UpdateUserProfileMutation,
+			UpdateUserProfileMutationVariables
+		>(UpdateUserProfileDocument, {
 			id,
 			updateUser,
 		});
@@ -138,9 +166,10 @@ export class UsersService {
 			accepted_tos_at: updateAcceptedTos.acceptedTosAt,
 		};
 
-		const {
-			data: { update_users_profile_by_pk: updatedUser },
-		} = await this.dataService.execute<UpdateUserProfileMutation>(UpdateUserProfileDocument, {
+		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
+			UpdateUserProfileMutation,
+			UpdateUserProfileMutationVariables
+		>(UpdateUserProfileDocument, {
 			id,
 			updateUser,
 		});
@@ -158,13 +187,13 @@ export class UsersService {
 		maintainerId: string
 	): Promise<boolean> {
 		// Get current link
-		const response = await this.dataService.execute<GetLinkUserToMaintainerQuery>(
-			GetLinkUserToMaintainerDocument,
-			{
-				userProfileId,
-			}
-		);
-		const maintainerUserProfiles = response?.data?.maintainer_users_profile || [];
+		const response = await this.dataService.execute<
+			GetLinkUserToMaintainerQuery,
+			GetLinkUserToMaintainerQueryVariables
+		>(GetLinkUserToMaintainerDocument, {
+			userProfileId,
+		});
+		const maintainerUserProfiles = response?.maintainer_users_profile || [];
 
 		// Delete existing links if
 		// - More than one link exists
@@ -175,24 +204,12 @@ export class UsersService {
 				maintainerUserProfiles[0]?.maintainer_identifier !== maintainerId)
 		) {
 			// We need to delete the existing link(s)
-			const response = await this.dataService.execute<DeleteLinkUserToMaintainerMutation>(
-				DeleteLinkUserToMaintainerDocument,
-				{
-					userProfileId,
-				}
-			);
-			if (response.errors) {
-				this.logger.error(
-					JSON.stringify({
-						message: 'Failed to delete existing link between profile and visitor space',
-						additionalInfo: {
-							graphqlErrors: response.errors,
-							userProfileId,
-							maintainerId,
-						},
-					})
-				);
-			}
+			await this.dataService.execute<
+				DeleteLinkUserToMaintainerMutation,
+				DeleteLinkUserToMaintainerMutationVariables
+			>(DeleteLinkUserToMaintainerDocument, {
+				userProfileId,
+			});
 		}
 
 		// Insert a new link if
@@ -206,16 +223,16 @@ export class UsersService {
 			maintainerUserProfiles.length > 1
 		) {
 			// We need to insert a new link
-			const response = await this.dataService.execute<InsertLinkUserToMaintainerMutation>(
-				InsertLinkUserToMaintainerDocument,
-				{
-					userProfileId,
-					maintainerId,
-				}
-			);
+			const response = await this.dataService.execute<
+				InsertLinkUserToMaintainerMutation,
+				InsertLinkUserToMaintainerMutationVariables
+			>(InsertLinkUserToMaintainerDocument, {
+				userProfileId,
+				maintainerId,
+			});
 
 			// Insert succeeded if we get a link id back
-			return !!response?.data?.insert_maintainer_users_profile_one?.id;
+			return !!response?.insert_maintainer_users_profile_one?.id;
 		}
 
 		// Return false if the user was already linked to the visitor space
@@ -224,16 +241,16 @@ export class UsersService {
 
 	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {
 		try {
-			const response = await this.dataService.execute<UpdateUserLastAccessDateMutation>(
-				UpdateUserLastAccessDateDocument,
-				{
-					userProfileId: id,
-					date: new Date().toISOString(),
-				}
-			);
+			const response = await this.dataService.execute<
+				UpdateUserLastAccessDateMutation,
+				UpdateUserLastAccessDateMutationVariables
+			>(UpdateUserLastAccessDateDocument, {
+				userProfileId: id,
+				date: new Date().toISOString(),
+			});
 
 			return {
-				affectedRows: response.data.update_users_profile.affected_rows,
+				affectedRows: response.update_users_profile.affected_rows,
 			};
 		} catch (err) {
 			this.logger.error('Failed to update user last access date', { id });

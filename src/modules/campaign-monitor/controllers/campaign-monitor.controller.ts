@@ -1,26 +1,25 @@
-import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { SendMailDto } from '../dto/campaign-monitor.dto';
+import { CampaignMonitorSendMailDto } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
+@UseGuards(LoggedInGuard)
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')
 export class CampaignMonitorController {
 	constructor(private campaignMonitorService: CampaignMonitorService) {}
 
 	/**
-	 * Test call to send test emails using campaign monitor
+	 * Send an email using the campaign monitor api.
 	 */
-	@UseGuards(ApiKeyGuard)
 	@Post('send')
-	public async sendMail(
-		@Body() sendMailDto: SendMailDto,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
-	): Promise<boolean> {
-		return this.campaignMonitorService.send(sendMailDto.templateId, sendMailDto.data);
+	@ApiOperation({ description: 'Send transactional mails through Campaign Monitor' })
+	async sendMail(
+		@Body() emailInfo: CampaignMonitorSendMailDto
+	): Promise<void | BadRequestException> {
+		return this.campaignMonitorService.sendMail(emailInfo);
 	}
 }

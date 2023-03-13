@@ -3,6 +3,7 @@ import {
 	InsertUserMutation,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Idp } from '~shared/auth/auth.types';
 
 export enum Permission {
@@ -49,6 +50,12 @@ export enum Permission {
 	EDIT_TRANSLATIONS = 'EDIT_TRANSLATIONS',
 	// IDP-based permission:
 	CAN_EDIT_PROFILE_INFO = 'CAN_EDIT_PROFILE_INFO',
+	// Material Requests
+	VIEW_ANY_MATERIAL_REQUESTS = 'VIEW_ANY_MATERIAL_REQUESTS',
+	VIEW_OWN_MATERIAL_REQUESTS = 'VIEW_OWN_MATERIAL_REQUESTS',
+	CREATE_MATERIAL_REQUESTS = 'CREATE_MATERIAL_REQUESTS',
+	EDIT_OWN_MATERIAL_REQUESTS = 'EDIT_OWN_MATERIAL_REQUESTS',
+	DELETE_OWN_MATERIAL_REQUESTS = 'DELETE_OWN_MATERIAL_REQUESTS',
 }
 
 export type GqlUser =
@@ -67,8 +74,10 @@ export interface User {
 	groupName: string;
 	permissions: Permission[];
 	idp: Idp;
+	isKeyUser: boolean;
 	maintainerId?: string;
 	visitorSpaceSlug?: string;
+	sector?: IeObjectSector | null;
 }
 
 export interface GqlPermission {

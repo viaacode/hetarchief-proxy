@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { INSERT_EVENTS } from '../queries/queries.gql';
 import { LogEvent } from '../types';
@@ -12,13 +12,13 @@ export class EventsService {
 	private logger: Logger = new Logger(EventsService.name, { timestamp: true });
 	private eventsGotInstance: Got;
 
-	constructor(protected configService: ConfigService) {
+	constructor(protected configService: ConfigService<Configuration>) {
 		this.eventsGotInstance = got.extend({
-			prefixUrl: getConfig(this.configService, 'graphQlUrlLogging'),
+			prefixUrl: this.configService.get('GRAPHQL_URL_LOGGING'),
 			resolveBodyOnly: true,
 			responseType: 'json',
 			headers: {
-				'x-hasura-admin-secret': getConfig(this.configService, 'graphQlSecretLogging'),
+				'x-hasura-admin-secret': this.configService.get('GRAPHQL_SECRET_LOGGING'),
 			},
 		});
 	}

@@ -1,8 +1,8 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ContentPartnersService } from './content-partners.service';
 
-import { DataService } from '~modules/data/services/data.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -61,7 +61,7 @@ describe('ContentPartnersService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({});
 			expect(response.items.length).toBe(1);
@@ -83,7 +83,7 @@ describe('ContentPartnersService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({ hasSpace: false });
 			expect(response.items.length).toBe(1);

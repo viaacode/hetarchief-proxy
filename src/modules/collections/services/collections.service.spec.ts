@@ -1,4 +1,6 @@
+import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
+import { format } from 'date-fns';
 
 import { CollectionsService } from './collections.service';
 
@@ -13,10 +15,10 @@ import {
 	RemoveObjectFromCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { PlayerTicketService } from '~modules/admin/player-ticket/services/player-ticket.service';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { CollectionObjectLink, GqlObject, IeObject } from '~modules/collections/types';
-import { DataService } from '~modules/data/services/data.service';
+import { CollectionObjectLink, GqlObject } from '~modules/collections/types';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -25,6 +27,10 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
 	resolveThumbnailUrl: jest.fn(),
+};
+
+const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
+	findEndDatesByFolderId: jest.fn(),
 };
 
 const mockGqlCollection1: FindCollectionsByUserQuery['users_folder'][0] = {
@@ -51,8 +57,6 @@ const mockGqlCollectionObject: GqlObject = {
 	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	schema_creator: null,
 	dcterms_available: '2015-09-19T12:08:24',
-	schema_thumbnail_url:
-		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
 	meemoo_identifier: '8s4jm2514q',
@@ -65,96 +69,86 @@ const mockGqlCollectionObjectLink: CollectionObjectLink = {
 	ie: mockGqlCollectionObject,
 };
 
-const mockGqlCollectionsResult: { data: FindCollectionsByUserQuery } = {
-	data: {
-		users_folder: [mockGqlCollection1, mockGqlCollection2],
-		users_folder_aggregate: {
-			aggregate: {
-				count: 2,
-			},
+const mockGqlCollectionsResult: FindCollectionsByUserQuery = {
+	users_folder: [mockGqlCollection1, mockGqlCollection2],
+	users_folder_aggregate: {
+		aggregate: {
+			count: 2,
 		},
 	},
 };
 
-const mockGqlCollectionResult: { data: FindCollectionsByUserQuery } = {
-	data: {
-		users_folder: [mockGqlCollection1],
-		users_folder_aggregate: {
-			aggregate: {
-				count: 0,
-			},
+const mockGqlCollectionResult: FindCollectionsByUserQuery = {
+	users_folder: [mockGqlCollection1],
+	users_folder_aggregate: {
+		aggregate: {
+			count: 0,
 		},
 	},
 };
 
-const mockGqlCollectionResultEmpty: { data: FindCollectionsByUserQuery } = {
-	data: {
-		users_folder: [],
-		users_folder_aggregate: {
-			aggregate: {
-				count: 0,
-			},
+const mockGqlCollectionResultEmpty: FindCollectionsByUserQuery = {
+	users_folder: [],
+	users_folder_aggregate: {
+		aggregate: {
+			count: 0,
 		},
 	},
 };
 
-const mockGqlCollectionObjectsResult: { data: FindCollectionObjectsByCollectionIdQuery } = {
-	data: {
-		users_folder_ie: [
-			{
-				created_at: '2022-02-02T10:55:16.542503',
-				ie: {
-					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-					schema_creator: null,
-					dcterms_available: '2015-09-19T12:08:24',
-					schema_thumbnail_url:
-						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-					dcterms_format: 'video',
-					schema_number_of_pages: null,
-					meemoo_identifier: '8s4jm2514q',
-					schema_identifier:
-						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-				},
+const mockGqlCollectionObjectsResult = {
+	users_folder_ie: [
+		{
+			created_at: '2022-02-02T10:55:16.542503',
+			ie: {
+				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schema_creator: null,
+				dcterms_available: '2015-09-19T12:08:24',
+				schema_thumbnail_url:
+					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+				dcterms_format: 'video',
+				schema_number_of_pages: null,
+				meemoo_identifier: '8s4jm2514q',
+				schema_identifier:
+					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 			},
-		],
-		users_folder_ie_aggregate: {
-			aggregate: {
-				count: 1,
-			},
+		},
+	],
+	users_folder_ie_aggregate: {
+		aggregate: {
+			count: 1,
 		},
 	},
 };
 
-const mockGqlCollectionObjectResult: { data: FindObjectInCollectionQuery } = {
-	data: {
-		users_folder_ie: [
-			{
-				created_at: '2022-02-02T10:55:16.542503',
-				ie: {
-					schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-					schema_creator: null,
-					dcterms_available: '2015-09-19T12:08:24',
-					schema_thumbnail_url:
-						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-					dcterms_format: 'video',
-					schema_number_of_pages: null,
-					meemoo_identifier: '8s4jm2514q',
-					schema_identifier:
-						'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-				},
+const mockGqlCollectionObjectResult: FindObjectInCollectionQuery = {
+	users_folder_ie: [
+		{
+			created_at: '2022-02-02T10:55:16.542503',
+			ie: {
+				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+				schema_creator: null,
+				dcterms_available: '2015-09-19T12:08:24',
+				schema_thumbnail_url:
+					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+				dcterms_format: 'video',
+				schema_number_of_pages: null,
+				meemoo_identifier: '8s4jm2514q',
+				schema_identifier:
+					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 			},
-		],
-	},
+		},
+	],
 };
 
-const mockCollectionObject: IeObject = {
+const mockCollectionObject: Partial<IeObject> & { collectionEntryCreatedAt: string } = {
 	schemaIdentifier:
 		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
 	meemooIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-	termsAvailable: '2015-09-19T12:08:24',
+	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
-	format: 'video',
+	dctermsFormat: 'video',
 	numberOfPages: null,
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -162,10 +156,11 @@ const mockCollectionObject: IeObject = {
 	description: 'A description for this collection',
 	maintainerId: 'OR-1v5bc86',
 	maintainerName: 'Huis van Alijn',
-	visitorSpaceSlug: 'amsab',
+	maintainerSlug: 'amsab',
 	meemooLocalId: 'WP00032225',
 	series: ['Serie'],
 	programs: ['Programma'],
+	duration: '01:01:59',
 };
 
 const mockUser = {
@@ -190,6 +185,10 @@ describe('CollectionsService', () => {
 					provide: PlayerTicketService,
 					useValue: mockPlayerTicketService,
 				},
+				{
+					provide: VisitsService,
+					useValue: mockVisitsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -213,10 +212,18 @@ describe('CollectionsService', () => {
 		});
 
 		it('can adapt a graphql collection response to our collection interface', async () => {
+			const mockVisitEndDates = [
+				new Date('2022-02-18T09:19:09.487977'),
+				new Date('2022-02-19T09:19:09.487977'),
+			];
+			mockVisitsService.findEndDatesByFolderId.mockResolvedValue(mockVisitEndDates);
 			const adapted = await collectionsService.adaptCollection(mockGqlCollection, 'referer');
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlCollection.id);
 			expect(adapted.name).toEqual(mockGqlCollection.name);
+			expect(adapted.usedForLimitedAccessUntil).toEqual(
+				format(mockVisitEndDates[1], 'yyyy-MM-dd')
+			);
 			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
 			expect(adapted.objects[0].schemaIdentifier).toEqual(
 				mockGqlCollection.ies[0].ie.schema_identifier
@@ -256,7 +263,7 @@ describe('CollectionsService', () => {
 				mockGqlCollectionObjectLink.ie.meemoo_identifier
 			);
 			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
-			expect(adapted.termsAvailable).toEqual(
+			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlCollectionObjectLink.ie.dcterms_available
 			);
 			expect(adapted.collectionEntryCreatedAt).toEqual(
@@ -277,7 +284,7 @@ describe('CollectionsService', () => {
 		it('returns a paginated response with all collections for a user', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionsResult);
 			const response = await collectionsService.findCollectionsByUser(
-				mockGqlCollectionsResult.data.users_folder[0].user_profile_id,
+				mockGqlCollectionsResult.users_folder[0].user_profile_id,
 				'referer'
 			);
 			expect(response.items.length).toBe(2);
@@ -291,16 +298,16 @@ describe('CollectionsService', () => {
 		it('should return once collection', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResult);
 			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.data.users_folder[0].id,
+				mockGqlCollectionResult.users_folder[0].id,
 				'referer'
 			);
-			expect(response.id).toBe(mockGqlCollectionResult.data.users_folder[0].id);
+			expect(response.id).toBe(mockGqlCollectionResult.users_folder[0].id);
 		});
 
 		it('should return undefined if collection does not exist', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResultEmpty);
 			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.data.users_folder[0].id,
+				mockGqlCollectionResult.users_folder[0].id,
 				'referer'
 			);
 			expect(response).toBeUndefined();
@@ -317,7 +324,7 @@ describe('CollectionsService', () => {
 				'referer'
 			);
 			expect(response.items[0].schemaIdentifier).toBe(
-				mockGqlCollectionObjectsResult.data.users_folder_ie[0].ie.schema_identifier
+				mockGqlCollectionObjectsResult.users_folder_ie[0].ie.schema_identifier
 			);
 		});
 
@@ -330,7 +337,7 @@ describe('CollectionsService', () => {
 					},
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
 				await collectionsService.findObjectsByCollectionId(
@@ -368,7 +375,7 @@ describe('CollectionsService', () => {
 					returning: [mockGqlCollection1],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ies, ...mockCollection } = mockGqlCollection1;
 			const response = await collectionsService.create(mockCollection, 'referer');
@@ -383,7 +390,7 @@ describe('CollectionsService', () => {
 					returning: [mockGqlCollection1],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, user_profile_id, ...mockCollection } =
 				mockGqlCollection1;
@@ -404,7 +411,7 @@ describe('CollectionsService', () => {
 					affected_rows: 1,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { id, user_profile_id } = mockGqlCollection1;
 			const affectedRows = await collectionsService.delete(id, user_profile_id);
 			expect(affectedRows).toBe(1);
@@ -416,7 +423,7 @@ describe('CollectionsService', () => {
 					affected_rows: 0,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const { user_profile_id } = mockGqlCollection1;
 			const affectedRows = await collectionsService.delete('unknown-id', user_profile_id);
 			expect(affectedRows).toBe(0);
@@ -428,7 +435,7 @@ describe('CollectionsService', () => {
 			const mockData: FindObjectBySchemaIdentifierQuery = {
 				object_ie: [mockGqlCollectionObject],
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const object = await collectionsService.findObjectBySchemaIdentifier(
 				mockCollectionObject.schemaIdentifier
 			);
@@ -446,10 +453,12 @@ describe('CollectionsService', () => {
 				.mockResolvedValueOnce(mockCollectionObject);
 			const mockData: InsertObjectIntoCollectionMutation = {
 				insert_users_folder_ie: {
-					returning: [mockGqlCollectionObjectLink],
+					returning: [
+						mockGqlCollectionObjectLink as InsertObjectIntoCollectionMutation['insert_users_folder_ie']['returning'][0],
+					],
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await collectionsService.addObjectToCollection(
 				mockGqlCollection1.id,
@@ -521,7 +530,7 @@ describe('CollectionsService', () => {
 					affected_rows: 1,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
 				mockGqlCollectionObjectLink.ie.schema_identifier,
@@ -536,7 +545,7 @@ describe('CollectionsService', () => {
 					affected_rows: 0,
 				},
 			};
-			mockDataService.execute.mockResolvedValueOnce({ data: mockData });
+			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const affectedRows = await collectionsService.removeObjectFromCollection(
 				mockGqlCollection1.id,
 				'unknown-id',

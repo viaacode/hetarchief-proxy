@@ -1,0 +1,13 @@
+query findOrganisationBySchemaId($schemaIdentifier: String!) {
+	maintainer_organisation(where: { schema_identifier: { _eq: $schemaIdentifier } }) {
+		schema_identifier
+		schema_name
+		updated_at
+		primary_site
+		logo
+		description
+		created_at
+		contact_point
+		haorg_organization_type
+	}
+}

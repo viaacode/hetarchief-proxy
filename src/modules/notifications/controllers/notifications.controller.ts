@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	ForbiddenException,
@@ -22,7 +23,6 @@ import {
 
 import { NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';

@@ -1,0 +1,204 @@
+[
+  {
+    "term": {
+      "premis_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_local_id": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "premis_is_part_of": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_original_cp": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_maintainer.schema_identifier": "{{query}}"
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 100,
+      "fields": [
+        "schema_name^20",
+        "schema_description",
+        "schema_abstract",
+        "schema_is_part_of.alternatief^20",
+        "schema_is_part_of.archief",
+        "schema_is_part_of.deelarchief",
+        "schema_is_part_of.deelreeks",
+        "schema_is_part_of.programma",
+        "schema_is_part_of.reeks",
+        "schema_is_part_of.seizoen",
+        "schema_is_part_of.serie",
+        "schema_keywords",
+        "schema_genre",
+        "schema_transcript",
+        "schema_captions",
+        "schema_spatial_coverage",
+        "schema_temporal_coverage",
+        "dcterms_medium",
+        "dcterms_format",
+        "ebucore_object_type",
+        "meemoo_description_programme",
+        "meemoo_description_cast",
+        "meemoofilm_base",
+        "schema_creator_text",
+        "schema_publisher_text"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 80,
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_description.lemma_split",
+        "schema_abstract.lemma_split",
+        "schema_is_part_of.alternatief.lemma_split^20",
+        "schema_is_part_of.archief.lemma_split",
+        "schema_is_part_of.deelarchief.lemma_split",
+        "schema_is_part_of.deelreeks.lemma_split",
+        "schema_is_part_of.programma.lemma_split",
+        "schema_is_part_of.reeks.lemma_split",
+        "schema_is_part_of.seizoen.lemma_split",
+        "schema_is_part_of.serie.lemma_split",
+        "schema_keywords.lemma_split",
+        "schema_genre.lemma_split",
+        "schema_transcript.lemma_split",
+        "schema_captions.lemma_split",
+        "schema_creator_text.lemma_split",
+        "schema_spatial_coverage.lemma_split",
+        "schema_temporal_coverage.lemma_split",
+        "ebucore_object_type.lemma_split",
+        "meemoo_description_programme.lemma_split",
+        "meemoo_description_cast.lemma_split",
+        "schema_publisher_text.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 40,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_description.lemma_split",
+        "schema_abstract.lemma_split",
+        "schema_is_part_of.alternatief.lemma_split^20",
+        "schema_is_part_of.archief.lemma_split",
+        "schema_is_part_of.deelarchief.lemma_split",
+        "schema_is_part_of.deelreeks.lemma_split",
+        "schema_is_part_of.programma.lemma_split",
+        "schema_is_part_of.reeks.lemma_split",
+        "schema_is_part_of.seizoen.lemma_split",
+        "schema_is_part_of.serie.lemma_split",
+        "schema_keywords.lemma_split",
+        "schema_genre.lemma_split",
+        "schema_transcript.lemma_split",
+        "schema_captions.lemma_split",
+        "schema_creator_text.lemma_split",
+        "schema_spatial_coverage.lemma_split",
+        "schema_temporal_coverage.lemma_split",
+        "ebucore_object_type.lemma_split",
+        "meemoo_description_programme.lemma_split",
+        "meemoo_description_cast.lemma_split",
+        "schema_publisher_text.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 20,
+      "fields": [
+        "schema_name.lemma_split_spell^20",
+        "schema_description.lemma_split_spell",
+        "schema_abstract.lemma_split_spell",
+        "schema_is_part_of.alternatief.lemma_split_spell^20",
+        "schema_is_part_of.archief.lemma_split_spell",
+        "schema_is_part_of.deelarchief.lemma_split_spell",
+        "schema_is_part_of.deelreeks.lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
+        "schema_is_part_of.reeks.lemma_split_spell",
+        "schema_is_part_of.seizoen.lemma_split_spell",
+        "schema_is_part_of.serie.lemma_split_spell",
+        "schema_keywords.lemma_split_spell",
+        "schema_genre.lemma_split_spell",
+        "schema_transcript.lemma_split_spell",
+        "schema_captions.lemma_split_spell",
+        "schema_creator_text.lemma_split_spell",
+        "schema_spatial_coverage.lemma_split_spell",
+        "schema_temporal_coverage.lemma_split_spell",
+        "ebucore_object_type.lemma_split_spell",
+        "meemoo_description_programme.lemma_split_spell",
+        "meemoo_description_cast.lemma_split_spell",
+        "schema_publisher_text.lemma_split_spell"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 5,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_name.lemma_split_spell^20",
+        "schema_description.lemma_split_spell",
+        "schema_abstract.lemma_split_spell",
+        "schema_is_part_of.alternatief.lemma_split_spell^20",
+        "schema_is_part_of.archief.lemma_split_spell",
+        "schema_is_part_of.deelarchief.lemma_split_spell",
+        "schema_is_part_of.deelreeks.lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
+        "schema_is_part_of.reeks.lemma_split_spell",
+        "schema_is_part_of.seizoen.lemma_split_spell",
+        "schema_is_part_of.serie.lemma_split_spell",
+        "schema_keywords.lemma_split_spell",
+        "schema_genre.lemma_split_spell",
+        "schema_transcript.lemma_split_spell",
+        "schema_captions.lemma_split_spell",
+        "schema_creator_text.lemma_split_spell",
+        "schema_spatial_coverage.lemma_split_spell",
+        "schema_temporal_coverage.lemma_split_spell",
+        "ebucore_object_type.lemma_split_spell",
+        "meemoo_description_programme.lemma_split_spell",
+        "meemoo_description_cast.lemma_split_spell",
+        "schema_publisher_text.lemma_split_spell"
+      ]
+    }
+  }
+]
+
+

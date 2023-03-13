@@ -1,10 +1,10 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AssetsService } from '../services/assets.service';
 
 import { AssetsController } from './assets.controller';
 
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {

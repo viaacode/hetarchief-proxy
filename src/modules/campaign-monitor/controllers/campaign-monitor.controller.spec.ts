@@ -11,7 +11,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
-		send: jest.fn(),
+		sendMail: jest.fn(),
 	};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -49,19 +49,16 @@ describe('CampaignMonitorController', () => {
 
 	describe('sendMail', () => {
 		it('should send an email', async () => {
-			mockCampaignMonitorService.send.mockResolvedValueOnce(true);
+			mockCampaignMonitorService.sendMail.mockResolvedValueOnce(true);
 
-			const sent = await campaignMonitorController.sendMail(
-				{
-					templateId: 'template-id-1',
-					data: {
-						To: 'test@studiohyperdrive.be',
-						ConsentToTrack: 'unchanged',
-						Data: {},
-					},
+			const sent = await campaignMonitorController.sendMail({
+				templateId: 'template-id-1',
+				data: {
+					to: 'test@studiohyperdrive.be',
+					consentToTrack: 'unchanged',
+					data: {},
 				},
-				'mySecretApiKey'
-			);
+			});
 
 			expect(sent).toBeTruthy();
 		});

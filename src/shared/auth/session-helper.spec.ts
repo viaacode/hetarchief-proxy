@@ -38,6 +38,7 @@ const mockArchiefUser: User = {
 	groupName: GroupIdToName[Group.CP_ADMIN],
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
+	isKeyUser: false,
 };
 
 describe('SessionHelper', () => {

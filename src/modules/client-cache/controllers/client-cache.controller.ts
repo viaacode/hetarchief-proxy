@@ -4,7 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';
 import { stringifyUrl } from 'query-string';
 
-import { getConfig } from '~config';
+import { Configuration } from '~config';
 
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -13,7 +13,7 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 @ApiTags('Client Cache')
 @Controller('client-cache')
 export class ClientCacheController {
-	constructor(private configService: ConfigService) {}
+	constructor(private configService: ConfigService<Configuration>) {}
 
 	@ApiOperation({
 		description: 'Clears the nextjs cache for a specific page',
@@ -26,8 +26,8 @@ export class ClientCacheController {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers('apikey') apikey: string
 	): Promise<{ message: string }> {
-		const clientHost: string = getConfig(this.configService, 'clientHost');
-		const clientApiKey: string = getConfig(this.configService, 'clientApiKey');
+		const clientHost: string = this.configService.get('CLIENT_HOST');
+		const clientApiKey: string = this.configService.get('CLIENT_API_KEY');
 
 		return got
 			.post({

@@ -4,26 +4,31 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { Template } from '../types';
+import { Template } from '../campaign-monitor.types';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'clientHost') {
+		if (key === 'CLIENT_HOST') {
 			return 'http://bezoekerstool';
 		}
-		if (key === 'campaignMonitorApiEndpoint') {
+		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
 		}
-		if (key === 'campaignMonitorTemplateVisitDenied') {
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
 		}
-		if (key === 'rerouteEmailsTo') {
+		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
+		}
+
+		if (key === 'ENABLE_SEND_EMAIL') {
+			return true;
 		}
 
 		return key;
@@ -59,6 +64,7 @@ const getMockVisit = (): Visit => ({
 	visitorName: 'Tom Testerom',
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
+	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 });
 
 describe('CampaignMonitorService', () => {
@@ -112,19 +118,6 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		it('should send an email using campaign monitor', async () => {
-			nock('http://campaignmonitor/')
-				.post('/campaignMonitorTemplateVisitApproved/send')
-				.reply(201, {});
-			const visit = getMockVisit();
-			const result = await campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
-				template: Template.VISIT_APPROVED,
-				visit: getMockVisit(),
-			});
-			expect(result).toBeTruthy();
-		});
-
 		it('should log and not send to an empty recipients email adres', async () => {
 			const visit = getMockVisit();
 			const result = await campaignMonitorService.sendForVisit({

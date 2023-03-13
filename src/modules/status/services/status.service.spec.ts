@@ -1,14 +1,19 @@
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import packageJson from '../../../../package.json';
 import { StatusService } from '../services/status.service';
 
-import { DataService } from '~modules/data/services/data.service';
-import { MediaService } from '~modules/media/services/media.service';
+import { GetFirstObjectIdQuery } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
-const mockMediaService: Partial<Record<keyof MediaService, jest.SpyInstance>> = {
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	executeQuery: jest.fn(),
+	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
+		objectIds: [],
+		visitorSpaceIds: [],
+	})),
 };
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -28,8 +33,8 @@ describe('StatusService', () => {
 			providers: [
 				StatusService,
 				{
-					provide: MediaService,
-					useValue: mockMediaService,
+					provide: IeObjectsService,
+					useValue: mockIeObjectsService,
 				},
 				{
 					provide: DataService,
@@ -52,9 +57,9 @@ describe('StatusService', () => {
 	describe('getStatusFull', () => {
 		it('should return the name and version of the app and the graphql and elasticsearch connectivity', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				data: { object_ie: [{ schema_identifier: '1' }] },
-			});
-			mockMediaService.executeQuery.mockReturnValueOnce({
+				object_ie: [{ schema_identifier: '1' }],
+			} as GetFirstObjectIdQuery);
+			mockIeObjectsService.executeQuery.mockReturnValueOnce({
 				hits: {
 					hits: [{ _id: '1' }],
 				},
@@ -68,9 +73,9 @@ describe('StatusService', () => {
 
 		it('should return graphql and elasticsearch unreachable if no data is returned', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				data: { object_ie: [] },
-			});
-			mockMediaService.executeQuery.mockResolvedValueOnce({
+				object_ie: [],
+			} as GetFirstObjectIdQuery);
+			mockIeObjectsService.executeQuery.mockResolvedValueOnce({
 				hits: {
 					hits: [],
 				},
@@ -84,7 +89,7 @@ describe('StatusService', () => {
 
 		it('should return graphql and elasticsearch unreachable if throw error', async () => {
 			mockDataService.execute.mockRejectedValueOnce({ message: 'timeout' });
-			mockMediaService.executeQuery.mockRejectedValueOnce({ message: 'timeout' });
+			mockIeObjectsService.executeQuery.mockRejectedValueOnce({ message: 'timeout' });
 			expect(await statusService.getStatusFull()).toEqual({
 				...mockStatus,
 				graphql: 'not accessible',

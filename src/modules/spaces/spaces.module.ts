@@ -1,12 +1,14 @@
+import { DataModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
+
+import { Configuration } from '~config';
 
 import { SpacesController } from './controllers/spaces.controller';
 import { SpacesService } from './services/spaces.service';
 
 import { AssetsModule } from '~modules/assets';
-import { DataModule } from '~modules/data';
 import { TranslationsModule } from '~modules/translations';
 
 @Module({
@@ -15,7 +17,8 @@ import { TranslationsModule } from '~modules/translations';
 		forwardRef(() => DataModule),
 		MulterModule.registerAsync({
 			imports: [ConfigModule],
-			useFactory: async (configService: ConfigService) => configService.get('multerOptions'),
+			useFactory: async (configService: ConfigService<Configuration>) =>
+				configService.get('MULTER_OPTIONS'),
 			inject: [ConfigService],
 		}),
 		AssetsModule,

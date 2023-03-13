@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -12,7 +13,6 @@ import { MeemooController } from './meemoo.controller';
 
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
-import { TranslationsService } from '~modules/translations/services/translations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Group } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -76,10 +76,10 @@ const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'clientHost') {
+		if (key === 'CLIENT_HOST') {
 			return meemooLoginUrl;
 		}
-		if (key === 'host') {
+		if (key === 'HOST') {
 			return 'http://localhost:3100';
 		}
 		return key;
@@ -102,7 +102,7 @@ const getNewMockSession = () => ({
 
 describe('MeemooController', () => {
 	let meemooController: MeemooController;
-	let configService: ConfigService;
+	let configService: ConfigService<Configuration>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -142,7 +142,7 @@ describe('MeemooController', () => {
 			.compile();
 
 		meemooController = module.get<MeemooController>(MeemooController);
-		configService = module.get<ConfigService>(ConfigService);
+		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
 	it('should be defined', () => {
@@ -152,7 +152,7 @@ describe('MeemooController', () => {
 	describe('login', () => {
 		it('should redirect to the login url', async () => {
 			mockMeemooService.createLoginRequestUrl.mockReturnValueOnce(meemooLoginUrl);
-			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('CLIENT_HOST'));
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 				url: meemooLoginUrl,
@@ -162,11 +162,11 @@ describe('MeemooController', () => {
 		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
 			const result = await meemooController.loginRoute(
 				getNewMockSession(),
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: configService.get('clientHost'),
+				url: configService.get('CLIENT_HOST'),
 			});
 		});
 
@@ -174,7 +174,7 @@ describe('MeemooController', () => {
 			mockMeemooService.createLoginRequestUrl.mockImplementationOnce(() => {
 				throw new Error('Test error handling');
 			});
-			const result = await meemooController.loginRoute({}, configService.get('clientHost'));
+			const result = await meemooController.loginRoute({}, configService.get('CLIENT_HOST'));
 			expect(result).toBeUndefined();
 		});
 	});
@@ -283,7 +283,7 @@ describe('MeemooController', () => {
 				{}
 			);
 			expect(response).toEqual({
-				url: `${configService.get('host')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
+				url: `${configService.get('HOST')}/auth/meemoo/login&returnToUrl=${meemooLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});
@@ -295,7 +295,7 @@ describe('MeemooController', () => {
 			const mockSession = getNewMockSession();
 			const result = await meemooController.logout(
 				mockSession,
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -309,11 +309,11 @@ describe('MeemooController', () => {
 			mockSession.idp = null;
 			const result = await meemooController.logout(
 				mockSession,
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: configService.get('clientHost'),
+				url: configService.get('CLIENT_HOST'),
 			});
 		});
 
@@ -323,7 +323,7 @@ describe('MeemooController', () => {
 			});
 			const result = await meemooController.logout(
 				getNewMockSession(),
-				configService.get('clientHost')
+				configService.get('CLIENT_HOST')
 			);
 			expect(result).toBeUndefined();
 		});

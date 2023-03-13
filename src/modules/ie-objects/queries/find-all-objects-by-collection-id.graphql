@@ -1,0 +1,24 @@
+query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
+	users_folder_ie(
+		where: {
+			user_collection_id: { _eq: $collectionId }
+			collection: { user_profile_id: { _eq: $userProfileId } }
+		}
+	) {
+		ie {
+			schema_identifier
+			premis_identifier
+			maintainer {
+				schema_name
+			}
+			schema_name
+			dcterms_format
+			schema_date_created_lower_bound
+			schema_date_published
+			schema_is_part_of
+			meemoo_identifier
+			meemoo_local_id
+			schema_license
+		}
+	}
+}
