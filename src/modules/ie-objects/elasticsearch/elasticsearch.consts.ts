@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import { IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+
 import identifierSearchQueryFuzzy from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
@@ -37,6 +39,8 @@ export enum SearchFilterField {
 	DURATION = 'duration',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
+	CONSULTABLE_REMOTE = 'isConsultableRemote',
+	CONSULTABLE_MEDIA = 'isConsultableMedia',
 }
 
 export enum Operator {
@@ -60,6 +64,19 @@ export enum QueryType {
 	TERMS = 'terms', // Must match at least one term exactly
 	RANGE = 'range', // Date range or duration range
 	MATCH = 'match', // Text based fuzzy search
+}
+
+export interface QueryBuilderUserInfo {
+	isKeyUser: boolean;
+	maintainerId: string;
+	sector: IeObjectSector;
+}
+
+export interface QueryBuilderInputInfo {
+	user: QueryBuilderUserInfo;
+	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
+	isConsultableRemote?: boolean;
+	isConsultableMedia?: boolean;
 }
 
 export const MULTI_MATCH_QUERY_MAPPING = {
@@ -122,7 +139,9 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
-export const READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]: string } = {
+export const READABLE_TO_ELASTIC_FILTER_NAMES: {
+	[prop in Exclude<SearchFilterField, 'isConsultableRemote' | 'isConsultableMedia'>]: string;
+} = {
 	[SearchFilterField.QUERY]: 'query',
 	[SearchFilterField.ADVANCED_QUERY]: 'query',
 	[SearchFilterField.GENRE]: 'schema_genre',
