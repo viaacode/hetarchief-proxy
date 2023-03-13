@@ -1,7 +1,7 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CampaignMonitorSendMailDto } from '../dto/campaign-monitor.dto';
+import { CampaignMonitorSendMailDto, PreferencesQueryDto } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -21,5 +21,20 @@ export class CampaignMonitorController {
 		@Body() emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
 		return this.campaignMonitorService.sendMail(emailInfo);
+	}
+
+	@Get('preferences')
+	@ApiOperation({ description: 'Fetch user newsletter preferences' })
+	async getPreferences(@Query() preferencesQueryDto: PreferencesQueryDto): Promise<void> {
+		//TODO change return type
+		// CampaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
+		return null;
+	}
+
+	@Post('preferences')
+	@ApiOperation({ description: 'Update user newsletter preferences' })
+	async updatePreferences(): Promise<void> {
+		//TODO change return type
+		return null;
 	}
 }

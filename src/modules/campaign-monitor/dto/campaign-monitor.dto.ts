@@ -144,3 +144,9 @@ export class CampaignMonitorSendMailDto {
 	})
 	data: CampaignMonitorData;
 }
+
+export class PreferencesQueryDto {
+	@IsString()
+	@IsNotEmpty()
+	email?: string;
+}
