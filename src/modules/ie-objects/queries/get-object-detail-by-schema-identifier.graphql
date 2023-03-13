@@ -64,5 +64,7 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 				schema_embed_url
 			}
 		}
+		haorg_alt_label
+		haorg_organization_type
 	}
 }
