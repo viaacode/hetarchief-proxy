@@ -17,20 +17,8 @@ import {
 
 import { getAccessThrough } from './get-access-through';
 
+import { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
 import { Group } from '~modules/users/types';
-
-export interface LimitAccessUserInfo {
-	userId: string | null;
-	isKeyUser: boolean;
-	sector: IeObjectSector | null;
-	groupId: string;
-	maintainerId: string;
-	// folders -> if ie object id is in here then the user has folder access to this visitor space
-	accessibleObjectIdsThroughFolders: string[];
-	// May only contain FULL ACCESS Visitor space ids
-	// full -> if object.maintainerId is in this list than the user has full access to visitor space
-	accessibleVisitorSpaceIds: string[];
-}
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (

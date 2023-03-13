@@ -8,7 +8,8 @@ import {
 	mockUserInfo,
 } from '../mocks/ie-objects.mock';
 
-import { limitAccessToObjectDetails, LimitAccessUserInfo } from './limit-access-to-object-details';
+import { limitAccessToObjectDetails } from './limit-access-to-object-details';
+import { LimitAccessUserInfo } from './limit-access-to-object-details.types';
 
 import { Group } from '~modules/users/types';
 
