@@ -300,7 +300,9 @@ export class IeObjectsService {
 			licenses: gqlIeObject?.schema_license,
 			maintainerId: gqlIeObject?.maintainer.schema_identifier,
 			maintainerName: gqlIeObject?.maintainer?.schema_name,
-			maintainerSlug: kebabCase(gqlIeObject?.maintainer?.schema_name || '') || undefined, // TODO fetch actual slug
+			maintainerSlug:
+				gqlIeObject?.haorg_alt_label ??
+				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
@@ -401,7 +403,9 @@ export class IeObjectsService {
 			licenses: esObject?.schema_license as IeObjectLicense[],
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
 			maintainerName: esObject?.schema_maintainer?.schema_name,
-			maintainerSlug: esObject?.schema_maintainer?.alt_label,
+			maintainerSlug:
+				esObject?.schema_maintainer?.alt_label ??
+				kebabCase(esObject?.schema_maintainer?.schema_name || ''),
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
