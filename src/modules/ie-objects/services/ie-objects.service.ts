@@ -1,10 +1,11 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
+import jsep from 'jsep';
 import { find, isEmpty, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
@@ -46,6 +47,8 @@ import {
 	GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
+import { SearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
@@ -116,6 +119,7 @@ export class IeObjectsService {
 				total: adaptedESResponse.hits.total.value,
 			}),
 			aggregations: adaptedESResponse.aggregations,
+			searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
 		};
 	}
 
@@ -578,5 +582,17 @@ export class IeObjectsService {
 			...(limitedObjectDetails ?? {}),
 			...this.defaultLimitedMetadata(folderObjectItem),
 		};
+	}
+
+	public getSimpleSearchTermsFromBooleanExpression(
+		filters: IeObjectsQueryDto['filters']
+	): string[] {
+		const searchTerm = filters.find(
+			(searchFilter) => searchFilter.field === SearchFilterField.QUERY
+		)?.value;
+		if (!searchTerm) {
+			return [];
+		}
+		return convertStringToSearchTerms(searchTerm);
 	}
 }
