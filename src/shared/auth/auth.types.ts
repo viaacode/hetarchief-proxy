@@ -12,7 +12,7 @@ interface LdapAttributes {
 	o: string[]; // organization id
 	entryUUID: string[];
 	entryDN?: string[]; // eg: mail=bert.verhelst@studiohyperdrive.be,ou=people,dc=hetarchief,dc=be
-	apps: string[]; // avo
+	apps: string[]; // avo, hetarchief-beheer & catpro
 	oNickname: string[]; // name organization
 	employeeNumber?: string[]; // stamboek number
 	'x-be-viaa-eduTypeName'?: string[];

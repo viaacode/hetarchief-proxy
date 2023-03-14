@@ -107,6 +107,7 @@ export class UsersService {
 			last_name: createUserDto.lastName,
 			mail: createUserDto.email,
 			group_id: createUserDto.groupId,
+			is_key_user: createUserDto.isKeyUser,
 		};
 		const { insert_users_profile_one: createdUser } = await this.dataService.execute<
 			InsertUserMutation,

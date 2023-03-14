@@ -134,11 +134,13 @@ export class HetArchiefController {
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser);
 
+			const apps = get(ldapUser, 'attributes.apps', []);
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
+				isKeyUser: apps.includes('cataloguspro'),
 			};
 
 			if (!archiefUser) {
@@ -164,7 +166,13 @@ export class HetArchiefController {
 			} else {
 				if (
 					!isEqual(
-						pick(archiefUser, ['firstName', 'lastName', 'email', 'groupId']),
+						pick(archiefUser, [
+							'firstName',
+							'lastName',
+							'email',
+							'groupId',
+							'isKeyUser',
+						]),
 						userDto
 					)
 				) {

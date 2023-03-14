@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
@@ -15,6 +15,9 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	groupId: string;
+
+	@IsBoolean()
+	isKeyUser: boolean;
 }
 
 export class UpdateUserDto {

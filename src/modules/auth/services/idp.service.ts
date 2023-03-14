@@ -50,10 +50,27 @@ export class IdpService {
 	/**
 	 * Flowchart: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/2978447456/Gebruikersgroepen+en+permissies+BZT+versie+1#Functionele-samenvatting
 	 * Overview test users: https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3458269217/Overzicht+testusers
+	 *
+	 * Flowchart v2: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3293741091/FA+permissies+licenties+en+gebruikersgroepen+V2#1.-Gebruikersgroepen
 	 */
 	public async determineUserGroup(ldapUser: LdapUser): Promise<Group> {
+		const organizationalStatus = get(ldapUser, 'attributes.organizationalStatus', []);
 		// permissions check
 		const apps = get(ldapUser, 'attributes.apps', []);
+
+		// 1. organizationalStatus = kiosk + apps = hetarchief-beheer → error (account misconfiguration)
+		// 2. organizationalStatus = kiosk + apps = cataloguspro → error (account misconfiguration)
+		if (
+			organizationalStatus.includes('kiosk') &&
+			(apps.includes('hetarchief-beheer') || apps.includes('cataloguspro'))
+		) {
+			throw new Error(
+				`${NO_ORG_LINKED}${this.translationsService.t(
+					'modules/auth/services/idp___account-configuratie'
+				)}`
+			);
+		}
+
 		if (apps.includes('hetarchief-beheer')) {
 			// bottom section of the flowchart
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
@@ -79,9 +96,10 @@ export class IdpService {
 		// no member of hetarchief-beheer
 		// TOP-section of the flowchart
 		// check for kiosk permissions -- otherwise it's a regular user
-		if (get(ldapUser, 'attributes.organizationalStatus', []).includes('kiosk')) {
+		if (organizationalStatus.includes('kiosk')) {
 			// organization needs to have a space to be a kiosk user
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
+			// 3. organizationalStatus = kiosk + cp has no visitor space → error (account misconfiguration)
 			if (!maintainerId) {
 				throw new Error(
 					`${NO_ORG_LINKED}${this.translationsService.t(
