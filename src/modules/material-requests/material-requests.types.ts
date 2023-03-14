@@ -60,6 +60,13 @@ export enum MaterialRequestRequesterCapacity {
 	EDUCATION = 'EDUCATION',
 }
 
+export enum RequestListType {
+	OTHER = 'OTHER',
+	PROFFESIONAL = 'PROFFESIONAL',
+	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
+	EDUCATION = 'EDUCATION',
+}
+
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];

@@ -3,7 +3,11 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { has, isArray, isEmpty, isNil, set } from 'lodash';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+} from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
@@ -243,6 +247,22 @@ export class MaterialRequestsService {
 
 		return response.delete_app_material_requests.affected_rows;
 	}
+
+	//REMOVE CODE BEFORE PR
+	// public async sendRequestList(
+	// 	sendRequestListDto: SendRequestListDto,
+	// 	userProfileId: string
+	// ): Promise<void> {
+	// 	const materialRequests = await this.findAll(
+	// 		{},
+	// 		{
+	// 			userProfileId: userProfileId,
+	// 			userGroup: '',
+	// 			isPersonal: true,
+	// 		}
+	// 	);
+	// 	console.log(materialRequests);
+	// }
 
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model

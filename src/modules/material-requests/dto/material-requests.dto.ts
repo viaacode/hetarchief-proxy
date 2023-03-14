@@ -14,6 +14,7 @@ import {
 	MaterialRequestOrderProp,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
+	RequestListType,
 } from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
@@ -194,6 +195,24 @@ export class UpdateMaterialRequestDto {
 		enum: MaterialRequestRequesterCapacity,
 	})
 	requesterCapacity? = undefined;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to',
+	})
+	organisation?: string | null;
+}
+
+export class SendRequestListDto {
+	@IsString()
+	@IsEnum(RequestListType)
+	@ApiPropertyOptional({
+		type: String,
+		enum: RequestListType,
+	})
+	type: RequestListType;
 
 	@IsString()
 	@IsOptional()

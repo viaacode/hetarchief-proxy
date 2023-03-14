@@ -1,10 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Put,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 
 import {
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
+	SendRequestListDto,
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
@@ -121,5 +133,24 @@ export class MaterialRequestsController {
 		} else {
 			return { status: `no material requests found with that id: ${materialRequestId}` };
 		}
+	}
+
+	@Post('/send')
+	@ApiOperation({
+		description: 'Send request list',
+	})
+	public async sendRequestList(
+		@Body() sendRequestListDto: SendRequestListDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<void> {
+		const dto = new MaterialRequestsQueryDto();
+		dto.isPending = true;
+		const materialRequests = await this.materialRequestsService.findAll(dto, {
+			userProfileId: user.getId(),
+			userGroup: user.getGroupId(),
+			isPersonal: true,
+		});
+		console.log(materialRequests);
+		// await this.materialRequestsService.sendRequestList(sendRequestListDto, user.getId());
 	}
 }
