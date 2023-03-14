@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
+import searchQueryExact from './templates/exact/exact-search-query.json';
 import identifierSearchQueryFuzzy from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
@@ -11,6 +12,7 @@ import searchQueryFuzzy from './templates/fuzzy/search-query.json';
 
 const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
 const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
+const searchQueryTemplateExact = _.values(searchQueryExact);
 const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
 const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
 
@@ -90,6 +92,7 @@ export const MULTI_MATCH_QUERY_MAPPING = {
 	exact: {
 		name: nameSearchQueryTemplateExact,
 		identifier: identifierSearchQueryTemplateExact,
+		exactQuery: searchQueryTemplateExact,
 	},
 };
 

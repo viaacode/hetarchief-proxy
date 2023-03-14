@@ -446,7 +446,7 @@ export class QueryBuilder {
 						textFilters = [
 							convertNodeToEsQueryFilterObjects(
 								jsep(searchFilter.value),
-								searchTemplate,
+								this.config.MULTI_MATCH_QUERY_MAPPING.exact.exactQuery,
 								searchFilter
 							),
 						];
