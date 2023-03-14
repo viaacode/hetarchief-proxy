@@ -91,7 +91,8 @@ export class QueryBuilder {
 				SearchFilterField.CONSULTABLE_MEDIA,
 			];
 			if (
-				searchRequest.filters.some((filter: SearchFilter) =>
+				searchRequest?.filters &&
+				searchRequest?.filters.some((filter: SearchFilter) =>
 					consultableSearchFilterFields.includes(filter.field)
 				)
 			) {
