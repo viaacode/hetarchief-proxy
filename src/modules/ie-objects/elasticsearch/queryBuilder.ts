@@ -333,7 +333,7 @@ export class QueryBuilder {
 		}
 
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
-		if (!isConsultableRemote && user.groupId !== Group.KIOSK_VISITOR) {
+		if (isConsultableRemote === false && user.groupId !== Group.KIOSK_VISITOR) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				{
