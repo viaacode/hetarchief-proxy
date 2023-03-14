@@ -148,5 +148,9 @@ export class CampaignMonitorSendMailDto {
 export class PreferencesQueryDto {
 	@IsString()
 	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Email to fetch preferences from',
+	})
 	email?: string;
 }

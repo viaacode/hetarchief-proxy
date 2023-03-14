@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { NewsletterPreferences } from '../campaign-monitor.types';
 import { CampaignMonitorSendMailDto, PreferencesQueryDto } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
@@ -25,10 +26,11 @@ export class CampaignMonitorController {
 
 	@Get('preferences')
 	@ApiOperation({ description: 'Fetch user newsletter preferences' })
-	async getPreferences(@Query() preferencesQueryDto: PreferencesQueryDto): Promise<void> {
+	async getPreferences(
+		@Query() preferencesQueryDto: PreferencesQueryDto
+	): Promise<NewsletterPreferences> {
 		//TODO change return type
-		// CampaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
-		return null;
+		return this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
 	}
 
 	@Post('preferences')

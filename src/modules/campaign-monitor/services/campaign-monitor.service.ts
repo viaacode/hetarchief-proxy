@@ -7,11 +7,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
 import { get, isArray } from 'lodash';
+import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
 import { templateIds } from '../campaign-monitor.consts';
-import { VisitEmailInfo } from '../campaign-monitor.types';
+import { NewsletterPreferences, VisitEmailInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
 	CampaignMonitorSendMailDto,
@@ -140,6 +141,40 @@ export class CampaignMonitorService {
 			throw new BadRequestException(
 				err,
 				'Failed to send email using the campaign monitor api'
+			);
+		}
+	}
+
+	public async fetchNewsletterPreferences(email: string): Promise<NewsletterPreferences> {
+		//TODO change return type
+		let url: string | null = null;
+
+		try {
+			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_URL as string}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string
+			}.json/?${queryString.stringify({ email })}`;
+			const response: any = await this.gotInstance({
+				url,
+				method: 'get',
+				throwHttpErrors: true,
+			});
+			return {
+				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
+			};
+		} catch (err) {
+			if (err?.code === 203) {
+				return {
+					newsletter: false,
+				};
+			}
+
+			this.logger.error(
+				new InternalServerErrorException(
+					{
+						err,
+					},
+					'Failed to retrieve newsletter preference'
+				)
 			);
 		}
 	}

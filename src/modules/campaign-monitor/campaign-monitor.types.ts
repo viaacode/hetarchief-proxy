@@ -31,3 +31,7 @@ export interface CampaignMonitorShareFolderInfo {
 	folder_name: string; // folder name
 	folder_sharelink: string; // the url for the shared folder
 }
+
+export interface NewsletterPreferences {
+	newsletter: boolean;
+}
