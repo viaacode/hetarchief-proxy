@@ -4,7 +4,8 @@ import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
-import { IeObjectLicense, IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import { getSectorsWithEssenceAccess } from '../helpers/get-sectors-with-essence-access';
+import { IeObjectLicense } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
@@ -21,12 +22,14 @@ import {
 	ORDER_MAPPINGS,
 	OrderProperty,
 	QueryBuilderConfig,
+	QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	SearchFilterField,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
+import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -69,13 +72,7 @@ export class QueryBuilder {
 	 * @param inputInfo
 	 * @return elastic search query
 	 */
-	public static build(
-		searchRequest: IeObjectsQueryDto,
-		inputInfo: {
-			user: { isKeyUser: boolean; maintainerId: string; sector: IeObjectSector };
-			visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-		}
-	): any {
+	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
 		try {
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
@@ -88,6 +85,34 @@ export class QueryBuilder {
 			queryObject.size = Math.min(searchRequest.size, this.config.MAX_NUMBER_SEARCH_RESULTS);
 			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = clamp(offset, 0, max);
+
+			const consultableSearchFilterFields: SearchFilterField[] = [
+				SearchFilterField.CONSULTABLE_REMOTE,
+				SearchFilterField.CONSULTABLE_MEDIA,
+			];
+			if (
+				searchRequest.filters.some((filter: SearchFilter) =>
+					consultableSearchFilterFields.includes(filter.field)
+				)
+			) {
+				inputInfo = {
+					...inputInfo,
+					isConsultableRemote: searchRequest.filters.some(
+						(filter: SearchFilter) =>
+							filter.field === SearchFilterField.CONSULTABLE_REMOTE
+					),
+					isConsultableMedia: searchRequest.filters.some(
+						(filter: SearchFilter) =>
+							filter.field === SearchFilterField.CONSULTABLE_MEDIA
+					),
+				};
+
+				// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
+				// since they have been handled above and should not be handled by the standard field filtering logic.
+				searchRequest.filters = searchRequest.filters.filter(
+					(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
+				);
+			}
 
 			// Add the filters and search terms to the query object
 			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequest.filters));
@@ -191,15 +216,8 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildLicensesFilter(inputInfo: {
-		user: {
-			isKeyUser: boolean;
-			maintainerId: string;
-			sector: IeObjectSector | null;
-		};
-		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-	}): any {
-		const { user, visitorSpaceInfo } = inputInfo;
+	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
+		const { user, visitorSpaceInfo, isConsultableRemote, isConsultableMedia } = inputInfo;
 
 		let checkSchemaLicenses: any = [
 			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
@@ -314,6 +332,58 @@ export class QueryBuilder {
 			];
 		}
 
+		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
+		if (isConsultableRemote === false && user.groupId !== Group.KIOSK_VISITOR) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					bool: {
+						should: [
+							{
+								terms: {
+									maintainer: visitorSpaceInfo.visitorSpaceIds,
+								},
+							},
+							{
+								terms: {
+									schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+								},
+							},
+						],
+						minimum_should_match: 2,
+					},
+				},
+			];
+		}
+
+		// User can access anything in combo with
+		// Object has VIAA_INTRA_CP-CONTENT license
+		// ACM: user has catpro
+		// ACM: sector or id the user connected to
+		if (isConsultableMedia && user.isKeyUser && !isNil(user.sector)) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					bool: {
+						should: [
+							{
+								terms: {
+									'schema_maintainer.organization_type':
+										getSectorsWithEssenceAccess(user.sector),
+								},
+							},
+							{
+								terms: {
+									schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
+								},
+							},
+						],
+						minimum_should_match: 2,
+					},
+				},
+			];
+		}
+
 		return {
 			bool: {
 				should: checkSchemaLicenses,
@@ -376,7 +446,7 @@ export class QueryBuilder {
 						textFilters = [
 							convertNodeToEsQueryFilterObjects(
 								jsep(searchFilter.value),
-								searchTemplate,
+								this.config.MULTI_MATCH_QUERY_MAPPING.exact.exactQuery,
 								searchFilter
 							),
 						];
