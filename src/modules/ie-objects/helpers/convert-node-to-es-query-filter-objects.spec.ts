@@ -11,6 +11,14 @@ import {
 import { Operator, SearchFilterField } from './../elasticsearch/elasticsearch.consts';
 import { convertNodeToEsQueryFilterObjects } from './convert-node-to-es-query-filter-objects';
 
+(jsep as any).removeAllBinaryOps();
+(jsep as any).removeAllUnaryOps();
+
+jsep.addBinaryOp('AND', 2);
+jsep.addBinaryOp('OR', 1);
+
+jsep.addUnaryOp('NOT');
+
 describe('Convert node to es query filter objects', () => {
 	it('Use case 1 - Bellewaerde', () => {
 		const node = 'bellewaerde';
