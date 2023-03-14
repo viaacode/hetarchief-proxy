@@ -203,6 +203,7 @@ export class HetArchiefController {
 						archiefUser.maintainerId
 					);
 				archiefUser.sector = organisation?.sector || null;
+				archiefUser.organisationSchemaId = organisation?.schemaIdentifier || null;
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
