@@ -9,6 +9,7 @@ import {
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
+import { Group } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
 
 const incompleteConfig: QueryBuilderConfig = {
@@ -46,6 +47,7 @@ const mockInputInfo = {
 		isKeyUser: false,
 		maintainerId: '',
 		sector: IeObjectSector.CULTURE,
+		groupId: Group.MEEMOO_ADMIN,
 	},
 	visitorSpaceInfo: {
 		visitorSpaceIds: [],
