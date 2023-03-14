@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import identifierSearchQueryFuzzy from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
+import booleanSearchQueryFuzzy from './templates/fuzzy/boolean-search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
@@ -9,6 +10,7 @@ import searchQueryFuzzy from './templates/fuzzy/search-query.json';
 
 const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
 const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
+const booleanSearchQueryTemplateFuzzy = _.values(booleanSearchQueryFuzzy);
 const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
 const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
 
@@ -64,6 +66,7 @@ export enum QueryType {
 
 export const MULTI_MATCH_QUERY_MAPPING = {
 	fuzzy: {
+		booleanQuery: booleanSearchQueryTemplateFuzzy,
 		query: searchQueryTemplateFuzzy,
 		advancedQuery: searchQueryAdvancedTemplateFuzzy,
 		name: nameSearchQueryTemplateFuzzy,
