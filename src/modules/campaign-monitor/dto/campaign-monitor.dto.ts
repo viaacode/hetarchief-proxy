@@ -154,3 +154,13 @@ export class PreferencesQueryDto {
 	})
 	email?: string;
 }
+
+export class UpdatePreferencesDto {
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Email to fetch preferences from',
+	})
+	email?: string;
+}

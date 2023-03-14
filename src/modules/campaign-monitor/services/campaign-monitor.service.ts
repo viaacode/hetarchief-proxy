@@ -146,7 +146,6 @@ export class CampaignMonitorService {
 	}
 
 	public async fetchNewsletterPreferences(email: string): Promise<NewsletterPreferences> {
-		//TODO change return type
 		let url: string | null = null;
 
 		try {
