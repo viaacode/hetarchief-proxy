@@ -1,11 +1,11 @@
 import { IeObject } from '../ie-objects.types';
 import {
 	mockIeObjectWithMetadataSetALL,
-	mockIeObjectWithMetadataSetALLCsv,
+	mockIeObjectWithMetadataSetAllCsv,
 	mockIeObjectWithMetadataSetALLWithEssence,
-	mockIeObjectWithMetadataSetALLWithEssenceCsv,
+	mockIeObjectWithMetadataSetAllWithEssenceCsv,
 	mockIeObjectWithMetadataSetLTD,
-	mockIeObjectWithMetadataSetLTDCsv,
+	mockIeObjectWithMetadataSetLtdCsv,
 } from '../mocks/ie-objects.mock';
 
 import { convertObjectsToCsv, convertObjectToCsv } from './convert-objects-to-csv';
@@ -31,17 +31,15 @@ describe('convertObjectToCsv', () => {
 
 	it('returns the csv version of an object with metadata set LTD', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetLTD);
-		expect(csv).toEqual(mockIeObjectWithMetadataSetLTDCsv);
+		expect(csv).toEqual(mockIeObjectWithMetadataSetLtdCsv);
 	});
 	it('returns the csv version of an object with metadata set ALL', () => {
 		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetALL);
-		expect(csv).toEqual(mockIeObjectWithMetadataSetALLCsv);
+		expect(csv).toEqual(mockIeObjectWithMetadataSetAllCsv);
 	});
 	it('returns the csv version of an object with metadata set ALL with Essence', () => {
-		const csv = convertObjectToCsv(
-			mockIeObjectWithMetadataSetALLWithEssence as unknown as IeObject
-		);
-		expect(csv).toEqual(mockIeObjectWithMetadataSetALLWithEssenceCsv);
+		const csv = convertObjectToCsv(mockIeObjectWithMetadataSetALLWithEssence);
+		expect(csv).toEqual(mockIeObjectWithMetadataSetAllWithEssenceCsv);
 	});
 });
 
