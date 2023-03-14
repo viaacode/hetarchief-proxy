@@ -4,6 +4,7 @@ import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
+import { getSectorsWithEssenceAccess } from '../helpers/get-sectors-with-essence-access';
 import { IeObjectLicense } from '../ie-objects.types';
 
 import {
@@ -331,10 +332,7 @@ export class QueryBuilder {
 			];
 		}
 
-		// Only viewable on site in combo with
-		// Object that has BEZOEKERTOOL_CONTENT license
-		// maintainer of object has active visitor space
-		// User cannot be part of KIOSK user group
+		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
 		if (!isConsultableRemote && user.groupId !== Group.KIOSK_VISITOR) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
@@ -369,8 +367,9 @@ export class QueryBuilder {
 					bool: {
 						should: [
 							{
-								term: {
-									'schema_maintainer.organization_type': user.sector,
+								terms: {
+									'schema_maintainer.organization_type':
+										getSectorsWithEssenceAccess(user.sector),
 								},
 							},
 							{
