@@ -33,7 +33,7 @@ import { LogEventType } from '~modules/events/types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
-import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -134,13 +134,13 @@ export class HetArchiefController {
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser);
 
-			const apps = get(ldapUser, 'attributes.apps', []);
+			const apps = ldapUser?.attributes?.apps ?? [];
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
-				isKeyUser: apps.includes('cataloguspro'),
+				isKeyUser: apps.includes(LdapApp.cataloguspro),
 			};
 
 			if (!archiefUser) {

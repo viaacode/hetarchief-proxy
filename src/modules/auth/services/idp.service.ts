@@ -10,7 +10,7 @@ import { NO_ORG_LINKED } from '../constants';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Group } from '~modules/users/types';
-import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {
@@ -62,7 +62,7 @@ export class IdpService {
 		// 2. organizationalStatus = kiosk + apps = cataloguspro → error (account misconfiguration)
 		if (
 			organizationalStatus.includes('kiosk') &&
-			(apps.includes('hetarchief-beheer') || apps.includes('cataloguspro'))
+			(apps.includes(LdapApp.hetarchiefBeheer) || apps.includes(LdapApp.cataloguspro))
 		) {
 			throw new Error(
 				`${NO_ORG_LINKED}${this.translationsService.t(
