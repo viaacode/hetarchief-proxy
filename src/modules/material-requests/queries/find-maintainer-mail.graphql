@@ -1,0 +1,21 @@
+query findMaintainerMail(
+	$where: app_material_requests_bool_exp
+	$offset: Int!
+	$limit: Int!
+	$orderBy: app_material_requests_order_by! = {}
+) {
+	app_material_requests(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
+		id
+		object {
+			maintainer {
+				schema_identifier
+				schema_name
+				maintainer_users_profiles {
+					profile {
+						mail
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,6 +1,7 @@
 import { templateIds } from './campaign-monitor.consts';
 import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { Visit } from '~modules/visits/types';
 import { Recipient } from '~shared/types/types';
 
@@ -9,12 +10,19 @@ export enum Template {
 	VISIT_APPROVED = 'visitApproved',
 	VISIT_DENIED = 'visitDenied',
 	SHARE_FOLDER = 'shareFolder',
+	MATERIAL_REQUEST = 'materialRequest',
 }
 
 export interface VisitEmailInfo {
 	to: Recipient[];
 	template: Template;
 	visit: Visit;
+}
+
+export interface MaterialRequestEmailInfo {
+	to: Recipient[];
+	template: Template;
+	materialRequests: MaterialRequest[];
 }
 
 export interface CampaignMonitorEmailInfo {

@@ -11,7 +11,7 @@ import { get, isArray } from 'lodash';
 import { Configuration } from '~config';
 
 import { templateIds } from '../campaign-monitor.consts';
-import { VisitEmailInfo } from '../campaign-monitor.types';
+import { MaterialRequestEmailInfo, VisitEmailInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
 	CampaignMonitorSendMailDto,
@@ -93,6 +93,11 @@ export class CampaignMonitorService {
 			return false;
 		}
 		return true;
+	}
+	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
+		console.log(emailInfo);
+		// const templateId = 'b573a74d-45cf-432a-bd0b-eb74a4cdec1e';
+		return false;
 	}
 
 	public async sendMail(
