@@ -32,6 +32,7 @@ query findMaterialRequests(
 				schema_name
 				information {
 					logo
+					contact_point
 				}
 				visitor_space {
 					slug
