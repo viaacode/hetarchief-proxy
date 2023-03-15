@@ -100,6 +100,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				query: `query contentpartners {
   contentpartners {
     id
+    label
     description
     sector
     form_url
@@ -163,6 +164,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		const parsedOrganizations: ParsedOrganisation[] = organizations.map(
 			(organization: OrganisationInfoV2) => ({
 				schema_identifier: organization?.id,
+				schema_name: organization?.label,
 				description: organization.description,
 				logo: organization?.logo,
 				contact_point: organization.contact_point,
