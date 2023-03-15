@@ -4,9 +4,12 @@ export enum Idp {
 }
 
 export enum LdapApp {
-	hetarchief = 'hetarchief',
-	hetarchiefBeheer = 'hetarchief-beheer',
-	cataloguspro = 'cataloguspro',
+	HETARCHIEF = 'hetarchief',
+	HETARCHIEF_BEHEER = 'hetarchief-beheer',
+	CATALOGUS_PRO = 'cataloguspro',
+	ADMINS = 'admins',
+	AVO = 'avo',
+	ACCOUNT_MANAGER = 'account-manager',
 }
 
 interface LdapAttributes {

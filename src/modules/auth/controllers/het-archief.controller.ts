@@ -16,7 +16,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { get, isEqual, pick } from 'lodash';
+import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
@@ -140,7 +140,10 @@ export class HetArchiefController {
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
-				isKeyUser: apps.includes(LdapApp.cataloguspro),
+				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
+				organisationSchemaId: isEmpty(ldapUser?.attributes?.o)
+					? null
+					: ldapUser.attributes.o[0],
 			};
 
 			if (!archiefUser) {
@@ -172,6 +175,7 @@ export class HetArchiefController {
 							'email',
 							'groupId',
 							'isKeyUser',
+							'organisationSchemaId',
 						]),
 						userDto
 					)

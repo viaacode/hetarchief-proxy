@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
@@ -17,7 +17,12 @@ export class CreateUserDto {
 	groupId: string;
 
 	@IsBoolean()
-	isKeyUser: boolean;
+	@IsOptional()
+	isKeyUser?: boolean;
+
+	@IsString()
+	@IsOptional()
+	organisationSchemaId?: string;
 }
 
 export class UpdateUserDto {
@@ -34,6 +39,14 @@ export class UpdateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	groupId: string;
+
+	@IsBoolean()
+	@IsOptional()
+	isKeyUser?: boolean;
+
+	@IsString()
+	@IsOptional()
+	organisationSchemaId?: string;
 }
 
 export class UpdateAcceptedTosDto {

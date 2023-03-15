@@ -62,7 +62,7 @@ export class IdpService {
 		// 2. organizationalStatus = kiosk + apps = cataloguspro → error (account misconfiguration)
 		if (
 			organizationalStatus.includes('kiosk') &&
-			(apps.includes(LdapApp.hetarchiefBeheer) || apps.includes(LdapApp.cataloguspro))
+			(apps.includes(LdapApp.HETARCHIEF_BEHEER) || apps.includes(LdapApp.CATALOGUS_PRO))
 		) {
 			throw new Error(
 				`${NO_ORG_LINKED}${this.translationsService.t(

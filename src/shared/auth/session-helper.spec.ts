@@ -1,8 +1,9 @@
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
+import { Idp, LdapApp } from './auth.types';
+
 import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SpecialPermissionGroups } from '~shared/types/types';
@@ -22,7 +23,7 @@ const mockLdapUser = {
 		givenName: ['Test'],
 		externalid: ['36630857-416d-4de0-8e61-1cc99cde8830'],
 		'x-be-viaa-eduLevelName': ['Secundair onderwijs'],
-		apps: ['admins', 'avo', 'hetarchief', 'account-manager'],
+		apps: [LdapApp.ADMINS, LdapApp.AVO, LdapApp.HETARCHIEF, LdapApp.ACCOUNT_MANAGER],
 		oNickname: ['Testbeeld'],
 	},
 };

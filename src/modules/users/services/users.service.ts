@@ -146,6 +146,8 @@ export class UsersService {
 			last_name: updateUserDto.lastName,
 			mail: updateUserDto.email,
 			group_id: updateUserDto.groupId,
+			is_key_user: updateUserDto.isKeyUser,
+			organisation_schema_identifier: updateUserDto.organisationSchemaId,
 		};
 
 		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
