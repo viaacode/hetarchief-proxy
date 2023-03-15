@@ -84,7 +84,7 @@ export class CampaignMonitorService {
 
 		if (this.isEnabled) {
 			await this.sendMail({
-				templateId: cmTemplateId,
+				template: emailInfo.template,
 				data,
 			});
 		} else {
@@ -138,7 +138,7 @@ export class CampaignMonitorService {
 
 		if (this.isEnabled) {
 			await this.sendMail({
-				templateId: cmTemplateId,
+				template: emailInfo.template,
 				data,
 			});
 			console.log('REAL MAIL');
@@ -159,11 +159,11 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			if (!templateIds[emailInfo.templateId]) {
+			if (!templateIds[emailInfo.template]) {
 				this.logger.error(
 					new InternalServerErrorException(
 						{
-							templateName: emailInfo.templateId,
+							templateName: emailInfo.template,
 							envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
 						},
 						'Cannot send email since the requested email template id has not been set as an environment variable'
@@ -173,7 +173,7 @@ export class CampaignMonitorService {
 			}
 
 			url = `${process.env.CAMPAIGN_MONITOR_API_ENDPOINT as string}/${
-				templateIds[emailInfo.templateId]
+				templateIds[emailInfo.template]
 			}/send`;
 
 			const data: any = {
@@ -195,6 +195,7 @@ export class CampaignMonitorService {
 				json: data,
 			}).json<void>();
 		} catch (err) {
+			console.error(err);
 			throw new BadRequestException(
 				err,
 				'Failed to send email using the campaign monitor api'
@@ -252,9 +253,9 @@ export class CampaignMonitorService {
 			request_list: materialRequests.map((mr) => ({
 				title: mr.objectSchemaName,
 				cp_name: mr.organisation,
-				// local_cp_id: //ontbreekt nog
-				// pid: //ontbreekt nog
-				// page_url: //ontbreekt nog
+				// local_cp_id: //ontbreekt nog// meemoo_local_id
+				// pid: //ontbreekt nog //is meemoo id
+				// page_url: //ontbreekt nog //env: CLIENT_HOST+/zoeken/maintainer van object(slug)/schemaId
 				request_type: mr.type,
 				request_description: mr.reason,
 			})),

@@ -174,7 +174,7 @@ export class CampaignMonitorSendMailDto {
 		description: 'The template ID for the email',
 		example: '8a583d31-8741-41de-ac38-69166c3213a3',
 	})
-	templateId: string;
+	template: string;
 
 	@Type(() => CampaignMonitorData)
 	@IsObject()

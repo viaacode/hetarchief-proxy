@@ -52,7 +52,7 @@ describe('CampaignMonitorController', () => {
 			mockCampaignMonitorService.sendMail.mockResolvedValueOnce(true);
 
 			const sent = await campaignMonitorController.sendMail({
-				templateId: 'template-id-1',
+				template: 'template-id-1',
 				data: {
 					to: 'test@studiohyperdrive.be',
 					consentToTrack: 'unchanged',
