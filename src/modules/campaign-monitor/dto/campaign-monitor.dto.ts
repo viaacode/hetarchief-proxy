@@ -4,6 +4,8 @@ import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'clas
 
 import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
+import { RequestListType } from '~modules/material-requests/material-requests.types';
+
 export class CampaignMonitorVisitData {
 	@IsString()
 	@IsOptional()
@@ -70,6 +72,68 @@ export class CampaignMonitorVisitData {
 	@ApiPropertyOptional({ type: String })
 	end_time?: string;
 }
+export class CampaignMonitorMaterialRequestData {
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	user_firstname?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	user_lastname?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: RequestListItem })
+	request_list?: RequestListItem[];
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	user_request_context?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	user_organisation?: string;
+}
+export class RequestListItem {
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	title?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	cp_name?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	local_cp_id?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	pid?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	page_url?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	request_type?: string;
+
+	@IsString()
+	@IsOptional()
+	// @ApiPropertyOptional({ type: String })
+	request_description?: string;
+}
 
 export class CampaignMonitorData {
 	@IsString()
@@ -96,7 +160,10 @@ export class CampaignMonitorData {
 		type: Object,
 		description: 'The data object with placeholder values for Campaign Monitor',
 	})
-	data: CampaignMonitorVisitData | CampaignMonitorShareFolderInfo;
+	data:
+		| CampaignMonitorVisitData
+		| CampaignMonitorShareFolderInfo
+		| CampaignMonitorMaterialRequestData;
 }
 
 export class CampaignMonitorSendMailDto {

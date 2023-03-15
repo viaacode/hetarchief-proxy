@@ -14,10 +14,13 @@ import { templateIds } from '../campaign-monitor.consts';
 import { MaterialRequestEmailInfo, VisitEmailInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
+	CampaignMonitorMaterialRequestData,
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 
+import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
@@ -95,9 +98,59 @@ export class CampaignMonitorService {
 		return true;
 	}
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
-		console.log(emailInfo);
-		// const templateId = 'b573a74d-45cf-432a-bd0b-eb74a4cdec1e';
-		return false;
+		const recipients: string[] = [];
+		emailInfo.materialRequests.forEach((mr) => {
+			if (!mr.contactMail) {
+				// Throw exception will break too much
+				this.logger.error(
+					`Mail will not be sent to user id ${mr.contactMail} - empty email address` //ERROR AANPASSEN
+				);
+			} else {
+				recipients.push(mr.contactMail);
+			}
+		});
+
+		if (recipients.length === 0) {
+			this.logger.error(
+				`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
+			);
+			return false;
+		}
+
+		const cmTemplateId = templateIds[emailInfo.template];
+		if (!cmTemplateId) {
+			this.logger.error(
+				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
+			);
+			return false;
+		}
+
+		const data: CampaignMonitorData = {
+			to: recipients,
+			consentToTrack: 'unchanged',
+			data: this.convertMaterialRequestsToEmailTemplateData(
+				emailInfo.materialRequests,
+				emailInfo.sendRequestListDto,
+				emailInfo.firstName,
+				emailInfo.lastName
+			),
+		};
+
+		if (this.isEnabled) {
+			// await this.sendMail({
+			// 	templateId: cmTemplateId,
+			// 	data,
+			// });
+			console.log('REAL MAIL');
+		} else {
+			this.logger.log(
+				`Mock email sent. To: '${
+					data.to
+				}'. Template: ${cmTemplateId}, data: ${JSON.stringify(data)}`
+			);
+			return false;
+		}
+		return true;
 	}
 
 	public async sendMail(
@@ -184,6 +237,29 @@ export class CampaignMonitorService {
 			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
 			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
 			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
+		};
+	}
+
+	public convertMaterialRequestsToEmailTemplateData(
+		materialRequests: MaterialRequest[],
+		sendRequestListDto: SendRequestListDto,
+		firstName: string,
+		lastname: string
+	): CampaignMonitorMaterialRequestData {
+		return {
+			user_firstname: firstName,
+			user_lastname: lastname,
+			request_list: materialRequests.map((mr) => ({
+				title: mr.objectSchemaName,
+				cp_name: mr.organisation,
+				// local_cp_id: //ontbreekt nog
+				// pid: //ontbreekt nog
+				// page_url: //ontbreekt nog
+				request_type: mr.type,
+				request_description: mr.reason,
+			})),
+			user_request_context: sendRequestListDto.type, //Is this right?
+			user_organisation: sendRequestListDto.organisation,
 		};
 	}
 }

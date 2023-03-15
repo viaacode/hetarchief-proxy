@@ -153,7 +153,7 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const dto = new MaterialRequestsQueryDto();
-		dto.isPending = true; //werkt mss niet, nog eens checken
+		dto.isPending = true; //werkt nog niet
 		//opletten met limit en paginatie
 		const materialRequests = await this.materialRequestsService.findAll(dto, {
 			userProfileId: user.getId(),
@@ -166,11 +166,15 @@ export class MaterialRequestsController {
 					(contact) => contact.contact_type === 'primary'
 				)?.email)
 		);
-		console.log(materialRequests);
+		console.log(materialRequests); //console weg
+
 		const emailInfo: MaterialRequestEmailInfo = {
 			// to: [],
 			template: Template.MATERIAL_REQUEST,
 			materialRequests: materialRequests.items,
+			sendRequestListDto,
+			firstName: user.getFirstName(),
+			lastName: user.getLastName(),
 		};
 		this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 	}

@@ -1,6 +1,7 @@
 import { templateIds } from './campaign-monitor.consts';
 import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
+import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { Visit } from '~modules/visits/types';
 import { Recipient } from '~shared/types/types';
@@ -23,6 +24,9 @@ export interface MaterialRequestEmailInfo {
 	// to: string[];
 	template: Template;
 	materialRequests: MaterialRequest[];
+	sendRequestListDto: SendRequestListDto;
+	firstName: string;
+	lastName: string;
 }
 
 export interface CampaignMonitorEmailInfo {

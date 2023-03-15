@@ -5,5 +5,5 @@ export const templateIds = {
 	[Template.VISIT_REQUEST_CP]: process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_REQUEST_CP as string,
 	[Template.VISIT_APPROVED]: process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED as string,
 	[Template.VISIT_DENIED]: process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED as string,
-	[Template.MATERIAL_REQUEST]: process.env.CAMPAIGN_MONITOR_MATERIAL_REQUEST as string,
+	[Template.MATERIAL_REQUEST]: process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST as string,
 };
