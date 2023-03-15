@@ -3,6 +3,15 @@ export enum Idp {
 	MEEMOO = 'MEEMOO',
 }
 
+export enum LdapApp {
+	HETARCHIEF = 'hetarchief',
+	HETARCHIEF_BEHEER = 'hetarchief-beheer',
+	CATALOGUS_PRO = 'cataloguspro',
+	ADMINS = 'admins',
+	AVO = 'avo',
+	ACCOUNT_MANAGER = 'account-manager',
+}
+
 interface LdapAttributes {
 	mail: string[];
 	displayName?: string[]; // username or nickname
@@ -12,7 +21,7 @@ interface LdapAttributes {
 	o: string[]; // organization id
 	entryUUID: string[];
 	entryDN?: string[]; // eg: mail=bert.verhelst@studiohyperdrive.be,ou=people,dc=hetarchief,dc=be
-	apps: string[]; // avo
+	apps: LdapApp[]; // avo, hetarchief-beheer & catpro
 	oNickname: string[]; // name organization
 	employeeNumber?: string[]; // stamboek number
 	'x-be-viaa-eduTypeName'?: string[];
