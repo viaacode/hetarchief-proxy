@@ -153,16 +153,22 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const dto = new MaterialRequestsQueryDto();
-		dto.isPending = true;
+		dto.isPending = true; //werkt mss niet, nog eens checken
 		//opletten met limit en paginatie
 		const materialRequests = await this.materialRequestsService.findAll(dto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
-		// ophalen mail adressen.
+		materialRequests.items.forEach(
+			(mr) =>
+				(mr.contactMail = mr.contactMail.find(
+					(contact) => contact.contact_type === 'primary'
+				)?.email)
+		);
+		console.log(materialRequests);
 		const emailInfo: MaterialRequestEmailInfo = {
-			to: [],
+			// to: [],
 			template: Template.MATERIAL_REQUEST,
 			materialRequests: materialRequests.items,
 		};

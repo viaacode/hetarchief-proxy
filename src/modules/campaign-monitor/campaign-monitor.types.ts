@@ -20,7 +20,7 @@ export interface VisitEmailInfo {
 }
 
 export interface MaterialRequestEmailInfo {
-	to: Recipient[];
+	// to: string[];
 	template: Template;
 	materialRequests: MaterialRequest[];
 }

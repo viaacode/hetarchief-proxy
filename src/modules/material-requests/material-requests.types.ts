@@ -30,6 +30,7 @@ export interface MaterialRequest {
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
 	maintainerLogo?: string;
+	contactMail?: any;
 	organisation?: string | null;
 }
 
