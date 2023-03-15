@@ -42,6 +42,8 @@ const archiefUser = {
 	email: 'test@studiohyperdrive.be',
 	groupId: Group.CP_ADMIN,
 	permissions: [],
+	isKeyUser: false,
+	organisationSchemaId: null,
 };
 
 const samlResponse = {
@@ -235,6 +237,7 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
+			mockUsersService.updateUser.mockReturnValue(archiefUser);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -296,6 +299,8 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
 				...archiefUser,
 				firstName: 'Tom2',
+				isKeyUser: false,
+				organisationSchemaId: '',
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
