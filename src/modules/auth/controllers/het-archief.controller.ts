@@ -127,13 +127,6 @@ export class HetArchiefController {
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
-			let archiefUser = await this.usersService.getUserByIdentityId(
-				ldapUser.attributes.entryUUID[0]
-			);
-
-			// determine user group
-			const userGroup = await this.idpService.determineUserGroup(ldapUser);
-
 			const apps = ldapUser?.attributes?.apps ?? [];
 			const organisationId = isEmpty(ldapUser?.attributes?.o)
 				? null
@@ -141,18 +134,20 @@ export class HetArchiefController {
 			const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 				organisationId
 			);
+			let archiefUser = await this.usersService.getUserByIdentityId(
+				ldapUser.attributes.entryUUID[0],
+				organisation
+			);
+
+			// determine user group
+			const userGroup = await this.idpService.determineUserGroup(ldapUser);
+
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
-				organisationId,
-				organisationName: organisation?.schemaName ?? null,
-			};
-
-			archiefUser = {
-				...archiefUser,
 				organisationId,
 				organisationName: organisation?.schemaName ?? null,
 			};

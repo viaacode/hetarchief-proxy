@@ -4,11 +4,9 @@ import { forwardRef, Module } from '@nestjs/common';
 import { UsersController } from './controllers/users.controller';
 import { UsersService } from './services/users.service';
 
-import { OrganisationsModule } from '~modules/organisations/organisations.module';
-
 @Module({
 	controllers: [UsersController],
-	imports: [forwardRef(() => DataModule), OrganisationsModule],
+	imports: [forwardRef(() => DataModule)],
 	providers: [UsersService],
 	exports: [UsersService],
 })

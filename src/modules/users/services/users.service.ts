@@ -1,6 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
+import { Organisation } from '../../organisations/organisations.types';
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
 import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../types';
 
@@ -30,8 +31,6 @@ import {
 	UpdateUserProfileMutation,
 	UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { Organisation } from '~modules/organisations/organisations.types';
-import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { Idp } from '~shared/auth/auth.types';
 import { UpdateResponse } from '~shared/types/types';
 
@@ -39,12 +38,9 @@ import { UpdateResponse } from '~shared/types/types';
 export class UsersService {
 	private logger: Logger = new Logger(UsersService.name, { timestamp: true });
 
-	constructor(
-		protected dataService: DataService,
-		protected organisationService: OrganisationsService
-	) {}
+	constructor(protected dataService: DataService) {}
 
-	public adapt(graphQlUser: GqlUser): User | null {
+	public adapt(graphQlUser: GqlUser, organisation?: Organisation): User | null {
 		if (!graphQlUser) {
 			return null;
 		}
@@ -80,6 +76,16 @@ export class UsersService {
 			};
 		}
 
+		if (organisation) {
+			adpatedUser = {
+				...adpatedUser,
+				organisationId:
+					organisation?.schemaIdentifier ??
+					graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+				organisationName: organisation?.schemaName ?? null,
+			};
+		}
+
 		/* istanbul ignore next */
 		return adpatedUser;
 	}
@@ -88,7 +94,10 @@ export class UsersService {
 		return GroupIdToName[groupId] || null;
 	}
 
-	public async getUserByIdentityId(identityId: string): Promise<User | null> {
+	public async getUserByIdentityId(
+		identityId: string,
+		organisation?: Organisation
+	): Promise<User | null> {
 		const userResponse = await this.dataService.execute<
 			GetUserByIdentityIdQuery,
 			GetUserByIdentityIdQueryVariables
@@ -99,7 +108,7 @@ export class UsersService {
 			return null;
 		}
 
-		return this.adapt(userResponse.users_profile[0]);
+		return this.adapt(userResponse.users_profile[0], organisation);
 	}
 
 	public async createUserWithIdp(

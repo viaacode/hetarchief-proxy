@@ -44,6 +44,7 @@ const archiefUser = {
 	permissions: [],
 	isKeyUser: false,
 	organisationId: null,
+	organisationName: null,
 };
 
 const samlResponse = {
