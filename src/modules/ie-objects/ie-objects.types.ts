@@ -276,6 +276,7 @@ export interface ElasticsearchObject {
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {
 	aggregations: any;
+	searchTerms: string[];
 }
 
 export interface IeObjectsVisitorSpaceInfo {

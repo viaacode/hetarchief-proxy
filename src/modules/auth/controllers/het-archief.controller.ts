@@ -16,7 +16,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { get, isEqual, pick } from 'lodash';
+import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
@@ -33,7 +33,7 @@ import { LogEventType } from '~modules/events/types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
-import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -134,11 +134,16 @@ export class HetArchiefController {
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser);
 
+			const apps = ldapUser?.attributes?.apps ?? [];
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
+				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
+				organisationSchemaId: isEmpty(ldapUser?.attributes?.o)
+					? null
+					: ldapUser.attributes.o[0],
 			};
 
 			if (!archiefUser) {
@@ -164,7 +169,14 @@ export class HetArchiefController {
 			} else {
 				if (
 					!isEqual(
-						pick(archiefUser, ['firstName', 'lastName', 'email', 'groupId']),
+						pick(archiefUser, [
+							'firstName',
+							'lastName',
+							'email',
+							'groupId',
+							'isKeyUser',
+							'organisationSchemaId',
+						]),
 						userDto
 					)
 				) {
@@ -195,6 +207,7 @@ export class HetArchiefController {
 						archiefUser.maintainerId
 					);
 				archiefUser.sector = organisation?.sector || null;
+				archiefUser.organisationSchemaId = organisation?.schemaIdentifier || null;
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
