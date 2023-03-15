@@ -71,7 +71,7 @@ export class IdpService {
 			);
 		}
 
-		if (apps.includes('hetarchief-beheer')) {
+		if (apps.includes(LdapApp.HETARCHIEF_BEHEER)) {
 			// bottom section of the flowchart
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
 			if (!maintainerId) {
