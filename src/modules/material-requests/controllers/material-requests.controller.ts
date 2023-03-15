@@ -160,7 +160,7 @@ export class MaterialRequestsController {
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
-		// console.log(materialRequests.items);
+		// ophalen mail adressen.
 		const emailInfo: MaterialRequestEmailInfo = {
 			to: [],
 			template: Template.MATERIAL_REQUEST,

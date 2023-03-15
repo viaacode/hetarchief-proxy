@@ -248,21 +248,20 @@ export class MaterialRequestsService {
 		return response.delete_app_material_requests.affected_rows;
 	}
 
-	//REMOVE CODE BEFORE PR
-	// public async sendRequestList(
-	// 	sendRequestListDto: SendRequestListDto,
-	// 	userProfileId: string
-	// ): Promise<void> {
-	// 	const materialRequests = await this.findAll(
-	// 		{},
-	// 		{
-	// 			userProfileId: userProfileId,
-	// 			userGroup: '',
-	// 			isPersonal: true,
-	// 		}
-	// 	);
-	// 	console.log(materialRequests);
-	// }
+	// REMOVE CODE BEFORE PR
+	public async findMaintainerPrimaryMail(
+		sendRequestListDto: SendRequestListDto,
+		userProfileId: string
+	): Promise<void> {
+		// const contactInfo = await this.dataService.execute<
+		// 	FindMaterialRequestsByIdQuery,
+		// 	FindMaterialRequestsByIdQueryVariables
+		// >(FindMaterialRequestsByIdDocument, { id });
+		// if (isNil(materialRequestResponse) || !materialRequestResponse.app_material_requests[0]) {
+		// 	throw new NotFoundException(`Material Request with id '${id}' not found`);
+		// }
+		// return this.adapt(materialRequestResponse.app_material_requests[0]);
+	}
 
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
