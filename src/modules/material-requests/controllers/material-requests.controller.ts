@@ -160,16 +160,18 @@ export class MaterialRequestsController {
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
+		// materialRequests.items.forEach(
+		// 	(mr) =>
+		// 		(mr.contactMail = mr.contactMail.find(
+		// 			(contact) => contact.contact_type === 'primary'
+		// 		)?.email)
+		// );
+
 		materialRequests.items.forEach(
-			(mr) =>
-				(mr.contactMail = mr.contactMail.find(
-					(contact) => contact.contact_type === 'primary'
-				)?.email)
+			(mr) => (mr.contactMail = 'emile.vantichelen@studiohyperdrive.be')
 		);
-		console.log(materialRequests); //console weg
 
 		const emailInfo: MaterialRequestEmailInfo = {
-			// to: [],
 			template: Template.MATERIAL_REQUEST,
 			materialRequests: materialRequests.items,
 			sendRequestListDto,

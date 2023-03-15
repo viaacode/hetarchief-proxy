@@ -137,10 +137,10 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			// await this.sendMail({
-			// 	templateId: cmTemplateId,
-			// 	data,
-			// });
+			await this.sendMail({
+				templateId: cmTemplateId,
+				data,
+			});
 			console.log('REAL MAIL');
 		} else {
 			this.logger.log(
