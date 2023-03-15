@@ -43,7 +43,7 @@ const archiefUser = {
 	groupId: Group.CP_ADMIN,
 	permissions: [],
 	isKeyUser: false,
-	organisationSchemaId: null,
+	organisationId: null,
 };
 
 const samlResponse = {
@@ -300,7 +300,7 @@ describe('HetArchiefController', () => {
 				...archiefUser,
 				firstName: 'Tom2',
 				isKeyUser: false,
-				organisationSchemaId: '',
+				organisationId: null,
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 

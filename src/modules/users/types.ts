@@ -78,7 +78,8 @@ export interface User {
 	maintainerId?: string;
 	visitorSpaceSlug?: string;
 	sector?: IeObjectSector | null;
-	organisationSchemaId?: string | null;
+	organisationName?: string | null;
+	organisationId?: string | null;
 }
 
 export interface GqlPermission {

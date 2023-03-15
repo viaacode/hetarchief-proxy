@@ -30,6 +30,8 @@ import {
 	UpdateUserProfileMutation,
 	UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { Organisation } from '~modules/organisations/organisations.types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { Idp } from '~shared/auth/auth.types';
 import { UpdateResponse } from '~shared/types/types';
 
@@ -37,7 +39,10 @@ import { UpdateResponse } from '~shared/types/types';
 export class UsersService {
 	private logger: Logger = new Logger(UsersService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		protected organisationService: OrganisationsService
+	) {}
 
 	public adapt(graphQlUser: GqlUser): User | null {
 		if (!graphQlUser) {
@@ -93,6 +98,7 @@ export class UsersService {
 		if (!userResponse.users_profile[0]) {
 			return null;
 		}
+
 		return this.adapt(userResponse.users_profile[0]);
 	}
 
@@ -147,7 +153,7 @@ export class UsersService {
 			mail: updateUserDto.email,
 			group_id: updateUserDto.groupId,
 			is_key_user: updateUserDto.isKeyUser,
-			organisation_schema_identifier: updateUserDto.organisationSchemaId,
+			organisation_schema_identifier: updateUserDto.organisationId,
 		};
 
 		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
