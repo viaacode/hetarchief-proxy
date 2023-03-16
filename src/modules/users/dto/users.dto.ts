@@ -22,7 +22,7 @@ export class CreateUserDto {
 
 	@IsString()
 	@IsOptional()
-	organisationSchemaId?: string;
+	organisationId?: string;
 }
 
 export class UpdateUserDto {
@@ -46,7 +46,7 @@ export class UpdateUserDto {
 
 	@IsString()
 	@IsOptional()
-	organisationSchemaId?: string;
+	organisationId?: string;
 }
 
 export class UpdateAcceptedTosDto {
