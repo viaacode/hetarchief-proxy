@@ -23,7 +23,6 @@ import {
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
