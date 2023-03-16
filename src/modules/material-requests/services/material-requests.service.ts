@@ -1,3 +1,5 @@
+import { userInfo } from 'os';
+
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
@@ -50,6 +52,7 @@ export class MaterialRequestsService {
 		parameters: {
 			userProfileId?: string;
 			userGroup?: string;
+			userMaintainerId?: string;
 			isPersonal?: boolean;
 		}
 	): Promise<IPagination<MaterialRequest>> {
@@ -89,7 +92,7 @@ export class MaterialRequestsService {
 			};
 		}
 
-		if (!isEmpty(maintainerIds)) {
+		if (!isEmpty(maintainerIds) && parameters.userGroup === Group.MEEMOO_ADMIN) {
 			where.object = {
 				maintainer: {
 					schema_identifier: {
@@ -97,6 +100,24 @@ export class MaterialRequestsService {
 					},
 				},
 			};
+		}
+
+		// Check if maintainer id is not empty
+		// If so check where object already has an entry for the maintainer schema identifier
+		// If so push the user maintainerId to the array
+		// If not add an entry for maintainer schema identifier
+		if (!isEmpty(parameters.userMaintainerId)) {
+			if (where?.object?.maintainer?.schema_identifier) {
+				where.object.maintainer.schema_identifier._in.push(parameters.userMaintainerId);
+			} else {
+				where.object = {
+					maintainer: {
+						schema_identifier: {
+							_in: [parameters.userMaintainerId],
+						},
+					},
+				};
+			}
 		}
 
 		if (!isEmpty(isPending)) {
