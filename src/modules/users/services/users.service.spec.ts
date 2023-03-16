@@ -124,7 +124,7 @@ describe('UsersService', () => {
 					email: 'test@studiohypderdrive.be',
 					groupId: Group.CP_ADMIN,
 					isKeyUser: false,
-					organisationSchemaId: 'test',
+					organisationId: 'test',
 				},
 				Idp.HETARCHIEF,
 				'idp-1'
@@ -146,7 +146,7 @@ describe('UsersService', () => {
 				email: 'test@studiohypderdrive.be',
 				groupId: Group.CP_ADMIN,
 				isKeyUser: false,
-				organisationSchemaId: 'test',
+				organisationId: 'test',
 			});
 			expect(result).toEqual(archiefUser);
 		});
