@@ -170,7 +170,7 @@ export class MaterialRequestsController {
 		materialRequests.items.forEach(
 			(mr) => (mr.contactMail = 'emile.vantichelen@studiohyperdrive.be')
 		);
-
+		//met group by van lodash alles per maintainer maken
 		const emailInfo: MaterialRequestEmailInfo = {
 			template: Template.MATERIAL_REQUEST,
 			materialRequests: materialRequests.items,

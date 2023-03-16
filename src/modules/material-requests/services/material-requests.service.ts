@@ -298,9 +298,12 @@ export class MaterialRequestsService {
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
 			maintainerLogo: grapqhQLMaterialRequest.object.maintainer.information?.logo?.iri,
 			organisation: grapqhQLMaterialRequest.organisation || null,
-			contactMail: (
-				grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0]
-			).object.maintainer.information?.contact_point,
+			contactMail:
+				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+					.object.maintainer.information?.contact_point || null,
+			objectMeemooLocalId:
+				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+					.object.meemoo_local_id || null,
 		};
 
 		return transformedMaterialRequest;

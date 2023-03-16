@@ -252,10 +252,10 @@ export class CampaignMonitorService {
 			user_lastname: lastname,
 			request_list: materialRequests.map((mr) => ({
 				title: mr.objectSchemaName,
-				cp_name: mr.organisation,
-				// local_cp_id: //ontbreekt nog// meemoo_local_id
-				// pid: //ontbreekt nog //is meemoo id
-				// page_url: //ontbreekt nog //env: CLIENT_HOST+/zoeken/maintainer van object(slug)/schemaId
+				cp_name: mr.maintainerName,
+				local_cp_id: mr.objectMeemooLocalId, //ontbreekt nog// object.meemoo_local_id
+				pid: mr.objectMeemooIdentifier, //ontbreekt nog //is meemoo id => object.meemoo_identifier
+				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`, //env: CLIENT_HOST+/zoeken/maintainer van object(slug)/schemaId
 				request_type: mr.type,
 				request_description: mr.reason,
 			})),
