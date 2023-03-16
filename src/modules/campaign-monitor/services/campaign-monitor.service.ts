@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isArray } from 'lodash';
+import { get, groupBy, isArray } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -35,7 +35,7 @@ export class CampaignMonitorService {
 
 	constructor(private configService: ConfigService<Configuration>) {
 		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
+			// prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'), //blokeerde verzenden van mails
 			resolveBodyOnly: true,
 			username: this.configService.get('CAMPAIGN_MONITOR_API_KEY'),
 			password: '.',
@@ -99,16 +99,20 @@ export class CampaignMonitorService {
 	}
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
-		emailInfo.materialRequests.forEach((mr) => {
-			if (!mr.contactMail) {
-				// Throw exception will break too much
-				this.logger.error(
-					`Mail will not be sent to user id ${mr.contactMail} - empty email address` //ERROR AANPASSEN
-				);
-			} else {
-				recipients.push(mr.contactMail);
-			}
-		});
+		if (!emailInfo.to) {
+			emailInfo.materialRequests.forEach((mr) => {
+				if (!mr.contactMail) {
+					// Throw exception will break too much
+					this.logger.error(
+						`Mail will not be sent to user id ${mr.contactMail} - empty email address` //ERROR AANPASSEN
+					);
+				} else {
+					recipients.push(mr.contactMail);
+				}
+			});
+		} else {
+			recipients.push(emailInfo.to);
+		}
 
 		if (recipients.length === 0) {
 			this.logger.error(
@@ -129,8 +133,7 @@ export class CampaignMonitorService {
 			to: recipients,
 			consentToTrack: 'unchanged',
 			data: this.convertMaterialRequestsToEmailTemplateData(
-				emailInfo.materialRequests,
-				emailInfo.sendRequestListDto,
+				emailInfo,
 				emailInfo.firstName,
 				emailInfo.lastName
 			),
@@ -176,16 +179,15 @@ export class CampaignMonitorService {
 				templateIds[emailInfo.template]
 			}/send`;
 
-			const data: any = {
-				Data: emailInfo.data,
-				ConsentToTrack: 'unchanged',
-			};
+			const data: any = emailInfo.data;
 
 			if (isArray(emailInfo.data.to)) {
-				data.BCC = emailInfo.data.to;
+				// data.BCC = emailInfo.data.to; //Not sure what this is doing, it made the mails send 2 times
 			} else {
 				data.To = [emailInfo.data.to];
 			}
+
+			this.logger.log(`mail data: ${JSON.stringify(data)}`);
 
 			// TODO: replace with node fetch
 			await this.gotInstance({
@@ -242,25 +244,43 @@ export class CampaignMonitorService {
 	}
 
 	public convertMaterialRequestsToEmailTemplateData(
-		materialRequests: MaterialRequest[],
-		sendRequestListDto: SendRequestListDto,
+		emailInfo: MaterialRequestEmailInfo,
 		firstName: string,
 		lastname: string
 	): CampaignMonitorMaterialRequestData {
+		if (emailInfo.isToMaintainer) {
+			//TODO: change this return object to match to maintainertemplate
+			return {
+				user_firstname: firstName,
+				user_lastname: lastname,
+				request_list: emailInfo.materialRequests.map((mr) => ({
+					title: mr.objectSchemaName,
+					cp_name: mr.maintainerName,
+					local_cp_id: mr.objectMeemooLocalId,
+					pid: mr.objectMeemooIdentifier,
+					page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+					request_type: mr.type,
+					request_description: mr.reason,
+				})),
+				user_request_context: emailInfo.sendRequestListDto.type,
+				user_organisation: emailInfo.sendRequestListDto.organisation,
+			};
+		}
+		//Convert to requesterTemplate
 		return {
 			user_firstname: firstName,
 			user_lastname: lastname,
-			request_list: materialRequests.map((mr) => ({
+			request_list: emailInfo.materialRequests.map((mr) => ({
 				title: mr.objectSchemaName,
 				cp_name: mr.maintainerName,
-				local_cp_id: mr.objectMeemooLocalId, //ontbreekt nog// object.meemoo_local_id
-				pid: mr.objectMeemooIdentifier, //ontbreekt nog //is meemoo id => object.meemoo_identifier
-				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`, //env: CLIENT_HOST+/zoeken/maintainer van object(slug)/schemaId
+				local_cp_id: mr.objectMeemooLocalId,
+				pid: mr.objectMeemooIdentifier,
+				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
 				request_type: mr.type,
 				request_description: mr.reason,
 			})),
-			user_request_context: sendRequestListDto.type, //Is this right?
-			user_organisation: sendRequestListDto.organisation,
+			user_request_context: emailInfo.sendRequestListDto.type,
+			user_organisation: emailInfo.sendRequestListDto.organisation,
 		};
 	}
 }

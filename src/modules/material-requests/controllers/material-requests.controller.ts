@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import _ from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -153,13 +154,14 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const dto = new MaterialRequestsQueryDto();
-		dto.isPending = true; //werkt nog niet
-		//opletten met limit en paginatie
+		dto.isPending = true; //=> Doesn't work yet
+		//Watch out with limits and pagination
 		const materialRequests = await this.materialRequestsService.findAll(dto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
+
 		// materialRequests.items.forEach(
 		// 	(mr) =>
 		// 		(mr.contactMail = mr.contactMail.find(
@@ -167,12 +169,39 @@ export class MaterialRequestsController {
 		// 		)?.email)
 		// );
 
+		//this replaces the code above for testing
 		materialRequests.items.forEach(
 			(mr) => (mr.contactMail = 'emile.vantichelen@studiohyperdrive.be')
 		);
-		//met group by van lodash alles per maintainer maken
+
+		const groupedMaterialRequests: any = _.groupBy(materialRequests.items, 'maintainerId');
+		const groupedArray = [];
+
+		Object.keys(groupedMaterialRequests).forEach(function (key) {
+			console.log(key, groupedMaterialRequests[key]);
+			groupedArray.push(groupedMaterialRequests[key]);
+		});
+
+		//Send mail to each maintainer
+		groupedArray.forEach((materialRequests) => {
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: materialRequests[0].contactMail, //Each materialRequest in this group has the same maintainer, otherwise, the maintainer will recieve multiple mails
+				isToMaintainer: true,
+				template: Template.MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: materialRequests,
+				sendRequestListDto,
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+			};
+			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		});
+
+		//Send mail to the requester
 		const emailInfo: MaterialRequestEmailInfo = {
-			template: Template.MATERIAL_REQUEST,
+			// to: user.getMail(), //disabled for testing
+			to: 'emile.vantichelen@studiohyperdrive.be',
+			isToMaintainer: false,
+			template: Template.MATERIAL_REQUEST_REQUESTER,
 			materialRequests: materialRequests.items,
 			sendRequestListDto,
 			firstName: user.getFirstName(),

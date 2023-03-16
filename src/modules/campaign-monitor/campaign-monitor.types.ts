@@ -11,7 +11,8 @@ export enum Template {
 	VISIT_APPROVED = 'visitApproved',
 	VISIT_DENIED = 'visitDenied',
 	SHARE_FOLDER = 'shareFolder',
-	MATERIAL_REQUEST = 'materialRequest',
+	MATERIAL_REQUEST_REQUESTER = 'materialRequestRequester',
+	MATERIAL_REQUEST_MAINTAINER = 'materialRequestMaintainer',
 }
 
 export interface VisitEmailInfo {
@@ -21,7 +22,8 @@ export interface VisitEmailInfo {
 }
 
 export interface MaterialRequestEmailInfo {
-	// to: string[];
+	to?: string;
+	isToMaintainer: boolean;
 	template: Template;
 	materialRequests: MaterialRequest[];
 	sendRequestListDto: SendRequestListDto;
