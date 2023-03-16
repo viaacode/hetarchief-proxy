@@ -40,7 +40,7 @@ export class UsersService {
 
 	constructor(protected dataService: DataService) {}
 
-	public adapt(graphQlUser: GqlUser, organisation?: Organisation): User | null {
+	public adapt(graphQlUser: GqlUser): User | null {
 		if (!graphQlUser) {
 			return null;
 		}
@@ -76,16 +76,6 @@ export class UsersService {
 			};
 		}
 
-		if (organisation) {
-			adpatedUser = {
-				...adpatedUser,
-				organisationId:
-					organisation?.schemaIdentifier ??
-					graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
-				organisationName: organisation?.schemaName ?? null,
-			};
-		}
-
 		/* istanbul ignore next */
 		return adpatedUser;
 	}
@@ -94,10 +84,7 @@ export class UsersService {
 		return GroupIdToName[groupId] || null;
 	}
 
-	public async getUserByIdentityId(
-		identityId: string,
-		organisation?: Organisation
-	): Promise<User | null> {
+	public async getUserByIdentityId(identityId: string): Promise<User | null> {
 		const userResponse = await this.dataService.execute<
 			GetUserByIdentityIdQuery,
 			GetUserByIdentityIdQueryVariables
@@ -108,7 +95,7 @@ export class UsersService {
 			return null;
 		}
 
-		return this.adapt(userResponse.users_profile[0], organisation);
+		return this.adapt(userResponse.users_profile[0]);
 	}
 
 	public async createUserWithIdp(

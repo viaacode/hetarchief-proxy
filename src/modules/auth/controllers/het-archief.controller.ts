@@ -134,10 +134,18 @@ export class HetArchiefController {
 			const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 				organisationId
 			);
+
 			let archiefUser = await this.usersService.getUserByIdentityId(
-				ldapUser.attributes.entryUUID[0],
-				organisation
+				ldapUser.attributes.entryUUID[0]
 			);
+
+			if (archiefUser) {
+				archiefUser = {
+					...archiefUser,
+					organisationId: organisationId,
+					organisationName: organisation?.schemaName ?? null,
+				};
+			}
 
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser);

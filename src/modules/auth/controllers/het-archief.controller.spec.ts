@@ -32,6 +32,7 @@ const ldapUser = {
 		name_id: 'test@studiohyperdrive.be',
 		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
 		apps: ['hetarchief'],
+		o: ['OR-1v5bc86'],
 	},
 };
 
@@ -43,7 +44,7 @@ const archiefUser = {
 	groupId: Group.CP_ADMIN,
 	permissions: [],
 	isKeyUser: false,
-	organisationId: null,
+	organisationId: 'OR-1v5bc86',
 	organisationName: null,
 };
 
@@ -261,6 +262,7 @@ describe('HetArchiefController', () => {
 				RelayState: null,
 			};
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
