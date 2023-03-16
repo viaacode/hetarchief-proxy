@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, groupBy, isArray } from 'lodash';
+import { get, isArray } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -19,8 +19,6 @@ import {
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { MaterialRequest } from '~modules/material-requests/material-requests.types';
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
