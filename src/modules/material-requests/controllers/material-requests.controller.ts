@@ -23,27 +23,18 @@ import {
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
-import {
-	MaterialRequestEmailInfo,
-	Template,
-} from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { LoggedInGuard } from '~shared/guards/logged-in.guard';
-import { Recipient } from '~shared/types/types';
 
 // @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
 @Controller('material-requests')
 export class MaterialRequestsController {
-	constructor(
-		private materialRequestsService: MaterialRequestsService,
-		private campaignMonitorService: CampaignMonitorService
-	) {}
+	constructor(private materialRequestsService: MaterialRequestsService) {}
 
 	@Get()
 	@ApiOperation({
@@ -154,14 +145,14 @@ export class MaterialRequestsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const dto = new MaterialRequestsQueryDto();
-		dto.isPending = true; //=> Doesn't work yet
+		dto.isPending = true;
 		//Watch out with limits and pagination
 		const materialRequests = await this.materialRequestsService.findAll(dto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
-
+		// This should probably happen in the adapt method in the service
 		// materialRequests.items.forEach(
 		// 	(mr) =>
 		// 		(mr.contactMail = mr.contactMail.find(
@@ -173,40 +164,9 @@ export class MaterialRequestsController {
 		materialRequests.items.forEach(
 			(mr) => (mr.contactMail = 'emile.vantichelen@studiohyperdrive.be')
 		);
-
-		const groupedMaterialRequests: any = _.groupBy(materialRequests.items, 'maintainerId');
-		const groupedArray = [];
-
-		Object.keys(groupedMaterialRequests).forEach(function (key) {
-			console.log(key, groupedMaterialRequests[key]);
-			groupedArray.push(groupedMaterialRequests[key]);
-		});
-
-		//Send mail to each maintainer
-		groupedArray.forEach((materialRequests) => {
-			const emailInfo: MaterialRequestEmailInfo = {
-				to: materialRequests[0].contactMail, //Each materialRequest in this group has the same maintainer, otherwise, the maintainer will recieve multiple mails
-				isToMaintainer: true,
-				template: Template.MATERIAL_REQUEST_MAINTAINER,
-				materialRequests: materialRequests,
-				sendRequestListDto,
-				firstName: user.getFirstName(),
-				lastName: user.getLastName(),
-			};
-			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
-		});
-
-		//Send mail to the requester
-		const emailInfo: MaterialRequestEmailInfo = {
-			// to: user.getMail(), //disabled for testing
-			to: 'emile.vantichelen@studiohyperdrive.be',
-			isToMaintainer: false,
-			template: Template.MATERIAL_REQUEST_REQUESTER,
-			materialRequests: materialRequests.items,
-			sendRequestListDto,
+		this.materialRequestsService.sendRequestList(materialRequests.items, sendRequestListDto, {
 			firstName: user.getFirstName(),
 			lastName: user.getLastName(),
-		};
-		this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		});
 	}
 }

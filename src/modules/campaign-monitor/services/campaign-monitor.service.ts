@@ -99,19 +99,13 @@ export class CampaignMonitorService {
 	}
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
-		if (!emailInfo.to) {
-			emailInfo.materialRequests.forEach((mr) => {
-				if (!mr.contactMail) {
-					// Throw exception will break too much
-					this.logger.error(
-						`Mail will not be sent to user id ${mr.contactMail} - empty email address` //ERROR AANPASSEN
-					);
-				} else {
-					recipients.push(mr.contactMail);
-				}
-			});
-		} else {
+		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
+		} else {
+			// Throw exception will break too much
+			this.logger.error(
+				`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0].maintainerId} - empty email address`
+			);
 		}
 
 		if (recipients.length === 0) {

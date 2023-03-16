@@ -1,7 +1,8 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { SessionUserEntity } from '@meemoo/admin-core-api/dist/src/modules/users/classes/session-user';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { has, isArray, isEmpty, isNil, set } from 'lodash';
+import { groupBy, has, isArray, isEmpty, isNil, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -38,6 +39,11 @@ import {
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import {
+	MaterialRequestEmailInfo,
+	Template,
+} from '~modules/campaign-monitor/campaign-monitor.types';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -47,7 +53,10 @@ import { SortDirection } from '~shared/types';
 export class MaterialRequestsService {
 	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		private campaignMonitorService: CampaignMonitorService
+	) {}
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
@@ -103,7 +112,7 @@ export class MaterialRequestsService {
 			};
 		}
 
-		if (!isEmpty(isPending)) {
+		if (!isNil(isPending)) {
 			where.is_pending = {
 				_eq: isPending,
 			};
@@ -248,19 +257,48 @@ export class MaterialRequestsService {
 		return response.delete_app_material_requests.affected_rows;
 	}
 
-	// REMOVE CODE BEFORE PR
-	public async findMaintainerPrimaryMail(
+	public async sendRequestList(
+		materialRequests: MaterialRequest[],
 		sendRequestListDto: SendRequestListDto,
-		userProfileId: string
+		userInfo: {
+			firstName;
+			lastName;
+		}
 	): Promise<void> {
-		// const contactInfo = await this.dataService.execute<
-		// 	FindMaterialRequestsByIdQuery,
-		// 	FindMaterialRequestsByIdQueryVariables
-		// >(FindMaterialRequestsByIdDocument, { id });
-		// if (isNil(materialRequestResponse) || !materialRequestResponse.app_material_requests[0]) {
-		// 	throw new NotFoundException(`Material Request with id '${id}' not found`);
-		// }
-		// return this.adapt(materialRequestResponse.app_material_requests[0]);
+		const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
+		const groupedArray = [];
+
+		Object.keys(groupedMaterialRequests).forEach(function (key) {
+			console.log(key, groupedMaterialRequests[key]);
+			groupedArray.push(groupedMaterialRequests[key]);
+		});
+
+		//Send mail to each maintainer
+		groupedArray.forEach((materialRequests) => {
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: materialRequests[0].contactMail, //Each materialRequest in this group has the same maintainer, otherwise, the maintainer will recieve multiple mails
+				isToMaintainer: true,
+				template: Template.MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: materialRequests,
+				sendRequestListDto,
+				firstName: userInfo.firstName,
+				lastName: userInfo.lastName,
+			};
+			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		});
+
+		//Send mail to the requester
+		const emailInfo: MaterialRequestEmailInfo = {
+			// to: user.getMail(), //disabled for testing
+			to: 'emile.vantichelen@studiohyperdrive.be',
+			isToMaintainer: false,
+			template: Template.MATERIAL_REQUEST_REQUESTER,
+			materialRequests: materialRequests,
+			sendRequestListDto,
+			firstName: userInfo.firstName,
+			lastName: userInfo.lastName,
+		};
+		this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 	}
 
 	/**
