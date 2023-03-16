@@ -82,7 +82,6 @@ export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: string;
 	dctermsMedium: string;
-	ebucoreObjectType?: string | null;
 	meemooIdentifier: string; // PID (not unique per object)
 	meemoofilmBase: string;
 	meemoofilmColor: boolean;
@@ -111,6 +110,7 @@ export interface IeObject {
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
 	// OPTIONAL
+	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
 	premisIsPartOf?: string;
 	alternativeName?: string;
