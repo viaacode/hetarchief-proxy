@@ -136,7 +136,6 @@ export class CampaignMonitorService {
 				template: emailInfo.template,
 				data,
 			});
-			console.log('REAL MAIL');
 		} else {
 			this.logger.log(
 				`Mock email sent. To: '${
@@ -178,8 +177,6 @@ export class CampaignMonitorService {
 			} else {
 				data.To = [emailInfo.data.to];
 			}
-
-			this.logger.log(`mail data: ${JSON.stringify(data)}`);
 
 			// TODO: replace with node fetch
 			await this.gotInstance({
