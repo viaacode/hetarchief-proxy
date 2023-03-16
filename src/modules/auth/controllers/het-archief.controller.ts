@@ -131,9 +131,12 @@ export class HetArchiefController {
 			const organisationId = isEmpty(ldapUser?.attributes?.o)
 				? null
 				: ldapUser.attributes.o[0];
-			const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-				organisationId
-			);
+
+			let organisation = null;
+			if (organisationId)
+				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+					organisationId
+				);
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
