@@ -151,7 +151,7 @@ export class HetArchiefController {
 			}
 
 			// determine user group
-			const userGroup = await this.idpService.determineUserGroup(ldapUser);
+			const userGroup = await this.idpService.determineUserGroup(ldapUser, organisation);
 
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
