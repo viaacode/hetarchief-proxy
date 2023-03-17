@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { isEmpty, isNil } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -23,7 +24,7 @@ import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { Group, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -45,6 +46,9 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
@@ -61,6 +65,9 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
@@ -165,5 +172,24 @@ export class MaterialRequestsController {
 			lastName: user.getLastName(),
 			mail: user.getMail(),
 		});
+	}
+
+	// helpers
+	// ========================
+	public validateMaintainerIdsWithUserGroup(
+		user: SessionUserEntity,
+		queryDto: MaterialRequestsQueryDto
+	): MaterialRequestsQueryDto {
+		if (!isNil(queryDto?.maintainerIds) || !isEmpty(queryDto?.maintainerIds)) {
+			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+				queryDto.maintainerIds = [];
+			}
+
+			if (user.getGroupId() === Group.CP_ADMIN) {
+				queryDto.maintainerIds = [user.getMaintainerId()];
+			}
+		}
+
+		return queryDto;
 	}
 }

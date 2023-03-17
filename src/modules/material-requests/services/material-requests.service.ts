@@ -13,6 +13,7 @@ import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestSendRequestListUserInfo,
@@ -60,11 +61,7 @@ export class MaterialRequestsService {
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
-		parameters: {
-			userProfileId?: string;
-			userGroup?: string;
-			isPersonal?: boolean;
-		}
+		parameters: MaterialRequestFindAllExtraParameters
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
 			inputQuery;

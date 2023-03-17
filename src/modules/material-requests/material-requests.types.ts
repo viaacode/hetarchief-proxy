@@ -40,6 +40,12 @@ export interface MaterialRequestMaintainer {
 	name: string;
 }
 
+export interface MaterialRequestFindAllExtraParameters {
+	userProfileId?: string;
+	userGroup?: string;
+	isPersonal?: boolean;
+}
+
 export interface MaterialRequestSendRequestListUserInfo {
 	firstName: string;
 	lastName: string;
