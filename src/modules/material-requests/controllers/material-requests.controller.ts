@@ -135,16 +135,12 @@ export class MaterialRequestsController {
 		queryDto: MaterialRequestsQueryDto
 	): MaterialRequestsQueryDto {
 		if (!isNil(queryDto?.maintainerIds) || !isEmpty(queryDto?.maintainerIds)) {
-			if (isNil(queryDto)) {
-				queryDto = new MaterialRequestsQueryDto();
+			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+				queryDto.maintainerIds = [];
 			}
 
 			if (user.getGroupId() === Group.CP_ADMIN) {
 				queryDto.maintainerIds = [user.getMaintainerId()];
-			}
-
-			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
-				queryDto.maintainerIds = [];
 			}
 		}
 
