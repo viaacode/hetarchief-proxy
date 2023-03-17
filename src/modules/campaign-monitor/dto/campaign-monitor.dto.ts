@@ -145,7 +145,7 @@ export class CampaignMonitorSendMailDto {
 	data: CampaignMonitorData;
 }
 
-export class PreferencesQueryDto {
+export class CampaignMonitorNewsletterPreferencesQueryDto {
 	@IsString()
 	@IsNotEmpty()
 	@ApiPropertyOptional({
@@ -155,7 +155,7 @@ export class PreferencesQueryDto {
 	email?: string;
 }
 
-export class UpdatePreferencesDto {
+export class CampaignMonitorUpdateNewsletterPreferencesDto {
 	@IsString()
 	@IsNotEmpty()
 	@ApiPropertyOptional({

@@ -12,7 +12,7 @@ import * as queryString from 'query-string';
 import { Configuration } from '~config';
 
 import { templateIds } from '../campaign-monitor.consts';
-import { NewsletterPreferences, VisitEmailInfo } from '../campaign-monitor.types';
+import { CampaignMonitorNewsletterPreferences, VisitEmailInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
 	CampaignMonitorSendMailDto,
@@ -145,18 +145,24 @@ export class CampaignMonitorService {
 		}
 	}
 
-	public async fetchNewsletterPreferences(email: string): Promise<NewsletterPreferences> {
+	public async fetchNewsletterPreferences(
+		email: string
+	): Promise<CampaignMonitorNewsletterPreferences> {
 		let url: string | null = null;
 
 		try {
-			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_URL as string}/${
+			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}${
+				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string
+			}/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT}/${
 				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string
 			}.json/?${queryString.stringify({ email })}`;
+
 			const response: any = await this.gotInstance({
 				url,
 				method: 'get',
 				throwHttpErrors: true,
 			});
+
 			return {
 				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
 			};

@@ -2,8 +2,11 @@ import { SessionUserEntity } from '@meemoo/admin-core-api/dist/src/modules/users
 import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { NewsletterPreferences } from '../campaign-monitor.types';
-import { CampaignMonitorSendMailDto, PreferencesQueryDto } from '../dto/campaign-monitor.dto';
+import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
+import {
+	CampaignMonitorNewsletterPreferencesQueryDto,
+	CampaignMonitorSendMailDto,
+} from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -29,15 +32,15 @@ export class CampaignMonitorController {
 	@Get('preferences')
 	@ApiOperation({ description: 'Fetch user newsletter preferences' })
 	async getPreferences(
-		@Query() preferencesQueryDto: PreferencesQueryDto
-	): Promise<NewsletterPreferences> {
+		@Query() preferencesQueryDto: CampaignMonitorNewsletterPreferencesQueryDto
+	): Promise<CampaignMonitorNewsletterPreferences> {
 		return this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
 	}
 
 	@Post('preferences')
 	@ApiOperation({ description: 'Update user newsletter preferences' })
 	async updatePreferences(
-		@Body() createMaterialRequestDto: CreateMaterialRequestDto,
+		@Body() createMaterialRequestDto: any,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		//TODO change return type
