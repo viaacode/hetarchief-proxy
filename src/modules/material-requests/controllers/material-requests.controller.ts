@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { isNil } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -33,6 +34,10 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		if (isNil(queryDto)) {
+			queryDto = new MaterialRequestsQueryDto();
+		}
+
 		if (user.getGroupId() === Group.CP_ADMIN) {
 			queryDto.maintainerIds = [user.getMaintainerId()];
 		}
@@ -57,6 +62,10 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		if (isNil(queryDto)) {
+			queryDto = new MaterialRequestsQueryDto();
+		}
+
 		if (user.getGroupId() === Group.CP_ADMIN) {
 			queryDto.maintainerIds = [user.getMaintainerId()];
 		}
