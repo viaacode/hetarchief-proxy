@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { isNil } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -34,17 +34,8 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		if (isNil(queryDto)) {
-			queryDto = new MaterialRequestsQueryDto();
-		}
-
-		if (user.getGroupId() === Group.CP_ADMIN) {
-			queryDto.maintainerIds = [user.getMaintainerId()];
-		}
-
-		if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
-			queryDto.maintainerIds = [];
-		}
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
@@ -62,17 +53,8 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		if (isNil(queryDto)) {
-			queryDto = new MaterialRequestsQueryDto();
-		}
-
-		if (user.getGroupId() === Group.CP_ADMIN) {
-			queryDto.maintainerIds = [user.getMaintainerId()];
-		}
-
-		if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
-			queryDto.maintainerIds = [];
-		}
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
@@ -146,5 +128,26 @@ export class MaterialRequestsController {
 		} else {
 			return { status: `no material requests found with that id: ${materialRequestId}` };
 		}
+	}
+
+	public validateMaintainerIdsWithUserGroup(
+		user: SessionUserEntity,
+		queryDto: MaterialRequestsQueryDto
+	): MaterialRequestsQueryDto {
+		if (!isNil(queryDto?.maintainerIds) || !isEmpty(queryDto?.maintainerIds)) {
+			if (isNil(queryDto)) {
+				queryDto = new MaterialRequestsQueryDto();
+			}
+
+			if (user.getGroupId() === Group.CP_ADMIN) {
+				queryDto.maintainerIds = [user.getMaintainerId()];
+			}
+
+			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+				queryDto.maintainerIds = [];
+			}
+		}
+
+		return queryDto;
 	}
 }
