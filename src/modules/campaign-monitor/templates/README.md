@@ -34,24 +34,24 @@ b573a74d-45cf-432a-bd0b-eb74a4cdec1e (https://meemoo.createsend.com/triggered/wo
 
 d2691b7b-5119-42cc-9db8-08a94df37f4c (https://meemoo.createsend.com/triggered/workflow/d2691b7b-5119-42cc-9db8-08a94df37f4c)
 
-```jsob
+```json
 {
-  "user_firstname": "Maaike",
-  "user_lastname": "Ongena",
-  "cp_name": "naam organisatie",
-  "request_list": [
-    {
-      "title": "titel van het object",
-      "local_cp_id": "local cp id van het item",
-      "pid": "meemoo id",
-      "page_url": "https://qas.hetarchief.be/item-url",
-      "request_type": "bekijken/herbruiken/meer info",
-      "request_description": "input invulveld gebruiker"
-    }
-  ],
-  "user_request_context": "beroepsdoeleinden/onderzoek/...",
-  "user_organisation": "organisatie van de gebruiker",
-  "user_email": "mailadres van de eindgebruiker"
+	"user_firstname": "Maaike",
+	"user_lastname": "Ongena",
+	"cp_name": "naam organisatie",
+	"request_list": [
+		{
+			"title": "titel van het object",
+			"local_cp_id": "local cp id van het item",
+			"pid": "meemoo id",
+			"page_url": "https://qas.hetarchief.be/item-url",
+			"request_type": "bekijken/herbruiken/meer info",
+			"request_description": "input invulveld gebruiker"
+		}
+	],
+	"user_request_context": "beroepsdoeleinden/onderzoek/...",
+	"user_organisation": "organisatie van de gebruiker",
+	"user_email": "mailadres van de eindgebruiker"
 }
 ```
 
