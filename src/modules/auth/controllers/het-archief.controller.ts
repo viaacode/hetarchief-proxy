@@ -16,7 +16,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { get, isEqual, pick } from 'lodash';
+import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
@@ -33,7 +33,7 @@ import { LogEventType } from '~modules/events/types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
-import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -127,9 +127,28 @@ export class HetArchiefController {
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
+			const apps = ldapUser?.attributes?.apps ?? [];
+			const organisationId = isEmpty(ldapUser?.attributes?.o)
+				? null
+				: ldapUser.attributes.o[0];
+
+			let organisation = null;
+			if (organisationId)
+				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
+					organisationId
+				);
+
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
 			);
+
+			if (archiefUser) {
+				archiefUser = {
+					...archiefUser,
+					organisationId: organisationId,
+					organisationName: organisation?.schemaName ?? null,
+				};
+			}
 
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser);
@@ -139,6 +158,9 @@ export class HetArchiefController {
 				lastName: ldapUser.attributes.sn[0],
 				email: ldapUser.attributes.mail[0],
 				groupId: userGroup,
+				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
+				organisationId,
+				organisationName: organisation?.schemaName ?? null,
 			};
 
 			if (!archiefUser) {
@@ -164,7 +186,15 @@ export class HetArchiefController {
 			} else {
 				if (
 					!isEqual(
-						pick(archiefUser, ['firstName', 'lastName', 'email', 'groupId']),
+						pick(archiefUser, [
+							'firstName',
+							'lastName',
+							'email',
+							'groupId',
+							'isKeyUser',
+							'organisationId',
+							'organisationName',
+						]),
 						userDto
 					)
 				) {
@@ -190,11 +220,8 @@ export class HetArchiefController {
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
 			if (archiefUser?.maintainerId) {
-				const organisation =
-					await this.organisationService.findOrganisationBySchemaIdentifier(
-						archiefUser.maintainerId
-					);
 				archiefUser.sector = organisation?.sector || null;
+				archiefUser.organisationId = organisation?.schemaIdentifier || null;
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);

@@ -1,6 +1,7 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import jsep from 'jsep';
 import { cloneDeep } from 'lodash';
 import nock from 'nock';
 

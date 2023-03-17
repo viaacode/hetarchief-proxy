@@ -17,7 +17,7 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-@UseGuards(LoggedInGuard)
+// @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
 @Controller('material-requests')
 export class MaterialRequestsController {
@@ -28,7 +28,7 @@ export class MaterialRequestsController {
 		description:
 			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
-	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	// @RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity

@@ -9,6 +9,7 @@ import {
 } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
+import { Group } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
 
 const incompleteConfig: QueryBuilderConfig = {
@@ -46,6 +47,7 @@ const mockInputInfo = {
 		isKeyUser: false,
 		maintainerId: '',
 		sector: IeObjectSector.CULTURE,
+		groupId: Group.MEEMOO_ADMIN,
 	},
 	visitorSpaceInfo: {
 		visitorSpaceIds: [],
@@ -63,7 +65,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return a match_all query when no filters are specified', () => {
-			const esQuery = QueryBuilder.build({ size: 10, page: 1 }, mockInputInfo);
+			const esQuery = QueryBuilder.build({ size: 10, page: 1, filters: [] }, mockInputInfo);
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
@@ -124,7 +126,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should correctly convert the page to a from value', () => {
-			const esQuery = QueryBuilder.build({ size: 10, page: 3 }, mockInputInfo);
+			const esQuery = QueryBuilder.build({ size: 10, page: 3, filters: [] }, mockInputInfo);
 			expect(esQuery.from).toEqual(20);
 			expect(esQuery.size).toEqual(10);
 		});
@@ -492,13 +494,13 @@ describe('QueryBuilder', () => {
 			QueryBuilder.setConfig(originalConfig);
 		});
 
-		it('should add filter suffixes when required', () => {
+		it('should create a wildcard filter when the contains operator is used', () => {
 			const esQuery = QueryBuilder.build(
 				{
 					filters: [
 						{
 							field: SearchFilterField.GENRE,
-							value: 'interview',
+							value: 'intervi',
 							operator: Operator.CONTAINS,
 						},
 					],
@@ -509,8 +511,17 @@ describe('QueryBuilder', () => {
 				mockInputInfo
 			);
 
-			expect(esQuery.query.bool.should[0].bool.must[0]).toEqual({
-				term: { 'schema_genre.keyword': 'interview' },
+			expect(esQuery.query.bool.should[0]).toEqual({
+				bool: {
+					filter: [
+						{
+							query_string: {
+								default_field: 'schema_genre',
+								query: 'intervi*',
+							},
+						},
+					],
+				},
 			});
 		});
 

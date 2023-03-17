@@ -19,11 +19,20 @@ query findMaterialRequests(
 			id
 			full_name
 			mail
+			group {
+				name
+				label
+				description
+				id
+			}
 		}
 		object {
 			maintainer {
 				schema_identifier
 				schema_name
+				information {
+					logo
+				}
 				visitor_space {
 					slug
 				}

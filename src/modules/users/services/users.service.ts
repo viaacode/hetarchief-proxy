@@ -1,6 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
+import { Organisation } from '../../organisations/organisations.types';
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
 import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../types';
 
@@ -93,6 +94,7 @@ export class UsersService {
 		if (!userResponse.users_profile[0]) {
 			return null;
 		}
+
 		return this.adapt(userResponse.users_profile[0]);
 	}
 
@@ -107,6 +109,7 @@ export class UsersService {
 			last_name: createUserDto.lastName,
 			mail: createUserDto.email,
 			group_id: createUserDto.groupId,
+			is_key_user: createUserDto.isKeyUser,
 		};
 		const { insert_users_profile_one: createdUser } = await this.dataService.execute<
 			InsertUserMutation,
@@ -145,6 +148,8 @@ export class UsersService {
 			last_name: updateUserDto.lastName,
 			mail: updateUserDto.email,
 			group_id: updateUserDto.groupId,
+			is_key_user: updateUserDto.isKeyUser,
+			organisation_schema_identifier: updateUserDto.organisationId,
 		};
 
 		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<

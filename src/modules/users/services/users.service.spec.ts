@@ -123,6 +123,8 @@ describe('UsersService', () => {
 					lastName: 'Testerom',
 					email: 'test@studiohypderdrive.be',
 					groupId: Group.CP_ADMIN,
+					isKeyUser: false,
+					organisationId: 'test',
 				},
 				Idp.HETARCHIEF,
 				'idp-1'
@@ -143,6 +145,8 @@ describe('UsersService', () => {
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
 				groupId: Group.CP_ADMIN,
+				isKeyUser: false,
+				organisationId: 'test',
 			});
 			expect(result).toEqual(archiefUser);
 		});

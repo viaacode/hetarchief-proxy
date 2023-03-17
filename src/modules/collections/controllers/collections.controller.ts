@@ -112,35 +112,6 @@ export class CollectionsController {
 		return folderObjects;
 	}
 
-	// Will be disabled in fase 2 => no export from folders, only from object detail page
-	// @Get(':collectionId/export')
-	// @RequireAllPermissions(Permission.EXPORT_OBJECT)
-	// @Header('Content-Type', 'text/xml')
-	// public async exportCollection(
-	// 	@Headers('referer') referer: string,
-	// 	@Param('collectionId', ParseUUIDPipe) collectionId: string,
-	// 	@SessionUser() user: SessionUserEntity,
-	// 	@Req() request: Request
-	// ): Promise<string> {
-	// 	const objects = await this.ieObjectsService.findAllObjectMetadataByCollectionId(
-	// 		collectionId,
-	// 		user.getId()
-	// 	);
-	//
-	// 	// Log event
-	// 	this.eventsService.insertEvents([
-	// 		{
-	// 			id: EventsHelper.getEventId(request),
-	// 			type: LogEventType.METADATA_EXPORT,
-	// 			source: request.path,
-	// 			subject: user.getId(),
-	// 			time: new Date().toISOString(),
-	// 		},
-	// 	]);
-	//
-	// 	return convertObjectsToXml(objects.map((object) => limitMetadata(object)));
-	// }
-
 	@Post()
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)

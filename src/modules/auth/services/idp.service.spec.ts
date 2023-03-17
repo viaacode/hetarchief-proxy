@@ -8,6 +8,7 @@ import { IdpService } from './idp.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Group } from '~modules/users/types';
+import { LdapApp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -33,7 +34,7 @@ const getLdapUser = () => ({
 		cn: ['Tom Testerom'],
 		sn: ['Testerom'],
 		oNickname: ['Testbeeld'],
-		apps: ['hetarchief-beheer'],
+		apps: [LdapApp.HETARCHIEF_BEHEER],
 		organizationalStatus: [''],
 		o: meemooAdminOrganizationIds.split(','),
 	},
