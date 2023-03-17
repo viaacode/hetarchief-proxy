@@ -1,9 +1,7 @@
-import { userInfo } from 'os';
-
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { has, isArray, isEmpty, isNil, set } from 'lodash';
+import { isArray, isEmpty, isNil, set } from 'lodash';
 
 import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
@@ -11,6 +9,7 @@ import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
 } from '../material-requests.types';
@@ -49,12 +48,7 @@ export class MaterialRequestsService {
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
-		parameters: {
-			userProfileId?: string;
-			userGroup?: string;
-			userMaintainerId?: string;
-			isPersonal?: boolean;
-		}
+		parameters: MaterialRequestFindAllExtraParameters
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
 			inputQuery;
@@ -92,7 +86,7 @@ export class MaterialRequestsService {
 			};
 		}
 
-		if (!isEmpty(maintainerIds) && parameters.userGroup === Group.MEEMOO_ADMIN) {
+		if (!isEmpty(maintainerIds)) {
 			where.object = {
 				maintainer: {
 					schema_identifier: {
@@ -100,24 +94,6 @@ export class MaterialRequestsService {
 					},
 				},
 			};
-		}
-
-		// Check if maintainer id is not empty
-		// If so check where object already has an entry for the maintainer schema identifier
-		// If so push the user maintainerId to the array
-		// If not add an entry for maintainer schema identifier
-		if (!isEmpty(parameters.userMaintainerId)) {
-			if (where?.object?.maintainer?.schema_identifier) {
-				where.object.maintainer.schema_identifier._in.push(parameters.userMaintainerId);
-			} else {
-				where.object = {
-					maintainer: {
-						schema_identifier: {
-							_in: [parameters.userMaintainerId],
-						},
-					},
-				};
-			}
 		}
 
 		if (!isEmpty(isPending)) {

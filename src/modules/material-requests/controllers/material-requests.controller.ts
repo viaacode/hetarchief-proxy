@@ -11,7 +11,7 @@ import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { Group, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -33,10 +33,13 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		if (user.getGroupId() === Group.MEEMOO_ADMIN) {
+			queryDto.maintainerIds.push(user.getMaintainerId());
+		}
+
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
-			userMaintainerId: user.getMaintainerId(),
 			isPersonal: false,
 		});
 	}
@@ -50,6 +53,10 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		if (user.getGroupId() === Group.MEEMOO_ADMIN) {
+			queryDto.maintainerIds.push(user.getMaintainerId());
+		}
+
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
