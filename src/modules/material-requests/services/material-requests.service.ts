@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { has, isArray, isEmpty, isNil, set } from 'lodash';
+import { isArray, isEmpty, isNil, set } from 'lodash';
 
 import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
@@ -9,6 +9,7 @@ import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
 } from '../material-requests.types';
@@ -47,11 +48,7 @@ export class MaterialRequestsService {
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
-		parameters: {
-			userProfileId?: string;
-			userGroup?: string;
-			isPersonal?: boolean;
-		}
+		parameters: MaterialRequestFindAllExtraParameters
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
 			inputQuery;
