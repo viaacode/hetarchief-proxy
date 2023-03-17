@@ -205,13 +205,30 @@ export class QueryBuilder {
 	}
 
 	protected static buildFilter(elasticKey: string, searchFilter: SearchFilter): any {
+		if (searchFilter.operator === Operator.CONTAINS) {
+			// Used for filtering aggregate options in checkbox lists
+			return {
+				occurrenceType: 'filter',
+				query: {
+					query_string: {
+						query: searchFilter.value + '*',
+						default_field: elasticKey,
+					},
+				},
+			};
+		}
+
+		// Used for other advanced filter fields
 		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
 		const value = this.buildValue(searchFilter);
+		const queryType = this.getQueryType(searchFilter, value);
+		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
+
 		return {
 			occurrenceType,
 			query: {
-				[this.getQueryType(searchFilter, value)]: {
-					[elasticKey + this.filterSuffix(searchFilter.field)]: value,
+				[queryType]: {
+					[queryKey]: value,
 				},
 			},
 		};

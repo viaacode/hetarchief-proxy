@@ -494,13 +494,13 @@ describe('QueryBuilder', () => {
 			QueryBuilder.setConfig(originalConfig);
 		});
 
-		it('should add filter suffixes when required', () => {
+		it('should create a wildcard filter when the contains operator is used', () => {
 			const esQuery = QueryBuilder.build(
 				{
 					filters: [
 						{
 							field: SearchFilterField.GENRE,
-							value: 'interview',
+							value: 'intervi',
 							operator: Operator.CONTAINS,
 						},
 					],
@@ -511,8 +511,17 @@ describe('QueryBuilder', () => {
 				mockInputInfo
 			);
 
-			expect(esQuery.query.bool.should[0].bool.must[0]).toEqual({
-				term: { 'schema_genre.keyword': 'interview' },
+			expect(esQuery.query.bool.should[0]).toEqual({
+				bool: {
+					filter: [
+						{
+							query_string: {
+								default_field: 'schema_genre',
+								query: 'intervi*',
+							},
+						},
+					],
+				},
 			});
 		});
 
