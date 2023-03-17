@@ -33,8 +33,12 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		if (user.getGroupId() === Group.MEEMOO_ADMIN) {
-			queryDto.maintainerIds.push(user.getMaintainerId());
+		if (user.getGroupId() === Group.CP_ADMIN) {
+			queryDto.maintainerIds = [user.getMaintainerId()];
+		}
+
+		if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+			queryDto.maintainerIds = [];
 		}
 
 		return await this.materialRequestsService.findAll(queryDto, {
@@ -53,8 +57,12 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		if (user.getGroupId() === Group.MEEMOO_ADMIN) {
-			queryDto.maintainerIds.push(user.getMaintainerId());
+		if (user.getGroupId() === Group.CP_ADMIN) {
+			queryDto.maintainerIds = [user.getMaintainerId()];
+		}
+
+		if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+			queryDto.maintainerIds = [];
 		}
 
 		return this.materialRequestsService.findAll(queryDto, {
