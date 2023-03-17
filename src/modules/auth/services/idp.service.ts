@@ -8,6 +8,7 @@ import { Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 
+import { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Group } from '~modules/users/types';
 import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
@@ -53,7 +54,10 @@ export class IdpService {
 	 *
 	 * Flowchart v2: see https://meemoo.atlassian.net/wiki/spaces/HA2/pages/3293741091/FA+permissies+licenties+en+gebruikersgroepen+V2#1.-Gebruikersgroepen
 	 */
-	public async determineUserGroup(ldapUser: LdapUser): Promise<Group> {
+	public async determineUserGroup(
+		ldapUser: LdapUser,
+		organisation?: Organisation | null
+	): Promise<Group> {
 		const organizationalStatus = get(ldapUser, 'attributes.organizationalStatus', []);
 		// permissions check
 		const apps = get(ldapUser, 'attributes.apps', []);
@@ -81,7 +85,7 @@ export class IdpService {
 					)
 				);
 			}
-			if (maintainerId && (await this.spacesService.findByMaintainerId(maintainerId))) {
+			if (organisation) {
 				return Group.CP_ADMIN;
 			}
 

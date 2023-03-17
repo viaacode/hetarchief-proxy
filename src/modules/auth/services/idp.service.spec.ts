@@ -6,6 +6,7 @@ import { Configuration } from '~config';
 
 import { IdpService } from './idp.service';
 
+import { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Group } from '~modules/users/types';
 import { LdapApp } from '~shared/auth/auth.types';
@@ -16,6 +17,18 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 };
 
 const meemooAdminOrganizationIds = 'OR-w66976m';
+const mockOrganisation: Organisation = {
+	schemaIdentifier: 'OR-w66976m',
+	contactPoint: null,
+	primarySite: null,
+	description: null,
+	logo: null,
+	sector: null,
+	schemaName: 'vrt',
+	createdAt: null,
+	updatedAt: null,
+	formUrl: null,
+};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): any => {
@@ -151,7 +164,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.o = ['OR-rf5kf25'];
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, mockOrganisation);
 			expect(group).toEqual(Group.CP_ADMIN);
 		});
 	});
