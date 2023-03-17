@@ -1,4 +1,3 @@
-import { SessionUserEntity } from '@meemoo/admin-core-api/dist/src/modules/users/classes/session-user';
 import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -9,6 +8,7 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
@@ -26,7 +26,7 @@ export class CampaignMonitorController {
 	async sendMail(
 		@Body() emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
-		return this.campaignMonitorService.sendMail(emailInfo);
+		return await this.campaignMonitorService.sendMail(emailInfo);
 	}
 
 	@Get('preferences')
@@ -34,16 +34,17 @@ export class CampaignMonitorController {
 	async getPreferences(
 		@Query() preferencesQueryDto: CampaignMonitorNewsletterPreferencesQueryDto
 	): Promise<CampaignMonitorNewsletterPreferences> {
-		return this.campaignMonitorService.fetchNewsletterPreferences(preferencesQueryDto.email);
+		return await this.campaignMonitorService.fetchNewsletterPreferences(
+			preferencesQueryDto.email
+		);
 	}
 
 	@Post('preferences')
 	@ApiOperation({ description: 'Update user newsletter preferences' })
 	async updatePreferences(
-		@Body() createMaterialRequestDto: any,
+		@Body() preferences: CampaignMonitorNewsletterPreferences,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		//TODO change return type
-		return null;
+		return await this.campaignMonitorService.updateNewsletterPreferences(preferences, user);
 	}
 }

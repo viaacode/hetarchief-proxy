@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isArray } from 'lodash';
+import { compact, get, isArray, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
@@ -19,6 +19,7 @@ import {
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
@@ -96,6 +97,91 @@ export class CampaignMonitorService {
 		return true;
 	}
 
+	public async fetchNewsletterPreferences(
+		email: string
+	): Promise<CampaignMonitorNewsletterPreferences> {
+		let url: string | null = null;
+
+		try {
+			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string
+			}/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string
+			}.json/?${queryString.stringify({ email })}`;
+
+			const response: any = await this.gotInstance({
+				url,
+				method: 'get',
+				throwHttpErrors: true,
+			});
+
+			return {
+				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
+			};
+		} catch (err) {
+			if (err?.code === 203) {
+				return {
+					newsletter: false,
+				};
+			}
+
+			this.logger.error(
+				new InternalServerErrorException(
+					{
+						err,
+					},
+					'Failed to retrieve newsletter preference'
+				)
+			);
+		}
+	}
+
+	public async updateNewsletterPreferences(
+		preferences: CampaignMonitorNewsletterPreferences,
+		user: SessionUserEntity
+	) {
+		let url: string | null = null;
+
+		try {
+			if (!user.getMail) {
+				return null;
+			}
+
+			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string
+			}/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string
+			}.json/?${queryString.stringify({ email: user.getMail() })}`;
+
+			const mappedPreferences = [];
+
+			if (preferences.newsletter) {
+				mappedPreferences.push(process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05_NEWSLETTER);
+			}
+
+			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
+
+			const data = this.convertPreferencesToNewsletterTemplateData(
+				user,
+				optin_mail_lists,
+				true
+			);
+
+			await this.gotInstance({
+				url,
+				method: 'post',
+				json: data,
+				throwHttpErrors: true,
+			});
+		} catch (err) {
+			throw new InternalServerErrorException({
+				message: 'Failed to update newsletter preferences',
+				error: err,
+				preferences,
+			});
+		}
+	}
+
 	public async sendMail(
 		emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
@@ -145,45 +231,6 @@ export class CampaignMonitorService {
 		}
 	}
 
-	public async fetchNewsletterPreferences(
-		email: string
-	): Promise<CampaignMonitorNewsletterPreferences> {
-		let url: string | null = null;
-
-		try {
-			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}${
-				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string
-			}/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT}/${
-				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string
-			}.json/?${queryString.stringify({ email })}`;
-
-			const response: any = await this.gotInstance({
-				url,
-				method: 'get',
-				throwHttpErrors: true,
-			});
-
-			return {
-				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
-			};
-		} catch (err) {
-			if (err?.code === 203) {
-				return {
-					newsletter: false,
-				};
-			}
-
-			this.logger.error(
-				new InternalServerErrorException(
-					{
-						err,
-					},
-					'Failed to retrieve newsletter preference'
-				)
-			);
-		}
-	}
-
 	// Helpers
 	// ------------------------------------------------------------------------
 	public setIsEnabled(enabled: boolean): void {
@@ -219,6 +266,25 @@ export class CampaignMonitorService {
 			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
 			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
 			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
+		};
+	}
+
+	public convertPreferencesToNewsletterTemplateData(
+		user: SessionUserEntity,
+		optin_mail_lists: string,
+		resubscribe: boolean
+	) {
+		return {
+			Name: user.getFullName(),
+			EmailAddress: user.getMail(),
+			optin_mail_lists,
+			gebruikersgroep: user.getGroupId(),
+			is_sleutel_gebruiker: user.getIsKeyUser(),
+			firstname: user.getFirstName(),
+			lastname: user.getLastName(),
+			aangemaakt_op: new Date(),
+			Resubscribe: resubscribe,
+			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
 		};
 	}
 }
