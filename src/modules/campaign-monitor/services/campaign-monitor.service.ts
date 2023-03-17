@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isArray } from 'lodash';
+import { get, head, isArray } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -182,8 +182,13 @@ export class CampaignMonitorService {
 
 			const data: any = emailInfo.data;
 
-			if (isArray(emailInfo.data.to)) {
-				data.BCC = emailInfo.data.to;
+			if (isArray(emailInfo.data.to) && emailInfo.data.to.length > 1) {
+				const emailInfoDataTo = emailInfo.data.to;
+
+				data.To = [head(emailInfoDataTo)];
+
+				emailInfoDataTo.shift();
+				data.BCC = emailInfoDataTo;
 			} else {
 				data.To = [emailInfo.data.to];
 			}
