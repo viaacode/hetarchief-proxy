@@ -38,6 +38,12 @@ export interface MaterialRequestMaintainer {
 	name: string;
 }
 
+export interface MaterialRequestFindAllExtraParameters {
+	userProfileId?: string;
+	userGroup?: string;
+	isPersonal?: boolean;
+}
+
 export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',
