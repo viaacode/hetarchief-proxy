@@ -1,8 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { SessionUserEntity } from '@meemoo/admin-core-api/dist/src/modules/users/classes/session-user';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { groupBy, has, isArray, isEmpty, isNil, set } from 'lodash';
+import { groupBy, isArray, isEmpty, isNil, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -16,6 +15,7 @@ import {
 	MaterialRequest,
 	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
+	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
 import {
@@ -260,23 +260,20 @@ export class MaterialRequestsService {
 	public async sendRequestList(
 		materialRequests: MaterialRequest[],
 		sendRequestListDto: SendRequestListDto,
-		userInfo: {
-			firstName;
-			lastName;
-		}
+		userInfo: MaterialRequestSendRequestListUserInfo
 	): Promise<void> {
 		const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
 		const groupedArray = [];
 
-		Object.keys(groupedMaterialRequests).forEach(function (key) {
-			console.log(key, groupedMaterialRequests[key]);
+		Object.keys(groupedMaterialRequests).forEach((key) => {
 			groupedArray.push(groupedMaterialRequests[key]);
 		});
 
-		//Send mail to each maintainer
-		groupedArray.forEach((materialRequests) => {
+		// Send mail to each maintainer
+		groupedArray.forEach((materialRequests: MaterialRequest[]) => {
 			const emailInfo: MaterialRequestEmailInfo = {
-				to: materialRequests[0].contactMail, //Each materialRequest in this group has the same maintainer, otherwise, the maintainer will recieve multiple mails
+				// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
+				to: materialRequests[0].contactMail,
 				isToMaintainer: true,
 				template: Template.MATERIAL_REQUEST_MAINTAINER,
 				materialRequests: materialRequests,
@@ -287,10 +284,9 @@ export class MaterialRequestsService {
 			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 		});
 
-		//Send mail to the requester
+		// Send mail to the requester
 		const emailInfo: MaterialRequestEmailInfo = {
-			// to: user.getMail(), //disabled for testing
-			to: 'emile.vantichelen@studiohyperdrive.be',
+			to: userInfo.mail,
 			isToMaintainer: false,
 			template: Template.MATERIAL_REQUEST_REQUESTER,
 			materialRequests: materialRequests,
@@ -338,10 +334,10 @@ export class MaterialRequestsService {
 			organisation: grapqhQLMaterialRequest.organisation || null,
 			contactMail:
 				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					.object.maintainer.information?.contact_point || null,
+					?.object?.maintainer?.information?.contact_point || null,
 			objectMeemooLocalId:
 				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					.object.meemoo_local_id || null,
+					?.object?.meemoo_local_id || null,
 		};
 
 		return transformedMaterialRequest;

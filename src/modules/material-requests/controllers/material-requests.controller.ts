@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import _ from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -28,8 +27,9 @@ import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-// @UseGuards(LoggedInGuard)
+@UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
 @Controller('material-requests')
 export class MaterialRequestsController {
@@ -40,7 +40,7 @@ export class MaterialRequestsController {
 		description:
 			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
-	// @RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -145,27 +145,25 @@ export class MaterialRequestsController {
 	): Promise<void> {
 		const dto = new MaterialRequestsQueryDto();
 		dto.isPending = true;
-		//Watch out with limits and pagination
+		dto.size = 100;
+
 		const materialRequests = await this.materialRequestsService.findAll(dto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
 			isPersonal: true,
 		});
-		// This should probably happen in the adapt method in the service
-		// materialRequests.items.forEach(
-		// 	(mr) =>
-		// 		(mr.contactMail = mr.contactMail.find(
-		// 			(contact) => contact.contact_type === 'primary'
-		// 		)?.email)
-		// );
 
-		//this replaces the code above for testing
 		materialRequests.items.forEach(
-			(mr) => (mr.contactMail = 'emile.vantichelen@studiohyperdrive.be')
+			(materialRequest: MaterialRequest) =>
+				(materialRequest.contactMail = materialRequest.contactMail.find(
+					(contact) => contact.contact_type === 'primary'
+				)?.email)
 		);
+
 		this.materialRequestsService.sendRequestList(materialRequests.items, sendRequestListDto, {
 			firstName: user.getFirstName(),
 			lastName: user.getLastName(),
+			mail: user.getMail(),
 		});
 	}
 }

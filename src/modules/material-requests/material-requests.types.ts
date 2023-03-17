@@ -40,6 +40,12 @@ export interface MaterialRequestMaintainer {
 	name: string;
 }
 
+export interface MaterialRequestSendRequestListUserInfo {
+	firstName: string;
+	lastName: string;
+	mail: string;
+}
+
 export enum MaterialRequestType {
 	REUSE = 'REUSE',
 	MORE_INFO = 'MORE_INFO',

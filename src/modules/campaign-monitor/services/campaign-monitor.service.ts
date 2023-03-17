@@ -33,7 +33,7 @@ export class CampaignMonitorService {
 
 	constructor(private configService: ConfigService<Configuration>) {
 		this.gotInstance = got.extend({
-			// prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'), //blokeerde verzenden van mails
+			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
 			resolveBodyOnly: true,
 			username: this.configService.get('CAMPAIGN_MONITOR_API_KEY'),
 			password: '.',
@@ -46,6 +46,7 @@ export class CampaignMonitorService {
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
 
+	// TODO: fix sendForVisit (ARC-1501)
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
@@ -81,10 +82,13 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			await this.sendMail({
-				template: emailInfo.template,
-				data,
-			});
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				null
+			);
 		} else {
 			this.logger.log(
 				`Mock email sent. To: '${
@@ -95,12 +99,14 @@ export class CampaignMonitorService {
 		}
 		return true;
 	}
+
+	// TODO: Write tests (ARC-1500)
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
+
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			// Throw exception will break too much
 			this.logger.error(
 				`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0].maintainerId} - empty email address`
 			);
@@ -121,6 +127,12 @@ export class CampaignMonitorService {
 			return false;
 		}
 
+		const url = `/${
+			process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
+		}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}${
+			templateIds[emailInfo.template]
+		}/send`;
+
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
@@ -132,10 +144,13 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			await this.sendMail({
-				template: emailInfo.template,
-				data,
-			});
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				url
+			);
 		} else {
 			this.logger.log(
 				`Mock email sent. To: '${
@@ -147,11 +162,10 @@ export class CampaignMonitorService {
 		return true;
 	}
 
-	public async sendMail(
-		emailInfo: CampaignMonitorSendMailDto
+	public async sendTransactionalMail(
+		emailInfo: CampaignMonitorSendMailDto,
+		url: string
 	): Promise<void | BadRequestException> {
-		let url: string | null = null;
-
 		try {
 			if (!templateIds[emailInfo.template]) {
 				this.logger.error(
@@ -166,14 +180,10 @@ export class CampaignMonitorService {
 				return;
 			}
 
-			url = `${process.env.CAMPAIGN_MONITOR_API_ENDPOINT as string}/${
-				templateIds[emailInfo.template]
-			}/send`;
-
 			const data: any = emailInfo.data;
 
 			if (isArray(emailInfo.data.to)) {
-				// data.BCC = emailInfo.data.to; //Not sure what this is doing, it made the mails send 2 times
+				data.BCC = emailInfo.data.to;
 			} else {
 				data.To = [emailInfo.data.to];
 			}
@@ -237,6 +247,7 @@ export class CampaignMonitorService {
 		firstName: string,
 		lastname: string
 	): CampaignMonitorMaterialRequestData {
+		// Maintainer Template
 		if (emailInfo.isToMaintainer) {
 			//TODO: change this return object to match to maintainertemplate
 			return {
@@ -255,7 +266,8 @@ export class CampaignMonitorService {
 				user_organisation: emailInfo.sendRequestListDto.organisation,
 			};
 		}
-		//Convert to requesterTemplate
+
+		// Requester Template
 		return {
 			user_firstname: firstName,
 			user_lastname: lastname,
