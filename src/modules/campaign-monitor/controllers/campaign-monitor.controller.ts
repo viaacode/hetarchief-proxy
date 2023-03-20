@@ -21,6 +21,6 @@ export class CampaignMonitorController {
 		@Body() emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
 		// TODO: replace empty string with correct url
-		return this.campaignMonitorService.sendTransactionalMail(emailInfo, '');
+		return this.campaignMonitorService.sendTransactionalMail(emailInfo);
 	}
 }

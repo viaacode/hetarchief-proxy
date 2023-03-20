@@ -4,8 +4,6 @@ import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'clas
 
 import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
-import { RequestListType } from '~modules/material-requests/material-requests.types';
-
 export class CampaignMonitorVisitData {
 	@IsString()
 	@IsOptional()
@@ -101,40 +99,34 @@ export class CampaignMonitorMaterialRequestData {
 	@IsOptional()
 	cp_name?: string;
 }
+
 export class RequestListItem {
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	title?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	cp_name?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	local_cp_id?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	pid?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	page_url?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	request_type?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	request_description?: string;
 }
 

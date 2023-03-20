@@ -82,13 +82,10 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			await this.sendTransactionalMail(
-				{
-					template: emailInfo.template,
-					data,
-				},
-				null
-			);
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
+				data,
+			});
 		} else {
 			this.logger.log(
 				`Mock email sent. To: '${
@@ -112,27 +109,6 @@ export class CampaignMonitorService {
 			);
 		}
 
-		if (recipients.length === 0) {
-			this.logger.error(
-				`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
-			);
-			return false;
-		}
-
-		const cmTemplateId = templateIds[emailInfo.template];
-		if (!cmTemplateId) {
-			this.logger.error(
-				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
-			);
-			return false;
-		}
-
-		const url = `${
-			process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
-		}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}/${
-			templateIds[emailInfo.template]
-		}/send`;
-
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
@@ -144,18 +120,15 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			await this.sendTransactionalMail(
-				{
-					template: emailInfo.template,
-					data,
-				},
-				url
-			);
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
+				data,
+			});
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${
-					data.to
-				}'. Template: ${cmTemplateId}, data: ${JSON.stringify(data)}`
+				`Mock email sent. To: '${data.to}'. Template: ${
+					emailInfo?.template
+				}, data: ${JSON.stringify(data)}`
 			);
 			return false;
 		}
@@ -163,11 +136,17 @@ export class CampaignMonitorService {
 	}
 
 	public async sendTransactionalMail(
-		emailInfo: CampaignMonitorSendMailDto,
-		url: string
+		emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
 		try {
-			if (!templateIds[emailInfo.template]) {
+			if (emailInfo.data.to.length === 0) {
+				this.logger.error(
+					`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
+				);
+				return;
+			}
+			const cmTemplateId = templateIds[emailInfo.template];
+			if (!cmTemplateId) {
 				this.logger.error(
 					new InternalServerErrorException(
 						{
@@ -179,6 +158,12 @@ export class CampaignMonitorService {
 				);
 				return;
 			}
+
+			const url = `${
+				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
+			}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}/${
+				templateIds[emailInfo.template]
+			}/send`;
 
 			const data: any = emailInfo.data;
 
@@ -258,6 +243,7 @@ export class CampaignMonitorService {
 			return {
 				user_firstname: firstName,
 				user_lastname: lastname,
+				cp_name: emailInfo.materialRequests[0].maintainerName,
 				request_list: emailInfo.materialRequests.map((mr) => ({
 					title: mr.objectSchemaName,
 					local_cp_id: mr.objectMeemooLocalId,
