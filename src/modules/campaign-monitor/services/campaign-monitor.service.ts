@@ -52,7 +52,7 @@ export class CampaignMonitorService {
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
 
-	// TODO: fix sendForVisit (ARC-1501)
+	// TODO: check sendForVisit still works (ARC-1501)
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
@@ -138,7 +138,7 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
 				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
 			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string}.json/?${queryString.stringify(
 				{ email }
@@ -201,7 +201,6 @@ export class CampaignMonitorService {
 				optin_mail_lists,
 				true
 			);
-
 			await this.gotInstance({
 				url,
 				method: 'post',
