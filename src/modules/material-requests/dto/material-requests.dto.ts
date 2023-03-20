@@ -11,10 +11,10 @@ import {
 } from 'class-validator';
 
 import {
+	MaterialRequestListType,
 	MaterialRequestOrderProp,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
-	RequestListType,
 } from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
@@ -207,12 +207,12 @@ export class UpdateMaterialRequestDto {
 
 export class SendRequestListDto {
 	@IsString()
-	@IsEnum(RequestListType)
+	@IsEnum(MaterialRequestListType)
 	@ApiPropertyOptional({
 		type: String,
-		enum: RequestListType,
+		enum: MaterialRequestListType,
 	})
-	type: RequestListType;
+	type: MaterialRequestListType;
 
 	@IsString()
 	@IsOptional()

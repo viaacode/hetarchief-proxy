@@ -73,7 +73,7 @@ export enum MaterialRequestRequesterCapacity {
 	EDUCATION = 'EDUCATION',
 }
 
-export enum RequestListType {
+export enum MaterialRequestListType {
 	OTHER = 'OTHER',
 	PROFFESIONAL = 'PROFFESIONAL',
 	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
