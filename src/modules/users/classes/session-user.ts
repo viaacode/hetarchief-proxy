@@ -75,6 +75,10 @@ export class SessionUserEntity {
 		return this.user?.isKeyUser || false;
 	}
 
+	public getLastAccessAt(): string {
+		return this.user?.lastAccessAt || null;
+	}
+
 	public has(permission: Permission): boolean {
 		return this.permissions.includes(permission);
 	}

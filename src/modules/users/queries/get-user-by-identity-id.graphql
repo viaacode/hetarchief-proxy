@@ -8,6 +8,7 @@ query getUserByIdentityId($identityId: uuid!) {
 		is_key_user
 		accepted_tos_at
 		group_id
+		last_access_at
 		group {
 			permissions(order_by: { permission: { name: asc } }) {
 				permission {

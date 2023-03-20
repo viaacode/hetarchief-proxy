@@ -375,6 +375,7 @@ export class CampaignMonitorService {
 			aangemaakt_op: new Date(),
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
+			laatst_ingelogd_op: user.getLastAccessAt,
 		};
 	}
 }

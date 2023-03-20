@@ -59,6 +59,9 @@ export class UsersService {
 			),
 			idp: graphQlUser?.identities?.[0]?.identity_provider_name as Idp,
 			isKeyUser: graphQlUser?.is_key_user,
+			lastAccessAt:
+				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at ||
+				null,
 		};
 
 		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {
