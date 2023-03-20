@@ -45,6 +45,9 @@ export class CampaignMonitorController {
 		@Body() preferences: CampaignMonitorNewsletterPreferences,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		return await this.campaignMonitorService.updateNewsletterPreferences(preferences, user);
+		return await this.campaignMonitorService.updateNewsletterPreferences(
+			{ newsletter: true }, //REPLACE WITH preferences
+			user
+		);
 	}
 }

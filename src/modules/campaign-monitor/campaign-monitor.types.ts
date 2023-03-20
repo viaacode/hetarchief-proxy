@@ -47,5 +47,5 @@ export interface CampaignMonitorShareFolderInfo {
 }
 
 export interface CampaignMonitorNewsletterPreferences {
-	newsletter: boolean;
+	newsletter?: boolean;
 }

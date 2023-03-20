@@ -27,6 +27,7 @@ query getUserByIdentityId($identityId: uuid!) {
 					slug
 					schema_maintainer_id
 				}
+				schema_name
 			}
 		}
 	}

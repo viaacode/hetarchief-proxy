@@ -62,6 +62,9 @@ export class UsersService {
 			lastAccessAt:
 				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at ||
 				null,
+			organisationName:
+				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])
+					?.maintainer_users_profiles[0]?.maintainer?.schema_name || null,
 		};
 
 		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {

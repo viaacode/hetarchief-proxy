@@ -79,6 +79,10 @@ export class SessionUserEntity {
 		return this.user?.lastAccessAt || null;
 	}
 
+	public getOrganisationName(): string {
+		return this.user?.organisationName || null;
+	}
+
 	public has(permission: Permission): boolean {
 		return this.permissions.includes(permission);
 	}
