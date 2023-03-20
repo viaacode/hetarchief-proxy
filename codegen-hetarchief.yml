@@ -1,6 +1,6 @@
 overwrite: true
 schema:
-  - http://localhost:9000/v1/graphql:
+  - ${GRAPHQL_URL_HET_ARCHIEF}:
       headers:
         x-hasura-admin-secret: ${GRAPHQL_SECRET_HET_ARCHIEF}
 

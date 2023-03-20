@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, head, isArray, isEmpty, isNil, set } from 'lodash';
+import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
@@ -629,8 +629,7 @@ export class QueryBuilder {
 				  // However for 99,99% of the time this will never happen
 				  true
 				: // Value from query string will be string but we need a Boolean
-				  // So we cast string to Boolean
-				  Boolean(head(searchRequestFilters).value),
+				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
 			isConsultableMedia: isEmpty(
 				searchRequestFilters.filter(
 					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_MEDIA
@@ -640,8 +639,7 @@ export class QueryBuilder {
 				  // However for 99,99% of the time this will never happen
 				  false
 				: // Value from query string will be string but we need a Boolean
-				  // So we cast string to Boolean
-				  Boolean(head(searchRequestFilters).value),
+				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
 		};
 	}
 }
