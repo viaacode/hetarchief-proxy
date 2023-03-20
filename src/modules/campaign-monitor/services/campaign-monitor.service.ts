@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { compact, get, head, isArray, uniq } from 'lodash';
+import { compact, get, head, isArray, isNil, isString, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
@@ -201,6 +201,7 @@ export class CampaignMonitorService {
 				optin_mail_lists,
 				true
 			);
+			this.logger.log(`data: ${JSON.stringify(data)}`);
 			await this.gotInstance({
 				url,
 				method: 'post',
@@ -363,19 +364,27 @@ export class CampaignMonitorService {
 		optin_mail_lists: string,
 		resubscribe: boolean
 	) {
-		return {
-			Name: user.getFullName(),
-			EmailAddress: user.getMail(),
-			optin_mail_lists,
+		const customFields = {
+			optin_mail_lists: optin_mail_lists,
 			gebruikersgroep: user.getGroupId(),
 			is_sleutel_gebruiker: user.getIsKeyUser(),
 			firstname: user.getFirstName(),
 			lastname: user.getLastName(),
 			aangemaakt_op: new Date(),
-			Resubscribe: resubscribe,
-			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
 			laatst_ingelogd_op: user.getLastAccessAt(),
 			organisatie: user.getOrganisationName(),
+		};
+
+		return {
+			EmailAddress: user?.getMail(),
+			Name: user.getFullName(),
+			Resubscribe: resubscribe,
+			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
+			CustomFields: toPairs(customFields).map((pair) => ({
+				Key: pair[0],
+				Value: pair[1],
+				Clear: isNil(pair[1]) || (isString(pair[1]) && pair[1] === ''),
+			})),
 		};
 	}
 }
