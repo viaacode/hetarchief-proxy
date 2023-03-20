@@ -108,7 +108,7 @@ export class CampaignMonitorService {
 			recipients.push(emailInfo.to);
 		} else {
 			this.logger.error(
-				`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0].maintainerId} - empty email address`
+				`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
 			);
 		}
 
@@ -127,9 +127,9 @@ export class CampaignMonitorService {
 			return false;
 		}
 
-		const url = `/${
+		const url = `${
 			process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
-		}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}${
+		}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}/${
 			templateIds[emailInfo.template]
 		}/send`;
 
@@ -192,7 +192,7 @@ export class CampaignMonitorService {
 			} else {
 				data.To = [emailInfo.data.to];
 			}
-
+			this.logger.log(`data: ${JSON.stringify(data)}`);
 			// TODO: replace with node fetch
 			await this.gotInstance({
 				url,
@@ -260,7 +260,6 @@ export class CampaignMonitorService {
 				user_lastname: lastname,
 				request_list: emailInfo.materialRequests.map((mr) => ({
 					title: mr.objectSchemaName,
-					cp_name: mr.maintainerName,
 					local_cp_id: mr.objectMeemooLocalId,
 					pid: mr.objectMeemooIdentifier,
 					page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
@@ -269,6 +268,7 @@ export class CampaignMonitorService {
 				})),
 				user_request_context: emailInfo.sendRequestListDto.type,
 				user_organisation: emailInfo.sendRequestListDto.organisation,
+				user_email: emailInfo.materialRequests[0].requesterMail,
 			};
 		}
 
@@ -287,6 +287,7 @@ export class CampaignMonitorService {
 			})),
 			user_request_context: emailInfo.sendRequestListDto.type,
 			user_organisation: emailInfo.sendRequestListDto.organisation,
+			user_email: emailInfo.materialRequests[0].requesterMail,
 		};
 	}
 }

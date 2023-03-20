@@ -283,7 +283,7 @@ export class MaterialRequestsService {
 
 		// Send mail to the requester
 		const emailInfo: MaterialRequestEmailInfo = {
-			to: userInfo.mail,
+			to: materialRequests[0].requesterMail,
 			isToMaintainer: false,
 			template: Template.MATERIAL_REQUEST_REQUESTER,
 			materialRequests: materialRequests,

@@ -49,7 +49,6 @@ export interface MaterialRequestFindAllExtraParameters {
 export interface MaterialRequestSendRequestListUserInfo {
 	firstName: string;
 	lastName: string;
-	mail: string;
 }
 
 export enum MaterialRequestType {

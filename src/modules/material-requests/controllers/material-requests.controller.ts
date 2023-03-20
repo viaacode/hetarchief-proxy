@@ -170,7 +170,6 @@ export class MaterialRequestsController {
 		this.materialRequestsService.sendRequestList(materialRequests.items, sendRequestListDto, {
 			firstName: user.getFirstName(),
 			lastName: user.getLastName(),
-			mail: user.getMail(),
 		});
 	}
 

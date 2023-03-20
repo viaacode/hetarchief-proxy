@@ -75,28 +75,31 @@ export class CampaignMonitorVisitData {
 export class CampaignMonitorMaterialRequestData {
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	user_firstname?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	user_lastname?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: RequestListItem })
 	request_list?: RequestListItem[];
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	user_request_context?: string;
 
 	@IsString()
 	@IsOptional()
-	// @ApiPropertyOptional({ type: String })
 	user_organisation?: string;
+
+	@IsString()
+	@IsOptional()
+	user_email?: string;
+
+	@IsString()
+	@IsOptional()
+	cp_name?: string;
 }
 export class RequestListItem {
 	@IsString()
