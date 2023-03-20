@@ -1,6 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockGqlMaintainers,
@@ -25,6 +26,11 @@ import { TestingLogger } from '~shared/logging/test-logger';
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
+
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+	{
+		sendTransactionalMail: jest.fn(),
+	};
 
 const getDefaultMaterialRequestsResponse = (): {
 	app_material_requests: FindMaterialRequestsQuery[];
@@ -72,6 +78,10 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: DataService,
 					useValue: mockDataService,
+				},
+				{
+					provide: CampaignMonitorService,
+					useValue: mockCampaignMonitorService,
 				},
 			],
 		})

@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 
 import {
+	MaterialRequestListType,
 	MaterialRequestOrderProp,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
@@ -194,6 +195,24 @@ export class UpdateMaterialRequestDto {
 		enum: MaterialRequestRequesterCapacity,
 	})
 	requesterCapacity? = undefined;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'To which organisation the user belongs to',
+	})
+	organisation?: string | null;
+}
+
+export class SendRequestListDto {
+	@IsString()
+	@IsEnum(MaterialRequestListType)
+	@ApiPropertyOptional({
+		type: String,
+		enum: MaterialRequestListType,
+	})
+	type: MaterialRequestListType;
 
 	@IsString()
 	@IsOptional()

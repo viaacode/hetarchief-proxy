@@ -23,10 +23,10 @@ export class CampaignMonitorController {
 	 */
 	@Post('send')
 	@ApiOperation({ description: 'Send transactional mails through Campaign Monitor' })
-	async sendMail(
+	async sendTransactionalMail(
 		@Body() emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
-		return await this.campaignMonitorService.sendMail(emailInfo);
+		return await this.campaignMonitorService.sendTransactionalMail(emailInfo);
 	}
 
 	@Get('preferences')
