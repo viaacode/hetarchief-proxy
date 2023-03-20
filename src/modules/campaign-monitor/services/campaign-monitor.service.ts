@@ -182,7 +182,7 @@ export class CampaignMonitorService {
 				return null;
 			}
 
-			url = `/${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
 				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
 			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string}.json/?${queryString.stringify(
 				{ email: user.getMail() }
