@@ -60,21 +60,6 @@ export class CampaignMonitorService {
 			}
 		});
 
-		if (recipients.length === 0) {
-			this.logger.error(
-				`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
-			);
-			return false;
-		}
-
-		const cmTemplateId = templateIds[emailInfo.template];
-		if (!cmTemplateId) {
-			this.logger.error(
-				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
-			);
-			return false;
-		}
-
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
@@ -88,9 +73,9 @@ export class CampaignMonitorService {
 			});
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${
-					data.to
-				}'. Template: ${cmTemplateId}, data: ${JSON.stringify(data)}`
+				`Mock email sent. To: '${data.to}'. Template: ${
+					emailInfo?.template
+				}, data: ${JSON.stringify(data)}`
 			);
 			return false;
 		}
