@@ -162,7 +162,7 @@ export class CampaignMonitorService {
 			} else {
 				data.To = [emailInfo.data.to];
 			}
-			this.logger.log(`data: ${JSON.stringify(data)}`);
+
 			// TODO: replace with node fetch
 			await this.gotInstance({
 				url,
