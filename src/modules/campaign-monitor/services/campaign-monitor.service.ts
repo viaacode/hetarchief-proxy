@@ -6,14 +6,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, isArray } from 'lodash';
+import { get, head, isArray } from 'lodash';
 
 import { Configuration } from '~config';
 
 import { templateIds } from '../campaign-monitor.consts';
-import { VisitEmailInfo } from '../campaign-monitor.types';
+import { MaterialRequestEmailInfo, VisitEmailInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
+	CampaignMonitorMaterialRequestData,
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
@@ -45,6 +46,7 @@ export class CampaignMonitorService {
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
 
+	// TODO: fix sendForVisit (ARC-1501)
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
@@ -58,21 +60,6 @@ export class CampaignMonitorService {
 			}
 		});
 
-		if (recipients.length === 0) {
-			this.logger.error(
-				`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
-			);
-			return false;
-		}
-
-		const cmTemplateId = templateIds[emailInfo.template];
-		if (!cmTemplateId) {
-			this.logger.error(
-				`Campaign monitor template ID for ${emailInfo.template} not found -- email could not be sent`
-			);
-			return false;
-		}
-
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
@@ -80,32 +67,81 @@ export class CampaignMonitorService {
 		};
 
 		if (this.isEnabled) {
-			await this.sendMail({
-				templateId: cmTemplateId,
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
 				data,
 			});
 		} else {
 			this.logger.log(
-				`Mock email sent. To: '${
-					data.to
-				}'. Template: ${cmTemplateId}, data: ${JSON.stringify(data)}`
+				`Mock email sent. To: '${data.to}'. Template: ${
+					emailInfo?.template
+				}, data: ${JSON.stringify(data)}`
 			);
 			return false;
 		}
 		return true;
 	}
 
-	public async sendMail(
+	// TODO: Write tests (ARC-1500)
+	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
+		const recipients: string[] = [];
+
+		if (emailInfo.to) {
+			recipients.push(emailInfo.to);
+		} else {
+			if (emailInfo.isToMaintainer) {
+				this.logger.error(
+					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
+				);
+			} else {
+				this.logger.error(
+					`Mail will not be sent to profile id ${emailInfo.materialRequests[0]?.profileId} - empty email address`
+				);
+			}
+		}
+
+		const data: CampaignMonitorData = {
+			to: recipients,
+			consentToTrack: 'unchanged',
+			data: this.convertMaterialRequestsToEmailTemplateData(
+				emailInfo,
+				emailInfo.firstName,
+				emailInfo.lastName
+			),
+		};
+
+		if (this.isEnabled) {
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
+				data,
+			});
+		} else {
+			this.logger.log(
+				`Mock email sent. To: '${data.to}'. Template: ${
+					emailInfo?.template
+				}, data: ${JSON.stringify(data)}`
+			);
+			return false;
+		}
+		return true;
+	}
+
+	public async sendTransactionalMail(
 		emailInfo: CampaignMonitorSendMailDto
 	): Promise<void | BadRequestException> {
-		let url: string | null = null;
-
 		try {
-			if (!templateIds[emailInfo.templateId]) {
+			if (emailInfo.data.to.length === 0) {
+				this.logger.error(
+					`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
+				);
+				return;
+			}
+			const cmTemplateId = templateIds[emailInfo.template];
+			if (!cmTemplateId) {
 				this.logger.error(
 					new InternalServerErrorException(
 						{
-							templateName: emailInfo.templateId,
+							templateName: emailInfo.template,
 							envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
 						},
 						'Cannot send email since the requested email template id has not been set as an environment variable'
@@ -114,17 +150,21 @@ export class CampaignMonitorService {
 				return;
 			}
 
-			url = `${process.env.CAMPAIGN_MONITOR_API_ENDPOINT as string}/${
-				templateIds[emailInfo.templateId]
+			const url = `${
+				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
+			}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}/${
+				templateIds[emailInfo.template]
 			}/send`;
 
-			const data: any = {
-				Data: emailInfo.data,
-				ConsentToTrack: 'unchanged',
-			};
+			const data: any = emailInfo.data;
 
-			if (isArray(emailInfo.data.to)) {
-				data.BCC = emailInfo.data.to;
+			if (isArray(emailInfo.data.to) && emailInfo.data.to.length > 1) {
+				const emailInfoDataTo = emailInfo.data.to;
+
+				data.To = [head(emailInfoDataTo)];
+
+				emailInfoDataTo.shift();
+				data.BCC = emailInfoDataTo;
 			} else {
 				data.To = [emailInfo.data.to];
 			}
@@ -137,6 +177,7 @@ export class CampaignMonitorService {
 				json: data,
 			}).json<void>();
 		} catch (err) {
+			console.error(err);
 			throw new BadRequestException(
 				err,
 				'Failed to send email using the campaign monitor api'
@@ -179,6 +220,51 @@ export class CampaignMonitorService {
 			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
 			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
 			end_time: visit.endAt ? formatAsBelgianDate(visit.endAt, 'HH:mm') : '',
+		};
+	}
+
+	public convertMaterialRequestsToEmailTemplateData(
+		emailInfo: MaterialRequestEmailInfo,
+		firstName: string,
+		lastname: string
+	): CampaignMonitorMaterialRequestData {
+		// Maintainer Template
+		if (emailInfo.isToMaintainer) {
+			//TODO: change this return object to match to maintainertemplate
+			return {
+				user_firstname: firstName,
+				user_lastname: lastname,
+				cp_name: emailInfo.materialRequests[0].maintainerName,
+				request_list: emailInfo.materialRequests.map((mr) => ({
+					title: mr.objectSchemaName,
+					local_cp_id: mr.objectMeemooLocalId,
+					pid: mr.objectMeemooIdentifier,
+					page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+					request_type: mr.type,
+					request_description: mr.reason,
+				})),
+				user_request_context: emailInfo.sendRequestListDto.type,
+				user_organisation: emailInfo.sendRequestListDto.organisation,
+				user_email: emailInfo.materialRequests[0].requesterMail,
+			};
+		}
+
+		// Requester Template
+		return {
+			user_firstname: firstName,
+			user_lastname: lastname,
+			request_list: emailInfo.materialRequests.map((mr) => ({
+				title: mr.objectSchemaName,
+				cp_name: mr.maintainerName,
+				local_cp_id: mr.objectMeemooLocalId,
+				pid: mr.objectMeemooIdentifier,
+				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+				request_type: mr.type,
+				request_description: mr.reason,
+			})),
+			user_request_context: emailInfo.sendRequestListDto.type,
+			user_organisation: emailInfo.sendRequestListDto.organisation,
+			user_email: emailInfo.materialRequests[0].requesterMail,
 		};
 	}
 }

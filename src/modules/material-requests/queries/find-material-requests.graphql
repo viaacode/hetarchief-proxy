@@ -32,11 +32,14 @@ query findMaterialRequests(
 				schema_name
 				information {
 					logo
+					contact_point
 				}
 				visitor_space {
 					slug
 				}
 			}
+			meemoo_identifier
+			meemoo_local_id
 			meemoo_identifier
 			schema_name
 			dcterms_format

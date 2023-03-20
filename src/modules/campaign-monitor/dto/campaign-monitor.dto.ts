@@ -70,6 +70,65 @@ export class CampaignMonitorVisitData {
 	@ApiPropertyOptional({ type: String })
 	end_time?: string;
 }
+export class CampaignMonitorMaterialRequestData {
+	@IsString()
+	@IsOptional()
+	user_firstname?: string;
+
+	@IsString()
+	@IsOptional()
+	user_lastname?: string;
+
+	@IsString()
+	@IsOptional()
+	request_list?: RequestListItem[];
+
+	@IsString()
+	@IsOptional()
+	user_request_context?: string;
+
+	@IsString()
+	@IsOptional()
+	user_organisation?: string;
+
+	@IsString()
+	@IsOptional()
+	user_email?: string;
+
+	@IsString()
+	@IsOptional()
+	cp_name?: string;
+}
+
+export class RequestListItem {
+	@IsString()
+	@IsOptional()
+	title?: string;
+
+	@IsString()
+	@IsOptional()
+	cp_name?: string;
+
+	@IsString()
+	@IsOptional()
+	local_cp_id?: string;
+
+	@IsString()
+	@IsOptional()
+	pid?: string;
+
+	@IsString()
+	@IsOptional()
+	page_url?: string;
+
+	@IsString()
+	@IsOptional()
+	request_type?: string;
+
+	@IsString()
+	@IsOptional()
+	request_description?: string;
+}
 
 export class CampaignMonitorData {
 	@IsString()
@@ -96,7 +155,10 @@ export class CampaignMonitorData {
 		type: Object,
 		description: 'The data object with placeholder values for Campaign Monitor',
 	})
-	data: CampaignMonitorVisitData | CampaignMonitorShareFolderInfo;
+	data:
+		| CampaignMonitorVisitData
+		| CampaignMonitorShareFolderInfo
+		| CampaignMonitorMaterialRequestData;
 }
 
 export class CampaignMonitorSendMailDto {
@@ -107,7 +169,7 @@ export class CampaignMonitorSendMailDto {
 		description: 'The template ID for the email',
 		example: '8a583d31-8741-41de-ac38-69166c3213a3',
 	})
-	templateId: string;
+	template: string;
 
 	@Type(() => CampaignMonitorData)
 	@IsObject()
