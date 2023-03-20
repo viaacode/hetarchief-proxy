@@ -100,7 +100,7 @@ export class QueryBuilder {
 				inputInfo = {
 					...inputInfo,
 					// Remark: value for isConsultableRemote will be send reverted by FE and as string type
-					// This because visually you as if you want to see it onSite
+					// This because visually you select the filter as if you want to see it onSite
 					...this.determineIsConsultableFilters(searchRequestFilters),
 				};
 
