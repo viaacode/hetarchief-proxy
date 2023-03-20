@@ -89,9 +89,15 @@ export class CampaignMonitorService {
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			this.logger.error(
-				`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
-			);
+			if (emailInfo.isToMaintainer) {
+				this.logger.error(
+					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
+				);
+			} else {
+				this.logger.error(
+					`Mail will not be sent to profile id ${emailInfo.materialRequests[0]?.profileId} - empty email address`
+				);
+			}
 		}
 
 		const data: CampaignMonitorData = {
