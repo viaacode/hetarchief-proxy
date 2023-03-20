@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
+import { clamp, forEach, head, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
@@ -96,21 +96,17 @@ export class QueryBuilder {
 					consultableSearchFilterFields.includes(filter.field)
 				)
 			) {
+				let searchRequestFilters: SearchFilter[] = [...searchRequest.filters];
 				inputInfo = {
 					...inputInfo,
-					isConsultableRemote: searchRequest.filters.some(
-						(filter: SearchFilter) =>
-							filter.field === SearchFilterField.CONSULTABLE_REMOTE
-					),
-					isConsultableMedia: searchRequest.filters.some(
-						(filter: SearchFilter) =>
-							filter.field === SearchFilterField.CONSULTABLE_MEDIA
-					),
+					// Remark: value for isConsultableRemote will be send reverted by FE and as string type
+					// This because visually you as if you want to see it onSite
+					...this.determineIsConsultableFilters(searchRequestFilters),
 				};
 
 				// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
 				// since they have been handled above and should not be handled by the standard field filtering logic.
-				searchRequest.filters = searchRequest.filters.filter(
+				searchRequestFilters = searchRequestFilters.filter(
 					(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
 				);
 			}
@@ -609,5 +605,43 @@ export class QueryBuilder {
 
 	public static isFuzzyOperator(operator: Operator): boolean {
 		return [Operator.CONTAINS, Operator.CONTAINS_NOT].includes(operator);
+	}
+
+	/**
+	 *	This function checks if the isConsultableFilters are present in the searchRequestFilters array of objects
+	 *	If so cast the value to a Boolean
+	 *	If not set default
+	 *
+	 * @param searchRequestFilters
+	 * @returns { isConsultableRemote: boolean, isConsultableMedia: boolean }
+	 */
+	public static determineIsConsultableFilters(searchRequestFilters: SearchFilter[]): {
+		isConsultableRemote: boolean;
+		isConsultableMedia: boolean;
+	} {
+		return {
+			isConsultableRemote: isEmpty(
+				searchRequestFilters.filter(
+					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_REMOTE
+				)
+			)
+				? // if FE does not return isConsultableRemote filter by default it will be visible both onSite and Remote
+				  // However for 99,99% of the time this will never happen
+				  true
+				: // Value from query string will be string but we need a Boolean
+				  // So we cast string to Boolean
+				  Boolean(head(searchRequestFilters).value),
+			isConsultableMedia: isEmpty(
+				searchRequestFilters.filter(
+					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_MEDIA
+				)
+			)
+				? // if FE does not return isConsultableMedia filter by default the essence will not be consultable
+				  // However for 99,99% of the time this will never happen
+				  false
+				: // Value from query string will be string but we need a Boolean
+				  // So we cast string to Boolean
+				  Boolean(head(searchRequestFilters).value),
+		};
 	}
 }
