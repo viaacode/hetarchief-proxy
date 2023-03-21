@@ -35,6 +35,8 @@ const archiefUser: User = {
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
+	lastAccessAt: null,
+	organisationName: null,
 };
 
 describe('UsersService', () => {
