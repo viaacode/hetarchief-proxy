@@ -2,6 +2,8 @@
 
 This folder contains email templates used in campaign monitor directly. We also store them here to track changes and make sure everyone can find them.
 
+When uploading the templates in campaign monitor, choose "import HTML" and make sure the option "Move my CSS inline (for best results in Gmail and Outlook)" is disabled (default on).
+
 ## ID's & variables
 
 ### qas_arc_request item enduser
