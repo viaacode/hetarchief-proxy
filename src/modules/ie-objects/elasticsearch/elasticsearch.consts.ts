@@ -159,7 +159,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[SearchFilterField.DESCRIPTION]: 'schema_description',
 	[SearchFilterField.ERA]: 'schema_temporal_coverage',
 	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
-	[SearchFilterField.MAINTAINER]: 'schema_maintainer.schema_identifier',
+	[SearchFilterField.MAINTAINER]: 'schema_maintainer.schema_name',
 	[SearchFilterField.CAST]: 'meemoo_description_cast',
 	[SearchFilterField.CAPTION]: 'schema_caption',
 	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
@@ -196,10 +196,11 @@ export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
 
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
-	genre: 'keyword',
-	name: 'keyword',
+	[SearchFilterField.GENRE]: 'keyword',
+	[SearchFilterField.NAME]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
-	genre: 'keyword',
+	[SearchFilterField.GENRE]: 'keyword',
+	[SearchFilterField.MAINTAINER]: 'keyword',
 };
