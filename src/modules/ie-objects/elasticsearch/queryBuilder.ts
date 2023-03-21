@@ -90,13 +90,13 @@ export class QueryBuilder {
 				SearchFilterField.CONSULTABLE_REMOTE,
 				SearchFilterField.CONSULTABLE_MEDIA,
 			];
+			let searchRequestFilters: SearchFilter[] = [...searchRequest.filters];
 			if (
 				searchRequest?.filters &&
 				searchRequest?.filters.some((filter: SearchFilter) =>
 					consultableSearchFilterFields.includes(filter.field)
 				)
 			) {
-				let searchRequestFilters: SearchFilter[] = [...searchRequest.filters];
 				inputInfo = {
 					...inputInfo,
 					// Remark: value for isConsultableRemote will be send reverted by FE and as string type
@@ -112,7 +112,7 @@ export class QueryBuilder {
 			}
 
 			// Add the filters and search terms to the query object
-			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequest.filters));
+			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequestFilters));
 
 			// Add the licenses to the query object
 			set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
