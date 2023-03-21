@@ -5,6 +5,11 @@ import nock from 'nock';
 import { Configuration } from '~config';
 
 import { Template } from '../campaign-monitor.types';
+import {
+	mockCampaignMonitorMaterialRequestDataToMaintainer,
+	mockCampaignMonitorMaterialRequestDataToRequester,
+	mockMaterialRequestEmailInfo,
+} from '../mocks/campaign-monitor.mocks';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
@@ -161,15 +166,23 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
-		it('should parse visits with empty startAt / endAt', () => {
-			const visit = getMockVisit();
-			visit.startAt = null;
-			visit.endAt = null;
-			const result = campaignMonitorService.convertVisitToEmailTemplateData(visit);
-			expect(result.start_date).toEqual('');
-			expect(result.start_time).toEqual('');
-			expect(result.end_date).toEqual('');
-			expect(result.end_time).toEqual('');
+		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			const result =
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+					materialRequestEmailInfo
+				);
+			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToMaintainer);
+		});
+
+		it('should parse materialRequestEmailInfo with Requester Template', () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			const result =
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+					materialRequestEmailInfo
+				);
+			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
 		});
 	});
 	// describe('sendForVisit', () => {

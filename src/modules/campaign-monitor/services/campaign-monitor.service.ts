@@ -101,11 +101,7 @@ export class CampaignMonitorService {
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
-			data: this.convertMaterialRequestsToEmailTemplateData(
-				emailInfo,
-				emailInfo.firstName,
-				emailInfo.lastName
-			),
+			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
 		await this.sendTransactionalMail({
@@ -308,16 +304,14 @@ export class CampaignMonitorService {
 	}
 
 	public convertMaterialRequestsToEmailTemplateData(
-		emailInfo: MaterialRequestEmailInfo,
-		firstName: string,
-		lastname: string
+		emailInfo: MaterialRequestEmailInfo
 	): CampaignMonitorMaterialRequestData {
 		// Maintainer Template
 		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
 			//TODO: change this return object to match to maintainertemplate
 			return {
-				user_firstname: firstName,
-				user_lastname: lastname,
+				user_firstname: emailInfo.firstName,
+				user_lastname: emailInfo.lastName,
 				cp_name: emailInfo.materialRequests[0].maintainerName,
 				request_list: emailInfo.materialRequests.map((mr) => ({
 					title: mr.objectSchemaName,
@@ -335,8 +329,8 @@ export class CampaignMonitorService {
 
 		// Requester Template
 		return {
-			user_firstname: firstName,
-			user_lastname: lastname,
+			user_firstname: emailInfo.firstName,
+			user_lastname: emailInfo.lastName,
 			request_list: emailInfo.materialRequests.map((mr) => ({
 				title: mr.objectSchemaName,
 				cp_name: mr.maintainerName,
