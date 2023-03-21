@@ -152,6 +152,7 @@ describe('CampaignMonitorService', () => {
 		// 	});
 		// 	expect(result).toBeFalsy();
 		// });
+		// TODO: fix forVisit tests
 		// it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
 		// 	campaignMonitorService.setIsEnabled(false);
 		// 	const visit = getMockVisit();
