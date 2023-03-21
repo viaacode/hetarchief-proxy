@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import got from 'got/dist/source';
 import nock from 'nock';
 
 import { Configuration } from '~config';
@@ -39,6 +40,8 @@ const mockConfigService = {
 		return key;
 	}),
 };
+
+jest.mock('got');
 
 const getMockVisit = (): Visit => ({
 	id: '1',
@@ -89,6 +92,10 @@ describe('CampaignMonitorService', () => {
 			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
+	});
+
+	afterEach(() => {
+		jest.resetAllMocks();
 	});
 
 	it('services should be defined', () => {
@@ -163,6 +170,23 @@ describe('CampaignMonitorService', () => {
 		// 	});
 		// 	expect(result).toBeFalsy();
 		// });
+	});
+	describe('');
+
+	it('returns true for a subscribed email address', async () => {
+		const expectedResponse = {
+			State: 'Active',
+		};
+		(got as unknown as jest.Mock).mockResolvedValue({
+			body: JSON.stringify(expectedResponse),
+		});
+
+		const email = 'test@example.com';
+		const preferences = await campaignMonitorService.fetchNewsletterPreferences(email);
+		expect(preferences.newsletter).toBe(true);
+		expect(got).toHaveBeenCalledWith(
+			expect.objectContaining({ url: expect.stringContaining(email) })
+		);
 	});
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
