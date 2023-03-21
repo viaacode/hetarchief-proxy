@@ -23,7 +23,6 @@ export interface VisitEmailInfo {
 
 export interface MaterialRequestEmailInfo {
 	to?: string;
-	isToMaintainer: boolean;
 	template: Template;
 	materialRequests: MaterialRequest[];
 	sendRequestListDto: SendRequestListDto;

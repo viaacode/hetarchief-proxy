@@ -15,6 +15,7 @@ import { templateIds } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorNewsletterPreferences,
 	MaterialRequestEmailInfo,
+	Template,
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -86,7 +87,7 @@ export class CampaignMonitorService {
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			if (emailInfo.isToMaintainer) {
+			if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
 				this.logger.error(
 					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
 				);
@@ -312,7 +313,7 @@ export class CampaignMonitorService {
 		lastname: string
 	): CampaignMonitorMaterialRequestData {
 		// Maintainer Template
-		if (emailInfo.isToMaintainer) {
+		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
 			//TODO: change this return object to match to maintainertemplate
 			return {
 				user_firstname: firstName,

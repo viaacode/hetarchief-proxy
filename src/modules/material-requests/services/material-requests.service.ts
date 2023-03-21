@@ -271,7 +271,6 @@ export class MaterialRequestsService {
 			const emailInfo: MaterialRequestEmailInfo = {
 				// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
 				to: materialRequests[0].contactMail,
-				isToMaintainer: true,
 				template: Template.MATERIAL_REQUEST_MAINTAINER,
 				materialRequests: materialRequests,
 				sendRequestListDto,
@@ -284,7 +283,6 @@ export class MaterialRequestsService {
 		// Send mail to the requester containing all of their material requests for all the objects they requested
 		const emailInfo: MaterialRequestEmailInfo = {
 			to: materialRequests[0].requesterMail,
-			isToMaintainer: false,
 			template: Template.MATERIAL_REQUEST_REQUESTER,
 			materialRequests: materialRequests,
 			sendRequestListDto,
