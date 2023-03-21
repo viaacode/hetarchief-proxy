@@ -43,6 +43,7 @@ export enum SearchFilterField {
 	MEDIUM = 'medium',
 	CONSULTABLE_REMOTE = 'isConsultableRemote',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
+	TYPE = 'type',
 }
 
 export enum Operator {
@@ -167,6 +168,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[SearchFilterField.DURATION]: 'schema_duration',
 	[SearchFilterField.LANGUAGE]: 'schema_in_language',
 	[SearchFilterField.MEDIUM]: 'dcterms_medium',
+	[SearchFilterField.TYPE]: 'ebucore_object_type',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -198,9 +200,12 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
 	[SearchFilterField.NAME]: 'keyword',
+	[SearchFilterField.MAINTAINER]: 'keyword',
+	[SearchFilterField.TYPE]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
 	[SearchFilterField.MAINTAINER]: 'keyword',
+	[SearchFilterField.TYPE]: 'keyword',
 };
