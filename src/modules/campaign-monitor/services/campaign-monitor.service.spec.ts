@@ -77,8 +77,12 @@ const getMockVisit = (): Visit => ({
 
 describe('CampaignMonitorService', () => {
 	let campaignMonitorService: CampaignMonitorService;
+	const env = process.env;
 
 	beforeEach(async () => {
+		// process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'templateIdFake';
+		jest.resetModules();
+		process.env = { ...env };
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
@@ -92,6 +96,9 @@ describe('CampaignMonitorService', () => {
 			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
+	});
+	afterEach(() => {
+		process.env = env;
 	});
 
 	afterEach(() => {
@@ -210,7 +217,7 @@ describe('CampaignMonitorService', () => {
 		});
 	});
 	describe('sendForMaterialRequest', () => {
-		it('should log and not send to an empty recipients email adres', async () => {
+		it('should log and not send to an empty recipients email adres, returns false', async () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
@@ -219,6 +226,17 @@ describe('CampaignMonitorService', () => {
 			);
 			expect(result).toBeFalsy();
 		});
+
+		// it('should log and throw error with invalid template, returns false', async () => {
+		// 	const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+		// 	// materialRequestEmailInfo.template = 'invalid';
+		// 	materialRequestEmailInfo.to = 'fakeemail@fakedomain.fake';
+		// 	const result = await campaignMonitorService.sendForMaterialRequest(
+		// 		materialRequestEmailInfo
+		// 	);
+		// 	expect(result).toBeFalsy();
+		// });
+
 		it('should return true when emailInfo has valid fields', async () => {
 			//Doesn't work yet
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
