@@ -216,13 +216,3 @@ export class CampaignMonitorNewsletterPreferencesQueryDto {
 	})
 	email?: string;
 }
-
-export class CampaignMonitorUpdateNewsletterPreferencesDto {
-	@IsString()
-	@IsNotEmpty()
-	@ApiPropertyOptional({
-		type: String,
-		description: 'Email to fetch preferences from',
-	})
-	email?: string;
-}
