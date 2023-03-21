@@ -81,10 +81,8 @@ const getMockVisit = (): Visit => ({
 
 describe('CampaignMonitorService', () => {
 	let campaignMonitorService: CampaignMonitorService;
-	const env = process.env;
 
 	beforeEach(async () => {
-		process.env = { ...env };
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
