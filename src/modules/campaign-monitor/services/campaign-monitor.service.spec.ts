@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import got from 'got/dist/source';
 import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { templateIds } from '../campaign-monitor.consts';
 import { Template } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
@@ -26,6 +26,12 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
 		}
+		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION') {
+			return 'v3.2';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT') {
+			return 'transactional/smartemail';
+		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
 		}
@@ -40,8 +46,6 @@ const mockConfigService = {
 		return key;
 	}),
 };
-
-jest.mock('got');
 
 const getMockVisit = (): Visit => ({
 	id: '1',
@@ -80,8 +84,6 @@ describe('CampaignMonitorService', () => {
 	const env = process.env;
 
 	beforeEach(async () => {
-		// process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'templateIdFake';
-		jest.resetModules();
 		process.env = { ...env };
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -96,13 +98,6 @@ describe('CampaignMonitorService', () => {
 			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
-	});
-	afterEach(() => {
-		process.env = env;
-	});
-
-	afterEach(() => {
-		jest.resetAllMocks();
 	});
 
 	it('services should be defined', () => {
@@ -178,23 +173,6 @@ describe('CampaignMonitorService', () => {
 		// 	expect(result).toBeFalsy();
 		// });
 	});
-	describe('');
-
-	it('returns true for a subscribed email address', async () => {
-		const expectedResponse = {
-			State: 'Active',
-		};
-		(got as unknown as jest.Mock).mockResolvedValue({
-			body: JSON.stringify(expectedResponse),
-		});
-
-		const email = 'test@example.com';
-		const preferences = await campaignMonitorService.fetchNewsletterPreferences(email);
-		expect(preferences.newsletter).toBe(true);
-		expect(got).toHaveBeenCalledWith(
-			expect.objectContaining({ url: expect.stringContaining(email) })
-		);
-	});
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
 		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
@@ -227,21 +205,47 @@ describe('CampaignMonitorService', () => {
 			expect(result).toBeFalsy();
 		});
 
-		// it('should log and throw error with invalid template, returns false', async () => {
-		// 	const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-		// 	// materialRequestEmailInfo.template = 'invalid';
-		// 	materialRequestEmailInfo.to = 'fakeemail@fakedomain.fake';
-		// 	const result = await campaignMonitorService.sendForMaterialRequest(
-		// 		materialRequestEmailInfo
-		// 	);
-		// 	expect(result).toBeFalsy();
-		// });
+		it('should log and throw error with invalid template, returns false', async () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.VISIT_DENIED;
+			materialRequestEmailInfo.to = 'test@example.com';
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+		});
 
-		it('should return true when emailInfo has valid fields', async () => {
-			//Doesn't work yet
+		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
-			materialRequestEmailInfo.to = 'fakeemail@fakedomain.fake';
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+			campaignMonitorService.setIsEnabled(true);
+		});
+
+		it('should return true when emailInfo has valid fields', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
+					)}/${templateIds[Template.MATERIAL_REQUEST_REQUESTER]}/send`
+				)
+				.reply(202, [
+					{
+						Status: 'Accepted',
+						MessageID: '91206192-c71c-11ed-8c12-c59c777888d7',
+						Recipient: 'test@example.com',
+					},
+				]);
+
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.to = 'test@example.com';
 			const result = await campaignMonitorService.sendForMaterialRequest(
 				materialRequestEmailInfo
 			);

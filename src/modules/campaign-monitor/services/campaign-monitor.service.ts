@@ -260,6 +260,7 @@ export class CampaignMonitorService {
 						emailInfo?.template
 					}, data: ${JSON.stringify(data)}`
 				);
+				return false;
 			}
 		} catch (err) {
 			console.error(err);

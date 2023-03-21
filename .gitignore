@@ -39,6 +39,7 @@ lerna-debug.log*
 
 # Env files
 .env.local
+.env.test
 
 # Intellij IDE
 .idea
