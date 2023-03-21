@@ -25,7 +25,7 @@ export class CampaignMonitorController {
 	@ApiOperation({ description: 'Send transactional mails through Campaign Monitor' })
 	async sendTransactionalMail(
 		@Body() emailInfo: CampaignMonitorSendMailDto
-	): Promise<void | BadRequestException> {
+	): Promise<void | BadRequestException | boolean> {
 		return await this.campaignMonitorService.sendTransactionalMail(emailInfo);
 	}
 

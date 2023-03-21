@@ -104,11 +104,15 @@ export class CampaignMonitorService {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
-		return true;
+		if (
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
+				data,
+			})
+		) {
+			return true;
+		}
+		return false;
 	}
 
 	public async fetchNewsletterPreferences(
@@ -200,13 +204,13 @@ export class CampaignMonitorService {
 
 	public async sendTransactionalMail(
 		emailInfo: CampaignMonitorSendMailDto
-	): Promise<void | BadRequestException> {
+	): Promise<void | BadRequestException | boolean> {
 		try {
 			if (emailInfo.data.to.length === 0) {
 				this.logger.error(
 					`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
 				);
-				return;
+				return false;
 			}
 			const cmTemplateId = templateIds[emailInfo.template];
 			if (!cmTemplateId) {
@@ -219,7 +223,7 @@ export class CampaignMonitorService {
 						'Cannot send email since the requested email template id has not been set as an environment variable'
 					)
 				);
-				return;
+				return false;
 			}
 
 			const url = `${
@@ -249,6 +253,7 @@ export class CampaignMonitorService {
 					throwHttpErrors: true,
 					json: data,
 				}).json<void>();
+				return true;
 			} else {
 				this.logger.log(
 					`Mock email sent. To: '${data.to}'. Template: ${
@@ -312,7 +317,7 @@ export class CampaignMonitorService {
 			return {
 				user_firstname: emailInfo.firstName,
 				user_lastname: emailInfo.lastName,
-				cp_name: emailInfo.materialRequests[0].maintainerName,
+				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				request_list: emailInfo.materialRequests.map((mr) => ({
 					title: mr.objectSchemaName,
 					local_cp_id: mr.objectMeemooLocalId,
@@ -323,7 +328,7 @@ export class CampaignMonitorService {
 				})),
 				user_request_context: emailInfo.sendRequestListDto.type,
 				user_organisation: emailInfo.sendRequestListDto.organisation,
-				user_email: emailInfo.materialRequests[0].requesterMail,
+				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
 		}
 
@@ -342,7 +347,7 @@ export class CampaignMonitorService {
 			})),
 			user_request_context: emailInfo.sendRequestListDto.type,
 			user_organisation: emailInfo.sendRequestListDto.organisation,
-			user_email: emailInfo.materialRequests[0].requesterMail,
+			user_email: emailInfo.materialRequests[0]?.requesterMail,
 		};
 	}
 

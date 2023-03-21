@@ -185,7 +185,25 @@ describe('CampaignMonitorService', () => {
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
 		});
 	});
-	// describe('sendForVisit', () => {
-
-	// });
+	describe('sendForMaterialRequest', () => {
+		it('should log and not send to an empty recipients email adres', async () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.to = null;
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+		});
+		it('should return true when emailInfo has valid fields', async () => {
+			//Doesn't work yet
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.to = 'fakeemail@fakedomain.fake';
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeTruthy();
+		});
+	});
 });
