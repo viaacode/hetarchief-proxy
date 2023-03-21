@@ -206,3 +206,13 @@ export class CampaignMonitorSendMailDto {
 	})
 	data: CampaignMonitorData;
 }
+
+export class CampaignMonitorNewsletterPreferencesQueryDto {
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Email to fetch preferences from',
+	})
+	email?: string;
+}

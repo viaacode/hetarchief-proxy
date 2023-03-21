@@ -6,12 +6,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { get, head, isArray } from 'lodash';
+import { compact, get, head, isArray, isNil, isString, toPairs, uniq } from 'lodash';
+import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
 import { templateIds } from '../campaign-monitor.consts';
-import { MaterialRequestEmailInfo, VisitEmailInfo } from '../campaign-monitor.types';
+import {
+	CampaignMonitorNewsletterPreferences,
+	MaterialRequestEmailInfo,
+	VisitEmailInfo,
+} from '../campaign-monitor.types';
 import {
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
@@ -19,6 +24,7 @@ import {
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
@@ -46,7 +52,7 @@ export class CampaignMonitorService {
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
 
-	// TODO: fix sendForVisit (ARC-1501)
+	// TODO: check sendForVisit still works (ARC-1501)
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
@@ -66,19 +72,10 @@ export class CampaignMonitorService {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
-		if (this.isEnabled) {
-			await this.sendTransactionalMail({
-				template: emailInfo.template,
-				data,
-			});
-		} else {
-			this.logger.log(
-				`Mock email sent. To: '${data.to}'. Template: ${
-					emailInfo?.template
-				}, data: ${JSON.stringify(data)}`
-			);
-			return false;
-		}
+		await this.sendTransactionalMail({
+			template: emailInfo.template,
+			data,
+		});
 		return true;
 	}
 
@@ -110,20 +107,98 @@ export class CampaignMonitorService {
 			),
 		};
 
-		if (this.isEnabled) {
-			await this.sendTransactionalMail({
-				template: emailInfo.template,
-				data,
-			});
-		} else {
-			this.logger.log(
-				`Mock email sent. To: '${data.to}'. Template: ${
-					emailInfo?.template
-				}, data: ${JSON.stringify(data)}`
-			);
-			return false;
-		}
+		await this.sendTransactionalMail({
+			template: emailInfo.template,
+			data,
+		});
 		return true;
+	}
+
+	public async fetchNewsletterPreferences(
+		email: string
+	): Promise<CampaignMonitorNewsletterPreferences> {
+		let url: string | null = null;
+
+		try {
+			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
+			}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
+			}.json/?${queryString.stringify({ email })}`;
+
+			const response: any = await this.gotInstance({
+				url,
+				method: 'get',
+				throwHttpErrors: true,
+			});
+
+			return {
+				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
+			};
+		} catch (err) {
+			if (err?.code === 203) {
+				return {
+					newsletter: false,
+				};
+			}
+
+			this.logger.error(
+				new InternalServerErrorException(
+					{
+						err,
+					},
+					'Failed to retrieve newsletter preference'
+				)
+			);
+		}
+	}
+
+	public async updateNewsletterPreferences(
+		preferences: CampaignMonitorNewsletterPreferences,
+		user: SessionUserEntity
+	) {
+		let url: string | null = null;
+
+		try {
+			if (!user.getMail) {
+				return null;
+			}
+
+			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
+				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
+			}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
+			}.json/?${queryString.stringify({ email: user.getMail() })}`;
+
+			const mappedPreferences = [];
+
+			if (preferences.newsletter) {
+				mappedPreferences.push(
+					process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER
+				);
+			}
+
+			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
+
+			const data = this.convertPreferencesToNewsletterTemplateData(
+				user,
+				optin_mail_lists,
+				true
+			);
+			this.logger.log(`data: ${JSON.stringify(data)}`);
+			await this.gotInstance({
+				url,
+				method: 'post',
+				json: data,
+				throwHttpErrors: true,
+			});
+		} catch (err) {
+			throw new InternalServerErrorException({
+				message: 'Failed to update newsletter preferences',
+				error: err,
+				preferences,
+			});
+		}
 	}
 
 	public async sendTransactionalMail(
@@ -158,7 +233,7 @@ export class CampaignMonitorService {
 
 			const data: any = emailInfo.data;
 
-			if (isArray(emailInfo.data.to) && emailInfo.data.to.length > 1) {
+			if (isArray(emailInfo.data.to)) {
 				const emailInfoDataTo = emailInfo.data.to;
 
 				data.To = [head(emailInfoDataTo)];
@@ -170,12 +245,20 @@ export class CampaignMonitorService {
 			}
 
 			// TODO: replace with node fetch
-			await this.gotInstance({
-				url,
-				method: 'post',
-				throwHttpErrors: true,
-				json: data,
-			}).json<void>();
+			if (this.isEnabled) {
+				await this.gotInstance({
+					url,
+					method: 'post',
+					throwHttpErrors: true,
+					json: data,
+				}).json<void>();
+			} else {
+				this.logger.log(
+					`Mock email sent. To: '${data.to}'. Template: ${
+						emailInfo?.template
+					}, data: ${JSON.stringify(data)}`
+				);
+			}
 		} catch (err) {
 			console.error(err);
 			throw new BadRequestException(
@@ -265,6 +348,35 @@ export class CampaignMonitorService {
 			user_request_context: emailInfo.sendRequestListDto.type,
 			user_organisation: emailInfo.sendRequestListDto.organisation,
 			user_email: emailInfo.materialRequests[0].requesterMail,
+		};
+	}
+
+	public convertPreferencesToNewsletterTemplateData(
+		user: SessionUserEntity,
+		optin_mail_lists: string,
+		resubscribe: boolean
+	) {
+		const customFields = {
+			optin_mail_lists: optin_mail_lists,
+			gebruikersgroep: user.getGroupId(),
+			is_sleutel_gebruiker: user.getIsKeyUser(),
+			firstname: user.getFirstName(),
+			lastname: user.getLastName(),
+			aangemaakt_op: new Date(),
+			laatst_ingelogd_op: user.getLastAccessAt(),
+			organisatie: user.getOrganisationName(),
+		};
+
+		return {
+			EmailAddress: user.getMail(),
+			Name: user.getFullName(),
+			Resubscribe: resubscribe,
+			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
+			CustomFields: toPairs(customFields).map((pair) => ({
+				Key: pair[0],
+				Value: pair[1],
+				Clear: isNil(pair[1]) || (isString(pair[1]) && pair[1] === ''),
+			})),
 		};
 	}
 }

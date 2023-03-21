@@ -48,7 +48,7 @@ export class SessionUserEntity {
 	}
 
 	public getMail(): string {
-		return get(this.user, 'mail');
+		return this.user?.email || null;
 	}
 
 	public getMaintainerId(): string {
@@ -73,6 +73,14 @@ export class SessionUserEntity {
 
 	public getIsKeyUser(): boolean {
 		return this.user?.isKeyUser || false;
+	}
+
+	public getLastAccessAt(): string {
+		return this.user?.lastAccessAt || null;
+	}
+
+	public getOrganisationName(): string {
+		return this.user?.organisationName || null;
 	}
 
 	public has(permission: Permission): boolean {
