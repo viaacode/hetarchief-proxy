@@ -48,8 +48,7 @@ export class SessionUserEntity {
 	}
 
 	public getMail(): string {
-		// return get(this.user, 'mail');
-		return this.user.email;
+		return this.user?.email || null;
 	}
 
 	public getMaintainerId(): string {
