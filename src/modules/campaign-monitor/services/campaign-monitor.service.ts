@@ -72,19 +72,10 @@ export class CampaignMonitorService {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
-		if (this.isEnabled) {
-			await this.sendTransactionalMail({
-				template: emailInfo.template,
-				data,
-			});
-		} else {
-			this.logger.log(
-				`Mock email sent. To: '${data.to}'. Template: ${
-					emailInfo?.template
-				}, data: ${JSON.stringify(data)}`
-			);
-			return false;
-		}
+		await this.sendTransactionalMail({
+			template: emailInfo.template,
+			data,
+		});
 		return true;
 	}
 
@@ -116,19 +107,10 @@ export class CampaignMonitorService {
 			),
 		};
 
-		if (this.isEnabled) {
-			await this.sendTransactionalMail({
-				template: emailInfo.template,
-				data,
-			});
-		} else {
-			this.logger.log(
-				`Mock email sent. To: '${data.to}'. Template: ${
-					emailInfo?.template
-				}, data: ${JSON.stringify(data)}`
-			);
-			return false;
-		}
+		await this.sendTransactionalMail({
+			template: emailInfo.template,
+			data,
+		});
 		return true;
 	}
 
@@ -140,9 +122,9 @@ export class CampaignMonitorService {
 		try {
 			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
 				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string}.json/?${queryString.stringify(
-				{ email }
-			)}`;
+			}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
+			}.json/?${queryString.stringify({ email })}`;
 
 			const response: any = await this.gotInstance({
 				url,
@@ -184,14 +166,16 @@ export class CampaignMonitorService {
 
 			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
 				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05 as string}.json/?${queryString.stringify(
-				{ email: user.getMail() }
-			)}`;
+			}/${
+				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
+			}.json/?${queryString.stringify({ email: user.getMail() })}`;
 
 			const mappedPreferences = [];
 
 			if (preferences.newsletter) {
-				mappedPreferences.push(process.env.CAMPAIGN_MONITOR_OPTIN_LIST_05_NEWSLETTER);
+				mappedPreferences.push(
+					process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER
+				);
 			}
 
 			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
@@ -249,7 +233,7 @@ export class CampaignMonitorService {
 
 			const data: any = emailInfo.data;
 
-			if (isArray(emailInfo.data.to) && emailInfo.data.to.length > 1) {
+			if (isArray(emailInfo.data.to)) {
 				const emailInfoDataTo = emailInfo.data.to;
 
 				data.To = [head(emailInfoDataTo)];
@@ -261,12 +245,20 @@ export class CampaignMonitorService {
 			}
 
 			// TODO: replace with node fetch
-			await this.gotInstance({
-				url,
-				method: 'post',
-				throwHttpErrors: true,
-				json: data,
-			}).json<void>();
+			if (this.isEnabled) {
+				await this.gotInstance({
+					url,
+					method: 'post',
+					throwHttpErrors: true,
+					json: data,
+				}).json<void>();
+			} else {
+				this.logger.log(
+					`Mock email sent. To: '${data.to}'. Template: ${
+						emailInfo?.template
+					}, data: ${JSON.stringify(data)}`
+				);
+			}
 		} catch (err) {
 			console.error(err);
 			throw new BadRequestException(
@@ -376,7 +368,7 @@ export class CampaignMonitorService {
 		};
 
 		return {
-			EmailAddress: user?.getMail(),
+			EmailAddress: user.getMail(),
 			Name: user.getFullName(),
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',

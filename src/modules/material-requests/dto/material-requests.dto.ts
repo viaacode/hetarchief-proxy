@@ -218,7 +218,7 @@ export class SendRequestListDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'To which organisation the user belongs to',
+		description: 'The name of the organisation to which the user belongs',
 	})
 	organisation?: string | null;
 }
