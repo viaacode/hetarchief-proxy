@@ -9,12 +9,15 @@ import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
 	mockMaterialRequestEmailInfo,
+	mockNewsletterTemplateData,
+	mockUser,
 } from '../mocks/campaign-monitor.mocks';
 import { TemplateService } from '../templates/templates.service';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -260,6 +263,17 @@ describe('CampaignMonitorService', () => {
 				materialRequestEmailInfo
 			);
 			expect(result).toBeTruthy();
+		});
+	});
+
+	describe('convertPreferencesToNewsletterTemplateData', () => {
+		it('should parse preferences to newsletterTemplateData', () => {
+			const result = campaignMonitorService.convertPreferencesToNewsletterTemplateData(
+				new SessionUserEntity({ ...mockUser }),
+				'newsletter',
+				true
+			);
+			expect(result).toEqual(mockNewsletterTemplateData);
 		});
 	});
 });
