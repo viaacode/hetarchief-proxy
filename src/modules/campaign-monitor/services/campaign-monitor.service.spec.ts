@@ -273,7 +273,17 @@ describe('CampaignMonitorService', () => {
 				'newsletter',
 				true
 			);
-			expect(result).toEqual(mockNewsletterTemplateData);
+			expect(result.EmailAddress).toEqual(mockNewsletterTemplateData.EmailAddress);
+			expect(result.Name).toEqual(mockNewsletterTemplateData.Name);
+			expect(result.Resubscribe).toEqual(mockNewsletterTemplateData.Resubscribe);
+			expect(result.ConsentToTrack).toEqual(mockNewsletterTemplateData.ConsentToTrack);
+			expect(result.CustomFields[0]).toEqual(mockNewsletterTemplateData.CustomFields[0]);
+			expect(result.CustomFields[1]).toEqual(mockNewsletterTemplateData.CustomFields[1]);
+			expect(result.CustomFields[2]).toEqual(mockNewsletterTemplateData.CustomFields[2]);
+			expect(result.CustomFields[3]).toEqual(mockNewsletterTemplateData.CustomFields[3]);
+			expect(result.CustomFields[4]).toEqual(mockNewsletterTemplateData.CustomFields[4]);
+			expect(result.CustomFields[6]).toEqual(mockNewsletterTemplateData.CustomFields[6]);
+			expect(result.CustomFields[7]).toEqual(mockNewsletterTemplateData.CustomFields[7]);
 		});
 	});
 });

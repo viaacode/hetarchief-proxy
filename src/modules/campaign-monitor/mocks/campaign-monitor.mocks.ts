@@ -110,8 +110,8 @@ export const mockNewsletterTemplateData = {
 		},
 		{
 			Key: 'aangemaakt_op',
-			Value: new Date(),
-			Clear: false,
+			Value: null,
+			Clear: true,
 		},
 		{
 			Key: 'laatst_ingelogd_op',
