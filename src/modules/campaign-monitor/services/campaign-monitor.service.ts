@@ -80,7 +80,6 @@ export class CampaignMonitorService {
 		return true;
 	}
 
-	// TODO: Write tests (ARC-1500)
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 
