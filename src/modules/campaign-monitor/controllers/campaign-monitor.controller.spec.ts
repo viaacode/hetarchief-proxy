@@ -8,6 +8,7 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
@@ -81,16 +82,16 @@ describe('CampaignMonitorController', () => {
 	});
 	describe('getPreferences', () => {
 		it('get user newsletter preferences', async () => {
-			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({
-				newsletter: true,
-			});
+			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
 
 			const sent = await campaignMonitorController.updatePreferences(
 				{ newsletter: true },
-				mockUser
+				new SessionUserEntity({
+					...mockUser,
+				})
 			);
 
-			// expect(sent).toEqual({ newsletter: true });
+			expect(sent).toBeTruthy();
 		});
 	});
 });
