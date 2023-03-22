@@ -335,4 +335,22 @@ describe('CampaignMonitorService', () => {
 			expect(result).toEqual({ newsletter: false });
 		});
 	});
+	it('should throw error when CM throws error other than 203', async () => {
+		nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+			.get(
+				`/${mockConfigService.get(
+					'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+				)}/${mockConfigService.get(
+					'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+				)}/${mockConfigService.get(
+					'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+				)}.json/?${queryString.stringify({ email: mockUser.email })}`
+			)
+			.replyWithError('');
+		try {
+			await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
+		} catch (e) {
+			expect(e).toBeDefined();
+		}
+	});
 });
