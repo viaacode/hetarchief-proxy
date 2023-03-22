@@ -11,7 +11,7 @@ import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
 	mockMaterialRequestEmailInfo,
-	mockNewsletterTemplateData,
+	mockNewsletterTemplateDataWithNewsletter,
 	mockUser,
 } from '../mocks/campaign-monitor.mocks';
 
@@ -277,6 +277,31 @@ describe('CampaignMonitorService', () => {
 			);
 			expect(result).toBeTruthy();
 		});
+
+		it('should throw an error when CM throws an error', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
+				)
+				.replyWithError('');
+			try {
+				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.to = 'test@example.com';
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
+				fail(
+					new Error(
+						'sendForMaterialRequest should have thrown an error when CM throws an error'
+					)
+				);
+			} catch (e) {
+				expect(e).toBeDefined();
+			}
+		});
 	});
 
 	describe('convertPreferencesToNewsletterTemplateData', () => {
@@ -286,17 +311,37 @@ describe('CampaignMonitorService', () => {
 				'newsletter',
 				true
 			);
-			expect(result.EmailAddress).toEqual(mockNewsletterTemplateData.EmailAddress);
-			expect(result.Name).toEqual(mockNewsletterTemplateData.Name);
-			expect(result.Resubscribe).toEqual(mockNewsletterTemplateData.Resubscribe);
-			expect(result.ConsentToTrack).toEqual(mockNewsletterTemplateData.ConsentToTrack);
-			expect(result.CustomFields[0]).toEqual(mockNewsletterTemplateData.CustomFields[0]);
-			expect(result.CustomFields[1]).toEqual(mockNewsletterTemplateData.CustomFields[1]);
-			expect(result.CustomFields[2]).toEqual(mockNewsletterTemplateData.CustomFields[2]);
-			expect(result.CustomFields[3]).toEqual(mockNewsletterTemplateData.CustomFields[3]);
-			expect(result.CustomFields[4]).toEqual(mockNewsletterTemplateData.CustomFields[4]);
-			expect(result.CustomFields[6]).toEqual(mockNewsletterTemplateData.CustomFields[6]);
-			expect(result.CustomFields[7]).toEqual(mockNewsletterTemplateData.CustomFields[7]);
+			expect(result.EmailAddress).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.EmailAddress
+			);
+			expect(result.Name).toEqual(mockNewsletterTemplateDataWithNewsletter.Name);
+			expect(result.Resubscribe).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.Resubscribe
+			);
+			expect(result.ConsentToTrack).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.ConsentToTrack
+			);
+			expect(result.CustomFields[0]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[0]
+			);
+			expect(result.CustomFields[1]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[1]
+			);
+			expect(result.CustomFields[2]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[2]
+			);
+			expect(result.CustomFields[3]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[3]
+			);
+			expect(result.CustomFields[4]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[4]
+			);
+			expect(result.CustomFields[6]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
+			);
+			expect(result.CustomFields[7]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
+			);
 		});
 	});
 
@@ -349,8 +394,104 @@ describe('CampaignMonitorService', () => {
 			.replyWithError('');
 		try {
 			await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
+			fail(
+				new Error(
+					'fetchNewsletterPreferences should have thrown an error when CM throws an error'
+				)
+			);
 		} catch (e) {
 			expect(e).toBeDefined();
 		}
+	});
+
+	describe('updateNewsletterPreferences', () => {
+		it('should return null when the user has no emailadress', async () => {
+			const user = mockUser;
+			user.email = null;
+			const result = await campaignMonitorService.updateNewsletterPreferences(
+				{
+					newsletter: true,
+				},
+				new SessionUserEntity({ ...user })
+			);
+			expect(result).toEqual(null);
+			user.email = 'test.testers@meemoo.be';
+		});
+
+		it('should throw an error when CM throws an error', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+				)
+				.replyWithError('');
+
+			const user = mockUser;
+			try {
+				await campaignMonitorService.updateNewsletterPreferences(
+					{
+						newsletter: true,
+					},
+					new SessionUserEntity({ ...user })
+				);
+				fail(
+					new Error(
+						'updateNewsletterPreferences should have thrown an error when CM throws an error'
+					)
+				);
+			} catch (e) {
+				expect(e).toBeDefined();
+			}
+		});
+
+		it('should succesfully update newsletterPrefferences when newsletter is false', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+				)
+				.reply(201, {});
+
+			const user = mockUser;
+			try {
+				await campaignMonitorService.updateNewsletterPreferences(
+					{
+						newsletter: false,
+					},
+					new SessionUserEntity({ ...user })
+				);
+			} catch (e) {
+				expect(e).toBeUndefined();
+			}
+		});
+		it('should succesfully update newsletterPrefferences when newsletter is true', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+				)
+				.reply(201, {});
+
+			const user = mockUser;
+			try {
+				await campaignMonitorService.updateNewsletterPreferences(
+					{
+						newsletter: true,
+					},
+					new SessionUserEntity({ ...user })
+				);
+			} catch (e) {
+				expect(e).toBeUndefined();
+			}
+		});
 	});
 });

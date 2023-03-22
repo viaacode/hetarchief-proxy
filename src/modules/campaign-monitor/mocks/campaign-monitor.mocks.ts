@@ -77,7 +77,7 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
 
-export const mockNewsletterTemplateData = {
+export const mockNewsletterTemplateDataWithNewsletter = {
 	EmailAddress: mockUser.email,
 	Name: mockUser.fullName,
 	Resubscribe: true,
@@ -125,3 +125,52 @@ export const mockNewsletterTemplateData = {
 		},
 	],
 };
+
+// export const mockNewsletterTemplateDataWithoutNewsletter = {
+// 	EmailAddress: mockUser.email,
+// 	Name: mockUser.fullName,
+// 	Resubscribe: true,
+// 	ConsentToTrack: 'Yes',
+// 	CustomFields: [
+// 		{
+// 			Key: 'optin_mail_lists',
+// 			Value: null,
+// 			Clear: false,
+// 		},
+// 		{
+// 			Key: 'gebruikersgroep',
+// 			Value: mockUser.groupId,
+// 			Clear: false,
+// 		},
+// 		{
+// 			Key: 'is_sleutel_gebruiker',
+// 			Value: mockUser.isKeyUser,
+// 			Clear: false,
+// 		},
+// 		{
+// 			Key: 'firstname',
+// 			Value: mockUser.firstName,
+// 			Clear: false,
+// 		},
+// 		{
+// 			Key: 'lastname',
+// 			Value: mockUser.lastName,
+// 			Clear: false,
+// 		},
+// 		{
+// 			Key: 'aangemaakt_op',
+// 			Value: null,
+// 			Clear: true,
+// 		},
+// 		{
+// 			Key: 'laatst_ingelogd_op',
+// 			Value: null,
+// 			Clear: true,
+// 		},
+// 		{
+// 			Key: 'organisatie',
+// 			Value: null,
+// 			Clear: true,
+// 		},
+// 	],
+// };
