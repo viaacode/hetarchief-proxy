@@ -4,13 +4,13 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { templateIds } from '../campaign-monitor.consts';
 import { Template } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
 	mockMaterialRequestEmailInfo,
 } from '../mocks/campaign-monitor.mocks';
+import { TemplateService } from '../templates/templates.service';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
@@ -81,8 +81,15 @@ const getMockVisit = (): Visit => ({
 
 describe('CampaignMonitorService', () => {
 	let campaignMonitorService: CampaignMonitorService;
+	const env = process.env;
 
 	beforeEach(async () => {
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'fakeTemplateId';
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
+		process.env.VISIT_DENIED = null;
+		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION = 'v3.2';
+		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT =
+			'transactional/smartemail';
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
@@ -96,6 +103,10 @@ describe('CampaignMonitorService', () => {
 			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
+	});
+
+	afterEach(() => {
+		process.env = env;
 	});
 
 	it('services should be defined', () => {
@@ -232,7 +243,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${templateIds[Template.MATERIAL_REQUEST_REQUESTER]}/send`
+					)}/${TemplateService.getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
 				)
 				.reply(202, [
 					{

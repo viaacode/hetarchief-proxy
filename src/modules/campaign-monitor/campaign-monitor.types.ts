@@ -1,4 +1,3 @@
-import { templateIds } from './campaign-monitor.consts';
 import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
@@ -31,7 +30,7 @@ export interface MaterialRequestEmailInfo {
 }
 
 export interface CampaignMonitorEmailInfo {
-	template: keyof typeof templateIds;
+	template: string;
 	to: string | string[];
 	data?: CampaignMonitorShareFolderInfo | CampaignMonitorVisitData;
 }
