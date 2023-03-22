@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
+import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
@@ -32,11 +33,20 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION') {
 			return 'v3.2';
 		}
+		if (key === 'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION') {
+			return 'v3.3';
+		}
 		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT') {
 			return 'transactional/smartemail';
 		}
+		if (key === 'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT') {
+			return 'subscribers';
+		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
+		}
+		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF') {
+			return 'fakeListId';
 		}
 		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
@@ -91,8 +101,11 @@ describe('CampaignMonitorService', () => {
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
 		process.env.VISIT_DENIED = null;
 		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION = 'v3.2';
+		process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION = 'v3.3';
+		process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT = 'subscribers';
 		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT =
 			'transactional/smartemail';
+		process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF = 'fakeListId';
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
@@ -284,6 +297,42 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[4]).toEqual(mockNewsletterTemplateData.CustomFields[4]);
 			expect(result.CustomFields[6]).toEqual(mockNewsletterTemplateData.CustomFields[6]);
 			expect(result.CustomFields[7]).toEqual(mockNewsletterTemplateData.CustomFields[7]);
+		});
+	});
+
+	describe('fetchNewsletterPreferences', () => {
+		it('should return newsletter = true when state is active', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.get(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}.json/?${queryString.stringify({ email: mockUser.email })}`
+				)
+				.reply(201, {
+					State: 'Active',
+				});
+			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
+			expect(result).toEqual({ newsletter: true });
+		});
+
+		it('should return newsletter = false when errorcode 203 is returned', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.get(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}.json/?${queryString.stringify({ email: mockUser.email })}`
+				)
+				.reply(203, {});
+			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
+			expect(result).toEqual({ newsletter: false });
 		});
 	});
 });
