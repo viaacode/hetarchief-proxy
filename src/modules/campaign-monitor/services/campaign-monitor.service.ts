@@ -11,6 +11,7 @@ import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
+import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorNewsletterPreferences,
 	MaterialRequestEmailInfo,
@@ -23,7 +24,6 @@ import {
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
-import { TemplateService } from '../templates/templates.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
@@ -212,7 +212,7 @@ export class CampaignMonitorService {
 				);
 				return false;
 			}
-			const cmTemplateId = TemplateService.getTemplateId(emailInfo.template);
+			const cmTemplateId = getTemplateId(emailInfo.template);
 			if (!cmTemplateId) {
 				this.logger.error(
 					new InternalServerErrorException(
@@ -230,7 +230,7 @@ export class CampaignMonitorService {
 				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
 			}/${
 				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string
-			}/${TemplateService.getTemplateId(emailInfo.template)}/send`;
+			}/${getTemplateId(emailInfo.template)}/send`;
 
 			const data: any = emailInfo.data;
 

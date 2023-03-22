@@ -4,13 +4,13 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { getTemplateId } from '../campaign-monitor.consts';
 import { Template } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
 	mockMaterialRequestEmailInfo,
 } from '../mocks/campaign-monitor.mocks';
-import { TemplateService } from '../templates/templates.service';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
@@ -243,7 +243,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${TemplateService.getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
 				)
 				.reply(202, [
 					{
