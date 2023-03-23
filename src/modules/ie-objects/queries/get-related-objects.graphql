@@ -20,6 +20,8 @@ query getRelatedObjects(
 			schema_name
 			information {
 				primary_site
+				logo
+				form_url
 			}
 		}
 		schema_copyright_holder

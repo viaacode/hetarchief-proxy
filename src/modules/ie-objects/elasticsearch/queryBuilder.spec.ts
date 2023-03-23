@@ -12,36 +12,6 @@ import { QueryBuilder } from './queryBuilder';
 import { Group } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
 
-const incompleteConfig: QueryBuilderConfig = {
-	MAX_NUMBER_SEARCH_RESULTS: 2000,
-	MAX_COUNT_SEARCH_RESULTS: 10000,
-	NUMBER_OF_FILTER_OPTIONS: 40,
-
-	READABLE_TO_ELASTIC_FILTER_NAMES: {
-		query: 'query',
-		// format: 'dcterms_format', // disabled
-	},
-
-	// By default add the 'format' aggregation
-	AGGS_PROPERTIES: [SearchFilterField.FORMAT],
-
-	NEEDS_FILTER_SUFFIX: {
-		genre: 'keyword',
-		// no format property
-	},
-	DEFAULT_QUERY_TYPE: {
-		format: QueryType.TERMS,
-		duration: QueryType.RANGE,
-	},
-	MULTI_MATCH_FIELDS: [
-		SearchFilterField.QUERY,
-		SearchFilterField.ADVANCED_QUERY,
-		SearchFilterField.NAME,
-		SearchFilterField.DESCRIPTION,
-	],
-	MULTI_MATCH_QUERY_MAPPING: {} as any,
-} as unknown as QueryBuilderConfig;
-
 const mockInputInfo = {
 	user: {
 		isKeyUser: false,
@@ -442,16 +412,13 @@ describe('QueryBuilder', () => {
 		});
 
 		it('throws an internal server exception when an unkown filter value is passed', () => {
-			// Set incomplete config
-			const originalConfig = QueryBuilder.getConfig();
-			QueryBuilder.setConfig(incompleteConfig as QueryBuilderConfig);
 			let error;
 			try {
 				QueryBuilder.build(
 					{
 						filters: [
 							{
-								field: SearchFilterField.FORMAT,
+								field: 'unknown filter' as any,
 								value: null,
 								operator: Operator.CONTAINS,
 							},
@@ -465,15 +432,9 @@ describe('QueryBuilder', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('Failed to build query object');
-
-			// reset
-			QueryBuilder.setConfig(originalConfig);
 		});
 
 		it('throws an internal server exception when an unknown aggregate value is passed', () => {
-			// Set incomplete config
-			const originalConfig = QueryBuilder.getConfig();
-			QueryBuilder.setConfig(incompleteConfig);
 			let error;
 			try {
 				QueryBuilder.build(
@@ -481,7 +442,7 @@ describe('QueryBuilder', () => {
 						filters: [],
 						size: 10,
 						page: 1,
-						requestedAggs: [SearchFilterField.FORMAT],
+						requestedAggs: ['unknown agg' as any],
 					},
 					mockInputInfo
 				);
@@ -489,9 +450,6 @@ describe('QueryBuilder', () => {
 				error = e;
 			}
 			expect(error.message).toEqual('Failed to build query object');
-
-			// reset
-			QueryBuilder.setConfig(originalConfig);
 		});
 
 		it('should create a wildcard filter when the contains operator is used', () => {

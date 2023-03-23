@@ -79,6 +79,10 @@ export class SessionUserEntity {
 		return this.user?.lastAccessAt || null;
 	}
 
+	public getCreatedAt(): string {
+		return this.user?.createdAt || null;
+	}
+
 	public getOrganisationName(): string {
 		return this.user?.organisationName || null;
 	}

@@ -11,10 +11,11 @@ import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
-import { templateIds } from '../campaign-monitor.consts';
+import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorNewsletterPreferences,
 	MaterialRequestEmailInfo,
+	Template,
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -26,6 +27,7 @@ import {
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
 @Injectable()
@@ -38,6 +40,12 @@ export class CampaignMonitorService {
 	private rerouteEmailsTo: string;
 
 	constructor(private configService: ConfigService<Configuration>) {
+		checkRequiredEnvs([
+			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT',
+			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION',
+			'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION',
+			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT',
+		]);
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
 			resolveBodyOnly: true,
@@ -51,9 +59,8 @@ export class CampaignMonitorService {
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
-
 	// TODO: check sendForVisit still works (ARC-1501)
-	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
+	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
 			if (!recipient.email) {
@@ -76,17 +83,15 @@ export class CampaignMonitorService {
 			template: emailInfo.template,
 			data,
 		});
-		return true;
 	}
 
-	// TODO: Write tests (ARC-1500)
-	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
+	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
 		const recipients: string[] = [];
 
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			if (emailInfo.isToMaintainer) {
+			if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
 				this.logger.error(
 					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
 				);
@@ -100,18 +105,13 @@ export class CampaignMonitorService {
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
-			data: this.convertMaterialRequestsToEmailTemplateData(
-				emailInfo,
-				emailInfo.firstName,
-				emailInfo.lastName
-			),
+			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
 		await this.sendTransactionalMail({
 			template: emailInfo.template,
 			data,
 		});
-		return true;
 	}
 
 	public async fetchNewsletterPreferences(
@@ -120,11 +120,13 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
-				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${
-				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
-			}.json/?${queryString.stringify({ email })}`;
+			url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+			)}.json/?${queryString.stringify({ email })}`;
 
 			const response: any = await this.gotInstance({
 				url,
@@ -160,21 +162,21 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			if (!user.getMail) {
+			if (!user.getMail()) {
 				return null;
 			}
 
-			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
-				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${
-				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
-			}.json/?${queryString.stringify({ email: user.getMail() })}`;
+			url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`;
 
 			const mappedPreferences = [];
 
 			if (preferences.newsletter) {
 				mappedPreferences.push(
-					process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER
+					this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
 				);
 			}
 
@@ -185,7 +187,7 @@ export class CampaignMonitorService {
 				optin_mail_lists,
 				true
 			);
-			this.logger.log(`data: ${JSON.stringify(data)}`);
+
 			await this.gotInstance({
 				url,
 				method: 'post',
@@ -201,35 +203,40 @@ export class CampaignMonitorService {
 		}
 	}
 
-	public async sendTransactionalMail(
-		emailInfo: CampaignMonitorSendMailDto
-	): Promise<void | BadRequestException> {
+	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
-				this.logger.error(
+				const error = new BadRequestException(
 					`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
 				);
-				return;
-			}
-			const cmTemplateId = templateIds[emailInfo.template];
-			if (!cmTemplateId) {
-				this.logger.error(
-					new InternalServerErrorException(
-						{
-							templateName: emailInfo.template,
-							envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
-						},
-						'Cannot send email since the requested email template id has not been set as an environment variable'
-					)
-				);
-				return;
+				this.logger.error(error);
+				throw error;
 			}
 
-			const url = `${
-				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
-			}/${process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string}/${
-				templateIds[emailInfo.template]
-			}/send`;
+			let cmTemplateId: string;
+			if (Object.values(Template).includes(emailInfo.template as any)) {
+				cmTemplateId = getTemplateId(emailInfo.template);
+			} else {
+				cmTemplateId = emailInfo.template;
+			}
+
+			if (!cmTemplateId) {
+				const error = new InternalServerErrorException(
+					{
+						templateName: emailInfo.template,
+						envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
+					},
+					'Cannot send email since the requested email template id has not been set as an environment variable'
+				);
+				this.logger.error(error);
+				throw error;
+			}
+
+			const url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
+			)}/${cmTemplateId}/send`;
 
 			const data: any = emailInfo.data;
 
@@ -307,47 +314,49 @@ export class CampaignMonitorService {
 	}
 
 	public convertMaterialRequestsToEmailTemplateData(
-		emailInfo: MaterialRequestEmailInfo,
-		firstName: string,
-		lastname: string
+		emailInfo: MaterialRequestEmailInfo
 	): CampaignMonitorMaterialRequestData {
 		// Maintainer Template
-		if (emailInfo.isToMaintainer) {
+		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
 			//TODO: change this return object to match to maintainertemplate
 			return {
-				user_firstname: firstName,
-				user_lastname: lastname,
-				cp_name: emailInfo.materialRequests[0].maintainerName,
+				user_firstname: emailInfo.firstName,
+				user_lastname: emailInfo.lastName,
+				cp_name: emailInfo.materialRequests[0]?.maintainerName,
 				request_list: emailInfo.materialRequests.map((mr) => ({
 					title: mr.objectSchemaName,
 					local_cp_id: mr.objectMeemooLocalId,
 					pid: mr.objectMeemooIdentifier,
-					page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+					page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
+						mr.maintainerSlug
+					}/${mr.objectSchemaIdentifier}`,
 					request_type: mr.type,
 					request_description: mr.reason,
 				})),
 				user_request_context: emailInfo.sendRequestListDto.type,
 				user_organisation: emailInfo.sendRequestListDto.organisation,
-				user_email: emailInfo.materialRequests[0].requesterMail,
+				user_email: emailInfo.materialRequests[0]?.requesterMail,
 			};
 		}
 
 		// Requester Template
 		return {
-			user_firstname: firstName,
-			user_lastname: lastname,
+			user_firstname: emailInfo.firstName,
+			user_lastname: emailInfo.lastName,
 			request_list: emailInfo.materialRequests.map((mr) => ({
 				title: mr.objectSchemaName,
 				cp_name: mr.maintainerName,
 				local_cp_id: mr.objectMeemooLocalId,
 				pid: mr.objectMeemooIdentifier,
-				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${mr.maintainerSlug}/${
+					mr.objectSchemaIdentifier
+				}`,
 				request_type: mr.type,
 				request_description: mr.reason,
 			})),
 			user_request_context: emailInfo.sendRequestListDto.type,
 			user_organisation: emailInfo.sendRequestListDto.organisation,
-			user_email: emailInfo.materialRequests[0].requesterMail,
+			user_email: emailInfo.materialRequests[0]?.requesterMail,
 		};
 	}
 
@@ -358,13 +367,13 @@ export class CampaignMonitorService {
 	) {
 		const customFields = {
 			optin_mail_lists: optin_mail_lists,
-			gebruikersgroep: user.getGroupId(),
-			is_sleutel_gebruiker: user.getIsKeyUser(),
+			usergroup: user.getGroupName(),
+			is_key_user: user.getIsKeyUser(),
 			firstname: user.getFirstName(),
 			lastname: user.getLastName(),
-			aangemaakt_op: new Date(),
-			laatst_ingelogd_op: user.getLastAccessAt(),
-			organisatie: user.getOrganisationName(),
+			created_date: user.getCreatedAt(),
+			last_access_date: user.getLastAccessAt(),
+			organisation: user.getOrganisationName(),
 		};
 
 		return {

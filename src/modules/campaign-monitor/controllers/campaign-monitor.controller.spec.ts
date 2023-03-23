@@ -3,15 +3,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
+import { mockUser } from '../mocks/campaign-monitor.mocks';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
 		sendTransactionalMail: jest.fn(),
+		fetchNewsletterPreferences: jest.fn(),
+		updateNewsletterPreferences: jest.fn(),
 	};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -59,6 +63,33 @@ describe('CampaignMonitorController', () => {
 					data: {},
 				},
 			});
+
+			expect(sent).toEqual({ message: 'success' });
+		});
+	});
+	describe('getPreferences', () => {
+		it('get user newsletter preferences', async () => {
+			mockCampaignMonitorService.fetchNewsletterPreferences.mockResolvedValueOnce({
+				newsletter: true,
+			});
+
+			const sent = await campaignMonitorController.getPreferences({
+				email: 'test@studiohyperdrive.be',
+			});
+
+			expect(sent).toEqual({ newsletter: true });
+		});
+	});
+	describe('getPreferences', () => {
+		it('get user newsletter preferences', async () => {
+			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
+
+			const sent = await campaignMonitorController.updatePreferences(
+				{ newsletter: true },
+				new SessionUserEntity({
+					...mockUser,
+				})
+			);
 
 			expect(sent).toBeTruthy();
 		});

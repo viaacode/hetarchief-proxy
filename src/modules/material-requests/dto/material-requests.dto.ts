@@ -11,7 +11,6 @@ import {
 } from 'class-validator';
 
 import {
-	MaterialRequestListType,
 	MaterialRequestOrderProp,
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
@@ -60,7 +59,7 @@ export class MaterialRequestsQueryDto {
 	@IsBoolean()
 	@Type(() => Boolean)
 	@Transform((input) => {
-		return input.value === 'true';
+		return input.value;
 	})
 	@IsOptional()
 	@ApiPropertyOptional({
@@ -207,12 +206,12 @@ export class UpdateMaterialRequestDto {
 
 export class SendRequestListDto {
 	@IsString()
-	@IsEnum(MaterialRequestListType)
+	@IsEnum(MaterialRequestRequesterCapacity)
 	@ApiPropertyOptional({
 		type: String,
-		enum: MaterialRequestListType,
+		enum: MaterialRequestRequesterCapacity,
 	})
-	type: MaterialRequestListType;
+	type: MaterialRequestRequesterCapacity;
 
 	@IsString()
 	@IsOptional()

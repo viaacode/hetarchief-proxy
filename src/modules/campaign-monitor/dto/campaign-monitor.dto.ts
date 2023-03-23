@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+	IsEnum,
+	IsNotEmpty,
+	IsObject,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 
 import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
@@ -166,8 +173,8 @@ export class CampaignMonitorSendMailDto {
 	@IsNotEmpty()
 	@ApiProperty({
 		type: String,
-		description: 'The template ID for the email',
-		example: '8a583d31-8741-41de-ac38-69166c3213a3',
+		description: 'The template enum for the mail OR the templateId',
+		example: 'visitRequestCp',
 	})
 	template: string;
 
