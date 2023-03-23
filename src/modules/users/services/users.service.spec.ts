@@ -37,6 +37,7 @@ const archiefUser: User = {
 	isKeyUser: true,
 	lastAccessAt: null,
 	organisationName: null,
+	createdAt: null,
 };
 
 describe('UsersService', () => {
