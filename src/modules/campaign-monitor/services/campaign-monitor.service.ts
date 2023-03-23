@@ -215,7 +215,7 @@ export class CampaignMonitorService {
 			}
 
 			let cmTemplateId: string;
-			if ((<any>Object).values(Template).includes(emailInfo.template)) {
+			if (Object.values(Template).includes(emailInfo.template as any)) {
 				cmTemplateId = getTemplateId(emailInfo.template);
 			} else {
 				cmTemplateId = emailInfo.template;
