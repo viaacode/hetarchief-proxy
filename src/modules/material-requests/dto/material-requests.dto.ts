@@ -60,7 +60,7 @@ export class MaterialRequestsQueryDto {
 	@IsBoolean()
 	@Type(() => Boolean)
 	@Transform((input) => {
-		return input.value === 'true';
+		return input.value;
 	})
 	@IsOptional()
 	@ApiPropertyOptional({
