@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	InternalServerErrorException,
 	Param,
 	Patch,
 	Post,
@@ -23,6 +24,10 @@ import {
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
+import {
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Type_Enum,
+} from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -144,7 +149,7 @@ export class MaterialRequestsController {
 
 	@Post('/send')
 	@ApiOperation({
-		description: 'Send request list',
+		description: 'Send material request list',
 	})
 	public async sendRequestList(
 		@Body() sendRequestListDto: SendRequestListDto,
@@ -154,29 +159,53 @@ export class MaterialRequestsController {
 		dto.isPending = true;
 		dto.size = 100;
 
-		const materialRequests = await this.materialRequestsService.findAll(dto, {
-			userProfileId: user.getId(),
-			userGroup: user.getGroupId(),
-			isPersonal: true,
-		});
+		try {
+			const materialRequests = await this.materialRequestsService.findAll(dto, {
+				userProfileId: user.getId(),
+				userGroup: user.getGroupId(),
+				isPersonal: true,
+			});
 
-		materialRequests.items.forEach(
-			(materialRequest: MaterialRequest) =>
-				(materialRequest.contactMail = materialRequest.contactMail.find(
-					(contact) => contact.contact_type === 'primary'
-				)?.email)
-		);
+			materialRequests.items.forEach(
+				(materialRequest: MaterialRequest) =>
+					(materialRequest.contactMail = materialRequest.contactMail.find(
+						(contact) => contact.contact_type === 'primary'
+					)?.email)
+			);
 
-		await this.materialRequestsService.sendRequestList(
-			materialRequests.items,
-			sendRequestListDto,
-			{
-				firstName: user.getFirstName(),
-				lastName: user.getLastName(),
-			}
-		);
+			await this.materialRequestsService.sendRequestList(
+				materialRequests.items,
+				sendRequestListDto,
+				{
+					firstName: user.getFirstName(),
+					lastName: user.getLastName(),
+				}
+			);
 
-		return { message: 'success' };
+			await Promise.all(
+				materialRequests.items.map(async (materialRequest: MaterialRequest) => {
+					await this.materialRequestsService.updateMaterialRequest(
+						materialRequest.id,
+						user.getId(),
+						{
+							type: materialRequest.type as Lookup_App_Material_Request_Type_Enum,
+							reason: materialRequest.reason,
+							organisation: materialRequest.organisation,
+							requester_capacity:
+								materialRequest.requesterCapacity as Lookup_App_Material_Request_Requester_Capacity_Enum,
+							is_pending: false,
+						}
+					);
+				})
+			);
+
+			return { message: 'success' };
+		} catch (error) {
+			throw new InternalServerErrorException({
+				message: 'Material request list could not be send.',
+				error,
+			});
+		}
 	}
 
 	// helpers
