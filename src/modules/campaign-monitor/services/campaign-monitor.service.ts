@@ -368,7 +368,7 @@ export class CampaignMonitorService {
 			is_key_user: user.getIsKeyUser(),
 			firstname: user.getFirstName(),
 			lastname: user.getLastName(),
-			created_date: new Date(),
+			created_date: user.getCreatedAt(),
 			last_access_date: user.getLastAccessAt(),
 			organisation: user.getOrganisationName(),
 		};
