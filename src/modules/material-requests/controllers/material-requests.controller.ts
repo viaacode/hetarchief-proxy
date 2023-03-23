@@ -149,7 +149,7 @@ export class MaterialRequestsController {
 	public async sendRequestList(
 		@Body() sendRequestListDto: SendRequestListDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<void> {
+	): Promise<{ message: 'success' }> {
 		const dto = new MaterialRequestsQueryDto();
 		dto.isPending = true;
 		dto.size = 100;
@@ -167,10 +167,16 @@ export class MaterialRequestsController {
 				)?.email)
 		);
 
-		this.materialRequestsService.sendRequestList(materialRequests.items, sendRequestListDto, {
-			firstName: user.getFirstName(),
-			lastName: user.getLastName(),
-		});
+		await this.materialRequestsService.sendRequestList(
+			materialRequests.items,
+			sendRequestListDto,
+			{
+				firstName: user.getFirstName(),
+				lastName: user.getLastName(),
+			}
+		);
+
+		return { message: 'success' };
 	}
 
 	// helpers
