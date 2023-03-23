@@ -21,7 +21,6 @@ import {
 	Operator,
 	ORDER_MAPPINGS,
 	OrderProperty,
-	QueryBuilderConfig,
 	QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
@@ -42,30 +41,6 @@ jsep.addBinaryOp('OR', 1);
 jsep.addUnaryOp('NOT');
 
 export class QueryBuilder {
-	private static config: QueryBuilderConfig = {
-		AGGS_PROPERTIES,
-		MAX_COUNT_SEARCH_RESULTS,
-		MAX_NUMBER_SEARCH_RESULTS,
-		NEEDS_FILTER_SUFFIX,
-		NUMBER_OF_FILTER_OPTIONS,
-		READABLE_TO_ELASTIC_FILTER_NAMES,
-		DEFAULT_QUERY_TYPE,
-		OCCURRENCE_TYPE,
-		VALUE_OPERATORS,
-		ORDER_MAPPINGS,
-		MULTI_MATCH_FIELDS,
-		MULTI_MATCH_QUERY_MAPPING,
-		NEEDS_AGG_SUFFIX,
-	};
-
-	public static getConfig(): QueryBuilderConfig {
-		return this.config;
-	}
-
-	public static setConfig(config: QueryBuilderConfig) {
-		this.config = config;
-	}
-
 	/**
 	 * Convert filters, order, aggs properties (created by the ui) to elasticsearch query object
 	 * @param searchRequest the search query parameters
@@ -82,8 +57,8 @@ export class QueryBuilder {
 			delete queryObject.default; // Side effect of importing a json file as a module
 
 			// Avoid huge queries
-			queryObject.size = Math.min(searchRequest.size, this.config.MAX_NUMBER_SEARCH_RESULTS);
-			const max = Math.max(0, this.config.MAX_COUNT_SEARCH_RESULTS - limit);
+			queryObject.size = Math.min(searchRequest.size, MAX_NUMBER_SEARCH_RESULTS);
+			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = clamp(offset, 0, max);
 
 			const consultableSearchFilterFields: SearchFilterField[] = [
@@ -154,7 +129,7 @@ export class QueryBuilder {
 	 * @param orderDirection
 	 */
 	private static buildSortArray(orderProperty: OrderProperty, orderDirection: SortDirection) {
-		const mappedOrderProperty = this.config.ORDER_MAPPINGS[orderProperty];
+		const mappedOrderProperty = ORDER_MAPPINGS[orderProperty];
 		const sortArray: any[] = [];
 		if (orderProperty !== OrderProperty.RELEVANCE) {
 			const sortItem = {
@@ -167,7 +142,7 @@ export class QueryBuilder {
 		}
 
 		// Always order by relevance if 2 search items have identical primary sort values
-		sortArray.push(this.config.ORDER_MAPPINGS[OrderProperty.RELEVANCE]);
+		sortArray.push(ORDER_MAPPINGS[OrderProperty.RELEVANCE]);
 
 		// If all the above is identical, sort by most recent created date
 		sortArray.push({
@@ -180,11 +155,11 @@ export class QueryBuilder {
 	}
 
 	protected static getOccurrenceType(operator: Operator): string {
-		return this.config.OCCURRENCE_TYPE[operator] || 'filter';
+		return OCCURRENCE_TYPE[operator] || 'filter';
 	}
 
 	protected static buildValue(searchFilter: SearchFilter): any {
-		if (this.config.VALUE_OPERATORS.includes(searchFilter.operator)) {
+		if (VALUE_OPERATORS.includes(searchFilter.operator)) {
 			return {
 				[searchFilter.operator]: searchFilter.value,
 			};
@@ -193,7 +168,7 @@ export class QueryBuilder {
 	}
 
 	protected static getQueryType(searchFilter: SearchFilter, value: any): any {
-		const defaultQueryType = this.config.DEFAULT_QUERY_TYPE[searchFilter.field];
+		const defaultQueryType = DEFAULT_QUERY_TYPE[searchFilter.field];
 		if (defaultQueryType === QueryType.TERMS && !isArray(value)) {
 			return QueryType.TERM;
 		}
@@ -443,7 +418,7 @@ export class QueryBuilder {
 		forEach(filters, (searchFilter: SearchFilter) => {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
-			if (this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
+			if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
 				if (!searchFilter.value) {
 					throw new BadRequestException(
 						`Value cannot be empty when filtering on field '${searchFilter.field}'`
@@ -452,15 +427,14 @@ export class QueryBuilder {
 				if (this.isFuzzyOperator(searchFilter.operator)) {
 					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
 
-					const searchTemplate =
-						this.config.MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
 
 					let textFilters;
 					if (searchFilter.field === SearchFilterField.QUERY) {
 						textFilters = [
 							convertNodeToEsQueryFilterObjects(
 								jsep(searchFilter.value),
-								this.config.MULTI_MATCH_QUERY_MAPPING.exact.exactQuery,
+								MULTI_MATCH_QUERY_MAPPING.exact.exactQuery,
 								searchFilter
 							),
 						];
@@ -477,8 +451,7 @@ export class QueryBuilder {
 					return;
 				} else {
 					// Use a multi field search template to exact search in elasticsearch across multiple fields
-					const searchTemplate =
-						this.config.MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
+					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
 
 					if (!searchTemplate) {
 						throw new BadRequestException(
@@ -502,7 +475,7 @@ export class QueryBuilder {
 			 * name and description are also multi_match fields, but they are allowed to be queried using is/isNot operator
 			 */
 			if (
-				this.config.MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
+				MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
 				[SearchFilterField.ADVANCED_QUERY, SearchFilterField.QUERY].includes(
 					searchFilter.field
 				)
@@ -513,7 +486,7 @@ export class QueryBuilder {
 			}
 
 			// Map frontend filter names to elasticsearch names
-			const elasticKey = this.config.READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
+			const elasticKey = READABLE_TO_ELASTIC_FILTER_NAMES[searchFilter.field];
 			if (!elasticKey) {
 				throw new InternalServerErrorException(
 					`Failed to resolve field to the ES fieldname: ${searchFilter.field}`
@@ -551,9 +524,9 @@ export class QueryBuilder {
 	 */
 	private static buildAggsObject(searchRequest: IeObjectsQueryDto): any {
 		const aggs: any = {};
-		forEach(searchRequest.requestedAggs || this.config.AGGS_PROPERTIES, (aggProperty) => {
+		forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
-				this.config.READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as SearchFilterField];
+				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as SearchFilterField];
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(
 					`Failed to resolve agg property: ${aggProperty}`
@@ -563,7 +536,7 @@ export class QueryBuilder {
 			aggs[elasticProperty] = {
 				terms: {
 					field: elasticProperty + this.aggSuffix(aggProperty),
-					size: this.config.NUMBER_OF_FILTER_OPTIONS,
+					size: NUMBER_OF_FILTER_OPTIONS,
 				},
 			};
 			// }
@@ -583,9 +556,7 @@ export class QueryBuilder {
 	 * @param prop
 	 */
 	private static filterSuffix(prop: SearchFilterField): string {
-		return this.config.NEEDS_FILTER_SUFFIX[prop]
-			? `.${this.config.NEEDS_FILTER_SUFFIX[prop]}`
-			: '';
+		return NEEDS_FILTER_SUFFIX[prop] ? `.${NEEDS_FILTER_SUFFIX[prop]}` : '';
 	}
 
 	/**
@@ -600,7 +571,7 @@ export class QueryBuilder {
 	 * @param prop
 	 */
 	private static aggSuffix(prop: SearchFilterField): string {
-		return this.config.NEEDS_AGG_SUFFIX[prop] ? `.${this.config.NEEDS_AGG_SUFFIX[prop]}` : '';
+		return NEEDS_AGG_SUFFIX[prop] ? `.${NEEDS_AGG_SUFFIX[prop]}` : '';
 	}
 
 	public static isFuzzyOperator(operator: Operator): boolean {
