@@ -1,23 +1,36 @@
-import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Put,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { isEmpty, isNil } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
 	MaterialRequestsQueryDto,
+	SendRequestListDto,
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { Group, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-// @UseGuards(LoggedInGuard)
+@UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
 @Controller('material-requests')
 export class MaterialRequestsController {
@@ -28,11 +41,14 @@ export class MaterialRequestsController {
 		description:
 			'Get materials requests endpoint for meemoo admins and CP admins. Visitors should use the /personal endpoint.',
 	})
-	// @RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
+	@RequireAnyPermissions(Permission.VIEW_ANY_MATERIAL_REQUESTS)
 	public async getMaterialRequests(
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+
 		return await this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
@@ -49,6 +65,9 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
+		// ARC-1472 Validatie the user group if the request has maintainerIds
+		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
+
 		return this.materialRequestsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			userGroup: user.getGroupId(),
@@ -121,5 +140,55 @@ export class MaterialRequestsController {
 		} else {
 			return { status: `no material requests found with that id: ${materialRequestId}` };
 		}
+	}
+
+	@Post('/send')
+	@ApiOperation({
+		description: 'Send request list',
+	})
+	public async sendRequestList(
+		@Body() sendRequestListDto: SendRequestListDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<void> {
+		const dto = new MaterialRequestsQueryDto();
+		dto.isPending = true;
+		dto.size = 100;
+
+		const materialRequests = await this.materialRequestsService.findAll(dto, {
+			userProfileId: user.getId(),
+			userGroup: user.getGroupId(),
+			isPersonal: true,
+		});
+
+		materialRequests.items.forEach(
+			(materialRequest: MaterialRequest) =>
+				(materialRequest.contactMail = materialRequest.contactMail.find(
+					(contact) => contact.contact_type === 'primary'
+				)?.email)
+		);
+
+		this.materialRequestsService.sendRequestList(materialRequests.items, sendRequestListDto, {
+			firstName: user.getFirstName(),
+			lastName: user.getLastName(),
+		});
+	}
+
+	// helpers
+	// ========================
+	public validateMaintainerIdsWithUserGroup(
+		user: SessionUserEntity,
+		queryDto: MaterialRequestsQueryDto
+	): MaterialRequestsQueryDto {
+		if (!isNil(queryDto?.maintainerIds) || !isEmpty(queryDto?.maintainerIds)) {
+			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+				queryDto.maintainerIds = [];
+			}
+
+			if (user.getGroupId() === Group.CP_ADMIN) {
+				queryDto.maintainerIds = [user.getMaintainerId()];
+			}
+		}
+
+		return queryDto;
 	}
 }

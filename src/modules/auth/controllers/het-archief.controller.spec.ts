@@ -32,6 +32,7 @@ const ldapUser = {
 		name_id: 'test@studiohyperdrive.be',
 		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
 		apps: ['hetarchief'],
+		o: ['OR-1v5bc86'],
 	},
 };
 
@@ -42,6 +43,9 @@ const archiefUser = {
 	email: 'test@studiohyperdrive.be',
 	groupId: Group.CP_ADMIN,
 	permissions: [],
+	isKeyUser: false,
+	organisationId: 'OR-1v5bc86',
+	organisationName: null,
 };
 
 const samlResponse = {
@@ -235,6 +239,7 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
+			mockUsersService.updateUser.mockReturnValue(archiefUser);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -257,6 +262,7 @@ describe('HetArchiefController', () => {
 				RelayState: null,
 			};
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
 
@@ -296,6 +302,8 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
 				...archiefUser,
 				firstName: 'Tom2',
+				isKeyUser: false,
+				organisationId: null,
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 

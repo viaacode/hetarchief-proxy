@@ -10,6 +10,7 @@ export interface MaterialRequest {
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
 	objectMeemooIdentifier: string;
+	objectMeemooLocalId?: string;
 	objectDctermsFormat: MediaFormat;
 	objectThumbnailUrl: string;
 	profileId: string;
@@ -30,12 +31,24 @@ export interface MaterialRequest {
 	requesterUserGroupLabel?: string;
 	requesterUserGroupDescription?: string;
 	maintainerLogo?: string;
+	contactMail?: any;
 	organisation?: string | null;
 }
 
 export interface MaterialRequestMaintainer {
 	id: string;
 	name: string;
+}
+
+export interface MaterialRequestFindAllExtraParameters {
+	userProfileId?: string;
+	userGroup?: string;
+	isPersonal?: boolean;
+}
+
+export interface MaterialRequestSendRequestListUserInfo {
+	firstName: string;
+	lastName: string;
 }
 
 export enum MaterialRequestType {
@@ -56,6 +69,13 @@ export enum MaterialRequestOrderProp {
 export enum MaterialRequestRequesterCapacity {
 	OTHER = 'OTHER',
 	WORK = 'WORK',
+	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
+	EDUCATION = 'EDUCATION',
+}
+
+export enum MaterialRequestListType {
+	OTHER = 'OTHER',
+	PROFFESIONAL = 'PROFFESIONAL',
 	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
 	EDUCATION = 'EDUCATION',
 }

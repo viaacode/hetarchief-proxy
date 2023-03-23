@@ -197,11 +197,11 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'inLanguage',
 	'meemoofilmBase',
 	'meemoofilmColor',
-	'meemoofilmCaption', // BESTAAT NOG NIET
-	'meemoofilmCaptionLanguage', // BESTAAT NOG NIET
 	'ebucoreIsMediaFragmentOf',
 	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 	'licenses',
+	'meemoofilmImageOrSound',
+	'languageSubtitles',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'premisIdentifier',
@@ -213,7 +213,8 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: (keyof IeObject)[] = [
 	'meemooDescriptionCast',
 	'spatial',
 	'temporal',
-	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET
+	'meemooMediaObjectId',
+	'publisher',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: (keyof IeObject)[] = [
 	'thumbnailUrl',
@@ -241,13 +242,13 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: (keyof IeObject)[] = [
 	'meemooLocalId',
 	'meemooMediaObjectId',
 	'maintainerId',
+	'maintainerName',
 	'name',
 	'series',
 	'programs',
 	'alternativeName',
 	'ebucoreObjectType',
 	'duration',
-	'durationInSeconds',
 	'dateCreated',
 	'datePublished',
 	'creator',
@@ -263,13 +264,13 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: (keyof IeObject)[] = [
 	'temporal',
 	'keywords',
 	'inLanguage',
-	'meemooDescriptionCategory',
+	// 'meemooDescriptionCategory', // Still has to be added to the graphQl db, might have to change to meemooDescriptionCategorie
 	'dctermsMedium',
 	'dctermsFormat',
 	'meemoofilmColor',
 	'meemoofilmBase',
 	'meemoofilmImageOrSound',
-	'meemooContainsEmbeddedCaption',
+	'meemoofilmContainsEmbeddedCaption',
 	'languageSubtitles',
 	'ebucoreIsMediaFragmentOf',
 ];

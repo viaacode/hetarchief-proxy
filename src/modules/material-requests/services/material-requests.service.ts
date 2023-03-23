@@ -1,16 +1,22 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { has, isArray, isEmpty, isNil, set } from 'lodash';
+import { groupBy, isArray, isEmpty, isNil, set } from 'lodash';
 
-import { CreateMaterialRequestDto, MaterialRequestsQueryDto } from '../dto/material-requests.dto';
+import {
+	CreateMaterialRequestDto,
+	MaterialRequestsQueryDto,
+	SendRequestListDto,
+} from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
 	GqlMaterialRequest,
 	GqlMaterialRequestMaintainer,
 	MaterialRequest,
+	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
 	MaterialRequestRequesterCapacity,
+	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
 import {
@@ -34,6 +40,11 @@ import {
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import {
+	MaterialRequestEmailInfo,
+	Template,
+} from '~modules/campaign-monitor/campaign-monitor.types';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { Group } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -43,15 +54,14 @@ import { SortDirection } from '~shared/types';
 export class MaterialRequestsService {
 	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(
+		protected dataService: DataService,
+		private campaignMonitorService: CampaignMonitorService
+	) {}
 
 	public async findAll(
 		inputQuery: MaterialRequestsQueryDto,
-		parameters: {
-			userProfileId?: string;
-			userGroup?: string;
-			isPersonal?: boolean;
-		}
+		parameters: MaterialRequestFindAllExtraParameters
 	): Promise<IPagination<MaterialRequest>> {
 		const { query, type, maintainerIds, isPending, page, size, orderProp, orderDirection } =
 			inputQuery;
@@ -99,7 +109,7 @@ export class MaterialRequestsService {
 			};
 		}
 
-		if (!isEmpty(isPending)) {
+		if (!isNil(isPending)) {
 			where.is_pending = {
 				_eq: isPending,
 			};
@@ -244,6 +254,46 @@ export class MaterialRequestsService {
 		return response.delete_app_material_requests.affected_rows;
 	}
 
+	public async sendRequestList(
+		materialRequests: MaterialRequest[],
+		sendRequestListDto: SendRequestListDto,
+		userInfo: MaterialRequestSendRequestListUserInfo
+	): Promise<void> {
+		const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
+		const groupedArray = [];
+
+		Object.keys(groupedMaterialRequests).forEach((key) => {
+			groupedArray.push(groupedMaterialRequests[key]);
+		});
+
+		// Send mail to each maintainer containing only material requests for objects they are the maintainer of
+		groupedArray.forEach((materialRequests: MaterialRequest[]) => {
+			const emailInfo: MaterialRequestEmailInfo = {
+				// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
+				to: materialRequests[0].contactMail,
+				isToMaintainer: true,
+				template: Template.MATERIAL_REQUEST_MAINTAINER,
+				materialRequests: materialRequests,
+				sendRequestListDto,
+				firstName: userInfo.firstName,
+				lastName: userInfo.lastName,
+			};
+			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		});
+
+		// Send mail to the requester containing all of their material requests for all the objects they requested
+		const emailInfo: MaterialRequestEmailInfo = {
+			to: materialRequests[0].requesterMail,
+			isToMaintainer: false,
+			template: Template.MATERIAL_REQUEST_REQUESTER,
+			materialRequests: materialRequests,
+			sendRequestListDto,
+			firstName: userInfo.firstName,
+			lastName: userInfo.lastName,
+		};
+		this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+	}
+
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
@@ -279,6 +329,12 @@ export class MaterialRequestsService {
 			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
 			maintainerLogo: grapqhQLMaterialRequest.object.maintainer.information?.logo?.iri,
 			organisation: grapqhQLMaterialRequest.organisation || null,
+			contactMail:
+				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+					?.object?.maintainer?.information?.contact_point || null,
+			objectMeemooLocalId:
+				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+					?.object?.meemoo_local_id || null,
 		};
 
 		return transformedMaterialRequest;

@@ -35,6 +35,8 @@ const archiefUser: User = {
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
+	lastAccessAt: null,
+	organisationName: null,
 };
 
 describe('UsersService', () => {
@@ -123,6 +125,8 @@ describe('UsersService', () => {
 					lastName: 'Testerom',
 					email: 'test@studiohypderdrive.be',
 					groupId: Group.CP_ADMIN,
+					isKeyUser: false,
+					organisationId: 'test',
 				},
 				Idp.HETARCHIEF,
 				'idp-1'
@@ -143,6 +147,8 @@ describe('UsersService', () => {
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
 				groupId: Group.CP_ADMIN,
+				isKeyUser: false,
+				organisationId: 'test',
 			});
 			expect(result).toEqual(archiefUser);
 		});

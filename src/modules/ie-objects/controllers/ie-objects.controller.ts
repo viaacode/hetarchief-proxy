@@ -117,7 +117,6 @@ export class IeObjectsController {
 		};
 	}
 
-	// TODO: rewrite export with limited access
 	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
 	@RequireAllPermissions(Permission.EXPORT_OBJECT)
@@ -139,7 +138,20 @@ export class IeObjectsController {
 			},
 		]);
 
-		return convertObjectToXml(objectMetadata);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return convertObjectToXml(
+			limitAccessToObjectDetails(objectMetadata, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getMaintainerId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			})
+		);
 	}
 
 	@Get(':id/export/csv')
@@ -163,7 +175,20 @@ export class IeObjectsController {
 			},
 		]);
 
-		return convertObjectToCsv(objectMetadata);
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return convertObjectToCsv(
+			limitAccessToObjectDetails(objectMetadata, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getMaintainerId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			})
+		);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')

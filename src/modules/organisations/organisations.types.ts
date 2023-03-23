@@ -2,6 +2,7 @@ import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export interface OrganisationInfoV2 {
 	id: string;
+	label: string;
 	description: string;
 	sector: IeObjectSector | null;
 	form_url: string | null;
@@ -37,6 +38,7 @@ export interface ParsedOrganisation {
 		contact_type: string;
 		email: string;
 	}[];
+	schema_name: string;
 	description: string;
 	// Remark here organization is with Z
 	haorg_organization_type: string;
