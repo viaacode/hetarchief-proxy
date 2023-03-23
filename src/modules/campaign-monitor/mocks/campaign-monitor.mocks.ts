@@ -4,7 +4,7 @@ import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
 import { CampaignMonitorMaterialRequestData, RequestListItem } from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { MaterialRequestListType } from '~modules/material-requests/material-requests.types';
+import { MaterialRequestRequesterCapacity } from '~modules/material-requests/material-requests.types';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -24,7 +24,7 @@ export const mockUser: User = {
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {
-	type: MaterialRequestListType.OTHER,
+	type: MaterialRequestRequesterCapacity.OTHER,
 	organisation: 'Test Organisation',
 };
 
