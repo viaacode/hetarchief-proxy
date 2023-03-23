@@ -27,6 +27,7 @@ import {
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
 @Injectable()
@@ -39,6 +40,12 @@ export class CampaignMonitorService {
 	private rerouteEmailsTo: string;
 
 	constructor(private configService: ConfigService<Configuration>) {
+		checkRequiredEnvs([
+			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT',
+			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION',
+			'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION',
+			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT',
+		]);
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
 			resolveBodyOnly: true,
@@ -73,11 +80,11 @@ export class CampaignMonitorService {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
-		await this.sendTransactionalMail({
+		const response = await this.sendTransactionalMail({
 			template: emailInfo.template,
 			data,
 		});
-		return true;
+		return !!response;
 	}
 
 	// TODO: Write tests (ARC-1500)
@@ -104,15 +111,11 @@ export class CampaignMonitorService {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		if (
-			await this.sendTransactionalMail({
-				template: emailInfo.template,
-				data,
-			})
-		) {
-			return true;
-		}
-		return false;
+		const response = await this.sendTransactionalMail({
+			template: emailInfo.template,
+			data,
+		});
+		return !!response;
 	}
 
 	public async fetchNewsletterPreferences(
@@ -200,9 +203,7 @@ export class CampaignMonitorService {
 		}
 	}
 
-	public async sendTransactionalMail(
-		emailInfo: CampaignMonitorSendMailDto
-	): Promise<void | BadRequestException | boolean> {
+	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<boolean> {
 		try {
 			if (emailInfo.data.to.length === 0) {
 				this.logger.error(
