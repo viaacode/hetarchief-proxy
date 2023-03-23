@@ -81,6 +81,7 @@ export interface User {
 	organisationName?: string | null;
 	organisationId?: string | null;
 	lastAccessAt?: string | null;
+	createdAt?: string | null;
 }
 
 export interface GqlPermission {
