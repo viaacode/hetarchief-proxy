@@ -26,7 +26,6 @@ import { IeObjectsService } from '../services/ie-objects.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -42,8 +41,7 @@ export class IeObjectsController {
 		private translationsService: TranslationsService,
 		private eventsService: EventsService,
 		private visitsService: VisitsService,
-		private playerTicketService: PlayerTicketService,
-		private organisationService: OrganisationsService
+		private playerTicketService: PlayerTicketService
 	) {}
 
 	@Get('player-ticket')
@@ -73,16 +71,7 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		let ieObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
-
-		const organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-			ieObject.schemaIdentifier
-		);
-
-		ieObject = {
-			...ieObject,
-			maintainerFromUrl: organisation?.formUrl || null,
-		};
+		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
