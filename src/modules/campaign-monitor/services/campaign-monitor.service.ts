@@ -367,13 +367,13 @@ export class CampaignMonitorService {
 	) {
 		const customFields = {
 			optin_mail_lists: optin_mail_lists,
-			gebruikersgroep: user.getGroupId(),
-			is_sleutel_gebruiker: user.getIsKeyUser(),
+			usergroup: user.getGroupName(),
+			is_key_user: user.getIsKeyUser(),
 			firstname: user.getFirstName(),
 			lastname: user.getLastName(),
-			aangemaakt_op: new Date(),
-			laatst_ingelogd_op: user.getLastAccessAt(),
-			organisatie: user.getOrganisationName(),
+			created_date: new Date(),
+			last_access_date: user.getLastAccessAt(),
+			organisation: user.getOrganisationName(),
 		};
 
 		return {
