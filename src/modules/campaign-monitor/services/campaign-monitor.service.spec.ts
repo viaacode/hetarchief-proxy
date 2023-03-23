@@ -4,7 +4,13 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { getTemplateId } from '../campaign-monitor.consts';
 import { Template } from '../campaign-monitor.types';
+import {
+	mockCampaignMonitorMaterialRequestDataToMaintainer,
+	mockCampaignMonitorMaterialRequestDataToRequester,
+	mockMaterialRequestEmailInfo,
+} from '../mocks/campaign-monitor.mocks';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
@@ -19,6 +25,12 @@ const mockConfigService = {
 		}
 		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION') {
+			return 'v3.2';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT') {
+			return 'transactional/smartemail';
 		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
 			return null;
@@ -69,8 +81,15 @@ const getMockVisit = (): Visit => ({
 
 describe('CampaignMonitorService', () => {
 	let campaignMonitorService: CampaignMonitorService;
+	const env = process.env;
 
 	beforeEach(async () => {
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'fakeTemplateId';
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
+		process.env.VISIT_DENIED = null;
+		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION = 'v3.2';
+		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT =
+			'transactional/smartemail';
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
@@ -84,6 +103,10 @@ describe('CampaignMonitorService', () => {
 			.compile();
 
 		campaignMonitorService = module.get<CampaignMonitorService>(CampaignMonitorService);
+	});
+
+	afterEach(() => {
+		process.env = env;
 	});
 
 	it('services should be defined', () => {
@@ -159,5 +182,84 @@ describe('CampaignMonitorService', () => {
 		// 	});
 		// 	expect(result).toBeFalsy();
 		// });
+	});
+
+	describe('convertMaterialRequestsToEmailTemplateData', () => {
+		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			const result =
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+					materialRequestEmailInfo
+				);
+			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToMaintainer);
+		});
+
+		it('should parse materialRequestEmailInfo with Requester Template', () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			const result =
+				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+					materialRequestEmailInfo
+				);
+			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToRequester);
+		});
+	});
+	describe('sendForMaterialRequest', () => {
+		it('should log and not send to an empty recipients email adres, returns false', async () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.to = null;
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+		});
+
+		it('should log and throw error with invalid template, returns false', async () => {
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.VISIT_DENIED;
+			materialRequestEmailInfo.to = 'test@example.com';
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+		});
+
+		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+			campaignMonitorService.setIsEnabled(false);
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeFalsy();
+			campaignMonitorService.setIsEnabled(true);
+		});
+
+		it('should return true when emailInfo has valid fields', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
+				)
+				.reply(202, [
+					{
+						Status: 'Accepted',
+						MessageID: '91206192-c71c-11ed-8c12-c59c777888d7',
+						Recipient: 'test@example.com',
+					},
+				]);
+
+			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.to = 'test@example.com';
+			const result = await campaignMonitorService.sendForMaterialRequest(
+				materialRequestEmailInfo
+			);
+			expect(result).toBeTruthy();
+		});
 	});
 });

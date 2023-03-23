@@ -270,8 +270,7 @@ export class MaterialRequestsService {
 		groupedArray.forEach((materialRequests: MaterialRequest[]) => {
 			const emailInfo: MaterialRequestEmailInfo = {
 				// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
-				to: materialRequests[0].contactMail,
-				isToMaintainer: true,
+				to: materialRequests[0]?.contactMail,
 				template: Template.MATERIAL_REQUEST_MAINTAINER,
 				materialRequests: materialRequests,
 				sendRequestListDto,
@@ -283,8 +282,7 @@ export class MaterialRequestsService {
 
 		// Send mail to the requester containing all of their material requests for all the objects they requested
 		const emailInfo: MaterialRequestEmailInfo = {
-			to: materialRequests[0].requesterMail,
-			isToMaintainer: false,
+			to: materialRequests[0]?.requesterMail,
 			template: Template.MATERIAL_REQUEST_REQUESTER,
 			materialRequests: materialRequests,
 			sendRequestListDto,
