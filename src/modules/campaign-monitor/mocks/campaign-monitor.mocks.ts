@@ -1,9 +1,27 @@
+import { Group, GroupIdToName } from '@meemoo/admin-core-api';
+
 import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
 import { CampaignMonitorMaterialRequestData, RequestListItem } from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { MaterialRequestListType } from '~modules/material-requests/material-requests.types';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
+import { Permission, User } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
+
+export const mockUser: User = {
+	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
+	firstName: 'Test',
+	lastName: 'Testers',
+	fullName: 'Test Testers',
+	email: 'test.testers@meemoo.be',
+	acceptedTosAt: '1997-01-01T00:00:00.000Z',
+	groupId: Group.CP_ADMIN,
+	groupName: GroupIdToName[Group.CP_ADMIN],
+	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
+	idp: Idp.HETARCHIEF,
+	isKeyUser: false,
+};
 
 export const mockSendRequestListDto: SendRequestListDto = {
 	type: MaterialRequestListType.OTHER,
@@ -58,3 +76,52 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
+
+export const mockNewsletterTemplateDataWithNewsletter = {
+	EmailAddress: mockUser.email,
+	Name: mockUser.fullName,
+	Resubscribe: true,
+	ConsentToTrack: 'Yes',
+	CustomFields: [
+		{
+			Key: 'optin_mail_lists',
+			Value: 'newsletter',
+			Clear: false,
+		},
+		{
+			Key: 'gebruikersgroep',
+			Value: mockUser.groupId,
+			Clear: false,
+		},
+		{
+			Key: 'is_sleutel_gebruiker',
+			Value: mockUser.isKeyUser,
+			Clear: false,
+		},
+		{
+			Key: 'firstname',
+			Value: mockUser.firstName,
+			Clear: false,
+		},
+		{
+			Key: 'lastname',
+			Value: mockUser.lastName,
+			Clear: false,
+		},
+		{
+			Key: 'aangemaakt_op',
+			Value: null,
+			Clear: true,
+		},
+		{
+			Key: 'laatst_ingelogd_op',
+			Value: null,
+			Clear: true,
+		},
+		{
+			Key: 'organisatie',
+			Value: null,
+			Clear: true,
+		},
+	],
+};

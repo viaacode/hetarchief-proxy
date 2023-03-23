@@ -164,15 +164,13 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			if (!user.getMail) {
+			if (!user.getMail()) {
 				return null;
 			}
 
 			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
 				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${
-				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
-			}.json/?${queryString.stringify({ email: user.getMail() })}`;
+			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string}.json`;
 
 			const mappedPreferences = [];
 
@@ -189,7 +187,7 @@ export class CampaignMonitorService {
 				optin_mail_lists,
 				true
 			);
-			this.logger.log(`data: ${JSON.stringify(data)}`);
+
 			await this.gotInstance({
 				url,
 				method: 'post',
