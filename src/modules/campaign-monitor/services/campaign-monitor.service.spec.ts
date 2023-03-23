@@ -99,6 +99,7 @@ describe('CampaignMonitorService', () => {
 	beforeEach(async () => {
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'fakeTemplateId';
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED = 'fakeTemplateId';
 		process.env.VISIT_DENIED = null;
 		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION = 'v3.2';
 		process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION = 'v3.3';
@@ -157,47 +158,46 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		// TODO: fix forVisit tests
-		// it('should log and not send to an empty recipients email adres', async () => {
-		// 	const visit = getMockVisit();
-		// 	const result = await campaignMonitorService.sendForVisit({
-		// 		to: [{ id: visit.visitorId, email: null }],
-		// 		template: Template.VISIT_APPROVED,
-		// 		visit: getMockVisit(),
-		// 	});
-		// 	expect(result).toBeFalsy();
-		// });
-		// TODO: fix forVisit tests
-		// it('should NOT call the campaign monitor if the template was not found', async () => {
-		// 	const visit = getMockVisit();
-		// 	const result = await campaignMonitorService.sendForVisit({
-		// 		template: Template.VISIT_DENIED, // Denied template is null and triggers the error
-		// 		visit,
-		// 		to: [{ id: visit.visitorId, email: visit.visitorMail }],
-		// 	});
-		// 	expect(result).toBeFalsy();
-		// });
-		// TODO: fix forVisit tests
-		// it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
-		// 	campaignMonitorService.setIsEnabled(false);
-		// 	const visit = getMockVisit();
-		// 	const result = await campaignMonitorService.sendForVisit({
-		// 		template: Template.VISIT_APPROVED,
-		// 		visit,
-		// 		to: [{ id: visit.visitorId, email: visit.visitorMail }],
-		// 	});
-		// 	expect(result).toBeFalsy();
-		// 	campaignMonitorService.setIsEnabled(true);
-		// });
-		// TODO: fix forVisit tests
-		// it('should return false if there is no email adres', async () => {
-		// 	const result = await campaignMonitorService.sendForVisit({
-		// 		template: Template.VISIT_APPROVED,
-		// 		visit: getMockVisit(),
-		// 		to: [],
-		// 	});
-		// 	expect(result).toBeFalsy();
-		// });
+		it('should log and not send to an empty recipients email adres', async () => {
+			const visit = getMockVisit();
+			const result = await campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: null }],
+				template: Template.VISIT_APPROVED,
+				visit: getMockVisit(),
+			});
+			expect(result).toBeFalsy();
+		});
+
+		it('should NOT call the campaign monitor if the template was not found', async () => {
+			const visit = getMockVisit();
+			const result = await campaignMonitorService.sendForVisit({
+				template: Template.VISIT_DENIED, // Denied template is null and triggers the error
+				visit,
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+			});
+			expect(result).toBeFalsy();
+		});
+
+		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+			campaignMonitorService.setIsEnabled(false);
+			const visit = getMockVisit();
+			const result = await campaignMonitorService.sendForVisit({
+				template: Template.VISIT_APPROVED,
+				visit,
+				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+			});
+			expect(result).toBeFalsy();
+			campaignMonitorService.setIsEnabled(true);
+		});
+
+		it('should return false if there is no email adres', async () => {
+			const result = await campaignMonitorService.sendForVisit({
+				template: Template.VISIT_APPROVED,
+				visit: getMockVisit(),
+				to: [],
+			});
+			expect(result).toBeFalsy();
+		});
 	});
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
@@ -233,7 +233,7 @@ describe('CampaignMonitorService', () => {
 
 		it('should log and throw error with invalid template, returns false', async () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.VISIT_DENIED;
+			materialRequestEmailInfo.template = Template.VISIT_DENIED; // Denied template is null and triggers the error
 			materialRequestEmailInfo.to = 'test@example.com';
 			const result = await campaignMonitorService.sendForMaterialRequest(
 				materialRequestEmailInfo
