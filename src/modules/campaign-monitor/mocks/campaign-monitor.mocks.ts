@@ -41,7 +41,7 @@ export const mockRequestListItemToMaintainer: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
-	page_url: `${process.env.CLIENT_HOST}/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: mockMaterialRequest1.type,
 	request_description: mockMaterialRequest1.reason,
 };
@@ -51,7 +51,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	cp_name: mockMaterialRequest1.maintainerName,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
-	page_url: `${process.env.CLIENT_HOST}/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: mockMaterialRequest1.type,
 	request_description: mockMaterialRequest1.reason,
 };
@@ -89,12 +89,12 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Clear: false,
 		},
 		{
-			Key: 'gebruikersgroep',
-			Value: mockUser.groupId,
+			Key: 'usergroup',
+			Value: mockUser.groupName,
 			Clear: false,
 		},
 		{
-			Key: 'is_sleutel_gebruiker',
+			Key: 'is_key_user',
 			Value: mockUser.isKeyUser,
 			Clear: false,
 		},
@@ -109,17 +109,17 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Clear: false,
 		},
 		{
-			Key: 'aangemaakt_op',
+			Key: 'created_date',
 			Value: null,
 			Clear: true,
 		},
 		{
-			Key: 'laatst_ingelogd_op',
+			Key: 'last_access_date',
 			Value: null,
 			Clear: true,
 		},
 		{
-			Key: 'organisatie',
+			Key: 'organisation',
 			Value: null,
 			Clear: true,
 		},

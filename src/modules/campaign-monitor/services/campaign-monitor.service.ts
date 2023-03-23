@@ -59,9 +59,8 @@ export class CampaignMonitorService {
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
-
 	// TODO: check sendForVisit still works (ARC-1501)
-	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
+	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
 			if (!recipient.email) {
@@ -80,14 +79,13 @@ export class CampaignMonitorService {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
-		const response = await this.sendTransactionalMail({
+		await this.sendTransactionalMail({
 			template: emailInfo.template,
 			data,
 		});
-		return !!response;
 	}
 
-	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
+	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
 		const recipients: string[] = [];
 
 		if (emailInfo.to) {
@@ -110,11 +108,10 @@ export class CampaignMonitorService {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		const response = await this.sendTransactionalMail({
+		await this.sendTransactionalMail({
 			template: emailInfo.template,
 			data,
 		});
-		return !!response;
 	}
 
 	public async fetchNewsletterPreferences(
@@ -123,11 +120,13 @@ export class CampaignMonitorService {
 		let url: string | null = null;
 
 		try {
-			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
-				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${
-				process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string
-			}.json/?${queryString.stringify({ email })}`;
+			url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+			)}.json/?${queryString.stringify({ email })}`;
 
 			const response: any = await this.gotInstance({
 				url,
@@ -167,15 +166,17 @@ export class CampaignMonitorService {
 				return null;
 			}
 
-			url = `${process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION as string}/${
-				process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT
-			}/${process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF as string}.json`;
+			url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`;
 
 			const mappedPreferences = [];
 
 			if (preferences.newsletter) {
 				mappedPreferences.push(
-					process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER
+					this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
 				);
 			}
 
@@ -202,13 +203,14 @@ export class CampaignMonitorService {
 		}
 	}
 
-	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<boolean> {
+	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
-				this.logger.error(
+				const error = new BadRequestException(
 					`Mail will not be sent - no recipients. emailInfo: ${JSON.stringify(emailInfo)}`
 				);
-				return false;
+				this.logger.error(error);
+				throw error;
 			}
 
 			let cmTemplateId: string;
@@ -219,23 +221,22 @@ export class CampaignMonitorService {
 			}
 
 			if (!cmTemplateId) {
-				this.logger.error(
-					new InternalServerErrorException(
-						{
-							templateName: emailInfo.template,
-							envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
-						},
-						'Cannot send email since the requested email template id has not been set as an environment variable'
-					)
+				const error = new InternalServerErrorException(
+					{
+						templateName: emailInfo.template,
+						envVarPrefix: 'CAMPAIGN_MONITOR_EMAIL_TEMPLATE_',
+					},
+					'Cannot send email since the requested email template id has not been set as an environment variable'
 				);
-				return false;
+				this.logger.error(error);
+				throw error;
 			}
 
-			const url = `${
-				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
-			}/${
-				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string
-			}/${cmTemplateId}/send`;
+			const url = `${this.configService.get(
+				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
+			)}/${this.configService.get(
+				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
+			)}/${cmTemplateId}/send`;
 
 			const data: any = emailInfo.data;
 
@@ -258,14 +259,12 @@ export class CampaignMonitorService {
 					throwHttpErrors: true,
 					json: data,
 				}).json<void>();
-				return true;
 			} else {
 				this.logger.log(
 					`Mock email sent. To: '${data.to}'. Template: ${
 						emailInfo?.template
 					}, data: ${JSON.stringify(data)}`
 				);
-				return false;
 			}
 		} catch (err) {
 			console.error(err);
@@ -328,7 +327,9 @@ export class CampaignMonitorService {
 					title: mr.objectSchemaName,
 					local_cp_id: mr.objectMeemooLocalId,
 					pid: mr.objectMeemooIdentifier,
-					page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+					page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
+						mr.maintainerSlug
+					}/${mr.objectSchemaIdentifier}`,
 					request_type: mr.type,
 					request_description: mr.reason,
 				})),
@@ -347,7 +348,9 @@ export class CampaignMonitorService {
 				cp_name: mr.maintainerName,
 				local_cp_id: mr.objectMeemooLocalId,
 				pid: mr.objectMeemooIdentifier,
-				page_url: `${process.env.CLIENT_HOST}/zoeken/${mr.maintainerSlug}/${mr.objectSchemaIdentifier}`,
+				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${mr.maintainerSlug}/${
+					mr.objectSchemaIdentifier
+				}`,
 				request_type: mr.type,
 				request_description: mr.reason,
 			})),

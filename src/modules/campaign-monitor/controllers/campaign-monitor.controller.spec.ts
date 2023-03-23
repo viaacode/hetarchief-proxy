@@ -64,7 +64,7 @@ describe('CampaignMonitorController', () => {
 				},
 			});
 
-			expect(sent).toBeTruthy();
+			expect(sent).toEqual({ message: 'success' });
 		});
 	});
 	describe('getPreferences', () => {

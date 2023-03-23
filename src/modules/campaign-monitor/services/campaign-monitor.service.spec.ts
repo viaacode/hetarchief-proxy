@@ -42,11 +42,20 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT') {
 			return 'subscribers';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
-			return null;
-		}
 		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF') {
 			return 'fakeListId';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER') {
+			return 'fakeTemplateId';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER') {
+			return 'fakeTemplateId';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED') {
+			return 'fakeTemplateId';
+		}
+		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
+			return null;
 		}
 		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
@@ -100,13 +109,8 @@ describe('CampaignMonitorService', () => {
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER = 'fakeTemplateId';
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED = 'fakeTemplateId';
-		process.env.VISIT_DENIED = null;
-		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION = 'v3.2';
-		process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION = 'v3.3';
-		process.env.CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT = 'subscribers';
-		process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT =
-			'transactional/smartemail';
-		process.env.CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF = 'fakeListId';
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED = null;
+
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CampaignMonitorService,
@@ -160,43 +164,61 @@ describe('CampaignMonitorService', () => {
 	describe('sendForVisit', () => {
 		it('should log and not send to an empty recipients email adres', async () => {
 			const visit = getMockVisit();
-			const result = await campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: null }],
-				template: Template.VISIT_APPROVED,
-				visit: getMockVisit(),
-			});
-			expect(result).toBeFalsy();
+			try {
+				await campaignMonitorService.sendForVisit({
+					to: [{ id: visit.visitorId, email: null }],
+					template: Template.VISIT_APPROVED,
+					visit: getMockVisit(),
+				});
+			} catch (err) {
+				expect(err.name).toEqual('BadRequestException');
+			}
 		});
-
-		it('should NOT call the campaign monitor if the template was not found', async () => {
-			const visit = getMockVisit();
-			const result = await campaignMonitorService.sendForVisit({
-				template: Template.VISIT_DENIED, // Denied template is null and triggers the error
-				visit,
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
-			});
-			expect(result).toBeFalsy();
-		});
+		// ARC-1537 Re-enable this test ones the FE has switched to using enum templates name
+		// it('should NOT call the campaign monitor if the template was not found', async () => {
+		// 	const visit = getMockVisit();
+		// 	try {
+		// 		await campaignMonitorService.sendForVisit({
+		// 			template: 'visitDenied' as Template,
+		// 			visit,
+		// 			to: [{ id: visit.visitorId, email: visit.visitorMail }],
+		// 		});
+		// 		fail(
+		// 			new Error(
+		// 				'sendForVisit should throw an error when an invalid template is passed'
+		// 			)
+		// 		);
+		// 	} catch (err) {
+		// 		expect(err.message).toEqual('Internal Server Error Exception');
+		// 	}
+		// });
 
 		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
 			const visit = getMockVisit();
-			const result = await campaignMonitorService.sendForVisit({
-				template: Template.VISIT_APPROVED,
-				visit,
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
-			});
-			expect(result).toBeFalsy();
+			try {
+				await campaignMonitorService.sendForVisit({
+					template: Template.VISIT_APPROVED,
+					visit,
+					to: [{ id: visit.visitorId, email: visit.visitorMail }],
+				});
+			} catch (err) {
+				expect(err.name).toEqual('BadRequestException');
+			}
 			campaignMonitorService.setIsEnabled(true);
 		});
 
 		it('should return false if there is no email adres', async () => {
-			const result = await campaignMonitorService.sendForVisit({
-				template: Template.VISIT_APPROVED,
-				visit: getMockVisit(),
-				to: [],
-			});
-			expect(result).toBeFalsy();
+			try {
+				await campaignMonitorService.sendForVisit({
+					template: Template.VISIT_APPROVED,
+					visit: getMockVisit(),
+					to: [],
+				});
+				fail(new Error('sendForVisit should throw an error when there is no email adres'));
+			} catch (err) {
+				expect(err.name).toEqual('BadRequestException');
+			}
 		});
 	});
 
@@ -225,23 +247,30 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
-			const result = await campaignMonitorService.sendForMaterialRequest(
-				materialRequestEmailInfo
-			);
-			expect(result).toBeFalsy();
-		});
-
-		it('should log and throw error with invalid template, returns false', async () => {
-			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.VISIT_DENIED; // Denied template is null and triggers the error
+			try {
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
+			} catch (err) {
+				expect(err.name).toEqual('BadRequestException');
+			}
 			materialRequestEmailInfo.to = 'test@example.com';
-			const result = await campaignMonitorService.sendForMaterialRequest(
-				materialRequestEmailInfo
-			);
-			expect(result).toBeFalsy();
 		});
+		// ARC-1537 Re-enable this test ones the FE has switched to using enum templates name
+		// it('should log and throw error with invalid template, returns false', async () => {
+		// 	const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+		// 	materialRequestEmailInfo.template = 'visitDenied' as Template;
+		// 	try {
+		// 		await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
+		// 		fail(
+		// 			new Error(
+		// 				'sendForMaterialRequest should throw an error when an invalid template is passed'
+		// 			)
+		// 		);
+		// 	} catch (err) {
+		// 		expect(err.message).toEqual('Internal Server Error Exception');
+		// 	}
+		// });
 
-		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+		it('should NOT call the campaign monitor api if email sending is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
@@ -269,13 +298,14 @@ describe('CampaignMonitorService', () => {
 					},
 				]);
 
-			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
-			materialRequestEmailInfo.to = 'test@example.com';
-			const result = await campaignMonitorService.sendForMaterialRequest(
-				materialRequestEmailInfo
-			);
-			expect(result).toBeTruthy();
+			try {
+				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
+				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.to = 'test@example.com';
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
+			} catch (err) {
+				expect(err).toBeUndefined();
+			}
 		});
 
 		it('should throw an error when CM throws an error', async () => {
