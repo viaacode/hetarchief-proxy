@@ -1,6 +1,9 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 export function checkRequiredEnvs(requiredEnvs: string[]) {
+	if (process.env.NODE_ENV === 'test') {
+		return;
+	}
 	const logger = new Logger('Check Required Envs');
 
 	requiredEnvs.forEach((envVar: string) => {

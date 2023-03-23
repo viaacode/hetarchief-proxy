@@ -62,6 +62,8 @@ export class UsersService {
 			lastAccessAt:
 				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.last_access_at ||
 				null,
+			createdAt:
+				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.created_at || null,
 			organisationName:
 				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])
 					?.maintainer_users_profiles[0]?.maintainer?.schema_name || null,
