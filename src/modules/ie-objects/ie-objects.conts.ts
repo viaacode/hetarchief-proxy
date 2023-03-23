@@ -181,6 +181,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'maintainerId',
 	'maintainerName', // Will be replaced by the slug in the future: https://meemoo.atlassian.net/browse/ARC-1372
 	'maintainerSlug',
+	'maintainerLogo',
 	'name',
 	'series',
 	'programs',

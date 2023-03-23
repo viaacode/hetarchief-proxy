@@ -23,6 +23,7 @@ export const mockIeObject: IeObject = {
 		'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
 	maintainerId: 'OR-rf5kf25',
 	maintainerSlug: 'vrt',
+	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	durationInSeconds: null,
 	numberOfPages: null,
 	datePublished: '2020-09-01',
@@ -414,6 +415,9 @@ export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
 							telephone: null,
 							post_office_box_number: null,
 						},
+					},
+					logo: {
+						iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 					},
 				},
 			},

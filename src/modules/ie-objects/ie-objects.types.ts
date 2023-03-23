@@ -101,6 +101,7 @@ export interface IeObject {
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;
+	maintainerLogo: string | null;
 	name: string;
 	publisher: any;
 	spatial: string;
