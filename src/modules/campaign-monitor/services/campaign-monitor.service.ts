@@ -73,11 +73,15 @@ export class CampaignMonitorService {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
-		return true;
+		if (
+			await this.sendTransactionalMail({
+				template: emailInfo.template,
+				data,
+			})
+		) {
+			return true;
+		}
+		return false;
 	}
 
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<boolean> {
