@@ -213,7 +213,14 @@ export class CampaignMonitorService {
 				);
 				return false;
 			}
-			const cmTemplateId = getTemplateId(emailInfo.template);
+
+			let cmTemplateId: string;
+			if ((<any>Object).values(Template).includes(emailInfo.template)) {
+				cmTemplateId = getTemplateId(emailInfo.template);
+			} else {
+				cmTemplateId = emailInfo.template;
+			}
+
 			if (!cmTemplateId) {
 				this.logger.error(
 					new InternalServerErrorException(
@@ -231,7 +238,7 @@ export class CampaignMonitorService {
 				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION as string
 			}/${
 				process.env.CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT as string
-			}/${getTemplateId(emailInfo.template)}/send`;
+			}/${cmTemplateId}/send`;
 
 			const data: any = emailInfo.data;
 

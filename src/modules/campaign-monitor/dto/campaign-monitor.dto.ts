@@ -9,7 +9,7 @@ import {
 	ValidateNested,
 } from 'class-validator';
 
-import { CampaignMonitorShareFolderInfo, Template } from '../campaign-monitor.types';
+import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
 	@IsString()
@@ -169,14 +169,14 @@ export class CampaignMonitorData {
 }
 
 export class CampaignMonitorSendMailDto {
-	@IsEnum(Template)
+	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
 		type: String,
-		description: 'The template enum for the mail',
+		description: 'The template enum for the mail OR the templateId',
 		example: 'visitRequestCp',
 	})
-	template: Template;
+	template: string;
 
 	@Type(() => CampaignMonitorData)
 	@IsObject()
