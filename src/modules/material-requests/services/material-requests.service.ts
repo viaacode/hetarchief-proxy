@@ -267,19 +267,21 @@ export class MaterialRequestsService {
 		});
 
 		// Send mail to each maintainer containing only material requests for objects they are the maintainer of
-		groupedArray.forEach((materialRequests: MaterialRequest[]) => {
-			const emailInfo: MaterialRequestEmailInfo = {
-				// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
-				to: materialRequests[0].contactMail,
-				isToMaintainer: true,
-				template: Template.MATERIAL_REQUEST_MAINTAINER,
-				materialRequests: materialRequests,
-				sendRequestListDto,
-				firstName: userInfo.firstName,
-				lastName: userInfo.lastName,
-			};
-			this.campaignMonitorService.sendForMaterialRequest(emailInfo);
-		});
+		await Promise.all(
+			groupedArray.map(async (materialRequests: MaterialRequest[]) => {
+				const emailInfo: MaterialRequestEmailInfo = {
+					// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
+					to: materialRequests[0].contactMail,
+					isToMaintainer: true,
+					template: Template.MATERIAL_REQUEST_MAINTAINER,
+					materialRequests: materialRequests,
+					sendRequestListDto,
+					firstName: userInfo.firstName,
+					lastName: userInfo.lastName,
+				};
+				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			})
+		);
 
 		// Send mail to the requester containing all of their material requests for all the objects they requested
 		const emailInfo: MaterialRequestEmailInfo = {
@@ -291,7 +293,7 @@ export class MaterialRequestsService {
 			firstName: userInfo.firstName,
 			lastName: userInfo.lastName,
 		};
-		this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 	}
 
 	/**
