@@ -24,10 +24,6 @@ import {
 import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
-import {
-	Lookup_App_Material_Request_Requester_Capacity_Enum,
-	Lookup_App_Material_Request_Type_Enum,
-} from '~generated/graphql-db-types-hetarchief';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Group, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -188,11 +184,10 @@ export class MaterialRequestsController {
 						materialRequest.id,
 						user.getId(),
 						{
-							type: materialRequest.type as Lookup_App_Material_Request_Type_Enum,
+							type: materialRequest.type,
 							reason: materialRequest.reason,
 							organisation: materialRequest.organisation,
-							requester_capacity:
-								materialRequest.requesterCapacity as Lookup_App_Material_Request_Requester_Capacity_Enum,
+							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
 						}
 					);
