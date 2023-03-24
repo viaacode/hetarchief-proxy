@@ -241,7 +241,7 @@ export class CampaignMonitorService {
 			const data: any = emailInfo.data;
 
 			// If env variable REROUTE_EMAILS_TO is set to a value
-			// Then set dat.To prop to that value
+			// Then set data.To prop to that value
 			// -----------------------------------------------------------------
 			// Remark: used for debugging en testing purposes
 			// This should be at all times filled in or otherwise client receives unexpected results
