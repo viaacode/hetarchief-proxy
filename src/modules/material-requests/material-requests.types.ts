@@ -2,6 +2,8 @@ import {
 	FindMaintainersWithMaterialRequestsQuery,
 	FindMaterialRequestsByIdQuery,
 	FindMaterialRequestsQuery,
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
+	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 
@@ -17,12 +19,12 @@ export interface MaterialRequest {
 	reason: string;
 	createdAt: string;
 	updatedAt: string;
-	type: string;
+	type: Lookup_App_Material_Request_Type_Enum;
 	isPending: boolean;
 	requesterId: string;
 	requesterFullName: string;
 	requesterMail: string;
-	requesterCapacity: string;
+	requesterCapacity: Lookup_App_Material_Request_Requester_Capacity_Enum;
 	maintainerId: string;
 	maintainerName: string;
 	maintainerSlug: string;

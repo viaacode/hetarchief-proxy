@@ -202,18 +202,19 @@ export class MaterialRequestsService {
 	public async updateMaterialRequest(
 		materialRequestId: string,
 		userProfileId: string,
-		materialRequestDto: Pick<
+		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
-			'type' | 'reason' | 'organisation' | 'requester_capacity'
+			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending'
 		>
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity } = materialRequestDto;
+		const { type, reason, organisation, requester_capacity, is_pending } = materialRequestInfo;
 
 		const updateMaterialRequest = {
 			type,
 			reason,
 			organisation,
 			requester_capacity,
+			is_pending,
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } =
