@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { compact, get, head, isArray, isNil, isString, toPairs, uniq } from 'lodash';
+import { compact, get, head, isArray, isEmpty, isNil, isString, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
@@ -51,8 +51,6 @@ export class CampaignMonitorService {
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
-
-	// TODO: check sendForVisit still works (ARC-1501)
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<boolean> {
 		const recipients: string[] = [];
 		emailInfo.to.forEach((recipient) => {
@@ -233,6 +231,15 @@ export class CampaignMonitorService {
 
 			const data: any = emailInfo.data;
 
+			// If env variable REROUTE_EMAILS_TO is set to a value
+			// Then set dat.To prop to that value
+			// -----------------------------------------------------------------
+			// Remark: used for debugging en testing purposes
+			// This should be at all times filled in or otherwise client receives unexpected results
+			if (!isEmpty(this.rerouteEmailsTo)) {
+				emailInfo.data.to = this.rerouteEmailsTo;
+			}
+
 			if (isArray(emailInfo.data.to)) {
 				const emailInfoDataTo = emailInfo.data.to;
 
@@ -244,7 +251,6 @@ export class CampaignMonitorService {
 				data.To = [emailInfo.data.to];
 			}
 
-			// TODO: replace with node fetch
 			if (this.isEnabled) {
 				await this.gotInstance({
 					url,
