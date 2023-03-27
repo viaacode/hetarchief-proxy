@@ -4,6 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
 import {
 	CampaignMonitorNewsletterPreferencesQueryDto,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
@@ -43,9 +44,9 @@ export class CampaignMonitorController {
 	@Post('preferences')
 	@ApiOperation({ description: 'Update user newsletter preferences' })
 	async updatePreferences(
-		@Body() preferences: CampaignMonitorNewsletterPreferences,
+		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		return await this.campaignMonitorService.updateNewsletterPreferences(preferences, user);
+		// return await this.campaignMonitorService.updateNewsletterPreferences(preferences, user);
 	}
 }

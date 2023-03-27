@@ -223,3 +223,38 @@ export class CampaignMonitorNewsletterPreferencesQueryDto {
 	})
 	email?: string;
 }
+
+export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'First name of user',
+	})
+	firstName?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Last name of user',
+	})
+	lastName?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Mail to sign up for newsletter',
+	})
+	mail?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		//OBJECT van preferences
+		type: String,
+		description: 'Mail to sign up for newsletter',
+	})
+	preferences?: string;
+}
