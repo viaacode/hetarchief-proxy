@@ -61,7 +61,16 @@ export class CampaignMonitorController {
 		if (user.getId()) {
 			return await this.campaignMonitorService.updateNewsletterPreferences(
 				preferences.preferences,
-				user
+				{
+					firstName: user?.getFirstName(),
+					lastName: user?.getLastName(),
+					email: user?.getMail(),
+					is_key_user: user?.getIsKeyUser(),
+					usergroup: user?.getGroupName(),
+					created_date: user?.getCreatedAt(),
+					last_access_date: user?.getLastAccessAt(),
+					organisation: user?.getOrganisationName(),
+				}
 			);
 		}
 		return await this.campaignMonitorService.sendConfirmationMail(preferences);

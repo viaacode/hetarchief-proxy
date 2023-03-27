@@ -151,7 +151,19 @@ export class CampaignMonitorService {
 		if (mail !== decryptData(token)) {
 			throw new InternalServerErrorException('token is invalid');
 		}
-		// this.updateNewsletterPreferences({newsletter: true}, ));
+		this.updateNewsletterPreferences(
+			{ newsletter: true },
+			{
+				firstName,
+				lastName,
+				email: mail,
+				is_key_user: false,
+				usergroup: null,
+				created_date: JSON.stringify(new Date()),
+				last_access_date: JSON.stringify(new Date()),
+				organisation: null,
+			}
+		);
 	}
 
 	public async fetchNewsletterPreferences(
@@ -197,12 +209,21 @@ export class CampaignMonitorService {
 
 	public async updateNewsletterPreferences(
 		preferences: CampaignMonitorNewsletterPreferences,
-		user: SessionUserEntity
+		userInfo: {
+			firstName: string;
+			lastName: string;
+			email: string;
+			is_key_user: boolean;
+			usergroup: string;
+			created_date: string;
+			last_access_date: string;
+			organisation: string;
+		}
 	) {
 		let url: string | null = null;
 
 		try {
-			if (!user.getMail()) {
+			if (!userInfo.email) {
 				return null;
 			}
 
@@ -223,7 +244,7 @@ export class CampaignMonitorService {
 			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
 
 			const data = this.convertPreferencesToNewsletterTemplateData(
-				user,
+				userInfo,
 				optin_mail_lists,
 				true
 			);
@@ -409,24 +430,33 @@ export class CampaignMonitorService {
 	}
 
 	public convertPreferencesToNewsletterTemplateData(
-		user: SessionUserEntity,
+		userInfo: {
+			firstName: string;
+			lastName: string;
+			email: string;
+			is_key_user: boolean;
+			usergroup: string;
+			created_date: string;
+			last_access_date: string;
+			organisation: string;
+		},
 		optin_mail_lists: string,
 		resubscribe: boolean
 	) {
 		const customFields = {
 			optin_mail_lists: optin_mail_lists,
-			usergroup: user.getGroupName(),
-			is_key_user: user.getIsKeyUser(),
-			firstname: user.getFirstName(),
-			lastname: user.getLastName(),
-			created_date: user.getCreatedAt(),
-			last_access_date: user.getLastAccessAt(),
-			organisation: user.getOrganisationName(),
+			usergroup: userInfo.usergroup,
+			is_key_user: userInfo,
+			firstname: userInfo,
+			lastname: userInfo,
+			created_date: userInfo,
+			last_access_date: userInfo,
+			organisation: userInfo,
 		};
 
 		return {
-			EmailAddress: user.getMail(),
-			Name: user.getFullName(),
+			EmailAddress: userInfo.email,
+			Name: userInfo.firstName + ' ' + userInfo.lastName,
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
 			CustomFields: toPairs(customFields).map((pair) => ({
