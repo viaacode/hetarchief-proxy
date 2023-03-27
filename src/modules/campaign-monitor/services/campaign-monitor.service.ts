@@ -26,6 +26,7 @@ import {
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
+import { encryptData } from '../helpers/convert-token';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
@@ -429,7 +430,7 @@ export class CampaignMonitorService {
 			firstname: preferences.firstName,
 			activation_url: `${this.configService.get(
 				'HOST'
-			)}/campaign-monitor/confirm-email?token=${'tokenblabla'}&mail=${
+			)}/campaign-monitor/confirm-email?token=${encryptData(preferences?.mail)}&mail=${
 				preferences?.mail
 			}&firstName=${preferences?.firstName}&lastName=${preferences?.lastName}`,
 		};
