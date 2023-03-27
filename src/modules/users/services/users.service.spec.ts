@@ -1,4 +1,4 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { DataService, Group } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
@@ -13,7 +13,7 @@ import {
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
-import { Group, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -31,7 +31,7 @@ const archiefUser: User = {
 	lastName: mockUser.last_name,
 	fullName: mockUser.full_name,
 	groupId: mockUser.group_id,
-	groupName: 'VISITOR',
+	groupName: GroupName.VISITOR,
 	idp: Idp.HETARCHIEF,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
@@ -82,11 +82,11 @@ describe('UsersService', () => {
 
 	describe('groupIdToName', () => {
 		it('should return group id', () => {
-			expect(usersService.groupIdToName(Group.MEEMOO_ADMIN)).toEqual('MEEMOO_ADMIN');
+			expect(usersService.groupIdToName(GroupId.MEEMOO_ADMIN)).toEqual('MEEMOO_ADMIN');
 		});
 
 		it('should return null if invalid group id', () => {
-			expect(usersService.groupIdToName('invalid' as unknown as Group)).toBeNull();
+			expect(usersService.groupIdToName('invalid' as unknown as GroupId)).toBeNull();
 		});
 	});
 

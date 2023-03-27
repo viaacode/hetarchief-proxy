@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { get } from 'lodash';
 
-import { Permission, User } from '../types';
+import { GroupName, Permission, User } from '../types';
 
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
@@ -63,7 +63,7 @@ export class SessionUserEntity {
 		return get(this.user, 'visitorSpaceSlug');
 	}
 
-	public getGroupName(): string {
+	public getGroupName(): GroupName {
 		return this.user?.groupName || null;
 	}
 

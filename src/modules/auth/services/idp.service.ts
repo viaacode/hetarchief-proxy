@@ -10,7 +10,7 @@ import { NO_ORG_LINKED } from '../constants';
 
 import { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
@@ -44,8 +44,8 @@ export class IdpService {
 		return url;
 	}
 
-	public userGroupRequiresMaintainerLink(userGroup: Group): boolean {
-		return [Group.KIOSK_VISITOR, Group.CP_ADMIN].includes(userGroup);
+	public userGroupRequiresMaintainerLink(userGroup: GroupId): boolean {
+		return [GroupId.KIOSK_VISITOR, GroupId.CP_ADMIN].includes(userGroup);
 	}
 
 	/**
@@ -57,7 +57,7 @@ export class IdpService {
 	public async determineUserGroup(
 		ldapUser: LdapUser,
 		organisation?: Organisation | null
-	): Promise<Group> {
+	): Promise<GroupId> {
 		const organizationalStatus = get(ldapUser, 'attributes.organizationalStatus', []);
 		// permissions check
 		const apps = get(ldapUser, 'attributes.apps', []);
@@ -86,15 +86,15 @@ export class IdpService {
 				);
 			}
 			if (organisation) {
-				return Group.CP_ADMIN;
+				return GroupId.CP_ADMIN;
 			}
 
 			// our (test) accounts have multiple organizations
 			if (intersection(this.meemooAdminOrganizationIds, ldapUser.attributes.o).length > 0) {
-				return Group.MEEMOO_ADMIN;
+				return GroupId.MEEMOO_ADMIN;
 			}
 
-			return Group.VISITOR;
+			return GroupId.VISITOR;
 		}
 
 		// no member of hetarchief-beheer
@@ -112,10 +112,10 @@ export class IdpService {
 				);
 			}
 			if (await this.spacesService.findByMaintainerId(maintainerId)) {
-				return Group.KIOSK_VISITOR;
+				return GroupId.KIOSK_VISITOR;
 			}
 		}
 
-		return Group.VISITOR;
+		return GroupId.VISITOR;
 	}
 }

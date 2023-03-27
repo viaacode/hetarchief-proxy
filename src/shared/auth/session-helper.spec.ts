@@ -3,7 +3,7 @@ import flow from 'lodash/fp/flow';
 
 import { Idp, LdapApp } from './auth.types';
 
-import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SpecialPermissionGroups } from '~shared/types/types';
@@ -35,8 +35,8 @@ const mockArchiefUser: User = {
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
 	acceptedTosAt: '2022-02-21T14:00:00',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
@@ -269,7 +269,7 @@ describe('SessionHelper', () => {
 	describe('getUserGroupIds', () => {
 		it('should return user group info', () => {
 			const result = SessionHelper.getUserGroupIds(mockArchiefUser);
-			expect(result).toEqual([Group.CP_ADMIN, SpecialPermissionGroups.loggedInUsers]);
+			expect(result).toEqual([GroupId.CP_ADMIN, SpecialPermissionGroups.loggedInUsers]);
 		});
 
 		it('should return user groups for not logged in user', () => {

@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
-import { isFuture } from 'date-fns';
+import { addYears, isFuture } from 'date-fns';
 import { Request } from 'express';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
@@ -26,13 +26,14 @@ import { VisitsService } from '../services/visits.service';
 import { AccessStatus, Visit, VisitAccessType, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
+import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -104,6 +105,37 @@ export class VisitsController {
 			userProfileId: user.getId(),
 			visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
 		});
+
+		if (user.getGroupName() === GroupName.CP_ADMIN) {
+			visits.items = [
+				...visits.items,
+				{
+					id: '-1',
+					status: VisitStatus.APPROVED,
+					endAt: addYears(new Date(), 100).toISOString(),
+					startAt: new Date(2000, 1, 1).toISOString(),
+					visitorFirstName: user.getFirstName(),
+					visitorLastName: user.getLastName(),
+					visitorName: user.getFullName(),
+					updatedByName: null,
+					createdAt: new Date().toISOString(),
+					spaceName: user.getVisitorSpaceSlug(),
+					spaceMail: null,
+					spaceId: user.getMaintainerId(),
+					spaceTelephone: null,
+					reason: null,
+					spaceMaintainerId: user.getMaintainerId(),
+					spaceSlug: user.getVisitorSpaceSlug(),
+					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
+					updatedById: null,
+					timeframe: null,
+					userProfileId: user.getId(),
+					visitorId: user.getId(),
+					updatedAt: new Date().toISOString(),
+					visitorMail: user.getMail(),
+				},
+			];
+		}
 
 		return visits;
 	}
