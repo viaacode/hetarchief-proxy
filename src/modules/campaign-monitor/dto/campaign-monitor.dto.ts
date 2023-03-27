@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-	IsEnum,
+	IsBoolean,
 	IsNotEmpty,
 	IsObject,
 	IsOptional,
@@ -107,6 +107,13 @@ export class CampaignMonitorMaterialRequestData {
 	cp_name?: string;
 }
 
+export class CampaignMonitorConfirmationData {
+	@IsString()
+	firstname: string;
+
+	@IsString()
+	activation_url: string;
+}
 export class RequestListItem {
 	@IsString()
 	@IsOptional()
@@ -165,7 +172,8 @@ export class CampaignMonitorData {
 	data:
 		| CampaignMonitorVisitData
 		| CampaignMonitorShareFolderInfo
-		| CampaignMonitorMaterialRequestData;
+		| CampaignMonitorMaterialRequestData
+		| CampaignMonitorConfirmationData;
 }
 
 export class CampaignMonitorSendMailDto {
@@ -224,9 +232,20 @@ export class CampaignMonitorNewsletterPreferencesQueryDto {
 	email?: string;
 }
 
+export class CampaignMonitorNewsletterPreferencesDto {
+	@IsBoolean()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Boolean to tell whether or not newsletter is active or not',
+		example: true,
+	})
+	newsletter: boolean;
+}
+
 export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'First name of user',
@@ -234,7 +253,7 @@ export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 	firstName?: string;
 
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Last name of user',
@@ -242,19 +261,21 @@ export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 	lastName?: string;
 
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Mail to sign up for newsletter',
 	})
 	mail?: string;
 
-	@IsString()
+	@IsObject()
 	@IsNotEmpty()
-	@ApiPropertyOptional({
+	@ApiProperty({
 		//OBJECT van preferences
-		type: String,
-		description: 'Mail to sign up for newsletter',
+		type: Object,
+		example: {
+			newsletter: true,
+		},
 	})
-	preferences?: string;
+	preferences: CampaignMonitorNewsletterPreferencesDto;
 }

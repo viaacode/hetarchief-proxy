@@ -13,7 +13,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
-@UseGuards(LoggedInGuard)
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')
 export class CampaignMonitorController {
@@ -22,6 +21,7 @@ export class CampaignMonitorController {
 	/**
 	 * Send an email using the campaign monitor api.
 	 */
+	@UseGuards(LoggedInGuard)
 	@Post('send')
 	@ApiOperation({ description: 'Send transactional mails through Campaign Monitor' })
 	async sendTransactionalMail(
@@ -31,6 +31,7 @@ export class CampaignMonitorController {
 		return { message: 'success' };
 	}
 
+	@UseGuards(LoggedInGuard)
 	@Get('preferences')
 	@ApiOperation({ description: 'Fetch user newsletter preferences' })
 	async getPreferences(
@@ -45,8 +46,14 @@ export class CampaignMonitorController {
 	@ApiOperation({ description: 'Update user newsletter preferences' })
 	async updatePreferences(
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user?: SessionUserEntity
 	): Promise<void> {
-		// return await this.campaignMonitorService.updateNewsletterPreferences(preferences, user);
+		if (user.getId()) {
+			return await this.campaignMonitorService.updateNewsletterPreferences(
+				preferences.preferences,
+				user
+			);
+		}
+		return await this.campaignMonitorService.sendConfirmationMail(preferences);
 	}
 }

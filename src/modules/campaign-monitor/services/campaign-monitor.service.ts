@@ -19,8 +19,10 @@ import {
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
+	CampaignMonitorConfirmationData,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
@@ -114,6 +116,29 @@ export class CampaignMonitorService {
 		});
 	}
 
+	public async sendConfirmationMail(
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+	): Promise<void> {
+		const recipients: string[] = [];
+		if (preferences?.mail) {
+			recipients.push(preferences?.mail);
+		} else {
+			this.logger.error(
+				`Mail will not be sent to ${preferences?.firstName} ${preferences?.lastName}- empty email address`
+			);
+		}
+
+		const data: CampaignMonitorData = {
+			to: recipients,
+			consentToTrack: 'unchanged',
+			data: this.convertToConfirmationEmailTemplate(preferences),
+		};
+
+		await this.sendTransactionalMail({
+			template: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION'),
+			data,
+		});
+	}
 	public async fetchNewsletterPreferences(
 		email: string
 	): Promise<CampaignMonitorNewsletterPreferences> {
@@ -394,6 +419,19 @@ export class CampaignMonitorService {
 				Value: pair[1],
 				Clear: isNil(pair[1]) || (isString(pair[1]) && pair[1] === ''),
 			})),
+		};
+	}
+
+	public convertToConfirmationEmailTemplate(
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+	): CampaignMonitorConfirmationData {
+		return {
+			firstname: preferences.firstName,
+			activation_url: `${this.configService.get(
+				'HOST'
+			)}/campaign-monitor/confirm-email?token=${'tokenblabla'}&mail=${
+				preferences?.mail
+			}&firstName=${preferences?.firstName}&lastName=${preferences?.lastName}`,
 		};
 	}
 }
