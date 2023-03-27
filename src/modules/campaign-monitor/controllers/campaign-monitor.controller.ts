@@ -3,6 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
 import {
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
@@ -55,5 +56,11 @@ export class CampaignMonitorController {
 			);
 		}
 		return await this.campaignMonitorService.sendConfirmationMail(preferences);
+	}
+
+	@Get('confirm-email')
+	@ApiOperation({ description: 'Update user newsletter preferences' })
+	async confirmMail(@Query() queryDto: CampaignMonitorConfirmMailQueryDto): Promise<void> {
+		// return await this.campaignMonitorService.sendConfirmationMail(preferences);
 	}
 }

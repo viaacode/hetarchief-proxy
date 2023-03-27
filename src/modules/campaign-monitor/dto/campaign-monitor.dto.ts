@@ -279,3 +279,29 @@ export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 	})
 	preferences: CampaignMonitorNewsletterPreferencesDto;
 }
+
+export class CampaignMonitorConfirmMailQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	token: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	mail: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	firstName: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	lastName: string;
+}

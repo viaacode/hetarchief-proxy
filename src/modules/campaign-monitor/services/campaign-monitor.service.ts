@@ -430,9 +430,13 @@ export class CampaignMonitorService {
 			firstname: preferences.firstName,
 			activation_url: `${this.configService.get(
 				'HOST'
-			)}/campaign-monitor/confirm-email?token=${encryptData(preferences?.mail)}&mail=${
+			)}/campaign-monitor/confirm-email?token=${encryptData(
 				preferences?.mail
-			}&firstName=${preferences?.firstName}&lastName=${preferences?.lastName}`,
+			)}&${queryString.stringify({ mail: preferences?.mail })}&${queryString.stringify({
+				firstName: preferences?.firstName,
+			})}&${queryString.stringify({
+				lastName: preferences?.lastName,
+			})}`,
 		};
 	}
 }
