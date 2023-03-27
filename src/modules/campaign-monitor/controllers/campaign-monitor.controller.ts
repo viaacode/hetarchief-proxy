@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Get,
+	Post,
+	Query,
+	Redirect,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
@@ -59,8 +68,18 @@ export class CampaignMonitorController {
 	}
 
 	@Get('confirm-email')
+	@Redirect()
 	@ApiOperation({ description: 'Update user newsletter preferences' })
-	async confirmMail(@Query() queryDto: CampaignMonitorConfirmMailQueryDto): Promise<void> {
-		// return await this.campaignMonitorService.sendConfirmationMail(preferences);
+	async confirmMail(@Query() queryDto: CampaignMonitorConfirmMailQueryDto) {
+		try {
+			await this.campaignMonitorService.confirmEmail(queryDto);
+			return {
+				url: `${process.env.CLIENT_HOST}/nieuwsbrief/bevestiging`,
+			};
+		} catch (error) {
+			return {
+				url: `${process.env.CLIENT_HOST}/nieuwsbrief/mislukt`,
+			};
+		}
 	}
 }

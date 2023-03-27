@@ -20,13 +20,14 @@ import {
 } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
-import { encryptData } from '../helpers/convert-token';
+import { decryptData, encryptData } from '../helpers/convert-token';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
@@ -140,6 +141,19 @@ export class CampaignMonitorService {
 			data,
 		});
 	}
+
+	public async confirmEmail({
+		token,
+		mail,
+		firstName,
+		lastName,
+	}: CampaignMonitorConfirmMailQueryDto): Promise<void> {
+		if (mail !== decryptData(token)) {
+			throw new InternalServerErrorException('token is invalid');
+		}
+		// this.updateNewsletterPreferences({newsletter: true}, ));
+	}
+
 	public async fetchNewsletterPreferences(
 		email: string
 	): Promise<CampaignMonitorNewsletterPreferences> {
