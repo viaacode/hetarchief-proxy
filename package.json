@@ -18,7 +18,7 @@
     "start": "nest start",
     "__predev": "npm run generate-database-types",
     "prestart:debug": "npm run generate-database-types",
-    "dev": "dotenv -e .env/.env.local nest start --watch",
+    "dev": "dotenv -e .env/.env.local nest start -- --watch",
     "start:debug": "dotenv -e .env/.env.local nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --cache",

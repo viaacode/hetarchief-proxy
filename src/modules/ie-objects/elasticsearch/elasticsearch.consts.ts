@@ -204,14 +204,12 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
 	[SearchFilterField.NAME]: 'keyword',
-	[SearchFilterField.MAINTAINER_ID]: 'keyword',
 	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[SearchFilterField.TYPE]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
-	[SearchFilterField.MAINTAINER_ID]: 'keyword',
 	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[SearchFilterField.TYPE]: 'keyword',
 };
