@@ -1,4 +1,4 @@
-import { DataService, Group } from '@meemoo/admin-core-api';
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
@@ -125,7 +125,7 @@ describe('UsersService', () => {
 					firstName: 'Tom',
 					lastName: 'Testerom',
 					email: 'test@studiohypderdrive.be',
-					groupId: Group.CP_ADMIN,
+					groupId: GroupId.CP_ADMIN,
 					isKeyUser: false,
 					organisationId: 'test',
 				},
@@ -147,7 +147,7 @@ describe('UsersService', () => {
 				firstName: 'Tom',
 				lastName: 'Testerom',
 				email: 'test@studiohypderdrive.be',
-				groupId: Group.CP_ADMIN,
+				groupId: GroupId.CP_ADMIN,
 				isKeyUser: false,
 				organisationId: 'test',
 			});

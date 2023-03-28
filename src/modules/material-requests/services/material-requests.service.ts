@@ -1,4 +1,4 @@
-import { DataService, Group } from '@meemoo/admin-core-api';
+import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { groupBy, isArray, isEmpty, isNil, set } from 'lodash';
@@ -46,6 +46,7 @@ import {
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -76,14 +77,14 @@ export class MaterialRequestsService {
 				{ requested_by: { mail: { _ilike: query } } },
 			];
 
-			if (parameters.userGroup === Group.MEEMOO_ADMIN) {
+			if (parameters.userGroup === GroupId.MEEMOO_ADMIN) {
 				where._or = [
 					...where._or,
 					{ object: { maintainer: { schema_name: { _ilike: query } } } },
 				];
 			}
 
-			if (parameters.userGroup === Group.VISITOR) {
+			if (parameters.userGroup === GroupId.VISITOR) {
 				where._or = [...where._or, { object: { schema_name: { _ilike: query } } }];
 			}
 		}
