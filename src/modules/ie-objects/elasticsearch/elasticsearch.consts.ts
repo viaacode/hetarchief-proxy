@@ -33,8 +33,9 @@ export enum SearchFilterField {
 	DESCRIPTION = 'description',
 	ERA = 'era',
 	LOCATION = 'location',
-	MAINTAINER_ID = 'maintainerId', // Contains the OR-id of the maintainer
-	MAINTAINER_NAME = 'maintainerName', // Contains the name of the maintainer
+	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
+	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
+	MAINTAINER_NAME = 'maintainers', // Contains the name of the maintainer
 	CAST = 'cast',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
