@@ -1,11 +1,10 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import jsep from 'jsep';
 import { find, isEmpty, kebabCase } from 'lodash';
 
 import { Configuration } from '~config';
@@ -80,12 +79,7 @@ export class IeObjectsService {
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
 		const esQuery = QueryBuilder.build(inputQuery, {
-			user: {
-				groupId: user.getGroupId(),
-				isKeyUser: user.getIsKeyUser(),
-				maintainerId: user.getMaintainerId(),
-				sector: user.getSector(),
-			},
+			user,
 			visitorSpaceInfo,
 		});
 
@@ -505,6 +499,7 @@ export class IeObjectsService {
 
 	public async executeQuery(esIndex: string, esQuery: any): Promise<any> {
 		try {
+			console.log(JSON.stringify(esQuery.query));
 			return await this.gotInstance.post(getSearchEndpoint(esIndex), {
 				json: esQuery,
 				resolveBodyOnly: true,

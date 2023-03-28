@@ -10,6 +10,8 @@ import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
 import searchQueryFuzzy from './templates/fuzzy/search-query.json';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+
 const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
 const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
 const searchQueryTemplateExact = _.values(searchQueryExact);
@@ -77,10 +79,8 @@ export interface QueryBuilderUserInfo {
 }
 
 export interface QueryBuilderInputInfo {
-	user: QueryBuilderUserInfo;
+	user: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
-	isConsultableRemote?: boolean;
-	isConsultableMedia?: boolean;
 }
 
 export const MULTI_MATCH_QUERY_MAPPING = {
@@ -134,6 +134,11 @@ export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
 	language: QueryType.TERMS,
 	medium: QueryType.TERMS,
 };
+
+export interface QueryBuilderConsultableFilters {
+	isConsultableRemote: boolean;
+	isConsultableMedia: boolean;
+}
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
