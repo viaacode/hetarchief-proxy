@@ -360,7 +360,8 @@ export class QueryBuilder {
 				query: [
 					{
 						terms: {
-							maintainer: inputInfo.visitorSpaceInfo.visitorSpaceIds,
+							'schema_maintainer.schema_identifier':
+								inputInfo.visitorSpaceInfo.visitorSpaceIds,
 						},
 					},
 					{
@@ -424,7 +425,8 @@ export class QueryBuilder {
 					should: [
 						{
 							terms: {
-								maintainer: visitorSpaceInfo.visitorSpaceIds,
+								'schema_maintainer.schema_identifier':
+									visitorSpaceInfo.visitorSpaceIds,
 							},
 						},
 						{
@@ -472,7 +474,7 @@ export class QueryBuilder {
 						should: [
 							{
 								terms: {
-									maintainer: [user.getMaintainerId()],
+									'schema_maintainer.schema_identifier': [user.getMaintainerId()],
 								},
 							},
 							{
@@ -508,7 +510,7 @@ export class QueryBuilder {
 				// 3) or-id is its own or-id and key user
 				{
 					term: {
-						schema_maintainer: user.getMaintainerId(),
+						'schema_maintainer.schema_identifier': user.getMaintainerId(),
 					},
 					terms: {
 						schema_license: [
