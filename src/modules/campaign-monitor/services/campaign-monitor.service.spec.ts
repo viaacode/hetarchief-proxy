@@ -13,12 +13,12 @@ import {
 	mockMaterialRequestEmailInfo,
 	mockNewsletterTemplateDataWithNewsletter,
 	mockUser,
+	mockUserInfo,
 } from '../mocks/campaign-monitor.mocks';
 
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -337,7 +337,7 @@ describe('CampaignMonitorService', () => {
 	describe('convertPreferencesToNewsletterTemplateData', () => {
 		it('should parse preferences to newsletterTemplateData', () => {
 			const result = campaignMonitorService.convertPreferencesToNewsletterTemplateData(
-				new SessionUserEntity({ ...mockUser }),
+				mockUserInfo,
 				'newsletter',
 				true
 			);
@@ -436,16 +436,16 @@ describe('CampaignMonitorService', () => {
 
 	describe('updateNewsletterPreferences', () => {
 		it('should return null when the user has no emailadress', async () => {
-			const user = mockUser;
-			user.email = null;
+			const userInfo = mockUserInfo;
+			userInfo.email = null;
 			const result = await campaignMonitorService.updateNewsletterPreferences(
 				{
 					newsletter: true,
 				},
-				new SessionUserEntity({ ...user })
+				userInfo
 			);
 			expect(result).toEqual(null);
-			user.email = 'test.testers@meemoo.be';
+			userInfo.email = 'test@example.com';
 		});
 
 		it('should throw an error when CM throws an error', async () => {
@@ -459,13 +459,12 @@ describe('CampaignMonitorService', () => {
 				)
 				.replyWithError('');
 
-			const user = mockUser;
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(
 					{
 						newsletter: true,
 					},
-					new SessionUserEntity({ ...user })
+					mockUserInfo
 				);
 				fail(
 					new Error(
@@ -488,13 +487,12 @@ describe('CampaignMonitorService', () => {
 				)
 				.reply(201, {});
 
-			const user = mockUser;
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(
 					{
 						newsletter: false,
 					},
-					new SessionUserEntity({ ...user })
+					mockUserInfo
 				);
 			} catch (e) {
 				expect(e).toBeUndefined();
@@ -511,13 +509,12 @@ describe('CampaignMonitorService', () => {
 				)
 				.reply(201, {});
 
-			const user = mockUser;
 			try {
 				await campaignMonitorService.updateNewsletterPreferences(
 					{
 						newsletter: true,
 					},
-					new SessionUserEntity({ ...user })
+					mockUserInfo
 				);
 			} catch (e) {
 				expect(e).toBeUndefined();

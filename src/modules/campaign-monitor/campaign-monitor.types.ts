@@ -53,8 +53,8 @@ export interface UserInfo {
 	lastName: string;
 	email: string;
 	is_key_user: boolean;
-	usergroup: string;
+	usergroup: string; //groupName
 	created_date: string;
 	last_access_date: string;
-	organisation: string;
+	organisation: string; //organisationName
 }

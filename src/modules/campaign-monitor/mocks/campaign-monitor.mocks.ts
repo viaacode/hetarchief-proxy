@@ -1,6 +1,6 @@
 import { Group, GroupIdToName } from '@meemoo/admin-core-api';
 
-import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
+import { MaterialRequestEmailInfo, Template, UserInfo } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorMaterialRequestData,
@@ -26,6 +26,17 @@ export const mockUser: User = {
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+};
+
+export const mockUserInfo: UserInfo = {
+	firstName: mockUser.firstName,
+	lastName: mockUser.lastName,
+	email: mockUser.email,
+	is_key_user: mockUser.isKeyUser,
+	usergroup: mockUser.groupName,
+	created_date: mockUser?.createdAt || null,
+	last_access_date: mockUser?.lastAccessAt || null,
+	organisation: mockUser?.organisationName || null,
 };
 
 export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterUpdatePreferencesQueryDto =
@@ -100,8 +111,8 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 	};
 
 export const mockNewsletterTemplateDataWithNewsletter = {
-	EmailAddress: mockUser.email,
-	Name: mockUser.fullName,
+	EmailAddress: mockUserInfo.email,
+	Name: mockUserInfo.firstName + ' ' + mockUserInfo.lastName,
 	Resubscribe: true,
 	ConsentToTrack: 'Yes',
 	CustomFields: [
@@ -112,22 +123,22 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 		},
 		{
 			Key: 'usergroup',
-			Value: mockUser.groupName,
+			Value: mockUserInfo.usergroup,
 			Clear: false,
 		},
 		{
 			Key: 'is_key_user',
-			Value: mockUser.isKeyUser,
+			Value: mockUserInfo.is_key_user,
 			Clear: false,
 		},
 		{
 			Key: 'firstname',
-			Value: mockUser.firstName,
+			Value: mockUserInfo.firstName,
 			Clear: false,
 		},
 		{
 			Key: 'lastname',
-			Value: mockUser.lastName,
+			Value: mockUserInfo.lastName,
 			Clear: false,
 		},
 		{
