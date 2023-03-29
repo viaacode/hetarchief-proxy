@@ -12,7 +12,7 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
-import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
@@ -158,8 +158,8 @@ export const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,

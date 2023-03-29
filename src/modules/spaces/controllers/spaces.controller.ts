@@ -18,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
@@ -27,7 +28,7 @@ import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -70,6 +71,15 @@ export class SpacesController {
 			queryDto.status = [VisitorSpaceStatus.Active];
 		}
 		const spaces = await this.spacesService.findAll(queryDto, user.getId());
+
+		// CP ADMINS always have access to their own space
+		if (user.getGroupName() === GroupName.CP_ADMIN) {
+			const ownSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
+			if (ownSpace) {
+				spaces.items = uniqBy([...spaces.items, ownSpace], (space) => space.id);
+			}
+		}
+
 		return spaces;
 	}
 

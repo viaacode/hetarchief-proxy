@@ -12,7 +12,7 @@ import { NotificationsController } from './notifications.controller';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -95,12 +95,11 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 };
-
 const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.SpyInstance>> = {
 	findNotificationsByUser: jest.fn(),
 	create: jest.fn(),

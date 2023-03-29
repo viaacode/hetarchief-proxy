@@ -29,7 +29,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -353,7 +353,7 @@ export class QueryBuilder {
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
 		if (
 			consultableFilters.isConsultableRemote === false &&
-			inputInfo.user.getGroupId() !== Group.KIOSK_VISITOR
+			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR
 		) {
 			toBeAppliedConsultableFilters.push({
 				occurrenceType: 'filter',
