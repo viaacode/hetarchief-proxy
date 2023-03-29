@@ -12,6 +12,7 @@ export enum Template {
 	SHARE_FOLDER = 'shareFolder',
 	MATERIAL_REQUEST_REQUESTER = 'materialRequestRequester',
 	MATERIAL_REQUEST_MAINTAINER = 'materialRequestMaintainer',
+	EMAIL_CONFIRMATION = 'emailConfirmation',
 }
 
 export interface VisitEmailInfo {

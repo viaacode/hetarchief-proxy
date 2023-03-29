@@ -126,19 +126,23 @@ export class CampaignMonitorService {
 		if (preferences?.mail) {
 			recipients.push(preferences?.mail);
 		} else {
-			this.logger.error(
+			throw new BadRequestException(
 				`Mail will not be sent to ${preferences?.firstName} ${preferences?.lastName}- empty email address`
 			);
+		}
+
+		if (!preferences.firstName || !preferences.lastName) {
+			throw new BadRequestException('Both "firstName" and "lastName" must be filled in');
 		}
 
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
-			data: this.convertToConfirmationEmailTemplate(preferences),
+			data: this.convertToConfirmationEmailTemplateData(preferences),
 		};
 
 		await this.sendTransactionalMail({
-			template: this.configService.get('CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION'),
+			template: Template.EMAIL_CONFIRMATION,
 			data,
 		});
 	}
@@ -450,7 +454,7 @@ export class CampaignMonitorService {
 		};
 	}
 
-	public convertToConfirmationEmailTemplate(
+	public convertToConfirmationEmailTemplateData(
 		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
 	): CampaignMonitorConfirmationData {
 		return {

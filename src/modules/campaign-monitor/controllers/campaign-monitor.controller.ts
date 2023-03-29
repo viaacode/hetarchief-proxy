@@ -48,24 +48,23 @@ export class CampaignMonitorController {
 	async updatePreferences(
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user?: SessionUserEntity
-	): Promise<void> {
+	): Promise<{ message: 'success' }> {
 		if (!user?.getId()) {
-			return await this.campaignMonitorService.sendConfirmationMail(preferences);
+			await this.campaignMonitorService.sendConfirmationMail(preferences);
+			return { message: 'success' };
 		}
 
-		return await this.campaignMonitorService.updateNewsletterPreferences(
-			preferences.preferences,
-			{
-				firstName: user?.getFirstName(),
-				lastName: user?.getLastName(),
-				email: user?.getMail(),
-				is_key_user: user?.getIsKeyUser(),
-				usergroup: user?.getGroupName(),
-				created_date: user?.getCreatedAt(),
-				last_access_date: user?.getLastAccessAt(),
-				organisation: user?.getOrganisationName(),
-			}
-		);
+		await this.campaignMonitorService.updateNewsletterPreferences(preferences.preferences, {
+			firstName: user?.getFirstName(),
+			lastName: user?.getLastName(),
+			email: user?.getMail(),
+			is_key_user: user?.getIsKeyUser(),
+			usergroup: user?.getGroupName(),
+			created_date: user?.getCreatedAt(),
+			last_access_date: user?.getLastAccessAt(),
+			organisation: user?.getOrganisationName(),
+		});
+		return { message: 'success' };
 	}
 
 	@Get('confirm-email')

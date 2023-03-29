@@ -2,6 +2,7 @@ import { Group, GroupIdToName } from '@meemoo/admin-core-api';
 
 import { MaterialRequestEmailInfo, Template, UserInfo } from '../campaign-monitor.types';
 import {
+	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
@@ -51,9 +52,15 @@ export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterU
 
 export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
 	token: 'NDk5MGVhYTEyMDcwMmJmMGZjMmRkODI0M2ExYjQ2ODMwZTM1ZTBlYjdjZGIwMzU2OWUxMjMzZWMyMWE4MDA1ZQ==',
-	firstName: 'test',
-	lastName: 'testers',
+	firstName: 'mockFirstName',
+	lastName: 'mockLastName',
 	mail: 'test@example.com',
+};
+
+export const mockConfirmationData: CampaignMonitorConfirmationData = {
+	firstname: 'mockFirstName',
+	activation_url:
+		'http://fakehost/campaign-monitor/confirm-email?token=NDk5MGVhYTEyMDcwMmJmMGZjMmRkODI0M2ExYjQ2ODMwZTM1ZTBlYjdjZGIwMzU2OWUxMjMzZWMyMWE4MDA1ZQ==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {

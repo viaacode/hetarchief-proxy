@@ -104,16 +104,16 @@ describe('CampaignMonitorController', () => {
 				})
 			);
 
-			expect(sent).toBeTruthy();
+			expect(sent).toEqual({ message: 'success' });
 		});
-		it('update user newsletter preferences with logged in user', async () => {
+		it('sent confirmation mail when no user is logged in', async () => {
 			mockCampaignMonitorService.sendConfirmationMail.mockResolvedValueOnce({});
 
 			const sent = await campaignMonitorController.updatePreferences(
 				mockNewsletterUpdatePreferencesQueryDto
 			);
 
-			expect(sent).toBeTruthy();
+			expect(sent).toEqual({ message: 'success' });
 		});
 	});
 
