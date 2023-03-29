@@ -119,8 +119,8 @@ describe('CampaignMonitorService', () => {
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER = 'fakeTemplateId';
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED = 'fakeTemplateId';
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED = null;
-		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_KEY = 'secretKey';
-		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_IV = 'secretIV';
+		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_KEY = 'fakeSecretKey';
+		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_IV = 'fakeSecretIV';
 		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_ECNRYPTION_METHOD = 'aes-256-cbc';
 
 		const module: TestingModule = await Test.createTestingModule({

@@ -29,7 +29,7 @@ import {
 	CampaignMonitorUpdatePreferencesData,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
-import { decryptData, encryptData } from '../helpers/convert-token';
+import { decryptData, encryptData } from '../helpers/crypto-helper';
 
 import { Visit } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';

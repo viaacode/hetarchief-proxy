@@ -51,7 +51,7 @@ export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterU
 	};
 
 export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
-	token: 'NDk5MGVhYTEyMDcwMmJmMGZjMmRkODI0M2ExYjQ2ODMwZTM1ZTBlYjdjZGIwMzU2OWUxMjMzZWMyMWE4MDA1ZQ==',
+	token: 'MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==',
 	firstName: 'mockFirstName',
 	lastName: 'mockLastName',
 	mail: 'test@example.com',
@@ -60,7 +60,7 @@ export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
 export const mockConfirmationData: CampaignMonitorConfirmationData = {
 	firstname: 'mockFirstName',
 	activation_url:
-		'http://fakehost/campaign-monitor/confirm-email?token=NDk5MGVhYTEyMDcwMmJmMGZjMmRkODI0M2ExYjQ2ODMwZTM1ZTBlYjdjZGIwMzU2OWUxMjMzZWMyMWE4MDA1ZQ==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
+		'http://fakehost/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {
