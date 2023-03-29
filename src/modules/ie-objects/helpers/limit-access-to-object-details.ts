@@ -18,7 +18,7 @@ import {
 import { getAccessThrough } from './get-access-through';
 
 import { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped
 export const limitAccessToObjectDetails = (
@@ -58,7 +58,9 @@ export const limitAccessToObjectDetails = (
 	// user is key user AND
 	// ie object has INTRA CP licenses AND
 	if (
-		[Group.CP_ADMIN, Group.MEEMOO_ADMIN, Group.VISITOR].includes(userInfo.groupId as Group) &&
+		[GroupId.CP_ADMIN, GroupId.MEEMOO_ADMIN, GroupId.VISITOR].includes(
+			userInfo.groupId as GroupId
+		) &&
 		userInfo?.sector &&
 		ieObject?.sector &&
 		userInfo?.isKeyUser &&

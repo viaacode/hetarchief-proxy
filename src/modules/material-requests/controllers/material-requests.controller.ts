@@ -25,7 +25,7 @@ import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group, Permission } from '~modules/users/types';
+import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -210,11 +210,11 @@ export class MaterialRequestsController {
 		queryDto: MaterialRequestsQueryDto
 	): MaterialRequestsQueryDto {
 		if (!isNil(queryDto?.maintainerIds) || !isEmpty(queryDto?.maintainerIds)) {
-			if (user.getGroupId() === (Group.VISITOR || Group.KIOSK_VISITOR)) {
+			if ([GroupName.VISITOR, GroupName.KIOSK_VISITOR].includes(user.getGroupName())) {
 				queryDto.maintainerIds = [];
 			}
 
-			if (user.getGroupId() === Group.CP_ADMIN) {
+			if (user.getGroupId() === GroupId.CP_ADMIN) {
 				queryDto.maintainerIds = [user.getMaintainerId()];
 			}
 		}

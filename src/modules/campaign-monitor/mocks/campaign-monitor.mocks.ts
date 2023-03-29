@@ -1,12 +1,10 @@
-import { Group, GroupIdToName } from '@meemoo/admin-core-api';
-
 import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
 import { CampaignMonitorMaterialRequestData, RequestListItem } from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { MaterialRequestRequesterCapacity } from '~modules/material-requests/material-requests.types';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 export const mockUser: User = {
@@ -16,8 +14,8 @@ export const mockUser: User = {
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,

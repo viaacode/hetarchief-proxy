@@ -14,7 +14,7 @@ import { MeemooController } from './meemoo.controller';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { UsersService } from '~modules/users/services/users.service';
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -38,7 +38,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
-	groupId: Group.CP_ADMIN,
+	groupId: GroupId.CP_ADMIN,
 };
 
 const samlResponse = {
@@ -185,7 +185,7 @@ describe('MeemooController', () => {
 			mockUsersService.getUserByIdentityId
 				.mockReturnValueOnce(archiefUser)
 				.mockReturnValueOnce(archiefUser);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 
 			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
@@ -205,7 +205,7 @@ describe('MeemooController', () => {
 			};
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 
 			const result = await meemooController.loginCallback(
 				mockRequest,
@@ -219,7 +219,7 @@ describe('MeemooController', () => {
 		it('should create an authorized user that is not yet in the database', async () => {
 			mockMeemooService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
 			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});
@@ -239,7 +239,7 @@ describe('MeemooController', () => {
 				...archiefUser,
 				firstName: 'Tom2',
 			});
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
 
 			const result = await meemooController.loginCallback(mockRequest, {}, samlResponse, {});

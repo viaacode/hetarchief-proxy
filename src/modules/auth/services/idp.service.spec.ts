@@ -8,7 +8,7 @@ import { IdpService } from './idp.service';
 
 import { Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { LdapApp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 
@@ -90,10 +90,10 @@ describe('IdpService', () => {
 
 	describe('userGroupRequiresMaintainerLink', () => {
 		it('can determine if a userGroup requires a link to a maintainer', () => {
-			expect(idpService.userGroupRequiresMaintainerLink(Group.CP_ADMIN)).toBeTruthy();
-			expect(idpService.userGroupRequiresMaintainerLink(Group.KIOSK_VISITOR)).toBeTruthy();
-			expect(idpService.userGroupRequiresMaintainerLink(Group.VISITOR)).toBeFalsy();
-			expect(idpService.userGroupRequiresMaintainerLink(Group.MEEMOO_ADMIN)).toBeFalsy();
+			expect(idpService.userGroupRequiresMaintainerLink(GroupId.CP_ADMIN)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(GroupId.KIOSK_VISITOR)).toBeTruthy();
+			expect(idpService.userGroupRequiresMaintainerLink(GroupId.VISITOR)).toBeFalsy();
+			expect(idpService.userGroupRequiresMaintainerLink(GroupId.MEEMOO_ADMIN)).toBeFalsy();
 		});
 	});
 
@@ -103,7 +103,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.apps = [];
 
 			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.VISITOR);
+			expect(group).toEqual(GroupId.VISITOR);
 		});
 
 		it('should assign the Visitor group if user has no archief-beheer, but kiosk and an org id without space', async () => {
@@ -112,7 +112,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
 			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.VISITOR);
+			expect(group).toEqual(GroupId.VISITOR);
 		});
 
 		it('should assign the Kiosk group if user has no archief-beheer, but kiosk and an org id with a space', async () => {
@@ -122,7 +122,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
 			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.KIOSK_VISITOR);
+			expect(group).toEqual(GroupId.KIOSK_VISITOR);
 		});
 
 		// Bottom section of the flowchart
@@ -147,7 +147,7 @@ describe('IdpService', () => {
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.VISITOR);
+			expect(group).toEqual(GroupId.VISITOR);
 		});
 
 		it('should assign the Meemoo Admin group if user has archief-beheer and the Meemoo Organization', async () => {
@@ -156,7 +156,7 @@ describe('IdpService', () => {
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
 			const group = await idpService.determineUserGroup(ldapUser);
-			expect(group).toEqual(Group.MEEMOO_ADMIN);
+			expect(group).toEqual(GroupId.MEEMOO_ADMIN);
 		});
 
 		it('should assign the CP Admin group if user has archief-beheer and a valid organization with space', async () => {
@@ -165,7 +165,7 @@ describe('IdpService', () => {
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 
 			const group = await idpService.determineUserGroup(ldapUser, mockOrganisation);
-			expect(group).toEqual(Group.CP_ADMIN);
+			expect(group).toEqual(GroupId.CP_ADMIN);
 		});
 	});
 });

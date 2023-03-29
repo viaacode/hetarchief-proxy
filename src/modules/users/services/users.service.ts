@@ -1,9 +1,8 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Organisation } from '../../organisations/organisations.types';
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
-import { GqlPermissionData, GqlUser, GroupIdToName, Permission, User } from '../types';
+import { GqlPermissionData, GqlUser, GroupIdToName, GroupName, Permission, User } from '../types';
 
 import {
 	DeleteLinkUserToMaintainerDocument,
@@ -53,7 +52,7 @@ export class UsersService {
 			email: graphQlUser?.mail,
 			acceptedTosAt: graphQlUser?.accepted_tos_at,
 			groupId: graphQlUser?.group_id,
-			groupName: this.groupIdToName(graphQlUser?.group_id),
+			groupName: this.groupIdToName(graphQlUser?.group_id) as GroupName,
 			permissions: (graphQlUser?.group?.permissions || []).map(
 				(permData: GqlPermissionData) => permData.permission.name as Permission
 			),
@@ -88,8 +87,8 @@ export class UsersService {
 		return adpatedUser;
 	}
 
-	public groupIdToName(groupId: keyof typeof GroupIdToName): string {
-		return GroupIdToName[groupId] || null;
+	public groupIdToName(groupId: keyof typeof GroupIdToName): GroupName | null {
+		return (GroupIdToName[groupId] || null) as GroupName | null;
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
