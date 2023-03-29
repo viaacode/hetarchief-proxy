@@ -47,3 +47,14 @@ export interface CampaignMonitorShareFolderInfo {
 export interface CampaignMonitorNewsletterPreferences {
 	newsletter: boolean;
 }
+
+export interface UserInfo {
+	firstName: string;
+	lastName: string;
+	email: string;
+	is_key_user: boolean;
+	usergroup: string;
+	created_date: string;
+	last_access_date: string;
+	organisation: string;
+}

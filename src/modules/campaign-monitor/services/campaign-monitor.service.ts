@@ -16,6 +16,7 @@ import {
 	CampaignMonitorNewsletterPreferences,
 	MaterialRequestEmailInfo,
 	Template,
+	UserInfo,
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -25,6 +26,7 @@ import {
 	CampaignMonitorMaterialRequestData,
 	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
+	CampaignMonitorUpdatePreferencesData,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/convert-token';
@@ -151,7 +153,7 @@ export class CampaignMonitorService {
 		if (mail !== decryptData(token)) {
 			throw new InternalServerErrorException('token is invalid');
 		}
-		this.updateNewsletterPreferences(
+		await this.updateNewsletterPreferences(
 			{ newsletter: true },
 			{
 				firstName,
@@ -209,16 +211,7 @@ export class CampaignMonitorService {
 
 	public async updateNewsletterPreferences(
 		preferences: CampaignMonitorNewsletterPreferences,
-		userInfo: {
-			firstName: string;
-			lastName: string;
-			email: string;
-			is_key_user: boolean;
-			usergroup: string;
-			created_date: string;
-			last_access_date: string;
-			organisation: string;
-		}
+		userInfo: UserInfo
 	) {
 		let url: string | null = null;
 
@@ -430,28 +423,19 @@ export class CampaignMonitorService {
 	}
 
 	public convertPreferencesToNewsletterTemplateData(
-		userInfo: {
-			firstName: string;
-			lastName: string;
-			email: string;
-			is_key_user: boolean;
-			usergroup: string;
-			created_date: string;
-			last_access_date: string;
-			organisation: string;
-		},
+		userInfo: UserInfo,
 		optin_mail_lists: string,
 		resubscribe: boolean
-	) {
+	): CampaignMonitorUpdatePreferencesData {
 		const customFields = {
 			optin_mail_lists: optin_mail_lists,
 			usergroup: userInfo.usergroup,
-			is_key_user: userInfo,
-			firstname: userInfo,
-			lastname: userInfo,
-			created_date: userInfo,
-			last_access_date: userInfo,
-			organisation: userInfo,
+			is_key_user: userInfo.is_key_user,
+			firstname: userInfo.firstName,
+			lastname: userInfo.lastName,
+			created_date: userInfo.created_date,
+			last_access_date: userInfo.last_access_date,
+			organisation: userInfo.organisation,
 		};
 
 		return {

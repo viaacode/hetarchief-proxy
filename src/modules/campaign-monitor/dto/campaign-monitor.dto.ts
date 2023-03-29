@@ -114,6 +114,29 @@ export class CampaignMonitorConfirmationData {
 	@IsString()
 	activation_url: string;
 }
+
+export class CampaignMonitorUpdatePreferencesData {
+	@IsString()
+	@IsOptional()
+	EmailAddress: string;
+
+	@IsString()
+	@IsOptional()
+	Name: string;
+
+	@IsString()
+	@IsOptional()
+	Resubscribe: boolean;
+
+	@IsString()
+	@IsOptional()
+	ConsentToTrack: string;
+
+	@IsString()
+	@IsOptional()
+	CustomFields: { Key: string; Value: any; Clear: boolean }[];
+}
+
 export class RequestListItem {
 	@IsString()
 	@IsOptional()
