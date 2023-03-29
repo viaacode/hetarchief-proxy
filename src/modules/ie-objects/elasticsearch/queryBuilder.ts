@@ -21,6 +21,7 @@ import {
 	Operator,
 	ORDER_MAPPINGS,
 	OrderProperty,
+	QueryBuilderConsultableFilters,
 	QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
@@ -61,33 +62,12 @@ export class QueryBuilder {
 			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - limit);
 			queryObject.from = clamp(offset, 0, max);
 
-			const consultableSearchFilterFields: SearchFilterField[] = [
-				SearchFilterField.CONSULTABLE_REMOTE,
-				SearchFilterField.CONSULTABLE_MEDIA,
-			];
-			let searchRequestFilters: SearchFilter[] = [...searchRequest.filters];
-			if (
-				searchRequest?.filters &&
-				searchRequest?.filters.some((filter: SearchFilter) =>
-					consultableSearchFilterFields.includes(filter.field)
-				)
-			) {
-				inputInfo = {
-					...inputInfo,
-					// Remark: value for isConsultableRemote will be send reverted by FE and as string type
-					// This because visually you select the filter as if you want to see it onSite
-					...this.determineIsConsultableFilters(searchRequestFilters),
-				};
-
-				// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
-				// since they have been handled above and should not be handled by the standard field filtering logic.
-				searchRequestFilters = searchRequestFilters.filter(
-					(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
-				);
-			}
-
 			// Add the filters and search terms to the query object
-			set(queryObject, 'query.bool.should[0]', this.buildFilterObject(searchRequestFilters));
+			set(
+				queryObject,
+				'query.bool.should[0]',
+				this.buildFilterObject(searchRequest.filters, inputInfo)
+			);
 
 			// Add the licenses to the query object
 			set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
@@ -205,216 +185,51 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
-		const { user, visitorSpaceInfo, isConsultableRemote, isConsultableMedia } = inputInfo;
-
-		let checkSchemaLicenses: any = [
-			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
-			{
-				terms: {
-					schema_license: [
-						IeObjectLicense.PUBLIEK_METADATA_LTD,
-						IeObjectLicense.PUBLIEK_METADATA_ALL,
-					],
-				},
-			},
-			// 4) Check or-id is part of visitorSpaceIds
-			// Remark: ES does not allow maintainer and schema license to be both under 1 terms object
-			{
-				bool: {
-					should: [
-						{
-							terms: {
-								maintainer: visitorSpaceInfo.visitorSpaceIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-					minimum_should_match: 2,
-				},
-			},
-			// 5) Check object id is part of folderObjectIds
-			// Remark: ES does not allow ids and should be added under bool should
-			{
-				bool: {
-					should: [
-						{
-							ids: {
-								values: visitorSpaceInfo.objectIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-					minimum_should_match: 2,
-				},
-			},
-		];
-
-		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
-		if (user?.maintainerId) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				{
-					bool: {
-						should: [
-							{
-								terms: {
-									maintainer: [user.maintainerId],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-										IeObjectLicense.BEZOEKERTOOL_CONTENT,
-									],
-								},
-							},
-						],
-						minimum_should_match: 2,
-					},
-				},
-			];
-		}
-
-		if (user.isKeyUser && !isNil(user.sector)) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				// 2) Check or-id is part of sectorOrIds and key user
-				{
-					term: {
-						'schema_maintainer.organization_type': user.sector,
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
-						],
-					},
-				},
-				// 3) or-id is its own or-id and key user
-				{
-					term: {
-						schema_maintainer: user.maintainerId,
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
-						],
-					},
-				},
-			];
-		}
-
-		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
-		if (isConsultableRemote === false && user.groupId !== GroupId.KIOSK_VISITOR) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				{
-					bool: {
-						should: [
-							{
-								terms: {
-									maintainer: visitorSpaceInfo.visitorSpaceIds,
-								},
-							},
-							{
-								terms: {
-									schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
-								},
-							},
-						],
-						minimum_should_match: 2,
-					},
-				},
-			];
-		}
-
-		// User can access anything in combo with
-		// Object has VIAA_INTRA_CP-CONTENT license
-		// ACM: user has catpro
-		// ACM: sector or id the user connected to
-		if (isConsultableMedia && user.isKeyUser && !isNil(user.sector)) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				{
-					bool: {
-						should: [
-							{
-								terms: {
-									'schema_maintainer.organization_type':
-										getSectorsWithEssenceAccess(user.sector),
-								},
-							},
-							{
-								terms: {
-									schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
-								},
-							},
-						],
-						minimum_should_match: 2,
-					},
-				},
-			];
-		}
-
-		return {
-			bool: {
-				should: checkSchemaLicenses,
-				minimum_should_match: 1,
-			},
-		};
-	}
-
-	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
-		// Replace {{query}} in the template with the escaped search terms
-		let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
-		stringifiedSearchTemplate = stringifiedSearchTemplate.replace(
-			/\{\{query\}\}/g,
-			searchFilter.value
-		);
-
-		return [
-			{
-				bool: {
-					should: JSON.parse(stringifiedSearchTemplate),
-					minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
-				},
-			},
-		];
-	}
-
 	/**
 	 * Creates the filter portion of the elasticsearch query object
 	 * Containing the search terms and the checked filters
 	 * @param filters
 	 */
-	private static buildFilterObject(filters: SearchFilter[] | undefined) {
+	private static buildFilterObject(
+		filters: SearchFilter[] | undefined,
+		inputInfo: QueryBuilderInputInfo
+	) {
 		if (!filters || isEmpty(filters)) {
 			// Return query object that will match all results
 			return { match_all: {} };
 		}
 
 		const filterObject: any = {};
-
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
 		set(filterObject, 'bool.filter', filterArray);
+
+		// Determine consultable filters are present and strip them from standard filter list to be processed later on
+		// Remark: this needs to happen after the line that checks if filters are empty.
+		// This because if we strip it before it will just return match_all
+		const consultableSearchFilterFields: SearchFilterField[] = [
+			SearchFilterField.CONSULTABLE_REMOTE,
+			SearchFilterField.CONSULTABLE_MEDIA,
+		];
+		if (
+			filters &&
+			filters.some((filter: SearchFilter) =>
+				consultableSearchFilterFields.includes(filter.field)
+			)
+		) {
+			const consultableFilters = this.determineIsConsultableFilters(filters, inputInfo);
+
+			// apply determined consultable filters if there are any
+			consultableFilters.forEach((consultableFilter) =>
+				this.applyFilter(filterObject, consultableFilter)
+			);
+			// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
+			// since they have been handled above and should not be handled by the standard field filtering logic.
+			filters = filters.filter(
+				(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
+			);
+		}
+
 		forEach(filters, (searchFilter: SearchFilter) => {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
@@ -500,9 +315,247 @@ export class QueryBuilder {
 		return filterObject;
 	}
 
+	/**
+	 *	This function checks if the isConsultableFilters are present in the searchRequestFilters and returns the correct filter objects
+	 *
+	 * @param searchRequestFilters
+	 * @returns { isConsultableRemote: boolean, isConsultableMedia: boolean }
+	 */
+	public static determineIsConsultableFilters(
+		searchRequestFilters: SearchFilter[],
+		inputInfo: QueryBuilderInputInfo
+	): any {
+		const toBeAppliedConsultableFilters: any = [];
+		const consultableFilters: QueryBuilderConsultableFilters = {
+			isConsultableRemote: isEmpty(
+				searchRequestFilters.filter(
+					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_REMOTE
+				)
+			)
+				? // if FE does not return isConsultableRemote filter by default it will be visible both onSite and Remote
+				  // However for 99,99% of the time this will never happen
+				  true
+				: // Value from query string will be string but we need a Boolean
+				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
+			isConsultableMedia: isEmpty(
+				searchRequestFilters.filter(
+					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_MEDIA
+				)
+			)
+				? // if FE does not return isConsultableMedia filter by default the essence will not be consultable
+				  // However for 99,99% of the time this will never happen
+				  false
+				: // Value from query string will be string but we need a Boolean
+				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
+		};
+
+		// add consultable filters
+		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
+		if (
+			consultableFilters.isConsultableRemote === false &&
+			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR
+		) {
+			toBeAppliedConsultableFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					{
+						terms: {
+							'schema_maintainer.schema_identifier':
+								inputInfo.visitorSpaceInfo.visitorSpaceIds,
+						},
+					},
+					{
+						terms: {
+							schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+						},
+					},
+				],
+			});
+		}
+
+		// User can access anything in combo with
+		// Object has VIAA_INTRA_CP-CONTENT license
+		// ACM: user has catpro
+		// ACM: sector or id the user connected to
+		if (
+			consultableFilters.isConsultableMedia &&
+			inputInfo.user.getIsKeyUser() &&
+			!isNil(inputInfo.user.getSector())
+		) {
+			toBeAppliedConsultableFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					{
+						terms: {
+							'schema_maintainer.organization_type': getSectorsWithEssenceAccess(
+								inputInfo.user.getSector()
+							),
+						},
+					},
+					{
+						terms: {
+							schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
+						},
+					},
+				],
+			});
+		}
+
+		// Return empty object if no consultable filter matches the requirements
+		return toBeAppliedConsultableFilters;
+	}
+
+	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
+		const { user, visitorSpaceInfo } = inputInfo;
+
+		let checkSchemaLicenses: any = [
+			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
+			{
+				terms: {
+					schema_license: [
+						IeObjectLicense.PUBLIEK_METADATA_LTD,
+						IeObjectLicense.PUBLIEK_METADATA_ALL,
+					],
+				},
+			},
+			// 4) Check or-id is part of visitorSpaceIds
+			// Remark: ES does not allow maintainer and schema license to be both under 1 terms object
+			{
+				bool: {
+					should: [
+						{
+							terms: {
+								'schema_maintainer.schema_identifier':
+									visitorSpaceInfo.visitorSpaceIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+					],
+					minimum_should_match: 2,
+				},
+			},
+			// 5) Check object id is part of folderObjectIds
+			// Remark: ES does not allow ids and should be added under bool should
+			{
+				bool: {
+					should: [
+						{
+							ids: {
+								values: visitorSpaceInfo.objectIds,
+							},
+						},
+						{
+							terms: {
+								schema_license: [
+									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+					],
+					minimum_should_match: 2,
+				},
+			},
+		];
+
+		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
+		if (user.getMaintainerId()) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				{
+					bool: {
+						should: [
+							{
+								terms: {
+									'schema_maintainer.schema_identifier': [user.getMaintainerId()],
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+										IeObjectLicense.BEZOEKERTOOL_CONTENT,
+									],
+								},
+							},
+						],
+						minimum_should_match: 2,
+					},
+				},
+			];
+		}
+
+		if (user.getIsKeyUser() && !isNil(user.getSector())) {
+			checkSchemaLicenses = [
+				...checkSchemaLicenses,
+				// 2) Check or-id is part of sectorOrIds and key user
+				{
+					term: {
+						'schema_maintainer.organization_type': user.getSector(),
+					},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
+						],
+					},
+				},
+				// 3) or-id is its own or-id and key user
+				{
+					term: {
+						'schema_maintainer.schema_identifier': user.getMaintainerId(),
+					},
+					terms: {
+						schema_license: [
+							IeObjectLicense.INTRA_CP_METADATA_ALL,
+							IeObjectLicense.INTRA_CP_CONTENT,
+						],
+					},
+				},
+			];
+		}
+
+		return {
+			bool: {
+				should: checkSchemaLicenses,
+				minimum_should_match: 1,
+			},
+		};
+	}
+
+	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
+		// Replace {{query}} in the template with the escaped search terms
+		let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
+		stringifiedSearchTemplate = stringifiedSearchTemplate.replace(
+			/\{\{query\}\}/g,
+			searchFilter.value
+		);
+
+		return [
+			{
+				bool: {
+					should: JSON.parse(stringifiedSearchTemplate),
+					minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
+				},
+			},
+		];
+	}
+
 	protected static applyFilter(filterObject: any, newFilter: any): void {
 		if (!filterObject.bool[newFilter.occurrenceType]) {
 			filterObject.bool[newFilter.occurrenceType] = [];
+		}
+
+		// isConsultable filters have array of items to be processed
+		if (isArray(newFilter.query)) {
+			return filterObject.bool[newFilter.occurrenceType].push(...newFilter.query);
 		}
 
 		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
@@ -576,41 +629,5 @@ export class QueryBuilder {
 
 	public static isFuzzyOperator(operator: Operator): boolean {
 		return [Operator.CONTAINS, Operator.CONTAINS_NOT].includes(operator);
-	}
-
-	/**
-	 *	This function checks if the isConsultableFilters are present in the searchRequestFilters array of objects
-	 *	If so cast the value to a Boolean
-	 *	If not set default
-	 *
-	 * @param searchRequestFilters
-	 * @returns { isConsultableRemote: boolean, isConsultableMedia: boolean }
-	 */
-	public static determineIsConsultableFilters(searchRequestFilters: SearchFilter[]): {
-		isConsultableRemote: boolean;
-		isConsultableMedia: boolean;
-	} {
-		return {
-			isConsultableRemote: isEmpty(
-				searchRequestFilters.filter(
-					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_REMOTE
-				)
-			)
-				? // if FE does not return isConsultableRemote filter by default it will be visible both onSite and Remote
-				  // However for 99,99% of the time this will never happen
-				  true
-				: // Value from query string will be string but we need a Boolean
-				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
-			isConsultableMedia: isEmpty(
-				searchRequestFilters.filter(
-					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_MEDIA
-				)
-			)
-				? // if FE does not return isConsultableMedia filter by default the essence will not be consultable
-				  // However for 99,99% of the time this will never happen
-				  false
-				: // Value from query string will be string but we need a Boolean
-				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
-		};
 	}
 }
