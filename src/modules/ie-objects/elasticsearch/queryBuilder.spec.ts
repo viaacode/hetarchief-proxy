@@ -1,24 +1,33 @@
 import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
-import {
-	Operator,
-	OrderProperty,
-	QueryBuilderConfig,
-	QueryType,
-	SearchFilterField,
-} from './elasticsearch.consts';
+import { Operator, OrderProperty, SearchFilterField } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
-import { GroupId } from '~modules/users/types';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupId, GroupName } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
 
 const mockInputInfo = {
-	user: {
+	user: new SessionUserEntity({
+		id: '3bbfcc61-8a1e-42b5-bc28-7a29181475d0',
+		fullName: 'John Doe',
+		firstName: 'John',
+		lastName: 'Doe',
+		email: 'johndoe@gmail.com',
+		acceptedTosAt: '',
+		groupId: GroupId.MEEMOO_ADMIN,
+		groupName: GroupName.MEEMOO_ADMIN,
+		permissions: [],
+		idp: null,
 		isKeyUser: false,
 		maintainerId: '',
+		visitorSpaceSlug: 'vrt',
 		sector: IeObjectSector.CULTURE,
-		groupId: GroupId.MEEMOO_ADMIN,
-	},
+		organisationName: 'vrt',
+		organisationId: null,
+		lastAccessAt: null,
+		createdAt: null,
+	}),
 	visitorSpaceInfo: {
 		visitorSpaceIds: [],
 		objectIds: [],
@@ -29,13 +38,16 @@ describe('QueryBuilder', () => {
 	describe('build', () => {
 		it('should build a valid search query', () => {
 			// const query = ;
-			expect(() => QueryBuilder.build(null, mockInputInfo)).toThrowError(
+			expect(() => QueryBuilder.build(null, mockInputInfo as any)).toThrowError(
 				'Failed to build query object'
 			);
 		});
 
 		it('should return a match_all query when no filters are specified', () => {
-			const esQuery = QueryBuilder.build({ size: 10, page: 1, filters: [] }, mockInputInfo);
+			const esQuery = QueryBuilder.build(
+				{ size: 10, page: 1, filters: [] },
+				mockInputInfo as any
+			);
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
@@ -54,7 +66,11 @@ describe('QueryBuilder', () => {
 									{
 										bool: {
 											should: [
-												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														'schema_maintainer.schema_identifier': [],
+													},
+												},
 												{
 													terms: {
 														schema_license: [
@@ -96,13 +112,19 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should correctly convert the page to a from value', () => {
-			const esQuery = QueryBuilder.build({ size: 10, page: 3, filters: [] }, mockInputInfo);
+			const esQuery = QueryBuilder.build(
+				{ size: 10, page: 3, filters: [] },
+				mockInputInfo as any as any
+			);
 			expect(esQuery.from).toEqual(20);
 			expect(esQuery.size).toEqual(10);
 		});
 
 		it('should return a match_all query when empty filters are specified', () => {
-			const esQuery = QueryBuilder.build({ filters: [], size: 10, page: 1 }, mockInputInfo);
+			const esQuery = QueryBuilder.build(
+				{ filters: [], size: 10, page: 1 },
+				mockInputInfo as any
+			);
 
 			expect(esQuery.query).toEqual({
 				bool: {
@@ -122,7 +144,11 @@ describe('QueryBuilder', () => {
 									{
 										bool: {
 											should: [
-												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														'schema_maintainer.schema_identifier': [],
+													},
+												},
 												{
 													terms: {
 														schema_license: [
@@ -174,7 +200,7 @@ describe('QueryBuilder', () => {
 					size: 10,
 					page: 1,
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 
 			expect(
@@ -197,7 +223,7 @@ describe('QueryBuilder', () => {
 						size: 10,
 						page: 1,
 					},
-					mockInputInfo
+					mockInputInfo as any
 				);
 			} catch (e) {
 				error = e;
@@ -220,7 +246,7 @@ describe('QueryBuilder', () => {
 					size: 10,
 					page: 1,
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 			expect(JSON.stringify(esQuery.query)).not.toContain('schema_transcript');
 		});
@@ -238,7 +264,7 @@ describe('QueryBuilder', () => {
 					size: 10,
 					page: 1,
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 
 			expect(esQuery.query).toEqual({
@@ -264,7 +290,11 @@ describe('QueryBuilder', () => {
 									{
 										bool: {
 											should: [
-												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														'schema_maintainer.schema_identifier': [],
+													},
+												},
 												{
 													terms: {
 														schema_license: [
@@ -316,7 +346,7 @@ describe('QueryBuilder', () => {
 					size: 10,
 					page: 1,
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 
 			expect(esQuery.query).toEqual({
@@ -347,7 +377,11 @@ describe('QueryBuilder', () => {
 									{
 										bool: {
 											should: [
-												{ terms: { maintainer: [] } },
+												{
+													terms: {
+														'schema_maintainer.schema_identifier': [],
+													},
+												},
 												{
 													terms: {
 														schema_license: [
@@ -401,7 +435,7 @@ describe('QueryBuilder', () => {
 						size: 10,
 						page: 1,
 					},
-					mockInputInfo
+					mockInputInfo as any
 				);
 			} catch (e) {
 				error = e;
@@ -426,7 +460,7 @@ describe('QueryBuilder', () => {
 						size: 10,
 						page: 1,
 					},
-					mockInputInfo
+					mockInputInfo as any
 				);
 			} catch (e) {
 				error = e;
@@ -444,7 +478,7 @@ describe('QueryBuilder', () => {
 						page: 1,
 						requestedAggs: ['unknown agg' as any],
 					},
-					mockInputInfo
+					mockInputInfo as any
 				);
 			} catch (e) {
 				error = e;
@@ -466,7 +500,7 @@ describe('QueryBuilder', () => {
 					page: 1,
 					requestedAggs: [SearchFilterField.FORMAT],
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 
 			expect(esQuery.query.bool.should[0]).toEqual({
@@ -497,7 +531,7 @@ describe('QueryBuilder', () => {
 					page: 1,
 					requestedAggs: [SearchFilterField.MEDIUM],
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 			expect(esQuery.aggs.dcterms_medium.terms).toEqual({
 				field: 'dcterms_medium',
@@ -517,7 +551,7 @@ describe('QueryBuilder', () => {
 					orderProp,
 					orderDirection,
 				},
-				mockInputInfo
+				mockInputInfo as any
 			);
 
 			const received = esQuery.sort.find((rule) => rule['schema_name.keyword']);

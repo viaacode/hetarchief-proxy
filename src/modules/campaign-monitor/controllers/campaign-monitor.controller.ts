@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, Redirect, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
+import { CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
@@ -24,7 +24,11 @@ export class CampaignMonitorController {
 	 */
 	@UseGuards(LoggedInGuard)
 	@Post('send')
-	@ApiOperation({ description: 'Send transactional mails through Campaign Monitor' })
+	@ApiOperation({
+		description: `Send transactional mails through Campaign Monitor. Template value is one of following values (${Object.values(
+			Template
+		).join(', ')}). Data custom fields are dependend on provided template type.`,
+	})
 	async sendTransactionalMail(
 		@Body() emailInfo: CampaignMonitorSendMailDto
 	): Promise<{ message: 'success' }> {
