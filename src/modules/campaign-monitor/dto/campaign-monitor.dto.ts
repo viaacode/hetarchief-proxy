@@ -294,7 +294,6 @@ export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
 	@IsObject()
 	@IsNotEmpty()
 	@ApiProperty({
-		//OBJECT van preferences
 		type: Object,
 		example: {
 			newsletter: true,
