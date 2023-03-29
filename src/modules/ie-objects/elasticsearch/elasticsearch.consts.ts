@@ -33,7 +33,9 @@ export enum SearchFilterField {
 	DESCRIPTION = 'description',
 	ERA = 'era',
 	LOCATION = 'location',
-	MAINTAINER = 'maintainer',
+	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
+	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
+	MAINTAINER_NAME = 'maintainers', // Contains the name of the maintainer
 	CAST = 'cast',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
@@ -114,25 +116,26 @@ export interface QueryBuilderConfig {
 }
 
 export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
-	genre: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	keyword: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	name: QueryType.TERM, // used for exact (not) matching
-	format: QueryType.TERMS, // es keyword
-	publisher: QueryType.TERMS,
-	creator: QueryType.TERMS,
-	created: QueryType.RANGE,
-	published: QueryType.RANGE,
-	description: QueryType.TERM, // used for exact (not) matching
-	era: QueryType.MATCH,
-	location: QueryType.MATCH,
-	maintainer: QueryType.TERMS,
-	cast: QueryType.TERMS,
-	caption: QueryType.TERM,
-	transcript: QueryType.TERM,
-	categorie: QueryType.TERMS,
-	duration: QueryType.RANGE,
-	language: QueryType.TERMS,
-	medium: QueryType.TERMS,
+	[SearchFilterField.GENRE]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	[SearchFilterField.KEYWORD]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	[SearchFilterField.NAME]: QueryType.TERM, // used for exact (not) matching
+	[SearchFilterField.FORMAT]: QueryType.TERMS, // es keyword
+	[SearchFilterField.PUBLISHER]: QueryType.TERMS,
+	[SearchFilterField.CREATOR]: QueryType.TERMS,
+	[SearchFilterField.CREATED]: QueryType.RANGE,
+	[SearchFilterField.PUBLISHED]: QueryType.RANGE,
+	[SearchFilterField.DESCRIPTION]: QueryType.TERM, // used for exact (not) matching
+	[SearchFilterField.ERA]: QueryType.MATCH,
+	[SearchFilterField.LOCATION]: QueryType.MATCH,
+	[SearchFilterField.MAINTAINER_ID]: QueryType.TERMS,
+	[SearchFilterField.MAINTAINER_NAME]: QueryType.TERMS,
+	[SearchFilterField.CAST]: QueryType.TERMS,
+	[SearchFilterField.CAPTION]: QueryType.TERM,
+	[SearchFilterField.TRANSCRIPT]: QueryType.TERM,
+	[SearchFilterField.CATEGORIE]: QueryType.TERMS,
+	[SearchFilterField.DURATION]: QueryType.RANGE,
+	[SearchFilterField.LANGUAGE]: QueryType.TERMS,
+	[SearchFilterField.MEDIUM]: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
@@ -160,7 +163,8 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[SearchFilterField.DESCRIPTION]: 'schema_description',
 	[SearchFilterField.ERA]: 'schema_temporal_coverage',
 	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
-	[SearchFilterField.MAINTAINER]: 'schema_maintainer.schema_name',
+	[SearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
+	[SearchFilterField.MAINTAINER_NAME]: 'schema_maintainer.schema_name',
 	[SearchFilterField.CAST]: 'meemoo_description_cast',
 	[SearchFilterField.CAPTION]: 'schema_caption',
 	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
@@ -200,12 +204,12 @@ export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORM
 export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
 	[SearchFilterField.NAME]: 'keyword',
-	[SearchFilterField.MAINTAINER]: 'keyword',
+	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[SearchFilterField.TYPE]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
 	[SearchFilterField.GENRE]: 'keyword',
-	[SearchFilterField.MAINTAINER]: 'keyword',
+	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[SearchFilterField.TYPE]: 'keyword',
 };
