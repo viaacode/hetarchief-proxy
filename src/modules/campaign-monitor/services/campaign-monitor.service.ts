@@ -31,7 +31,6 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/convert-token';
 
-import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';

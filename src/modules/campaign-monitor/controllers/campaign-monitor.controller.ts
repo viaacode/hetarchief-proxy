@@ -1,13 +1,4 @@
-import {
-	BadRequestException,
-	Body,
-	Controller,
-	Get,
-	Post,
-	Query,
-	Redirect,
-	UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Redirect, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CampaignMonitorNewsletterPreferences } from '../campaign-monitor.types';
@@ -58,27 +49,28 @@ export class CampaignMonitorController {
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user?: SessionUserEntity
 	): Promise<void> {
-		if (user.getId()) {
-			return await this.campaignMonitorService.updateNewsletterPreferences(
-				preferences.preferences,
-				{
-					firstName: user?.getFirstName(),
-					lastName: user?.getLastName(),
-					email: user?.getMail(),
-					is_key_user: user?.getIsKeyUser(),
-					usergroup: user?.getGroupName(),
-					created_date: user?.getCreatedAt(),
-					last_access_date: user?.getLastAccessAt(),
-					organisation: user?.getOrganisationName(),
-				}
-			);
+		if (!user?.getId()) {
+			return await this.campaignMonitorService.sendConfirmationMail(preferences);
 		}
-		return await this.campaignMonitorService.sendConfirmationMail(preferences);
+
+		return await this.campaignMonitorService.updateNewsletterPreferences(
+			preferences.preferences,
+			{
+				firstName: user?.getFirstName(),
+				lastName: user?.getLastName(),
+				email: user?.getMail(),
+				is_key_user: user?.getIsKeyUser(),
+				usergroup: user?.getGroupName(),
+				created_date: user?.getCreatedAt(),
+				last_access_date: user?.getLastAccessAt(),
+				organisation: user?.getOrganisationName(),
+			}
+		);
 	}
 
 	@Get('confirm-email')
 	@Redirect()
-	@ApiOperation({ description: 'Update user newsletter preferences' })
+	@ApiOperation({ description: 'Confirm email with token and sign user up for newsletter' })
 	async confirmMail(@Query() queryDto: CampaignMonitorConfirmMailQueryDto) {
 		try {
 			await this.campaignMonitorService.confirmEmail(queryDto);

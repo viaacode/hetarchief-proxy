@@ -1,7 +1,12 @@
 import { Group, GroupIdToName } from '@meemoo/admin-core-api';
 
 import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
-import { CampaignMonitorMaterialRequestData, RequestListItem } from '../dto/campaign-monitor.dto';
+import {
+	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	RequestListItem,
+} from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { MaterialRequestRequesterCapacity } from '~modules/material-requests/material-requests.types';
@@ -21,6 +26,23 @@ export const mockUser: User = {
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+};
+
+export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterUpdatePreferencesQueryDto =
+	{
+		firstName: 'mockFirstName',
+		lastName: 'mockLastName',
+		mail: 'test@example.com',
+		preferences: {
+			newsletter: true,
+		},
+	};
+
+export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
+	token: 'NDk5MGVhYTEyMDcwMmJmMGZjMmRkODI0M2ExYjQ2ODMwZTM1ZTBlYjdjZGIwMzU2OWUxMjMzZWMyMWE4MDA1ZQ==',
+	firstName: 'test',
+	lastName: 'testers',
+	mail: 'test@example.com',
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {

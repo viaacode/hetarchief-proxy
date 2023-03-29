@@ -1,14 +1,15 @@
 import crypto from 'crypto';
 
-const secret_key = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_KEY;
-const secret_iv = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_IV;
-const encryption_method = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_ECNRYPTION_METHOD;
+const secret_key = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_KEY || '';
+const secret_iv = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_IV || '';
+const encryption_method = process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_ECNRYPTION_METHOD || '';
 
 const key = crypto
 	.createHash('sha512')
 	.update(secret_key as string)
 	.digest('hex')
 	.substring(0, 32);
+
 const encryptionIV = crypto
 	.createHash('sha512')
 	.update(secret_iv as string)
