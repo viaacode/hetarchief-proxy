@@ -8,10 +8,10 @@ import { CollectionsController } from './collections.controller';
 
 import { Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
-import { IeObject, IeObjectsVisitorSpaceInfo } from '~modules/ie-objects/ie-objects.types';
+import { IeObject } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Group, GroupIdToName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -75,8 +75,8 @@ const mockUser: User = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 };

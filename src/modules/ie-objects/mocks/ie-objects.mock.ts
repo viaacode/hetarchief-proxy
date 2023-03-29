@@ -1,5 +1,3 @@
-import { GroupIdToName } from '@meemoo/admin-core-api';
-
 import {
 	ElasticsearchHit,
 	IeObject,
@@ -9,7 +7,7 @@ import {
 } from '../ie-objects.types';
 
 import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
-import { Group, Permission } from '~modules/users/types';
+import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
 export const mockIeObject: IeObject = {
@@ -248,8 +246,8 @@ export const mockUser = {
 	email: 'test.testers@meemoo.be',
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
-	groupId: Group.CP_ADMIN,
-	groupName: GroupIdToName[Group.CP_ADMIN],
+	groupId: GroupId.CP_ADMIN,
+	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
 };
@@ -266,7 +264,7 @@ export const mockUserInfo: {
 	userId: '2ca2fcad-0ef1-4b0c-ad14-ea83984161c9',
 	isKeyUser: false,
 	sector: null,
-	groupId: Group.VISITOR,
+	groupId: GroupId.VISITOR,
 	maintainerId: 'OR-rf5kf25',
 	accessibleObjectIdsThroughFolders: [],
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],

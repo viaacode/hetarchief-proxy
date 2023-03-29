@@ -15,7 +15,7 @@ import { CollectionsService } from '~modules/collections/services/collections.se
 import { EventsService } from '~modules/events/services/events.service';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -41,7 +41,7 @@ const archiefUser = {
 	firstName: 'Tom',
 	lastName: 'Testerom',
 	email: 'test@studiohyperdrive.be',
-	groupId: Group.CP_ADMIN,
+	groupId: GroupId.CP_ADMIN,
 	permissions: [],
 	isKeyUser: false,
 	organisationId: 'OR-1v5bc86',
@@ -237,7 +237,7 @@ describe('HetArchiefController', () => {
 		it('should redirect after successful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 			mockUsersService.updateUser.mockReturnValue(archiefUser);
 
@@ -264,7 +264,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -278,7 +278,7 @@ describe('HetArchiefController', () => {
 		it('should create an authorized user that is not yet in the database', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(Group.CP_ADMIN);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
 
 			const result = await hetArchiefController.loginCallback(

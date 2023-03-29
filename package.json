@@ -18,7 +18,7 @@
     "start": "nest start",
     "__predev": "npm run generate-database-types",
     "prestart:debug": "npm run generate-database-types",
-    "dev": "dotenv -e .env/.env.local nest start --watch",
+    "dev": "dotenv -e .env/.env.local nest start -- --watch",
     "start:debug": "dotenv -e .env/.env.local nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --cache",
@@ -33,7 +33,7 @@
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "2.0.56",
+    "@meemoo/admin-core-api": "2.0.63",
     "@nestjs/common": "8.2.3",
     "@nestjs/config": "1.1.5",
     "@nestjs/core": "8.2.3",

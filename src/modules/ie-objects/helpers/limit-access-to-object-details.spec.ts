@@ -11,7 +11,7 @@ import {
 import { limitAccessToObjectDetails } from './limit-access-to-object-details';
 import { LimitAccessUserInfo } from './limit-access-to-object-details.types';
 
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 
 describe('Limit access to object details', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen
@@ -19,7 +19,7 @@ describe('Limit access to object details', () => {
 	it('Test case 1 - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCase1a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: true,
 			sector: IeObjectSector.PUBLIC,
 			accessibleVisitorSpaceIds: [],
@@ -44,7 +44,7 @@ describe('Limit access to object details', () => {
 	it('Test case 2 - user sees metadataset all en essence on detail page', () => {
 		const mockUserInfoTestCase2a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.CP_ADMIN,
+			groupId: GroupId.CP_ADMIN,
 			isKeyUser: true,
 			sector: IeObjectSector.CULTURE,
 		};
@@ -72,7 +72,7 @@ describe('Limit access to object details', () => {
 	it('Test case 3 - user sees metadataset all en essence on detail page', () => {
 		const mockUserInfoTestCase3a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: true,
 			sector: IeObjectSector.CULTURE,
 		};
@@ -108,7 +108,7 @@ describe('Limit access to object details', () => {
 	it('Test case 4 - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCase4a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: false,
 			sector: IeObjectSector.CULTURE,
 			accessibleVisitorSpaceIds: [],
@@ -143,7 +143,7 @@ describe('Limit access to object details', () => {
 	it('Test case 4b - user sees metadataset limited on detail page', () => {
 		const mockUserInfoTestCase4b: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: false,
 			sector: IeObjectSector.CULTURE,
 			accessibleVisitorSpaceIds: [],
@@ -177,7 +177,7 @@ describe('Limit access to object details', () => {
 	it('Test case 5 - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCase5a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.MEEMOO_ADMIN,
+			groupId: GroupId.MEEMOO_ADMIN,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: 'OR-rf4kf25',
@@ -212,7 +212,7 @@ describe('Limit access to object details', () => {
 	it("Test case 6 - user doesn't see object", () => {
 		const mockUserInfoTestCase6a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.KIOSK_VISITOR,
+			groupId: GroupId.KIOSK_VISITOR,
 			isKeyUser: false,
 			sector: IeObjectSector.CULTURE,
 			accessibleVisitorSpaceIds: [],
@@ -237,7 +237,7 @@ describe('Limit access to object details', () => {
 	it('Test case 7 - user sees limited metadataset on detail page', () => {
 		const mockUserInfoTestCase7a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.CP_ADMIN,
+			groupId: GroupId.CP_ADMIN,
 			isKeyUser: true,
 			sector: IeObjectSector.REGIONAL,
 			accessibleVisitorSpaceIds: [],
@@ -263,7 +263,7 @@ describe('Limit access to object details', () => {
 	it('Test case 8 - user sees metadataset all and essence on detail page', () => {
 		const mockUserInfoTestCase8a: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: true,
 			sector: IeObjectSector.RURAL,
 			accessibleObjectIdsThroughFolders: [],
@@ -300,7 +300,7 @@ describe('Limit access to object details', () => {
 	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCaseNoSectorA: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.VISITOR,
+			groupId: GroupId.VISITOR,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: null,
@@ -327,7 +327,7 @@ describe('Limit access to object details', () => {
 	it('USER NO SECTOR - user (CP Admin) sees metadataset limited on detail page', () => {
 		const mockUserInfoTestCaseNoSectorB: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.CP_ADMIN,
+			groupId: GroupId.CP_ADMIN,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: null,
@@ -354,7 +354,7 @@ describe('Limit access to object details', () => {
 	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCaseNoSectorC: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.MEEMOO_ADMIN,
+			groupId: GroupId.MEEMOO_ADMIN,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: null,
@@ -389,7 +389,7 @@ describe('Limit access to object details', () => {
 	it("USER NO SECTOR - user doesn't see object", () => {
 		const mockUserInfoTestCaseNoSectorD: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.KIOSK_VISITOR,
+			groupId: GroupId.KIOSK_VISITOR,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: null,
@@ -415,7 +415,7 @@ describe('Limit access to object details', () => {
 	it("USER NO SECTOR - user doesn't see object", () => {
 		const mockUserInfoTestCaseNoSectorE: LimitAccessUserInfo = {
 			...mockUserInfo,
-			groupId: Group.CP_ADMIN,
+			groupId: GroupId.CP_ADMIN,
 			isKeyUser: false,
 			sector: null,
 			maintainerId: null,

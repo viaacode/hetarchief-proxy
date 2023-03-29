@@ -28,7 +28,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { Group } from '~modules/users/types';
+import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -322,7 +322,7 @@ export class QueryBuilder {
 		}
 
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
-		if (isConsultableRemote === false && user.groupId !== Group.KIOSK_VISITOR) {
+		if (isConsultableRemote === false && user.groupId !== GroupId.KIOSK_VISITOR) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				{
