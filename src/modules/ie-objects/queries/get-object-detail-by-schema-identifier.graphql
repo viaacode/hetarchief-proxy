@@ -12,6 +12,7 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 				primary_site
 				logo
 				form_url
+				description
 			}
 		}
 		schema_copyright_holder

@@ -303,6 +303,7 @@ export class IeObjectsService {
 				gqlIeObject?.haorg_alt_label ??
 				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
+			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
