@@ -106,7 +106,11 @@ export class VisitsController {
 		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const spaces = await this.spacesService.findAll(
 				{
-					status: [VisitorSpaceStatus.Active, VisitorSpaceStatus.Inactive],
+					status: [
+						VisitorSpaceStatus.Active,
+						VisitorSpaceStatus.Inactive,
+						VisitorSpaceStatus.Requested,
+					],
 					page: 1,
 					size: 100,
 				},
