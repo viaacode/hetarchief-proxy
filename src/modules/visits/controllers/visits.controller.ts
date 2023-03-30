@@ -101,6 +101,46 @@ export class VisitsController {
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
+		if (user.getGroupName() === GroupName.CP_ADMIN) {
+			const visits = await this.visitsService.findAll(
+				{
+					status: [VisitStatus.APPROVED, VisitStatus.PENDING],
+				},
+				{}
+			);
+
+			visits.items = [
+				...visits.items,
+				{
+					id: '-1',
+					status: VisitStatus.APPROVED,
+					endAt: addYears(new Date(), 100).toISOString(),
+					startAt: new Date(2000, 1, 1).toISOString(),
+					visitorFirstName: user.getFirstName(),
+					visitorLastName: user.getLastName(),
+					visitorName: user.getFullName(),
+					updatedByName: null,
+					createdAt: new Date().toISOString(),
+					spaceName: user.getVisitorSpaceSlug(),
+					spaceMail: null,
+					spaceId: user.getMaintainerId(),
+					spaceTelephone: null,
+					reason: null,
+					spaceMaintainerId: user.getMaintainerId(),
+					spaceSlug: user.getVisitorSpaceSlug(),
+					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
+					updatedById: null,
+					timeframe: null,
+					userProfileId: user.getId(),
+					visitorId: user.getId(),
+					updatedAt: new Date().toISOString(),
+					visitorMail: user.getMail(),
+				},
+			];
+
+			return visits;
+		}
+
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
