@@ -83,7 +83,11 @@ export class SpacesController {
 		// MEEMOO ADMIN always have access to all spaces
 		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			spaces = await this.spacesService.findAll(
-				{ status: [VisitorSpaceStatus.Active, VisitorSpaceStatus.Inactive] },
+				{
+					status: [VisitorSpaceStatus.Active, VisitorSpaceStatus.Inactive],
+					page: 1,
+					size: 100,
+				},
 				user.getId()
 			);
 		}

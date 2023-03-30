@@ -17,6 +17,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Pagination } from '@studiohyperdrive/pagination';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { addYears, isFuture } from 'date-fns';
 import { Request } from 'express';
@@ -32,6 +33,7 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -101,18 +103,19 @@ export class VisitsController {
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			const visits = await this.visitsService.findAll(
+		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
+			const spaces = await this.spacesService.findAll(
 				{
-					status: [VisitStatus.APPROVED, VisitStatus.PENDING],
+					status: [VisitorSpaceStatus.Active, VisitorSpaceStatus.Inactive],
+					page: 1,
+					size: 100,
 				},
-				{}
+				user.getId()
 			);
 
-			visits.items = [
-				...visits.items,
-				{
-					id: '-1',
+			const visits = spaces.items.map((space: Space) => {
+				return {
+					id: `permanent-id--${randomUUID()}`,
 					status: VisitStatus.APPROVED,
 					endAt: addYears(new Date(), 100).toISOString(),
 					startAt: new Date(2000, 1, 1).toISOString(),
@@ -121,13 +124,13 @@ export class VisitsController {
 					visitorName: user.getFullName(),
 					updatedByName: null,
 					createdAt: new Date().toISOString(),
-					spaceName: user.getVisitorSpaceSlug(),
-					spaceMail: null,
-					spaceId: user.getMaintainerId(),
-					spaceTelephone: null,
+					spaceName: space.name,
+					spaceMail: space.contactInfo.email,
+					spaceId: space.id,
+					spaceTelephone: space.contactInfo.telephone,
 					reason: null,
-					spaceMaintainerId: user.getMaintainerId(),
-					spaceSlug: user.getVisitorSpaceSlug(),
+					spaceMaintainerId: space.maintainerId,
+					spaceSlug: space.slug,
 					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 					updatedById: null,
 					timeframe: null,
@@ -135,10 +138,15 @@ export class VisitsController {
 					visitorId: user.getId(),
 					updatedAt: new Date().toISOString(),
 					visitorMail: user.getMail(),
-				},
-			];
+				};
+			});
 
-			return visits;
+			return Pagination<Visit>({
+				items: visits,
+				page: spaces.page,
+				size: spaces.size,
+				total: spaces.total,
+			});
 		}
 
 		const visits = await this.visitsService.findAll(queryDto, {
@@ -150,7 +158,7 @@ export class VisitsController {
 			visits.items = [
 				...visits.items,
 				{
-					id: '-1',
+					id: `permanent-id--${randomUUID()}`,
 					status: VisitStatus.APPROVED,
 					endAt: addYears(new Date(), 100).toISOString(),
 					startAt: new Date(2000, 1, 1).toISOString(),
