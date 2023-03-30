@@ -10,6 +10,7 @@ import { HetArchiefService } from './services/het-archief.service';
 import { IdpService } from './services/idp.service';
 import { MeemooService } from './services/meemoo.service';
 
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -48,6 +49,7 @@ export const meemooServiceFactory = {
 		EventsModule,
 		TranslationsModule,
 		OrganisationsModule,
+		CampaignMonitorModule,
 	],
 	providers: [archiefServiceFactory, meemooServiceFactory, IdpService, SessionService],
 })

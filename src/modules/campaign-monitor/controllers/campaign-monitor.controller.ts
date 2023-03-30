@@ -58,16 +58,19 @@ export class CampaignMonitorController {
 			return { message: 'success' };
 		}
 
-		await this.campaignMonitorService.updateNewsletterPreferences(preferences.preferences, {
-			firstName: user?.getFirstName(),
-			lastName: user?.getLastName(),
-			email: user?.getMail(),
-			is_key_user: user?.getIsKeyUser(),
-			usergroup: user?.getGroupName(),
-			created_date: user?.getCreatedAt(),
-			last_access_date: user?.getLastAccessAt(),
-			organisation: user?.getOrganisationName(),
-		});
+		await this.campaignMonitorService.updateNewsletterPreferences(
+			{
+				firstName: user?.getFirstName(),
+				lastName: user?.getLastName(),
+				email: user?.getMail(),
+				is_key_user: user?.getIsKeyUser(),
+				usergroup: user?.getGroupName(),
+				created_date: user?.getCreatedAt(),
+				last_access_date: user?.getLastAccessAt(),
+				organisation: user?.getOrganisationName(),
+			},
+			preferences.preferences
+		);
 		return { message: 'success' };
 	}
 
