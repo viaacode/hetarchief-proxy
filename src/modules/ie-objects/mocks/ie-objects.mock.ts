@@ -23,6 +23,8 @@ export const mockIeObject: IeObject = {
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	maintainerDescription:
+		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	durationInSeconds: null,
 	numberOfPages: null,
 	datePublished: '2020-09-01',
@@ -88,6 +90,8 @@ export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	maintainerDescription:
+		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	series: null,
 	programs: null,
@@ -136,6 +140,8 @@ export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	maintainerDescription:
+		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	series: null,
 	programs: null,
@@ -195,6 +201,8 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	maintainerDescription:
+		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	series: null,
 	programs: null,
