@@ -192,7 +192,7 @@ export class CampaignMonitorService {
 			});
 
 			return {
-				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
+				newsletter: response?.State === 'Active',
 			};
 		} catch (err) {
 			if (err?.code === 203) {
@@ -442,7 +442,7 @@ export class CampaignMonitorService {
 			last_access_date: userInfo.last_access_date,
 			organisation: userInfo.organisation,
 		};
-		if (optin_mail_lists) {
+		if (optin_mail_lists != null) {
 			customFields['optin_mail_lists'] = optin_mail_lists;
 		}
 

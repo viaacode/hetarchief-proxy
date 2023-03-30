@@ -126,11 +126,6 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 	ConsentToTrack: 'Yes',
 	CustomFields: [
 		{
-			Key: 'optin_mail_lists',
-			Value: 'newsletter',
-			Clear: false,
-		},
-		{
 			Key: 'usergroup',
 			Value: mockUserInfo.usergroup,
 			Clear: false,
@@ -164,6 +159,11 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Key: 'organisation',
 			Value: null,
 			Clear: true,
+		},
+		{
+			Key: 'optin_mail_lists',
+			Value: 'newsletter',
+			Clear: false,
 		},
 	],
 };

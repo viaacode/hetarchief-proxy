@@ -228,7 +228,7 @@ export class HetArchiefController {
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
-			// Update custom fields in CM
+			// Update custom fields in Campaign Monitor
 			try {
 				await this.campaignMonitorService.updateNewsletterPreferences({
 					firstName: archiefUser?.firstName,
@@ -243,6 +243,7 @@ export class HetArchiefController {
 			} catch (err) {
 				this.logger.error('Failed updating the custom fields to Campaign Monitor');
 			}
+
 			// Log event
 			this.eventsService.insertEvents([
 				{

@@ -11,6 +11,7 @@ import { IdpService } from '../services/idp.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -108,6 +109,11 @@ const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.
 	findOrganisationBySchemaIdentifier: jest.fn(),
 };
 
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+	{
+		updateNewsletterPreferences: jest.fn(),
+	};
+
 const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
 
 const getNewMockSession = () => ({
@@ -157,6 +163,10 @@ describe('HetArchiefController', () => {
 				{
 					provide: OrganisationsService,
 					useValue: mockOrganisationsService,
+				},
+				{
+					provide: CampaignMonitorService,
+					useValue: mockCampaignMonitorService,
 				},
 			],
 		})
@@ -234,12 +244,35 @@ describe('HetArchiefController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('should redirect after successful login with a known user', async () => {
+		it('should redirect after successful login with a known user and succesful update in CM', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
 			mockUsersService.updateUser.mockReturnValue(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce({});
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+		});
+		it('should redirect after successful login with a known user and failed update in CM', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
+			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
+			mockUsersService.updateUser.mockReturnValue(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockRejectedValueOnce('');
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
