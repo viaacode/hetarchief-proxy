@@ -49,7 +49,7 @@ export interface CampaignMonitorNewsletterPreferences {
 	newsletter: boolean;
 }
 
-export interface UserInfo {
+export interface CampaignMonitorUserInfo {
 	firstName: string;
 	lastName: string;
 	email: string;

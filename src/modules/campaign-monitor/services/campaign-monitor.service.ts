@@ -14,9 +14,9 @@ import { Configuration } from '~config';
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorNewsletterPreferences,
+	CampaignMonitorUserInfo,
 	MaterialRequestEmailInfo,
 	Template,
-	UserInfo,
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -214,7 +214,7 @@ export class CampaignMonitorService {
 
 	public async updateNewsletterPreferences(
 		preferences: CampaignMonitorNewsletterPreferences,
-		userInfo: UserInfo
+		userInfo: CampaignMonitorUserInfo
 	) {
 		let url: string | null = null;
 
@@ -426,7 +426,7 @@ export class CampaignMonitorService {
 	}
 
 	public convertPreferencesToNewsletterTemplateData(
-		userInfo: UserInfo,
+		userInfo: CampaignMonitorUserInfo,
 		optin_mail_lists: string,
 		resubscribe: boolean
 	): CampaignMonitorUpdatePreferencesData {

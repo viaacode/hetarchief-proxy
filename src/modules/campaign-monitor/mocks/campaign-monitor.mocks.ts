@@ -1,4 +1,8 @@
-import { MaterialRequestEmailInfo, Template, UserInfo } from '../campaign-monitor.types';
+import {
+	CampaignMonitorUserInfo,
+	MaterialRequestEmailInfo,
+	Template,
+} from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmationData,
 	CampaignMonitorConfirmMailQueryDto,
@@ -27,7 +31,7 @@ export const mockUser: User = {
 	isKeyUser: false,
 };
 
-export const mockUserInfo: UserInfo = {
+export const mockUserInfo: CampaignMonitorUserInfo = {
 	firstName: mockUser.firstName,
 	lastName: mockUser.lastName,
 	email: mockUser.email,
