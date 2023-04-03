@@ -51,11 +51,33 @@ describe('OrganisationService', () => {
 	});
 
 	describe('findOrganisationBySchemaIdentifier', () => {
-		it('successfully find organisation by schema identifier', async () => {
-			mockDataService.execute.mockResolvedValueOnce(''); //todo
-			expect(1).toEqual(1);
+		it('should successfully find organisation by schema identifier', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				maintainer_organisation: [mockGqlOrganisation],
+			});
+			const result = await organisationsService.findOrganisationBySchemaIdentifier(
+				'OR-rf5kf25'
+			);
+			expect(result).toEqual(mockOrganisation);
+		});
+		it('should return null when the dataservice returns null', async () => {
+			mockDataService.execute.mockResolvedValueOnce(null);
+			const result = await organisationsService.findOrganisationBySchemaIdentifier(
+				'non-existing-id'
+			);
+			expect(result).toEqual(null);
+		});
+		it('should return null when the dataservice response has no organisations', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				maintainer_organisation: [],
+			});
+			const result = await organisationsService.findOrganisationBySchemaIdentifier(
+				'non-existing-id'
+			);
+			expect(result).toEqual(null);
 		});
 	});
+
 	describe('adapt', () => {
 		it('successfully adapt a GqlOrganisation to an Organisation', async () => {
 			const result = organisationsService.adapt(mockGqlOrganisation);
