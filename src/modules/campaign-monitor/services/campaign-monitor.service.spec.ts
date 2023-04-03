@@ -379,6 +379,9 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[4]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[4]
 			);
+			expect(result.CustomFields[5]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[5]
+			);
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
@@ -416,6 +419,9 @@ describe('CampaignMonitorService', () => {
 			);
 			expect(result.CustomFields[4]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[4]
+			);
+			expect(result.CustomFields[5]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[5]
 			);
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
