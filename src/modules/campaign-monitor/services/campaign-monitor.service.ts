@@ -154,18 +154,13 @@ export class CampaignMonitorService {
 		lastName,
 	}: CampaignMonitorConfirmMailQueryDto): Promise<void> {
 		if (mail !== decryptData(token)) {
-			throw new InternalServerErrorException('token is invalid');
+			throw new BadRequestException('token is invalid');
 		}
 		await this.updateNewsletterPreferences(
 			{
 				firstName,
 				lastName,
 				email: mail,
-				is_key_user: false,
-				usergroup: null,
-				created_date: JSON.stringify(new Date()),
-				last_access_date: JSON.stringify(new Date()),
-				organisation: null,
 			},
 			{ newsletter: true }
 		);
@@ -335,7 +330,6 @@ export class CampaignMonitorService {
 				);
 			}
 		} catch (err) {
-			console.error(err);
 			throw new BadRequestException(
 				err,
 				'Failed to send email using the campaign monitor api'

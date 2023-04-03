@@ -62,7 +62,7 @@ export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
 export const mockConfirmationData: CampaignMonitorConfirmationData = {
 	firstname: 'mockFirstName',
 	activation_url:
-		'http://fakehost/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
+		'http://fakeclienthost/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {

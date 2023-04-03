@@ -229,8 +229,8 @@ export class HetArchiefController {
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			// Update custom fields in Campaign Monitor
-			try {
-				await this.campaignMonitorService.updateNewsletterPreferences({
+			this.campaignMonitorService
+				.updateNewsletterPreferences({
 					firstName: archiefUser?.firstName,
 					lastName: archiefUser?.lastName,
 					email: archiefUser?.email,
@@ -239,10 +239,13 @@ export class HetArchiefController {
 					created_date: archiefUser?.createdAt,
 					last_access_date: archiefUser?.lastAccessAt,
 					organisation: archiefUser?.organisationName,
+				})
+				.catch((err) => {
+					this.logger.error(
+						'Failed updating the custom fields to Campaign Monitor: ' +
+							JSON.stringify(err)
+					);
 				});
-			} catch (err) {
-				this.logger.error('Failed updating the custom fields to Campaign Monitor');
-			}
 
 			// Log event
 			this.eventsService.insertEvents([
