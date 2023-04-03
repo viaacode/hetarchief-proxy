@@ -351,8 +351,8 @@ describe('CampaignMonitorService', () => {
 		it('should parse preferences to newsletterTemplateData', () => {
 			const result = campaignMonitorService.convertPreferencesToNewsletterTemplateData(
 				mockUserInfo,
-				'newsletter',
-				true
+				true,
+				'newsletter'
 			);
 			expect(result.EmailAddress).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.EmailAddress
@@ -385,6 +385,42 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[7]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
 			);
+		});
+
+		it('should parse preferences to newsletterTemplateData', () => {
+			const result = campaignMonitorService.convertPreferencesToNewsletterTemplateData(
+				mockUserInfo,
+				true
+			);
+			expect(result.EmailAddress).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.EmailAddress
+			);
+			expect(result.Name).toEqual(mockNewsletterTemplateDataWithNewsletter.Name);
+			expect(result.Resubscribe).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.Resubscribe
+			);
+			expect(result.ConsentToTrack).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.ConsentToTrack
+			);
+			expect(result.CustomFields[0]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[0]
+			);
+			expect(result.CustomFields[1]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[1]
+			);
+			expect(result.CustomFields[2]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[2]
+			);
+			expect(result.CustomFields[3]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[3]
+			);
+			expect(result.CustomFields[4]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[4]
+			);
+			expect(result.CustomFields[6]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
+			);
+			expect(result.CustomFields[7]).toBeUndefined();
 		});
 	});
 
@@ -452,12 +488,9 @@ describe('CampaignMonitorService', () => {
 		it('should return null when the user has no emailadress', async () => {
 			const userInfo = mockUserInfo;
 			userInfo.email = null;
-			const result = await campaignMonitorService.updateNewsletterPreferences(
-				{
-					newsletter: true,
-				},
-				userInfo
-			);
+			const result = await campaignMonitorService.updateNewsletterPreferences(userInfo, {
+				newsletter: true,
+			});
 			expect(result).toEqual(null);
 			userInfo.email = 'test@example.com';
 		});
@@ -474,12 +507,9 @@ describe('CampaignMonitorService', () => {
 				.replyWithError('');
 
 			try {
-				await campaignMonitorService.updateNewsletterPreferences(
-					{
-						newsletter: true,
-					},
-					mockUserInfo
-				);
+				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
+					newsletter: true,
+				});
 				fail(
 					new Error(
 						'updateNewsletterPreferences should have thrown an error when CM throws an error'
@@ -502,12 +532,9 @@ describe('CampaignMonitorService', () => {
 				.reply(201, {});
 
 			try {
-				await campaignMonitorService.updateNewsletterPreferences(
-					{
-						newsletter: false,
-					},
-					mockUserInfo
-				);
+				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
+					newsletter: false,
+				});
 			} catch (e) {
 				expect(e).toBeUndefined();
 			}
@@ -525,12 +552,27 @@ describe('CampaignMonitorService', () => {
 				.reply(201, {});
 
 			try {
-				await campaignMonitorService.updateNewsletterPreferences(
-					{
-						newsletter: true,
-					},
-					mockUserInfo
-				);
+				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo, {
+					newsletter: true,
+				});
+			} catch (e) {
+				expect(e).toBeUndefined();
+			}
+		});
+
+		it('should succesfully update newsletterPrefferences when no preferences are given (sync on login)', async () => {
+			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
+				.post(
+					`/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+				)
+				.reply(201, {});
+
+			try {
+				await campaignMonitorService.updateNewsletterPreferences(mockUserInfo);
 			} catch (e) {
 				expect(e).toBeUndefined();
 			}

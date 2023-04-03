@@ -157,7 +157,6 @@ export class CampaignMonitorService {
 			throw new InternalServerErrorException('token is invalid');
 		}
 		await this.updateNewsletterPreferences(
-			{ newsletter: true },
 			{
 				firstName,
 				lastName,
@@ -167,7 +166,8 @@ export class CampaignMonitorService {
 				created_date: JSON.stringify(new Date()),
 				last_access_date: JSON.stringify(new Date()),
 				organisation: null,
-			}
+			},
+			{ newsletter: true }
 		);
 	}
 
@@ -192,7 +192,7 @@ export class CampaignMonitorService {
 			});
 
 			return {
-				newsletter: response?.State === 'Active', //OR: response?.data?.State === 'Active',
+				newsletter: response?.State === 'Active',
 			};
 		} catch (err) {
 			if (err?.code === 203) {
@@ -213,8 +213,8 @@ export class CampaignMonitorService {
 	}
 
 	public async updateNewsletterPreferences(
-		preferences: CampaignMonitorNewsletterPreferences,
-		userInfo: CampaignMonitorUserInfo
+		userInfo: CampaignMonitorUserInfo,
+		preferences?: CampaignMonitorNewsletterPreferences
 	) {
 		let url: string | null = null;
 
@@ -229,20 +229,23 @@ export class CampaignMonitorService {
 				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`;
 
-			const mappedPreferences = [];
+			let optin_mail_lists;
+			if (preferences) {
+				const mappedPreferences = [];
 
-			if (preferences.newsletter) {
-				mappedPreferences.push(
-					this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
-				);
+				if (preferences.newsletter) {
+					mappedPreferences.push(
+						this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
+					);
+				}
+
+				optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
 			}
-
-			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
 
 			const data = this.convertPreferencesToNewsletterTemplateData(
 				userInfo,
-				optin_mail_lists,
-				true
+				true,
+				optin_mail_lists
 			);
 
 			await this.gotInstance({
@@ -427,11 +430,10 @@ export class CampaignMonitorService {
 
 	public convertPreferencesToNewsletterTemplateData(
 		userInfo: CampaignMonitorUserInfo,
-		optin_mail_lists: string,
-		resubscribe: boolean
+		resubscribe: boolean,
+		optin_mail_lists?: string
 	): CampaignMonitorUpdatePreferencesData {
 		const customFields = {
-			optin_mail_lists: optin_mail_lists,
 			usergroup: userInfo.usergroup,
 			is_key_user: userInfo.is_key_user,
 			firstname: userInfo.firstName,
@@ -440,6 +442,9 @@ export class CampaignMonitorService {
 			last_access_date: userInfo.last_access_date,
 			organisation: userInfo.organisation,
 		};
+		if (optin_mail_lists != null) {
+			customFields['optin_mail_lists'] = optin_mail_lists;
+		}
 
 		return {
 			EmailAddress: userInfo.email,
