@@ -5,6 +5,7 @@ import {
 	Controller,
 	ForbiddenException,
 	Get,
+	GoneException,
 	Logger,
 	NotFoundException,
 	Param,
@@ -98,6 +99,9 @@ export class SpacesController {
 					}
 				)
 			);
+		}
+		if (space.status === VisitorSpaceStatus.Inactive) {
+			throw new GoneException(`Space with slug "${slug}" is inactive`);
 		}
 		return space;
 	}
