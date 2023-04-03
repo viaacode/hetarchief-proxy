@@ -31,7 +31,7 @@ const mockConfigService = {
 			return 'http://bezoekerstool';
 		}
 		if (key === 'HOST') {
-			return 'http://fakehost';
+			return 'http://fakeclienthost';
 		}
 		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';

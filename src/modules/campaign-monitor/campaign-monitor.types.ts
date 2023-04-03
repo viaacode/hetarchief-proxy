@@ -53,9 +53,9 @@ export interface CampaignMonitorUserInfo {
 	firstName: string;
 	lastName: string;
 	email: string;
-	is_key_user: boolean;
-	usergroup: string; //groupName
-	created_date: string;
-	last_access_date: string;
-	organisation: string; //organisationName
+	is_key_user?: boolean;
+	usergroup?: string; //groupName
+	created_date?: string;
+	last_access_date?: string;
+	organisation?: string; //organisationName
 }

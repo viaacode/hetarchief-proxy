@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const encryptionParams = (): {
+const getEncryptionParams = (): {
 	key: string;
 	encryptionIV: string;
 	encryption_method: string;
@@ -22,20 +22,22 @@ const encryptionParams = (): {
 };
 // Encrypt data
 export const encryptData = (data: string): string => {
+	const encrypParams = getEncryptionParams();
 	const cipher = crypto.createCipheriv(
-		encryptionParams().encryption_method,
-		encryptionParams().key,
-		encryptionParams().encryptionIV
+		encrypParams.encryption_method,
+		encrypParams.key,
+		encrypParams.encryptionIV
 	);
 	return Buffer.from(cipher.update(data, 'utf8', 'hex') + cipher.final('hex')).toString('base64'); // Encrypts data and converts to hex and base64
 };
 // Decrypt data
 export const decryptData = (encryptedData: string): string => {
+	const encrypParams = getEncryptionParams();
 	const buff = Buffer.from(encryptedData, 'base64');
 	const decipher = crypto.createDecipheriv(
-		encryptionParams().encryption_method,
-		encryptionParams().key,
-		encryptionParams().encryptionIV
+		encrypParams.encryption_method,
+		encrypParams.key,
+		encrypParams.encryptionIV
 	);
 	return decipher.update(buff.toString('utf8'), 'hex', 'utf8') + decipher.final('utf8'); // Decrypts data and converts to utf8
 };
