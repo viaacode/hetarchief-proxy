@@ -30,11 +30,8 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 
 describe('OrganisationService', () => {
 	let organisationsService: OrganisationsService;
-	const env = process.env;
 
 	beforeEach(async () => {
-		process.env.ORGANIZATIONS_API_V2_URL = 'http://fake-organisations-url.be';
-
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				OrganisationsService,
@@ -56,7 +53,6 @@ describe('OrganisationService', () => {
 
 	afterEach(() => {
 		mockDataService.execute.mockRestore();
-		process.env = env;
 	});
 
 	describe('findOrganisationBySchemaIdentifier', () => {
