@@ -12,6 +12,7 @@ export enum Template {
 	SHARE_FOLDER = 'shareFolder',
 	MATERIAL_REQUEST_REQUESTER = 'materialRequestRequester',
 	MATERIAL_REQUEST_MAINTAINER = 'materialRequestMaintainer',
+	EMAIL_CONFIRMATION = 'emailConfirmation',
 }
 
 export interface VisitEmailInfo {
@@ -46,4 +47,15 @@ export interface CampaignMonitorShareFolderInfo {
 
 export interface CampaignMonitorNewsletterPreferences {
 	newsletter: boolean;
+}
+
+export interface CampaignMonitorUserInfo {
+	firstName: string;
+	lastName: string;
+	email: string;
+	is_key_user: boolean;
+	usergroup: string; //groupName
+	created_date: string;
+	last_access_date: string;
+	organisation: string; //organisationName
 }

@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+	IsBoolean,
+	IsNotEmpty,
+	IsObject,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 
 import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
@@ -100,6 +107,36 @@ export class CampaignMonitorMaterialRequestData {
 	cp_name?: string;
 }
 
+export class CampaignMonitorConfirmationData {
+	@IsString()
+	firstname: string;
+
+	@IsString()
+	activation_url: string;
+}
+
+export class CampaignMonitorUpdatePreferencesData {
+	@IsString()
+	@IsOptional()
+	EmailAddress: string;
+
+	@IsString()
+	@IsOptional()
+	Name: string;
+
+	@IsString()
+	@IsOptional()
+	Resubscribe: boolean;
+
+	@IsString()
+	@IsOptional()
+	ConsentToTrack: string;
+
+	@IsString()
+	@IsOptional()
+	CustomFields: { Key: string; Value: any; Clear: boolean }[];
+}
+
 export class RequestListItem {
 	@IsString()
 	@IsOptional()
@@ -156,7 +193,8 @@ export class CampaignMonitorData {
 	data:
 		| CampaignMonitorVisitData
 		| CampaignMonitorShareFolderInfo
-		| CampaignMonitorMaterialRequestData;
+		| CampaignMonitorMaterialRequestData
+		| CampaignMonitorConfirmationData;
 }
 
 export class CampaignMonitorSendMailDto {
@@ -194,4 +232,77 @@ export class CampaignMonitorNewsletterPreferencesQueryDto {
 		description: 'Email to fetch preferences from',
 	})
 	email?: string;
+}
+
+export class CampaignMonitorNewsletterPreferencesDto {
+	@IsBoolean()
+	@IsNotEmpty()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Boolean to tell whether or not newsletter is active or not',
+		example: true,
+	})
+	newsletter: boolean;
+}
+
+export class CampaignMonitorNewsletterUpdatePreferencesQueryDto {
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'First name of user',
+	})
+	firstName?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Last name of user',
+	})
+	lastName?: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'Mail to sign up for newsletter',
+	})
+	mail?: string;
+
+	@IsObject()
+	@IsNotEmpty()
+	@ApiProperty({
+		type: Object,
+		example: {
+			newsletter: true,
+		},
+	})
+	preferences: CampaignMonitorNewsletterPreferencesDto;
+}
+
+export class CampaignMonitorConfirmMailQueryDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	token: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	mail: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	firstName: string;
+
+	@IsString()
+	@ApiProperty({
+		type: String,
+	})
+	lastName: string;
 }

@@ -11,6 +11,7 @@ export const getTemplateId = (template: string): string => {
 			.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER as string,
 		[Template.MATERIAL_REQUEST_MAINTAINER]: process.env
 			.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER as string,
+		[Template.EMAIL_CONFIRMATION]: process.env.CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION as string,
 	};
 	return templateIds[template];
 };

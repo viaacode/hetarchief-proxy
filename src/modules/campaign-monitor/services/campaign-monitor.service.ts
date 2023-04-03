@@ -14,18 +14,23 @@ import { Configuration } from '~config';
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorNewsletterPreferences,
+	CampaignMonitorUserInfo,
 	MaterialRequestEmailInfo,
 	Template,
 	VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
+	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorData,
 	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 	CampaignMonitorSendMailDto,
+	CampaignMonitorUpdatePreferencesData,
 	CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
+import { decryptData, encryptData } from '../helpers/crypto-helper';
 
-import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Visit } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
@@ -114,6 +119,58 @@ export class CampaignMonitorService {
 		});
 	}
 
+	public async sendConfirmationMail(
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+	): Promise<void> {
+		const recipients: string[] = [];
+		if (preferences?.mail) {
+			recipients.push(preferences?.mail);
+		} else {
+			throw new BadRequestException(
+				`Mail will not be sent to ${preferences?.firstName} ${preferences?.lastName}- empty email address`
+			);
+		}
+
+		if (!preferences.firstName || !preferences.lastName) {
+			throw new BadRequestException('Both "firstName" and "lastName" must be filled in');
+		}
+
+		const data: CampaignMonitorData = {
+			to: recipients,
+			consentToTrack: 'unchanged',
+			data: this.convertToConfirmationEmailTemplateData(preferences),
+		};
+
+		await this.sendTransactionalMail({
+			template: Template.EMAIL_CONFIRMATION,
+			data,
+		});
+	}
+
+	public async confirmEmail({
+		token,
+		mail,
+		firstName,
+		lastName,
+	}: CampaignMonitorConfirmMailQueryDto): Promise<void> {
+		if (mail !== decryptData(token)) {
+			throw new InternalServerErrorException('token is invalid');
+		}
+		await this.updateNewsletterPreferences(
+			{ newsletter: true },
+			{
+				firstName,
+				lastName,
+				email: mail,
+				is_key_user: false,
+				usergroup: null,
+				created_date: JSON.stringify(new Date()),
+				last_access_date: JSON.stringify(new Date()),
+				organisation: null,
+			}
+		);
+	}
+
 	public async fetchNewsletterPreferences(
 		email: string
 	): Promise<CampaignMonitorNewsletterPreferences> {
@@ -157,12 +214,12 @@ export class CampaignMonitorService {
 
 	public async updateNewsletterPreferences(
 		preferences: CampaignMonitorNewsletterPreferences,
-		user: SessionUserEntity
+		userInfo: CampaignMonitorUserInfo
 	) {
 		let url: string | null = null;
 
 		try {
-			if (!user.getMail()) {
+			if (!userInfo.email) {
 				return null;
 			}
 
@@ -183,7 +240,7 @@ export class CampaignMonitorService {
 			const optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
 
 			const data = this.convertPreferencesToNewsletterTemplateData(
-				user,
+				userInfo,
 				optin_mail_lists,
 				true
 			);
@@ -369,24 +426,24 @@ export class CampaignMonitorService {
 	}
 
 	public convertPreferencesToNewsletterTemplateData(
-		user: SessionUserEntity,
+		userInfo: CampaignMonitorUserInfo,
 		optin_mail_lists: string,
 		resubscribe: boolean
-	) {
+	): CampaignMonitorUpdatePreferencesData {
 		const customFields = {
 			optin_mail_lists: optin_mail_lists,
-			usergroup: user.getGroupName(),
-			is_key_user: user.getIsKeyUser(),
-			firstname: user.getFirstName(),
-			lastname: user.getLastName(),
-			created_date: user.getCreatedAt(),
-			last_access_date: user.getLastAccessAt(),
-			organisation: user.getOrganisationName(),
+			usergroup: userInfo.usergroup,
+			is_key_user: userInfo.is_key_user,
+			firstname: userInfo.firstName,
+			lastname: userInfo.lastName,
+			created_date: userInfo.created_date,
+			last_access_date: userInfo.last_access_date,
+			organisation: userInfo.organisation,
 		};
 
 		return {
-			EmailAddress: user.getMail(),
-			Name: user.getFullName(),
+			EmailAddress: userInfo.email,
+			Name: userInfo.firstName + ' ' + userInfo.lastName,
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
 			CustomFields: toPairs(customFields).map((pair) => ({
@@ -394,6 +451,23 @@ export class CampaignMonitorService {
 				Value: pair[1],
 				Clear: isNil(pair[1]) || (isString(pair[1]) && pair[1] === ''),
 			})),
+		};
+	}
+
+	public convertToConfirmationEmailTemplateData(
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+	): CampaignMonitorConfirmationData {
+		return {
+			firstname: preferences.firstName,
+			activation_url: `${this.configService.get(
+				'HOST'
+			)}/campaign-monitor/confirm-email?token=${encryptData(
+				preferences?.mail
+			)}&${queryString.stringify({ mail: preferences?.mail })}&${queryString.stringify({
+				firstName: preferences?.firstName,
+			})}&${queryString.stringify({
+				lastName: preferences?.lastName,
+			})}`,
 		};
 	}
 }
