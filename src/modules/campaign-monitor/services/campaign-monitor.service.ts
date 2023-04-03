@@ -330,7 +330,6 @@ export class CampaignMonitorService {
 				);
 			}
 		} catch (err) {
-			console.error(err);
 			throw new BadRequestException(
 				err,
 				'Failed to send email using the campaign monitor api'

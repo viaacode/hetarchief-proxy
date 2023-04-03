@@ -220,14 +220,16 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(true);
 		});
 
-		it('should return false if there is no email adres', async () => {
+		it('should return false if there is no email address', async () => {
 			try {
 				await campaignMonitorService.sendForVisit({
 					template: Template.VISIT_APPROVED,
 					visit: getMockVisit(),
 					to: [],
 				});
-				fail(new Error('sendForVisit should throw an error when there is no email adres'));
+				fail(
+					new Error('sendForVisit should throw an error when there is no email address')
+				);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -256,7 +258,7 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForMaterialRequest', () => {
-		it('should log and not send to an empty recipients email adres, returns false', async () => {
+		it('should throw an error and not send to an empty recipients email address', async () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
@@ -294,7 +296,7 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(true);
 		});
 
-		it('should return true when emailInfo has valid fields', async () => {
+		it('should successfully send mail when emailInfo has valid fields', async () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
@@ -586,7 +588,7 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('convertToConfirmationEmailTemplateData', () => {
-		it('should parse CampaignMonitorNewsletterUpdatePreferencesQueryDto to correc template data', () => {
+		it('should parse CampaignMonitorNewsletterUpdatePreferencesQueryDto to correct template data', () => {
 			const result = campaignMonitorService.convertToConfirmationEmailTemplateData(
 				mockNewsletterUpdatePreferencesQueryDto
 			);
@@ -617,7 +619,7 @@ describe('CampaignMonitorService', () => {
 			preferences.firstName = 'test';
 		});
 
-		it('should successfully send confirmation mail all data is valid', async () => {
+		it('should successfully send confirmation mail when all data is valid', async () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
