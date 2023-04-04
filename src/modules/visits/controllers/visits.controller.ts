@@ -370,6 +370,7 @@ export class VisitsController {
 				data: {
 					visitor_space_id: visitorSpace.id,
 				},
+				userRole: user.getGroupId(),
 			},
 		]);
 
@@ -461,6 +462,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 					},
+					userRole: user.getGroupId(),
 				},
 			]);
 		} else if (visit.status === VisitStatus.DENIED) {
@@ -481,6 +483,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 					},
+					userRole: user.getGroupId(),
 				},
 			]);
 		} else if (updateVisitDto.status === VisitStatus.CANCELLED_BY_VISITOR) {
@@ -500,6 +503,7 @@ export class VisitsController {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
 					},
+					userRole: user.getGroupId(),
 				},
 			]);
 		}

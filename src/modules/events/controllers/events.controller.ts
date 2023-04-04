@@ -30,6 +30,7 @@ export class EventsController {
 			source: createEventsDto.path,
 			subject: user.getId() || 'anonymous',
 			time: new Date().toISOString(),
+			userRole: user.getGroupId() || 'anonymous',
 		};
 
 		if (createEventsDto.data) {

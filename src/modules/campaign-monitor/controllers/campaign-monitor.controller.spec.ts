@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Request } from 'express';
 
 import { Configuration } from '~config';
 
@@ -12,6 +13,7 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
+import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -27,6 +29,12 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
 	get: jest.fn((key: keyof Configuration): string | boolean => key),
 };
+
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
+const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
 
 describe('CampaignMonitorController', () => {
 	let campaignMonitorController: CampaignMonitorController;
@@ -46,6 +54,10 @@ describe('CampaignMonitorController', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
 				},
 			],
 		})
@@ -98,6 +110,7 @@ describe('CampaignMonitorController', () => {
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
 
 			const sent = await campaignMonitorController.updatePreferences(
+				mockRequest,
 				mockNewsletterUpdatePreferencesQueryDto,
 				new SessionUserEntity({
 					...mockUser,
@@ -110,6 +123,7 @@ describe('CampaignMonitorController', () => {
 			mockCampaignMonitorService.sendConfirmationMail.mockResolvedValueOnce({});
 
 			const sent = await campaignMonitorController.updatePreferences(
+				mockRequest,
 				mockNewsletterUpdatePreferencesQueryDto
 			);
 

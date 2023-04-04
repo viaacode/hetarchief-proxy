@@ -29,6 +29,7 @@ const logEvents = [
 		data: {
 			folderId: '84b9cff3-9dab-423c-b8c4-37ff6da6ce4b',
 		},
+		userRole: 'anonymous',
 	},
 ];
 
