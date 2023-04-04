@@ -34,7 +34,7 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
-const mockRequest = { path: '/auth/hetarchief', headers: {} } as unknown as Request;
+const mockRequest = { path: '/campaign-monitor/preferences', headers: {} } as unknown as Request;
 
 describe('CampaignMonitorController', () => {
 	let campaignMonitorController: CampaignMonitorController;
