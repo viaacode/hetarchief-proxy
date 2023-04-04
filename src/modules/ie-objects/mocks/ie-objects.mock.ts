@@ -238,6 +238,72 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 };
 
+export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
+	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+	meemooOriginalCp: null,
+	premisIsPartOf: null,
+	meemooIdentifier: '8911p09j1g',
+	schemaIdentifier:
+		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	meemooLocalId: null,
+	maintainerId: 'OR-rf5kf25',
+	maintainerName: 'vrt',
+	maintainerSlug: 'vrt',
+	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	name: 'Durf te vragen R002 A0001',
+	series: [],
+	programs: [],
+	alternativeName: null,
+	dctermsFormat: 'video',
+	dctermsMedium: '16mm',
+	duration: '00:39:52',
+	dateCreated: '[2020-09-01]',
+	datePublished: '2020-09-01',
+	creator: {
+		productionCompany: ['Roses Are Blue'],
+	},
+	description:
+		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
+	genre: ['program'],
+	keywords: [
+		'INTERVIEW',
+		'ZIEKTE',
+		'GEZONDHEID',
+		'ZIEKTE VAN ALZHEIMER',
+		'JONGDEMENTIE',
+		'THUISVERPLEGING',
+		'FIETS',
+		'GEHEUGEN',
+		'VERGETEN',
+		'AGRESSIE',
+		'KARAKTERVORMING',
+	],
+	inLanguage: null,
+	meemoofilmBase: null,
+	meemoofilmColor: null,
+	ebucoreIsMediaFragmentOf: null,
+	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	meemoofilmImageOrSound: null,
+	dateCreatedLowerBound: '2020-09-01',
+	premisIdentifier: null,
+};
+
+export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
+	name: 'Durf te vragen R002 A0001',
+	maintainerName: 'vrt',
+	maintainerId: 'OR-rf5kf25',
+	series: [],
+	dctermsFormat: 'video',
+	dateCreatedLowerBound: '2020-09-01',
+	datePublished: '2020-09-01',
+	meemooIdentifier: '8911p09j1g',
+	meemooLocalId: null,
+	premisIdentifier: null,
+	schemaIdentifier:
+		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	programs: [],
+};
+
 export const mockUser = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',

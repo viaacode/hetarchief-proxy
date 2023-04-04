@@ -7,11 +7,19 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
+import { Operator, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
 import { ElasticsearchResponse } from '../ie-objects.types';
-import { mockObjectIe } from '../mocks/ie-objects.mock';
+import {
+	mockIeObject,
+	mockIeObjectDefaultLimitedMetadata,
+	mockIeObjectLimitedInFolder,
+	mockObjectIe,
+	mockUser,
+} from '../mocks/ie-objects.mock';
 
 import { IeObjectsService } from './ie-objects.service';
 
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -229,6 +237,63 @@ describe('ieObjectsService', () => {
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.items.length).toBe(2);
+		});
+	});
+
+	describe('defaultLimitedMetadata', () => {
+		it('should succesfully parse the object', () => {
+			const result = ieObjectsService.defaultLimitedMetadata(mockIeObject);
+			expect(result).toEqual(mockIeObjectDefaultLimitedMetadata);
+		});
+	});
+
+	describe('limitObjectInFolder', () => {
+		it('should succesfully parse the object', () => {
+			const result = ieObjectsService.limitObjectInFolder(
+				mockIeObject,
+				new SessionUserEntity(mockUser),
+				{ visitorSpaceIds: ['1'], objectIds: ['1'] }
+			);
+			expect(result).toEqual(mockIeObjectLimitedInFolder);
+		});
+	});
+
+	describe('getSimpleSearchTermsFromBooleanExpression', () => {
+		it('should return the value of the filter when the field is query', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: SearchFilterField.QUERY,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+			]);
+			expect(result).toEqual(['example']);
+		});
+
+		it('should only return the value of the filter where the field is query', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: SearchFilterField.QUERY,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+				{
+					field: SearchFilterField.NAME,
+					operator: Operator.CONTAINS,
+					value: 'example2',
+				},
+			]);
+			expect(result).toEqual(['example']);
+		});
+		it('should return an empty array when there are no filters where field is query', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: SearchFilterField.NAME,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+			]);
+			expect(result).toEqual([]);
 		});
 	});
 });
