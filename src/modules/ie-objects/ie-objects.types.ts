@@ -124,6 +124,8 @@ export interface IeObject {
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
 	maintainerFromUrl?: string | null;
+	maintainerDescription?: string;
+	maintainerSiteUrl?: string;
 	// FROM DB
 	meemoofilmCaption?: string;
 	meemoofilmCaptionLanguage?: string;

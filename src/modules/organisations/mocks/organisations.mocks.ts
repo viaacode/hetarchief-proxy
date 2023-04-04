@@ -76,6 +76,7 @@ export const mockOrganisationInfoV2: OrganisationInfoV2 = {
 	sector: IeObjectSector.PUBLIC,
 	form_url:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
+	homepage: 'https://www.vrt.be',
 	logo: {
 		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},

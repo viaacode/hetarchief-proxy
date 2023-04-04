@@ -6,6 +6,7 @@ export interface OrganisationInfoV2 {
 	description: string;
 	sector: IeObjectSector | null;
 	form_url: string | null;
+	homepage: string | null;
 	logo: {
 		iri: string;
 	};
@@ -42,6 +43,8 @@ export interface ParsedOrganisation {
 	description: string;
 	// Remark here organization is with Z
 	haorg_organization_type: string;
+	form_url: string | null;
+	homepage_url: string | null;
 	logo: {
 		iri: string;
 	};
@@ -81,6 +84,7 @@ export interface GqlOrganisation {
 	// Remark here organization is with Z
 	haorg_organization_type?: IeObjectSector | null;
 	form_url?: string | null;
+	homepage_url?: string | null;
 }
 
 export interface Organisation {
