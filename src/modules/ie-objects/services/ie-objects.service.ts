@@ -27,6 +27,7 @@ import {
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
+	IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -305,6 +306,7 @@ export class IeObjectsService {
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
 			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
+			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
