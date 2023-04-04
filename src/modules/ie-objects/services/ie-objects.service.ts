@@ -304,6 +304,7 @@ export class IeObjectsService {
 				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
 			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
+			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
