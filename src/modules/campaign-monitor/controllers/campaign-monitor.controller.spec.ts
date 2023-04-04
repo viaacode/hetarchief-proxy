@@ -3,7 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Configuration } from '~config';
 
-import { mockUser } from '../mocks/campaign-monitor.mocks';
+import {
+	mockNewsletterUpdatePreferencesQueryDto,
+	mockSendMailQueryDto,
+	mockUser,
+} from '../mocks/campaign-monitor.mocks';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
@@ -16,6 +20,8 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 		sendTransactionalMail: jest.fn(),
 		fetchNewsletterPreferences: jest.fn(),
 		updateNewsletterPreferences: jest.fn(),
+		sendConfirmationMail: jest.fn(),
+		confirmEmail: jest.fn(),
 	};
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -24,8 +30,11 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 
 describe('CampaignMonitorController', () => {
 	let campaignMonitorController: CampaignMonitorController;
+	const env = process.env;
 
 	beforeEach(async () => {
+		process.env.CLIENT_HOST = 'fakeClientHost';
+
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [CampaignMonitorController],
 			imports: [],
@@ -45,6 +54,10 @@ describe('CampaignMonitorController', () => {
 
 		campaignMonitorController =
 			module.get<CampaignMonitorController>(CampaignMonitorController);
+	});
+
+	afterEach(() => {
+		process.env = env;
 	});
 
 	it('should be defined', () => {
@@ -80,18 +93,51 @@ describe('CampaignMonitorController', () => {
 			expect(sent).toEqual({ newsletter: true });
 		});
 	});
-	describe('getPreferences', () => {
-		it('get user newsletter preferences', async () => {
+	describe('updatePreferences', () => {
+		it('update user newsletter preferences with logged in user', async () => {
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
 
 			const sent = await campaignMonitorController.updatePreferences(
-				{ newsletter: true },
+				mockNewsletterUpdatePreferencesQueryDto,
 				new SessionUserEntity({
 					...mockUser,
 				})
 			);
 
-			expect(sent).toBeTruthy();
+			expect(sent).toEqual({ message: 'success' });
+		});
+		it('sent confirmation mail when no user is logged in', async () => {
+			mockCampaignMonitorService.sendConfirmationMail.mockResolvedValueOnce({});
+
+			const sent = await campaignMonitorController.updatePreferences(
+				mockNewsletterUpdatePreferencesQueryDto
+			);
+
+			expect(sent).toEqual({ message: 'success' });
+		});
+	});
+
+	describe('confirmMail', () => {
+		it('redirect to nieuwsbrief/bevestiging when the token is valid', async () => {
+			mockCampaignMonitorService.confirmEmail.mockResolvedValueOnce({});
+
+			const result = await campaignMonitorController.confirmMail(mockSendMailQueryDto);
+
+			expect(result).toEqual({
+				url: `${process.env.CLIENT_HOST}/nieuwsbrief/bevestiging`,
+			});
+		});
+		it('redirect to nieuwsbrief/mislukt when the token is invalid', async () => {
+			mockCampaignMonitorService.confirmEmail.mockRejectedValueOnce({});
+
+			const mockData = mockSendMailQueryDto;
+			mockData.mail = 'invalid@mail.com';
+			const result = await campaignMonitorController.confirmMail(mockData);
+
+			expect(result).toEqual({
+				url: `${process.env.CLIENT_HOST}/nieuwsbrief/mislukt`,
+			});
+			mockData.mail = 'test@example.com';
 		});
 	});
 });

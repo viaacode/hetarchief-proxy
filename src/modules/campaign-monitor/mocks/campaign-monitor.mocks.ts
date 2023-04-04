@@ -1,5 +1,15 @@
-import { MaterialRequestEmailInfo, Template } from '../campaign-monitor.types';
-import { CampaignMonitorMaterialRequestData, RequestListItem } from '../dto/campaign-monitor.dto';
+import {
+	CampaignMonitorUserInfo,
+	MaterialRequestEmailInfo,
+	Template,
+} from '../campaign-monitor.types';
+import {
+	CampaignMonitorConfirmationData,
+	CampaignMonitorConfirmMailQueryDto,
+	CampaignMonitorMaterialRequestData,
+	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	RequestListItem,
+} from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { MaterialRequestRequesterCapacity } from '~modules/material-requests/material-requests.types';
@@ -19,6 +29,40 @@ export const mockUser: User = {
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS, Permission.CREATE_VISIT_REQUEST],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
+};
+
+export const mockUserInfo: CampaignMonitorUserInfo = {
+	firstName: mockUser.firstName,
+	lastName: mockUser.lastName,
+	email: mockUser.email,
+	is_key_user: mockUser.isKeyUser,
+	usergroup: mockUser.groupName,
+	created_date: mockUser?.createdAt || null,
+	last_access_date: mockUser?.lastAccessAt || null,
+	organisation: mockUser?.organisationName || null,
+};
+
+export const mockNewsletterUpdatePreferencesQueryDto: CampaignMonitorNewsletterUpdatePreferencesQueryDto =
+	{
+		firstName: 'mockFirstName',
+		lastName: 'mockLastName',
+		mail: 'test@example.com',
+		preferences: {
+			newsletter: true,
+		},
+	};
+
+export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
+	token: 'MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==',
+	firstName: 'mockFirstName',
+	lastName: 'mockLastName',
+	mail: 'test@example.com',
+};
+
+export const mockConfirmationData: CampaignMonitorConfirmationData = {
+	firstname: 'mockFirstName',
+	activation_url:
+		'http://fakeclienthost/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {
@@ -76,34 +120,29 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 	};
 
 export const mockNewsletterTemplateDataWithNewsletter = {
-	EmailAddress: mockUser.email,
-	Name: mockUser.fullName,
+	EmailAddress: mockUserInfo.email,
+	Name: mockUserInfo.firstName + ' ' + mockUserInfo.lastName,
 	Resubscribe: true,
 	ConsentToTrack: 'Yes',
 	CustomFields: [
 		{
-			Key: 'optin_mail_lists',
-			Value: 'newsletter',
-			Clear: false,
-		},
-		{
 			Key: 'usergroup',
-			Value: mockUser.groupName,
+			Value: mockUserInfo.usergroup,
 			Clear: false,
 		},
 		{
 			Key: 'is_key_user',
-			Value: mockUser.isKeyUser,
+			Value: mockUserInfo.is_key_user,
 			Clear: false,
 		},
 		{
 			Key: 'firstname',
-			Value: mockUser.firstName,
+			Value: mockUserInfo.firstName,
 			Clear: false,
 		},
 		{
 			Key: 'lastname',
-			Value: mockUser.lastName,
+			Value: mockUserInfo.lastName,
 			Clear: false,
 		},
 		{
@@ -120,6 +159,11 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Key: 'organisation',
 			Value: null,
 			Clear: true,
+		},
+		{
+			Key: 'optin_mail_lists',
+			Value: 'newsletter',
+			Clear: false,
 		},
 	],
 };

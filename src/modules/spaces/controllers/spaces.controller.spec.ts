@@ -26,6 +26,12 @@ const mockSpacesResponse = {
 			name: 'Space X',
 			maintainerId: 'OR-spacex',
 		},
+		{
+			id: '3',
+			name: 'Space Y',
+			maintainerId: 'OR-spacey',
+			status: VisitorSpaceStatus.Inactive,
+		},
 	],
 };
 
@@ -94,19 +100,19 @@ describe('SpacesController', () => {
 		it('should return all spaces', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
 			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(mockUser));
-			expect(spaces.items.length).toEqual(2);
+			expect(spaces.items.length).toEqual(mockSpacesResponse.items.length);
 		});
 
 		it('should return all spaces if no user is logged in', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
 			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(undefined));
-			expect(spaces.items.length).toEqual(2);
+			expect(spaces.items.length).toEqual(mockSpacesResponse.items.length);
 		});
 
 		it('should only return active spaces if the user does not have the READ_ALL_SPACES permission', async () => {
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSpacesResponse);
 			const spaces = await spacesController.getSpaces({}, new SessionUserEntity(mockUser));
-			expect(spaces.items.length).toEqual(2);
+			expect(spaces.items.length).toEqual(mockSpacesResponse.items.length);
 			expect(mockSpacesService.findAll).toHaveBeenCalledWith(
 				{
 					status: [VisitorSpaceStatus.Active],
@@ -167,6 +173,21 @@ describe('SpacesController', () => {
 				message: 'Space with slug "huis-van-alijn" not found',
 				error: 'Not Found',
 			});
+		});
+
+		it('should throw a gone exception for space that is inactive', async () => {
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[2]);
+
+			try {
+				await spacesController.getSpaceBySlug('huis-van-alijn');
+				fail('getSpaceBySlug should throw an error when the space is inactive');
+			} catch (err) {
+				expect(err?.response).toEqual({
+					statusCode: 410,
+					message: 'Space with slug "huis-van-alijn" is inactive',
+					error: 'Gone',
+				});
+			}
 		});
 	});
 
