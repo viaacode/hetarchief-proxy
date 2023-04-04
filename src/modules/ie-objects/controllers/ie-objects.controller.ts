@@ -103,6 +103,7 @@ export class IeObjectsController {
 		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
+			description: hasPublicAccess ? ieObject?.description : null,
 		};
 	}
 

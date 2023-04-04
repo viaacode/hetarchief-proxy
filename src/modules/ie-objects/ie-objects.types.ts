@@ -8,7 +8,7 @@ import {
 
 export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
 
-export type IeObjectSeo = Pick<IeObject, 'name'>;
+export type IeObjectSeo = Pick<IeObject, 'name' | 'description'>;
 
 export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];
