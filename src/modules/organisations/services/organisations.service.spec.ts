@@ -97,7 +97,7 @@ describe('OrganisationService', () => {
 				.post('/')
 				.reply(200, getMockOrganisationResponse(51));
 
-			mockDataService.execute.mockResolvedValueOnce(true); // execute in emptyOrganizations method
+			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in emptyOrganizations method
 			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in insertOrganizations method
 
 			try {
@@ -112,7 +112,7 @@ describe('OrganisationService', () => {
 				.post('/')
 				.reply(200, getMockOrganisationResponse(0));
 
-			mockDataService.execute.mockResolvedValueOnce(true); // execute in emptyOrganizations method
+			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in emptyOrganizations method
 			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in insertOrganizations method
 
 			try {
@@ -130,7 +130,7 @@ describe('OrganisationService', () => {
 		it('should throw InternalServerErrorException when organizations api throws an error', async () => {
 			nock('http://fake-organisations-url.be').post('/').replyWithError('');
 
-			mockDataService.execute.mockResolvedValueOnce(true); // execute in emptyOrganizations method
+			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in emptyOrganizations method
 			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in insertOrganizations method
 
 			try {
@@ -167,7 +167,7 @@ describe('OrganisationService', () => {
 				.post('/')
 				.reply(200, getMockOrganisationResponse(51));
 
-			mockDataService.execute.mockResolvedValueOnce(true); // execute in emptyOrganizations method
+			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in emptyOrganizations method
 			mockDataService.execute.mockRejectedValueOnce(''); // execute in insertOrganizations method
 
 			try {
@@ -188,7 +188,7 @@ describe('OrganisationService', () => {
 				.post('/')
 				.reply(200, getMockOrganisationResponse(51));
 
-			mockDataService.execute.mockResolvedValueOnce(true); // execute in emptyOrganizations method
+			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in emptyOrganizations method
 			mockDataService.execute.mockResolvedValueOnce(Promise.resolve()); // execute in insertOrganizations method
 
 			try {

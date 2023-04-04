@@ -34,6 +34,8 @@ export const mockGqlOrganisation: GqlOrganisation = {
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	// Remark here organization is with Z
 	haorg_organization_type: IeObjectSector.PUBLIC,
+	form_url:
+		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 };
 
 export const mockOrganisation: Organisation = {
@@ -62,7 +64,8 @@ export const mockOrganisation: Organisation = {
 	createdAt: '2023-04-03T13:28:01.434203+02:00',
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
 	sector: IeObjectSector.PUBLIC,
-	formUrl: undefined,
+	formUrl:
+		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 };
 
 export const mockOrganisationInfoV2: OrganisationInfoV2 = {
