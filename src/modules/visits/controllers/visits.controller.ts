@@ -171,7 +171,7 @@ export class VisitsController {
 					visitorName: user.getFullName(),
 					updatedByName: null,
 					createdAt: new Date().toISOString(),
-					spaceName: user.getVisitorSpaceSlug(),
+					spaceName: user.getOrganisationName(),
 					spaceMail: null,
 					spaceId: user.getMaintainerId(),
 					spaceTelephone: null,
