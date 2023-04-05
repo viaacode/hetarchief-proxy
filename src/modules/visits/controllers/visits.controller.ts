@@ -482,7 +482,7 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
-						user_Group: user.getGroupId(),
+						user_group: user.getGroupId(),
 					},
 				},
 			]);
@@ -502,7 +502,7 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
-						user_Group: user.getGroupId(),
+						user_group: user.getGroupId(),
 					},
 				},
 			]);
