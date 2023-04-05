@@ -497,26 +497,44 @@ export class QueryBuilder {
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds and key user
 				{
-					term: {
-						'schema_maintainer.organization_type': user.getSector(),
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
+					bool: {
+						should: [
+							{
+								terms: {
+									'schema_maintainer.organization_type': [user.getSector()],
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
 						],
+						minimum_should_match: 2,
 					},
 				},
 				// 3) or-id is its own or-id and key user
 				{
-					term: {
-						'schema_maintainer.schema_identifier': user.getMaintainerId(),
-					},
-					terms: {
-						schema_license: [
-							IeObjectLicense.INTRA_CP_METADATA_ALL,
-							IeObjectLicense.INTRA_CP_CONTENT,
+					bool: {
+						should: [
+							{
+								terms: {
+									'schema_maintainer.schema_identifier': [user.getMaintainerId()],
+								},
+							},
+							{
+								terms: {
+									schema_license: [
+										IeObjectLicense.INTRA_CP_METADATA_ALL,
+										IeObjectLicense.INTRA_CP_CONTENT,
+									],
+								},
+							},
 						],
+						minimum_should_match: 2,
 					},
 				},
 			];
