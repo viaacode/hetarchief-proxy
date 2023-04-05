@@ -14,13 +14,14 @@ import {
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectLimitedInFolder,
 	mockObjectIe,
+	mockObjectIeTuples,
 	mockUser,
 } from '../mocks/ie-objects.mock';
 
 import { IeObjectsService } from './ie-objects.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { mockVisitApproved, mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
+import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -212,6 +213,22 @@ describe('ieObjectsService', () => {
 
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
+		});
+	});
+
+	describe('countRelated', () => {
+		it('should succesfully count the related objects', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				object_ie: mockObjectIeTuples,
+			});
+
+			const result = await ieObjectsService.countRelated(['1', '2', '3']);
+
+			expect(result).toEqual({
+				s46h14z19k: 1,
+				w37kp8850k_001_wav: 1,
+				x921c4s60t: 2,
+			});
 		});
 	});
 
