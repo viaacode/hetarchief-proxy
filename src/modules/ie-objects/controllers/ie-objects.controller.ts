@@ -3,6 +3,7 @@ import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
+import { intersection } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -90,12 +91,10 @@ export class IeObjectsController {
 		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKTOOL licences
 		if (
 			user.getGroupId() === GroupId.MEEMOO_ADMIN &&
-			limitedObject?.licenses.some((licence) =>
-				[
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				].includes(licence)
-			)
+			intersection(limitedObject?.licenses, [
+				IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			]).length > 0
 		) {
 			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
 		}
