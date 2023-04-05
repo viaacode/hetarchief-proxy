@@ -87,8 +87,16 @@ export class IeObjectsController {
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
 
-		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough
-		if (user.getGroupId() === GroupId.MEEMOO_ADMIN) {
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKTOOL licences
+		if (
+			user.getGroupId() === GroupId.MEEMOO_ADMIN &&
+			limitedObject?.licenses.some((licence) =>
+				[
+					IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+				].includes(licence)
+			)
+		) {
 			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
 		}
 
