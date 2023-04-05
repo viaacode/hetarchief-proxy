@@ -18,6 +18,7 @@ import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
 	IeObject,
+	IeObjectAccessThrough,
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
@@ -27,7 +28,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { GroupId, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -85,6 +86,11 @@ export class IeObjectsController {
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
+
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough
+		if (user.getGroupId() === GroupId.MEEMOO_ADMIN) {
+			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		}
 
 		return limitedObject;
 	}
