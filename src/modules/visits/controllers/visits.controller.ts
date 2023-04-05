@@ -35,7 +35,7 @@ import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName, Permission } from '~modules/users/types';
+import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -226,7 +226,10 @@ export class VisitsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		// Check if the user is a CP admin or a Kiosk user for the requested space
-		if (visitorSpaceSlug === user.getVisitorSpaceSlug()) {
+		if (
+			visitorSpaceSlug === user.getVisitorSpaceSlug() ||
+			user.getGroupId() === GroupId.MEEMOO_ADMIN
+		) {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
 			// Return fake visit request that is approved and valid forever
 			return {
