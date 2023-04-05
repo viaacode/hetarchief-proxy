@@ -20,7 +20,9 @@ import {
 import { IeObjectsService } from './ie-objects.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { mockVisitApproved, mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -54,6 +56,7 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	hasAccess: jest.fn(),
+	findAll: jest.fn(),
 };
 
 const mockObjectSchemaIdentifier = mockObjectIe.object_ie[0].schema_identifier;
@@ -237,6 +240,75 @@ describe('ieObjectsService', () => {
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.items.length).toBe(2);
+		});
+	});
+
+	describe('executeQuery', () => {
+		it('should return the result when the fetch is successful', async () => {
+			const esIndex = 'esIndexValue';
+			nock('http://elasticsearch').post(`/${esIndex}/_search`).reply(200, {});
+
+			const result = await ieObjectsService.executeQuery(esIndex, 'query');
+
+			expect(result).toEqual({});
+		});
+
+		it('should log and throw an error when the fetch is unsuccessful', async () => {
+			const esIndex = 'esIndexValue';
+			nock('http://elasticsearch').post(`/${esIndex}/_search`).replyWithError('');
+
+			try {
+				await ieObjectsService.executeQuery(esIndex, 'query');
+				fail('executeQuery should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('RequestError');
+			}
+		});
+	});
+
+	describe('getVisitorSpaceAccessInfoFromUser', () => {
+		it('should return empty arrays when the user is not logged in', async () => {
+			const user = mockUser;
+			user.id = null;
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity(user)
+			);
+
+			expect(result).toEqual({
+				objectIds: [],
+				visitorSpaceIds: [],
+			});
+			user.id = 'e791ecf1-e121-4c54-9d2e-34524b6467c6';
+		});
+
+		it('should return empty arrays when the user has no approved visits', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({
+				items: [],
+			});
+
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(result).toEqual({
+				objectIds: [],
+				visitorSpaceIds: [],
+			});
+		});
+
+		it('should return Visitor Access Info from user that has approved visits', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({
+				items: [{ ...mockVisitApproved, accessType: VisitAccessType.Full }],
+			});
+
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity(mockUser)
+			);
+
+			expect(result).toEqual({
+				objectIds: [mockVisitApproved?.accessibleObjectIds],
+				visitorSpaceIds: [mockVisitApproved?.spaceMaintainerId],
+			});
 		});
 	});
 
