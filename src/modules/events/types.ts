@@ -1,6 +1,8 @@
 export enum LogEventType {
 	USER_AUTHENTICATE = 'be.hetarchief.user.authenticate',
 	ITEM_REQUEST = 'be.hetarchief.item.request',
+	ITEM_VIEW = 'be.hetarchief.bezoek.item.view', // Triggered in client
+	ITEM_PLAY = 'be.hetarchief.bezoek.item.play', // Triggered in client
 	ITEM_BOOKMARK = 'be.hetarchief.item.bookmark',
 	METADATA_EXPORT = 'be.hetarchief.bezoek.metadata.export',
 	VISIT_REQUEST = 'be.hetarchief.bezoek.visit.request',
