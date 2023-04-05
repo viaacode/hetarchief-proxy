@@ -164,6 +164,7 @@ export class MeemooController {
 					time: new Date().toISOString(),
 					data: {
 						idp: Idp.MEEMOO,
+						user_group: archiefUser.groupId,
 					},
 				},
 			]);

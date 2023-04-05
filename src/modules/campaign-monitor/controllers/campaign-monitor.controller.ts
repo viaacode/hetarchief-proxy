@@ -68,8 +68,10 @@ export class CampaignMonitorController {
 				type: LogEventType.NEWSLETTER_SUBSCRIBE,
 				source: request.path,
 				subject: user?.getId() || 'anonymous',
-				userRole: user?.getGroupId() || 'anonymous',
 				time: new Date().toISOString(),
+				data: {
+					user_group: user?.getGroupId() || 'anonymous',
+				},
 			},
 		]);
 

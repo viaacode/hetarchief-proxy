@@ -19,5 +19,4 @@ export interface LogEvent {
 	subject: string;
 	time: string; // timestamp
 	data?: Record<string, unknown>;
-	userRole?: string;
 }

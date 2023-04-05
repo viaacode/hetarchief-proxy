@@ -124,7 +124,9 @@ export class IeObjectsController {
 				source: request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
-				userRole: user.getGroupId(),
+				data: {
+					user_group: user.getGroupId(),
+				},
 			},
 		]);
 
@@ -162,7 +164,9 @@ export class IeObjectsController {
 				source: request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
-				userRole: user.getGroupId(),
+				data: {
+					user_group: user.getGroupId(),
+				},
 			},
 		]);
 

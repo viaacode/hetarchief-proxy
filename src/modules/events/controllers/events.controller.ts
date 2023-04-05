@@ -30,12 +30,16 @@ export class EventsController {
 			source: createEventsDto.path,
 			subject: user.getId() || 'anonymous',
 			time: new Date().toISOString(),
-			userRole: user.getGroupId() || 'anonymous',
 		};
 
 		if (createEventsDto.data) {
 			logEvent.data = createEventsDto.data;
 		}
+
+		logEvent.data = {
+			...logEvent.data,
+			user_group: user.getGroupId() || 'anonymous',
+		};
 
 		await this.eventsService.insertEvents([logEvent]);
 

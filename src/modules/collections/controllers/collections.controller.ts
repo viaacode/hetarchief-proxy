@@ -196,6 +196,7 @@ export class CollectionsController {
 				data: {
 					schema_identifier: objectSchemaIdentifier,
 					folder_id: collectionId,
+					user_group: user.getGroupId(),
 				},
 			},
 		]);
