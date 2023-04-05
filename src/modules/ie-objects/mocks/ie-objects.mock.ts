@@ -559,7 +559,7 @@ export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
 	],
 };
 
-export const mockObjectIeTuples: Partial<GqlIeObject>[] = [
+export const mockGqlIeObjectTuples: Partial<GqlIeObject>[] = [
 	{
 		schema_identifier:
 			'73d46f15abae4947912429864ef40472617630b7e5914d82809576457883dbb35d4b0399743941d082aa489c08e2d990',
@@ -581,6 +581,57 @@ export const mockObjectIeTuples: Partial<GqlIeObject>[] = [
 		meemoo_identifier: 'x921c4s60t',
 	},
 ];
+
+export const mockGqlIeObjectFindByCollectionId = {
+	ie: {
+		schema_identifier:
+			'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
+		premis_identifier: {
+			batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+		},
+		maintainer: {
+			schema_name: 'Huis van Alijn',
+		},
+		schema_name: 'Op de boerderij',
+		dcterms_format: 'video',
+		schema_date_created_lower_bound: '2018-01-01',
+		schema_date_published: null,
+		schema_is_part_of: {
+			reeks: ['WEB'],
+			archief: ['digitaal archief/videoproducties'],
+			alternatief: ['videoproductie'],
+		},
+		meemoo_identifier: '4f1mg9x363',
+		meemoo_local_id: 'VI-0011-0004',
+		schema_license: [
+			'CP-WEBSITE',
+			'VIAA-INTRA_CP-CONTENT',
+			'VIAA-INTRA_CP-METADATA-ALL',
+			'VIAA-ONDERWIJS',
+			'VIAA-ONDERZOEK',
+			'VIAA-PUBLIEK-METADATA-LTD',
+			'BEZOEKERTOOL-CONTENT',
+			'BEZOEKERTOOL-METADATA-ALL',
+		],
+	},
+};
+
+export const mockGqlIeObjectFindByCollectionIdResult: Partial<IeObject> = {
+	schemaIdentifier:
+		'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
+	premisIdentifier: {
+		batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+	},
+	maintainerName: 'Huis van Alijn',
+	name: 'Op de boerderij',
+	dctermsFormat: 'video',
+	dateCreatedLowerBound: '2018-01-01',
+	datePublished: null,
+	meemooIdentifier: '4f1mg9x363',
+	meemooLocalId: 'VI-0011-0004',
+	series: [],
+	programs: [],
+};
 
 export const mockIeObjectWithMetadataSetLtdCsv =
 	"meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;maintainerId;maintainerName;name;series;programs;alternativeName;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\r\n;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793;8911p09j1g;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;";

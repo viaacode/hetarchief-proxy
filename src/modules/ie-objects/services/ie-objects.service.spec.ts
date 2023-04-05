@@ -10,11 +10,13 @@ import { Configuration } from '~config';
 import { Operator, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
 import { ElasticsearchResponse } from '../ie-objects.types';
 import {
+	mockGqlIeObjectFindByCollectionId,
+	mockGqlIeObjectFindByCollectionIdResult,
+	mockGqlIeObjectTuples,
 	mockIeObject,
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectLimitedInFolder,
 	mockObjectIe,
-	mockObjectIeTuples,
 	mockUser,
 } from '../mocks/ie-objects.mock';
 
@@ -214,12 +216,54 @@ describe('ieObjectsService', () => {
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
+
+		it('throws an error when no objects were found', async () => {
+			const mockData = {
+				object_ie: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await ieObjectsService.findBySchemaIdentifier('invalidId', 'referer');
+				fail('findBySchemaIdentifier should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('NotFoundException');
+				expect(err.message).toEqual("Object IE with id 'invalidId' not found");
+			}
+		});
+	});
+
+	describe('findAllObjectMetadataByCollectionId', () => {
+		it('should throw an error when there are no objects found with the collectionId', async () => {
+			const mockData = {
+				users_folder_ie: [],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await ieObjectsService.findAllObjectMetadataByCollectionId('ids', 'dontMatch');
+				fail('findAllObjectMetadataByCollectionId should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('NotFoundException');
+			}
+		});
+		it('should successfully return all objects by collectionId adapted', async () => {
+			const mockData = {
+				users_folder_ie: [mockGqlIeObjectFindByCollectionId],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const result = await ieObjectsService.findAllObjectMetadataByCollectionId('1', '1');
+
+			expect(result).toEqual([mockGqlIeObjectFindByCollectionIdResult]);
+		});
 	});
 
 	describe('countRelated', () => {
 		it('should succesfully count the related objects', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				object_ie: mockObjectIeTuples,
+				object_ie: mockGqlIeObjectTuples,
 			});
 
 			const result = await ieObjectsService.countRelated(['1', '2', '3']);
