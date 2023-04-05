@@ -1,7 +1,6 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import jsep from 'jsep';
 import { cloneDeep } from 'lodash';
 import nock from 'nock';
 
@@ -12,6 +11,7 @@ import { mockObjectIe } from '../mocks/ie-objects.mock';
 
 import { IeObjectsService } from './ie-objects.service';
 
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -46,6 +46,10 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	hasAccess: jest.fn(),
+};
+
+const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
+	findAll: jest.fn(),
 };
 
 const mockObjectSchemaIdentifier = mockObjectIe.object_ie[0].schema_identifier;
@@ -94,6 +98,10 @@ describe('ieObjectsService', () => {
 				{
 					provide: VisitsService,
 					useValue: mockVisitsService,
+				},
+				{
+					provide: SpacesService,
+					useValue: mockSpacesService,
 				},
 			],
 		})
