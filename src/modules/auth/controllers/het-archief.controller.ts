@@ -257,7 +257,8 @@ export class HetArchiefController {
 					time: new Date().toISOString(),
 					data: {
 						idp: Idp.HETARCHIEF,
-						user_group: archiefUser.groupId,
+						user_group_name: archiefUser.groupName,
+						user_group_id: archiefUser.groupId,
 					},
 				},
 			]);

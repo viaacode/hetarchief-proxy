@@ -67,10 +67,11 @@ export class CampaignMonitorController {
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.NEWSLETTER_SUBSCRIBE,
 				source: request.path,
-				subject: user?.getId() || 'anonymous',
+				subject: user?.getId() || 'ANONYMOUS',
 				time: new Date().toISOString(),
 				data: {
-					user_group: user?.getGroupId() || 'anonymous',
+					user_group_id: user?.getGroupId() || 'ANONYMOUS',
+					user_group_name: user?.getGroupName() || 'ANOYMOUS',
 				},
 			},
 		]);
