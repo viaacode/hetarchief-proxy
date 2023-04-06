@@ -92,6 +92,9 @@ export interface GqlPermissionData {
 	permission: GqlPermission;
 }
 
+/**
+ * @deprecated At some point we would like to get rid of the GroupId enum since it contains uuids and we don't like hardcoding uuids in the code. So prefer GroupName where possible.
+ */
 export enum GroupId {
 	KIOSK_VISITOR = '04150e6e-b779-4125-84e5-6ee6fc580757',
 	MEEMOO_ADMIN = '0b281484-76cd-45a9-b6ce-68a0ea7f4b26',
