@@ -29,7 +29,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, Permission } from '~modules/users/types';
+import { GroupName, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -88,9 +88,9 @@ export class IeObjectsController {
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
 
-		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKTOOL licences
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
 		if (
-			user.getGroupId() === GroupId.MEEMOO_ADMIN &&
+			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
 			intersection(limitedObject?.licenses, [
 				IeObjectLicense.BEZOEKERTOOL_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
