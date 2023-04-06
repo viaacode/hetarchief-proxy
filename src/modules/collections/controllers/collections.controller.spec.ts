@@ -451,6 +451,10 @@ describe('CollectionsController', () => {
 			});
 
 			mockCollectionsService.create.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionObjectsResponse
+			);
+			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce('');
 
 			const sharedCollection = await collectionsController.shareCollection(
 				'referer',

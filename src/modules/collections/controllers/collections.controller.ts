@@ -5,6 +5,7 @@ import {
 	ForbiddenException,
 	Get,
 	Headers,
+	InternalServerErrorException,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -291,24 +292,30 @@ export class CollectionsController {
 		);
 
 		// Get all the objects from the original collection and add them to the new collection
-
-		const folderObjects: IPagination<Partial<IeObject>> =
-			await this.collectionsService.findObjectsByCollectionId(
+		let folderObjects: IPagination<Partial<IeObject>>;
+		try {
+			folderObjects = await this.collectionsService.findObjectsByCollectionId(
 				collectionId,
 				collection?.userProfileId,
 				{ size: 1000 },
 				referer
 			);
-
-		await Promise.all(
-			folderObjects.items.map(async (item) => {
-				await this.collectionsService.addObjectToCollection(
-					createdCollection.id,
-					item?.schemaIdentifier,
-					referer
+			await Promise.all(
+				folderObjects?.items.map(async (item) => {
+					await this.collectionsService.addObjectToCollection(
+						createdCollection.id,
+						item?.schemaIdentifier,
+						referer
+					);
+				})
+			);
+		} catch (err) {
+			if (err.name !== 'NotFoundException') {
+				throw new InternalServerErrorException(
+					'Failed to add object from original collection to shared collection'
 				);
-			})
-		);
+			}
+		}
 
 		return {
 			status: CollectionStatus.ADDED,
