@@ -425,8 +425,11 @@ export class QueryBuilder {
 					should: [
 						{
 							terms: {
-								'schema_maintainer.schema_identifier':
-									visitorSpaceInfo.visitorSpaceIds,
+								'schema_maintainer.schema_identifier': isNil(
+									visitorSpaceInfo.visitorSpaceIds
+								)
+									? []
+									: visitorSpaceInfo.visitorSpaceIds,
 							},
 						},
 						{
@@ -474,7 +477,11 @@ export class QueryBuilder {
 						should: [
 							{
 								terms: {
-									'schema_maintainer.schema_identifier': [user.getMaintainerId()],
+									'schema_maintainer.schema_identifier': isNil(
+										user.getMaintainerId()
+									)
+										? []
+										: [user.getMaintainerId()],
 								},
 							},
 							{
