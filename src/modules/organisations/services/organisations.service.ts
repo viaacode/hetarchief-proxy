@@ -97,8 +97,8 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
 
 			const queryBody = {
-				query: `query contentpartners {
-  contentpartners {
+				query: `query organizations {
+  organizations {
     id
     label
     description
@@ -133,9 +133,9 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			}).json<OrganisationResponse>();
 
 			// Handle response
-			if ((orgResponse?.data?.contentpartners?.length || 0) > 50) {
+			if ((orgResponse?.data?.organizations?.length || 0) > 50) {
 				await this.emptyOrganizations();
-				await this.insertOrganizations(orgResponse?.data.contentpartners);
+				await this.insertOrganizations(orgResponse?.data.organizations);
 			} else {
 				/* istanbul ignore next */
 				throw new InternalServerErrorException({
