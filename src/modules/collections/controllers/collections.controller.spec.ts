@@ -451,10 +451,12 @@ describe('CollectionsController', () => {
 			});
 
 			mockCollectionsService.create.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
-			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+			mockCollectionsService.findObjectsByCollectionId.mockResolvedValueOnce(
 				mockCollectionObjectsResponse
 			);
-			mockCollectionsService.addObjectToCollection.mockResolvedValueOnce('');
+			mockCollectionsService.addObjectToCollection.mockResolvedValue(
+				mockCollectionObjectsResponse.items[0]
+			);
 
 			const sharedCollection = await collectionsController.shareCollection(
 				'referer',
@@ -463,6 +465,7 @@ describe('CollectionsController', () => {
 			);
 
 			expect(sharedCollection?.status).toEqual(CollectionStatus.ADDED);
+			mockCollectionsService.addObjectToCollection.mockReset();
 		});
 	});
 });

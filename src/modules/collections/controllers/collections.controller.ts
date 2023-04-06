@@ -300,6 +300,7 @@ export class CollectionsController {
 				{ size: 1000 },
 				referer
 			);
+			// TODO: make it possible to insert all objects to the new collection at once
 			await Promise.all(
 				folderObjects?.items.map(async (item) => {
 					await this.collectionsService.addObjectToCollection(
