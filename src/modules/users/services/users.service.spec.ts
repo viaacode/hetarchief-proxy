@@ -140,7 +140,7 @@ describe('UsersService', () => {
 		it('should update a user', async () => {
 			// Mock insert user
 			mockDataService.execute.mockReturnValueOnce({
-				update_users_profile_by_pk: mockUser,
+				update_users_profile: { returning: [mockUser] },
 			} as UpdateUserProfileMutation);
 
 			const result = await usersService.updateUser('123', {
@@ -158,7 +158,7 @@ describe('UsersService', () => {
 	describe('updateAcceptedTos', () => {
 		it('should update if a user accepted the terms of service', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				update_users_profile_by_pk: mockUser,
+				update_users_profile: { returning: [mockUser] },
 			} as UpdateUserProfileMutation);
 
 			const result = await usersService.updateAcceptedTos('123', {
@@ -168,14 +168,16 @@ describe('UsersService', () => {
 		});
 
 		it('should throw a not found exception when the id is not of a existing user', async () => {
-			mockDataService.execute.mockRejectedValueOnce('');
+			mockDataService.execute.mockReturnValueOnce({
+				update_users_profile: { returning: [] },
+			});
 
 			try {
 				await usersService.updateAcceptedTos('invalidId', {
 					acceptedTosAt: '2022-02-21T18:00:00',
 				});
 			} catch (err) {
-				expect(err.message).toEqual('User with id "invalidId" was not found.');
+				expect(err.message).toEqual('User with id "invalidId" was not found');
 				expect(err.name).toEqual('NotFoundException');
 			}
 		});

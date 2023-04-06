@@ -61,7 +61,7 @@ export enum Permission {
 export type GqlUser =
 	| GetUserByIdentityIdQuery['users_profile'][0]
 	| InsertUserMutation['insert_users_profile_one']
-	| UpdateUserProfileMutation['update_users_profile_by_pk'];
+	| UpdateUserProfileMutation['update_users_profile']['returning']['0'];
 
 export interface User {
 	id: string;
