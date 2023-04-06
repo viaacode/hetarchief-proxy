@@ -166,6 +166,19 @@ describe('UsersService', () => {
 			});
 			expect(result).toEqual(archiefUser);
 		});
+
+		it('should throw a not found exception when the id is not of a existing user', async () => {
+			mockDataService.execute.mockRejectedValueOnce('');
+
+			try {
+				await usersService.updateAcceptedTos('invalidId', {
+					acceptedTosAt: '2022-02-21T18:00:00',
+				});
+			} catch (err) {
+				expect(err.message).toEqual('User with id "invalidId" was not found.');
+				expect(err.name).toEqual('NotFoundException');
+			}
+		});
 	});
 
 	describe('linkCpAdminToMaintainer', () => {
