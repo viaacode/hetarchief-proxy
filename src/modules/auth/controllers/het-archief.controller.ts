@@ -31,6 +31,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
@@ -134,7 +135,7 @@ export class HetArchiefController {
 				? null
 				: ldapUser.attributes.o[0];
 
-			let organisation = null;
+			let organisation: Organisation | null = null;
 			if (organisationId)
 				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 					organisationId
@@ -149,6 +150,7 @@ export class HetArchiefController {
 					...archiefUser,
 					organisationId: organisationId,
 					organisationName: organisation?.schemaName ?? null,
+					sector: organisation?.sector ?? null,
 				};
 			}
 
@@ -163,6 +165,7 @@ export class HetArchiefController {
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
 				organisationId,
 				organisationName: organisation?.schemaName ?? null,
+				sector: ldapUser.attributes.sector[0],
 			};
 
 			if (!archiefUser) {
@@ -196,6 +199,7 @@ export class HetArchiefController {
 							'isKeyUser',
 							'organisationId',
 							'organisationName',
+							'sector',
 						]),
 						userDto
 					)
