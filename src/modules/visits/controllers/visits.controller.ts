@@ -10,6 +10,7 @@ import {
 	GoneException,
 	NotFoundException,
 	Param,
+	ParseUUIDPipe,
 	Patch,
 	Post,
 	Query,
@@ -218,7 +219,7 @@ export class VisitsController {
 		Permission.READ_CP_VISIT_REQUESTS,
 		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
-	public async getVisitById(@Param('id') id: string): Promise<Visit> {
+	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<Visit> {
 		const visit = await this.visitsService.findById(id);
 		return visit;
 	}
@@ -391,7 +392,7 @@ export class VisitsController {
 	)
 	public async update(
 		@Req() request: Request,
-		@Param('id') id: string,
+		@Param('id', ParseUUIDPipe) id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
