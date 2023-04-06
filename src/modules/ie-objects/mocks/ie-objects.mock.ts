@@ -1,5 +1,6 @@
 import {
 	ElasticsearchHit,
+	GqlIeObject,
 	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -244,6 +245,72 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	publisher: null,
 	licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+};
+
+export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
+	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+	meemooOriginalCp: null,
+	premisIsPartOf: null,
+	meemooIdentifier: '8911p09j1g',
+	schemaIdentifier:
+		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	meemooLocalId: null,
+	maintainerId: 'OR-rf5kf25',
+	maintainerName: 'vrt',
+	maintainerSlug: 'vrt',
+	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	name: 'Durf te vragen R002 A0001',
+	series: [],
+	programs: [],
+	alternativeName: null,
+	dctermsFormat: 'video',
+	dctermsMedium: '16mm',
+	duration: '00:39:52',
+	dateCreated: '[2020-09-01]',
+	datePublished: '2020-09-01',
+	creator: {
+		productionCompany: ['Roses Are Blue'],
+	},
+	description:
+		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
+	genre: ['program'],
+	keywords: [
+		'INTERVIEW',
+		'ZIEKTE',
+		'GEZONDHEID',
+		'ZIEKTE VAN ALZHEIMER',
+		'JONGDEMENTIE',
+		'THUISVERPLEGING',
+		'FIETS',
+		'GEHEUGEN',
+		'VERGETEN',
+		'AGRESSIE',
+		'KARAKTERVORMING',
+	],
+	inLanguage: null,
+	meemoofilmBase: null,
+	meemoofilmColor: null,
+	ebucoreIsMediaFragmentOf: null,
+	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+	meemoofilmImageOrSound: null,
+	dateCreatedLowerBound: '2020-09-01',
+	premisIdentifier: null,
+};
+
+export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
+	name: 'Durf te vragen R002 A0001',
+	maintainerName: 'vrt',
+	maintainerId: 'OR-rf5kf25',
+	series: [],
+	dctermsFormat: 'video',
+	dateCreatedLowerBound: '2020-09-01',
+	datePublished: '2020-09-01',
+	meemooIdentifier: '8911p09j1g',
+	meemooLocalId: null,
+	premisIdentifier: null,
+	schemaIdentifier:
+		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	programs: [],
 };
 
 export const mockUser = {
@@ -498,6 +565,80 @@ export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
 			],
 		},
 	],
+};
+
+export const mockGqlIeObjectTuples: Partial<GqlIeObject>[] = [
+	{
+		schema_identifier:
+			'73d46f15abae4947912429864ef40472617630b7e5914d82809576457883dbb35d4b0399743941d082aa489c08e2d990',
+		meemoo_identifier: 's46h14z19k',
+	},
+	{
+		schema_identifier:
+			'be81ec4b7a1f4fa69d8f7e123f9c89bebca89947ed454d5dbf1d919a9b50aef04a8efdbcb4d84807acd99e3003a88cad',
+		meemoo_identifier: 'w37kp8850k_001_wav',
+	},
+	{
+		schema_identifier:
+			'd1288c82c96747d7bb6bd6260c4e2db14bcad026f9cf4add9376c22a5c06db421985e236d7fb4b839ffcf2fbe88606cf',
+		meemoo_identifier: 'x921c4s60t',
+	},
+	{
+		schema_identifier:
+			'd1288c82c96747d7bb6bd6260c4e2db14bcad026f9cf4add9376c22a5c06db421985e236d7fb4b839ffc111111111111',
+		meemoo_identifier: 'x921c4s60t',
+	},
+];
+
+export const mockGqlIeObjectFindByCollectionId = {
+	ie: {
+		schema_identifier:
+			'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
+		premis_identifier: {
+			batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+		},
+		maintainer: {
+			schema_name: 'Huis van Alijn',
+		},
+		schema_name: 'Op de boerderij',
+		dcterms_format: 'video',
+		schema_date_created_lower_bound: '2018-01-01',
+		schema_date_published: null,
+		schema_is_part_of: {
+			reeks: ['WEB'],
+			archief: ['digitaal archief/videoproducties'],
+			alternatief: ['videoproductie'],
+		},
+		meemoo_identifier: '4f1mg9x363',
+		meemoo_local_id: 'VI-0011-0004',
+		schema_license: [
+			'CP-WEBSITE',
+			'VIAA-INTRA_CP-CONTENT',
+			'VIAA-INTRA_CP-METADATA-ALL',
+			'VIAA-ONDERWIJS',
+			'VIAA-ONDERZOEK',
+			'VIAA-PUBLIEK-METADATA-LTD',
+			'BEZOEKERTOOL-CONTENT',
+			'BEZOEKERTOOL-METADATA-ALL',
+		],
+	},
+};
+
+export const mockGqlIeObjectFindByCollectionIdResult: Partial<IeObject> = {
+	schemaIdentifier:
+		'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
+	premisIdentifier: {
+		batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+	},
+	maintainerName: 'Huis van Alijn',
+	name: 'Op de boerderij',
+	dctermsFormat: 'video',
+	dateCreatedLowerBound: '2018-01-01',
+	datePublished: null,
+	meemooIdentifier: '4f1mg9x363',
+	meemooLocalId: 'VI-0011-0004',
+	series: [],
+	programs: [],
 };
 
 export const mockIeObjectWithMetadataSetLtdCsv =
