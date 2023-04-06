@@ -290,6 +290,26 @@ export class CollectionsController {
 			referer
 		);
 
+		// Get all the objects from the original collection and add them to the new collection
+
+		const folderObjects: IPagination<Partial<IeObject>> =
+			await this.collectionsService.findObjectsByCollectionId(
+				collectionId,
+				collection?.userProfileId,
+				{ size: 1000 },
+				referer
+			);
+
+		await Promise.all(
+			folderObjects.items.map(async (item) => {
+				await this.collectionsService.addObjectToCollection(
+					createdCollection.id,
+					item?.schemaIdentifier,
+					referer
+				);
+			})
+		);
+
 		return {
 			status: CollectionStatus.ADDED,
 			folderId: createdCollection?.id,
