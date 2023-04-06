@@ -150,7 +150,6 @@ export class HetArchiefController {
 					...archiefUser,
 					organisationId: organisationId,
 					organisationName: organisation?.schemaName ?? null,
-					sector: organisation?.sector ?? null,
 				};
 			}
 
@@ -165,7 +164,6 @@ export class HetArchiefController {
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
 				organisationId,
 				organisationName: organisation?.schemaName ?? null,
-				sector: ldapUser.attributes.sector[0],
 			};
 
 			if (!archiefUser) {
@@ -225,9 +223,10 @@ export class HetArchiefController {
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
-			if (archiefUser?.maintainerId) {
+			if (organisation) {
 				archiefUser.sector = organisation?.sector || null;
 				archiefUser.organisationId = organisation?.schemaIdentifier || null;
+				archiefUser.organisationName = organisation?.schemaName || null;
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);

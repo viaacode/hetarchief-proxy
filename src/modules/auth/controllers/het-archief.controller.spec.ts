@@ -34,6 +34,7 @@ const ldapUser = {
 		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
 		apps: ['hetarchief'],
 		o: ['OR-1v5bc86'],
+		sector: ['Overheid'],
 	},
 };
 
