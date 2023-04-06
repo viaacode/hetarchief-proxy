@@ -12,6 +12,9 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 				primary_site
 				logo
 				form_url
+				description
+				homepage_url
+				haorg_organization_type
 			}
 		}
 		schema_copyright_holder

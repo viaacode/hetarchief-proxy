@@ -97,13 +97,14 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
 
 			const queryBody = {
-				query: `query contentpartners {
-  contentpartners {
+				query: `query organizations {
+  organizations {
     id
     label
     description
     sector
     form_url
+    homepage
     logo {
       iri
     }
@@ -132,9 +133,9 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			}).json<OrganisationResponse>();
 
 			// Handle response
-			if ((orgResponse?.data?.contentpartners?.length || 0) > 50) {
+			if ((orgResponse?.data?.organizations?.length || 0) > 50) {
 				await this.emptyOrganizations();
-				await this.insertOrganizations(orgResponse?.data.contentpartners);
+				await this.insertOrganizations(orgResponse?.data.organizations);
 			} else {
 				/* istanbul ignore next */
 				throw new InternalServerErrorException({
@@ -172,6 +173,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				// Remark here organization is with Z
 				haorg_organization_type: organization?.sector || null,
 				form_url: organization?.form_url || null,
+				homepage_url: organization?.homepage || null,
 			})
 		);
 

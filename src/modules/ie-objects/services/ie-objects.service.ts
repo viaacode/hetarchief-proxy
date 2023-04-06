@@ -27,6 +27,7 @@ import {
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
+	IeObjectSector,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -48,7 +49,9 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { SearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
@@ -61,7 +64,8 @@ export class IeObjectsService {
 		private configService: ConfigService<Configuration>,
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
-		protected visitsService: VisitsService
+		protected visitsService: VisitsService,
+		protected spacesService: SpacesService
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -303,6 +307,9 @@ export class IeObjectsService {
 				gqlIeObject?.haorg_alt_label ??
 				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
+			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
+			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
+			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
@@ -535,9 +542,36 @@ export class IeObjectsService {
 		);
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
 
+		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
+		// CP_ADMIN should always have access to their own visitor space
+		// MEEMOO_ADMIN should always have access to all visitor spaces
+		let accessibleVisitorSpaceIds: string[] = [];
+		if (user.getGroupName() === GroupName.CP_ADMIN) {
+			accessibleVisitorSpaceIds = [
+				...visitorSpaceAccessInfo.visitorSpaceIds,
+				user.getMaintainerId(),
+			];
+		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
+			const spaces = await this.spacesService.findAll(
+				{
+					status: [
+						VisitorSpaceStatus.Active,
+						VisitorSpaceStatus.Inactive,
+						VisitorSpaceStatus.Requested,
+					],
+					page: 1,
+					size: 100,
+				},
+				user.getId()
+			);
+			accessibleVisitorSpaceIds = [
+				...spaces.items.map((space) => space.maintainerId),
+				user.getMaintainerId(),
+			];
+		}
 		return {
 			objectIds: visitorSpaceAccessInfo.objectIds,
-			visitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			visitorSpaceIds: accessibleVisitorSpaceIds,
 		};
 	}
 

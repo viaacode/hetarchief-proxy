@@ -7,6 +7,7 @@ import { IeObjectsService } from './services/ie-objects.service';
 
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
+import { SpacesModule } from '~modules/spaces';
 import { TranslationsModule } from '~modules/translations';
 import { VisitsModule } from '~modules/visits';
 
@@ -20,6 +21,7 @@ import { VisitsModule } from '~modules/visits';
 		VisitsModule,
 		TranslationsModule,
 		OrganisationsModule,
+		SpacesModule,
 	],
 	providers: [IeObjectsService],
 	exports: [IeObjectsService],

@@ -31,6 +31,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
@@ -134,7 +135,7 @@ export class HetArchiefController {
 				? null
 				: ldapUser.attributes.o[0];
 
-			let organisation = null;
+			let organisation: Organisation | null = null;
 			if (organisationId)
 				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 					organisationId
@@ -196,6 +197,7 @@ export class HetArchiefController {
 							'isKeyUser',
 							'organisationId',
 							'organisationName',
+							'sector',
 						]),
 						userDto
 					)
@@ -221,9 +223,10 @@ export class HetArchiefController {
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
 
-			if (archiefUser?.maintainerId) {
+			if (organisation) {
 				archiefUser.sector = organisation?.sector || null;
 				archiefUser.organisationId = organisation?.schemaIdentifier || null;
+				archiefUser.organisationName = organisation?.schemaName || null;
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);

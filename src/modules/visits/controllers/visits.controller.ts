@@ -21,6 +21,7 @@ import { Pagination } from '@studiohyperdrive/pagination';
 import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { addYears, isFuture } from 'date-fns';
 import { Request } from 'express';
+import { uniqBy } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
@@ -159,34 +160,37 @@ export class VisitsController {
 		});
 
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			visits.items = [
-				...visits.items,
-				{
-					id: `permanent-id--${randomUUID()}`,
-					status: VisitStatus.APPROVED,
-					endAt: addYears(new Date(), 100).toISOString(),
-					startAt: new Date(2000, 1, 1).toISOString(),
-					visitorFirstName: user.getFirstName(),
-					visitorLastName: user.getLastName(),
-					visitorName: user.getFullName(),
-					updatedByName: null,
-					createdAt: new Date().toISOString(),
-					spaceName: user.getVisitorSpaceSlug(),
-					spaceMail: null,
-					spaceId: user.getMaintainerId(),
-					spaceTelephone: null,
-					reason: null,
-					spaceMaintainerId: user.getMaintainerId(),
-					spaceSlug: user.getVisitorSpaceSlug(),
-					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
-					updatedById: null,
-					timeframe: null,
-					userProfileId: user.getId(),
-					visitorId: user.getId(),
-					updatedAt: new Date().toISOString(),
-					visitorMail: user.getMail(),
-				},
-			];
+			visits.items = uniqBy(
+				[
+					...visits.items,
+					{
+						id: `permanent-id--${randomUUID()}`,
+						status: VisitStatus.APPROVED,
+						endAt: addYears(new Date(), 100).toISOString(),
+						startAt: new Date(2000, 1, 1).toISOString(),
+						visitorFirstName: user.getFirstName(),
+						visitorLastName: user.getLastName(),
+						visitorName: user.getFullName(),
+						updatedByName: null,
+						createdAt: new Date().toISOString(),
+						spaceName: user.getOrganisationName(),
+						spaceMail: null,
+						spaceId: user.getMaintainerId(),
+						spaceTelephone: null,
+						reason: null,
+						spaceMaintainerId: user.getMaintainerId(),
+						spaceSlug: user.getVisitorSpaceSlug(),
+						accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
+						updatedById: null,
+						timeframe: null,
+						userProfileId: user.getId(),
+						visitorId: user.getId(),
+						updatedAt: new Date().toISOString(),
+						visitorMail: user.getMail(),
+					},
+				],
+				(visit) => visit.spaceSlug
+			);
 		}
 
 		return visits;

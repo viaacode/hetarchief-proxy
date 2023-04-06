@@ -52,7 +52,7 @@ export class SessionUserEntity {
 	}
 
 	public getMaintainerId(): string {
-		return this.user?.maintainerId || null;
+		return this.user?.maintainerId || this.user?.organisationId || null;
 	}
 
 	public getSector(): IeObjectSector | null {

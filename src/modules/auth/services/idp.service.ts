@@ -85,13 +85,14 @@ export class IdpService {
 					)
 				);
 			}
-			if (organisation) {
-				return GroupId.CP_ADMIN;
-			}
 
 			// our (test) accounts have multiple organizations
 			if (intersection(this.meemooAdminOrganizationIds, ldapUser.attributes.o).length > 0) {
 				return GroupId.MEEMOO_ADMIN;
+			}
+
+			if (organisation) {
+				return GroupId.CP_ADMIN;
 			}
 
 			return GroupId.VISITOR;

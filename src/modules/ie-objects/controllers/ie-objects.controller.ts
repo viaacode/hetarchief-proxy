@@ -3,6 +3,7 @@ import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
+import { isNil } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -103,6 +104,7 @@ export class IeObjectsController {
 		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
+			description: hasPublicAccess ? ieObject?.description : null,
 		};
 	}
 
@@ -305,6 +307,21 @@ export class IeObjectsController {
 				})
 			),
 		};
+
+		// TODO remove this hack and fix this bug
+		// This hacky patch is added so the client doesn't completely break and shows some of the valid results
+		if (licensedSearchResult.items.filter((item) => isNil(item)).length > 0) {
+			// Response should never contain null objects because the client crashes on null objects
+			// The elasticsearch query should be constructed in a way so that all objects that elasticsearch returns can be fully or partially visible to the current user
+			console.error({
+				message:
+					'Response should never contain null objects because the client crashes on null objects\n' +
+					'The elasticsearch query should be constructed in a way so that all objects that elasticsearch returns can be fully or partially visible to the current user',
+				licensedSearchResultItems: licensedSearchResult.items,
+				searchResultItems: searchResult.items,
+			});
+			licensedSearchResult.items = licensedSearchResult.items.map((item) => item || {});
+		}
 
 		return licensedSearchResult;
 	}
