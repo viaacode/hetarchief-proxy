@@ -403,7 +403,7 @@ describe('ieObjectsService', () => {
 			expect(result).toEqual(['example']);
 		});
 
-		it('should only return the value of the filter where the field is query', () => {
+		it('should only return the value of the filter where the field is "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
 					field: SearchFilterField.QUERY,
@@ -418,7 +418,7 @@ describe('ieObjectsService', () => {
 			]);
 			expect(result).toEqual(['example']);
 		});
-		it('should return an empty array when there are no filters where field is query', () => {
+		it('should return an empty array when there are no filter objects containing "field" with value "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
 					field: SearchFilterField.NAME,

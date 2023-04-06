@@ -298,7 +298,7 @@ describe('IeObjectsController', () => {
 	});
 
 	describe('exportXml', () => {
-		it('should export a ieObject item as xml', async () => {
+		it('should export an ieObject item as xml', async () => {
 			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
@@ -309,7 +309,7 @@ describe('IeObjectsController', () => {
 	});
 
 	describe('exportCsv', () => {
-		it('should export a ieObject item as csv', async () => {
+		it('should export an ieObject item as csv', async () => {
 			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
