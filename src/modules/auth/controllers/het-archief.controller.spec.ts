@@ -1,5 +1,5 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-// import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
@@ -24,40 +24,40 @@ import { TestingLogger } from '~shared/logging/test-logger';
 const hetArchiefLoginUrl = 'http://localhost:3200';
 const hetArchiefLogoutUrl = 'http://localhost:3200';
 const hetArchiefRegisterUrl = 'http://meemoo.be/dummy-ssum-registration-page';
-//
-// const ldapUser = {
-// 	attributes: {
-// 		givenName: ['Tom'],
-// 		sn: ['Testerom'],
-// 		mail: ['test@studiohyperdrive.be'],
-// 		name_id: 'test@studiohyperdrive.be',
-// 		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
-// 		apps: ['hetarchief'],
-// 		o: ['OR-1v5bc86'],
-// 	},
-// };
-//
-// const archiefUser = {
-// 	id: '1',
-// 	firstName: 'Tom',
-// 	lastName: 'Testerom',
-// 	email: 'test@studiohyperdrive.be',
-// 	groupId: GroupId.CP_ADMIN,
-// 	permissions: [],
-// 	isKeyUser: false,
-// 	organisationId: 'OR-1v5bc86',
-// 	organisationName: null,
-// };
-//
-// const samlResponse = {
-// 	RelayState: `{ "returnToUrl": "${hetArchiefLoginUrl}" }`,
-// 	SAMLResponse: 'dummy',
-// };
-//
-// const samlLogoutResponse = {
-// 	RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
-// 	SAMLResponse: 'dummy',
-// };
+
+const ldapUser = {
+	attributes: {
+		givenName: ['Tom'],
+		sn: ['Testerom'],
+		mail: ['test@studiohyperdrive.be'],
+		name_id: 'test@studiohyperdrive.be',
+		entryUUID: ['291585e9-0541-4498-83cc-8c526e3762cb'],
+		apps: ['hetarchief'],
+		o: ['OR-1v5bc86'],
+	},
+};
+
+const archiefUser = {
+	id: '1',
+	firstName: 'Tom',
+	lastName: 'Testerom',
+	email: 'test@studiohyperdrive.be',
+	groupId: GroupId.CP_ADMIN,
+	permissions: [],
+	isKeyUser: false,
+	organisationId: 'OR-1v5bc86',
+	organisationName: null,
+};
+
+const samlResponse = {
+	RelayState: `{ "returnToUrl": "${hetArchiefLoginUrl}" }`,
+	SAMLResponse: 'dummy',
+};
+
+const samlLogoutResponse = {
+	RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
+	SAMLResponse: 'dummy',
+};
 
 const mockResponseObject = {
 	redirect: jest.fn(),
@@ -187,331 +187,331 @@ describe('HetArchiefController', () => {
 	it('should be defined', () => {
 		expect(hetArchiefController).toBeDefined();
 	});
-	//
-	// describe('register', () => {
-	// 	it('should redirect to the register url', async () => {
-	// 		const result = await hetArchiefController.registerRoute(
-	// 			{},
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
-	// 		expect(result.url.split('?')[0]).toEqual(hetArchiefRegisterUrl);
-	// 	});
-	//
-	// 	it('should catch an exception when generating the register url', async () => {
-	// 		const clientHost = configService.get('CLIENT_HOST');
-	// 		mockConfigService.get.mockImplementationOnce(() => {
-	// 			throw new Error('Test error handling');
-	// 		});
-	// 		const result = await hetArchiefController.registerRoute({}, clientHost);
-	// 		expect(result).toBeUndefined();
-	// 	});
-	// });
-	//
-	// describe('login', () => {
-	// 	it('should redirect to the login url', async () => {
-	// 		mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
-	// 		const result = await hetArchiefController.loginRoute(
-	// 			{},
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLoginUrl,
-	// 		});
-	// 	});
-	//
-	// 	it('should immediately redirect to the returnUrl if there is a valid session', async () => {
-	// 		const result = await hetArchiefController.loginRoute(
-	// 			getNewMockSession(),
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: configService.get('CLIENT_HOST'),
-	// 		});
-	// 	});
-	//
-	// 	it('should catch an exception when generating the login url', async () => {
-	// 		mockArchiefService.createLoginRequestUrl.mockImplementationOnce(() => {
-	// 			throw new Error('Test error handling');
-	// 		});
-	// 		const result = await hetArchiefController.loginRoute(
-	// 			{},
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toBeUndefined();
-	// 	});
-	// });
-	//
-	// describe('login-callback', () => {
-	// 	it('should redirect after successful login with a known user and succesful update in CM', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
-	// 		mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-	// 		mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
-	// 		mockUsersService.updateUser.mockReturnValue(archiefUser);
-	// 		mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-	// 			Promise.resolve()
-	// 		);
-	//
-	// 		const result = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponse,
-	// 			{}
-	// 		);
-	//
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLoginUrl,
-	// 		});
-	// 		expect(mockUsersService.createUserWithIdp).not.toBeCalled();
-	// 		expect(mockUsersService.updateUser).not.toBeCalled();
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-	// 	});
-	// 	it('should redirect after successful login with a known user and failed update in CM', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
-	// 		mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-	// 		mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
-	// 		mockUsersService.updateUser.mockReturnValue(archiefUser);
-	// 		mockCampaignMonitorService.updateNewsletterPreferences.mockRejectedValueOnce('');
-	//
-	// 		const result = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponse,
-	// 			{}
-	// 		);
-	//
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLoginUrl,
-	// 		});
-	// 		expect(mockUsersService.createUserWithIdp).not.toBeCalled();
-	// 		expect(mockUsersService.updateUser).not.toBeCalled();
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-	// 	});
-	//
-	// 	it('should use fallback relaystate', async () => {
-	// 		const samlResponseWithNullRelayState = {
-	// 			...samlResponse,
-	// 			RelayState: null,
-	// 		};
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
-	// 		mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
-	// 		mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-	// 		mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-	// 			Promise.resolve()
-	// 		);
-	//
-	// 		const result = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponseWithNullRelayState,
-	// 			{}
-	// 		);
-	// 		expect(result.url).toBeUndefined();
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-	// 	});
-	//
-	// 	it('should create an authorized user that is not yet in the database', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
-	// 		mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-	// 		mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
-	// 		mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-	// 			Promise.resolve()
-	// 		);
-	//
-	// 		const result = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponse,
-	// 			{}
-	// 		);
-	//
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLoginUrl,
-	// 		});
-	// 		expect(mockUsersService.createUserWithIdp).toBeCalled();
-	// 		expect(mockUsersService.updateUser).not.toBeCalled();
-	// 		mockUsersService.createUserWithIdp.mockClear();
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-	// 	});
-	//
-	// 	it('should update an authorized user that was changed in ldap', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValueOnce({
-	// 			...archiefUser,
-	// 			firstName: 'Tom2',
-	// 			isKeyUser: false,
-	// 			organisationId: null,
-	// 		});
-	// 		mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
-	// 		mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-	// 			Promise.resolve()
-	// 		);
-	//
-	// 		const result = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponse,
-	// 			{}
-	// 		);
-	//
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLoginUrl,
-	// 		});
-	// 		expect(mockUsersService.createUserWithIdp).not.toBeCalled();
-	// 		expect(mockUsersService.updateUser).toBeCalled();
-	// 		mockUsersService.updateUser.mockClear();
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-	// 	});
-	//
-	// 	it('should throw an exception on invalid saml response', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockImplementationOnce(() => {
-	// 			throw new Error('Test error handling');
-	// 		});
-	// 		let error;
-	// 		try {
-	// 			await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {});
-	// 		} catch (e) {
-	// 			error = e;
-	// 		}
-	// 		expect(error.response.error).toEqual('Test error handling');
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
-	// 	});
-	//
-	// 	it('should redirect to the login route if the idp response is no longer valid', async () => {
-	// 		const ldapNoAccess = {
-	// 			attributes: {
-	// 				...ldapUser.attributes,
-	// 			},
-	// 		};
-	// 		ldapNoAccess.attributes.apps = [];
-	// 		mockArchiefService.assertSamlResponse.mockRejectedValueOnce({
-	// 			message: 'SAML Response is no longer valid',
-	// 		});
-	// 		const response = await hetArchiefController.loginCallback(
-	// 			mockRequest,
-	// 			{},
-	// 			samlResponse,
-	// 			{}
-	// 		);
-	// 		expect(response).toEqual({
-	// 			url: `${configService.get(
-	// 				'HOST'
-	// 			)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 		});
-	//
-	// 		expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
-	// 	});
-	// });
-	//
-	// describe('logout', () => {
-	// 	it('should logout and redirect to the IDP logout url', async () => {
-	// 		mockArchiefService.createLogoutRequestUrl.mockReturnValueOnce(hetArchiefLogoutUrl);
-	// 		const mockSession = getNewMockSession();
-	// 		const result = await hetArchiefController.logout(
-	// 			mockSession,
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: hetArchiefLogoutUrl,
-	// 		});
-	// 		expect(mockSession.idp).toBeNull();
-	// 	});
-	//
-	// 	it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
-	// 		const mockSession = getNewMockSession();
-	// 		mockSession.idp = null;
-	// 		const result = await hetArchiefController.logout(
-	// 			mockSession,
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toEqual({
-	// 			statusCode: HttpStatus.TEMPORARY_REDIRECT,
-	// 			url: configService.get('CLIENT_HOST'),
-	// 		});
-	// 	});
-	//
-	// 	it('should catch an exception when generating the logout url', async () => {
-	// 		mockArchiefService.createLogoutRequestUrl.mockImplementationOnce(() => {
-	// 			throw new Error('Test error handling');
-	// 		});
-	// 		const result = await hetArchiefController.logout(
-	// 			getNewMockSession(),
-	// 			configService.get('CLIENT_HOST')
-	// 		);
-	// 		expect(result).toBeUndefined();
-	// 	});
-	// });
-	//
-	// describe('logout-callback', () => {
-	// 	it('should redirect after successful logout callback', async () => {
-	// 		mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-	// 		mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
-	//
-	// 		await hetArchiefController.logoutCallbackPost(
-	// 			getNewMockSession(),
-	// 			samlLogoutResponse,
-	// 			mockResponseObject
-	// 		);
-	//
-	// 		expect(mockResponseObject.redirect).toBeCalledWith(hetArchiefLogoutUrl);
-	// 		expect(mockArchiefService.createLogoutResponseUrl).not.toBeCalled();
-	// 	});
-	//
-	// 	it('should catch an exception when handling the saml response', async () => {
-	// 		await hetArchiefController.logoutCallbackPost(
-	// 			{},
-	// 			{
-	// 				RelayState: 'invalidjson',
-	// 				SAMLResponse: 'dummy',
-	// 			},
-	// 			mockResponseObject
-	// 		);
-	// 		expect(mockResponseObject.redirect).toBeCalledWith(undefined);
-	// 	});
-	//
-	// 	it('should redirect to the generated logout response url', async () => {
-	// 		mockArchiefService.createLogoutResponseUrl.mockResolvedValueOnce('logout-response-url');
-	// 		await hetArchiefController.logoutCallbackPost(
-	// 			{},
-	// 			{
-	// 				RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
-	// 				SAMLResponse: null,
-	// 			},
-	// 			mockResponseObject
-	// 		);
-	// 		expect(mockResponseObject.redirect).toBeCalledWith('logout-response-url');
-	// 	});
-	//
-	// 	it('should catch an exception when generating the logout response url', async () => {
-	// 		mockArchiefService.createLogoutResponseUrl.mockImplementationOnce(() => {
-	// 			throw new Error('Test error handling');
-	// 		});
-	// 		await hetArchiefController.logoutCallbackPost(
-	// 			{},
-	// 			{
-	// 				RelayState: null,
-	// 				SAMLResponse: null,
-	// 			},
-	// 			mockResponseObject
-	// 		);
-	// 		expect(mockResponseObject.redirect).toBeCalledTimes(0);
-	// 	});
-	// });
+
+	describe('register', () => {
+		it('should redirect to the register url', async () => {
+			const result = await hetArchiefController.registerRoute(
+				{},
+				configService.get('CLIENT_HOST')
+			);
+			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
+			expect(result.url.split('?')[0]).toEqual(hetArchiefRegisterUrl);
+		});
+
+		it('should catch an exception when generating the register url', async () => {
+			const clientHost = configService.get('CLIENT_HOST');
+			mockConfigService.get.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.registerRoute({}, clientHost);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('login', () => {
+		it('should redirect to the login url', async () => {
+			mockArchiefService.createLoginRequestUrl.mockReturnValueOnce(hetArchiefLoginUrl);
+			const result = await hetArchiefController.loginRoute(
+				{},
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+		});
+
+		it('should immediately redirect to the returnUrl if there is a valid session', async () => {
+			const result = await hetArchiefController.loginRoute(
+				getNewMockSession(),
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: configService.get('CLIENT_HOST'),
+			});
+		});
+
+		it('should catch an exception when generating the login url', async () => {
+			mockArchiefService.createLoginRequestUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.loginRoute(
+				{},
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('login-callback', () => {
+		it('should redirect after successful login with a known user and succesful update in CM', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
+			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
+			mockUsersService.updateUser.mockReturnValue(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
+				Promise.resolve()
+			);
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
+		});
+		it('should redirect after successful login with a known user and failed update in CM', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
+			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
+			mockUsersService.updateUser.mockReturnValue(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockRejectedValueOnce('');
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
+		});
+
+		it('should use fallback relaystate', async () => {
+			const samlResponseWithNullRelayState = {
+				...samlResponse,
+				RelayState: null,
+			};
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
+			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
+				Promise.resolve()
+			);
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponseWithNullRelayState,
+				{}
+			);
+			expect(result.url).toBeUndefined();
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
+		});
+
+		it('should create an authorized user that is not yet in the database', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
+			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
+			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
+				Promise.resolve()
+			);
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).toBeCalled();
+			expect(mockUsersService.updateUser).not.toBeCalled();
+			mockUsersService.createUserWithIdp.mockClear();
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
+		});
+
+		it('should update an authorized user that was changed in ldap', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce({
+				...archiefUser,
+				firstName: 'Tom2',
+				isKeyUser: false,
+				organisationId: null,
+			});
+			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
+				Promise.resolve()
+			);
+
+			const result = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLoginUrl,
+			});
+			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
+			expect(mockUsersService.updateUser).toBeCalled();
+			mockUsersService.updateUser.mockClear();
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
+		});
+
+		it('should throw an exception on invalid saml response', async () => {
+			mockArchiefService.assertSamlResponse.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			let error;
+			try {
+				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {});
+			} catch (e) {
+				error = e;
+			}
+			expect(error.response.error).toEqual('Test error handling');
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
+		});
+
+		it('should redirect to the login route if the idp response is no longer valid', async () => {
+			const ldapNoAccess = {
+				attributes: {
+					...ldapUser.attributes,
+				},
+			};
+			ldapNoAccess.attributes.apps = [];
+			mockArchiefService.assertSamlResponse.mockRejectedValueOnce({
+				message: 'SAML Response is no longer valid',
+			});
+			const response = await hetArchiefController.loginCallback(
+				mockRequest,
+				{},
+				samlResponse,
+				{}
+			);
+			expect(response).toEqual({
+				url: `${configService.get(
+					'HOST'
+				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			});
+
+			expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('logout', () => {
+		it('should logout and redirect to the IDP logout url', async () => {
+			mockArchiefService.createLogoutRequestUrl.mockReturnValueOnce(hetArchiefLogoutUrl);
+			const mockSession = getNewMockSession();
+			const result = await hetArchiefController.logout(
+				mockSession,
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: hetArchiefLogoutUrl,
+			});
+			expect(mockSession.idp).toBeNull();
+		});
+
+		it('should immediately redirect to the returnUrl if the IDP is invalid', async () => {
+			const mockSession = getNewMockSession();
+			mockSession.idp = null;
+			const result = await hetArchiefController.logout(
+				mockSession,
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toEqual({
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+				url: configService.get('CLIENT_HOST'),
+			});
+		});
+
+		it('should catch an exception when generating the logout url', async () => {
+			mockArchiefService.createLogoutRequestUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			const result = await hetArchiefController.logout(
+				getNewMockSession(),
+				configService.get('CLIENT_HOST')
+			);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('logout-callback', () => {
+		it('should redirect after successful logout callback', async () => {
+			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
+			mockUsersService.getUserByIdentityId.mockReturnValueOnce(archiefUser);
+
+			await hetArchiefController.logoutCallbackPost(
+				getNewMockSession(),
+				samlLogoutResponse,
+				mockResponseObject
+			);
+
+			expect(mockResponseObject.redirect).toBeCalledWith(hetArchiefLogoutUrl);
+			expect(mockArchiefService.createLogoutResponseUrl).not.toBeCalled();
+		});
+
+		it('should catch an exception when handling the saml response', async () => {
+			await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: 'invalidjson',
+					SAMLResponse: 'dummy',
+				},
+				mockResponseObject
+			);
+			expect(mockResponseObject.redirect).toBeCalledWith(undefined);
+		});
+
+		it('should redirect to the generated logout response url', async () => {
+			mockArchiefService.createLogoutResponseUrl.mockResolvedValueOnce('logout-response-url');
+			await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: `{ "returnToUrl": "${hetArchiefLogoutUrl}" }`,
+					SAMLResponse: null,
+				},
+				mockResponseObject
+			);
+			expect(mockResponseObject.redirect).toBeCalledWith('logout-response-url');
+		});
+
+		it('should catch an exception when generating the logout response url', async () => {
+			mockArchiefService.createLogoutResponseUrl.mockImplementationOnce(() => {
+				throw new Error('Test error handling');
+			});
+			await hetArchiefController.logoutCallbackPost(
+				{},
+				{
+					RelayState: null,
+					SAMLResponse: null,
+				},
+				mockResponseObject
+			);
+			expect(mockResponseObject.redirect).toBeCalledTimes(0);
+		});
+	});
 });
