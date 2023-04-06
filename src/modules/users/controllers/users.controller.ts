@@ -1,4 +1,13 @@
-import { Body, Controller, Logger, Param, Patch, Session, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Logger,
+	Param,
+	ParseUUIDPipe,
+	Patch,
+	Session,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { UpdateAcceptedTosDto } from '../dto/users.dto';
@@ -19,7 +28,7 @@ export class UsersController {
 	@Patch(':id/accepted-tos')
 	public async updateTos(
 		@Body() updateAcceptedTosDto: UpdateAcceptedTosDto,
-		@Param('id') id: string,
+		@Param('id', ParseUUIDPipe) id: string,
 		@Session() session: Record<string, any>
 	): Promise<User> {
 		const user = await this.usersService.updateAcceptedTos(id, updateAcceptedTosDto);

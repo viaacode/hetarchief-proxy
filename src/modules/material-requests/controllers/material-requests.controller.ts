@@ -5,6 +5,7 @@ import {
 	Get,
 	InternalServerErrorException,
 	Param,
+	ParseUUIDPipe,
 	Patch,
 	Post,
 	Put,
@@ -87,7 +88,9 @@ export class MaterialRequestsController {
 		Permission.VIEW_ANY_MATERIAL_REQUESTS,
 		Permission.VIEW_OWN_MATERIAL_REQUESTS
 	)
-	public async getMaterialRequestById(@Param('id') id: string): Promise<MaterialRequest> {
+	public async getMaterialRequestById(
+		@Param('id', ParseUUIDPipe) id: string
+	): Promise<MaterialRequest> {
 		return await this.materialRequestsService.findById(id);
 	}
 
@@ -111,7 +114,7 @@ export class MaterialRequestsController {
 	})
 	@RequireAnyPermissions(Permission.EDIT_OWN_MATERIAL_REQUESTS)
 	public async updateMaterialRequest(
-		@Param('id') materialRequestId: string,
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@Body() updateMaterialRequestDto: UpdateMaterialRequestDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<MaterialRequest> {
@@ -128,7 +131,7 @@ export class MaterialRequestsController {
 	})
 	@RequireAnyPermissions(Permission.DELETE_OWN_MATERIAL_REQUESTS)
 	public async deleteMaterialRequest(
-		@Param('id') materialRequestId: string,
+		@Param('id', ParseUUIDPipe) materialRequestId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
 		const affectedRows = await this.materialRequestsService.deleteMaterialRequest(
