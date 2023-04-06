@@ -1,5 +1,5 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
 import { GqlPermissionData, GqlUser, GroupIdToName, GroupName, Permission, User } from '../types';
@@ -159,7 +159,7 @@ export class UsersService {
 			organisation_schema_identifier: updateUserDto.organisationId,
 		};
 
-		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
+		const { update_users_profile: updatedUser } = await this.dataService.execute<
 			UpdateUserProfileMutation,
 			UpdateUserProfileMutationVariables
 		>(UpdateUserProfileDocument, {
@@ -167,7 +167,11 @@ export class UsersService {
 			updateUser,
 		});
 
-		return this.adapt(updatedUser);
+		if (updatedUser?.returning.length === 0) {
+			throw new NotFoundException(`User with id "${id}" was not found`);
+		}
+
+		return this.adapt(updatedUser?.returning[0]);
 	}
 
 	public async updateAcceptedTos(
@@ -178,7 +182,7 @@ export class UsersService {
 			accepted_tos_at: updateAcceptedTos.acceptedTosAt,
 		};
 
-		const { update_users_profile_by_pk: updatedUser } = await this.dataService.execute<
+		const { update_users_profile: updatedUser } = await this.dataService.execute<
 			UpdateUserProfileMutation,
 			UpdateUserProfileMutationVariables
 		>(UpdateUserProfileDocument, {
@@ -186,7 +190,11 @@ export class UsersService {
 			updateUser,
 		});
 
-		return this.adapt(updatedUser);
+		if (updatedUser?.returning.length === 0) {
+			throw new NotFoundException(`User with id "${id}" was not found`);
+		}
+
+		return this.adapt(updatedUser?.returning[0]);
 	}
 
 	/**
