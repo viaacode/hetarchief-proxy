@@ -29,7 +29,7 @@ export interface OrganisationInfoV2 {
 
 export interface OrganisationResponse {
 	data: {
-		contentpartners: OrganisationInfoV2[];
+		organizations: OrganisationInfoV2[];
 	};
 }
 

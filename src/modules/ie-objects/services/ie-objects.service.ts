@@ -545,7 +545,7 @@ export class IeObjectsService {
 		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
 		// CP_ADMIN should always have access to their own visitor space
 		// MEEMOO_ADMIN should always have access to all visitor spaces
-		let accessibleVisitorSpaceIds: string[];
+		let accessibleVisitorSpaceIds: string[] = [];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
 				...visitorSpaceAccessInfo.visitorSpaceIds,
