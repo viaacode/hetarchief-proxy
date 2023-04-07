@@ -1,4 +1,4 @@
-import { Operator, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
+import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { MediaFormat } from '../ie-objects.types';
 
 import { checkAndFixFormatFilter } from './check-and-fix-format-filter';
@@ -8,7 +8,7 @@ describe('checkAndFixFormatFilter', () => {
 		const fixedQuery = checkAndFixFormatFilter({
 			filters: [
 				{
-					field: SearchFilterField.FORMAT,
+					field: IeObjectsSearchFilterField.FORMAT,
 					value: MediaFormat.VIDEO,
 					operator: Operator.IS,
 				},
@@ -21,7 +21,7 @@ describe('checkAndFixFormatFilter', () => {
 		const fixedQuery = checkAndFixFormatFilter({
 			filters: [
 				{
-					field: SearchFilterField.FORMAT,
+					field: IeObjectsSearchFilterField.FORMAT,
 					multiValue: [MediaFormat.VIDEO],
 					operator: Operator.IS,
 				},
