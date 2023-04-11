@@ -310,7 +310,7 @@ export class CollectionsController {
 				);
 			});
 		} catch (err) {
-			if (err.name !== 'NotFoundException') {
+			if (err?.name !== 'NotFoundException') {
 				throw new InternalServerErrorException({
 					message: 'Failed to add object from original collection to shared collection',
 					error: err,
