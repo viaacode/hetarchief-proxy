@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
 import { isNil } from 'lodash';
 
@@ -301,20 +302,19 @@ export class CollectionsController {
 				referer
 			);
 			// TODO: make it possible to insert all objects to the new collection at once
-			await Promise.all(
-				folderObjects?.items.map(async (item) => {
-					await this.collectionsService.addObjectToCollection(
-						createdCollection.id,
-						item?.schemaIdentifier,
-						referer
-					);
-				})
-			);
+			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
+				await this.collectionsService.addObjectToCollection(
+					createdCollection.id,
+					item?.schemaIdentifier,
+					referer
+				);
+			});
 		} catch (err) {
 			if (err.name !== 'NotFoundException') {
-				throw new InternalServerErrorException(
-					'Failed to add object from original collection to shared collection'
-				);
+				throw new InternalServerErrorException({
+					message: 'Failed to add object from original collection to shared collection',
+					error: err,
+				});
 			}
 		}
 
