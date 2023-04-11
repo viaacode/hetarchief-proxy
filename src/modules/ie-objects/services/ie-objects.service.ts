@@ -107,6 +107,28 @@ export class IeObjectsService {
 
 		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer);
 
+		// When filtering on dates, we want to only return objects that contain a date.
+		if (inputQuery?.filters.some((filter) => filter.field === SearchFilterField.CREATED)) {
+			adaptedESResponse.hits.hits = adaptedESResponse.hits.hits.filter((object) => {
+				if (object?._source.schema_date_created != null) {
+					return true;
+				} else {
+					adaptedESResponse.hits.total.value--;
+					return false;
+				}
+			});
+		}
+
+		if (inputQuery?.filters.some((filter) => filter.field === SearchFilterField.PUBLISHED)) {
+			adaptedESResponse.hits.hits = adaptedESResponse.hits.hits.filter((object) => {
+				if (object?._source.schema_date_published != null) {
+					return true;
+				} else {
+					adaptedESResponse.hits.total.value--;
+					return false;
+				}
+			});
+		}
 		return {
 			...Pagination<IeObject>({
 				items: adaptedESResponse.hits.hits.map((esHit) =>

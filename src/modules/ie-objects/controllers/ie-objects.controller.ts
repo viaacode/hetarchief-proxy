@@ -312,16 +312,6 @@ export class IeObjectsController {
 			visitorSpaceAccessInfo
 		);
 
-		// When filtering on dates, we want to only return objects that contain a date.
-		if (queryDto?.filters.some((filter) => filter.field === 'created')) {
-			searchResult.items = searchResult.items.filter((object) => object?.dateCreated != null);
-		}
-
-		if (queryDto?.filters.some((filter) => filter.field === 'published')) {
-			searchResult.items = searchResult.items.filter(
-				(object) => object?.datePublished != null
-			);
-		}
 		// Limit the amount of props returned for an ie object based on licenses and sector
 		const licensedSearchResult = {
 			...searchResult,
