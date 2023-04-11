@@ -226,6 +226,7 @@ export class VisitsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		// Check if the user is a CP admin or a Kiosk user for the requested space
+		// MEEMOO_ADMIN has access to all the visitor spaces
 		if (
 			visitorSpaceSlug === user.getVisitorSpaceSlug() ||
 			user.getGroupName() === GroupName.MEEMOO_ADMIN
