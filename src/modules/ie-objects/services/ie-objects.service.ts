@@ -538,7 +538,6 @@ export class IeObjectsService {
 			{
 				userProfileId: user.getId(),
 				visitorSpaceStatus: VisitorSpaceStatus.Active,
-				visitorSpaceSlug: user.getVisitorSpaceSlug(),
 			}
 		);
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
