@@ -528,59 +528,25 @@ export class IeObjectsService {
 		}
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
-		let activeVisits = { items: [] };
-		if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
-			const spaceInfo = await this.spacesService.findBySlug(user.getVisitorSpaceSlug());
-			// Return fake visit request that is approved and valid forever
-			activeVisits.items = [
-				{
-					spaceId: spaceInfo.id,
-					id: randomUUID(),
-					startAt: new Date(2000, 0, 2).toISOString(),
-					endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
-					visitorName: user.getFullName(),
-					spaceName: spaceInfo.name,
-					spaceMaintainerId: spaceInfo.maintainerId,
-					status: VisitStatus.APPROVED,
-					createdAt: new Date().toISOString(),
-					reason: 'permanent access',
-					visitorFirstName: user.getFirstName(),
-					visitorLastName: user.getLastName(),
-					visitorId: user.getId(),
-					visitorMail: user.getMail(),
-					spaceMail: spaceInfo.contactInfo.email,
-					spaceTelephone: spaceInfo.contactInfo.telephone,
-					updatedById: '',
-					updatedByName: '',
-					spaceSlug: spaceInfo.slug,
-					timeframe: '',
-					updatedAt: new Date().toISOString(),
-					userProfileId: user.getId(),
-					accessType: VisitAccessType.Full,
-					accessibleFolderIds: null,
-					accessibleObjectIds: null,
-				},
-			];
-		} else {
-			activeVisits = await this.visitsService.findAll(
-				{
-					page: 1,
-					size: 100,
-					timeframe: VisitTimeframe.ACTIVE,
-					status: VisitStatus.APPROVED,
-				},
-				{
-					userProfileId: user.getId(),
-					visitorSpaceStatus: VisitorSpaceStatus.Active,
-					visitorSpaceSlug: user.getVisitorSpaceSlug(),
-				}
-			);
-		}
+		const activeVisits = await this.visitsService.findAll(
+			{
+				page: 1,
+				size: 100,
+				timeframe: VisitTimeframe.ACTIVE,
+				status: VisitStatus.APPROVED,
+			},
+			{
+				userProfileId: user.getId(),
+				visitorSpaceStatus: VisitorSpaceStatus.Active,
+				visitorSpaceSlug: user.getVisitorSpaceSlug(),
+			}
+		);
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
 
 		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
 		// CP_ADMIN should always have access to their own visitor space
 		// MEEMOO_ADMIN should always have access to all visitor spaces
+		// KIOSK_VISITOR should always have access to their own visitor space
 		let accessibleVisitorSpaceIds: string[] = [];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
@@ -604,6 +570,8 @@ export class IeObjectsService {
 				...spaces.items.map((space) => space.maintainerId),
 				user.getMaintainerId(),
 			];
+		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			accessibleVisitorSpaceIds = ['OR-7h1dk9t']; //user.getMaintainerId()
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}
