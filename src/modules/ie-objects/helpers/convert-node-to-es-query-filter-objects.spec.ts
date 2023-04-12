@@ -1,7 +1,5 @@
 import jsep from 'jsep';
 
-import * as exactQuery from '../elasticsearch/templates/exact/exact-search-query.json';
-import * as fuzzyQuery from '../elasticsearch/templates/fuzzy/search-query.json';
 import {
 	esQuerySearchTemplate,
 	mockConvertNodeToEsQueryFilterObject1,
