@@ -6,7 +6,7 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { Operator, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
+import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { ElasticsearchResponse } from '../ie-objects.types';
 import {
 	mockGqlIeObjectFindByCollectionId,
@@ -412,7 +412,7 @@ describe('ieObjectsService', () => {
 		it('should return the value of the filter when the field is query', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
-					field: SearchFilterField.QUERY,
+					field: IeObjectsSearchFilterField.QUERY,
 					operator: Operator.CONTAINS,
 					value: 'example',
 				},
@@ -423,12 +423,12 @@ describe('ieObjectsService', () => {
 		it('should only return the value of the filter where the field is "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
-					field: SearchFilterField.QUERY,
+					field: IeObjectsSearchFilterField.QUERY,
 					operator: Operator.CONTAINS,
 					value: 'example',
 				},
 				{
-					field: SearchFilterField.NAME,
+					field: IeObjectsSearchFilterField.NAME,
 					operator: Operator.CONTAINS,
 					value: 'example2',
 				},
@@ -438,7 +438,7 @@ describe('ieObjectsService', () => {
 		it('should return an empty array when there are no filter objects containing "field" with value "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
-					field: SearchFilterField.NAME,
+					field: IeObjectsSearchFilterField.NAME,
 					operator: Operator.CONTAINS,
 					value: 'example',
 				},
