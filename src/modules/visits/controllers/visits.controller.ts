@@ -231,7 +231,11 @@ export class VisitsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		// Check if the user is a CP admin or a Kiosk user for the requested space
-		if (visitorSpaceSlug === user.getVisitorSpaceSlug()) {
+		// MEEMOO_ADMIN has access to all the visitor spaces
+		if (
+			visitorSpaceSlug === user.getVisitorSpaceSlug() ||
+			user.getGroupName() === GroupName.MEEMOO_ADMIN
+		) {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
 			// Return fake visit request that is approved and valid forever
 			return {
