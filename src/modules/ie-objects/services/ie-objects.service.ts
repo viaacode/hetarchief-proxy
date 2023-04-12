@@ -571,7 +571,7 @@ export class IeObjectsService {
 				user.getMaintainerId(),
 			];
 		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
-			accessibleVisitorSpaceIds = ['OR-7h1dk9t']; //user.getMaintainerId()
+			accessibleVisitorSpaceIds = [user.getMaintainerId()];
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}
