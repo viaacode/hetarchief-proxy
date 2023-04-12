@@ -47,7 +47,7 @@ import {
 	GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
-import { SearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -625,7 +625,7 @@ export class IeObjectsService {
 		filters: IeObjectsQueryDto['filters']
 	): string[] {
 		const searchTerm = filters.find(
-			(searchFilter) => searchFilter.field === SearchFilterField.QUERY
+			(searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY
 		)?.value;
 		if (!searchTerm) {
 			return [];
