@@ -568,7 +568,10 @@ export class IeObjectsService {
 				...spaces.items.map((space) => space.maintainerId),
 				user.getMaintainerId(),
 			];
+		} else {
+			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}
+
 		return {
 			objectIds: visitorSpaceAccessInfo.objectIds,
 			visitorSpaceIds: accessibleVisitorSpaceIds,

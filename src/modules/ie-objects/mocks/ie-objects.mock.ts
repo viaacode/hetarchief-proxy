@@ -259,6 +259,8 @@ export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
+	maintainerDescription:
+		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	series: [],
 	programs: [],

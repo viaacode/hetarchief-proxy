@@ -23,6 +23,7 @@ import { IeObjectsService } from './ie-objects.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupId, GroupName } from '~modules/users/types';
 import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
@@ -356,7 +357,11 @@ describe('ieObjectsService', () => {
 			});
 
 			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity({
+					...mockUser,
+					groupId: GroupId.VISITOR,
+					groupName: GroupName.VISITOR,
+				})
 			);
 
 			expect(result).toEqual({
@@ -371,7 +376,11 @@ describe('ieObjectsService', () => {
 			});
 
 			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
-				new SessionUserEntity(mockUser)
+				new SessionUserEntity({
+					...mockUser,
+					groupId: GroupId.VISITOR,
+					groupName: GroupName.VISITOR,
+				})
 			);
 
 			expect(result).toEqual({

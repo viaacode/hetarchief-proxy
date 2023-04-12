@@ -265,6 +265,7 @@ describe('IeObjectsController', () => {
 
 			expect(result).toEqual({
 				name: mockIeObject.name,
+				description: mockIeObject.description,
 			});
 		});
 
@@ -279,6 +280,7 @@ describe('IeObjectsController', () => {
 
 			expect(result).toEqual({
 				name: mockIeObject.name,
+				description: mockIeObject.description,
 			});
 		});
 
@@ -293,6 +295,7 @@ describe('IeObjectsController', () => {
 
 			expect(result).toEqual({
 				name: null,
+				description: null,
 			});
 		});
 	});
