@@ -1,5 +1,7 @@
 import jsep from 'jsep';
 
+import * as exactQuery from '../elasticsearch/templates/exact/exact-search-query.json';
+import * as fuzzyQuery from '../elasticsearch/templates/fuzzy/search-query.json';
 import {
 	esQuerySearchTemplate,
 	mockConvertNodeToEsQueryFilterObject1,
@@ -25,7 +27,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -42,7 +47,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -58,7 +66,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -75,7 +86,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
