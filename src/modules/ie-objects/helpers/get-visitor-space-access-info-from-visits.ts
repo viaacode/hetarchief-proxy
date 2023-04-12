@@ -11,6 +11,6 @@ export const getVisitorSpaceAccessInfoFromVisits = (
 				?.filter((activeVisit: Visit) => activeVisit.accessType === VisitAccessType.Full)
 				?.map((activeVisit: Visit) => activeVisit.spaceMaintainerId) || [],
 		objectIds:
-			activeVisits?.flatMap((activeVisit: Visit) => activeVisit.accessibleObjectIds) || [],
+			activeVisits?.flatMap((activeVisit: Visit) => activeVisit?.accessibleObjectIds) || [],
 	};
 };

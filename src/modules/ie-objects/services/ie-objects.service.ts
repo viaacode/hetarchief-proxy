@@ -53,7 +53,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { VisitAccessType, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -528,18 +528,54 @@ export class IeObjectsService {
 		}
 		// Get active visits for the current user
 		// Need this to retrieve visitorSpaceAccessInfo
-		const activeVisits = await this.visitsService.findAll(
-			{
-				page: 1,
-				size: 100,
-				timeframe: VisitTimeframe.ACTIVE,
-				status: VisitStatus.APPROVED,
-			},
-			{
-				userProfileId: user.getId(),
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
-			}
-		);
+		let activeVisits = { items: [] };
+		if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			const spaceInfo = await this.spacesService.findBySlug(user.getVisitorSpaceSlug());
+			// Return fake visit request that is approved and valid forever
+			activeVisits.items = [
+				{
+					spaceId: spaceInfo.id,
+					id: randomUUID(),
+					startAt: new Date(2000, 0, 2).toISOString(),
+					endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
+					visitorName: user.getFullName(),
+					spaceName: spaceInfo.name,
+					spaceMaintainerId: spaceInfo.maintainerId,
+					status: VisitStatus.APPROVED,
+					createdAt: new Date().toISOString(),
+					reason: 'permanent access',
+					visitorFirstName: user.getFirstName(),
+					visitorLastName: user.getLastName(),
+					visitorId: user.getId(),
+					visitorMail: user.getMail(),
+					spaceMail: spaceInfo.contactInfo.email,
+					spaceTelephone: spaceInfo.contactInfo.telephone,
+					updatedById: '',
+					updatedByName: '',
+					spaceSlug: spaceInfo.slug,
+					timeframe: '',
+					updatedAt: new Date().toISOString(),
+					userProfileId: user.getId(),
+					accessType: VisitAccessType.Full,
+					accessibleFolderIds: null,
+					accessibleObjectIds: null,
+				},
+			];
+		} else {
+			activeVisits = await this.visitsService.findAll(
+				{
+					page: 1,
+					size: 100,
+					timeframe: VisitTimeframe.ACTIVE,
+					status: VisitStatus.APPROVED,
+				},
+				{
+					userProfileId: user.getId(),
+					visitorSpaceStatus: VisitorSpaceStatus.Active,
+					visitorSpaceSlug: user.getVisitorSpaceSlug(),
+				}
+			);
+		}
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
 
 		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
