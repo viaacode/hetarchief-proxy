@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
@@ -28,6 +33,7 @@ import {
 	IeObjectLicense,
 	IeObjectRepresentation,
 	IeObjectSector,
+	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -36,6 +42,9 @@ import {
 	FindAllObjectsByCollectionIdDocument,
 	FindAllObjectsByCollectionIdQuery,
 	FindAllObjectsByCollectionIdQueryVariables,
+	FindObjectsForSitemapDocument,
+	FindObjectsForSitemapQuery,
+	FindObjectsForSitemapQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -275,10 +284,22 @@ export class IeObjectsService {
 		return allAdapted;
 	}
 
-	// public async findAllPublicObjects(): Promise<any> {
-	// 	try {
-	// 	} catch (err) {}
-	// }
+	public async findObjectsForSitemap(licenses: IeObjectLicense[]): Promise<IeObjectsSitemap[]> {
+		try {
+			const { object_ie: objects } = await this.dataService.execute<
+				FindObjectsForSitemapQuery,
+				FindObjectsForSitemapQueryVariables
+			>(FindObjectsForSitemapDocument, { licenses });
+
+			const adapted = objects.map((object) => {
+				return this.adaptForSitemap(object);
+			});
+
+			return adapted;
+		} catch (err) {
+			throw new InternalServerErrorException('Failed getting objects for sitemap', err);
+		}
+	}
 
 	// Adapt
 	// ------------------------------------------------------------------------
@@ -504,6 +525,15 @@ export class IeObjectsService {
 				embedUrl: file?.schema_embed_url,
 			})
 		);
+	}
+
+	private adaptForSitemap(graphQlObject: any): IeObjectsSitemap {
+		return {
+			schemaIdentifier: graphQlObject?.schema_identifier,
+			maintainerSlug: graphQlObject?.maintainer?.visitor_space?.slug,
+			name: graphQlObject?.schema_name,
+			updatedAt: graphQlObject?.updated_at,
+		};
 	}
 
 	// Helpers
