@@ -1,4 +1,4 @@
-import { convertUserInfoToCommonUser, HetArchiefUser, UserInfoType } from '@meemoo/admin-core-api';
+import { convertUserInfoToCommonUser, UserInfoType } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	Get,
@@ -52,7 +52,7 @@ export class AuthController {
 			return {
 				userInfo,
 				commonUserInfo: convertUserInfoToCommonUser(
-					userInfo as unknown as HetArchiefUser,
+					userInfo as unknown as Avo.User.HetArchiefUser,
 					UserInfoType.HetArchiefUser
 				) as Avo.User.CommonUser,
 				message: LoginMessage.LOGGED_IN,
