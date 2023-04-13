@@ -1,3 +1,5 @@
+import { Readable } from 'stream';
+
 import { Controller, Header, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import moment from 'moment';
@@ -6,6 +8,7 @@ import { SitemapService } from '../services/sitemap.service';
 import { SitemapItemInfo } from '../sitemap.types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
+import { AssetsService } from '~modules/assets/services/assets.service';
 import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -16,7 +19,8 @@ export class SitemapController {
 	constructor(
 		private sitemapService: SitemapService,
 		private spacesService: SpacesService,
-		private ieObjectsService: IeObjectsService
+		private ieObjectsService: IeObjectsService,
+		private assetsService: AssetsService
 	) {}
 
 	@Post()
@@ -66,11 +70,26 @@ export class SitemapController {
 			})),
 		];
 
-		return `<?xml version="1.0" encoding="UTF-8"?>
-			<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-				${allPages.map(SitemapController.renderPage).join('\n')}
-			</urlset>
-			`;
+		const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+			${allPages.map(SitemapController.renderPage).join('\n')}
+		</urlset>
+		`;
+		// Be careful!! This keep making new files, which is not how it is supposed to work (check comment in Jira ARC-1559).
+		// This was just added so FE has something to work with
+		// 	const url = await this.assetsService.upload(AssetFileType.SITEMAP, {
+		// 		fieldname: 'indexSitemap',
+		// 		originalname: 'indexSitemap',
+		// 		encoding: '',
+		// 		mimetype: 'text/xml',
+		// 		size: 0,
+		// 		stream: new Readable(),
+		// 		destination: '',
+		// 		filename: 'indexSitemap',
+		// 		path: '',
+		// 		buffer: Buffer.from(renderedXml, 'utf-8'),
+		// 	});
+		return renderedXml;
 	}
 
 	private static renderPage(pageInfo: SitemapItemInfo): string {
