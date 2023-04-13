@@ -1,0 +1,13 @@
+query getPublicObjects($licenses: [String!]) {
+	object_ie(where: { schema_license: { _has_keys_any: $licenses } }) {
+		schema_identifier
+		maintainer {
+			visitor_space {
+				slug
+			}
+		}
+		schema_name
+		updated_at
+		schema_license
+	}
+}

@@ -275,6 +275,11 @@ export class IeObjectsService {
 		return allAdapted;
 	}
 
+	// public async findAllPublicObjects(): Promise<any> {
+	// 	try {
+	// 	} catch (err) {}
+	// }
+
 	// Adapt
 	// ------------------------------------------------------------------------
 
