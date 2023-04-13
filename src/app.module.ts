@@ -21,6 +21,7 @@ import { IeObjectsModule } from '~modules/ie-objects';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
+import { SitemapModule } from '~modules/sitemap';
 import { SpacesModule } from '~modules/spaces';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
@@ -61,6 +62,7 @@ import { SessionService } from '~shared/services/session.service';
 		MaterialRequestsModule,
 		IeObjectsModule,
 		ZendeskModule,
+		SitemapModule,
 	],
 	controllers: [],
 	providers: [
