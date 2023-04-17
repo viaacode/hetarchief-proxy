@@ -28,7 +28,10 @@ import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { PermissionGuard } from '~shared/guards/permission.guard';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { SessionService } from '~shared/services/session.service';
+
+checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 
 @Module({
 	imports: [

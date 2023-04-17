@@ -77,6 +77,7 @@ export class CampaignMonitorVisitData {
 	@ApiPropertyOptional({ type: String })
 	end_time?: string;
 }
+
 export class CampaignMonitorMaterialRequestData {
 	@IsString()
 	@IsOptional()
@@ -134,7 +135,7 @@ export class CampaignMonitorUpdatePreferencesData {
 
 	@IsString()
 	@IsOptional()
-	CustomFields: { Key: string; Value: any; Clear: boolean }[];
+	CustomFields: { Key: string; Value: any }[];
 }
 
 export class RequestListItem {
