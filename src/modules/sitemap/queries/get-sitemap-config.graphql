@@ -1,0 +1,8 @@
+query getSitemapConfig {
+	app_config(where: { name: { _eq: "SITEMAP_CONFIG" } }) {
+		value
+		updated_at
+		name
+		created_at
+	}
+}

@@ -1,5 +1,4 @@
-import { Readable } from 'stream';
-
+import { ContentPagesService } from '@meemoo/admin-core-api';
 import { Controller, Header, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import moment from 'moment';
@@ -20,7 +19,8 @@ export class SitemapController {
 		private sitemapService: SitemapService,
 		private spacesService: SpacesService,
 		private ieObjectsService: IeObjectsService,
-		private assetsService: AssetsService
+		private assetsService: AssetsService,
+		private contentPagesService: ContentPagesService
 	) {}
 
 	@Post()
@@ -35,6 +35,10 @@ export class SitemapController {
 						-zoekpagina per cp: '/zoeken/?aanbieders={or id van aanbieder}' done
 						-item-detailpagina’s: '/zoeken/{maintainerSlug}/{objectSchemaId}' done
 		*/
+
+		const config = await this.sitemapService.getSitemapConfig();
+		const contentPagesPaths = await this.sitemapService.getContentPages();
+
 		const staticPages = ['/', '/bezoek', '/zoeken'];
 
 		const activeSpaces = await this.spacesService.findAll(

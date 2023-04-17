@@ -1,4 +1,4 @@
-import { DataModule } from '@meemoo/admin-core-api';
+import { ContentPagesModule, DataModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 
 import { SitemapController } from './controllers/sitemap.controller';
@@ -11,6 +11,6 @@ import { SpacesModule } from '~modules/spaces';
 @Module({
 	controllers: [SitemapController],
 	providers: [SitemapService],
-	imports: [DataModule, SpacesModule, IeObjectsModule, AssetsModule],
+	imports: [DataModule, SpacesModule, IeObjectsModule, AssetsModule, ContentPagesModule],
 })
 export class SitemapModule {}
