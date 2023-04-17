@@ -1,6 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsOptional } from 'class-validator';
+
+import { MaterialRequestType } from '~modules/material-requests/material-requests.types';
+import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 
 export class ContentPartnersQueryDto {
 	@IsBoolean()
@@ -16,5 +19,16 @@ export class ContentPartnersQueryDto {
 		description: 'Filter on content partners with/without a space',
 		default: undefined,
 	})
-	hasSpace? = undefined;
+	hasSpace?: boolean = undefined;
+
+	@IsArray()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		isArray: true,
+		description: 'OR-ids for which you want to receive information',
+		default: [],
+	})
+	@Transform(commaSeparatedStringToArray)
+	orIds?: string[] = [];
 }

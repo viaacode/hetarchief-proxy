@@ -583,7 +583,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -618,7 +617,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -653,7 +651,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -688,7 +685,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -728,7 +724,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
