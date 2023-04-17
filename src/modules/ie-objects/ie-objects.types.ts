@@ -123,7 +123,7 @@ export interface IeObject {
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
-	maintainerFromUrl?: string | null;
+	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
 	// FROM DB
