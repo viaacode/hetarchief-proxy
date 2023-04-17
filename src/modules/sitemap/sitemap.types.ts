@@ -1,7 +1,8 @@
 export interface SitemapItemInfo {
 	loc: string;
-	lastmod?: string;
 	changefreq: string;
+	lastmod?: string;
+	priority?: number;
 }
 
 export interface SitemapItemConfig {

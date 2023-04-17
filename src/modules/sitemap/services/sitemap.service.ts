@@ -27,7 +27,7 @@ export class SitemapService {
 		}
 	}
 
-	public async getContentPages(): Promise<string[]> {
+	public async getContentPagesPaths(): Promise<string[]> {
 		try {
 			const contentPages = await this.contentPagesService.fetchContentPages(
 				0,
@@ -35,7 +35,7 @@ export class SitemapService {
 				'title',
 				'asc',
 				'',
-				{}
+				{ content_type: { _eq: 'PAGINA' } }
 			);
 			const paths = contentPages[0].map((cp) => cp?.path);
 			return paths;

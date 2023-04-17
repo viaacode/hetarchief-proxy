@@ -30,16 +30,17 @@ export class SitemapController {
 					items in sitemap:
 						-homepage (static): '/' done
 						-landingspagina bzt (static): '/bezoek' done
-						-andere contentpagina’s: '' admincore : fetchContentPages //like: import { DataService } from '@meemoo/admin-core-api';
+						-andere contentpagina’s: '' admincore : fetchContentPages //like: import { DataService } from '@meemoo/admin-core-api'; done
 						-zoekpagina algemeen (static): '/zoeken' done
 						-zoekpagina per cp: '/zoeken/?aanbieders={or id van aanbieder}' done
 						-item-detailpagina’s: '/zoeken/{maintainerSlug}/{objectSchemaId}' done
 		*/
 
 		const config = await this.sitemapService.getSitemapConfig();
-		const contentPagesPaths = await this.sitemapService.getContentPages();
+		const configPaths = config.value.map((c) => c.path);
+		const contentPagesPaths = await this.sitemapService.getContentPagesPaths();
 
-		const staticPages = ['/', '/bezoek', '/zoeken'];
+		const staticPages = ['/', '/bezoek', '/zoeken', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
 
 		const activeSpaces = await this.spacesService.findAll(
 			{ size: 1000, status: [VisitorSpaceStatus.Active] },
@@ -54,6 +55,10 @@ export class SitemapController {
 		const allPages: SitemapItemInfo[] = [
 			//TODO: Put everything in correct order like big comment above
 			...staticPages.map((path) => ({
+				loc: process.env.CLIENT_HOST + path,
+				changefreq: 'monthly',
+			})),
+			...contentPagesPaths.map((path) => ({
 				loc: process.env.CLIENT_HOST + path,
 				changefreq: 'monthly',
 			})),
@@ -74,9 +79,23 @@ export class SitemapController {
 			})),
 		];
 
+		const filteredPages = allPages
+			.map((page) => {
+				const path = page.loc.slice(process.env.CLIENT_HOST.length);
+				if (configPaths.includes(path)) {
+					const configValue = config.value.filter((c) => c.path === path)[0];
+					if (configValue?.blacklisted === true) {
+						return null; // todo: remove object clean
+					} else {
+						return { ...page, priority: configValue?.priority };
+					}
+				}
+				return page;
+			})
+			.filter((x) => x !== null);
 		const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-			${allPages.map(SitemapController.renderPage).join('\n')}
+			${filteredPages.map(SitemapController.renderPage).join('\n')}
 		</urlset>
 		`;
 		// Be careful!! This keep making new files, which is not how it is supposed to work (check comment in Jira ARC-1559).
@@ -101,6 +120,7 @@ export class SitemapController {
 			<loc>${pageInfo.loc}</loc>
 			${pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : ``}
 			<changefreq>${pageInfo.changefreq}</changefreq>
+			${pageInfo.priority ? `<priority>${pageInfo.priority}</priority>` : ``}
 			</url>`;
 	}
 }
