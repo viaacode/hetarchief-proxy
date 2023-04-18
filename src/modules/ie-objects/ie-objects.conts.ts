@@ -184,6 +184,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'maintainerLogo',
 	'maintainerDescription',
 	'maintainerSiteUrl',
+	'maintainerFormUrl',
 	'name',
 	'series',
 	'programs',

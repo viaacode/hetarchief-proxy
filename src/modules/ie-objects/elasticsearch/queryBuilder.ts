@@ -31,7 +31,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { GroupId } from '~modules/users/types';
+import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -197,16 +197,19 @@ export class QueryBuilder {
 		filters: SearchFilter[] | undefined,
 		inputInfo: QueryBuilderInputInfo
 	) {
-		if (!filters || isEmpty(filters)) {
-			// Return query object that will match all results
-			return { match_all: {} };
-		}
-
 		const filterObject: any = {};
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
 		set(filterObject, 'bool.filter', filterArray);
 
+		// Kiosk users are only allowed to view objects from their maintainer
+		if (inputInfo.user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			filterArray.push({
+				terms: {
+					'schema_maintainer.schema_identifier': [inputInfo.user.getMaintainerId()],
+				},
+			});
+		}
 		// Determine consultable filters are present and strip them from standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
 		// This because if we strip it before it will just return match_all

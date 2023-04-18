@@ -6,6 +6,7 @@ describe('ContentPartnersQueryDto', () => {
 			const contentPartnersQueryDto = new ContentPartnersQueryDto();
 			expect(contentPartnersQueryDto).toEqual({
 				hasSpace: undefined,
+				orIds: [],
 			});
 		});
 	});

@@ -62,7 +62,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { VisitAccessType, VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -335,6 +335,7 @@ export class IeObjectsService {
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
 			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
+			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
 			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
@@ -580,6 +581,7 @@ export class IeObjectsService {
 		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
 		// CP_ADMIN should always have access to their own visitor space
 		// MEEMOO_ADMIN should always have access to all visitor spaces
+		// KIOSK_VISITOR should always have access to their own visitor space
 		let accessibleVisitorSpaceIds: string[] = [];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
@@ -603,6 +605,8 @@ export class IeObjectsService {
 				...spaces.items.map((space) => space.maintainerId),
 				user.getMaintainerId(),
 			];
+		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			accessibleVisitorSpaceIds = [user.getMaintainerId()];
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}

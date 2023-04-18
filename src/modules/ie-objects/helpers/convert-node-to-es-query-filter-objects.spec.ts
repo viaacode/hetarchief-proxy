@@ -25,7 +25,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -42,7 +45,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -58,7 +64,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
@@ -75,7 +84,10 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
+			{
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				value: node,

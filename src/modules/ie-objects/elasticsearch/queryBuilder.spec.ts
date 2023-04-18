@@ -44,7 +44,7 @@ describe('QueryBuilder', () => {
 			);
 		});
 
-		it('should return a match_all query when no filters are specified', () => {
+		it('should return a empty filter array query when no filters are specified', () => {
 			const esQuery = QueryBuilder.build(
 				{ size: 10, page: 1, filters: [] },
 				mockInputInfo as any
@@ -52,7 +52,11 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
-						{ match_all: {} },
+						{
+							bool: {
+								filter: [],
+							},
+						},
 						{
 							bool: {
 								should: [
@@ -121,7 +125,7 @@ describe('QueryBuilder', () => {
 			expect(esQuery.size).toEqual(10);
 		});
 
-		it('should return a match_all query when empty filters are specified', () => {
+		it('should return a empty filter array query when empty filters are specified', () => {
 			const esQuery = QueryBuilder.build(
 				{ filters: [], size: 10, page: 1 },
 				mockInputInfo as any
@@ -130,7 +134,11 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
-						{ match_all: {} },
+						{
+							bool: {
+								filter: [],
+							},
+						},
 						{
 							bool: {
 								should: [
@@ -575,7 +583,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -610,7 +617,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -645,7 +651,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -680,7 +685,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
@@ -720,7 +724,6 @@ describe('QueryBuilder', () => {
 						IeObjectsSearchFilterField.CREATOR,
 						IeObjectsSearchFilterField.LANGUAGE,
 						IeObjectsSearchFilterField.MAINTAINER_ID,
-						IeObjectsSearchFilterField.MAINTAINER_NAME,
 					],
 				},
 				{
