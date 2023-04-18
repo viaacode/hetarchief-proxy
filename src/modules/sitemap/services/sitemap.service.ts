@@ -31,7 +31,7 @@ export class SitemapService {
 		try {
 			const contentPages = await this.contentPagesService.fetchContentPages(
 				0,
-				100000,
+				50000,
 				'title',
 				'asc',
 				'',
