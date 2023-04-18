@@ -54,7 +54,7 @@ export class SitemapService {
 					loc: process.env.CLIENT_HOST + path,
 					changefreq: 'monthly',
 				})),
-				// /zoeken is seperate because of the required order
+				// '/zoeken' is seperate because of the required order
 				{
 					loc: process.env.CLIENT_HOST + '/zoeken',
 					changefreq: 'monthly',
@@ -84,7 +84,7 @@ export class SitemapService {
 			],
 			sitemapConfig
 		);
-		const XML_OBJECTS_SIZE = 50; // amount of objects in 1 xml file, should be 50000
+		const XML_OBJECTS_SIZE = 50000; // amount of objects in 1 xml file, should be 50000
 		const itemDetailPagesArray = []; // This contains arrays each containing a maximum of XML_OBJECTS_SIZE items
 
 		for (let i = 0; i < itemDetailPages.length; i += XML_OBJECTS_SIZE) {
@@ -93,9 +93,9 @@ export class SitemapService {
 		}
 
 		// Generate and upload all the xml files
-		const xmlUrls = [];
+		const xmlUrls = []; // This will contain the urls for the index xml file
 
-		// Render general xml
+		// Generate general xml
 		const renderedGeneralXml = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 			${generalPages.map(this.renderPage).join('\n')}
@@ -184,7 +184,6 @@ export class SitemapService {
 		});
 	}
 
-	// This function blacklists and adds priority using the config json in the database
 	private blacklistAndPrioritizePages(
 		pages: SitemapItemInfo[],
 		config: SitemapItemConfig
