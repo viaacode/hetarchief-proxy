@@ -55,7 +55,8 @@ export class SitemapController {
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
 		]);
 
-		const allPages: SitemapItemInfo[] = [
+		// Create sitemap info for general pages
+		const generalPages: SitemapItemInfo[] = [
 			//TODO: Put everything in correct order like big comment above
 			...staticPages.map((path) => ({
 				loc: process.env.CLIENT_HOST + path,
@@ -70,6 +71,10 @@ export class SitemapController {
 				changefreq: 'weekly',
 				lastmod: moment(space.updatedAt).format('YYYY-MM-DD'),
 			})),
+		];
+
+		// Create sitemap info for item detail pages
+		const itemDetailPages: SitemapItemInfo[] = [
 			...publicObjects.map((object) => ({
 				loc:
 					process.env.CLIENT_HOST +
@@ -81,8 +86,16 @@ export class SitemapController {
 				lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
 			})),
 		];
+		const PAGE_SIZE = 5; // amount of objects in 1 xml file, should be 50000
+		const itemDetailPagesArray = [];
 
-		const filteredPages = allPages.reduce((result, page) => {
+		for (let i = 0; i < itemDetailPages.length; i += PAGE_SIZE) {
+			const chunk = itemDetailPages.slice(i, i + PAGE_SIZE);
+			itemDetailPagesArray.push(chunk);
+		}
+
+		// blacklist and add priority
+		const filteredPages = generalPages.reduce((result, page) => {
 			const path = page.loc.substring(process.env.CLIENT_HOST.length);
 			if (configPaths.includes(path)) {
 				const configValue = config.value.find((c) => c.path === path);
@@ -100,21 +113,21 @@ export class SitemapController {
 			${filteredPages.map(SitemapController.renderPage).join('\n')}
 		</urlset>
 		`;
-		// // Be careful!! This keep making new files, which is not how it is supposed to work (check comment in Jira ARC-1559).
-		// // This was just added so FE has something to work with
-		const url = await this.assetsService.uploadSitemap(AssetFileType.SITEMAP, {
-			fieldname: 'indexSitemap',
-			originalname: 'general',
-			encoding: '',
-			mimetype: 'text/xml',
-			size: 0,
-			stream: new Readable(),
-			destination: '',
-			filename: 'indexSitemap',
-			path: '',
-			buffer: Buffer.from(renderedXml, 'utf-8'),
-		});
-		return url;
+
+		// const url = await this.assetsService.uploadSitemap(AssetFileType.SITEMAP, {
+		// 	fieldname: 'indexSitemap',
+		// 	originalname: 'general',
+		// 	encoding: '',
+		// 	mimetype: 'text/xml',
+		// 	size: 0,
+		// 	stream: new Readable(),
+		// 	destination: '',
+		// 	filename: 'indexSitemap',
+		// 	path: '',
+		// 	buffer: Buffer.from(renderedXml, 'utf-8'),
+		// });
+		// return url;
+		return renderedXml;
 	}
 
 	private static renderPage(pageInfo: SitemapItemInfo): string {
