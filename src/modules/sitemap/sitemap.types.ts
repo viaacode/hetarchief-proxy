@@ -5,7 +5,7 @@ export interface SitemapItemInfo {
 	priority?: number;
 }
 
-export interface SitemapItemConfig {
+export interface SitemapConfig {
 	value: PathInfo[];
 	name: string;
 	updated_at?: string;

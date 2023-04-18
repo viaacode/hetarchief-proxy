@@ -11,7 +11,7 @@ export class SitemapController {
 	constructor(private sitemapService: SitemapService) {}
 
 	@Post()
-	public async getSitemap(): Promise<string> {
+	public async generateSitemap(): Promise<string> {
 		/*	From Jira:	// Comment can be removed once this feature is complete
 					items in sitemap:
 						-homepage (static): '/' done

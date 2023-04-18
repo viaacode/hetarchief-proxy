@@ -4,7 +4,7 @@ import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import moment from 'moment';
 
-import { SitemapItemConfig, SitemapItemInfo } from '../sitemap.types';
+import { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
@@ -124,7 +124,7 @@ export class SitemapService {
 		await this.uploadXml(indexXml, `index`);
 	}
 
-	public async getSitemapConfig(): Promise<SitemapItemConfig> {
+	public async getSitemapConfig(): Promise<SitemapConfig> {
 		try {
 			const { app_config: config } = await this.dataService.execute<GetSitemapConfigQuery>(
 				GetSitemapConfigDocument
@@ -186,7 +186,7 @@ export class SitemapService {
 
 	private blacklistAndPrioritizePages(
 		pages: SitemapItemInfo[],
-		config: SitemapItemConfig
+		config: SitemapConfig
 	): SitemapItemInfo[] {
 		const configPaths = config.value.map((c) => c.path);
 
