@@ -169,8 +169,9 @@ export class SitemapService {
 			<loc>${url}</loc>
 			</sitemap>`;
 	}
+
 	private async uploadXml(xml: string, name: string): Promise<string> {
-		return await this.assetsService.uploadSitemap(AssetFileType.SITEMAP, {
+		return await this.assetsService.upload(AssetFileType.SITEMAP, {
 			fieldname: name,
 			originalname: name,
 			encoding: '',

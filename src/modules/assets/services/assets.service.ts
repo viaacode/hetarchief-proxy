@@ -121,19 +121,9 @@ export class AssetsService {
 
 	public async upload(assetFiletype: AssetFileType, file: Express.Multer.File): Promise<string> {
 		const parsedFilename = path.parse(file.originalname);
-		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}-${uuidv4()}${
-			parsedFilename.ext
+		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}${
+			assetFiletype === AssetFileType.SITEMAP ? '' : `-${uuidv4()}${parsedFilename.ext}`
 		}`;
-
-		return this.uploadToObjectStore(key, file);
-	}
-
-	public async uploadSitemap(
-		assetFiletype: AssetFileType,
-		file: Express.Multer.File
-	): Promise<string> {
-		const parsedFilename = path.parse(file.originalname);
-		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}`;
 
 		return this.uploadToObjectStore(key, file);
 	}
