@@ -32,18 +32,22 @@ export class ContentPartnersService {
 	public async getContentPartners(
 		inputQuery: ContentPartnersQueryDto
 	): Promise<IPagination<ContentPartner>> {
-		let where = {};
+		const andFilter = [];
 		if (inputQuery.hasSpace === true) {
-			where = { visitor_space: {} };
+			andFilter.push({ visitor_space: {} });
 		} else if (inputQuery.hasSpace === false) {
-			where = { _not: { visitor_space: {} } };
+			andFilter.push({ _not: { visitor_space: {} } });
+		}
+
+		if (inputQuery.orIds?.length > 0) {
+			andFilter.push({ schema_identifier: { _in: inputQuery.orIds } });
 		}
 
 		const contentPartners = await this.dataService.execute<
 			FindContentPartnersQuery,
 			FindContentPartnersQueryVariables
 		>(FindContentPartnersDocument, {
-			where,
+			where: { _and: andFilter },
 		});
 
 		return Pagination<ContentPartner>({

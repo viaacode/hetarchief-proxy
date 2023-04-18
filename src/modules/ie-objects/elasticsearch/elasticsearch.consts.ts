@@ -37,7 +37,6 @@ export enum IeObjectsSearchFilterField {
 	LOCATION = 'location',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
-	MAINTAINER_NAME = 'maintainers', // Contains the name of the maintainer
 	CAST = 'cast',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
@@ -112,7 +111,6 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]?: QueryT
 	[IeObjectsSearchFilterField.ERA]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.LOCATION]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: QueryType.TERMS,
-	[IeObjectsSearchFilterField.MAINTAINER_NAME]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CAST]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CAPTION]: QueryType.TERM,
 	[IeObjectsSearchFilterField.TRANSCRIPT]: QueryType.TERM,
@@ -152,7 +150,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.ERA]: 'schema_temporal_coverage',
 	[IeObjectsSearchFilterField.LOCATION]: 'schema_spatial_coverage',
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
-	[IeObjectsSearchFilterField.MAINTAINER_NAME]: 'schema_maintainer.schema_name',
 	[IeObjectsSearchFilterField.CAST]: 'meemoo_description_cast',
 	[IeObjectsSearchFilterField.CAPTION]: 'schema_caption',
 	[IeObjectsSearchFilterField.TRANSCRIPT]: 'schema_transcript',
@@ -194,12 +191,10 @@ export const AGGS_PROPERTIES: Array<IeObjectsSearchFilterField> = [
 export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.NAME]: 'keyword',
-	[IeObjectsSearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[IeObjectsSearchFilterField.TYPE]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
-	[IeObjectsSearchFilterField.MAINTAINER_NAME]: 'keyword',
 	[IeObjectsSearchFilterField.TYPE]: 'keyword',
 };
