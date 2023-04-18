@@ -15,7 +15,6 @@ export class ContentPartnersController {
 	public async getContentPartners(
 		@Query() queryDto: ContentPartnersQueryDto
 	): Promise<IPagination<ContentPartner>> {
-		const contentPartners = await this.contentPartnersService.getContentPartners(queryDto);
-		return contentPartners;
+		return await this.contentPartnersService.getContentPartners(queryDto);
 	}
 }
