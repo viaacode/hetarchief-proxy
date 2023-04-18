@@ -187,7 +187,10 @@ export class CampaignMonitorService {
 			});
 
 			return {
-				newsletter: response?.State === 'Active',
+				newsletter:
+					response?.CustomFields.find(
+						(field) => field.Key === 'optin_mail_lists'
+					)?.Value?.includes('newsletter') ?? false,
 			};
 		} catch (err) {
 			if (err?.code === 203) {
@@ -211,18 +214,16 @@ export class CampaignMonitorService {
 		userInfo: CampaignMonitorUserInfo,
 		preferences?: CampaignMonitorNewsletterPreferences
 	) {
-		let url: string | null = null;
-
 		try {
 			if (!userInfo.email) {
 				return null;
 			}
 
-			url = `${this.configService.get(
+			const url: string | null = `${this.configService.get(
 				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 			)}/${this.configService.get(
 				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`;
+			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}/import.json`;
 
 			let optin_mail_lists;
 			if (preferences) {
@@ -237,7 +238,7 @@ export class CampaignMonitorService {
 				optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
 			}
 
-			const data = this.convertPreferencesToNewsletterTemplateData(
+			const subscriberInfo = this.convertPreferencesToNewsletterTemplateData(
 				userInfo,
 				true,
 				optin_mail_lists
@@ -246,7 +247,10 @@ export class CampaignMonitorService {
 			await this.gotInstance({
 				url,
 				method: 'post',
-				json: data,
+				json: {
+					Subscribers: [subscriberInfo],
+					Resubscribe: false,
+				},
 				throwHttpErrors: true,
 			});
 		} catch (err) {
@@ -427,7 +431,7 @@ export class CampaignMonitorService {
 		resubscribe: boolean,
 		optin_mail_lists?: string
 	): CampaignMonitorUpdatePreferencesData {
-		const customFields = {
+		const customFields: Record<string, string | boolean> = {
 			usergroup: userInfo.usergroup,
 			is_key_user: userInfo.is_key_user,
 			firstname: userInfo.firstName,
@@ -436,8 +440,8 @@ export class CampaignMonitorService {
 			last_access_date: userInfo.last_access_date,
 			organisation: userInfo.organisation,
 		};
-		if (optin_mail_lists != null) {
-			customFields['optin_mail_lists'] = optin_mail_lists;
+		if (!isNil(optin_mail_lists)) {
+			customFields.optin_mail_lists = optin_mail_lists;
 		}
 
 		return {
@@ -445,11 +449,12 @@ export class CampaignMonitorService {
 			Name: userInfo.firstName + ' ' + userInfo.lastName,
 			Resubscribe: resubscribe,
 			ConsentToTrack: resubscribe ? 'Yes' : 'Unchanged',
-			CustomFields: toPairs(customFields).map((pair) => ({
-				Key: pair[0],
-				Value: pair[1],
-				Clear: isNil(pair[1]) || (isString(pair[1]) && pair[1] === ''),
-			})),
+			CustomFields: toPairs(customFields).map((pair) => {
+				return {
+					Key: pair[0],
+					Value: pair[1],
+				};
+			}),
 		};
 	}
 

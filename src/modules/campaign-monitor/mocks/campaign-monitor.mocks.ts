@@ -128,42 +128,34 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 		{
 			Key: 'usergroup',
 			Value: mockUserInfo.usergroup,
-			Clear: false,
 		},
 		{
 			Key: 'is_key_user',
 			Value: mockUserInfo.is_key_user,
-			Clear: false,
 		},
 		{
 			Key: 'firstname',
 			Value: mockUserInfo.firstName,
-			Clear: false,
 		},
 		{
 			Key: 'lastname',
 			Value: mockUserInfo.lastName,
-			Clear: false,
 		},
 		{
 			Key: 'created_date',
 			Value: null,
-			Clear: true,
 		},
 		{
 			Key: 'last_access_date',
 			Value: null,
-			Clear: true,
 		},
 		{
 			Key: 'organisation',
 			Value: null,
-			Clear: true,
 		},
 		{
 			Key: 'optin_mail_lists',
 			Value: 'newsletter',
-			Clear: false,
 		},
 	],
 };

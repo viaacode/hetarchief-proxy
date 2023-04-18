@@ -445,7 +445,12 @@ describe('CampaignMonitorService', () => {
 					)}.json/?${queryString.stringify({ email: mockUser.email })}`
 				)
 				.reply(201, {
-					State: 'Active',
+					CustomFields: [
+						{
+							Key: 'optin_mail_lists',
+							Value: 'newsletter',
+						},
+					],
 				});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
 			expect(result).toEqual({ newsletter: true });
@@ -462,7 +467,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
 					)}.json/?${queryString.stringify({ email: mockUser.email })}`
 				)
-				.reply(203, {});
+				.reply(203, {
+					CustomFields: [],
+				});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
 			expect(result).toEqual({ newsletter: false });
 		});
@@ -510,7 +517,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}/import.json`
 				)
 				.replyWithError('');
 
@@ -535,7 +544,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}/import.json`
 				)
 				.reply(201, {});
 
@@ -555,7 +566,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}/import.json`
 				)
 				.reply(201, {});
 
@@ -575,7 +588,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}/import.json`
 				)
 				.reply(201, {});
 
@@ -667,7 +682,9 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}.json`
+					)}/${mockConfigService.get(
+						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+					)}/import.json`
 				)
 				.reply(201, {});
 
