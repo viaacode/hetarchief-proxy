@@ -1,3 +1,5 @@
+import { Readable } from 'stream';
+
 import { ContentPagesService } from '@meemoo/admin-core-api';
 import { Controller, Header, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -8,6 +10,7 @@ import { SitemapItemInfo } from '../sitemap.types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AssetsService } from '~modules/assets/services/assets.service';
+import { AssetFileType } from '~modules/assets/types';
 import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -40,7 +43,7 @@ export class SitemapController {
 		const configPaths = config.value.map((c) => c.path);
 		const contentPagesPaths = await this.sitemapService.getContentPagesPaths();
 
-		const staticPages = ['/', '/bezoek', '/zoeken', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
+		const staticPages = ['/', '/emiletest', '/bezoek', '/zoeken', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
 
 		const activeSpaces = await this.spacesService.findAll(
 			{ size: 1000, status: [VisitorSpaceStatus.Active] },
@@ -79,40 +82,39 @@ export class SitemapController {
 			})),
 		];
 
-		const filteredPages = allPages
-			.map((page) => {
-				const path = page.loc.slice(process.env.CLIENT_HOST.length);
-				if (configPaths.includes(path)) {
-					const configValue = config.value.filter((c) => c.path === path)[0];
-					if (configValue?.blacklisted === true) {
-						return null; // todo: remove object clean
-					} else {
-						return { ...page, priority: configValue?.priority };
-					}
+		const filteredPages = allPages.reduce((result, page) => {
+			const path = page.loc.substring(process.env.CLIENT_HOST.length);
+			if (configPaths.includes(path)) {
+				const configValue = config.value.find((c) => c.path === path);
+				if (configValue?.blacklisted === true) {
+					return result;
+				} else {
+					return [...result, { ...page, priority: configValue?.priority }];
 				}
-				return page;
-			})
-			.filter((x) => x !== null);
+			}
+			return [...result, page];
+		}, []);
+
 		const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 			${filteredPages.map(SitemapController.renderPage).join('\n')}
 		</urlset>
 		`;
-		// Be careful!! This keep making new files, which is not how it is supposed to work (check comment in Jira ARC-1559).
-		// This was just added so FE has something to work with
-		// 	const url = await this.assetsService.upload(AssetFileType.SITEMAP, {
-		// 		fieldname: 'indexSitemap',
-		// 		originalname: 'indexSitemap',
-		// 		encoding: '',
-		// 		mimetype: 'text/xml',
-		// 		size: 0,
-		// 		stream: new Readable(),
-		// 		destination: '',
-		// 		filename: 'indexSitemap',
-		// 		path: '',
-		// 		buffer: Buffer.from(renderedXml, 'utf-8'),
-		// 	});
-		return renderedXml;
+		// // Be careful!! This keep making new files, which is not how it is supposed to work (check comment in Jira ARC-1559).
+		// // This was just added so FE has something to work with
+		const url = await this.assetsService.uploadSitemap(AssetFileType.SITEMAP, {
+			fieldname: 'indexSitemap',
+			originalname: 'general',
+			encoding: '',
+			mimetype: 'text/xml',
+			size: 0,
+			stream: new Readable(),
+			destination: '',
+			filename: 'indexSitemap',
+			path: '',
+			buffer: Buffer.from(renderedXml, 'utf-8'),
+		});
+		return url;
 	}
 
 	private static renderPage(pageInfo: SitemapItemInfo): string {

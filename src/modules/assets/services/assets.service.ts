@@ -128,6 +128,16 @@ export class AssetsService {
 		return this.uploadToObjectStore(key, file);
 	}
 
+	public async uploadSitemap(
+		assetFiletype: AssetFileType,
+		file: Express.Multer.File
+	): Promise<string> {
+		const parsedFilename = path.parse(file.originalname);
+		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}`;
+
+		return this.uploadToObjectStore(key, file);
+	}
+
 	public async uploadToObjectStore(key: string, file: Express.Multer.File): Promise<string> {
 		const s3Client = await this.getS3Client();
 
