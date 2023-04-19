@@ -275,11 +275,13 @@ describe('ieObjectsService', () => {
 		it('should throw an error when it fails to get object', async () => {
 			mockDataService.execute.mockResolvedValueOnce('');
 			try {
-				await ieObjectsService.findIeObjectsForSitemap([
-					IeObjectLicense.PUBLIEK_METADATA_LTD,
-				]);
+				await ieObjectsService.findIeObjectsForSitemap(
+					[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+					0,
+					50
+				);
 			} catch (err) {
-				expect(err.message).toEqual('Failed getting objects for sitemap');
+				expect(err.message).toEqual('Failed getting ieObjects for sitemap');
 			}
 		});
 
@@ -289,11 +291,13 @@ describe('ieObjectsService', () => {
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const result = await ieObjectsService.findIeObjectsForSitemap([
-				IeObjectLicense.PUBLIEK_METADATA_LTD,
-			]);
+			const result = await ieObjectsService.findIeObjectsForSitemap(
+				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				0,
+				50
+			);
 
-			expect(result).toEqual([mockSitemapObject]);
+			expect(result.items).toEqual([mockSitemapObject]);
 		});
 	});
 

@@ -81,6 +81,7 @@ export class SitemapService {
 				i,
 				SITEMAP_XML_OBJECTS_SIZE
 			);
+
 			const itemDetailPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
 				[
 					...ieObjects.items.map((object) => ({
@@ -97,11 +98,13 @@ export class SitemapService {
 				],
 				sitemapConfig
 			);
+
 			const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
 				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 					${itemDetailPages.map(this.renderPage).join('\n')}
 				</urlset>
 				`;
+
 			xmlUrls.push(await this.uploadXml(renderedXml, `itemDetail${ieObjects.page}`));
 		}
 
@@ -136,8 +139,8 @@ export class SitemapService {
 				'',
 				{ content_type: { _eq: 'PAGINA' } }
 			);
-			const paths = contentPages[0].map((cp) => cp?.path);
-			return paths;
+
+			return contentPages[0].map((cp) => cp?.path);
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting all the content pages', err);
 		}

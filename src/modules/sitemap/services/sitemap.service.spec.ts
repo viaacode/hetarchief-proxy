@@ -1,7 +1,7 @@
 import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { mockSitemapConfig } from '../mocks/sitemap.mocks';
+import { mockContentPage, mockSitemapConfig } from '../mocks/sitemap.mocks';
 
 import { SitemapService } from './sitemap.service';
 
@@ -20,10 +20,10 @@ const mockContentPagesService: Partial<Record<keyof ContentPagesService, jest.Sp
 	fetchContentPages: jest.fn(),
 };
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
-	findObjectsForSitemap: jest.fn(),
+	findIeObjectsForSitemap: jest.fn(),
 };
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
-	uploadSitemap: jest.fn(),
+	upload: jest.fn(),
 };
 
 describe('SitemapService', () => {
@@ -65,7 +65,7 @@ describe('SitemapService', () => {
 		expect(sitemapService).toBeDefined();
 	});
 
-	describe('renderPage', () => {
+	describe('getSitemapConfig', () => {
 		it('returns a SitemapItemConfig object', async () => {
 			const mockdata = {
 				app_config: [mockSitemapConfig],
@@ -74,6 +74,38 @@ describe('SitemapService', () => {
 
 			const response = await sitemapService.getSitemapConfig();
 			expect(response).toEqual(mockSitemapConfig);
+		});
+
+		it('throw an error when it fails to get the sitemap config', async () => {
+			mockDataService.execute.mockRejectedValueOnce('');
+
+			try {
+				await sitemapService.getSitemapConfig();
+				fail('getSitemapConfig should have thrown an error');
+			} catch (err) {
+				expect(err.message).toEqual('Failed getting sitemap config');
+			}
+		});
+	});
+
+	describe('getContentPagesPaths', () => {
+		it('returns a SitemapItemConfig object', async () => {
+			const mockdata = [[mockContentPage], 1];
+			mockContentPagesService.fetchContentPages.mockResolvedValueOnce(mockdata);
+
+			const response = await sitemapService.getContentPagesPaths();
+			expect(response).toEqual([mockContentPage.path]);
+		});
+
+		it('throw an error when it fails to get the content pages', async () => {
+			mockContentPagesService.fetchContentPages.mockRejectedValueOnce('');
+
+			try {
+				await sitemapService.getContentPagesPaths();
+				fail('getContentPagesPaths should have thrown an error');
+			} catch (err) {
+				expect(err.message).toEqual('Failed getting all the content pages');
+			}
 		});
 	});
 });

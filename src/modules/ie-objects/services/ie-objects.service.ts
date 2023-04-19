@@ -303,7 +303,7 @@ export class IeObjectsService {
 				total: ieObjectAggregate?.aggregate?.count,
 			});
 		} catch (err) {
-			throw new InternalServerErrorException('Failed getting objects for sitemap', err);
+			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);
 		}
 	}
 
