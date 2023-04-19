@@ -2,8 +2,10 @@ import { Readable } from 'stream';
 
 import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import _ from 'lodash';
 import moment from 'moment';
 
+import { SITEMAP_XML_OBJECTS_SIZE } from '../sitemap.consts';
 import { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
@@ -31,14 +33,14 @@ export class SitemapService {
 		const sitemapConfig = await this.getSitemapConfig();
 		const contentPagesPaths = await this.getContentPagesPaths();
 
-		const staticPages = ['/', '/bezoek', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
+		const staticPages = ['/', '/bezoek', '/zoeken', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
 
 		const activeSpaces = await this.spacesService.findAll(
 			{ size: 1000, status: [VisitorSpaceStatus.Active] },
 			null
 		);
 
-		const publicObjects = await this.ieObjectsService.findObjectsForSitemap([
+		const publicIeObjects = await this.ieObjectsService.findIeObjectsForSitemap([
 			IeObjectLicense.PUBLIEK_METADATA_LTD,
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
 		]);
@@ -47,22 +49,16 @@ export class SitemapService {
 		const generalPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
 			[
 				...staticPages.map((path) => ({
-					loc: process.env.CLIENT_HOST + path,
+					loc: path,
 					changefreq: 'monthly',
 				})),
 				...contentPagesPaths.map((path) => ({
-					loc: process.env.CLIENT_HOST + path,
+					loc: path,
 					changefreq: 'monthly',
 				})),
-				// '/zoeken' is seperate because of the required order
-				{
-					loc: process.env.CLIENT_HOST + '/zoeken',
-					changefreq: 'monthly',
-				},
 				...activeSpaces.items.map((space) => ({
-					loc: process.env.CLIENT_HOST + '/zoeken/?aanbieders=' + space.maintainerId,
+					loc: '/zoeken/?aanbieders=' + space.maintainerId,
 					changefreq: 'weekly',
-					lastmod: moment(space.updatedAt).format('YYYY-MM-DD'),
 				})),
 			],
 			sitemapConfig
@@ -71,24 +67,24 @@ export class SitemapService {
 		// Create sitemap info for item detail pages
 		const itemDetailPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
 			[
-				...publicObjects.map((object) => ({
+				...publicIeObjects.map((object) => ({
 					loc:
-						process.env.CLIENT_HOST +
 						'/zoeken/' +
 						object.maintainerSlug +
 						'/' +
-						object.schemaIdentifier,
+						object.schemaIdentifier +
+						'/' +
+						_.kebabCase(object.name),
 					changefreq: 'weekly',
 					lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
 				})),
 			],
 			sitemapConfig
 		);
-		const XML_OBJECTS_SIZE = 50000; // amount of objects in 1 xml file, should be 50000
 		const itemDetailPagesArray = []; // This contains arrays each containing a maximum of XML_OBJECTS_SIZE items
 
-		for (let i = 0; i < itemDetailPages.length; i += XML_OBJECTS_SIZE) {
-			const chunk = itemDetailPages.slice(i, i + XML_OBJECTS_SIZE);
+		for (let i = 0; i < itemDetailPages.length; i += SITEMAP_XML_OBJECTS_SIZE) {
+			const chunk = itemDetailPages.slice(i, i + SITEMAP_XML_OBJECTS_SIZE);
 			itemDetailPagesArray.push(chunk);
 		}
 
@@ -157,7 +153,7 @@ export class SitemapService {
 	// ------------------------------------------------------------------------
 	private renderPage(pageInfo: SitemapItemInfo): string {
 		return `<url>
-			<loc>${pageInfo.loc}</loc>
+			<loc>${process.env.CLIENT_HOST}${pageInfo.loc}</loc>
 			${pageInfo.lastmod ? `<lastmod>${pageInfo.lastmod}</lastmod>` : ``}
 			<changefreq>${pageInfo.changefreq}</changefreq>
 			${pageInfo.priority ? `<priority>${pageInfo.priority}</priority>` : ``}
@@ -171,18 +167,22 @@ export class SitemapService {
 	}
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
-		return await this.assetsService.upload(AssetFileType.SITEMAP, {
-			fieldname: name,
-			originalname: name,
-			encoding: '',
-			mimetype: 'text/xml',
-			size: 0,
-			stream: new Readable(),
-			destination: '',
-			filename: name,
-			path: '',
-			buffer: Buffer.from(xml, 'utf-8'),
-		});
+		return await this.assetsService.upload(
+			AssetFileType.SITEMAP,
+			{
+				fieldname: name,
+				originalname: name,
+				encoding: '',
+				mimetype: 'text/xml',
+				size: 0,
+				stream: new Readable(),
+				destination: '',
+				filename: name,
+				path: '',
+				buffer: Buffer.from(xml, 'utf-8'),
+			},
+			name
+		);
 	}
 
 	private blacklistAndPrioritizePages(
@@ -190,18 +190,19 @@ export class SitemapService {
 		config: SitemapConfig
 	): SitemapItemInfo[] {
 		const configPaths = config.value.map((c) => c.path);
-
-		return pages.reduce((result, page) => {
-			const path = page.loc.substring(process.env.CLIENT_HOST.length);
-			if (configPaths.includes(path)) {
-				const configValue = config.value.find((c) => c.path === path);
-				if (configValue?.blacklisted === true) {
-					return result;
-				} else {
-					return [...result, { ...page, priority: configValue?.priority }];
+		return _.compact(
+			pages.map((page) => {
+				if (configPaths.includes(page.loc)) {
+					const configValue = config.value.find((c) => c.path === page.loc);
+					if (configValue?.blacklisted) {
+						return null;
+					}
+					if (configValue?.priority) {
+						page.priority = configValue?.priority;
+					}
 				}
-			}
-			return [...result, page];
-		}, []);
+				return page;
+			})
+		);
 	}
 }

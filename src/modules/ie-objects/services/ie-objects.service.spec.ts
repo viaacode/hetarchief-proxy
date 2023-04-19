@@ -275,7 +275,7 @@ describe('ieObjectsService', () => {
 		it('should throw an error when it fails to get object', async () => {
 			mockDataService.execute.mockResolvedValueOnce('');
 			try {
-				await ieObjectsService.findObjectsForSitemap([
+				await ieObjectsService.findIeObjectsForSitemap([
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 				]);
 			} catch (err) {
@@ -289,7 +289,7 @@ describe('ieObjectsService', () => {
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const result = await ieObjectsService.findObjectsForSitemap([
+			const result = await ieObjectsService.findIeObjectsForSitemap([
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 			]);
 

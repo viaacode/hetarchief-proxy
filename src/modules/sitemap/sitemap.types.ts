@@ -6,13 +6,13 @@ export interface SitemapItemInfo {
 }
 
 export interface SitemapConfig {
-	value: PathInfo[];
+	value: SitemapPathInfo[];
 	name: string;
 	updated_at?: string;
 	created_at?: string;
 }
 
-export interface PathInfo {
+export interface SitemapPathInfo {
 	path: string;
 	priority?: number;
 	blacklisted?: boolean;

@@ -42,9 +42,9 @@ import {
 	FindAllObjectsByCollectionIdDocument,
 	FindAllObjectsByCollectionIdQuery,
 	FindAllObjectsByCollectionIdQueryVariables,
-	FindObjectsForSitemapDocument,
-	FindObjectsForSitemapQuery,
-	FindObjectsForSitemapQueryVariables,
+	FindIeObjectsForSitemapDocument,
+	FindIeObjectsForSitemapQuery,
+	FindIeObjectsForSitemapQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -62,7 +62,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitAccessType, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -284,18 +284,18 @@ export class IeObjectsService {
 		return allAdapted;
 	}
 
-	public async findObjectsForSitemap(licenses: IeObjectLicense[]): Promise<IeObjectsSitemap[]> {
+	public async findIeObjectsForSitemap(licenses: IeObjectLicense[]): Promise<IeObjectsSitemap[]> {
 		try {
-			const { object_ie: objects } = await this.dataService.execute<
-				FindObjectsForSitemapQuery,
-				FindObjectsForSitemapQueryVariables
-			>(FindObjectsForSitemapDocument, { licenses });
+			const { object_ie: ieObjects } = await this.dataService.execute<
+				FindIeObjectsForSitemapQuery,
+				FindIeObjectsForSitemapQueryVariables
+			>(FindIeObjectsForSitemapDocument, { licenses });
 
-			const adapted = objects.map((object) => {
-				return this.adaptForSitemap(object);
+			const adaptedIeObjects = ieObjects.map((ieObject) => {
+				return this.adaptForSitemap(ieObject);
 			});
 
-			return adapted;
+			return adaptedIeObjects;
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting objects for sitemap', err);
 		}
