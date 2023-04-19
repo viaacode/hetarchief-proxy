@@ -40,12 +40,9 @@ export class SitemapService {
 			null
 		);
 
-		const publicIeObjects = await this.ieObjectsService.findIeObjectsForSitemap([
-			IeObjectLicense.PUBLIEK_METADATA_LTD,
-			IeObjectLicense.PUBLIEK_METADATA_ALL,
-		]);
+		const xmlUrls = []; // This will contain the urls for the index xml file
 
-		// Create sitemap info for general pages
+		// Create and upload sitemap for general pages
 		const generalPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
 			[
 				...staticPages.map((path) => ({
@@ -64,52 +61,49 @@ export class SitemapService {
 			sitemapConfig
 		);
 
-		// Create sitemap info for item detail pages
-		const itemDetailPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
-			[
-				...publicIeObjects.map((object) => ({
-					loc:
-						'/zoeken/' +
-						object.maintainerSlug +
-						'/' +
-						object.schemaIdentifier +
-						'/' +
-						_.kebabCase(object.name),
-					changefreq: 'weekly',
-					lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
-				})),
-			],
-			sitemapConfig
-		);
-		const itemDetailPagesArray = []; // This contains arrays each containing a maximum of XML_OBJECTS_SIZE items
-
-		for (let i = 0; i < itemDetailPages.length; i += SITEMAP_XML_OBJECTS_SIZE) {
-			const chunk = itemDetailPages.slice(i, i + SITEMAP_XML_OBJECTS_SIZE);
-			itemDetailPagesArray.push(chunk);
-		}
-
-		// Generate and upload all the xml files
-		const xmlUrls = []; // This will contain the urls for the index xml file
-
-		// Generate general xml
 		const renderedGeneralXml = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 			${generalPages.map(this.renderPage).join('\n')}
 		</urlset>
 		`;
+
 		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general'));
 
-		// Generate itemDetail xml
-		await Promise.all(
-			itemDetailPagesArray.map(async (pages: SitemapItemInfo[], index) => {
-				const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
+		// Create and upload sitemap for itemDetail pages
+		const result = await this.ieObjectsService.findIeObjectsForSitemap(
+			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+			0,
+			0
+		);
+		for (let i = 0; i < result.total; i += SITEMAP_XML_OBJECTS_SIZE) {
+			const ieObjects = await this.ieObjectsService.findIeObjectsForSitemap(
+				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				i,
+				SITEMAP_XML_OBJECTS_SIZE
+			);
+			const itemDetailPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
+				[
+					...ieObjects.items.map((object) => ({
+						loc:
+							'/zoeken/' +
+							object.maintainerSlug +
+							'/' +
+							object.schemaIdentifier +
+							'/' +
+							_.kebabCase(object.name),
+						changefreq: 'weekly',
+						lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
+					})),
+				],
+				sitemapConfig
+			);
+			const renderedXml = `<?xml version="1.0" encoding="UTF-8"?>
 				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-					${pages.map(this.renderPage).join('\n')}
+					${itemDetailPages.map(this.renderPage).join('\n')}
 				</urlset>
 				`;
-				xmlUrls.push(await this.uploadXml(renderedXml, `itemDetail${index}`));
-			})
-		);
+			xmlUrls.push(await this.uploadXml(renderedXml, `itemDetail${ieObjects.page}`));
+		}
 
 		// Generate index xml
 		const indexXml = `<?xml version="1.0" encoding="UTF-8"?>

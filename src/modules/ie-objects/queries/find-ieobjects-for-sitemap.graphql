@@ -1,5 +1,9 @@
-query findIeObjectsForSitemap($licenses: [String!]) {
-	object_ie(where: { schema_license: { _has_keys_any: $licenses } }) {
+query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) {
+	object_ie(
+		where: { schema_license: { _has_keys_any: $licenses } }
+		offset: $offset
+		limit: $limit
+	) {
 		schema_identifier
 		maintainer {
 			visitor_space {
@@ -8,5 +12,10 @@ query findIeObjectsForSitemap($licenses: [String!]) {
 		}
 		schema_name
 		updated_at
+	}
+	object_ie_aggregate(where: { schema_license: { _has_keys_any: $licenses } }) {
+		aggregate {
+			count
+		}
 	}
 }

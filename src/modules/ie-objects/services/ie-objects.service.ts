@@ -284,18 +284,24 @@ export class IeObjectsService {
 		return allAdapted;
 	}
 
-	public async findIeObjectsForSitemap(licenses: IeObjectLicense[]): Promise<IeObjectsSitemap[]> {
+	public async findIeObjectsForSitemap(
+		licenses: IeObjectLicense[],
+		offset: number,
+		limit: number
+	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
-			const { object_ie: ieObjects } = await this.dataService.execute<
-				FindIeObjectsForSitemapQuery,
-				FindIeObjectsForSitemapQueryVariables
-			>(FindIeObjectsForSitemapDocument, { licenses });
+			const { object_ie: ieObjects, object_ie_aggregate: ieObjectAggregate } =
+				await this.dataService.execute<
+					FindIeObjectsForSitemapQuery,
+					FindIeObjectsForSitemapQueryVariables
+				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
 
-			const adaptedIeObjects = ieObjects.map((ieObject) => {
-				return this.adaptForSitemap(ieObject);
+			return Pagination<IeObjectsSitemap>({
+				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
+				page: Math.floor(offset / limit),
+				size: limit,
+				total: ieObjectAggregate?.aggregate?.count,
 			});
-
-			return adaptedIeObjects;
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting objects for sitemap', err);
 		}
