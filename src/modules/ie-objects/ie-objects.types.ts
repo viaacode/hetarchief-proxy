@@ -285,3 +285,10 @@ export interface IeObjectsVisitorSpaceInfo {
 	visitorSpaceIds: string[];
 	objectIds: string[];
 }
+
+export interface IeObjectsSitemap {
+	schemaIdentifier: string;
+	maintainerSlug: string;
+	name: string;
+	updatedAt: string;
+}

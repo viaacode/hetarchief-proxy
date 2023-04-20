@@ -119,10 +119,14 @@ export class AssetsService {
 		}
 	}
 
-	public async upload(assetFiletype: AssetFileType, file: Express.Multer.File): Promise<string> {
+	public async upload(
+		assetFiletype: AssetFileType,
+		file: Express.Multer.File,
+		prefferedKey?: string
+	): Promise<string> {
 		const parsedFilename = path.parse(file.originalname);
-		const key = `${assetFiletype}/${_.kebabCase(parsedFilename.name)}-${uuidv4()}${
-			parsedFilename.ext
+		const key = `${assetFiletype}/${
+			prefferedKey ?? `${_.kebabCase(parsedFilename.name)}-${uuidv4()}${parsedFilename.ext}`
 		}`;
 
 		return this.uploadToObjectStore(key, file);

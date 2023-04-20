@@ -7,15 +7,17 @@ import nock from 'nock';
 import { Configuration } from '~config';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { ElasticsearchResponse } from '../ie-objects.types';
+import { ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
 import {
 	mockGqlIeObjectFindByCollectionId,
 	mockGqlIeObjectFindByCollectionIdResult,
 	mockGqlIeObjectTuples,
+	mockGqlSitemapObject,
 	mockIeObject,
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectLimitedInFolder,
 	mockObjectIe,
+	mockSitemapObject,
 	mockUser,
 } from '../mocks/ie-objects.mock';
 
@@ -266,6 +268,37 @@ describe('ieObjectsService', () => {
 			const result = await ieObjectsService.findAllObjectMetadataByCollectionId('1', '1');
 
 			expect(result).toEqual([mockGqlIeObjectFindByCollectionIdResult]);
+		});
+	});
+
+	describe('findObjectsForSitemap', () => {
+		it('should throw an error when it fails to get object', async () => {
+			mockDataService.execute.mockResolvedValueOnce('');
+			try {
+				await ieObjectsService.findIeObjectsForSitemap(
+					[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+					0,
+					50
+				);
+				fail('findIeObjectsForSitemap should have thrown an error');
+			} catch (err) {
+				expect(err.message).toEqual('Failed getting ieObjects for sitemap');
+			}
+		});
+
+		it('should successfully return all objects adapted for sitemap', async () => {
+			const mockData = {
+				object_ie: [mockGqlSitemapObject],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const result = await ieObjectsService.findIeObjectsForSitemap(
+				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				0,
+				50
+			);
+
+			expect(result.items).toEqual([mockSitemapObject]);
 		});
 	});
 
