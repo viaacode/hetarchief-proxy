@@ -50,7 +50,7 @@ describe('SitemapController', () => {
 			const result = await sitemapController.generateSitemap();
 
 			expect(result).toEqual(
-				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index`
+				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index.xml`
 			);
 		});
 	});
