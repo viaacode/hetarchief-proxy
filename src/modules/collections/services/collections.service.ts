@@ -88,7 +88,9 @@ export class CollectionsService {
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound || null,
 			duration: gqlIeObject?.schema_duration || null,
 			licenses: gqlIeObject?.schema_license || null,
-			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
+			sector:
+				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector) ||
+				null,
 		};
 	}
 
