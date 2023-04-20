@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { mockSitemapConfig } from '../mocks/sitemap.mocks';
 import { SitemapService } from '../services/sitemap.service';
 
 import { SitemapController } from './sitemap.controller';
@@ -9,6 +10,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSitemapService = {
 	generateSitemap: jest.fn(),
+	getSitemapConfig: jest.fn(),
 };
 
 describe('SitemapController', () => {
@@ -45,6 +47,9 @@ describe('SitemapController', () => {
 
 	describe('generateSitemap', () => {
 		it('should return the url of the index xml file', async () => {
+			mockSitemapService.getSitemapConfig.mockResolvedValueOnce({
+				app_config: [mockSitemapConfig],
+			});
 			mockSitemapService.generateSitemap.mockResolvedValueOnce('');
 
 			const result = await sitemapController.generateSitemap();

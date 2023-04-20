@@ -29,8 +29,7 @@ export class SitemapService {
 		protected assetsService: AssetsService
 	) {}
 
-	public async generateSitemap() {
-		const sitemapConfig = await this.getSitemapConfig();
+	public async generateSitemap(sitemapConfig: SitemapConfig) {
 		const contentPagesPaths = await this.getContentPagesPaths();
 
 		const staticPages = ['/', '/bezoek', '/zoeken'];
@@ -123,7 +122,11 @@ export class SitemapService {
 			const { app_config: config } = await this.dataService.execute<GetSitemapConfigQuery>(
 				GetSitemapConfigDocument
 			);
-
+			if (!config) {
+				throw new InternalServerErrorException(
+					'Database value for SITEMAP_CONFIG is not defined in app.config. Aborting Sitemap generation.'
+				);
+			}
 			return config[0];
 		} catch (err) {
 			throw new InternalServerErrorException('Failed getting sitemap config', err);

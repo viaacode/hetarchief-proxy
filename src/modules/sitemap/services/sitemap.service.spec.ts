@@ -144,9 +144,6 @@ describe('SitemapService', () => {
 
 	describe('generateSitemap', () => {
 		it('should return the xml for the general sitemap xml', async () => {
-			mockDataService.execute.mockResolvedValue({
-				app_config: [mockSitemapConfig],
-			});
 			mockContentPagesService.fetchContentPages.mockResolvedValueOnce([[mockContentPage], 1]);
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSitemapSpaces);
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
@@ -163,7 +160,7 @@ describe('SitemapService', () => {
 				'https://asset-server.be/bucketname/SITEMAP/index'
 			);
 
-			const result = await sitemapService.generateSitemap();
+			const result = await sitemapService.generateSitemap(mockSitemapConfig);
 			expect(result).toEqual(mockGeneralXml);
 		});
 	});
