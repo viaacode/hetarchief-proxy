@@ -1,11 +1,18 @@
 import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { mockContentPage, mockSitemapConfig } from '../mocks/sitemap.mocks';
+import {
+	mockContentPage,
+	mockGeneralXml,
+	mockSitemapConfig,
+	mockSitemapSpaces,
+} from '../mocks/sitemap.mocks';
+import { SitemapItemInfo } from '../sitemap.types';
 
 import { SitemapService } from './sitemap.service';
 
 import { AssetsService } from '~modules/assets/services/assets.service';
+import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -28,8 +35,11 @@ const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> 
 
 describe('SitemapService', () => {
 	let sitemapService: SitemapService;
+	const env = process.env;
 
 	beforeEach(async () => {
+		process.env.CLIENT_HOST = 'http://bezoekerstool';
+
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				SitemapService,
@@ -59,6 +69,10 @@ describe('SitemapService', () => {
 			.compile();
 
 		sitemapService = module.get<SitemapService>(SitemapService);
+	});
+
+	afterEach(() => {
+		process.env = env;
 	});
 
 	it('services should be defined', () => {
@@ -106,6 +120,51 @@ describe('SitemapService', () => {
 			} catch (err) {
 				expect(err.message).toEqual('Failed getting all the content pages');
 			}
+		});
+	});
+
+	describe('blacklistAndPrioritizePages', () => {
+		it('should remove the blacklisted items and add priority', async () => {
+			const mockPages: SitemapItemInfo[] = [
+				{ loc: '/bezoek', changefreq: 'monthly' },
+				{ loc: '/dynamic', changefreq: 'monthly' },
+				{ loc: '/geheime-content-pagina', changefreq: 'weekly' },
+			];
+
+			const response = await sitemapService.blacklistAndPrioritizePages(
+				mockPages,
+				mockSitemapConfig
+			);
+			expect(response).toEqual([
+				{ loc: '/bezoek', changefreq: 'monthly', priority: 1 },
+				{ loc: '/dynamic', changefreq: 'monthly' },
+			]);
+		});
+	});
+
+	describe('generateSitemap', () => {
+		it('should return the xml for the general sitemap xml', async () => {
+			mockDataService.execute.mockResolvedValue({
+				app_config: [mockSitemapConfig],
+			});
+			mockContentPagesService.fetchContentPages.mockResolvedValueOnce([[mockContentPage], 1]);
+			mockSpacesService.findAll.mockResolvedValueOnce(mockSitemapSpaces);
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [mockSitemapObject],
+			});
+			mockAssetsService.upload.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/general'
+			);
+			mockAssetsService.upload.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/object-detail-0'
+			);
+			mockAssetsService.upload.mockResolvedValueOnce(
+				'https://asset-server.be/bucketname/SITEMAP/index'
+			);
+
+			const result = await sitemapService.generateSitemap();
+			expect(result).toEqual(mockGeneralXml);
 		});
 	});
 });

@@ -22,6 +22,6 @@ export class SitemapController {
 						-item-detailpagina’s: '/zoeken/{maintainerSlug}/{objectSchemaId}' done
 		*/
 		this.sitemapService.generateSitemap(); // no await because this can take a while and we don't want FE to crash
-		return `${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index`;
+		return `${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index.xml`;
 	}
 }

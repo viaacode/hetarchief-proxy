@@ -280,6 +280,7 @@ describe('ieObjectsService', () => {
 					0,
 					50
 				);
+				fail('findIeObjectsForSitemap should have thrown an error');
 			} catch (err) {
 				expect(err.message).toEqual('Failed getting ieObjects for sitemap');
 			}

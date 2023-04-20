@@ -126,9 +126,7 @@ export class AssetsService {
 	): Promise<string> {
 		const parsedFilename = path.parse(file.originalname);
 		const key = `${assetFiletype}/${
-			prefferedKey
-				? _.kebabCase(prefferedKey)
-				: `${_.kebabCase(parsedFilename.name)}-${uuidv4()}${parsedFilename.ext}`
+			prefferedKey ?? `${_.kebabCase(parsedFilename.name)}-${uuidv4()}${parsedFilename.ext}`
 		}`;
 
 		return this.uploadToObjectStore(key, file);

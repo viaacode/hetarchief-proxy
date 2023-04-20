@@ -54,3 +54,22 @@ export const mockContentPage: DbContentPage = {
 	content_blocks: [],
 	labels: [],
 };
+
+export const mockSitemapSpaces = {
+	items: [
+		{
+			id: '1',
+			name: 'Space Mountain',
+			image: 'http://assets-int.hetarchief.be/hetarchief/SPACE_IMAGE/image.jpg',
+			maintainerId: 'OR-rf5kf25',
+		},
+		{
+			id: '2',
+			name: 'Space X',
+			maintainerId: 'OR-spacex',
+		},
+	],
+};
+
+export const mockGeneralXml =
+	'<?xml version="1.0" encoding="UTF-8"?>\n\t\t<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\t\t\t<url>\n\t\t\t<loc>http://bezoekerstool/</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t<priority>1</priority>\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/bezoek</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t<priority>1</priority>\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/mock-content-page-url</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken/?aanbieders=OR-rf5kf25</loc>\n\t\t\t\n\t\t\t<changefreq>weekly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken/?aanbieders=OR-spacex</loc>\n\t\t\t\n\t\t\t<changefreq>weekly</changefreq>\n\t\t\t\n\t\t\t</url>\n\t\t</urlset>\n\t\t';

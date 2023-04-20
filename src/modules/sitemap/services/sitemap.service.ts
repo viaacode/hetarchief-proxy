@@ -33,7 +33,7 @@ export class SitemapService {
 		const sitemapConfig = await this.getSitemapConfig();
 		const contentPagesPaths = await this.getContentPagesPaths();
 
-		const staticPages = ['/', '/bezoek', '/zoeken', '/geheime-content-pagina']; // /geheime-content-pagina is for testing
+		const staticPages = ['/', '/bezoek', '/zoeken'];
 
 		const activeSpaces = await this.spacesService.findAll(
 			{ size: 1000, status: [VisitorSpaceStatus.Active] },
@@ -67,7 +67,7 @@ export class SitemapService {
 		</urlset>
 		`;
 
-		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general'));
+		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general.xml'));
 
 		// Create and upload sitemap for itemDetail pages
 		const result = await this.ieObjectsService.findIeObjectsForSitemap(
@@ -105,16 +105,17 @@ export class SitemapService {
 				</urlset>
 				`;
 
-			xmlUrls.push(await this.uploadXml(renderedXml, `itemDetail${ieObjects.page}`));
+			xmlUrls.push(await this.uploadXml(renderedXml, `item-detail-${ieObjects.page}.xml`));
 		}
 
 		// Generate index xml
 		const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 		<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-			${xmlUrls.map(this.renderIndexPage).join('\n')}
+			${xmlUrls.map(this.renderSitemapIndexEntry).join('\n')}
 		</sitemapindex>
 		`;
-		await this.uploadXml(indexXml, `index`);
+		await this.uploadXml(indexXml, `index.xml`);
+		return renderedGeneralXml; // This is returned for unit tests
 	}
 
 	public async getSitemapConfig(): Promise<SitemapConfig> {
@@ -157,7 +158,7 @@ export class SitemapService {
 			</url>`;
 	}
 
-	private renderIndexPage(url: string): string {
+	private renderSitemapIndexEntry(url: string): string {
 		return `<sitemap>
 			<loc>${url}</loc>
 			</sitemap>`;
@@ -182,7 +183,7 @@ export class SitemapService {
 		);
 	}
 
-	private blacklistAndPrioritizePages(
+	public blacklistAndPrioritizePages(
 		pages: SitemapItemInfo[],
 		config: SitemapConfig
 	): SitemapItemInfo[] {
