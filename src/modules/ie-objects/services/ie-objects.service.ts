@@ -187,9 +187,9 @@ export class IeObjectsService {
 		ieObjectSimilarQueryDto?: IeObjectsSimilarQueryDto,
 		limit = 4
 	): Promise<IPagination<IeObject>> {
-		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase() ?? '_all';
+		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase();
 		const likeFilter = {
-			_index: esIndex,
+			...(esIndex ? { _index: esIndex } : {}),
 			_id: schemaIdentifier,
 		};
 
@@ -206,7 +206,7 @@ export class IeObjectsService {
 			},
 		};
 
-		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex || '_all', esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
 
 		return {
