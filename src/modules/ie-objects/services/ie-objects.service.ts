@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
@@ -28,6 +33,7 @@ import {
 	IeObjectLicense,
 	IeObjectRepresentation,
 	IeObjectSector,
+	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -36,6 +42,9 @@ import {
 	FindAllObjectsByCollectionIdDocument,
 	FindAllObjectsByCollectionIdQuery,
 	FindAllObjectsByCollectionIdQueryVariables,
+	FindIeObjectsForSitemapDocument,
+	FindIeObjectsForSitemapQuery,
+	FindIeObjectsForSitemapQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -53,7 +62,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitAccessType, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 
 @Injectable()
 export class IeObjectsService {
@@ -273,6 +282,29 @@ export class IeObjectsService {
 		});
 
 		return allAdapted;
+	}
+
+	public async findIeObjectsForSitemap(
+		licenses: IeObjectLicense[],
+		offset: number,
+		limit: number
+	): Promise<IPagination<IeObjectsSitemap>> {
+		try {
+			const { object_ie: ieObjects, object_ie_aggregate: ieObjectAggregate } =
+				await this.dataService.execute<
+					FindIeObjectsForSitemapQuery,
+					FindIeObjectsForSitemapQueryVariables
+				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+
+			return Pagination<IeObjectsSitemap>({
+				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
+				page: Math.floor(offset / limit),
+				size: limit,
+				total: ieObjectAggregate?.aggregate?.count,
+			});
+		} catch (err) {
+			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);
+		}
 	}
 
 	// Adapt
@@ -500,6 +532,15 @@ export class IeObjectsService {
 				embedUrl: file?.schema_embed_url,
 			})
 		);
+	}
+
+	private adaptForSitemap(graphQlObject: any): IeObjectsSitemap {
+		return {
+			schemaIdentifier: graphQlObject?.schema_identifier,
+			maintainerSlug: graphQlObject?.maintainer?.visitor_space?.slug,
+			name: graphQlObject?.schema_name,
+			updatedAt: graphQlObject?.updated_at,
+		};
 	}
 
 	// Helpers
