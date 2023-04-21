@@ -3,13 +3,17 @@ import jsep from 'jsep';
 import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
-import { convertNodeToEsQueryFilterObjects } from '../helpers/convert-node-to-es-query-filter-objects';
+import {
+	buildFreeTextFilter,
+	convertNodeToEsQueryFilterObjects,
+} from '../helpers/convert-node-to-es-query-filter-objects';
 import { getSectorsWithEssenceAccess } from '../helpers/get-sectors-with-essence-access';
 import { IeObjectLicense } from '../ie-objects.types';
 
 import {
 	AGGS_PROPERTIES,
 	DEFAULT_QUERY_TYPE,
+	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
 	MULTI_MATCH_FIELDS,
@@ -21,15 +25,13 @@ import {
 	Operator,
 	ORDER_MAPPINGS,
 	OrderProperty,
-	QueryBuilderConsultableFilters,
 	QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
-	SearchFilterField,
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
-import { GroupId } from '~modules/users/types';
+import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
 
@@ -189,27 +191,31 @@ export class QueryBuilder {
 	 * Creates the filter portion of the elasticsearch query object
 	 * Containing the search terms and the checked filters
 	 * @param filters
+	 * @param inputInfo
 	 */
 	private static buildFilterObject(
 		filters: SearchFilter[] | undefined,
 		inputInfo: QueryBuilderInputInfo
 	) {
-		if (!filters || isEmpty(filters)) {
-			// Return query object that will match all results
-			return { match_all: {} };
-		}
-
 		const filterObject: any = {};
 		// Add additional filters to the query object
 		const filterArray: any[] = [];
 		set(filterObject, 'bool.filter', filterArray);
 
+		// Kiosk users are only allowed to view objects from their maintainer
+		if (inputInfo.user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			filterArray.push({
+				terms: {
+					'schema_maintainer.schema_identifier': [inputInfo.user.getMaintainerId()],
+				},
+			});
+		}
 		// Determine consultable filters are present and strip them from standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
 		// This because if we strip it before it will just return match_all
-		const consultableSearchFilterFields: SearchFilterField[] = [
-			SearchFilterField.CONSULTABLE_REMOTE,
-			SearchFilterField.CONSULTABLE_MEDIA,
+		const consultableSearchFilterFields: IeObjectsSearchFilterField[] = [
+			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
+			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 		];
 		if (
 			filters &&
@@ -223,7 +229,7 @@ export class QueryBuilder {
 			consultableFilters.forEach((consultableFilter) =>
 				this.applyFilter(filterObject, consultableFilter)
 			);
-			// Remove CONSULTABLE_REMOTE and CONSULTABLE_MEDIA filter entries from the filter list,
+			// Remove CONSULTABLE_ONLY_ON_LOCATION and CONSULTABLE_MEDIA filter entries from the filter list,
 			// since they have been handled above and should not be handled by the standard field filtering logic.
 			filters = filters.filter(
 				(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
@@ -242,19 +248,21 @@ export class QueryBuilder {
 				if (this.isFuzzyOperator(searchFilter.operator)) {
 					// Use a multi field search template to fuzzy search in elasticsearch across multiple fields
 
-					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
-
 					let textFilters;
-					if (searchFilter.field === SearchFilterField.QUERY) {
+					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 						textFilters = [
 							convertNodeToEsQueryFilterObjects(
 								jsep(searchFilter.value),
-								MULTI_MATCH_QUERY_MAPPING.exact.exactQuery,
+								{
+									fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query,
+									exact: MULTI_MATCH_QUERY_MAPPING.exact.query,
+								},
 								searchFilter
 							),
 						];
 					} else {
-						textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
 					textFilters.forEach((filter) =>
@@ -274,14 +282,12 @@ export class QueryBuilder {
 						);
 					}
 
-					const textFilters = this.buildFreeTextFilter(searchTemplate, searchFilter);
+					const textFilter = buildFreeTextFilter(searchTemplate, searchFilter);
 
-					textFilters.forEach((filter) =>
-						this.applyFilter(filterObject, {
-							occurrenceType: this.getOccurrenceType(searchFilter.operator),
-							query: filter,
-						})
-					);
+					this.applyFilter(filterObject, {
+						occurrenceType: this.getOccurrenceType(searchFilter.operator),
+						query: textFilter,
+					});
 					return;
 				}
 			}
@@ -291,9 +297,10 @@ export class QueryBuilder {
 			 */
 			if (
 				MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
-				[SearchFilterField.ADVANCED_QUERY, SearchFilterField.QUERY].includes(
-					searchFilter.field
-				)
+				[
+					IeObjectsSearchFilterField.ADVANCED_QUERY,
+					IeObjectsSearchFilterField.QUERY,
+				].includes(searchFilter.field)
 			) {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
@@ -319,40 +326,27 @@ export class QueryBuilder {
 	 *	This function checks if the isConsultableFilters are present in the searchRequestFilters and returns the correct filter objects
 	 *
 	 * @param searchRequestFilters
-	 * @returns { isConsultableRemote: boolean, isConsultableMedia: boolean }
+	 * @param inputInfo
+	 * @returns
 	 */
 	public static determineIsConsultableFilters(
 		searchRequestFilters: SearchFilter[],
 		inputInfo: QueryBuilderInputInfo
 	): any {
 		const toBeAppliedConsultableFilters: any = [];
-		const consultableFilters: QueryBuilderConsultableFilters = {
-			isConsultableRemote: isEmpty(
-				searchRequestFilters.filter(
-					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_REMOTE
-				)
-			)
-				? // if FE does not return isConsultableRemote filter by default it will be visible both onSite and Remote
-				  // However for 99,99% of the time this will never happen
-				  true
-				: // Value from query string will be string but we need a Boolean
-				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
-			isConsultableMedia: isEmpty(
-				searchRequestFilters.filter(
-					(filter: SearchFilter) => filter.field === SearchFilterField.CONSULTABLE_MEDIA
-				)
-			)
-				? // if FE does not return isConsultableMedia filter by default the essence will not be consultable
-				  // However for 99,99% of the time this will never happen
-				  false
-				: // Value from query string will be string but we need a Boolean
-				  searchRequestFilters[0]?.value?.toLowerCase() === 'true',
-		};
+
+		const consultableOnlyOnLocationFilter = searchRequestFilters.find(
+			(filter: SearchFilter) =>
+				filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+		);
+		const consultableMediaFilter = searchRequestFilters.find(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_MEDIA
+		);
 
 		// add consultable filters
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
 		if (
-			consultableFilters.isConsultableRemote === false &&
+			consultableOnlyOnLocationFilter?.value?.toLowerCase() === 'true' &&
 			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR
 		) {
 			toBeAppliedConsultableFilters.push({
@@ -375,10 +369,10 @@ export class QueryBuilder {
 
 		// User can access anything in combo with
 		// Object has VIAA_INTRA_CP-CONTENT license
-		// ACM: user has catpro
+		// ACM: user has catpro (key user)
 		// ACM: sector or id the user connected to
 		if (
-			consultableFilters.isConsultableMedia &&
+			consultableMediaFilter?.value?.toLowerCase() === 'true' &&
 			inputInfo.user.getIsKeyUser() &&
 			!isNil(inputInfo.user.getSector())
 		) {
@@ -555,24 +549,6 @@ export class QueryBuilder {
 		};
 	}
 
-	protected static buildFreeTextFilter(searchTemplate: any[], searchFilter: SearchFilter): any {
-		// Replace {{query}} in the template with the escaped search terms
-		let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
-		stringifiedSearchTemplate = stringifiedSearchTemplate.replace(
-			/\{\{query\}\}/g,
-			searchFilter.value
-		);
-
-		return [
-			{
-				bool: {
-					should: JSON.parse(stringifiedSearchTemplate),
-					minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
-				},
-			},
-		];
-	}
-
 	protected static applyFilter(filterObject: any, newFilter: any): void {
 		if (!filterObject.bool[newFilter.occurrenceType]) {
 			filterObject.bool[newFilter.occurrenceType] = [];
@@ -604,7 +580,7 @@ export class QueryBuilder {
 		const aggs: any = {};
 		forEach(searchRequest.requestedAggs || AGGS_PROPERTIES, (aggProperty) => {
 			const elasticProperty =
-				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as SearchFilterField];
+				READABLE_TO_ELASTIC_FILTER_NAMES[aggProperty as IeObjectsSearchFilterField];
 			if (!elasticProperty) {
 				throw new InternalServerErrorException(
 					`Failed to resolve agg property: ${aggProperty}`
@@ -633,7 +609,7 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static filterSuffix(prop: SearchFilterField): string {
+	private static filterSuffix(prop: IeObjectsSearchFilterField): string {
 		return NEEDS_FILTER_SUFFIX[prop] ? `.${NEEDS_FILTER_SUFFIX[prop]}` : '';
 	}
 
@@ -648,7 +624,7 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static aggSuffix(prop: SearchFilterField): string {
+	private static aggSuffix(prop: IeObjectsSearchFilterField): string {
 		return NEEDS_AGG_SUFFIX[prop] ? `.${NEEDS_AGG_SUFFIX[prop]}` : '';
 	}
 

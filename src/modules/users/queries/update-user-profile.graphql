@@ -1,30 +1,32 @@
 mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
-	update_users_profile_by_pk(pk_columns: { id: $id }, _set: $updateUser) {
-		id
-		first_name
-		last_name
-		full_name
-		mail
-		is_key_user
-		accepted_tos_at
-		group_id
-		group {
-			permissions {
-				permission {
-					name
+	update_users_profile(where: { id: { _eq: $id } }, _set: $updateUser) {
+		returning {
+			id
+			first_name
+			last_name
+			full_name
+			mail
+			is_key_user
+			accepted_tos_at
+			group_id
+			group {
+				permissions {
+					permission {
+						name
+					}
 				}
 			}
-		}
-		identities {
-			identity_provider_name
-		}
-		maintainer_users_profiles {
-			maintainer_identifier
-			maintainer {
-				visitor_space {
-					id
-					slug
-					schema_maintainer_id
+			identities {
+				identity_provider_name
+			}
+			maintainer_users_profiles {
+				maintainer_identifier
+				maintainer {
+					visitor_space {
+						id
+						slug
+						schema_maintainer_id
+					}
 				}
 			}
 		}

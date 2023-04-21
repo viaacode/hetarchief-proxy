@@ -1,8 +1,9 @@
 import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
-import { Operator, OrderProperty, SearchFilterField } from './elasticsearch.consts';
+import { IeObjectsSearchFilterField, Operator, OrderProperty } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
+import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
@@ -43,7 +44,7 @@ describe('QueryBuilder', () => {
 			);
 		});
 
-		it('should return a match_all query when no filters are specified', () => {
+		it('should return a empty filter array query when no filters are specified', () => {
 			const esQuery = QueryBuilder.build(
 				{ size: 10, page: 1, filters: [] },
 				mockInputInfo as any
@@ -51,7 +52,11 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
-						{ match_all: {} },
+						{
+							bool: {
+								filter: [],
+							},
+						},
 						{
 							bool: {
 								should: [
@@ -120,7 +125,7 @@ describe('QueryBuilder', () => {
 			expect(esQuery.size).toEqual(10);
 		});
 
-		it('should return a match_all query when empty filters are specified', () => {
+		it('should return a empty filter array query when empty filters are specified', () => {
 			const esQuery = QueryBuilder.build(
 				{ filters: [], size: 10, page: 1 },
 				mockInputInfo as any
@@ -129,7 +134,11 @@ describe('QueryBuilder', () => {
 			expect(esQuery.query).toEqual({
 				bool: {
 					should: [
-						{ match_all: {} },
+						{
+							bool: {
+								filter: [],
+							},
+						},
 						{
 							bool: {
 								should: [
@@ -192,7 +201,7 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.QUERY,
+							field: IeObjectsSearchFilterField.QUERY,
 							value: 'searchme',
 							operator: Operator.CONTAINS,
 						},
@@ -215,7 +224,7 @@ describe('QueryBuilder', () => {
 					{
 						filters: [
 							{
-								field: SearchFilterField.QUERY,
+								field: IeObjectsSearchFilterField.QUERY,
 								value: '',
 								operator: Operator.CONTAINS,
 							},
@@ -229,7 +238,7 @@ describe('QueryBuilder', () => {
 				error = e;
 			}
 			expect(error.response.error.message).toEqual(
-				`Value cannot be empty when filtering on field '${SearchFilterField.QUERY}'`
+				`Value cannot be empty when filtering on field '${IeObjectsSearchFilterField.QUERY}'`
 			);
 		});
 
@@ -238,7 +247,7 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.ADVANCED_QUERY,
+							field: IeObjectsSearchFilterField.ADVANCED_QUERY,
 							value: 'searchme',
 							operator: Operator.CONTAINS,
 						},
@@ -256,7 +265,7 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.FORMAT,
+							field: IeObjectsSearchFilterField.FORMAT,
 							value: MediaFormat.VIDEO,
 							operator: Operator.IS,
 						},
@@ -338,7 +347,7 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.DURATION,
+							field: IeObjectsSearchFilterField.DURATION,
 							value: '01:00:00',
 							operator: Operator.GTE,
 						},
@@ -420,32 +429,25 @@ describe('QueryBuilder', () => {
 			});
 		});
 
-		it('should throw an exception when using the is operator on the query field', () => {
-			let error;
-			try {
-				QueryBuilder.build(
-					{
-						filters: [
-							{
-								field: SearchFilterField.QUERY,
-								operator: Operator.IS,
-								value: 'testvalue',
-							},
-						],
-						size: 10,
-						page: 1,
-					},
-					mockInputInfo as any
-				);
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response.error.message).toEqual(
-				"An exact search is not supported for multi field: 'query'"
+		it('should the is operator on the query field and should return an exact query object', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.QUERY,
+							operator: Operator.IS,
+							value: 'testvalue',
+						},
+					],
+					size: 10,
+					page: 1,
+				},
+				mockInputInfo as any
 			);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
 		});
 
-		it('throws an internal server exception when an unkown filter value is passed', () => {
+		it('throws an internal server exception when an unknown filter value is passed', () => {
 			let error;
 			try {
 				QueryBuilder.build(
@@ -491,14 +493,14 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.GENRE,
+							field: IeObjectsSearchFilterField.GENRE,
 							value: 'intervi',
 							operator: Operator.CONTAINS,
 						},
 					],
 					size: 10,
 					page: 1,
-					requestedAggs: [SearchFilterField.FORMAT],
+					requestedAggs: [IeObjectsSearchFilterField.FORMAT],
 				},
 				mockInputInfo as any
 			);
@@ -522,14 +524,14 @@ describe('QueryBuilder', () => {
 				{
 					filters: [
 						{
-							field: SearchFilterField.FORMAT,
+							field: IeObjectsSearchFilterField.FORMAT,
 							value: MediaFormat.VIDEO,
 							operator: Operator.CONTAINS,
 						},
 					],
 					size: 10,
 					page: 1,
-					requestedAggs: [SearchFilterField.MEDIUM],
+					requestedAggs: [IeObjectsSearchFilterField.MEDIUM],
 				},
 				mockInputInfo as any
 			);
@@ -558,6 +560,185 @@ describe('QueryBuilder', () => {
 			const expected = { 'schema_name.keyword': { order: orderDirection } };
 
 			expect(received).toEqual(expected);
+		});
+
+		it('Should return a fuzzy filter object for free text search without quotes', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.QUERY,
+							operator: Operator.CONTAINS,
+							value: 'Wielrennen', // Does not contain quotes because we're searching for a fuzzy value
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity(mockUser),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
+		});
+
+		it('Should return an exact filter object for free text search with quotes', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.QUERY,
+							operator: Operator.CONTAINS,
+							value: '"Wielrennen"', // Contains quotes because we're searching for an exact value
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity(mockUser),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
+		});
+
+		it('Should not set a filter when consultable remote is set to true (since the value is inverted from the filter in the UI)', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.QUERY,
+							operator: Operator.CONTAINS,
+							value: 'Wielrennen',
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity(mockUser),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(0);
+		});
+
+		it('Should set a filter when consultableOnlyOnLocation is set to true', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
+							operator: Operator.IS,
+							value: 'true',
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity(mockUser),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(2);
+		});
+
+		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
+							operator: Operator.IS,
+							value: 'true',
+						},
+						{
+							field: IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+							operator: Operator.IS,
+							value: 'true',
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity({
+						...mockUser,
+						isKeyUser: true,
+						sector: IeObjectSector.CULTURE,
+					}),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(4);
 		});
 	});
 });

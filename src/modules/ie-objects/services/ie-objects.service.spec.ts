@@ -6,13 +6,29 @@ import nock from 'nock';
 
 import { Configuration } from '~config';
 
-import { ElasticsearchResponse } from '../ie-objects.types';
-import { mockObjectIe } from '../mocks/ie-objects.mock';
+import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
+import { ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
+import {
+	mockGqlIeObjectFindByCollectionId,
+	mockGqlIeObjectFindByCollectionIdResult,
+	mockGqlIeObjectTuples,
+	mockGqlSitemapObject,
+	mockIeObject,
+	mockIeObjectDefaultLimitedMetadata,
+	mockIeObjectLimitedInFolder,
+	mockObjectIe,
+	mockSitemapObject,
+	mockUser,
+} from '../mocks/ie-objects.mock';
 
 import { IeObjectsService } from './ie-objects.service';
 
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupId, GroupName } from '~modules/users/types';
+import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
+import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -46,6 +62,7 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
 	hasAccess: jest.fn(),
+	findAll: jest.fn(),
 };
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
@@ -210,6 +227,95 @@ describe('ieObjectsService', () => {
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.representations[0].files).toEqual([]);
 		});
+
+		it('throws an error when no objects were found', async () => {
+			const mockData = {
+				object_ie: [],
+			};
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await ieObjectsService.findBySchemaIdentifier('invalidId', 'referer');
+				fail('findBySchemaIdentifier should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('NotFoundException');
+				expect(err.message).toEqual("Object IE with id 'invalidId' not found");
+			}
+		});
+	});
+
+	describe('findAllObjectMetadataByCollectionId', () => {
+		it('should throw an error when there are no objects found with the collectionId', async () => {
+			const mockData = {
+				users_folder_ie: [],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+
+			try {
+				await ieObjectsService.findAllObjectMetadataByCollectionId('ids', 'dontMatch');
+				fail('findAllObjectMetadataByCollectionId should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('NotFoundException');
+			}
+		});
+		it('should successfully return all objects by collectionId adapted', async () => {
+			const mockData = {
+				users_folder_ie: [mockGqlIeObjectFindByCollectionId],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const result = await ieObjectsService.findAllObjectMetadataByCollectionId('1', '1');
+
+			expect(result).toEqual([mockGqlIeObjectFindByCollectionIdResult]);
+		});
+	});
+
+	describe('findObjectsForSitemap', () => {
+		it('should throw an error when it fails to get object', async () => {
+			mockDataService.execute.mockResolvedValueOnce('');
+			try {
+				await ieObjectsService.findIeObjectsForSitemap(
+					[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+					0,
+					50
+				);
+				fail('findIeObjectsForSitemap should have thrown an error');
+			} catch (err) {
+				expect(err.message).toEqual('Failed getting ieObjects for sitemap');
+			}
+		});
+
+		it('should successfully return all objects adapted for sitemap', async () => {
+			const mockData = {
+				object_ie: [mockGqlSitemapObject],
+			};
+
+			mockDataService.execute.mockResolvedValueOnce(mockData);
+			const result = await ieObjectsService.findIeObjectsForSitemap(
+				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				0,
+				50
+			);
+
+			expect(result.items).toEqual([mockSitemapObject]);
+		});
+	});
+
+	describe('countRelated', () => {
+		it('should succesfully count the related objects', async () => {
+			mockDataService.execute.mockResolvedValueOnce({
+				object_ie: mockGqlIeObjectTuples,
+			});
+
+			const result = await ieObjectsService.countRelated(['1', '2', '3']);
+
+			expect(result).toEqual({
+				s46h14z19k: 1,
+				w37kp8850k_001_wav: 1,
+				x921c4s60t: 2,
+			});
+		});
 	});
 
 	describe('getRelated', () => {
@@ -237,6 +343,140 @@ describe('ieObjectsService', () => {
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.items.length).toBe(2);
+		});
+	});
+
+	describe('executeQuery', () => {
+		it('should return the result when the fetch is successful', async () => {
+			const esIndex = 'esIndexValue';
+			nock('http://elasticsearch').post(`/${esIndex}/_search`).reply(200, {});
+
+			const result = await ieObjectsService.executeQuery(esIndex, 'query');
+
+			expect(result).toEqual({});
+		});
+
+		it('should log and throw an error when the fetch is unsuccessful', async () => {
+			const esIndex = 'esIndexValue';
+			nock('http://elasticsearch').post(`/${esIndex}/_search`).replyWithError('');
+
+			try {
+				await ieObjectsService.executeQuery(esIndex, 'query');
+				fail('executeQuery should have thrown an error');
+			} catch (err) {
+				expect(err.name).toEqual('RequestError');
+			}
+		});
+	});
+
+	describe('getVisitorSpaceAccessInfoFromUser', () => {
+		it('should return empty arrays when the user is not logged in', async () => {
+			const user = mockUser;
+			user.id = null;
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity(user)
+			);
+
+			expect(result).toEqual({
+				objectIds: [],
+				visitorSpaceIds: [],
+			});
+			user.id = 'e791ecf1-e121-4c54-9d2e-34524b6467c6';
+		});
+
+		it('should return empty arrays when the user has no approved visits', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({
+				items: [],
+			});
+
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity({
+					...mockUser,
+					groupId: GroupId.VISITOR,
+					groupName: GroupName.VISITOR,
+				})
+			);
+
+			expect(result).toEqual({
+				objectIds: [],
+				visitorSpaceIds: [],
+			});
+		});
+
+		it('should return Visitor Access Info from user that has approved visits', async () => {
+			mockVisitsService.findAll.mockResolvedValueOnce({
+				items: [{ ...mockVisitApproved, accessType: VisitAccessType.Full }],
+			});
+
+			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
+				new SessionUserEntity({
+					...mockUser,
+					groupId: GroupId.VISITOR,
+					groupName: GroupName.VISITOR,
+				})
+			);
+
+			expect(result).toEqual({
+				objectIds: [mockVisitApproved?.accessibleObjectIds],
+				visitorSpaceIds: [mockVisitApproved?.spaceMaintainerId],
+			});
+		});
+	});
+
+	describe('defaultLimitedMetadata', () => {
+		it('should succesfully parse the object', () => {
+			const result = ieObjectsService.defaultLimitedMetadata(mockIeObject);
+			expect(result).toEqual(mockIeObjectDefaultLimitedMetadata);
+		});
+	});
+
+	describe('limitObjectInFolder', () => {
+		it('should succesfully parse the object', () => {
+			const result = ieObjectsService.limitObjectInFolder(
+				mockIeObject,
+				new SessionUserEntity(mockUser),
+				{ visitorSpaceIds: ['1'], objectIds: ['1'] }
+			);
+			expect(result).toEqual(mockIeObjectLimitedInFolder);
+		});
+	});
+
+	describe('getSimpleSearchTermsFromBooleanExpression', () => {
+		it('should return the value of the filter when the field is query', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: IeObjectsSearchFilterField.QUERY,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+			]);
+			expect(result).toEqual(['example']);
+		});
+
+		it('should only return the value of the filter where the field is "query"', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: IeObjectsSearchFilterField.QUERY,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+				{
+					field: IeObjectsSearchFilterField.NAME,
+					operator: Operator.CONTAINS,
+					value: 'example2',
+				},
+			]);
+			expect(result).toEqual(['example']);
+		});
+		it('should return an empty array when there are no filter objects containing "field" with value "query"', () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: IeObjectsSearchFilterField.NAME,
+					operator: Operator.CONTAINS,
+					value: 'example',
+				},
+			]);
+			expect(result).toEqual([]);
 		});
 	});
 });

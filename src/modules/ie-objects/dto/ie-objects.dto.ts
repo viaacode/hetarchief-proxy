@@ -3,21 +3,25 @@ import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { isArray } from 'lodash';
 
-import { Operator, OrderProperty, SearchFilterField } from '../elasticsearch/elasticsearch.consts';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+	OrderProperty,
+} from '../elasticsearch/elasticsearch.consts';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 
 export class SearchFilter {
 	@IsString()
-	@IsEnum(SearchFilterField)
+	@IsEnum(IeObjectsSearchFilterField)
 	@ApiProperty({
 		type: String,
-		description: `The field to filter on. Options are: ${Object.values(SearchFilterField).join(
-			', '
-		)}`,
+		description: `The field to filter on. Options are: ${Object.values(
+			IeObjectsSearchFilterField
+		).join(', ')}`,
 	})
-	field: SearchFilterField;
+	field: IeObjectsSearchFilterField;
 
 	@IsArray()
 	@IsOptional()
@@ -82,13 +86,13 @@ export class IeObjectsQueryDto {
 
 	@IsArray()
 	@IsOptional()
-	@IsEnum(SearchFilterField, { each: true })
+	@IsEnum(IeObjectsSearchFilterField, { each: true })
 	@ApiPropertyOptional({
 		type: Array,
 		description: 'The aggregates to include in the result',
 		default: [],
 	})
-	requestedAggs?: SearchFilterField[];
+	requestedAggs?: IeObjectsSearchFilterField[];
 
 	@IsString()
 	@IsEnum(OrderProperty)

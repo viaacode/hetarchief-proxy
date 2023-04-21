@@ -5,6 +5,7 @@ import {
 	ForbiddenException,
 	Get,
 	Headers,
+	InternalServerErrorException,
 	Param,
 	ParseUUIDPipe,
 	Patch,
@@ -15,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
 import { isNil } from 'lodash';
 
@@ -196,6 +198,8 @@ export class CollectionsController {
 				data: {
 					schema_identifier: objectSchemaIdentifier,
 					folder_id: collectionId,
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
 				},
 			},
 		]);
@@ -289,6 +293,32 @@ export class CollectionsController {
 			},
 			referer
 		);
+
+		// Get all the objects from the original collection and add them to the new collection
+		let folderObjects: IPagination<Partial<IeObject>>;
+		try {
+			folderObjects = await this.collectionsService.findObjectsByCollectionId(
+				collectionId,
+				collection?.userProfileId,
+				{ size: 1000 },
+				referer
+			);
+			// TODO: make it possible to insert all objects to the new collection at once
+			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
+				await this.collectionsService.addObjectToCollection(
+					createdCollection.id,
+					item?.schemaIdentifier,
+					referer
+				);
+			});
+		} catch (err) {
+			if (err?.name !== 'NotFoundException') {
+				throw new InternalServerErrorException({
+					message: 'Failed to add object from original collection to shared collection',
+					error: err,
+				});
+			}
+		}
 
 		return {
 			status: CollectionStatus.ADDED,

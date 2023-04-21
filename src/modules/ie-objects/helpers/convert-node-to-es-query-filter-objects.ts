@@ -5,7 +5,7 @@ import { SearchFilter } from '../dto/ie-objects.dto';
 
 export const convertNodeToEsQueryFilterObjects = (
 	node: Expression,
-	searchTemplate?: any[],
+	searchTemplates?: { fuzzy: any[]; exact: any[] },
 	searchFilter?: SearchFilter
 ): any => {
 	switch (node.type) {
@@ -13,7 +13,7 @@ export const convertNodeToEsQueryFilterObjects = (
 			return {
 				bool: {
 					should: ((node.body || []) as Expression[]).map((bodyNode) =>
-						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplate, searchFilter)
+						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
 					),
 					minimum_should_match: ((node.body || []) as Expression[]).length,
 				},
@@ -23,7 +23,7 @@ export const convertNodeToEsQueryFilterObjects = (
 			return {
 				bool: {
 					should: ((node.expressions || []) as Expression[]).map((bodyNode) =>
-						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplate, searchFilter)
+						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
 					),
 					minimum_should_match: ((node.expressions || []) as Expression[]).length,
 				},
@@ -35,12 +35,12 @@ export const convertNodeToEsQueryFilterObjects = (
 					should: [
 						convertNodeToEsQueryFilterObjects(
 							node.left as Expression,
-							searchTemplate,
+							searchTemplates,
 							searchFilter
 						),
 						convertNodeToEsQueryFilterObjects(
 							node.right as Expression,
-							searchTemplate,
+							searchTemplates,
 							searchFilter
 						),
 					],
@@ -53,20 +53,20 @@ export const convertNodeToEsQueryFilterObjects = (
 				bool: {
 					must_not: convertNodeToEsQueryFilterObjects(
 						node.argument as Expression,
-						searchTemplate,
+						searchTemplates,
 						searchFilter
 					),
 				},
 			};
 
 		case 'Identifier':
-			return buildFreeTextFilter(searchTemplate, {
+			return buildFreeTextFilter(searchTemplates.fuzzy, {
 				...searchFilter,
 				value: node.name as string,
 			});
 
 		case 'Literal':
-			return buildFreeTextFilter(searchTemplate, {
+			return buildFreeTextFilter(searchTemplates.exact, {
 				...searchFilter,
 				value: node.value as string,
 			});
@@ -75,7 +75,7 @@ export const convertNodeToEsQueryFilterObjects = (
 	}
 };
 
-const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchFilter): any => {
+export const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchFilter): any => {
 	// Replace {{query}} in the template with the escaped search terms
 	let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
 	stringifiedSearchTemplate = stringifiedSearchTemplate.replace(

@@ -21,6 +21,7 @@ import { IeObjectsModule } from '~modules/ie-objects';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
+import { SitemapModule } from '~modules/sitemap';
 import { SpacesModule } from '~modules/spaces';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
@@ -28,7 +29,10 @@ import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { PermissionGuard } from '~shared/guards/permission.guard';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { SessionService } from '~shared/services/session.service';
+
+checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 
 @Module({
 	imports: [
@@ -61,6 +65,7 @@ import { SessionService } from '~shared/services/session.service';
 		MaterialRequestsModule,
 		IeObjectsModule,
 		ZendeskModule,
+		SitemapModule,
 	],
 	controllers: [],
 	providers: [

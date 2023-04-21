@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, Query, Redirect, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Redirect, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
 import {
@@ -10,14 +11,20 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')
 export class CampaignMonitorController {
-	constructor(private campaignMonitorService: CampaignMonitorService) {}
+	constructor(
+		private campaignMonitorService: CampaignMonitorService,
+		private eventsService: EventsService
+	) {}
 
 	/**
 	 * Send an email using the campaign monitor api.
@@ -50,11 +57,28 @@ export class CampaignMonitorController {
 	@Post('preferences')
 	@ApiOperation({ description: 'Update user newsletter preferences' })
 	async updatePreferences(
+		@Req() request: Request,
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user?: SessionUserEntity
 	): Promise<{ message: 'success' }> {
+		// Log event
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.NEWSLETTER_SUBSCRIBE,
+				source: request.path,
+				subject: user?.getId() || 'ANONYMOUS',
+				time: new Date().toISOString(),
+				data: {
+					user_group_id: user?.getGroupId() || 'ANONYMOUS',
+					user_group_name: user?.getGroupName() || 'ANOYMOUS',
+				},
+			},
+		]);
+
 		if (!user?.getId()) {
 			await this.campaignMonitorService.sendConfirmationMail(preferences);
+
 			return { message: 'success' };
 		}
 
@@ -71,6 +95,7 @@ export class CampaignMonitorController {
 			},
 			preferences.preferences
 		);
+
 		return { message: 'success' };
 	}
 

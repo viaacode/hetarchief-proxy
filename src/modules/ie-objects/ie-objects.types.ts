@@ -123,7 +123,7 @@ export interface IeObject {
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
-	maintainerFromUrl?: string | null;
+	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
 	// FROM DB
@@ -284,4 +284,11 @@ export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>
 export interface IeObjectsVisitorSpaceInfo {
 	visitorSpaceIds: string[];
 	objectIds: string[];
+}
+
+export interface IeObjectsSitemap {
+	schemaIdentifier: string;
+	maintainerSlug: string;
+	name: string;
+	updatedAt: string;
 }

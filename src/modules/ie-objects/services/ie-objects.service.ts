@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
@@ -28,6 +33,7 @@ import {
 	IeObjectLicense,
 	IeObjectRepresentation,
 	IeObjectSector,
+	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
 } from '../ie-objects.types';
@@ -36,6 +42,9 @@ import {
 	FindAllObjectsByCollectionIdDocument,
 	FindAllObjectsByCollectionIdQuery,
 	FindAllObjectsByCollectionIdQueryVariables,
+	FindIeObjectsForSitemapDocument,
+	FindIeObjectsForSitemapQuery,
+	FindIeObjectsForSitemapQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -47,7 +56,7 @@ import {
 	GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
-import { SearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -275,6 +284,29 @@ export class IeObjectsService {
 		return allAdapted;
 	}
 
+	public async findIeObjectsForSitemap(
+		licenses: IeObjectLicense[],
+		offset: number,
+		limit: number
+	): Promise<IPagination<IeObjectsSitemap>> {
+		try {
+			const { object_ie: ieObjects, object_ie_aggregate: ieObjectAggregate } =
+				await this.dataService.execute<
+					FindIeObjectsForSitemapQuery,
+					FindIeObjectsForSitemapQueryVariables
+				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+
+			return Pagination<IeObjectsSitemap>({
+				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
+				page: Math.floor(offset / limit),
+				size: limit,
+				total: ieObjectAggregate?.aggregate?.count,
+			});
+		} catch (err) {
+			throw new InternalServerErrorException('Failed getting ieObjects for sitemap', err);
+		}
+	}
+
 	// Adapt
 	// ------------------------------------------------------------------------
 
@@ -309,6 +341,7 @@ export class IeObjectsService {
 			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
 			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
+			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
 			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
@@ -501,6 +534,15 @@ export class IeObjectsService {
 		);
 	}
 
+	private adaptForSitemap(graphQlObject: any): IeObjectsSitemap {
+		return {
+			schemaIdentifier: graphQlObject?.schema_identifier,
+			maintainerSlug: graphQlObject?.maintainer?.visitor_space?.slug,
+			name: graphQlObject?.schema_name,
+			updatedAt: graphQlObject?.updated_at,
+		};
+	}
+
 	// Helpers
 	// ------------------------------------------------------------------------
 
@@ -545,6 +587,7 @@ export class IeObjectsService {
 		// Extend the accessible visitor spaces for CP_ADMIN and MEEMOO_ADMIN
 		// CP_ADMIN should always have access to their own visitor space
 		// MEEMOO_ADMIN should always have access to all visitor spaces
+		// KIOSK_VISITOR should always have access to their own visitor space
 		let accessibleVisitorSpaceIds: string[] = [];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
@@ -568,7 +611,12 @@ export class IeObjectsService {
 				...spaces.items.map((space) => space.maintainerId),
 				user.getMaintainerId(),
 			];
+		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			accessibleVisitorSpaceIds = [user.getMaintainerId()];
+		} else {
+			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}
+
 		return {
 			objectIds: visitorSpaceAccessInfo.objectIds,
 			visitorSpaceIds: accessibleVisitorSpaceIds,
@@ -618,7 +666,7 @@ export class IeObjectsService {
 		filters: IeObjectsQueryDto['filters']
 	): string[] {
 		const searchTerm = filters.find(
-			(searchFilter) => searchFilter.field === SearchFilterField.QUERY
+			(searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY
 		)?.value;
 		if (!searchTerm) {
 			return [];

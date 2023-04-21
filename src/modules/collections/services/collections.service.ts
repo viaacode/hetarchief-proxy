@@ -46,7 +46,7 @@ import {
 	UpdateCollectionMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObject, IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -88,6 +88,9 @@ export class CollectionsService {
 			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound || null,
 			duration: gqlIeObject?.schema_duration || null,
 			licenses: gqlIeObject?.schema_license || null,
+			sector:
+				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector) ||
+				null,
 		};
 	}
 

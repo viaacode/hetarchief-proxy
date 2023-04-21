@@ -8,7 +8,7 @@ import {
 	mockConvertNodeToEsQueryFilterObject4,
 } from '../mocks/elasticsearch.mock';
 
-import { Operator, SearchFilterField } from './../elasticsearch/elasticsearch.consts';
+import { IeObjectsSearchFilterField, Operator } from './../elasticsearch/elasticsearch.consts';
 import { convertNodeToEsQueryFilterObjects } from './convert-node-to-es-query-filter-objects';
 
 (jsep as any).removeAllBinaryOps();
@@ -25,9 +25,12 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
 			{
-				field: SearchFilterField.QUERY,
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
+			{
+				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
 				operator: Operator.CONTAINS,
 			}
@@ -42,9 +45,12 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
 			{
-				field: SearchFilterField.QUERY,
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
+			{
+				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
 				operator: Operator.CONTAINS,
 			}
@@ -58,9 +64,12 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
 			{
-				field: SearchFilterField.QUERY,
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
+			{
+				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
 				operator: Operator.CONTAINS,
 			}
@@ -75,9 +84,12 @@ describe('Convert node to es query filter objects', () => {
 
 		const convertedNodesToEsQueryFilterObjects = convertNodeToEsQueryFilterObjects(
 			jsep(node),
-			esQuerySearchTemplate,
 			{
-				field: SearchFilterField.QUERY,
+				exact: esQuerySearchTemplate,
+				fuzzy: esQuerySearchTemplate,
+			},
+			{
+				field: IeObjectsSearchFilterField.QUERY,
 				value: node,
 				operator: Operator.CONTAINS,
 			}

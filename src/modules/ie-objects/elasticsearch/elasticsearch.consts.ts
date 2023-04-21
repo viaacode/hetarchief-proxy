@@ -21,7 +21,7 @@ const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy
 const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
 const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryFuzzy);
 
-export enum SearchFilterField {
+export enum IeObjectsSearchFilterField {
 	QUERY = 'query',
 	ADVANCED_QUERY = 'advancedQuery',
 	GENRE = 'genre',
@@ -37,7 +37,6 @@ export enum SearchFilterField {
 	LOCATION = 'location',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
-	MAINTAINER_NAME = 'maintainers', // Contains the name of the maintainer
 	CAST = 'cast',
 	CAPTION = 'caption',
 	TRANSCRIPT = 'transcript',
@@ -45,7 +44,7 @@ export enum SearchFilterField {
 	DURATION = 'duration',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
-	CONSULTABLE_REMOTE = 'isConsultableRemote',
+	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	TYPE = 'type',
 }
@@ -95,53 +94,31 @@ export const MULTI_MATCH_QUERY_MAPPING = {
 	exact: {
 		name: nameSearchQueryTemplateExact,
 		identifier: identifierSearchQueryTemplateExact,
-		exactQuery: searchQueryTemplateExact,
+		query: searchQueryTemplateExact,
 	},
 };
 
-export interface QueryBuilderConfig {
-	AGGS_PROPERTIES: Array<SearchFilterField>;
-	MAX_COUNT_SEARCH_RESULTS: number;
-	MAX_NUMBER_SEARCH_RESULTS: number;
-	NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string };
-	NUMBER_OF_FILTER_OPTIONS: number;
-	READABLE_TO_ELASTIC_FILTER_NAMES: { [prop in SearchFilterField]?: string };
-	DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType };
-	OCCURRENCE_TYPE: { [prop in Operator]?: string };
-	VALUE_OPERATORS: Array<Operator>;
-	ORDER_MAPPINGS: { [prop in OrderProperty]: string };
-	MULTI_MATCH_FIELDS: Array<SearchFilterField>;
-	MULTI_MATCH_QUERY_MAPPING: typeof MULTI_MATCH_QUERY_MAPPING;
-	NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string };
-}
-
-export const DEFAULT_QUERY_TYPE: { [prop in SearchFilterField]?: QueryType } = {
-	[SearchFilterField.GENRE]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	[SearchFilterField.KEYWORD]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	[SearchFilterField.NAME]: QueryType.TERM, // used for exact (not) matching
-	[SearchFilterField.FORMAT]: QueryType.TERMS, // es keyword
-	[SearchFilterField.PUBLISHER]: QueryType.TERMS,
-	[SearchFilterField.CREATOR]: QueryType.TERMS,
-	[SearchFilterField.CREATED]: QueryType.RANGE,
-	[SearchFilterField.PUBLISHED]: QueryType.RANGE,
-	[SearchFilterField.DESCRIPTION]: QueryType.TERM, // used for exact (not) matching
-	[SearchFilterField.ERA]: QueryType.MATCH,
-	[SearchFilterField.LOCATION]: QueryType.MATCH,
-	[SearchFilterField.MAINTAINER_ID]: QueryType.TERMS,
-	[SearchFilterField.MAINTAINER_NAME]: QueryType.TERMS,
-	[SearchFilterField.CAST]: QueryType.TERMS,
-	[SearchFilterField.CAPTION]: QueryType.TERM,
-	[SearchFilterField.TRANSCRIPT]: QueryType.TERM,
-	[SearchFilterField.CATEGORIE]: QueryType.TERMS,
-	[SearchFilterField.DURATION]: QueryType.RANGE,
-	[SearchFilterField.LANGUAGE]: QueryType.TERMS,
-	[SearchFilterField.MEDIUM]: QueryType.TERMS,
+export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]?: QueryType } = {
+	[IeObjectsSearchFilterField.GENRE]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	[IeObjectsSearchFilterField.KEYWORD]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
+	[IeObjectsSearchFilterField.NAME]: QueryType.TERM, // used for exact (not) matching
+	[IeObjectsSearchFilterField.FORMAT]: QueryType.TERMS, // es keyword
+	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
+	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
+	[IeObjectsSearchFilterField.DESCRIPTION]: QueryType.TERM, // used for exact (not) matching
+	[IeObjectsSearchFilterField.ERA]: QueryType.MATCH,
+	[IeObjectsSearchFilterField.LOCATION]: QueryType.MATCH,
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CAST]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CAPTION]: QueryType.TERM,
+	[IeObjectsSearchFilterField.TRANSCRIPT]: QueryType.TERM,
+	[IeObjectsSearchFilterField.CATEGORIE]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.DURATION]: QueryType.RANGE,
+	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
 };
-
-export interface QueryBuilderConsultableFilters {
-	isConsultableRemote: boolean;
-	isConsultableMedia: boolean;
-}
 
 // Max number of search results to return to the client
 export const MAX_NUMBER_SEARCH_RESULTS = 2000;
@@ -153,31 +130,34 @@ export const MAX_COUNT_SEARCH_RESULTS = 10000;
 export const NUMBER_OF_FILTER_OPTIONS = 40;
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
-	[prop in Exclude<SearchFilterField, 'isConsultableRemote' | 'isConsultableMedia'>]: string;
+	[prop in Exclude<
+		IeObjectsSearchFilterField,
+		| IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
+	>]: string;
 } = {
-	[SearchFilterField.QUERY]: 'query',
-	[SearchFilterField.ADVANCED_QUERY]: 'query',
-	[SearchFilterField.GENRE]: 'schema_genre',
-	[SearchFilterField.KEYWORD]: 'schema_keywords',
-	[SearchFilterField.NAME]: 'schema_name',
-	[SearchFilterField.FORMAT]: 'dcterms_format',
-	[SearchFilterField.PUBLISHER]: 'schema_publisher',
-	[SearchFilterField.CREATOR]: 'schema_creator',
-	[SearchFilterField.CREATED]: 'schema_date_created',
-	[SearchFilterField.PUBLISHED]: 'schema_date_published',
-	[SearchFilterField.DESCRIPTION]: 'schema_description',
-	[SearchFilterField.ERA]: 'schema_temporal_coverage',
-	[SearchFilterField.LOCATION]: 'schema_spatial_coverage',
-	[SearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
-	[SearchFilterField.MAINTAINER_NAME]: 'schema_maintainer.schema_name',
-	[SearchFilterField.CAST]: 'meemoo_description_cast',
-	[SearchFilterField.CAPTION]: 'schema_caption',
-	[SearchFilterField.TRANSCRIPT]: 'schema_transcript',
-	[SearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
-	[SearchFilterField.DURATION]: 'schema_duration',
-	[SearchFilterField.LANGUAGE]: 'schema_in_language',
-	[SearchFilterField.MEDIUM]: 'dcterms_medium',
-	[SearchFilterField.TYPE]: 'ebucore_object_type',
+	[IeObjectsSearchFilterField.QUERY]: 'query',
+	[IeObjectsSearchFilterField.ADVANCED_QUERY]: 'query',
+	[IeObjectsSearchFilterField.GENRE]: 'schema_genre',
+	[IeObjectsSearchFilterField.KEYWORD]: 'schema_keywords',
+	[IeObjectsSearchFilterField.NAME]: 'schema_name',
+	[IeObjectsSearchFilterField.FORMAT]: 'dcterms_format',
+	[IeObjectsSearchFilterField.PUBLISHER]: 'schema_publisher',
+	[IeObjectsSearchFilterField.CREATOR]: 'schema_creator',
+	[IeObjectsSearchFilterField.CREATED]: 'schema_date_created',
+	[IeObjectsSearchFilterField.PUBLISHED]: 'schema_date_published',
+	[IeObjectsSearchFilterField.DESCRIPTION]: 'schema_description',
+	[IeObjectsSearchFilterField.ERA]: 'schema_temporal_coverage',
+	[IeObjectsSearchFilterField.LOCATION]: 'schema_spatial_coverage',
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
+	[IeObjectsSearchFilterField.CAST]: 'meemoo_description_cast',
+	[IeObjectsSearchFilterField.CAPTION]: 'schema_caption',
+	[IeObjectsSearchFilterField.TRANSCRIPT]: 'schema_transcript',
+	[IeObjectsSearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
+	[IeObjectsSearchFilterField.DURATION]: 'schema_duration',
+	[IeObjectsSearchFilterField.LANGUAGE]: 'schema_in_language',
+	[IeObjectsSearchFilterField.MEDIUM]: 'dcterms_medium',
+	[IeObjectsSearchFilterField.TYPE]: 'ebucore_object_type',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -187,11 +167,11 @@ export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
 	name: 'schema_name.keyword',
 };
 
-export const MULTI_MATCH_FIELDS: Array<SearchFilterField> = [
-	SearchFilterField.QUERY,
-	SearchFilterField.ADVANCED_QUERY,
-	SearchFilterField.NAME,
-	SearchFilterField.DESCRIPTION,
+export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
+	IeObjectsSearchFilterField.QUERY,
+	IeObjectsSearchFilterField.ADVANCED_QUERY,
+	IeObjectsSearchFilterField.NAME,
+	IeObjectsSearchFilterField.DESCRIPTION,
 ];
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
@@ -204,17 +184,17 @@ export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
 // By default add the 'format' aggregation
-export const AGGS_PROPERTIES: Array<SearchFilterField> = [SearchFilterField.FORMAT];
+export const AGGS_PROPERTIES: Array<IeObjectsSearchFilterField> = [
+	IeObjectsSearchFilterField.FORMAT,
+];
 
-export const NEEDS_FILTER_SUFFIX: { [prop in SearchFilterField]?: string } = {
-	[SearchFilterField.GENRE]: 'keyword',
-	[SearchFilterField.NAME]: 'keyword',
-	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
-	[SearchFilterField.TYPE]: 'keyword',
+export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
+	[IeObjectsSearchFilterField.GENRE]: 'keyword',
+	[IeObjectsSearchFilterField.NAME]: 'keyword',
+	[IeObjectsSearchFilterField.TYPE]: 'keyword',
 };
 
-export const NEEDS_AGG_SUFFIX: { [prop in SearchFilterField]?: string } = {
-	[SearchFilterField.GENRE]: 'keyword',
-	[SearchFilterField.MAINTAINER_NAME]: 'keyword',
-	[SearchFilterField.TYPE]: 'keyword',
+export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
+	[IeObjectsSearchFilterField.GENRE]: 'keyword',
+	[IeObjectsSearchFilterField.TYPE]: 'keyword',
 };

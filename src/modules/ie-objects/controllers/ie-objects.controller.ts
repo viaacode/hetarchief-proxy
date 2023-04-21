@@ -3,7 +3,7 @@ import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-import { isNil } from 'lodash';
+import { intersection, isNil } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -19,6 +19,7 @@ import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
 	IeObject,
+	IeObjectAccessThrough,
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
@@ -28,7 +29,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { GroupName, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -87,6 +88,17 @@ export class IeObjectsController {
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
 
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+		if (
+			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+			intersection(limitedObject?.licenses, [
+				IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			]).length > 0
+		) {
+			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		}
+
 		return limitedObject;
 	}
 
@@ -126,6 +138,10 @@ export class IeObjectsController {
 				source: request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
+				data: {
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
+				},
 			},
 		]);
 
@@ -163,6 +179,10 @@ export class IeObjectsController {
 				source: request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
+				data: {
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
+				},
 			},
 		]);
 

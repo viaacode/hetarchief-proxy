@@ -10,6 +10,7 @@ import {
 	GoneException,
 	NotFoundException,
 	Param,
+	ParseUUIDPipe,
 	Patch,
 	Post,
 	Query,
@@ -133,6 +134,9 @@ export class VisitsController {
 					spaceMail: space.contactInfo.email,
 					spaceId: space.id,
 					spaceTelephone: space.contactInfo.telephone,
+					spaceLogo: space.logo,
+					spaceColor: space.color,
+					spaceImage: space.image,
 					reason: null,
 					spaceMaintainerId: space.maintainerId,
 					spaceSlug: space.slug,
@@ -218,7 +222,7 @@ export class VisitsController {
 		Permission.READ_CP_VISIT_REQUESTS,
 		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
-	public async getVisitById(@Param('id') id: string): Promise<Visit> {
+	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<Visit> {
 		const visit = await this.visitsService.findById(id);
 		return visit;
 	}
@@ -230,7 +234,11 @@ export class VisitsController {
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit | null> {
 		// Check if the user is a CP admin or a Kiosk user for the requested space
-		if (visitorSpaceSlug === user.getVisitorSpaceSlug()) {
+		// MEEMOO_ADMIN has access to all the visitor spaces
+		if (
+			visitorSpaceSlug === user.getVisitorSpaceSlug() ||
+			user.getGroupName() === GroupName.MEEMOO_ADMIN
+		) {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
 			// Return fake visit request that is approved and valid forever
 			return {
@@ -373,6 +381,8 @@ export class VisitsController {
 				time: new Date().toISOString(),
 				data: {
 					visitor_space_id: visitorSpace.id,
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
 				},
 			},
 		]);
@@ -391,7 +401,7 @@ export class VisitsController {
 	)
 	public async update(
 		@Req() request: Request,
-		@Param('id') id: string,
+		@Param('id', ParseUUIDPipe) id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Visit> {
@@ -464,6 +474,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
+						user_group_name: user.getGroupName(),
+						user_group_id: user.getGroupId(),
 					},
 				},
 			]);
@@ -484,6 +496,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
+						user_group_name: user.getGroupName(),
+						user_group_id: user.getGroupId(),
 					},
 				},
 			]);
@@ -503,6 +517,8 @@ export class VisitsController {
 					data: {
 						visitor_space_request_id: visit.id,
 						visitor_space_id: visit.spaceId,
+						user_group_name: user.getGroupName(),
+						user_group_id: user.getGroupId(),
 					},
 				},
 			]);

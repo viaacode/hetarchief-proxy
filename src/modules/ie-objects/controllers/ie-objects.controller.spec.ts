@@ -2,6 +2,7 @@ import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { Request } from 'express';
 import { cloneDeep } from 'lodash';
 
 import { IeObject, IeObjectLicense } from '../ie-objects.types';
@@ -9,6 +10,8 @@ import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetLTD,
+	mockIeObjectWithMetadataSetLtdCsv,
+	mockIeObjectWithMetadataSetLtdXml,
 	mockUser,
 } from '../mocks/ie-objects.mock';
 import { IeObjectsService } from '../services/ie-objects.service';
@@ -45,6 +48,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findBySchemaIdentifier: jest.fn(),
 	findMetadataBySchemaIdentifier: jest.fn(),
 	getRelated: jest.fn(),
+	countRelated: jest.fn(),
 	getSimilar: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
 		objectIds: [],
@@ -70,6 +74,8 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
 	findOrganisationBySchemaIdentifier: jest.fn(),
 };
+
+const mockRequest = { path: '/ie-objects/export', headers: {} } as unknown as Request;
 
 describe('IeObjectsController', () => {
 	let ieObjectsController: IeObjectsController;
@@ -117,6 +123,7 @@ describe('IeObjectsController', () => {
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
 		mockIeObjectsService.getRelated.mockRestore();
+		mockIeObjectsService.countRelated.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -246,19 +253,73 @@ describe('IeObjectsController', () => {
 		});
 	});
 
-	// TODO: rewrite tests for export
-	describe('export', () => {
-		// it('should export a ieObject item as xml', async () => {
-		// 	mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce({
-		// 		maintainerId: 'or-vrt',
-		// 	});
-		// 	mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-		// 	mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
-		// 	const mockXmlResponse = '<object><schemaIdentifier>1</schemaIdentifier></object>';
-		// 	convertObjectToXml.mockReturnValueOnce(mockXmlResponse);
-		// 	const xml = await ieObjectsController.export('1', mockRequest, mockSessionUser);
-		// 	expect(xml).toEqual(mockXmlResponse);
-		// });
+	describe('getIeObjectSeoById', () => {
+		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_LTD', async () => {
+			const mockResponse = {
+				...mockIeObject,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+			};
+			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+
+			expect(result).toEqual({
+				name: mockIeObject.name,
+				description: mockIeObject.description,
+			});
+		});
+
+		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_ALL', async () => {
+			const mockResponse = {
+				...mockIeObject,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+			};
+			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+
+			expect(result).toEqual({
+				name: mockIeObject.name,
+				description: mockIeObject.description,
+			});
+		});
+
+		it('should return name = null when object has no valid licence', async () => {
+			const mockResponse = {
+				...mockIeObject,
+				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+			};
+			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+
+			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+
+			expect(result).toEqual({
+				name: null,
+				description: null,
+			});
+		});
+	});
+
+	describe('exportXml', () => {
+		it('should export an ieObject item as xml', async () => {
+			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
+			const xml = await ieObjectsController.exportXml('1', mockRequest, mockSessionUser);
+			expect(xml).toEqual(mockIeObjectWithMetadataSetLtdXml);
+		});
+	});
+
+	describe('exportCsv', () => {
+		it('should export an ieObject item as csv', async () => {
+			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
+			const csv = await ieObjectsController.exportCsv('1', mockRequest, mockSessionUser);
+			expect(csv).toEqual(mockIeObjectWithMetadataSetLtdCsv);
+		});
 	});
 
 	describe('getRelated', () => {
@@ -275,6 +336,17 @@ describe('IeObjectsController', () => {
 				mockSessionUser
 			);
 			expect(ieObject.items.length).toEqual(2);
+		});
+	});
+	describe('countRelated', () => {
+		it('should get the number of related ieObject items', async () => {
+			mockIeObjectsService.countRelated.mockResolvedValueOnce({});
+
+			const result = await ieObjectsController.countRelated({
+				meemooIdentifiers: ['1', '2', '3'],
+			});
+
+			expect(result).toEqual({});
 		});
 	});
 
