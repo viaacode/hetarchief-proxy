@@ -1,5 +1,17 @@
 import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
-import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	ForbiddenException,
+	Get,
+	Header,
+	Headers,
+	Param,
+	Post,
+	Query,
+	Req,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
@@ -87,6 +99,10 @@ export class IeObjectsController {
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
+
+		if (!limitedObject) {
+			throw new ForbiddenException('You do not have access to this object');
+		}
 
 		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
 		if (
