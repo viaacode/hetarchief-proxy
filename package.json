@@ -33,7 +33,7 @@
     "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "2.0.66",
+    "@meemoo/admin-core-api": "2.1.1",
     "@nestjs/common": "8.2.3",
     "@nestjs/config": "1.1.5",
     "@nestjs/core": "8.2.3",
