@@ -1,6 +1,6 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { NotificationType } from '../types';
 
@@ -39,4 +39,15 @@ export class DeleteNotificationDto {
 		enum: NotificationType,
 	})
 	types?: NotificationType[];
+}
+
+export class CreateFromMaintenanceAlertDto {
+	@IsString()
+	@Type(() => String)
+	@ApiProperty({
+		type: String,
+		description: 'The id of the maintenance alert that was dismissed',
+		example: '660b0c58-a7ee-4c2d-a4de-cae0090d5746',
+	})
+	id: string;
 }

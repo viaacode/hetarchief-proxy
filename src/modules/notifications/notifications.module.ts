@@ -1,4 +1,4 @@
-import { DataModule } from '@meemoo/admin-core-api';
+import { DataModule, MaintenanceAlertsModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -17,6 +17,7 @@ import { VisitsModule } from '~modules/visits';
 		ConfigModule,
 		CampaignMonitorModule,
 		TranslationsModule,
+		MaintenanceAlertsModule,
 	],
 	providers: [NotificationsService, ConfigService],
 	exports: [NotificationsService],

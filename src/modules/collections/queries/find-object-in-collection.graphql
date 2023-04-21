@@ -23,6 +23,9 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 			maintainer {
 				schema_identifier
 				schema_name
+				information {
+					haorg_organization_type
+				}
 				visitor_space {
 					id
 					slug
