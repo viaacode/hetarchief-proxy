@@ -1,4 +1,4 @@
-import { DataService, TranslationsService } from '@meemoo/admin-core-api';
+import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addHours, addMonths, subHours } from 'date-fns';
 
@@ -180,6 +180,20 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 		getAdminEmail: jest.fn().mockImplementation((email) => email),
 	};
 
+const mockMaintenanceAlertsService: Partial<
+	Record<keyof MaintenanceAlertsService, jest.SpyInstance>
+> = {
+	findById: jest.fn().mockResolvedValue({
+		id: '0e6e26aa-55e5-4c61-891c-8c3644f93301',
+		title: 'Test',
+		message: 'Test message',
+		type: 'info',
+		fromDate: '2023-03-08T08:00:00',
+		untilDate: '2023-03-08T16:00:00',
+		userGroups: ['MEEMOO_ADMIN'],
+	}),
+};
+
 describe('NotificationsService', () => {
 	let notificationsService: NotificationsService;
 
@@ -198,6 +212,10 @@ describe('NotificationsService', () => {
 				{
 					provide: TranslationsService,
 					useValue: mockTranslationsService,
+				},
+				{
+					provide: MaintenanceAlertsService,
+					useValue: mockMaintenanceAlertsService,
 				},
 			],
 		})

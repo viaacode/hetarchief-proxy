@@ -1,4 +1,4 @@
-import { DataService, TranslationsService } from '@meemoo/admin-core-api';
+import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
@@ -46,7 +46,8 @@ export class NotificationsService {
 	constructor(
 		protected dataService: DataService,
 		protected campaignMonitorService: CampaignMonitorService,
-		protected translationsService: TranslationsService
+		protected translationsService: TranslationsService,
+		protected maintenanceAlertsService: MaintenanceAlertsService
 	) {}
 
 	/**
@@ -347,5 +348,21 @@ export class NotificationsService {
 			},
 			recipients.map((recipient) => recipient.id)
 		);
+	}
+
+	public async createFromMaintenanceAlert(maintenanceAlertId: string, profileId: string) {
+		const maintenanceAlert = await this.maintenanceAlertsService.findById(maintenanceAlertId);
+		await this.create([
+			{
+				title: maintenanceAlert.title,
+				status: NotificationStatus.READ,
+				description: maintenanceAlert.message,
+				type: NotificationType.MAINTENANCE_ALERT,
+				recipient: profileId,
+				visit_id: null,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+			},
+		]);
 	}
 }

@@ -10,7 +10,7 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
 
@@ -21,11 +21,15 @@ import {
 	NotificationType,
 } from '../types';
 
-import { NotificationsQueryDto } from '~modules/notifications/dto/notifications.dto';
+import {
+	CreateFromMaintenanceAlertDto,
+	NotificationsQueryDto,
+} from '~modules/notifications/dto/notifications.dto';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
+import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -251,5 +255,27 @@ export class NotificationsController {
 				this.translationsService.t(translationKey),
 			])
 		);
+	}
+
+	/**
+	 * Is called when a user closes a maintenance alert on the client
+	 * We create a read notification for that user, so they can always see the maintenance alerts in their notification center
+	 * @param createFromMaintenanceAlert
+	 * @param user
+	 */
+	@Post('create-from-maintenance-alert')
+	@ApiOperation({
+		description: 'Create a new maintenance alert',
+	})
+	@UseGuards(LoggedInGuard)
+	public async dismissMaintenanceAlert(
+		@Query() createFromMaintenanceAlert: CreateFromMaintenanceAlertDto,
+		@SessionUser() user: SessionUserEntity
+	): Promise<{ message: 'success' }> {
+		await this.notificationsService.createFromMaintenanceAlert(
+			createFromMaintenanceAlert.id,
+			user.getId()
+		);
+		return { message: 'success' };
 	}
 }
