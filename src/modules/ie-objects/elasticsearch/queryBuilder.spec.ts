@@ -1,7 +1,9 @@
+import { buildFreeTextFilter } from '../helpers/convert-node-to-es-query-filter-objects';
 import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
 import { IeObjectsSearchFilterField, Operator, OrderProperty } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
+import creatorSearchQueryExact from './templates/exact/creator-query.json';
 
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -739,6 +741,19 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(4);
+		});
+
+		it('Should generate a fuzzy search query objects based on a multi value filter', () => {
+			const queryObject = buildFreeTextFilter(creatorSearchQueryExact, {
+				field: IeObjectsSearchFilterField.CREATOR,
+				multiValue: ['a', 'b'],
+				operator: Operator.IS,
+			});
+			expect(queryObject.bool.should).toHaveLength(creatorSearchQueryExact.length * 2);
+			expect(queryObject.bool.should[0].multi_match.query).toEqual('a');
+			expect(
+				queryObject.bool.should[creatorSearchQueryExact.length * 1].multi_match.query
+			).toEqual('b');
 		});
 	});
 });
