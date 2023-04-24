@@ -1,4 +1,5 @@
 import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
+import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
@@ -182,20 +183,38 @@ describe('IeObjectsController', () => {
 			expect(ieObject).toBeDefined();
 		});
 
-		it('should throw a notfound exception if the object has no valid license', async () => {
+		it('should throw a no access exception if the object has no valid license', async () => {
 			const mockResponse = {
 				...mockIeObject,
 				licenses: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 
-			const object = await ieObjectsController.getIeObjectById(
-				'referer',
-				'1',
-				mockSessionUser
+			try {
+				await ieObjectsController.getIeObjectById('referer', '1', mockSessionUser);
+				fail('Expected an error to be thrown if the object does not exist');
+			} catch (err) {
+				expect(err.message).toEqual('You do not have access to this object');
+				expect(err.status).toEqual(403);
+			}
+		});
+
+		it('should throw a not found exception if the object does not exist', async () => {
+			mockIeObjectsService.findBySchemaIdentifier.mockRejectedValueOnce(
+				new NotFoundException(
+					`Object IE with id '${mockIeObject.schemaIdentifier}' not found`
+				)
 			);
 
-			expect(object).toBeNull();
+			try {
+				await ieObjectsController.getIeObjectById('referer', '1', mockSessionUser);
+				fail('Expected an error to be thrown if the object does not exist');
+			} catch (err) {
+				expect(err.message).toEqual(
+					`Object IE with id '${mockIeObject.schemaIdentifier}' not found`
+				);
+				expect(err.status).toEqual(404);
+			}
 		});
 
 		it('should return limited metadata if the user no longer has access', async () => {
