@@ -15,7 +15,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-import { intersection, isNil } from 'lodash';
+import { compact, intersection, isNil } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -280,16 +280,14 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjects = await this.ieObjectsService.getSimilar(
+		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
 			id,
 			referer,
 			ieObjectSimilarQueryDto
 		);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedSimilarIeObjects = {
-			...similarIeObjects,
-			items: (similarIeObjects.items || []).map((item) =>
+		const similarIeObjects = compact(
+			(similarIeObjectsResponse.items || []).map((item) =>
 				limitAccessToObjectDetails(item, {
 					userId: user.getId(),
 					isKeyUser: user.getIsKeyUser(),
@@ -299,7 +297,16 @@ export class IeObjectsController {
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
-			),
+			)
+		);
+
+		// Limit the amount of props returned for an ie object based on licenses and sector
+		const licensedSimilarIeObjects = {
+			items: similarIeObjects,
+			total: similarIeObjects.length,
+			pages: 1,
+			page: 1,
+			size: similarIeObjects.length,
 		};
 
 		return licensedSimilarIeObjects;
