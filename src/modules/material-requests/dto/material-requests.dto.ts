@@ -207,10 +207,10 @@ export class UpdateMaterialRequestDto {
 
 export class SendRequestListDto {
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@ApiPropertyOptional({
 		type: String,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
 	type: Lookup_App_Material_Request_Requester_Capacity_Enum;
 
