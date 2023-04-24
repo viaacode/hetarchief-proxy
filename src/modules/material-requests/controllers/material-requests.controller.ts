@@ -165,12 +165,13 @@ export class MaterialRequestsController {
 				isPersonal: true,
 			});
 
-			materialRequests.items.forEach(
-				(materialRequest: MaterialRequest) =>
-					(materialRequest.contactMail = materialRequest.contactMail.find(
-						(contact) => contact.contact_type === 'primary'
-					)?.email)
-			);
+			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
+				materialRequest.contactMail = materialRequest.contactMail.find(
+					(contact) => contact.contact_type === 'primary'
+				)?.email;
+				materialRequest.requesterCapacity = sendRequestListDto.type;
+				materialRequest.organisation = sendRequestListDto?.organisation;
+			});
 
 			await this.materialRequestsService.sendRequestList(
 				materialRequests.items,

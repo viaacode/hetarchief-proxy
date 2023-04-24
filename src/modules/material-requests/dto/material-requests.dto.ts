@@ -1,3 +1,4 @@
+import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
@@ -211,7 +212,7 @@ export class SendRequestListDto {
 		type: String,
 		enum: MaterialRequestRequesterCapacity,
 	})
-	type: MaterialRequestRequesterCapacity;
+	type: Lookup_App_Material_Request_Requester_Capacity_Enum;
 
 	@IsString()
 	@IsOptional()
