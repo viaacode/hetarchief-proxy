@@ -2,9 +2,10 @@ import _ from 'lodash';
 
 import { IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
-import searchQueryExact from './templates/exact/exact-search-query.json';
+import creatorSearchQueryExact from './templates/exact/creator-query.json';
 import identifierSearchQueryFuzzy from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
+import searchQueryExact from './templates/exact/search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
@@ -20,6 +21,7 @@ const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy
 
 const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
 const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryFuzzy);
+const creatorSearchQueryTemplateExact = _.values(creatorSearchQueryExact);
 
 export enum IeObjectsSearchFilterField {
 	QUERY = 'query',
@@ -95,6 +97,7 @@ export const MULTI_MATCH_QUERY_MAPPING = {
 		name: nameSearchQueryTemplateExact,
 		identifier: identifierSearchQueryTemplateExact,
 		query: searchQueryTemplateExact,
+		creator: creatorSearchQueryTemplateExact,
 	},
 };
 
@@ -181,6 +184,7 @@ export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.ADVANCED_QUERY,
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.DESCRIPTION,
+	IeObjectsSearchFilterField.CREATOR,
 ];
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {

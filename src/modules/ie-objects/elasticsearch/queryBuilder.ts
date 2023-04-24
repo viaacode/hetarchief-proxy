@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isEmpty, isNil, set } from 'lodash';
+import { clamp, forEach, isArray, isNil, set } from 'lodash';
 
 import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -241,7 +241,7 @@ export class QueryBuilder {
 			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
 			// query multiple fields at once
 			if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
-				if (!searchFilter.value) {
+				if (!searchFilter.value && !searchFilter.multiValue?.length) {
 					throw new BadRequestException(
 						`Value cannot be empty when filtering on field '${searchFilter.field}'`
 					);
@@ -274,6 +274,7 @@ export class QueryBuilder {
 					);
 					return;
 				} else {
+					// Exact match
 					// Use a multi field search template to exact search in elasticsearch across multiple fields
 					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
 
