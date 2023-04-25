@@ -133,14 +133,14 @@ export class CreateMaterialRequestDto {
 	type = undefined;
 
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiProperty({
 		type: String,
 		description: "The reason for this user's material request",
 		example:
 			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
-	reason: string;
+	reason?: string = '';
 
 	@IsString()
 	@IsEnum(MaterialRequestRequesterCapacity)
@@ -220,5 +220,5 @@ export class SendRequestListDto {
 		type: String,
 		description: 'The name of the organisation to which the user belongs',
 	})
-	organisation?: string | null;
+	organisation?: string | null = null;
 }

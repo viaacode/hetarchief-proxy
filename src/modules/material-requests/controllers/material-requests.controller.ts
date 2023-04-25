@@ -193,7 +193,7 @@ export class MaterialRequestsController {
 							organisation: materialRequest.organisation,
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
-							updated_at: new Date(),
+							updated_at: new Date().toISOString(),
 						}
 					);
 				})
