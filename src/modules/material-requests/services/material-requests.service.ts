@@ -204,10 +204,11 @@ export class MaterialRequestsService {
 		userProfileId: string,
 		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
-			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending'
+			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
 		>
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity, is_pending } = materialRequestInfo;
+		const { type, reason, organisation, requester_capacity, is_pending, updated_at } =
+			materialRequestInfo;
 
 		const updateMaterialRequest = {
 			type,
@@ -215,6 +216,7 @@ export class MaterialRequestsService {
 			organisation,
 			requester_capacity,
 			is_pending,
+			updated_at,
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } =
