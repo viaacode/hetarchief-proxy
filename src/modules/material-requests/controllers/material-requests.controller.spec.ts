@@ -1,6 +1,7 @@
+import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MaterialRequestRequesterCapacity, MaterialRequestType } from '../material-requests.types';
+import { MaterialRequestType } from '../material-requests.types';
 import {
 	mockMaintainerWithMaterialRequest,
 	mockMaterialRequest1,
@@ -116,7 +117,8 @@ describe('MaterialRequestsController', () => {
 					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
-					requesterCapacity: MaterialRequestRequesterCapacity.EDUCATION,
+					requesterCapacity:
+						Lookup_App_Material_Request_Requester_Capacity_Enum.Education,
 				},
 				new SessionUserEntity({
 					...mockUser,

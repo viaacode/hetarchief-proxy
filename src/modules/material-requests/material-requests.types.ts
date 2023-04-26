@@ -68,13 +68,6 @@ export enum MaterialRequestOrderProp {
 	MAINTAINER_NAME = 'maintainerName',
 }
 
-export enum MaterialRequestRequesterCapacity {
-	OTHER = 'OTHER',
-	WORK = 'WORK',
-	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
-	EDUCATION = 'EDUCATION',
-}
-
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];

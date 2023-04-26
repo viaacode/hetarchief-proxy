@@ -15,7 +15,6 @@ import {
 	MaterialRequest,
 	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
-	MaterialRequestRequesterCapacity,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
@@ -36,6 +35,7 @@ import {
 	InsertMaterialRequestDocument,
 	InsertMaterialRequestMutation,
 	InsertMaterialRequestMutationVariables,
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	UpdateMaterialRequestDocument,
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
@@ -183,7 +183,7 @@ export class MaterialRequestsService {
 			organisation: createMaterialRequestDto?.organisation,
 			requester_capacity:
 				createMaterialRequestDto?.requesterCapacity ||
-				MaterialRequestRequesterCapacity.OTHER,
+				Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
 		};
 
 		const { insert_app_material_requests_one: createdMaterialRequest } =

@@ -11,11 +11,7 @@ import {
 	IsString,
 } from 'class-validator';
 
-import {
-	MaterialRequestOrderProp,
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
@@ -143,12 +139,12 @@ export class CreateMaterialRequestDto {
 	reason?: string = '';
 
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@ApiProperty({
 		type: String,
 		description: 'Which capacity the requester is part of',
 		default: undefined,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
 	requesterCapacity = undefined;
 
@@ -186,13 +182,13 @@ export class UpdateMaterialRequestDto {
 	reason?: string;
 
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which capacity the requester is part of',
 		default: undefined,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
 	requesterCapacity? = undefined;
 
