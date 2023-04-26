@@ -22,7 +22,11 @@ import {
 	SendRequestListDto,
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
-import { MaterialRequest, MaterialRequestMaintainer } from '../material-requests.types';
+import {
+	MaterialRequest,
+	MaterialRequestMaintainer,
+	MaterialRequestMaintainerContactType,
+} from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -167,7 +171,8 @@ export class MaterialRequestsController {
 
 			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
 				materialRequest.contactMail = materialRequest.contactMail.find(
-					(contact) => contact.contact_type === 'primary'
+					(contact) =>
+						contact.contact_type === MaterialRequestMaintainerContactType.ONTSLUITING
 				)?.email;
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;

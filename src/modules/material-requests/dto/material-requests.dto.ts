@@ -56,7 +56,7 @@ export class MaterialRequestsQueryDto {
 	@IsBoolean()
 	@Type(() => Boolean)
 	@Transform((input) => {
-		return input.value;
+		return input.obj.isPending === 'true';
 	})
 	@IsOptional()
 	@ApiPropertyOptional({
