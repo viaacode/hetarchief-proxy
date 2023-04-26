@@ -76,16 +76,23 @@ export const convertNodeToEsQueryFilterObjects = (
 };
 
 export const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchFilter): any => {
+	let values: string[];
+	if (searchFilter.multiValue) {
+		values = searchFilter.multiValue;
+	} else {
+		values = [searchFilter.value];
+	}
+
 	// Replace {{query}} in the template with the escaped search terms
-	let stringifiedSearchTemplate = JSON.stringify(searchTemplate);
-	stringifiedSearchTemplate = stringifiedSearchTemplate.replace(
-		/\{\{query\}\}/g,
-		searchFilter.value
-	);
+	const stringifiedSearchTemplate = JSON.stringify(searchTemplate);
+
+	const shouldArray = values.flatMap((value) => {
+		return JSON.parse(stringifiedSearchTemplate.replace(/\{\{query}}/g, value));
+	});
 
 	return {
 		bool: {
-			should: JSON.parse(stringifiedSearchTemplate),
+			should: shouldArray,
 			minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
 		},
 	};

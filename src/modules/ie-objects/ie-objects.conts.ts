@@ -193,6 +193,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: (keyof IeObject)[] = [
 	'dctermsMedium',
 	'duration',
 	'dateCreated',
+	'dateCreatedLowerBound',
 	'datePublished',
 	'creator',
 	'description',

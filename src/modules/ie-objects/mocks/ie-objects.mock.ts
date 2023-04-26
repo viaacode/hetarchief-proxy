@@ -103,6 +103,7 @@ export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
+	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -154,6 +155,7 @@ export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
+	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -215,6 +217,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
+	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",

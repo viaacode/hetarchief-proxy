@@ -187,9 +187,9 @@ export class IeObjectsService {
 		ieObjectSimilarQueryDto?: IeObjectsSimilarQueryDto,
 		limit = 4
 	): Promise<IPagination<IeObject>> {
-		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase() ?? '_all';
+		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase();
 		const likeFilter = {
-			_index: esIndex,
+			...(esIndex ? { _index: esIndex } : {}),
 			_id: schemaIdentifier,
 		};
 
@@ -206,7 +206,7 @@ export class IeObjectsService {
 			},
 		};
 
-		const mediaResponse = await this.executeQuery(esIndex, esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex || '_all', esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
 
 		return {
@@ -325,6 +325,7 @@ export class IeObjectsService {
 			abstract: gqlIeObject?.schema_abstract,
 			creator: gqlIeObject?.schema_creator,
 			dateCreated: gqlIeObject?.schema_date_created,
+			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
 			duration: gqlIeObject?.schema_duration,
@@ -362,7 +363,6 @@ export class IeObjectsService {
 			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
 			copyrightNotice: gqlIeObject?.schema_copyright_notice,
 			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
-			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
 			actor: gqlIeObject?.schema_actor,
 		};
 	}
@@ -432,6 +432,7 @@ export class IeObjectsService {
 			copyrightHolder: esObject?.schema_copyrightholder,
 			creator: esObject?.schema_creator,
 			dateCreated: esObject?.schema_date_created,
+			dateCreatedLowerBound: esObject?.schema_date_created,
 			datePublished: esObject?.schema_date_published,
 			description: esObject?.schema_description,
 			duration: esObject?.schema_duration,

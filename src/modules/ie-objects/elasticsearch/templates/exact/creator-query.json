@@ -1,0 +1,59 @@
+[
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 100,
+      "fields": [
+        "schema_creator_text"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 80,
+      "fields": [
+        "schema_creator_text.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 40,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_creator_text.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 20,
+      "fields": [
+        "schema_creator_text.lemma_split_spell"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 5,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_creator_text.lemma_split_spell"
+      ]
+    }
+  }
+]

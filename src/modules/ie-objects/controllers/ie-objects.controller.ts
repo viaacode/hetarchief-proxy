@@ -1,9 +1,21 @@
 import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
-import { Body, Controller, Get, Header, Headers, Param, Post, Query, Req } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	ForbiddenException,
+	Get,
+	Header,
+	Headers,
+	Param,
+	Post,
+	Query,
+	Req,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-import { intersection, isNil } from 'lodash';
+import { compact, intersection, isNil } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -87,6 +99,10 @@ export class IeObjectsController {
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
+
+		if (!limitedObject) {
+			throw new ForbiddenException('You do not have access to this object');
+		}
 
 		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
 		if (
@@ -264,16 +280,14 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjects = await this.ieObjectsService.getSimilar(
+		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
 			id,
 			referer,
 			ieObjectSimilarQueryDto
 		);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedSimilarIeObjects = {
-			...similarIeObjects,
-			items: (similarIeObjects.items || []).map((item) =>
+		const similarIeObjects = compact(
+			(similarIeObjectsResponse.items || []).map((item) =>
 				limitAccessToObjectDetails(item, {
 					userId: user.getId(),
 					isKeyUser: user.getIsKeyUser(),
@@ -283,7 +297,16 @@ export class IeObjectsController {
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
-			),
+			)
+		);
+
+		// Limit the amount of props returned for an ie object based on licenses and sector
+		const licensedSimilarIeObjects = {
+			items: similarIeObjects,
+			total: similarIeObjects.length,
+			pages: 1,
+			page: 1,
+			size: similarIeObjects.length,
 		};
 
 		return licensedSimilarIeObjects;
