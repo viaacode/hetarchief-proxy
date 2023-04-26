@@ -1,8 +1,4 @@
-import {
-	MaterialRequest,
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 import {
 	FindMaintainersWithMaterialRequestsQuery,
@@ -28,7 +24,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
 	organisation: null,
-	requester_capacity: MaterialRequestRequesterCapacity.EDUCATION as any,
+	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
@@ -61,7 +57,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 	type: MaterialRequestType.REUSE as any,
 	is_pending: true,
 	organisation: null,
-	requester_capacity: MaterialRequestRequesterCapacity.EDUCATION as any,
+	requester_capacity: Lookup_App_Material_Request_Requester_Capacity_Enum.Education as any,
 	requested_by: {
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',

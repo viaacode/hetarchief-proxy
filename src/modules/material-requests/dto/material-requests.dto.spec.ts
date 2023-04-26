@@ -24,6 +24,7 @@ describe('MaterialRequestsDto', () => {
 				organisation: null,
 				requesterCapacity: undefined,
 				type: undefined,
+				reason: '',
 			});
 		});
 	});

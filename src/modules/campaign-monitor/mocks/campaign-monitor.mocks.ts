@@ -1,3 +1,5 @@
+import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+
 import {
 	CampaignMonitorUserInfo,
 	MaterialRequestEmailInfo,
@@ -12,7 +14,6 @@ import {
 } from '../dto/campaign-monitor.dto';
 
 import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { MaterialRequestRequesterCapacity } from '~modules/material-requests/material-requests.types';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -66,7 +67,7 @@ export const mockConfirmationData: CampaignMonitorConfirmationData = {
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {
-	type: MaterialRequestRequesterCapacity.OTHER,
+	type: Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
 	organisation: 'Test Organisation',
 };
 

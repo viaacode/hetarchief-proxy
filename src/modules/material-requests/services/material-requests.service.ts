@@ -15,7 +15,6 @@ import {
 	MaterialRequest,
 	MaterialRequestFindAllExtraParameters,
 	MaterialRequestMaintainer,
-	MaterialRequestRequesterCapacity,
 	MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
@@ -36,6 +35,7 @@ import {
 	InsertMaterialRequestDocument,
 	InsertMaterialRequestMutation,
 	InsertMaterialRequestMutationVariables,
+	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	UpdateMaterialRequestDocument,
 	UpdateMaterialRequestMutation,
 	UpdateMaterialRequestMutationVariables,
@@ -183,7 +183,7 @@ export class MaterialRequestsService {
 			organisation: createMaterialRequestDto?.organisation,
 			requester_capacity:
 				createMaterialRequestDto?.requesterCapacity ||
-				MaterialRequestRequesterCapacity.OTHER,
+				Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
 		};
 
 		const { insert_app_material_requests_one: createdMaterialRequest } =
@@ -204,10 +204,11 @@ export class MaterialRequestsService {
 		userProfileId: string,
 		materialRequestInfo: Pick<
 			App_Material_Requests_Set_Input,
-			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending'
+			'type' | 'reason' | 'organisation' | 'requester_capacity' | 'is_pending' | 'updated_at'
 		>
 	): Promise<MaterialRequest> {
-		const { type, reason, organisation, requester_capacity, is_pending } = materialRequestInfo;
+		const { type, reason, organisation, requester_capacity, is_pending, updated_at } =
+			materialRequestInfo;
 
 		const updateMaterialRequest = {
 			type,
@@ -215,6 +216,7 @@ export class MaterialRequestsService {
 			organisation,
 			requester_capacity,
 			is_pending,
+			updated_at,
 		};
 
 		const { update_app_material_requests: updatedMaterialRequest } =

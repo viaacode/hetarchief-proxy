@@ -68,13 +68,6 @@ export enum MaterialRequestOrderProp {
 	MAINTAINER_NAME = 'maintainerName',
 }
 
-export enum MaterialRequestRequesterCapacity {
-	OTHER = 'OTHER',
-	WORK = 'WORK',
-	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
-	EDUCATION = 'EDUCATION',
-}
-
 export enum MaterialRequestMaintainerContactType {
 	PRIMARY = 'primary',
 	ONTSLUITING = 'ontsluiting',

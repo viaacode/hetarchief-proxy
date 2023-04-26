@@ -1,3 +1,4 @@
+import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
@@ -10,11 +11,7 @@ import {
 	IsString,
 } from 'class-validator';
 
-import {
-	MaterialRequestOrderProp,
-	MaterialRequestRequesterCapacity,
-	MaterialRequestType,
-} from '../material-requests.types';
+import { MaterialRequestOrderProp, MaterialRequestType } from '../material-requests.types';
 
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
@@ -132,22 +129,22 @@ export class CreateMaterialRequestDto {
 	type = undefined;
 
 	@IsString()
-	@IsNotEmpty()
+	@IsOptional()
 	@ApiProperty({
 		type: String,
 		description: "The reason for this user's material request",
 		example:
 			'I would like to do research on evolution of the Dutch language in the vrt news across the decades.',
 	})
-	reason: string;
+	reason?: string = '';
 
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@ApiProperty({
 		type: String,
 		description: 'Which capacity the requester is part of',
 		default: undefined,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
 	requesterCapacity = undefined;
 
@@ -185,13 +182,13 @@ export class UpdateMaterialRequestDto {
 	reason?: string;
 
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'Which capacity the requester is part of',
 		default: undefined,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
 	requesterCapacity? = undefined;
 
@@ -206,12 +203,12 @@ export class UpdateMaterialRequestDto {
 
 export class SendRequestListDto {
 	@IsString()
-	@IsEnum(MaterialRequestRequesterCapacity)
+	@IsEnum(Lookup_App_Material_Request_Requester_Capacity_Enum)
 	@ApiPropertyOptional({
 		type: String,
-		enum: MaterialRequestRequesterCapacity,
+		enum: Lookup_App_Material_Request_Requester_Capacity_Enum,
 	})
-	type: MaterialRequestRequesterCapacity;
+	type: Lookup_App_Material_Request_Requester_Capacity_Enum;
 
 	@IsString()
 	@IsOptional()
@@ -219,5 +216,5 @@ export class SendRequestListDto {
 		type: String,
 		description: 'The name of the organisation to which the user belongs',
 	})
-	organisation?: string | null;
+	organisation?: string | null = null;
 }

@@ -169,14 +169,14 @@ export class MaterialRequestsController {
 				isPersonal: true,
 			});
 
-			materialRequests.items.forEach(
-				(materialRequest: MaterialRequest) =>
-					(materialRequest.contactMail = materialRequest.contactMail.find(
-						(contact) =>
-							contact.contact_type ===
-							MaterialRequestMaintainerContactType.ONTSLUITING
-					)?.email)
-			);
+			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
+				materialRequest.contactMail = materialRequest.contactMail.find(
+					(contact) =>
+						contact.contact_type === MaterialRequestMaintainerContactType.ONTSLUITING
+				)?.email;
+				materialRequest.requesterCapacity = sendRequestListDto.type;
+				materialRequest.organisation = sendRequestListDto?.organisation;
+			});
 
 			await this.materialRequestsService.sendRequestList(
 				materialRequests.items,
@@ -198,6 +198,7 @@ export class MaterialRequestsController {
 							organisation: materialRequest.organisation,
 							requester_capacity: materialRequest.requesterCapacity,
 							is_pending: false,
+							updated_at: new Date().toISOString(),
 						}
 					);
 				})
