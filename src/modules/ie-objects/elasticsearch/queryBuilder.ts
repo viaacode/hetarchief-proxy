@@ -7,6 +7,7 @@ import {
 	buildFreeTextFilter,
 	convertNodeToEsQueryFilterObjects,
 } from '../helpers/convert-node-to-es-query-filter-objects';
+import { encodeSearchterm } from '../helpers/encode-search-term';
 import { getSectorsWithEssenceAccess } from '../helpers/get-sectors-with-essence-access';
 import { IeObjectLicense } from '../ie-objects.types';
 
@@ -252,7 +253,7 @@ export class QueryBuilder {
 					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 						textFilters = [
 							convertNodeToEsQueryFilterObjects(
-								jsep(searchFilter.value),
+								jsep(encodeSearchterm(searchFilter.value)),
 								{
 									fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query,
 									exact: MULTI_MATCH_QUERY_MAPPING.exact.query,
