@@ -1,4 +1,4 @@
-import { ES_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
+import { JSEP_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
 
 /*
 	This function parses the searchterm before jsep parses it.
@@ -7,7 +7,7 @@ import { ES_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
 			output: _ç_ç_ç_ç_ç_3_ç_ç_ç_ç_ç_r_ç_ç_ç_ç_ç_0_ç_ç_ç_ç_ç_pr_ç_ç_ç_ç_ç_9_ç_ç_ç_ç_ç_jj_ç_ç_ç_ç_ç_7_ç_ç_ç_ç_ç_g
 */
 export const encodeSearchterm = (term: string): string => {
-	return term?.replace(/\d/g, (match) => ES_DIGIT_PREFIX + match + ES_DIGIT_PREFIX);
+	return term?.replace(/\d/g, (match) => JSEP_DIGIT_PREFIX + match + JSEP_DIGIT_PREFIX);
 };
 
 /*
@@ -18,6 +18,6 @@ export const encodeSearchterm = (term: string): string => {
 			output: 3r0pr9jj7g
 */
 export const decodeSearchterm = (parsedTerm: string): string => {
-	const regex = new RegExp(`${ES_DIGIT_PREFIX}(\\d)${ES_DIGIT_PREFIX}`, 'g');
+	const regex = new RegExp(`${JSEP_DIGIT_PREFIX}(\\d)${JSEP_DIGIT_PREFIX}`, 'g');
 	return parsedTerm?.replace(regex, (_, digit) => digit);
 };

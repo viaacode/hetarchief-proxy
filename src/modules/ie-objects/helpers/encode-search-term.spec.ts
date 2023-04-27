@@ -1,10 +1,12 @@
+import { JSEP_DIGIT_PREFIX } from '../elasticsearch/elasticsearch.consts';
+
 import { decodeSearchterm, encodeSearchterm } from './encode-search-term';
 
 describe('encode and decode search terms', () => {
 	describe('encodeSearchterm', () => {
 		it('should encode a searchterm number that contains digits', () => {
 			expect(encodeSearchterm('3r0pr9jj7g')).toEqual(
-				'_ç_ç_ç_ç_ç_3_ç_ç_ç_ç_ç_r_ç_ç_ç_ç_ç_0_ç_ç_ç_ç_ç_pr_ç_ç_ç_ç_ç_9_ç_ç_ç_ç_ç_jj_ç_ç_ç_ç_ç_7_ç_ç_ç_ç_ç_g'
+				`${JSEP_DIGIT_PREFIX}3${JSEP_DIGIT_PREFIX}r${JSEP_DIGIT_PREFIX}0${JSEP_DIGIT_PREFIX}pr${JSEP_DIGIT_PREFIX}9${JSEP_DIGIT_PREFIX}jj${JSEP_DIGIT_PREFIX}7${JSEP_DIGIT_PREFIX}g`
 			);
 		});
 
@@ -25,7 +27,7 @@ describe('encode and decode search terms', () => {
 		it('should return the original searchterm given an encoded searchterm that contains digits', () => {
 			expect(
 				decodeSearchterm(
-					'_ç_ç_ç_ç_ç_3_ç_ç_ç_ç_ç_r_ç_ç_ç_ç_ç_0_ç_ç_ç_ç_ç_pr_ç_ç_ç_ç_ç_9_ç_ç_ç_ç_ç_jj_ç_ç_ç_ç_ç_7_ç_ç_ç_ç_ç_g'
+					`${JSEP_DIGIT_PREFIX}3${JSEP_DIGIT_PREFIX}r${JSEP_DIGIT_PREFIX}0${JSEP_DIGIT_PREFIX}pr${JSEP_DIGIT_PREFIX}9${JSEP_DIGIT_PREFIX}jj${JSEP_DIGIT_PREFIX}7${JSEP_DIGIT_PREFIX}g`
 				)
 			).toEqual('3r0pr9jj7g');
 		});

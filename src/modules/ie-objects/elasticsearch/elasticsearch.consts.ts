@@ -206,7 +206,6 @@ export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string }
 /*
 	This prefix is added before and after every digit before jsep parses it.
 	This has to be a string that's not expected to occur in any ES object's properties.
-	It should also be made of characters that aren't recognised by jsep.
 	If the searchterm is a string starting with a digit and we don't do this, jsep will throw an error saying a variable cannot start with a digit.
 */
-export const ES_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';
+export const JSEP_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';
