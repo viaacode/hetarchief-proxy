@@ -141,7 +141,6 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 // -  See the scroll api for a more efficient way to request large data sets.
 // -  This limit can be set by changing the [index.max_result_window] index level setting. // TODO Still relevant?
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
-export const NUMBER_OF_FILTER_OPTIONS = 40;
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[prop in Exclude<
@@ -173,6 +172,16 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.MEDIUM]: 'dcterms_medium',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
 	[IeObjectsSearchFilterField.IDENTIFIER]: 'schema_identifier',
+};
+
+export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
+export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
+	[IeObjectsSearchFilterField.FORMAT]: NUMBER_OF_FILTER_OPTIONS_DEFAULT, // Only contains a few options: video, audio and in the future maybe newspaper and images
+	[IeObjectsSearchFilterField.GENRE]: NUMBER_OF_FILTER_OPTIONS_DEFAULT,
+	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
+	[IeObjectsSearchFilterField.CREATOR]: NUMBER_OF_FILTER_OPTIONS_DEFAULT,
+	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
