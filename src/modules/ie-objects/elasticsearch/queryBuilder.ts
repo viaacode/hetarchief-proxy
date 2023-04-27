@@ -21,7 +21,8 @@ import {
 	MULTI_MATCH_QUERY_MAPPING,
 	NEEDS_AGG_SUFFIX,
 	NEEDS_FILTER_SUFFIX,
-	NUMBER_OF_FILTER_OPTIONS,
+	NUMBER_OF_FILTER_OPTIONS_DEFAULT,
+	NUMBER_OF_OPTIONS_PER_AGGREGATE,
 	OCCURRENCE_TYPE,
 	Operator,
 	ORDER_MAPPINGS,
@@ -581,7 +582,10 @@ export class QueryBuilder {
 			aggs[elasticProperty] = {
 				terms: {
 					field: elasticProperty + this.aggSuffix(aggProperty),
-					size: NUMBER_OF_FILTER_OPTIONS,
+					size:
+						NUMBER_OF_OPTIONS_PER_AGGREGATE[
+							aggProperty as IeObjectsSearchFilterField
+						] ?? NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 				},
 			};
 			// }
