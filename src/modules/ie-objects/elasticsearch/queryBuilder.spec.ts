@@ -507,7 +507,8 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query.bool.should[0]).toEqual({
 				bool: {
-					filter: [
+					filter: [],
+					must: [
 						{
 							query_string: {
 								default_field: 'schema_genre',
@@ -537,7 +538,7 @@ describe('QueryBuilder', () => {
 			);
 			expect(esQuery.aggs.dcterms_medium.terms).toEqual({
 				field: 'dcterms_medium',
-				size: 40,
+				size: 500,
 			});
 		});
 
