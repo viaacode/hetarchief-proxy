@@ -3,7 +3,7 @@ import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
 import { IeObjectsSearchFilterField, Operator, OrderProperty } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
-import creatorSearchQueryExact from './templates/exact/creator-query.json';
+import creatorSearchQueryExact from './templates/exact/creator-search-query.json';
 
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

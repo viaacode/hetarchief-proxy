@@ -2,8 +2,8 @@ import _ from 'lodash';
 
 import { IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
-import creatorSearchQueryExact from './templates/exact/creator-query.json';
-import identifierSearchQueryFuzzy from './templates/exact/identifier-search-query.json';
+import creatorSearchQueryExact from './templates/exact/creator-search-query.json';
+import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
 import searchQueryExact from './templates/exact/search-query.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
@@ -20,35 +20,36 @@ const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
 const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
 
 const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
-const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryFuzzy);
+const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryExact);
 const creatorSearchQueryTemplateExact = _.values(creatorSearchQueryExact);
 
 export enum IeObjectsSearchFilterField {
-	QUERY = 'query',
 	ADVANCED_QUERY = 'advancedQuery',
-	GENRE = 'genre',
-	KEYWORD = 'keyword',
-	NAME = 'name',
-	FORMAT = 'format',
 	CREATED = 'created',
-	PUBLISHED = 'published',
-	PUBLISHER = 'publisher',
 	CREATOR = 'creator',
 	DESCRIPTION = 'description',
-	ERA = 'era',
-	LOCATION = 'location',
-	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
-	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
-	CAST = 'cast',
-	CAPTION = 'caption',
-	TRANSCRIPT = 'transcript',
-	CATEGORIE = 'categorie',
 	DURATION = 'duration',
+	SPACIAL_COVERAGE = 'spacialCoverage',
+	TEMPORAL_COVERAGE = 'temporalCoverage',
+	FORMAT = 'format',
+	GENRE = 'genre',
+	KEYWORD = 'keyword',
 	LANGUAGE = 'language',
 	MEDIUM = 'medium',
+	NAME = 'name',
+	PUBLISHED = 'published',
+	PUBLISHER = 'publisher',
+	QUERY = 'query',
+	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
+	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
-	TYPE = 'type',
+	CAST = 'cast',
+	IDENTIFIER = 'identifier',
+	OBJECT_TYPE = 'objectType',
+	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	TRANSCRIPT = 'transcript', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 }
 
 export enum Operator {
@@ -72,6 +73,7 @@ export enum QueryType {
 	TERMS = 'terms', // Must match at least one term exactly
 	RANGE = 'range', // Date range or duration range
 	MATCH = 'match', // Text based fuzzy search
+	QUERY_STRING = 'query_string', // Text search met wildcards: {"query_string":{"query":"arbeids*","default_field":"schema_keywords"}}
 }
 
 export interface QueryBuilderUserInfo {
@@ -101,18 +103,19 @@ export const MULTI_MATCH_QUERY_MAPPING = {
 	},
 };
 
-export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]?: QueryType } = {
-	[IeObjectsSearchFilterField.GENRE]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	[IeObjectsSearchFilterField.KEYWORD]: QueryType.TERMS, // text // TODO es text -> can be match query: no longer case sensitive but issue with multiValue
-	[IeObjectsSearchFilterField.NAME]: QueryType.TERM, // used for exact (not) matching
-	[IeObjectsSearchFilterField.FORMAT]: QueryType.TERMS, // es keyword
+export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryType } = {
+	[IeObjectsSearchFilterField.GENRE]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.KEYWORD]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.NAME]: QueryType.TERM,
+	[IeObjectsSearchFilterField.FORMAT]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
-	[IeObjectsSearchFilterField.DESCRIPTION]: QueryType.TERM, // used for exact (not) matching
-	[IeObjectsSearchFilterField.ERA]: QueryType.MATCH,
-	[IeObjectsSearchFilterField.LOCATION]: QueryType.MATCH,
+	[IeObjectsSearchFilterField.DESCRIPTION]: QueryType.TERM,
+	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: QueryType.MATCH,
+	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CAST]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CAPTION]: QueryType.TERM,
@@ -121,6 +124,17 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]?: QueryT
 	[IeObjectsSearchFilterField.DURATION]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
+
+	// Should never be used since these are marked as multi match fields
+	// But we include it to get stricter type checks on missing fields
+	[IeObjectsSearchFilterField.ADVANCED_QUERY]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.IDENTIFIER]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.QUERY]: QueryType.TERMS,
+
+	// Should never be used since these are handled separately using boolean filters
+	// But we include it to get stricter type checks on missing fields
+	[IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CONSULTABLE_MEDIA]: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
@@ -150,8 +164,8 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.CREATED]: 'schema_date_created',
 	[IeObjectsSearchFilterField.PUBLISHED]: 'schema_date_published',
 	[IeObjectsSearchFilterField.DESCRIPTION]: 'schema_description',
-	[IeObjectsSearchFilterField.ERA]: 'schema_temporal_coverage',
-	[IeObjectsSearchFilterField.LOCATION]: 'schema_spatial_coverage',
+	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'schema_temporal_coverage',
+	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'schema_spatial_coverage',
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
 	[IeObjectsSearchFilterField.CAST]: 'meemoo_description_cast',
 	[IeObjectsSearchFilterField.CAPTION]: 'schema_caption',
@@ -160,7 +174,8 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.DURATION]: 'schema_duration',
 	[IeObjectsSearchFilterField.LANGUAGE]: 'schema_in_language',
 	[IeObjectsSearchFilterField.MEDIUM]: 'dcterms_medium',
-	[IeObjectsSearchFilterField.TYPE]: 'ebucore_object_type',
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
+	[IeObjectsSearchFilterField.IDENTIFIER]: 'schema_identifier',
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
@@ -176,6 +191,7 @@ export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.DESCRIPTION,
 	IeObjectsSearchFilterField.CREATOR,
+	IeObjectsSearchFilterField.IDENTIFIER,
 ];
 
 export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
@@ -195,12 +211,12 @@ export const AGGS_PROPERTIES: Array<IeObjectsSearchFilterField> = [
 export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.NAME]: 'keyword',
-	[IeObjectsSearchFilterField.TYPE]: 'keyword',
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
-	[IeObjectsSearchFilterField.TYPE]: 'keyword',
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 };
 
 /*

@@ -159,10 +159,19 @@ export class QueryBuilder {
 	}
 
 	protected static buildFilter(elasticKey: string, searchFilter: SearchFilter): any {
-		if (searchFilter.operator === Operator.CONTAINS) {
-			// Used for filtering aggregate options in checkbox lists
+		// Used for other advanced filter fields
+		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+		const value = this.buildValue(searchFilter);
+		const queryType = this.getQueryType(searchFilter, value);
+		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
+
+		// Contains, ContainsNot
+		if (
+			searchFilter.operator === Operator.CONTAINS ||
+			searchFilter.operator === Operator.CONTAINS_NOT
+		) {
 			return {
-				occurrenceType: 'filter',
+				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					query_string: {
 						query: searchFilter.value + '*',
@@ -172,12 +181,7 @@ export class QueryBuilder {
 			};
 		}
 
-		// Used for other advanced filter fields
-		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
-		const value = this.buildValue(searchFilter);
-		const queryType = this.getQueryType(searchFilter, value);
-		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
-
+		// Is, IsNot
 		return {
 			occurrenceType,
 			query: {
