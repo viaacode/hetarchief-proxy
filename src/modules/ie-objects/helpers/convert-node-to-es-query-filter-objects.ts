@@ -11,6 +11,7 @@ export const convertNodeToEsQueryFilterObjects = (
 	searchFilter?: SearchFilter
 ): any => {
 	node.name = decodeSearchterm(node.name as string);
+
 	switch (node.type) {
 		case 'Compound':
 			return {
