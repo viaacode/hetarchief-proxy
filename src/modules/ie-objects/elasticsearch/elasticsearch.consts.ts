@@ -202,3 +202,5 @@ export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string }
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.TYPE]: 'keyword',
 };
+
+export const ES_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';

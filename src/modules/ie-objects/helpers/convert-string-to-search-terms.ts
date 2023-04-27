@@ -1,5 +1,7 @@
 import jsep, { Expression } from 'jsep';
 
+import { decodeSearchterm, encodeSearchterm } from './encode-search-term';
+
 (jsep as any).removeAllBinaryOps();
 (jsep as any).removeAllUnaryOps();
 
@@ -12,11 +14,12 @@ export function convertStringToSearchTerms(searchQuery: string): string[] {
 	if (!searchQuery) {
 		return [];
 	}
-	const node = jsep(searchQuery);
+	const node = jsep(encodeSearchterm(searchQuery));
 	return convertNodeToSearchTerms(node);
 }
 
 export function convertNodeToSearchTerms(node: Expression): string[] {
+	node.name = decodeSearchterm(node.name as string);
 	switch (node.type) {
 		case 'Compound':
 			return ((node.body || []) as Expression[]).flatMap(convertNodeToSearchTerms);

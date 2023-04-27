@@ -3,11 +3,14 @@ import { baseTypes, Expression } from 'jsep';
 
 import { SearchFilter } from '../dto/ie-objects.dto';
 
+import { decodeSearchterm } from './encode-search-term';
+
 export const convertNodeToEsQueryFilterObjects = (
 	node: Expression,
 	searchTemplates?: { fuzzy: any[]; exact: any[] },
 	searchFilter?: SearchFilter
 ): any => {
+	node.name = decodeSearchterm(node.name as string);
 	switch (node.type) {
 		case 'Compound':
 			return {
@@ -69,6 +72,11 @@ export const convertNodeToEsQueryFilterObjects = (
 			return buildFreeTextFilter(searchTemplates.exact, {
 				...searchFilter,
 				value: node.value as string,
+			});
+		case 'ThisExpression':
+			return buildFreeTextFilter(searchTemplates.exact, {
+				...searchFilter,
+				value: 'this',
 			});
 		default:
 			throw new BadRequestException(`Unknown expression (${node})`);
