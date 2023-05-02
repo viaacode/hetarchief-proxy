@@ -155,7 +155,10 @@ describe('SpacesController', () => {
 	describe('getSpaceBySlug', () => {
 		it('should return a space by slug', async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			const space = await spacesController.getSpaceBySlug('huis-van-alijn');
+			const space = await spacesController.getSpaceBySlug(
+				'huis-van-alijn',
+				new SessionUserEntity(mockUser)
+			);
 			expect(space.id).toEqual('1');
 		});
 
@@ -164,7 +167,10 @@ describe('SpacesController', () => {
 
 			let error;
 			try {
-				await spacesController.getSpaceBySlug('huis-van-alijn');
+				await spacesController.getSpaceBySlug(
+					'huis-van-alijn',
+					new SessionUserEntity(mockUser)
+				);
 			} catch (err) {
 				error = err;
 			}
@@ -179,7 +185,10 @@ describe('SpacesController', () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[2]);
 
 			try {
-				await spacesController.getSpaceBySlug('huis-van-alijn');
+				await spacesController.getSpaceBySlug(
+					'huis-van-alijn',
+					new SessionUserEntity(mockUser)
+				);
 				fail('getSpaceBySlug should throw an error when the space is inactive');
 			} catch (err) {
 				expect(err?.response).toEqual({
