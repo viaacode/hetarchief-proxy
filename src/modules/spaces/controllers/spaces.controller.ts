@@ -60,12 +60,11 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
-			const error = new ForbiddenException(
+			throw new ForbiddenException(
 				this.translationsService.t(
 					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
 				)
 			);
-			throw error;
 		}
 		if (!queryDto.status && !user.has(Permission.READ_ALL_SPACES)) {
 			// If someone requests all spaces but doesn't have access to all spaces, we only return the active spaces
@@ -88,7 +87,10 @@ export class SpacesController {
 	@ApiOperation({
 		description: 'Get a space by slug',
 	})
-	public async getSpaceBySlug(@Param('slug') slug: string): Promise<Space | null> {
+	public async getSpaceBySlug(
+		@Param('slug') slug: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<Space | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
 			throw new NotFoundException(
@@ -100,7 +102,10 @@ export class SpacesController {
 				)
 			);
 		}
-		if (space.status === VisitorSpaceStatus.Inactive) {
+		if (
+			space.status === VisitorSpaceStatus.Inactive &&
+			!user.has(Permission.UPDATE_ALL_SPACES)
+		) {
 			throw new GoneException(`Space with slug "${slug}" is inactive`);
 		}
 		return space;
