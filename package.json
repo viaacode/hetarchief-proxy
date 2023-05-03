@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "1.4.24",
+  "version": "1.4.25",
   "description": "",
   "author": "",
   "private": true,
@@ -30,10 +30,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
     "translations:extract": "ts-node --transpile-only --require dotenv/config scripts/extract-and-replace-translations.ts dotenv_config_path=.env/.env.local && npm run format:fix",
-    "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml"
+    "generate-database-types": "dotenv -e ./.env/.env.local graphql-codegen -- --config codegen-hetarchief.yml",
+    "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "2.1.5",
+    "@meemoo/admin-core-api": "2.2.0",
     "@nestjs/common": "8.2.3",
     "@nestjs/config": "1.1.5",
     "@nestjs/core": "8.2.3",
