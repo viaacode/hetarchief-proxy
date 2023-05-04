@@ -62,10 +62,12 @@ export enum MaterialRequestType {
 export enum MaterialRequestOrderProp {
 	ID = 'id',
 	CREATED_AT = 'createdAt',
+	UPDATED_AT = 'updatedAt',
 	TYPE = 'type',
 	REQUESTER_FULL_NAME = 'requesterFullName',
 	REQUESTER_MAIL = 'requesterMail',
 	MAINTAINER_NAME = 'maintainerName',
+	NAME = 'objectSchemaName',
 }
 
 export enum MaterialRequestMaintainerContactType {
