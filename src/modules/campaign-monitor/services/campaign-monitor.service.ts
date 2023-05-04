@@ -244,6 +244,22 @@ export class CampaignMonitorService {
 				optin_mail_lists
 			);
 
+			console.log(
+				'cm call: ',
+				JSON.stringify(
+					{
+						url,
+						method: 'post',
+						json: {
+							Subscribers: [subscriberInfo],
+							Resubscribe: false,
+						},
+						throwHttpErrors: true,
+					},
+					null,
+					2
+				)
+			);
 			await this.gotInstance({
 				url,
 				method: 'post',
@@ -453,6 +469,7 @@ export class CampaignMonitorService {
 				return {
 					Key: pair[0],
 					Value: pair[1],
+					Clear: !pair[1], // Clear the field if it is empty or false
 				};
 			}),
 		};

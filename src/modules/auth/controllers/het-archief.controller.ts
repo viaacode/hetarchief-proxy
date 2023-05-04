@@ -136,10 +136,11 @@ export class HetArchiefController {
 				: ldapUser.attributes.o[0];
 
 			let organisation: Organisation | null = null;
-			if (organisationId)
+			if (organisationId) {
 				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 					organisationId
 				);
+			}
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
@@ -230,25 +231,6 @@ export class HetArchiefController {
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
-
-			// Update custom fields in Campaign Monitor
-			this.campaignMonitorService
-				.updateNewsletterPreferences({
-					firstName: archiefUser?.firstName,
-					lastName: archiefUser?.lastName,
-					email: archiefUser?.email,
-					is_key_user: archiefUser?.isKeyUser,
-					usergroup: archiefUser?.groupName,
-					created_date: archiefUser?.createdAt,
-					last_access_date: archiefUser?.lastAccessAt,
-					organisation: archiefUser?.organisationName,
-				})
-				.catch((err) => {
-					this.logger.error(
-						'Failed updating the custom fields to Campaign Monitor: ' +
-							JSON.stringify(err)
-					);
-				});
 
 			// Log event
 			this.eventsService.insertEvents([
