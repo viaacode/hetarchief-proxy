@@ -27,7 +27,6 @@ import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -52,8 +51,7 @@ export class HetArchiefController {
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private translationsService: TranslationsService,
-		private organisationService: OrganisationsService,
-		private campaignMonitorService: CampaignMonitorService
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('login')

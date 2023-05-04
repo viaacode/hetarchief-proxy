@@ -1,6 +1,7 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
 import {
+	CampaignMonitorCustomFieldName,
 	CampaignMonitorUserInfo,
 	MaterialRequestEmailInfo,
 	Template,
@@ -127,35 +128,43 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 	ConsentToTrack: 'Yes',
 	CustomFields: [
 		{
-			Key: 'usergroup',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.usergroup,
 			Value: mockUserInfo.usergroup,
 		},
 		{
-			Key: 'is_key_user',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.is_key_user,
 			Value: mockUserInfo.is_key_user,
 		},
 		{
-			Key: 'firstname',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.firstname,
 			Value: mockUserInfo.firstName,
 		},
 		{
-			Key: 'lastname',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.lastname,
 			Value: mockUserInfo.lastName,
 		},
 		{
-			Key: 'created_date',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.created_date,
 			Value: null,
 		},
 		{
-			Key: 'last_access_date',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.last_access_date,
 			Value: null,
 		},
 		{
-			Key: 'organisation',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.organisation,
 			Value: null,
 		},
 		{
-			Key: 'optin_mail_lists',
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.optin_mail_lists,
 			Value: 'newsletter',
 		},
 	],

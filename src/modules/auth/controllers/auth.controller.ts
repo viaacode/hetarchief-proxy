@@ -53,19 +53,33 @@ export class AuthController {
 				// A user can only have a last_access_at date if they accepted the terms and conditions
 				if (user.getUser().acceptedTosAt) {
 					// update last access
-					await this.usersService.updateLastAccessDate(user.getId());
-
-					// Sync the new last-access-date to the info in campaign monitor since we do not have a nightly sync for hetarchief
-					await this.campaignMonitorService.updateNewsletterPreferences({
-						firstName: user?.getFirstName(),
-						lastName: user?.getLastName(),
-						email: user?.getMail(),
-						is_key_user: user?.getIsKeyUser(),
-						usergroup: user?.getGroupName(),
-						created_date: user?.getCreatedAt(),
-						last_access_date: new Date().toISOString(),
-						organisation: user?.getOrganisationName(),
-					});
+					this.usersService
+						.updateLastAccessDate(user.getId())
+						.then(() => {
+							// Sync the new last-access-date to the info in campaign monitor since we do not have a nightly sync for hetarchief
+							this.campaignMonitorService
+								.updateNewsletterPreferences({
+									firstName: user?.getFirstName(),
+									lastName: user?.getLastName(),
+									email: user?.getMail(),
+									is_key_user: user?.getIsKeyUser(),
+									usergroup: user?.getGroupName(),
+									created_date: user?.getCreatedAt(),
+									last_access_date: new Date().toISOString(),
+									organisation: user?.getOrganisationName(),
+								})
+								.catch(() => {
+									this.logger.error(
+										'Failed to update user in campaign monitor. user: ' +
+											JSON.stringify(user)
+									);
+								});
+						})
+						.catch(() => {
+							this.logger.error(
+								'Failed to update user lastAccessAt date. id: ' + user.getId()
+							);
+						});
 				}
 			}
 
