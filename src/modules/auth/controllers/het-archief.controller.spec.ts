@@ -165,10 +165,6 @@ describe('HetArchiefController', () => {
 					provide: OrganisationsService,
 					useValue: mockOrganisationsService,
 				},
-				{
-					provide: CampaignMonitorService,
-					useValue: mockCampaignMonitorService,
-				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -182,7 +178,6 @@ describe('HetArchiefController', () => {
 		(mockResponseObject.redirect as jest.Mock).mockRestore();
 		mockArchiefService.createLogoutResponseUrl.mockRestore();
 		mockUsersService.getUserByIdentityId.mockRestore();
-		mockCampaignMonitorService.updateNewsletterPreferences.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -246,7 +241,7 @@ describe('HetArchiefController', () => {
 	});
 
 	describe('login-callback', () => {
-		it('should redirect after successful login with a known user and succesful update in CM', async () => {
+		it('should redirect after successful login with a known user', async () => {
 			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
@@ -269,31 +264,6 @@ describe('HetArchiefController', () => {
 			});
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).not.toBeCalled();
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
-		});
-		it('should redirect after successful login with a known user and failed update in CM', async () => {
-			mockArchiefService.assertSamlResponse.mockResolvedValueOnce(ldapUser);
-			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
-			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-			mockIdpService.userGroupRequiresMaintainerLink.mockReturnValueOnce(true);
-			mockUsersService.updateUser.mockReturnValue(archiefUser);
-			mockCampaignMonitorService.updateNewsletterPreferences.mockRejectedValueOnce('');
-
-			const result = await hetArchiefController.loginCallback(
-				mockRequest,
-				{},
-				samlResponse,
-				{}
-			);
-
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: hetArchiefLoginUrl,
-			});
-			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
-			expect(mockUsersService.updateUser).not.toBeCalled();
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should use fallback relaystate', async () => {
@@ -305,9 +275,7 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValue(archiefUser);
 			mockUsersService.createUserWithIdp.mockResolvedValueOnce(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-				Promise.resolve()
-			);
+			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce(undefined);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -316,8 +284,6 @@ describe('HetArchiefController', () => {
 				{}
 			);
 			expect(result.url).toBeUndefined();
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should create an authorized user that is not yet in the database', async () => {
@@ -325,9 +291,6 @@ describe('HetArchiefController', () => {
 			mockUsersService.getUserByIdentityId.mockReturnValueOnce(null);
 			mockIdpService.determineUserGroup.mockReturnValueOnce(GroupId.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockReturnValueOnce(archiefUser);
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-				Promise.resolve()
-			);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -343,8 +306,6 @@ describe('HetArchiefController', () => {
 			expect(mockUsersService.createUserWithIdp).toBeCalled();
 			expect(mockUsersService.updateUser).not.toBeCalled();
 			mockUsersService.createUserWithIdp.mockClear();
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should update an authorized user that was changed in ldap', async () => {
@@ -356,9 +317,6 @@ describe('HetArchiefController', () => {
 				organisationId: null,
 			});
 			mockUsersService.updateUser.mockReturnValueOnce(archiefUser);
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReturnValueOnce(
-				Promise.resolve()
-			);
 
 			const result = await hetArchiefController.loginCallback(
 				mockRequest,
@@ -374,8 +332,6 @@ describe('HetArchiefController', () => {
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).toBeCalled();
 			mockUsersService.updateUser.mockClear();
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should throw an exception on invalid saml response', async () => {
@@ -389,8 +345,6 @@ describe('HetArchiefController', () => {
 				error = e;
 			}
 			expect(error.response.error).toEqual('Test error handling');
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {
@@ -415,8 +369,6 @@ describe('HetArchiefController', () => {
 				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).not.toHaveBeenCalled();
 		});
 	});
 

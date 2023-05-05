@@ -6,7 +6,7 @@ import * as queryString from 'query-string';
 import { Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
-import { Template } from '../campaign-monitor.types';
+import { CampaignMonitorCustomFieldName, Template } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
@@ -50,6 +50,9 @@ const mockConfigService = {
 		}
 		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF') {
 			return 'fakeListId';
+		}
+		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER') {
+			return 'newsletter';
 		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER') {
 			return 'fakeTemplateId';
@@ -433,7 +436,7 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('fetchNewsletterPreferences', () => {
-		it('should return newsletter = true when state is active', async () => {
+		it('should return newsletter = true when optin_mail_lists contains "newsletter"', async () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.get(
 					`/${mockConfigService.get(
@@ -447,7 +450,7 @@ describe('CampaignMonitorService', () => {
 				.reply(201, {
 					CustomFields: [
 						{
-							Key: 'optin_mail_lists',
+							Key: CampaignMonitorCustomFieldName.optin_mail_lists,
 							Value: 'newsletter',
 						},
 					],

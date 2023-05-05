@@ -1,8 +1,0 @@
-mutation updateContentPartner(
-	$updateContentPartner: maintainer_content_partner_set_input!
-	$pkColumns: maintainer_content_partner_pk_columns_input!
-) {
-	update_maintainer_content_partner_by_pk(_set: $updateContentPartner, pk_columns: $pkColumns) {
-		schema_identifier
-	}
-}

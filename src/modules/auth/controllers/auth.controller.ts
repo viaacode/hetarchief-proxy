@@ -14,14 +14,18 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Avo } from '@viaa/avo2-types';
+import { isToday, parseISO } from 'date-fns';
 
 import { Configuration } from '~config';
 
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, LoginResponse } from '../types';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { SessionService } from '~shared/services/session.service';
 
@@ -34,25 +38,55 @@ export class AuthController {
 		private idpService: IdpService,
 		private usersService: UsersService,
 		private configService: ConfigService<Configuration>,
-		private sessionService: SessionService
+		private sessionService: SessionService,
+		private campaignMonitorService: CampaignMonitorService
 	) {}
 
 	@Get('check-login')
-	public async checkLogin(@Session() session: Record<string, any>): Promise<LoginResponse> {
+	public async checkLogin(
+		@Session() session: Record<string, any>,
+		@SessionUser() user: SessionUserEntity
+	): Promise<LoginResponse> {
 		if (SessionHelper.isLoggedIn(session)) {
-			const userInfo = SessionHelper.getArchiefUserInfo(session);
-			/**
-			 * In AVO there is extra logic here:
-			 * - check on accepted terms and conditions
-			 * - Send a log event
-			 */
-			// update last access
-			await this.usersService.updateLastAccessDate(userInfo.id);
+			// To avoid updating the user and the campaign monitor info too many times, we only execute this if the last_access_at date is not up-to-date
+			if (!isToday(parseISO(user.getLastAccessAt()))) {
+				// A user can only have a last_access_at date if they accepted the terms and conditions
+				if (user.getUser().acceptedTosAt) {
+					// update last access
+					this.usersService
+						.updateLastAccessDate(user.getId())
+						.then(() => {
+							// Sync the new last-access-date to the info in campaign monitor since we do not have a nightly sync for hetarchief
+							this.campaignMonitorService
+								.updateNewsletterPreferences({
+									firstName: user?.getFirstName(),
+									lastName: user?.getLastName(),
+									email: user?.getMail(),
+									is_key_user: user?.getIsKeyUser(),
+									usergroup: user?.getGroupName(),
+									created_date: user?.getCreatedAt(),
+									last_access_date: new Date().toISOString(),
+									organisation: user?.getOrganisationName(),
+								})
+								.catch(() => {
+									this.logger.error(
+										'Failed to update user in campaign monitor. user: ' +
+											JSON.stringify(user)
+									);
+								});
+						})
+						.catch(() => {
+							this.logger.error(
+								'Failed to update user lastAccessAt date. id: ' + user.getId()
+							);
+						});
+				}
+			}
 
 			return {
-				userInfo,
+				userInfo: user.getUser(),
 				commonUserInfo: convertUserInfoToCommonUser(
-					userInfo as unknown as Avo.User.HetArchiefUser,
+					user as unknown as Avo.User.HetArchiefUser,
 					UserInfoType.HetArchiefUser
 				) as Avo.User.CommonUser,
 				message: LoginMessage.LOGGED_IN,

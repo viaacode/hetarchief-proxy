@@ -59,3 +59,14 @@ export interface CampaignMonitorUserInfo {
 	last_access_date?: string;
 	organisation?: string; //organisationName
 }
+
+export enum CampaignMonitorCustomFieldName {
+	optin_mail_lists = 'optin_mail_lists',
+	usergroup = 'usergroup',
+	is_key_user = 'is_key_user',
+	firstname = 'firstname',
+	lastname = 'lastname',
+	created_date = 'created_date',
+	last_access_date = 'last_access_date',
+	organisation = 'organisation',
+}
