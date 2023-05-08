@@ -59,7 +59,7 @@ export interface Configuration {
 	MULTER_OPTIONS: MulterOptions;
 	MEEMOO_ADMIN_ORGANIZATION_IDS: string;
 	REROUTE_EMAILS_TO: string;
-	FALLBACK_EMAIL: string;
+	MEEMOO_FALLBACK_EMAIL: string;
 	IGNORE_OBJECT_LICENSES: boolean;
 	ORGANIZATIONS_API_V2_URL: string;
 	ELASTICSEARCH_LOG_QUERIES: boolean;

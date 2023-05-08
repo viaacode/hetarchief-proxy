@@ -74,7 +74,7 @@ export class CampaignMonitorService {
 				recipients.push(recipient.email);
 			} else {
 				// If there are no recipients, the mails will be sent to a fallback email address
-				recipients.push(this.configService.get('FALLBACK_EMAIL'));
+				recipients.push(this.configService.get('MEEMOO_FALLBACK_EMAIL'));
 			}
 		});
 
@@ -96,7 +96,7 @@ export class CampaignMonitorService {
 			recipients.push(emailInfo.to);
 		} else {
 			// If there are no recipients, the mails will be sent to a fallback email address
-			recipients.push(this.configService.get('FALLBACK_EMAIL'));
+			recipients.push(this.configService.get('MEEMOO_FALLBACK_EMAIL'));
 		}
 
 		const data: CampaignMonitorData = {

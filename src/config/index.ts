@@ -152,7 +152,7 @@ const config = (): Configuration => {
 		},
 		MEEMOO_ADMIN_ORGANIZATION_IDS: getEnvValue('MEEMOO_ADMIN_ORGANIZATION_IDS', true) || '',
 		REROUTE_EMAILS_TO: getEnvValue('REROUTE_EMAILS_TO', false),
-		FALLBACK_EMAIL: getEnvValue('FALLBACK_EMAIL', false),
+		MEEMOO_FALLBACK_EMAIL: getEnvValue('FALLBACK_EMAIL', false),
 		IGNORE_OBJECT_LICENSES: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 		ORGANIZATIONS_API_V2_URL: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
