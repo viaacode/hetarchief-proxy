@@ -68,14 +68,13 @@ export class CampaignMonitorService {
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
 		const recipients: string[] = [];
+
 		emailInfo.to.forEach((recipient) => {
-			if (!recipient.email) {
-				// Throw exception will break too much
-				this.logger.error(
-					`Mail will not be sent to user id ${recipient.id} - empty email address`
-				);
-			} else {
+			if (recipient.email) {
 				recipients.push(recipient.email);
+			} else {
+				// If there are no recipients, the mails will be sent to a fallback email address
+				recipients.push(this.configService.get('FALLBACK_EMAIL'));
 			}
 		});
 
@@ -93,19 +92,11 @@ export class CampaignMonitorService {
 
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
 		const recipients: string[] = [];
-
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
-				this.logger.error(
-					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
-				);
-			} else {
-				this.logger.error(
-					`Mail will not be sent to profile id ${emailInfo.materialRequests[0]?.profileId} - empty email address`
-				);
-			}
+			// If there are no recipients, the mails will be sent to a fallback email address
+			recipients.push(this.configService.get('FALLBACK_EMAIL'));
 		}
 
 		const data: CampaignMonitorData = {
