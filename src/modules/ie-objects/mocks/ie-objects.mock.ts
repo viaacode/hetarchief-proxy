@@ -67,9 +67,6 @@ export const mockIeObject: IeObject = {
 	dateCreatedLowerBound: '2020-09-01',
 	meemooOriginalCp: null,
 	meemooLocalId: null,
-	series: null,
-	programs: null,
-	alternativeName: null,
 	meemoofilmBase: null,
 	meemoofilmColor: null,
 	ebucoreIsMediaFragmentOf: null,
@@ -79,6 +76,7 @@ export const mockIeObject: IeObject = {
 	meemooDescriptionCast: null,
 	representations: [],
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+	isPartOf: {},
 };
 
 export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
@@ -95,9 +93,6 @@ export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	series: null,
-	programs: null,
-	alternativeName: null,
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	duration: '00:39:52',
@@ -128,6 +123,7 @@ export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
 	ebucoreIsMediaFragmentOf: null,
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+	isPartOf: {},
 };
 
 export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
@@ -146,9 +142,6 @@ export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	series: null,
-	programs: null,
-	alternativeName: null,
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	ebucoreObjectType: null,
@@ -187,6 +180,7 @@ export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
 	publisher: null,
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+	isPartOf: {},
 };
 
 export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
@@ -208,9 +202,6 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	series: null,
-	programs: null,
-	alternativeName: null,
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	ebucoreObjectType: null,
@@ -249,6 +240,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	publisher: null,
 	licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
+	isPartOf: {},
 };
 
 export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
@@ -266,9 +258,6 @@ export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	series: [],
-	programs: [],
-	alternativeName: null,
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	duration: '00:39:52',
@@ -301,13 +290,13 @@ export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
 	meemoofilmImageOrSound: null,
 	dateCreatedLowerBound: '2020-09-01',
 	premisIdentifier: null,
+	isPartOf: {},
 };
 
 export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
 	name: 'Durf te vragen R002 A0001',
 	maintainerName: 'vrt',
 	maintainerId: 'OR-rf5kf25',
-	series: [],
 	dctermsFormat: 'video',
 	dateCreatedLowerBound: '2020-09-01',
 	datePublished: '2020-09-01',
@@ -316,7 +305,7 @@ export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
 	premisIdentifier: null,
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-	programs: [],
+	isPartOf: {},
 };
 
 export const mockUser = {
@@ -643,8 +632,7 @@ export const mockGqlIeObjectFindByCollectionIdResult: Partial<IeObject> = {
 	datePublished: null,
 	meemooIdentifier: '4f1mg9x363',
 	meemooLocalId: 'VI-0011-0004',
-	series: [],
-	programs: [],
+	isPartOf: {},
 };
 
 export const mockGqlSitemapObject = {

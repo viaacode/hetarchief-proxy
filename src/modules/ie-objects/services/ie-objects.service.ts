@@ -277,11 +277,9 @@ export class IeObjectsService {
 			throw new NotFoundException();
 		}
 
-		const allAdapted = allObjects.map((object) => {
+		return allObjects.map((object) => {
 			return this.adaptLimitedMetadata(object);
 		});
-
-		return allAdapted;
 	}
 
 	public async findIeObjectsForSitemap(
@@ -350,10 +348,8 @@ export class IeObjectsService {
 			temporal: gqlIeObject?.schema_temporal_coverage,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
 			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			alternativeName: gqlIeObject?.schema_is_part_of?.alternatief,
 			copyrightHolder: gqlIeObject?.schema_copyright_holder,
-			series: gqlIeObject?.schema_is_part_of?.serie,
-			programs: gqlIeObject?.schema_is_part_of?.reeks,
+			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast,
 			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
@@ -427,7 +423,6 @@ export class IeObjectsService {
 			premisIsPartOf: esObject?.premis_is_part_of,
 			premisIdentifier: esObject?.premis_identifier,
 			abstract: esObject?.schema_abstract,
-			alternativeName: esObject?.schema_alternate_name,
 			contributor: esObject?.schema_contributor,
 			copyrightHolder: esObject?.schema_copyrightholder,
 			creator: esObject?.schema_creator,
@@ -439,7 +434,6 @@ export class IeObjectsService {
 			genre: esObject?.schema_genre,
 			schemaIdentifier: esObject?.schema_identifier,
 			inLanguage: esObject?.schema_in_language,
-			schemaIsPartOf: esObject?.schema_is_part_of,
 			keywords: esObject?.schema_keywords,
 			licenses: esObject?.schema_license as IeObjectLicense[],
 			maintainerId: esObject?.schema_maintainer?.schema_identifier,
@@ -463,8 +457,7 @@ export class IeObjectsService {
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_type,
 			// Other
-			series: esObject?.schema_is_part_of?.serie,
-			programs: esObject?.schema_is_part_of?.reeks,
+			isPartOf: esObject?.schema_is_part_of,
 			// Not yet available
 			transcript: esObject?.schema_transcript,
 			caption: esObject?.schema_caption,
@@ -486,8 +479,7 @@ export class IeObjectsService {
 			datePublished: graphQlObject.ie?.schema_date_published,
 			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
 			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
-			series: graphQlObject.ie?.schema_is_part_of?.serie || [],
-			programs: graphQlObject.ie?.schema_is_part_of?.programma || [],
+			isPartOf: graphQlObject.ie?.schema_is_part_of || {},
 		};
 	}
 
@@ -589,7 +581,7 @@ export class IeObjectsService {
 		// CP_ADMIN should always have access to their own visitor space
 		// MEEMOO_ADMIN should always have access to all visitor spaces
 		// KIOSK_VISITOR should always have access to their own visitor space
-		let accessibleVisitorSpaceIds: string[] = [];
+		let accessibleVisitorSpaceIds: string[];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
 				...visitorSpaceAccessInfo.visitorSpaceIds,
@@ -629,7 +621,7 @@ export class IeObjectsService {
 			name: ieObject?.name,
 			maintainerName: ieObject?.maintainerName,
 			maintainerId: ieObject?.maintainerId,
-			series: ieObject?.series || [],
+			isPartOf: ieObject?.isPartOf || {},
 			dctermsFormat: ieObject?.dctermsFormat,
 			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
 			datePublished: ieObject?.datePublished,
@@ -637,7 +629,6 @@ export class IeObjectsService {
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,
-			programs: ieObject?.programs || [],
 		};
 	}
 
