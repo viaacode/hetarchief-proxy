@@ -86,7 +86,7 @@ export class AuthController {
 			return {
 				userInfo: user.getUser(),
 				commonUserInfo: convertUserInfoToCommonUser(
-					user as unknown as Avo.User.HetArchiefUser,
+					user.getUser() as Avo.User.HetArchiefUser,
 					UserInfoType.HetArchiefUser
 				) as Avo.User.CommonUser,
 				message: LoginMessage.LOGGED_IN,
