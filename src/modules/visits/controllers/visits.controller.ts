@@ -240,6 +240,16 @@ export class VisitsController {
 			user.getGroupName() === GroupName.MEEMOO_ADMIN
 		) {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
+
+			if (!spaceInfo) {
+				throw new NotFoundException(
+					this.translationsService.t(
+						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
+						{ name: visitorSpaceSlug }
+					)
+				);
+			}
+
 			// Return fake visit request that is approved and valid forever
 			return {
 				spaceId: spaceInfo.id,
