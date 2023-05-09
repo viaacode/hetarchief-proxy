@@ -129,9 +129,13 @@ export class HetArchiefController {
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
 			const apps = ldapUser?.attributes?.apps ?? [];
+
+			// Prefer an organisation with an OR-id instead of a school
+			// TODO wait for schools to be available in the organisation api cache and identify the business vs the schools
 			const organisationId = isEmpty(ldapUser?.attributes?.o)
 				? null
-				: ldapUser.attributes.o[0];
+				: ldapUser.attributes.o.find((org) => org.toLowerCase().startsWith('or')) ||
+				  ldapUser.attributes.o[0];
 
 			let organisation: Organisation | null = null;
 			if (organisationId) {
