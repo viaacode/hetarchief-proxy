@@ -91,27 +91,37 @@ export class IeObjectsService {
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
-		//ophalen alle visitorspace ids, mss enkel als die filter aan staat?
-		const spaces = await this.spacesService.findAll(
-			{
-				status: [
-					VisitorSpaceStatus.Active,
-					VisitorSpaceStatus.Inactive,
-					VisitorSpaceStatus.Requested,
-				],
-				page: 1,
-				size: 1000,
-			},
-			user.getId()
-		);
 
-		const spaceIds = spaces.items.map((space) => space.maintainerId);
+		let spacesIds: string[] = [];
+
+		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter and it is set to 'true'
+		if (inputQuery.filters && inputQuery.filters.length > 0) {
+			const consultableFilter = inputQuery.filters.find(
+				(filter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+			);
+			if (consultableFilter && consultableFilter.value === 'true') {
+				const spaces = await this.spacesService.findAll(
+					{
+						status: [
+							VisitorSpaceStatus.Active,
+							VisitorSpaceStatus.Inactive,
+							VisitorSpaceStatus.Requested,
+						],
+						page: 1,
+						size: 1000,
+					},
+					user.getId()
+				);
+
+				spacesIds = spaces.items.map((space) => space.maintainerId);
+			}
+		}
 
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user,
 			visitorSpaceInfo,
-			spaces: spaceIds,
-		}); // geef nieuw parameter mee met alle visitor space ids
+			spacesIds,
+		});
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
