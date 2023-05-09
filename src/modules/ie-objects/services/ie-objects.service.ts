@@ -91,10 +91,27 @@ export class IeObjectsService {
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
+		//ophalen alle visitorspace ids, mss enkel als die filter aan staat?
+		const spaces = await this.spacesService.findAll(
+			{
+				status: [
+					VisitorSpaceStatus.Active,
+					VisitorSpaceStatus.Inactive,
+					VisitorSpaceStatus.Requested,
+				],
+				page: 1,
+				size: 1000,
+			},
+			user.getId()
+		);
+
+		const spaceIds = spaces.items.map((space) => space.maintainerId);
+
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user,
 			visitorSpaceInfo,
-		});
+			spaces: spaceIds,
+		}); // geef nieuw parameter mee met alle visitor space ids
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(

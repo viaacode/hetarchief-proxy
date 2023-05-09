@@ -361,8 +361,8 @@ export class QueryBuilder {
 				query: [
 					{
 						terms: {
-							'schema_maintainer.schema_identifier':
-								inputInfo.visitorSpaceInfo.visitorSpaceIds,
+							'schema_maintainer.schema_identifier': inputInfo.spaces,
+							// inputInfo.visitorSpaceInfo.visitorSpaceIds, //Hier alle visitor space ids
 						},
 					},
 					{
