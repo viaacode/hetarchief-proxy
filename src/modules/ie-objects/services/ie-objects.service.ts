@@ -102,11 +102,7 @@ export class IeObjectsService {
 			if (consultableFilter && consultableFilter.value === 'true') {
 				const spaces = await this.spacesService.findAll(
 					{
-						status: [
-							VisitorSpaceStatus.Active,
-							VisitorSpaceStatus.Inactive,
-							VisitorSpaceStatus.Requested,
-						],
+						status: [VisitorSpaceStatus.Active],
 						page: 1,
 						size: 1000,
 					},
