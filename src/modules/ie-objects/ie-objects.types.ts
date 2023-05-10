@@ -78,6 +78,24 @@ export interface IeObjectRepresentation {
 	files: IeObjectFile[];
 }
 
+export enum IsPartOfKey {
+	alternatief = 'alternatief',
+	archief = 'archief',
+	deelarchief = 'deelarchief',
+	deelreeks = 'deelreeks',
+	programma = 'programma',
+	reeks = 'reeks',
+	seizoen = 'seizoen',
+	serie = 'serie',
+	stuk = 'stuk',
+	episode = 'episode',
+	aflevering = 'aflevering',
+	bestanddeel = 'bestanddeel',
+	registratie = 'registratie',
+	serienummer = 'serienummer',
+	seizoennummer = 'seizoennummer',
+}
+
 export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: string;
@@ -114,12 +132,9 @@ export interface IeObject {
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
 	premisIsPartOf?: string;
-	alternativeName?: string;
 	contributor?: any;
 	copyrightHolder?: string;
-	schemaIsPartOf?: any;
-	series?: string[];
-	programs?: string[] | null;
+	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	representations?: IeObjectRepresentation[];
