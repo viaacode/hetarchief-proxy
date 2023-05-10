@@ -91,9 +91,32 @@ export class IeObjectsService {
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
 		const id = randomUUID();
+
+		let spacesIds: string[] = [];
+
+		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter and it is set to 'true'
+		if (inputQuery.filters && inputQuery.filters.length > 0) {
+			const consultableFilter = inputQuery.filters.find(
+				(filter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+			);
+			if (consultableFilter && consultableFilter.value === 'true') {
+				const spaces = await this.spacesService.findAll(
+					{
+						status: [VisitorSpaceStatus.Active],
+						page: 1,
+						size: 1000,
+					},
+					user.getId()
+				);
+
+				spacesIds = spaces.items.map((space) => space.maintainerId);
+			}
+		}
+
 		const esQuery = QueryBuilder.build(inputQuery, {
 			user,
 			visitorSpaceInfo,
+			spacesIds,
 		});
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {

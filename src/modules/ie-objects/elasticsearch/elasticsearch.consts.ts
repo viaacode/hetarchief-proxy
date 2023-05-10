@@ -85,6 +85,7 @@ export interface QueryBuilderUserInfo {
 export interface QueryBuilderInputInfo {
 	user: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
+	spacesIds?: string[];
 }
 
 export const MULTI_MATCH_QUERY_MAPPING = {
