@@ -27,7 +27,6 @@ import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -52,8 +51,7 @@ export class HetArchiefController {
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private translationsService: TranslationsService,
-		private organisationService: OrganisationsService,
-		private campaignMonitorService: CampaignMonitorService
+		private organisationService: OrganisationsService
 	) {}
 
 	@Get('login')
@@ -131,15 +129,20 @@ export class HetArchiefController {
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
 
 			const apps = ldapUser?.attributes?.apps ?? [];
+
+			// Prefer an organisation with an OR-id instead of a school
+			// TODO wait for schools to be available in the organisation api cache and identify the business vs the schools
 			const organisationId = isEmpty(ldapUser?.attributes?.o)
 				? null
-				: ldapUser.attributes.o[0];
+				: ldapUser.attributes.o.find((org) => org.toLowerCase().startsWith('or')) ||
+				  ldapUser.attributes.o[0];
 
 			let organisation: Organisation | null = null;
-			if (organisationId)
+			if (organisationId) {
 				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
 					organisationId
 				);
+			}
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
 				ldapUser.attributes.entryUUID[0]
@@ -230,25 +233,6 @@ export class HetArchiefController {
 			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
-
-			// Update custom fields in Campaign Monitor
-			this.campaignMonitorService
-				.updateNewsletterPreferences({
-					firstName: archiefUser?.firstName,
-					lastName: archiefUser?.lastName,
-					email: archiefUser?.email,
-					is_key_user: archiefUser?.isKeyUser,
-					usergroup: archiefUser?.groupName,
-					created_date: archiefUser?.createdAt,
-					last_access_date: archiefUser?.lastAccessAt,
-					organisation: archiefUser?.organisationName,
-				})
-				.catch((err) => {
-					this.logger.error(
-						'Failed updating the custom fields to Campaign Monitor: ' +
-							JSON.stringify(err)
-					);
-				});
 
 			// Log event
 			this.eventsService.insertEvents([

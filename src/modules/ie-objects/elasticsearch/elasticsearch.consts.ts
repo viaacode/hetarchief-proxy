@@ -45,6 +45,7 @@ export enum IeObjectsSearchFilterField {
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
 	OBJECT_TYPE = 'objectType',
+	LICENSES = 'license', // Used to filter objects that are in a visitor space
 	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 	TRANSCRIPT = 'transcript', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
@@ -84,6 +85,7 @@ export interface QueryBuilderUserInfo {
 export interface QueryBuilderInputInfo {
 	user: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
+	spacesIds?: string[];
 }
 
 export const MULTI_MATCH_QUERY_MAPPING = {
@@ -121,6 +123,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.DURATION]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.LICENSES]: QueryType.TERMS,
 
 	// Should never be used since these are marked as multi match fields
 	// But we include it to get stricter type checks on missing fields
@@ -172,6 +175,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.MEDIUM]: 'dcterms_medium',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
 	[IeObjectsSearchFilterField.IDENTIFIER]: 'schema_identifier',
+	[IeObjectsSearchFilterField.LICENSES]: 'schema_license',
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;

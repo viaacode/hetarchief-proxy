@@ -6,13 +6,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { compact, get, head, isArray, isEmpty, isNil, isString, toPairs, uniq } from 'lodash';
+import { compact, get, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
+	CampaignMonitorCustomFieldName,
 	CampaignMonitorNewsletterPreferences,
 	CampaignMonitorUserInfo,
 	MaterialRequestEmailInfo,
@@ -67,14 +68,13 @@ export class CampaignMonitorService {
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
 		const recipients: string[] = [];
+
 		emailInfo.to.forEach((recipient) => {
-			if (!recipient.email) {
-				// Throw exception will break too much
-				this.logger.error(
-					`Mail will not be sent to user id ${recipient.id} - empty email address`
-				);
-			} else {
+			if (recipient.email) {
 				recipients.push(recipient.email);
+			} else {
+				// If there are no recipients, the mails will be sent to a fallback email address
+				recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
 			}
 		});
 
@@ -92,19 +92,11 @@ export class CampaignMonitorService {
 
 	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
 		const recipients: string[] = [];
-
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
 		} else {
-			if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
-				this.logger.error(
-					`Mail will not be sent to maintainer id ${emailInfo.materialRequests[0]?.maintainerId} - empty email address`
-				);
-			} else {
-				this.logger.error(
-					`Mail will not be sent to profile id ${emailInfo.materialRequests[0]?.profileId} - empty email address`
-				);
-			}
+			// If there are no recipients, the mails will be sent to a fallback email address
+			recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
 		}
 
 		const data: CampaignMonitorData = {
@@ -189,8 +181,10 @@ export class CampaignMonitorService {
 			return {
 				newsletter:
 					response?.CustomFields.find(
-						(field) => field.Key === 'optin_mail_lists'
-					)?.Value?.includes('newsletter') ?? false,
+						(field) => field.Key === CampaignMonitorCustomFieldName.optin_mail_lists
+					)?.Value?.includes(
+						this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
+					) ?? false,
 			};
 		} catch (err) {
 			if (err?.code === 203) {
@@ -432,16 +426,16 @@ export class CampaignMonitorService {
 		optin_mail_lists?: string
 	): CampaignMonitorUpdatePreferencesData {
 		const customFields: Record<string, string | boolean> = {
-			usergroup: userInfo.usergroup,
-			is_key_user: userInfo.is_key_user,
-			firstname: userInfo.firstName,
-			lastname: userInfo.lastName,
-			created_date: userInfo.created_date,
-			last_access_date: userInfo.last_access_date,
-			organisation: userInfo.organisation,
+			[CampaignMonitorCustomFieldName.usergroup]: userInfo.usergroup,
+			[CampaignMonitorCustomFieldName.is_key_user]: userInfo.is_key_user,
+			[CampaignMonitorCustomFieldName.firstname]: userInfo.firstName,
+			[CampaignMonitorCustomFieldName.lastname]: userInfo.lastName,
+			[CampaignMonitorCustomFieldName.created_date]: userInfo.created_date,
+			[CampaignMonitorCustomFieldName.last_access_date]: userInfo.last_access_date,
+			[CampaignMonitorCustomFieldName.organisation]: userInfo.organisation,
 		};
 		if (!isNil(optin_mail_lists)) {
-			customFields.optin_mail_lists = optin_mail_lists;
+			customFields[CampaignMonitorCustomFieldName.optin_mail_lists] = optin_mail_lists;
 		}
 
 		return {
@@ -453,6 +447,7 @@ export class CampaignMonitorService {
 				return {
 					Key: pair[0],
 					Value: pair[1],
+					Clear: pair[0] === 'optin_mail_lists' && !pair[1], // Clear the optin_mail_lists field if it is empty string
 				};
 			}),
 		};
