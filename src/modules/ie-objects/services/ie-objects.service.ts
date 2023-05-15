@@ -122,6 +122,10 @@ export class IeObjectsService {
 				spacesIds,
 			});
 		} catch (err) {
+			/*
+					If the QueryBuilder throws an error, we try the query with a literal string.
+					If that also throws an error, we return http 500
+			*/
 			esQuery = QueryBuilder.build(convertQueryToLiteralString(inputQuery), {
 				user,
 				visitorSpaceInfo,
