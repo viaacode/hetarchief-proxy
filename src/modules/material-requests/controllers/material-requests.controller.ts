@@ -170,7 +170,8 @@ export class MaterialRequestsController {
 			});
 
 			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
-				materialRequest.contactMail = materialRequest.contactMail.find(
+				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
+				materialRequest.contactMail = materialRequest?.contactMail?.find(
 					(contact) =>
 						contact.contact_type === MaterialRequestMaintainerContactType.ONTSLUITING
 				)?.email;
