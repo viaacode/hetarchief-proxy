@@ -19,7 +19,6 @@ export function convertStringToSearchTerms(searchQuery: string): string[] {
 }
 
 export function convertNodeToSearchTerms(node: Expression): string[] {
-	node.raw = decodeSearchterm(node.raw as string);
 	node.value = decodeSearchterm(node.value as string);
 	node.name = decodeSearchterm(node.name as string);
 

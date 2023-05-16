@@ -19,12 +19,12 @@ describe('convertQueryToLiteralString', () => {
 			{
 				field: IeObjectsSearchFilterField.QUERY,
 				operator: Operator.CONTAINS,
-				value: 'De grote -)( test',
+				value: 'The big -)( test',
 			},
 		],
 	};
 	it('should add quotes to around the search terms value', () => {
 		const result = convertQueryToLiteralString(mockQueryDto);
-		expect(result.filters[0].value).toEqual('"De grote -)( test"');
+		expect(result.filters[0].value).toEqual('"The big -)( test"');
 	});
 });

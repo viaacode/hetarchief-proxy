@@ -10,7 +10,6 @@ export const convertNodeToEsQueryFilterObjects = (
 	searchTemplates?: { fuzzy: any[]; exact: any[] },
 	searchFilter?: SearchFilter
 ): any => {
-	node.raw = decodeSearchterm(node.raw as string);
 	node.value = decodeSearchterm(node.value as string);
 	node.name = decodeSearchterm(node.name as string);
 	switch (node.type) {
