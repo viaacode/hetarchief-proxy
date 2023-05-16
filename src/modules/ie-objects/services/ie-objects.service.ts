@@ -123,9 +123,9 @@ export class IeObjectsService {
 			});
 		} catch (err) {
 			/*
-					If the QueryBuilder throws an error, we try the query with a literal string.
-					If that also throws an error, we return http 500
-					We update the inputQuery because it is later used.
+				If the QueryBuilder throws an error, we try the query with a literal string.
+				If that also throws an error, we return http 500
+				We update the inputQuery because it is later used.
 			*/
 			inputQuery = convertQueryToLiteralString(inputQuery);
 			esQuery = QueryBuilder.build(inputQuery, {
