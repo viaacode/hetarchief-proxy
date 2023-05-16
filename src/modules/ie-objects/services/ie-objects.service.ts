@@ -125,8 +125,10 @@ export class IeObjectsService {
 			/*
 					If the QueryBuilder throws an error, we try the query with a literal string.
 					If that also throws an error, we return http 500
+					We update the inputQuery because it is later used.
 			*/
-			esQuery = QueryBuilder.build(convertQueryToLiteralString(inputQuery), {
+			inputQuery = convertQueryToLiteralString(inputQuery);
+			esQuery = QueryBuilder.build(inputQuery, {
 				user,
 				visitorSpaceInfo,
 				spacesIds,
