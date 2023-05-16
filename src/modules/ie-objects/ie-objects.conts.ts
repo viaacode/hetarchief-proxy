@@ -121,6 +121,7 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Record<
 		[IeObjectSector.PUBLIC]: [
 			IeObjectLicense.PUBLIEK_METADATA_ALL,
 			IeObjectLicense.INTRA_CP_METADATA_ALL,
+			IeObjectLicense.INTRA_CP_METADATA_LTD,
 			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 		],
 		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
