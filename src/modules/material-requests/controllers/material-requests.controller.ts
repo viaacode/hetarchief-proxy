@@ -170,7 +170,7 @@ export class MaterialRequestsController {
 			});
 
 			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
-				materialRequest.contactMail = materialRequest.contactMail.find(
+				materialRequest.contactMail = materialRequest?.contactMail?.find(
 					(contact) =>
 						contact.contact_type === MaterialRequestMaintainerContactType.ONTSLUITING
 				)?.email;
