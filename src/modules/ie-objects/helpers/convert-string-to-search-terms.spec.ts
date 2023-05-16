@@ -34,6 +34,18 @@ describe('convertNodeToSearchStrings', () => {
 		]);
 	});
 
+	it('should return the string as a literal string', () => {
+		try {
+			expect(convertStringToSearchTerms('The big -)( test')).toThrowError();
+			fail(
+				'convertStringToSearchTerms should have thrown an error when there are special characters'
+			);
+		} catch (err) {
+			// If it fails the first time, we try again with quotes around the whole string
+			expect(convertStringToSearchTerms('"The big -)( test"')).toEqual(['The big -)( test']);
+		}
+	});
+
 	it('should return an empty array if input is an empty string', () => {
 		expect(convertStringToSearchTerms('')).toEqual([]);
 	});

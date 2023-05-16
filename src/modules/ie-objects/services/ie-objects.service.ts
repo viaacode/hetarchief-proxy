@@ -20,6 +20,7 @@ import {
 	IeObjectsSimilarQueryDto,
 } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
+import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
@@ -113,11 +114,26 @@ export class IeObjectsService {
 			}
 		}
 
-		const esQuery = QueryBuilder.build(inputQuery, {
-			user,
-			visitorSpaceInfo,
-			spacesIds,
-		});
+		let esQuery;
+		try {
+			esQuery = QueryBuilder.build(inputQuery, {
+				user,
+				visitorSpaceInfo,
+				spacesIds,
+			});
+		} catch (err) {
+			/*
+				If the QueryBuilder throws an error, we try the query with a literal string.
+				If that also throws an error, we return http 500
+				We update the inputQuery because it is later used.
+			*/
+			inputQuery = convertQueryToLiteralString(inputQuery);
+			esQuery = QueryBuilder.build(inputQuery, {
+				user,
+				visitorSpaceInfo,
+				spacesIds,
+			});
+		}
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
