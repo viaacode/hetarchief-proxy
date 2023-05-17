@@ -8,7 +8,7 @@ query findCollectionObjectsByCollectionId(
 	users_folder_ie(
 		where: {
 			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
-			collection: { user_profile_id: { _eq: $userProfileId } }
+			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		}
 		offset: $offset
 		limit: $limit
@@ -47,7 +47,7 @@ query findCollectionObjectsByCollectionId(
 	users_folder_ie_aggregate(
 		where: {
 			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
-			collection: { user_profile_id: { _eq: $userProfileId } }
+			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		}
 	) {
 		aggregate {
