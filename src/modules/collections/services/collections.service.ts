@@ -14,9 +14,6 @@ import {
 } from '../types';
 
 import {
-	DeleteCollectionDocument,
-	DeleteCollectionMutation,
-	DeleteCollectionMutationVariables,
 	FindCollectionByIdDocument,
 	FindCollectionByIdQuery,
 	FindCollectionByIdQueryVariables,
@@ -41,6 +38,9 @@ import {
 	RemoveObjectFromCollectionDocument,
 	RemoveObjectFromCollectionMutation,
 	RemoveObjectFromCollectionMutationVariables,
+	SoftDeleteCollectionDocument,
+	SoftDeleteCollectionMutation,
+	SoftDeleteCollectionMutationVariables,
 	UpdateCollectionDocument,
 	UpdateCollectionMutation,
 	UpdateCollectionMutationVariables,
@@ -311,15 +311,15 @@ export class CollectionsService {
 
 	public async delete(collectionId: string, userProfileId: string): Promise<number> {
 		const response = await this.dataService.execute<
-			DeleteCollectionMutation,
-			DeleteCollectionMutationVariables
-		>(DeleteCollectionDocument, {
+			SoftDeleteCollectionMutation,
+			SoftDeleteCollectionMutationVariables
+		>(SoftDeleteCollectionDocument, {
 			collectionId,
 			userProfileId,
 		});
 		this.logger.debug(`Collection ${collectionId} deleted`);
 
-		return response.delete_users_folder.affected_rows;
+		return response.update_users_folder.affected_rows;
 	}
 
 	public async findObjectInCollectionBySchemaIdentifier(

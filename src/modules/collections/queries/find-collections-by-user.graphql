@@ -1,6 +1,6 @@
 query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 	users_folder(
-		where: { user_profile_id: { _eq: $userProfileId } }
+		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		order_by: { created_at: asc }
 		offset: $offset
 		limit: $limit
@@ -21,7 +21,9 @@ query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			}
 		}
 	}
-	users_folder_aggregate(where: { user_profile_id: { _eq: $userProfileId } }) {
+	users_folder_aggregate(
+		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+	) {
 		aggregate {
 			count
 		}

@@ -13,6 +13,7 @@ import {
 	InsertCollectionsMutation,
 	InsertObjectIntoCollectionMutation,
 	RemoveObjectFromCollectionMutation,
+	SoftDeleteCollectionMutation,
 	UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
@@ -406,8 +407,8 @@ describe('CollectionsService', () => {
 
 	describe('delete', () => {
 		it('can delete a collection', async () => {
-			const mockData: DeleteCollectionMutation = {
-				delete_users_folder: {
+			const mockData: SoftDeleteCollectionMutation = {
+				update_users_folder: {
 					affected_rows: 1,
 				},
 			};
@@ -418,8 +419,8 @@ describe('CollectionsService', () => {
 		});
 
 		it('can delete a non existing collection', async () => {
-			const mockData: DeleteCollectionMutation = {
-				delete_users_folder: {
+			const mockData: SoftDeleteCollectionMutation = {
+				update_users_folder: {
 					affected_rows: 0,
 				},
 			};

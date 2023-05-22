@@ -1,5 +1,5 @@
 query findCollectionById($collectionId: uuid) {
-	users_folder(where: { id: { _eq: $collectionId } }) {
+	users_folder(where: { id: { _eq: $collectionId }, is_deleted: { _eq: false } }) {
 		created_at
 		id
 		is_default

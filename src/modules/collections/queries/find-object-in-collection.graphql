@@ -3,6 +3,7 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 		where: {
 			user_collection_id: { _eq: $collectionId }
 			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
+			collection: { is_deleted: { _eq: false } }
 		}
 	) {
 		ie {

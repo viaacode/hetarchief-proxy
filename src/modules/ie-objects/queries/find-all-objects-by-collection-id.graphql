@@ -2,7 +2,7 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $collectionId }
-			collection: { user_profile_id: { _eq: $userProfileId } }
+			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		}
 	) {
 		ie {
