@@ -46,6 +46,10 @@ import {
 	FindIeObjectsForSitemapDocument,
 	FindIeObjectsForSitemapQuery,
 	FindIeObjectsForSitemapQueryVariables,
+	FindObjectBySchemaIdentifierDocument,
+	FindObjectOrganisationInfoDocument,
+	FindObjectOrganisationInfoQuery,
+	FindObjectOrganisationInfoQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -59,6 +63,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { GqlOrganisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -201,9 +206,18 @@ export class IeObjectsService {
 			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
 		});
 
+		const orIds = mediaObjects.object_ie.map((object) => object?.maintainer?.schema_identifier);
+		const organisationInfo = await this.dataService.execute<
+			FindObjectOrganisationInfoQuery,
+			FindObjectOrganisationInfoQueryVariables
+		>(FindObjectOrganisationInfoDocument, { schemaIdentifier: orIds });
+
 		const adaptedItems = await Promise.all(
 			mediaObjects.object_ie.map(async (object: any) => {
-				const adapted = this.adaptFromDB(object);
+				const org = organisationInfo.maintainer_organisation.filter(
+					(org) => org.schema_identifier === object?.maintainer?.schema_identifier
+				)[0];
+				const adapted = this.adaptFromDB(object, org as GqlOrganisation);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
 					referer
@@ -279,7 +293,16 @@ export class IeObjectsService {
 			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
 		}
 
-		const adapted = this.adaptFromDB(objectIe[0]);
+		const orId = [objectIe[0]?.maintainer?.schema_identifier];
+		const organisationInfo = await this.dataService.execute<
+			FindObjectOrganisationInfoQuery,
+			FindObjectOrganisationInfoQueryVariables
+		>(FindObjectOrganisationInfoDocument, { schemaIdentifier: orId });
+
+		const adapted = this.adaptFromDB(
+			objectIe[0],
+			organisationInfo.maintainer_organisation[0] as GqlOrganisation
+		);
 		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			adapted.thumbnailUrl,
 			referer
@@ -347,7 +370,7 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
-	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
+	public adaptFromDB(gqlIeObject: GqlIeObject, gqlOrganisationInfo: GqlOrganisation): IeObject {
 		return {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format,
@@ -372,15 +395,14 @@ export class IeObjectsService {
 			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
 			maintainerId: gqlIeObject?.maintainer.schema_identifier,
-			maintainerName: gqlIeObject?.maintainer?.schema_name,
+			maintainerName: gqlOrganisationInfo?.schema_name,
 			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
-			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
-			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
-			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
-			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
-			sector: gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector,
+				gqlIeObject?.haorg_alt_label ?? kebabCase(gqlOrganisationInfo?.schema_name || ''),
+			maintainerLogo: gqlOrganisationInfo?.logo?.iri,
+			maintainerDescription: gqlOrganisationInfo?.description,
+			maintainerSiteUrl: gqlOrganisationInfo?.homepage_url,
+			maintainerFormUrl: gqlOrganisationInfo?.form_url,
+			sector: gqlOrganisationInfo?.haorg_organization_type as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,

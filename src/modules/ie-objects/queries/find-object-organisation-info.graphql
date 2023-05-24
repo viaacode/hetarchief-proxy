@@ -1,0 +1,12 @@
+query findObjectOrganisationInfo($schemaIdentifier: [String!]) {
+	maintainer_organisation(where: { schema_identifier: { _in: $schemaIdentifier } }) {
+		schema_identifier
+		schema_name
+		primary_site
+		logo
+		form_url
+		description
+		homepage_url
+		haorg_organization_type
+	}
+}
