@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { mockSitemapConfig } from '../mocks/sitemap.mocks';
@@ -23,7 +24,7 @@ describe('SitemapController', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [SitemapController],
-			imports: [],
+			imports: [ConfigModule],
 			providers: [
 				{
 					provide: SitemapService,

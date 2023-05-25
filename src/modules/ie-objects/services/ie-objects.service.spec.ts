@@ -203,7 +203,9 @@ describe('ieObjectsService', () => {
 			const objectIeMock = cloneDeep(mockObjectIe);
 			objectIeMock.object_ie[0].premis_is_represented_by = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
-			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			mockDataService.execute.mockResolvedValueOnce({
+				maintainer_organisation: [{}],
+			});
 
 			const response = await ieObjectsService.findBySchemaIdentifier(
 				mockObjectSchemaIdentifier,

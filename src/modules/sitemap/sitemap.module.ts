@@ -13,12 +13,12 @@ import { SpacesModule } from '~modules/spaces';
 	controllers: [SitemapController],
 	providers: [SitemapService],
 	imports: [
+		ConfigModule,
 		DataModule,
 		SpacesModule,
 		IeObjectsModule,
 		AssetsModule,
 		ContentPagesModule,
-		ConfigModule,
 	],
 })
 export class SitemapModule {}

@@ -207,17 +207,17 @@ export class IeObjectsService {
 		});
 
 		const orIds = mediaObjects.object_ie.map((object) => object?.maintainer?.schema_identifier);
-		const organisationInfo = await this.dataService.execute<
+		const organisationsInfo = await this.dataService.execute<
 			FindObjectOrganisationInfoQuery,
 			FindObjectOrganisationInfoQueryVariables
 		>(FindObjectOrganisationInfoDocument, { schemaIdentifier: orIds });
 
 		const adaptedItems = await Promise.all(
 			mediaObjects.object_ie.map(async (object: any) => {
-				const org = organisationInfo.maintainer_organisation.filter(
+				const organisationInfo = organisationsInfo?.maintainer_organisation.filter(
 					(org) => org.schema_identifier === object?.maintainer?.schema_identifier
 				)[0];
-				const adapted = this.adaptFromDB(object, org as GqlOrganisation);
+				const adapted = this.adaptFromDB(object, organisationInfo as GqlOrganisation);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
 					referer
@@ -301,7 +301,7 @@ export class IeObjectsService {
 
 		const adapted = this.adaptFromDB(
 			objectIe[0],
-			organisationInfo.maintainer_organisation[0] as GqlOrganisation
+			organisationInfo?.maintainer_organisation[0] as GqlOrganisation
 		);
 		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			adapted.thumbnailUrl,
