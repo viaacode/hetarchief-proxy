@@ -380,7 +380,9 @@ export class IeObjectsService {
 			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
 			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
-			sector: gqlIeObject?.haorg_organization_type as IeObjectSector,
+			sector:
+				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
+				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector),
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
