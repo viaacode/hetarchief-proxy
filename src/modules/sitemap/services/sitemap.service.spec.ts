@@ -14,6 +14,7 @@ import { SitemapService } from './sitemap.service';
 import { AssetsService } from '~modules/assets/services/assets.service';
 import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -28,6 +29,9 @@ const mockContentPagesService: Partial<Record<keyof ContentPagesService, jest.Sp
 };
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findIeObjectsForSitemap: jest.fn(),
+};
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
+	findAllOrganisationsForSitemap: jest.fn(),
 };
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
 	upload: jest.fn(),
@@ -62,6 +66,10 @@ describe('SitemapService', () => {
 				{
 					provide: AssetsService,
 					useValue: mockAssetsService,
+				},
+				{
+					provide: OrganisationsService,
+					useValue: mockOrganisationsService,
 				},
 			],
 		})
@@ -146,6 +154,7 @@ describe('SitemapService', () => {
 		it('should return the xml for the general sitemap xml', async () => {
 			mockContentPagesService.fetchContentPages.mockResolvedValueOnce([[mockContentPage], 1]);
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSitemapSpaces);
+			mockOrganisationsService.findAllOrganisationsForSitemap.mockResolvedValueOnce([]);
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],

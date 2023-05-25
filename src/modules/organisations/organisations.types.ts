@@ -118,3 +118,8 @@ export interface OrganisationPrimarySiteAddress {
 	telephone: string;
 	post_office_box_number: string;
 }
+
+export interface OrganisationForSitemap {
+	schemaIdentifier: string;
+	schemaName?: string;
+}

@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 
 import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import _ from 'lodash';
+import _, { kebabCase } from 'lodash';
 import moment from 'moment';
 
 import { SITEMAP_XML_OBJECTS_SIZE } from '../sitemap.consts';
@@ -17,6 +17,7 @@ import { AssetsService } from '~modules/assets/services/assets.service';
 import { AssetFileType } from '~modules/assets/types';
 import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 
 @Injectable()
@@ -26,7 +27,8 @@ export class SitemapService {
 		protected spacesService: SpacesService,
 		protected contentPagesService: ContentPagesService,
 		protected ieObjectsService: IeObjectsService,
-		protected assetsService: AssetsService
+		protected assetsService: AssetsService,
+		protected organisationsService: OrganisationsService
 	) {}
 
 	public async generateSitemap(sitemapConfig: SitemapConfig) {
@@ -74,6 +76,8 @@ export class SitemapService {
 			0,
 			0
 		);
+		const allOrganisations = await this.organisationsService.findAllOrganisationsForSitemap();
+
 		for (let i = 0; i < result.total; i += SITEMAP_XML_OBJECTS_SIZE) {
 			const ieObjects = await this.ieObjectsService.findIeObjectsForSitemap(
 				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
@@ -83,17 +87,29 @@ export class SitemapService {
 
 			const itemDetailPages: SitemapItemInfo[] = this.blacklistAndPrioritizePages(
 				[
-					...ieObjects.items.map((object) => ({
-						loc:
-							'/zoeken/' +
-							object.maintainerSlug +
-							'/' +
-							object.schemaIdentifier +
-							'/' +
-							_.kebabCase(object.name),
-						changefreq: 'weekly',
-						lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
-					})),
+					...ieObjects.items.map((object) => {
+						// If the object doesn't have a slug directly, we get it from the organisations table
+						const slug =
+							object.maintainerSlug ??
+							kebabCase(
+								allOrganisations?.filter(
+									(organisation) =>
+										organisation.schemaIdentifier === object?.maintainerId
+								)[0]?.schemaName || 'undefined'
+							);
+
+						return {
+							loc:
+								'/zoeken/' +
+								slug +
+								'/' +
+								object.schemaIdentifier +
+								'/' +
+								_.kebabCase(object.name),
+							changefreq: 'weekly',
+							lastmod: moment(object.updatedAt).format('YYYY-MM-DD'),
+						};
+					}),
 				],
 				sitemapConfig
 			);

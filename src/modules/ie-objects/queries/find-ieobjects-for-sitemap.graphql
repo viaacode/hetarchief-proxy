@@ -9,6 +9,7 @@ query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) 
 			visitor_space {
 				slug
 			}
+			schema_identifier
 		}
 		schema_name
 		updated_at

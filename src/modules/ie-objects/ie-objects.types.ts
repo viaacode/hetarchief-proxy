@@ -306,4 +306,5 @@ export interface IeObjectsSitemap {
 	maintainerSlug: string;
 	name: string;
 	updatedAt: string;
+	maintainerId?: string;
 }

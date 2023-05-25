@@ -14,6 +14,7 @@ import { Configuration } from '~config';
 import {
 	GqlOrganisation,
 	Organisation,
+	OrganisationForSitemap,
 	OrganisationInfoV2,
 	OrganisationResponse,
 	ParsedOrganisation,
@@ -24,6 +25,8 @@ import {
 	FindOrganisationBySchemaIdDocument,
 	FindOrganisationBySchemaIdQuery,
 	FindOrganisationBySchemaIdQueryVariables,
+	FindOrganisationsForSitemapDocument,
+	FindOrganisationsForSitemapQuery,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
 
@@ -70,6 +73,19 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		}
 
 		return this.adapt(organisationResponse.maintainer_organisation[0] as GqlOrganisation);
+	}
+
+	public async findAllOrganisationsForSitemap(): Promise<OrganisationForSitemap[] | null> {
+		const organisationResponse = await this.dataService.execute<
+			FindOrganisationsForSitemapQuery,
+			FindOrganisationBySchemaIdQueryVariables
+		>(FindOrganisationsForSitemapDocument);
+
+		const adapted = organisationResponse?.maintainer_organisation?.map((org) => {
+			return { schemaIdentifier: org.schema_identifier, schemaName: org?.schema_name };
+		});
+
+		return adapted;
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {

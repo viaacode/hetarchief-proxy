@@ -572,6 +572,7 @@ export class IeObjectsService {
 			maintainerSlug: graphQlObject?.maintainer?.visitor_space?.slug,
 			name: graphQlObject?.schema_name,
 			updatedAt: graphQlObject?.updated_at,
+			maintainerId: graphQlObject?.maintainer?.schema_identifier,
 		};
 	}
 

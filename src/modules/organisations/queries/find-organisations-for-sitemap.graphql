@@ -1,0 +1,6 @@
+query FindOrganisationsForSitemap {
+	maintainer_organisation {
+		schema_name
+		schema_identifier
+	}
+}
