@@ -566,12 +566,14 @@ export class IeObjectsService {
 		);
 	}
 
-	private adaptForSitemap(graphQlObject: any): IeObjectsSitemap {
+	private adaptForSitemap(gqlIeObject: any): IeObjectsSitemap {
 		return {
-			schemaIdentifier: graphQlObject?.schema_identifier,
-			maintainerSlug: graphQlObject?.maintainer?.visitor_space?.slug,
-			name: graphQlObject?.schema_name,
-			updatedAt: graphQlObject?.updated_at,
+			schemaIdentifier: gqlIeObject?.schema_identifier,
+			maintainerSlug:
+				gqlIeObject?.haorg_alt_label ??
+				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
+			name: gqlIeObject?.schema_name,
+			updatedAt: gqlIeObject?.updated_at,
 		};
 	}
 

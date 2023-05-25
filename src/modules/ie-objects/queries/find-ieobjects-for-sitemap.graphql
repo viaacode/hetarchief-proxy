@@ -5,13 +5,12 @@ query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) 
 		limit: $limit
 	) {
 		schema_identifier
-		maintainer {
-			visitor_space {
-				slug
-			}
-		}
 		schema_name
 		updated_at
+		haorg_alt_label
+		maintainer {
+			schema_name
+		}
 	}
 	object_ie_aggregate(where: { schema_license: { _has_keys_any: $licenses } }) {
 		aggregate {
