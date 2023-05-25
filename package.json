@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "1.4.28",
+  "version": "1.4.29",
   "description": "",
   "author": "",
   "private": true,
@@ -107,6 +107,7 @@
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "5.4.0",
     "@typescript-eslint/parser": "5.4.0",
+    "bump-package-versions": "^1.0.5",
     "dotenv": "10.0.0",
     "dotenv-cli": "5.1.0",
     "eslint": "^8.29.0",
