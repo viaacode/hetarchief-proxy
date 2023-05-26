@@ -643,10 +643,9 @@ export const mockGqlSitemapObject = {
 	schema_identifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	maintainer: {
-		visitor_space: {
-			slug: 'vrt',
-		},
+		schema_name: 'VRT',
 	},
+	haorg_alt_label: 'vrt',
 	schema_name: 'Durf te vragen R002 A0001',
 	updated_at: '2023-04-13',
 };
