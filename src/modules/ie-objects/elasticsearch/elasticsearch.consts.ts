@@ -63,7 +63,7 @@ export enum Operator {
 export enum OrderProperty {
 	RELEVANCE = 'relevance',
 	CREATED = 'created',
-	PUBLISHED = 'published',
+	ARCHIVED = 'archived',
 	NAME = 'name',
 }
 
@@ -189,10 +189,10 @@ export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 };
 
 export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
-	relevance: '_score',
-	created: 'schema_date_created',
-	published: 'schema_date_published',
-	name: 'schema_name.keyword',
+	[OrderProperty.RELEVANCE]: '_score',
+	[OrderProperty.CREATED]: 'schema_date_created',
+	[OrderProperty.ARCHIVED]: 'dcterms_available',
+	[OrderProperty.NAME]: 'schema_name.keyword',
 };
 
 export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
