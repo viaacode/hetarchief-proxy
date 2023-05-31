@@ -139,9 +139,11 @@ export class HetArchiefController {
 
 			let organisation: Organisation | null = null;
 			if (organisationId) {
-				organisation = await this.organisationService.findOrganisationBySchemaIdentifier(
-					organisationId
-				);
+				organisation = (
+					await this.organisationService.findOrganisationsBySchemaIdentifiers([
+						organisationId,
+					])
+				)[0];
 			}
 
 			let archiefUser = await this.usersService.getUserByIdentityId(
@@ -221,6 +223,10 @@ export class HetArchiefController {
 				archiefUser = await this.usersService.getUserByIdentityId(
 					ldapUser.attributes.entryUUID[0]
 				);
+			}
+
+			if (!archiefUser) {
+				throw new Error('hetarchief user could not be found nor be created');
 			}
 
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP

@@ -8,7 +8,7 @@ import { Configuration } from '~config';
 import {
 	getMockOrganisationResponse,
 	mockGqlOrganisation,
-	mockOrganisation,
+	mockOrganisation1,
 } from '../mocks/organisations.mocks';
 
 import { OrganisationsService } from './organisations.service';
@@ -55,31 +55,31 @@ describe('OrganisationService', () => {
 		mockDataService.execute.mockRestore();
 	});
 
-	describe('findOrganisationBySchemaIdentifier', () => {
+	describe('findOrganisationsBySchemaIdentifiers', () => {
 		it('should successfully find organisation by schema identifier', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				maintainer_organisation: [mockGqlOrganisation],
 			});
-			const result = await organisationsService.findOrganisationBySchemaIdentifier(
-				'OR-rf5kf25'
-			);
-			expect(result).toEqual(mockOrganisation);
+			const result = await organisationsService.findOrganisationsBySchemaIdentifiers([
+				'OR-rf5kf25',
+			]);
+			expect(result).toEqual([mockOrganisation1]);
 		});
-		it('should return null when the dataservice returns null', async () => {
+		it('should return empty array when the dataservice returns null', async () => {
 			mockDataService.execute.mockResolvedValueOnce(null);
-			const result = await organisationsService.findOrganisationBySchemaIdentifier(
-				'non-existing-id'
-			);
-			expect(result).toEqual(null);
+			const result = await organisationsService.findOrganisationsBySchemaIdentifiers([
+				'non-existing-id',
+			]);
+			expect(result).toEqual([]);
 		});
 		it('should return null when the dataservice response has no organisations', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
 				maintainer_organisation: [],
 			});
-			const result = await organisationsService.findOrganisationBySchemaIdentifier(
-				'non-existing-id'
-			);
-			expect(result).toEqual(null);
+			const result = await organisationsService.findOrganisationsBySchemaIdentifiers([
+				'non-existing-id',
+			]);
+			expect(result).toEqual([]);
 		});
 	});
 
@@ -87,7 +87,7 @@ describe('OrganisationService', () => {
 		it('should successfully adapt a GqlOrganisation to an Organisation', async () => {
 			const result = organisationsService.adapt(mockGqlOrganisation);
 
-			expect(result).toEqual(mockOrganisation);
+			expect(result).toEqual(mockOrganisation1);
 		});
 	});
 
