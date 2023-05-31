@@ -21,6 +21,8 @@ import {
 	InsertMaterialRequestMutation,
 	UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -31,6 +33,10 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 	{
 		sendTransactionalMail: jest.fn(),
 	};
+
+const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
+	findOrganisationsBySchemaIdentifiers: jest.fn(),
+};
 
 const getDefaultMaterialRequestsResponse = (): {
 	app_material_requests: FindMaterialRequestsQuery[];
@@ -83,6 +89,10 @@ describe('MaterialRequestsService', () => {
 					provide: CampaignMonitorService,
 					useValue: mockCampaignMonitorService,
 				},
+				{
+					provide: OrganisationsService,
+					useValue: mockOrganisationsService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -101,7 +111,10 @@ describe('MaterialRequestsService', () => {
 
 	describe('adapt', () => {
 		it('can adapt a FindMaterialRequestsQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest1);
+			const adapted = materialRequestsService.adapt(
+				mockGqlMaterialRequest1,
+				mockOrganisations
+			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest1.id);
 			expect(adapted.objectSchemaIdentifier).toEqual(
@@ -128,7 +141,10 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('can adapt a FindMaterialRequestsByIdQuery hasura response to our material request interface', () => {
-			const adapted = materialRequestsService.adapt(mockGqlMaterialRequest2);
+			const adapted = materialRequestsService.adapt(
+				mockGqlMaterialRequest2,
+				mockOrganisations
+			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest2.id);
 			expect(adapted.objectSchemaIdentifier).toEqual(
@@ -182,19 +198,22 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('should return null when the material request does not exist', () => {
-			const adapted = materialRequestsService.adapt(undefined);
+			const adapted = materialRequestsService.adapt(undefined, mockOrganisations);
 			// test some sample keys
 			expect(adapted).toBeNull();
 		});
 
 		it('returns null on invalid input', () => {
-			const adapted = materialRequestsService.adapt(null);
+			const adapted = materialRequestsService.adapt(null, mockOrganisations);
 			expect(adapted).toBeNull();
 		});
 	});
 
 	describe('findAll', () => {
 		it('returns a paginated response with all material requests', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
@@ -210,6 +229,9 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('returns a paginated response with material requests containing Ilya', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
@@ -228,6 +250,9 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('can filter on type "REUSE"', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
@@ -245,6 +270,9 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('can filter on an array of materialIds', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
@@ -259,6 +287,9 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('can filter on userProfileId', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			mockDataService.execute.mockResolvedValueOnce(getDefaultMaterialRequestsResponse());
 			const response = await materialRequestsService.findAll(
 				{
@@ -282,6 +313,9 @@ describe('MaterialRequestsService', () => {
 		});
 
 		it('throws a notfoundexception if the material request was not found', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			const mockData: FindMaterialRequestsQuery = {
 				app_material_requests: [],
 				app_material_requests_aggregate: {
@@ -318,6 +352,9 @@ describe('MaterialRequestsService', () => {
 
 	describe('create', () => {
 		it('can create a new material request', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			const mockData: InsertMaterialRequestMutation = {
 				insert_app_material_requests_one: mockGqlMaterialRequest1,
 			};
@@ -337,12 +374,18 @@ describe('MaterialRequestsService', () => {
 
 	describe('update', () => {
 		it('can update a material request', async () => {
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			const mockData: UpdateMaterialRequestMutation = {
 				update_app_material_requests: {
 					returning: [mockGqlMaterialRequest1],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
+			mockOrganisationsService.findOrganisationsBySchemaIdentifiers.mockResolvedValue(
+				mockOrganisations
+			);
 			const response = await materialRequestsService.updateMaterialRequest(
 				mockGqlMaterialRequest1.id,
 				mockGqlMaterialRequest1.profile_id,

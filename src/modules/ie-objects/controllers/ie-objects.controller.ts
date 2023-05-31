@@ -10,7 +10,6 @@ import {
 	Post,
 	Query,
 	Req,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';

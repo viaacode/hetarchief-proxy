@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got from 'got';
-import { isNil, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -21,9 +21,9 @@ import {
 
 import {
 	DeleteOrganisationsDocument,
-	FindOrganisationBySchemaIdDocument,
-	FindOrganisationBySchemaIdQuery,
-	FindOrganisationBySchemaIdQueryVariables,
+	FindOrganisationsBySchemaIdsDocument,
+	FindOrganisationsBySchemaIdsQuery,
+	FindOrganisationsBySchemaIdsQueryVariables,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
 
@@ -57,19 +57,20 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		}
 	}
 
-	public async findOrganisationBySchemaIdentifier(
-		schemaIdentifier: string
-	): Promise<Organisation | null> {
-		const organisationResponse = await this.dataService.execute<
-			FindOrganisationBySchemaIdQuery,
-			FindOrganisationBySchemaIdQueryVariables
-		>(FindOrganisationBySchemaIdDocument, { schemaIdentifier });
-
-		if (isNil(organisationResponse) || !organisationResponse.maintainer_organisation[0]) {
-			return null;
+	public async findOrganisationsBySchemaIdentifiers(
+		schemaIdentifiers: string[]
+	): Promise<Organisation[]> {
+		if (schemaIdentifiers.length === 0) {
+			return [];
 		}
+		const organisationsResponse = await this.dataService.execute<
+			FindOrganisationsBySchemaIdsQuery,
+			FindOrganisationsBySchemaIdsQueryVariables
+		>(FindOrganisationsBySchemaIdsDocument, { schemaIdentifiers });
 
-		return this.adapt(organisationResponse.maintainer_organisation[0] as GqlOrganisation);
+		return ((organisationsResponse?.maintainer_organisation || []) as GqlOrganisation[]).map(
+			this.adapt
+		);
 	}
 
 	public adapt(gqlOrganisation: GqlOrganisation): Organisation {
@@ -182,6 +183,8 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			return {
 				...org,
 				logo: org.logo || {}, // Hasura v2.6.0 complains about null jsonb values
+				primary_site: org.primary_site || {}, // Hasura v2.6.0 complains about null jsonb values
+				contact_point: org.contact_point || {}, // Hasura v2.6.0 complains about null jsonb values
 			};
 		});
 

@@ -98,7 +98,7 @@ export abstract class SamlService {
 	/**
 	 * login url
 	 */
-	public createLoginRequestUrl(returnToUrl: string) {
+	public createLoginRequestUrl(returnToUrl: string): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			this.serviceProvider.create_login_request_url(
 				this.identityProvider,
@@ -116,7 +116,7 @@ export abstract class SamlService {
 		});
 	}
 
-	public createLogoutRequestUrl(nameId: string, returnToUrl: string) {
+	public createLogoutRequestUrl(nameId: string, returnToUrl: string): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			this.serviceProvider.create_logout_request_url(
 				this.identityProvider,

@@ -1,8 +1,14 @@
 export enum LogEventType {
-	USER_AUTHENTICATE = 'be.hetarchief.user.authenticate',
+	// Triggered in the frontend
+	BEZOEK_ITEM_VIEW = 'be.hetarchief.bezoek.item.view',
+	BEZOEK_ITEM_PLAY = 'be.hetarchief.bezoek.item.play',
 	ITEM_REQUEST = 'be.hetarchief.item.request',
-	ITEM_VIEW = 'be.hetarchief.bezoek.item.view', // Triggered in client
-	ITEM_PLAY = 'be.hetarchief.bezoek.item.play', // Triggered in client
+	ITEM_VIEW = 'be.hetarchief.item.view',
+	ITEM_PLAY = 'be.hetarchief.item.play',
+	SEARCH = 'be.hetarchief.item.search',
+
+	// Triggered in the backend
+	USER_AUTHENTICATE = 'be.hetarchief.user.authenticate',
 	ITEM_BOOKMARK = 'be.hetarchief.item.bookmark',
 	METADATA_EXPORT = 'be.hetarchief.bezoek.metadata.export',
 	VISIT_REQUEST = 'be.hetarchief.bezoek.visit.request',
@@ -10,7 +16,6 @@ export enum LogEventType {
 	VISIT_REQUEST_DENIED = 'be.hetarchief.bezoek.visit.disapprove',
 	VISIT_REQUEST_CANCELLED_BY_VISITOR = 'be.hetarchief.bezoek.visit.cancel',
 	VISIT_REQUEST_REVOKED = 'be.hetarchief.bezoek.visit.revoke',
-	SEARCH = 'be.hetarchief.bezoek.search', // Triggered in client
 	NEWSLETTER_SUBSCRIBE = 'be.hetarchief.user.newslettersubscribe',
 }
 

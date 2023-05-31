@@ -5,11 +5,12 @@ import { MaterialRequestsController } from './controllers/material-requests.cont
 import { MaterialRequestsService } from './services/material-requests.service';
 
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
+import { OrganisationsModule } from '~modules/organisations/organisations.module';
 
 @Module({
 	controllers: [MaterialRequestsController],
 	providers: [MaterialRequestsService],
-	imports: [DataModule, CampaignMonitorModule],
+	imports: [DataModule, CampaignMonitorModule, OrganisationsModule],
 	exports: [MaterialRequestsService],
 })
 export class MaterialRequestsModule {}

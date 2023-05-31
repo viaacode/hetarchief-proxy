@@ -5,7 +5,6 @@ import { format } from 'date-fns';
 import { CollectionsService } from './collections.service';
 
 import {
-	DeleteCollectionMutation,
 	FindCollectionObjectsByCollectionIdQuery,
 	FindCollectionsByUserQuery,
 	FindObjectBySchemaIdentifierQuery,
@@ -18,7 +17,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
 import { CollectionObjectLink, GqlObject } from '~modules/collections/types';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObject, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -159,8 +158,10 @@ const mockCollectionObject: Partial<IeObject> & { collectionEntryCreatedAt: stri
 	maintainerName: 'Huis van Alijn',
 	maintainerSlug: 'amsab',
 	meemooLocalId: 'WP00032225',
-	series: ['Serie'],
-	programs: ['Programma'],
+	isPartOf: {
+		[IsPartOfKey.serie]: ['Serie'],
+		[IsPartOfKey.programma]: ['Programma'],
+	},
 	duration: '01:01:59',
 };
 
