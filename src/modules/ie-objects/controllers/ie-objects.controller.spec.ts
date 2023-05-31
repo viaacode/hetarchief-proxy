@@ -73,7 +73,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 };
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
-	findOrganisationBySchemaIdentifier: jest.fn(),
+	findOrganisationsBySchemaIdentifiers: jest.fn(),
 };
 
 const mockRequest = { path: '/ie-objects/export', headers: {} } as unknown as Request;

@@ -1,7 +1,7 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { groupBy, isArray, isEmpty, isNil, set } from 'lodash';
+import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
 import {
 	CreateMaterialRequestDto,
@@ -46,6 +46,8 @@ import {
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { Organisation } from '~modules/organisations/organisations.types';
+import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -56,7 +58,8 @@ export class MaterialRequestsService {
 
 	constructor(
 		protected dataService: DataService,
-		private campaignMonitorService: CampaignMonitorService
+		private campaignMonitorService: CampaignMonitorService,
+		private organisationsService: OrganisationsService
 	) {}
 
 	public async findAll(
@@ -128,9 +131,18 @@ export class MaterialRequestsService {
 				orderDirection || SortDirection.desc
 			),
 		});
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact(
+				materialRequestsResponse.app_material_requests.map(
+					(matRequest) => matRequest?.object?.maintainer?.schema_identifier
+				)
+			)
+		);
 
 		return Pagination<MaterialRequest>({
-			items: materialRequestsResponse.app_material_requests.map((mr) => this.adapt(mr)),
+			items: materialRequestsResponse.app_material_requests.map((mr) =>
+				this.adapt(mr, organisations)
+			),
 			page,
 			size,
 			total: materialRequestsResponse.app_material_requests_aggregate.aggregate.count,
@@ -147,7 +159,15 @@ export class MaterialRequestsService {
 			throw new NotFoundException(`Material Request with id '${id}' not found`);
 		}
 
-		return this.adapt(materialRequestResponse.app_material_requests[0]);
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact(
+				materialRequestResponse.app_material_requests.map(
+					(matRequest) => matRequest?.object?.maintainer?.schema_identifier
+				)
+			)
+		);
+
+		return this.adapt(materialRequestResponse.app_material_requests[0], organisations);
 	}
 
 	public async findMaintainers(): Promise<MaterialRequestMaintainer[] | []> {
@@ -196,7 +216,11 @@ export class MaterialRequestsService {
 
 		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
 
-		return this.adapt(createdMaterialRequest);
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([createdMaterialRequest?.object?.maintainer?.schema_identifier])
+		);
+
+		return this.adapt(createdMaterialRequest, organisations);
 	}
 
 	public async updateMaterialRequest(
@@ -237,7 +261,11 @@ export class MaterialRequestsService {
 
 		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0]?.id} updated.`);
 
-		return this.adapt(updatedMaterialRequest.returning[0]);
+		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
+			compact([updatedMaterialRequest?.returning?.[0]?.object?.maintainer?.schema_identifier])
+		);
+
+		return this.adapt(updatedMaterialRequest.returning[0], organisations);
 	}
 
 	public async deleteMaterialRequest(
@@ -300,43 +328,52 @@ export class MaterialRequestsService {
 	/**
 	 * Adapt a material request as returned by a graphQl response to our internal model
 	 */
-	public adapt(grapqhQLMaterialRequest: GqlMaterialRequest): MaterialRequest | null {
-		if (!grapqhQLMaterialRequest) {
+	public adapt(
+		graphQlMaterialRequest: GqlMaterialRequest,
+		organisations: Organisation[]
+	): MaterialRequest | null {
+		if (!graphQlMaterialRequest) {
 			return null;
 		}
 
+		const organisation = organisations.find(
+			(org) =>
+				org.schemaIdentifier === graphQlMaterialRequest.object.maintainer.schema_identifier
+		);
 		const transformedMaterialRequest: MaterialRequest = {
-			id: grapqhQLMaterialRequest.id,
-			objectSchemaIdentifier: grapqhQLMaterialRequest.object_schema_identifier,
-			objectSchemaName: grapqhQLMaterialRequest.object.schema_name,
-			objectMeemooIdentifier: grapqhQLMaterialRequest.object.meemoo_identifier,
-			objectDctermsFormat: grapqhQLMaterialRequest.object.dcterms_format as MediaFormat,
-			objectThumbnailUrl: grapqhQLMaterialRequest.object.schema_thumbnail_url,
-			profileId: grapqhQLMaterialRequest.profile_id,
-			reason: grapqhQLMaterialRequest.reason,
-			createdAt: grapqhQLMaterialRequest.created_at,
-			updatedAt: grapqhQLMaterialRequest.updated_at,
-			type: grapqhQLMaterialRequest.type,
-			isPending: grapqhQLMaterialRequest.is_pending,
-			requesterId: grapqhQLMaterialRequest.requested_by.id,
-			requesterFullName: grapqhQLMaterialRequest.requested_by.full_name,
-			requesterMail: grapqhQLMaterialRequest.requested_by.mail,
-			requesterCapacity: grapqhQLMaterialRequest.requester_capacity,
-			requesterUserGroupId: grapqhQLMaterialRequest.requested_by.group?.id || null,
-			requesterUserGroupName: grapqhQLMaterialRequest.requested_by.group?.name || null,
-			requesterUserGroupLabel: grapqhQLMaterialRequest.requested_by.group?.label || null,
+			id: graphQlMaterialRequest.id,
+			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
+			objectSchemaName: graphQlMaterialRequest.object.schema_name,
+			objectMeemooIdentifier: graphQlMaterialRequest.object.meemoo_identifier,
+			objectDctermsFormat: graphQlMaterialRequest.object.dcterms_format as MediaFormat,
+			objectThumbnailUrl: graphQlMaterialRequest.object.schema_thumbnail_url,
+			profileId: graphQlMaterialRequest.profile_id,
+			reason: graphQlMaterialRequest.reason,
+			createdAt: graphQlMaterialRequest.created_at,
+			updatedAt: graphQlMaterialRequest.updated_at,
+			type: graphQlMaterialRequest.type,
+			isPending: graphQlMaterialRequest.is_pending,
+			requesterId: graphQlMaterialRequest.requested_by.id,
+			requesterFullName: graphQlMaterialRequest.requested_by.full_name,
+			requesterMail: graphQlMaterialRequest.requested_by.mail,
+			requesterCapacity: graphQlMaterialRequest.requester_capacity,
+			requesterUserGroupId: graphQlMaterialRequest.requested_by.group?.id || null,
+			requesterUserGroupName: graphQlMaterialRequest.requested_by.group?.name || null,
+			requesterUserGroupLabel: graphQlMaterialRequest.requested_by.group?.label || null,
 			requesterUserGroupDescription:
-				grapqhQLMaterialRequest.requested_by.group?.description || null,
-			maintainerId: grapqhQLMaterialRequest.object.maintainer.schema_identifier,
-			maintainerName: grapqhQLMaterialRequest.object.maintainer.schema_name,
-			maintainerSlug: grapqhQLMaterialRequest.object.maintainer.visitor_space.slug,
-			maintainerLogo: grapqhQLMaterialRequest.object.maintainer.information?.logo?.iri,
-			organisation: grapqhQLMaterialRequest.organisation || null,
+				graphQlMaterialRequest.requested_by.group?.description || null,
+			maintainerId: organisation?.schemaIdentifier,
+			maintainerName: organisation?.schemaName,
+			maintainerSlug:
+				graphQlMaterialRequest.object.maintainer.visitor_space?.slug ||
+				kebabCase(organisation?.schemaName),
+			maintainerLogo: organisation?.logo?.iri,
+			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
 			contactMail:
-				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.object?.maintainer?.information?.contact_point || null,
 			objectMeemooLocalId:
-				(grapqhQLMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.object?.meemoo_local_id || null,
 		};
 
@@ -344,11 +381,11 @@ export class MaterialRequestsService {
 	}
 
 	public adaptMaintainers(
-		grapqhQLMaterialRequestMaintainer: GqlMaterialRequestMaintainer
+		graphQlMaterialRequestMaintainer: GqlMaterialRequestMaintainer
 	): MaterialRequestMaintainer {
 		return {
-			id: grapqhQLMaterialRequestMaintainer.schema_identifier,
-			name: grapqhQLMaterialRequestMaintainer.schema_name,
+			id: graphQlMaterialRequestMaintainer.schema_identifier,
+			name: graphQlMaterialRequestMaintainer.schema_name,
 		};
 	}
 }
