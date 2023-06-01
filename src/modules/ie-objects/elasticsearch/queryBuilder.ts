@@ -159,7 +159,27 @@ export class QueryBuilder {
 		return defaultQueryType;
 	}
 
-	protected static buildFilter(elasticKey: string, searchFilter: SearchFilter): any {
+	protected static buildFilter(
+		elasticKey: string,
+		searchFilter: SearchFilter
+	): { occurrenceType: string; query: any } {
+		if (
+			searchFilter.field === IeObjectsSearchFilterField.PUBLISHER &&
+			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
+		) {
+			// Publisher is a special case since it is a flattened field
+			return {
+				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
+				query: {
+					wildcard: {
+						schema_publisher: {
+							value: `*${searchFilter.value}*`,
+						},
+					},
+				},
+			};
+		}
+
 		// Used for other advanced filter fields
 		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
 		const value = this.buildValue(searchFilter);
