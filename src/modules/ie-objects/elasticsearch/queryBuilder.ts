@@ -469,7 +469,10 @@ export class QueryBuilder {
 		];
 
 		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
-		if (user.getMaintainerId()) {
+		if (
+			[GroupName.CP_ADMIN, GroupName.KIOSK_VISITOR].includes(user.getGroupName()) &&
+			user.getMaintainerId()
+		) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				{
