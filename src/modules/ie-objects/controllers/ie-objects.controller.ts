@@ -282,7 +282,9 @@ export class IeObjectsController {
 		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
 			id,
 			referer,
-			ieObjectSimilarQueryDto
+			ieObjectSimilarQueryDto,
+			4,
+			user
 		);
 
 		const similarIeObjects = compact(
@@ -300,15 +302,13 @@ export class IeObjectsController {
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedSimilarIeObjects = {
+		return {
 			items: similarIeObjects,
 			total: similarIeObjects.length,
 			pages: 1,
 			page: 1,
 			size: similarIeObjects.length,
 		};
-
-		return licensedSimilarIeObjects;
 	}
 
 	@Post()

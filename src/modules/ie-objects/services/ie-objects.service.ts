@@ -223,24 +223,45 @@ export class IeObjectsService {
 	public async getSimilar(
 		schemaIdentifier: string,
 		referer: string,
-		ieObjectSimilarQueryDto?: IeObjectsSimilarQueryDto,
-		limit = 4
+		ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
+		limit = 4,
+		user: SessionUserEntity
 	): Promise<IPagination<IeObject>> {
 		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase();
-		const likeFilter = {
-			...(esIndex ? { _index: esIndex } : {}),
-			_id: schemaIdentifier,
-		};
+
+		// We can reuse the license checking part from the regular search queries:
+		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
+		const regularQuery = QueryBuilder.build(
+			{ filters: [], page: 0, size: 0 },
+			{
+				user,
+				spacesIds: [],
+				visitorSpaceInfo: visitorSpaceAccessInfo,
+			}
+		);
 
 		const esQueryObject = {
 			size: limit,
 			from: 0,
 			query: {
-				more_like_this: {
-					fields: ['schema_name', 'schema_description'],
-					like: [likeFilter],
-					min_term_freq: 1,
-					max_query_terms: 12,
+				bool: {
+					should: [
+						{
+							more_like_this: {
+								fields: ['schema_name', 'schema_description'],
+								like: [
+									{
+										...(esIndex ? { _index: esIndex } : {}),
+										_id: schemaIdentifier,
+									},
+								],
+								min_term_freq: 1,
+								min_doc_freq: 1,
+							},
+						},
+						regularQuery.query.bool.should[1],
+					],
+					minimum_should_match: 2,
 				},
 			},
 		};
