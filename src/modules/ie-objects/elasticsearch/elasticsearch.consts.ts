@@ -75,15 +75,8 @@ export enum QueryType {
 	QUERY_STRING = 'query_string', // Text search met wildcards: {"query_string":{"query":"arbeids*","default_field":"schema_keywords"}}
 }
 
-export interface QueryBuilderUserInfo {
-	groupId: string;
-	isKeyUser: boolean;
-	maintainerId: string;
-	sector: IeObjectSector;
-}
-
 export interface QueryBuilderInputInfo {
-	user: SessionUserEntity;
+	user?: SessionUserEntity;
 	visitorSpaceInfo?: IeObjectsVisitorSpaceInfo;
 	spacesIds?: string[];
 }

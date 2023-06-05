@@ -339,7 +339,9 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getSimilar(
 				mockObjectSchemaIdentifier,
 				'referer',
-				{ maintainerId: 'my-index' }
+				{ maintainerId: 'my-index' },
+				4,
+				undefined
 			);
 			expect(response.items.length).toBe(2);
 			expect(response.items.length).toBe(2);
