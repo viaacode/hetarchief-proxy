@@ -240,31 +240,78 @@ export class IeObjectsService {
 			}
 		);
 
-		const esQueryObject = {
-			size: limit,
-			from: 0,
-			query: {
-				bool: {
-					should: [
-						{
-							more_like_this: {
-								fields: ['schema_name', 'schema_description'],
-								like: [
-									{
-										...(esIndex ? { _index: esIndex } : {}),
-										_id: schemaIdentifier,
-									},
-								],
-								min_term_freq: 1,
-								min_doc_freq: 1,
+		let esQueryObject;
+
+		if (esIndex) {
+			// if esIndex is passed, we only want to return objects that are inside a visitor space
+			esQueryObject = {
+				size: limit,
+				from: 0,
+				query: {
+					bool: {
+						should: [
+							{
+								bool: {
+									should: [
+										{
+											more_like_this: {
+												fields: ['schema_name', 'schema_description'],
+												like: [
+													{
+														_index: esIndex,
+														_id: schemaIdentifier,
+													},
+												],
+												min_term_freq: 1,
+												min_doc_freq: 1,
+											},
+										},
+										{
+											// if esIndex is passed, we only want to return objects that are inside a visitor space
+											terms: {
+												schema_license: [
+													IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+													IeObjectLicense.BEZOEKERTOOL_CONTENT,
+												],
+											},
+										},
+									],
+									minimum_should_match: 2,
+								},
 							},
-						},
-						regularQuery.query.bool.should[1],
-					],
-					minimum_should_match: 2,
+							regularQuery.query.bool.should[1],
+						],
+						minimum_should_match: 2,
+					},
 				},
-			},
-		};
+			};
+		} else {
+			// If no esIndex is passed, we want to find similar objects in the whole database
+			esQueryObject = {
+				size: limit,
+				from: 0,
+				query: {
+					bool: {
+						should: [
+							{
+								more_like_this: {
+									fields: ['schema_name', 'schema_description'],
+									like: [
+										{
+											_id: schemaIdentifier,
+										},
+									],
+									min_term_freq: 1,
+									min_doc_freq: 1,
+								},
+							},
+							regularQuery.query.bool.should[1],
+						],
+						minimum_should_match: 2,
+					},
+				},
+			};
+		}
 
 		const mediaResponse = await this.executeQuery(esIndex || '_all', esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
