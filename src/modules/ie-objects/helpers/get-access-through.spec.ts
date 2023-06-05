@@ -22,27 +22,52 @@ describe('Access Through', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen - https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
 	// -------------------------------------------------------------------------
 	it('Should return PUBLIC INFO', () => {
-		const accessThrough = getAccessThrough(false, false, false, hasPublicLicenses);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: false,
+			hasFolderAccess: false,
+			hasIntraCPLicenses: false,
+			hasPublicLicenses: hasPublicLicenses,
+		});
 
 		expect(accessThrough).toEqual([IeObjectAccessThrough.PUBLIC_INFO]);
 	});
 	it('Should return SECTOR', () => {
-		const accessThrough = getAccessThrough(false, false, hasIntraCpLicenses, false);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: false,
+			hasFolderAccess: false,
+			hasIntraCPLicenses: hasIntraCpLicenses,
+			hasPublicLicenses: false,
+		});
 
 		expect(accessThrough).toEqual([IeObjectAccessThrough.SECTOR]);
 	});
 	it('Should return VISITOR_SPACE_FOLDERS', () => {
-		const accessThrough = getAccessThrough(false, true, false, false);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: false,
+			hasFolderAccess: true,
+			hasIntraCPLicenses: false,
+			hasPublicLicenses: false,
+		});
 
 		expect(accessThrough).toEqual([IeObjectAccessThrough.VISITOR_SPACE_FOLDERS]);
 	});
 	it('Should return VISITOR_SPACE_FULL', () => {
-		const accessThrough = getAccessThrough(true, false, false, false);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: true,
+			hasFolderAccess: false,
+			hasIntraCPLicenses: false,
+			hasPublicLicenses: false,
+		});
 
 		expect(accessThrough).toEqual([IeObjectAccessThrough.VISITOR_SPACE_FULL]);
 	});
 	it('Should return PUBLIC INFO & SECTOR & VISITOR_SPACE_FULL', () => {
-		const accessThrough = getAccessThrough(true, false, hasIntraCpLicenses, hasPublicLicenses);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: true,
+			hasFolderAccess: false,
+			hasIntraCPLicenses: hasIntraCpLicenses,
+			hasPublicLicenses: hasPublicLicenses,
+		});
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -51,7 +76,12 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return PUBLIC INFO & SECTOR & VISITOR_SPACE_FOLDERS', () => {
-		const accessThrough = getAccessThrough(false, true, hasIntraCpLicenses, hasPublicLicenses);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: false,
+			hasFolderAccess: true,
+			hasIntraCPLicenses: hasIntraCpLicenses,
+			hasPublicLicenses: hasPublicLicenses,
+		});
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -60,7 +90,12 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return SECTOR & VISITOR_SPACE_FULL', () => {
-		const accessThrough = getAccessThrough(true, false, hasIntraCpLicenses, false);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: true,
+			hasFolderAccess: false,
+			hasIntraCPLicenses: hasIntraCpLicenses,
+			hasPublicLicenses: false,
+		});
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,
@@ -68,7 +103,12 @@ describe('Access Through', () => {
 		]);
 	});
 	it('Should return SECTOR & VISITOR_SPACE_FOLDERS', () => {
-		const accessThrough = getAccessThrough(false, true, hasIntraCpLicenses, false);
+		const accessThrough = getAccessThrough({
+			hasFullAccess: false,
+			hasFolderAccess: true,
+			hasIntraCPLicenses: hasIntraCpLicenses,
+			hasPublicLicenses: false,
+		});
 
 		expect(accessThrough).toEqual([
 			IeObjectAccessThrough.SECTOR,

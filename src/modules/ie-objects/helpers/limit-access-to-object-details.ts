@@ -30,7 +30,9 @@ export const limitAccessToObjectDetails = (
 			userInfo.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS
 		] ?? []),
 	];
-	let ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
+	const ieObjectLicenses: IeObjectLicense[] = [...(ieObject.licenses || [])];
+
+	let accessibleLicenses: IeObjectLicense[] = [];
 
 	const objectIntraCpLicenses = intersection(ieObjectLicenses, IE_OBJECT_INTRA_CP_LICENSES);
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
@@ -41,12 +43,28 @@ export const limitAccessToObjectDetails = (
 	// Step 1a - Determine Licenses
 	// ---------------------------------------------------
 
-	// If the ie object exposes its metadata then we add an extra licenses to more easily check sector licenses
-	if (
-		ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_METADATA_ALL) ||
-		ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_CONTENT)
-	) {
+	// If the ie object exposes a wider license, then we also add the stricter licences to make the checks below easier
+	if (ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_CONTENT)) {
+		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_ALL);
+	}
+	if (ieObjectLicenses.includes(IeObjectLicense.INTRA_CP_METADATA_ALL)) {
 		ieObjectLicenses.push(IeObjectLicense.INTRA_CP_METADATA_LTD);
+	}
+	if (ieObjectLicenses.includes(IeObjectLicense.BEZOEKERTOOL_CONTENT)) {
+		ieObjectLicenses.push(IeObjectLicense.BEZOEKERTOOL_METADATA_ALL);
+	}
+	if (ieObjectLicenses.includes(IeObjectLicense.PUBLIEK_METADATA_ALL)) {
+		ieObjectLicenses.push(IeObjectLicense.PUBLIEK_METADATA_LTD);
+	}
+
+	// public licenses can be accessed if the object has public licenses
+	// Kiosk users can only see objects from the maintainer they are linked to
+	// Test case 6: https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
+	if (
+		userInfo.groupId !== GroupId.KIOSK_VISITOR ||
+		ieObject.maintainerId === userInfo.maintainerId
+	) {
+		accessibleLicenses.push(...intersection(ieObjectLicenses, IE_OBJECT_PUBLIC_LICENSES));
 	}
 
 	// Step 1b - Sector as extra filter on INTRA_CP_CONTENT, INTRA_CP_METADATA OR BOTH
@@ -89,30 +107,34 @@ export const limitAccessToObjectDetails = (
 			licensesBySector.push(IeObjectLicense.INTRA_CP_CONTENT);
 		}
 
-		ieObjectLicenses = intersection(ieObjectLicenses, licensesBySector);
-	} else {
-		// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
-		// If user is part of VISITOR && has full access -> add visitor content license to licenses
-		if (hasFolderAccess || hasFullAccess) {
-			licensesByUserGroup.push(
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				IeObjectLicense.BEZOEKERTOOL_CONTENT
-			);
-		}
+		// Determine common ground between ie object licenses and user group licenses
+		accessibleLicenses.push(...licensesBySector);
+	}
+	// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
+	// If user is part of VISITOR && has full access -> add visitor content license to licenses
+	if (hasFolderAccess || hasFullAccess) {
+		licensesByUserGroup.push(
+			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			IeObjectLicense.BEZOEKERTOOL_CONTENT
+		);
 
 		// Determine common ground between ie object licenses and user group licenses
-		ieObjectLicenses = intersection(ieObjectLicenses, licensesByUserGroup);
+		accessibleLicenses.push(...licensesByUserGroup);
 	}
+
+	accessibleLicenses = uniq(intersection(ieObjectLicenses, accessibleLicenses));
 
 	// Step 2 - Determine ieObject limited props
 	// ---------------------------------------------------
-	if (isEmpty(ieObjectLicenses)) {
+	if (isEmpty(accessibleLicenses)) {
 		return null;
 	}
 
 	const ieObjectLimitedProps: string[] = uniq(
-		ieObjectLicenses.flatMap((license: IeObjectLicense) => {
-			return IE_OBJECT_PROPS_BY_METADATA_SET[IE_OBJECT_METADATA_SET_BY_LICENSE[license]];
+		accessibleLicenses.flatMap((accessibleLicense: IeObjectLicense) => {
+			return IE_OBJECT_PROPS_BY_METADATA_SET[
+				IE_OBJECT_METADATA_SET_BY_LICENSE[accessibleLicense]
+			];
 		})
 	);
 
@@ -121,16 +143,13 @@ export const limitAccessToObjectDetails = (
 	const limitedIeObject = pick(ieObject, ieObjectLimitedProps);
 
 	// Determine access through
-	const accessThrough = getAccessThrough(
+	const accessThrough = getAccessThrough({
 		hasFullAccess,
 		hasFolderAccess,
-		ieObjectLicenses.some((license: IeObjectLicense) =>
-			IE_OBJECT_INTRA_CP_LICENSES.includes(license)
-		),
-		ieObjectLicenses.some((license: IeObjectLicense) =>
-			IE_OBJECT_PUBLIC_LICENSES.includes(license)
-		)
-	);
+		hasIntraCPLicenses:
+			intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,
+		hasPublicLicenses: intersection(accessibleLicenses, IE_OBJECT_PUBLIC_LICENSES).length > 0,
+	});
 
 	return {
 		...limitedIeObject,

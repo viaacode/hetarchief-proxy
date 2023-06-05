@@ -181,14 +181,14 @@ describe('Limit access to object details', () => {
 			isKeyUser: false,
 			sector: null,
 			maintainerId: 'OR-rf4kf25',
-			accessibleVisitorSpaceIds: [],
+			accessibleVisitorSpaceIds: ['OR-rf4kf25', 'OR-rf5kf25'], // MEEMOO_ADMIN has access to all visitor spaces
 			accessibleObjectIdsThroughFolders: [],
 		};
 		const limitedAccessIeObject1e = limitAccessToObjectDetails(
 			// DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				sector: IeObjectSector.RURAL,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_CONTENT,
@@ -205,7 +205,10 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.INTRA_CP_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			],
-			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+			accessThrough: [
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
+				IeObjectAccessThrough.PUBLIC_INFO,
+			],
 		});
 	});
 
@@ -213,9 +216,10 @@ describe('Limit access to object details', () => {
 		const mockUserInfoTestCase6a: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.KIOSK_VISITOR,
+			maintainerId: 'OR-xs5jg6w', // ADVN
 			isKeyUser: false,
 			sector: IeObjectSector.CULTURE,
-			accessibleVisitorSpaceIds: [],
+			accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
 			accessibleObjectIdsThroughFolders: [],
 		};
 		const limitedAccessIeObject1f = limitAccessToObjectDetails(
@@ -223,6 +227,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-kw57h48', // Letterenhuis
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
@@ -291,13 +296,17 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.INTRA_CP_METADATA_ALL,
 				IeObjectLicense.INTRA_CP_CONTENT,
 			],
-			accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.VISITOR_SPACE_FULL],
+			accessThrough: [
+				IeObjectAccessThrough.SECTOR,
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
+				IeObjectAccessThrough.PUBLIC_INFO,
+			],
 		});
 	});
 
 	// -------------------------------------------------------------------------
 
-	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
+	it('USER visitor NO SECTOR - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCaseNoSectorA: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.VISITOR,
@@ -324,7 +333,7 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('USER NO SECTOR - user (CP Admin) sees metadataset limited on detail page', () => {
+	it('USER cp admin NO SECTOR - user (CP Admin) sees metadataset limited on detail page', () => {
 		const mockUserInfoTestCaseNoSectorB: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.CP_ADMIN,
@@ -351,14 +360,14 @@ describe('Limit access to object details', () => {
 		});
 	});
 
-	it('USER NO SECTOR - user sees metadataset all on detail page', () => {
+	it('USER meemoo admin NO SECTOR - user sees metadataset all on detail page', () => {
 		const mockUserInfoTestCaseNoSectorC: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.MEEMOO_ADMIN,
 			isKeyUser: false,
 			sector: null,
-			maintainerId: null,
-			accessibleVisitorSpaceIds: [],
+			maintainerId: 'meemoo-or-id',
+			accessibleVisitorSpaceIds: ['OR-rf5kf25'], // MEEMOO_ADMIN has access to all visitor spaces
 			accessibleObjectIdsThroughFolders: [],
 		};
 		const limitedAccessIeObject2d = limitAccessToObjectDetails(
@@ -366,6 +375,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-rf5kf25',
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_CONTENT,
@@ -382,11 +392,14 @@ describe('Limit access to object details', () => {
 				IeObjectLicense.INTRA_CP_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			],
-			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
+			accessThrough: [
+				IeObjectAccessThrough.VISITOR_SPACE_FULL,
+				IeObjectAccessThrough.PUBLIC_INFO,
+			],
 		});
 	});
 
-	it("USER NO SECTOR - user doesn't see object", () => {
+	it('USER NO SECTOR - only show public metadata', () => {
 		const mockUserInfoTestCaseNoSectorD: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.KIOSK_VISITOR,
@@ -412,7 +425,7 @@ describe('Limit access to object details', () => {
 		expect(limitedAccessIeObject2e).toEqual(null);
 	});
 
-	it("USER NO SECTOR - user doesn't see object", () => {
+	it("USER NO SECTOR - don't show object", () => {
 		const mockUserInfoTestCaseNoSectorE: LimitAccessUserInfo = {
 			...mockUserInfo,
 			groupId: GroupId.CP_ADMIN,

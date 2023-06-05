@@ -1,11 +1,16 @@
 import { IeObjectAccessThrough } from '../ie-objects.types';
 
-export const getAccessThrough = (
-	hasFullAccess: boolean,
-	hasFolderAccess: boolean,
-	hasIntraCPLicenses: boolean,
-	hasPublicLicenses: boolean
-): IeObjectAccessThrough[] => {
+export const getAccessThrough = ({
+	hasFullAccess,
+	hasFolderAccess,
+	hasIntraCPLicenses,
+	hasPublicLicenses,
+}: {
+	hasFullAccess: boolean;
+	hasFolderAccess: boolean;
+	hasIntraCPLicenses: boolean;
+	hasPublicLicenses: boolean;
+}): IeObjectAccessThrough[] => {
 	const accessThrough = [];
 	if (hasIntraCPLicenses) {
 		accessThrough.push(IeObjectAccessThrough.SECTOR);
