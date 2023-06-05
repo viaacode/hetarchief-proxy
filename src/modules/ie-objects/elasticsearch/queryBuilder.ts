@@ -229,10 +229,10 @@ export class QueryBuilder {
 		set(filterObject, 'bool.filter', filterArray);
 
 		// Kiosk users are only allowed to view objects from their maintainer
-		if (inputInfo.user.getGroupName() === GroupName.KIOSK_VISITOR) {
+		if (inputInfo.user?.getGroupName() === GroupName.KIOSK_VISITOR) {
 			filterArray.push({
 				terms: {
-					'schema_maintainer.schema_identifier': [inputInfo.user.getMaintainerId()],
+					'schema_maintainer.schema_identifier': [inputInfo.user?.getMaintainerId()],
 				},
 			});
 		}
@@ -490,8 +490,8 @@ export class QueryBuilder {
 
 		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
 		if (
-			[GroupName.CP_ADMIN, GroupName.KIOSK_VISITOR].includes(user.getGroupName()) &&
-			user.getMaintainerId()
+			[GroupName.CP_ADMIN, GroupName.KIOSK_VISITOR].includes(user?.getGroupName()) &&
+			user?.getMaintainerId()
 		) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
@@ -501,10 +501,10 @@ export class QueryBuilder {
 							{
 								terms: {
 									'schema_maintainer.schema_identifier': isNil(
-										user.getMaintainerId()
+										user?.getMaintainerId()
 									)
 										? []
-										: [user.getMaintainerId()],
+										: [user?.getMaintainerId()],
 								},
 							},
 							{
@@ -522,7 +522,7 @@ export class QueryBuilder {
 			];
 		}
 
-		if (user.getIsKeyUser() && !isNil(user.getSector())) {
+		if (user?.getIsKeyUser() && !isNil(user?.getSector())) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
 				// 2) Check or-id is part of sectorOrIds and key user
@@ -541,7 +541,9 @@ export class QueryBuilder {
 						should: [
 							{
 								terms: {
-									'schema_maintainer.schema_identifier': [user.getMaintainerId()],
+									'schema_maintainer.schema_identifier': [
+										user?.getMaintainerId(),
+									],
 								},
 							},
 							{

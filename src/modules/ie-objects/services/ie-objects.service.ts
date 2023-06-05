@@ -225,7 +225,7 @@ export class IeObjectsService {
 		referer: string,
 		ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		limit = 4,
-		user: SessionUserEntity
+		user?: SessionUserEntity
 	): Promise<IPagination<IeObject>> {
 		const esIndex = ieObjectSimilarQueryDto?.maintainerId?.toLowerCase();
 
@@ -663,10 +663,10 @@ export class IeObjectsService {
 	}
 
 	public async getVisitorSpaceAccessInfoFromUser(
-		user: SessionUserEntity
+		user?: SessionUserEntity
 	): Promise<IeObjectsVisitorSpaceInfo> {
 		// If user is not logged in, he cannot have any visitor space access
-		if (!user.getId()) {
+		if (!user?.getId()) {
 			return {
 				objectIds: [],
 				visitorSpaceIds: [],
