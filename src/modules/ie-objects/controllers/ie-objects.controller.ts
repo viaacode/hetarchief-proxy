@@ -106,6 +106,7 @@ export class IeObjectsController {
 		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
 		if (
 			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+			visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
 			intersection(limitedObject?.licenses, [
 				IeObjectLicense.BEZOEKERTOOL_CONTENT,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
