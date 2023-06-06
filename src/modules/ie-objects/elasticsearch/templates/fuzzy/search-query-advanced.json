@@ -43,7 +43,8 @@
         "schema_creator",
         "schema_spatial_coverage",
         "schema_temporal_coverage",
-        "dcterms_medium"
+        "dcterms_medium",
+        "schema_maintainer.schema_name"
       ]
     }
   },

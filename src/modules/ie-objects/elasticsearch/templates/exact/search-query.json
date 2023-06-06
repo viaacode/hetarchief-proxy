@@ -64,7 +64,8 @@
         "meemoo_description_cast",
         "meemoofilm_base",
         "schema_creator_text",
-        "schema_publisher_text"
+        "schema_publisher_text",
+        "schema_maintainer.schema_name"
       ]
     }
   }
