@@ -12,6 +12,7 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { MaterialRequestsController } from './material-requests.controller';
 
+import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -27,6 +28,10 @@ const mockMaterialRequestsService: Partial<
 	deleteMaterialRequest: jest.fn(),
 };
 
+const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
+	insertEvents: jest.fn(),
+};
+
 describe('MaterialRequestsController', () => {
 	let materialRequestsController: MaterialRequestsController;
 
@@ -38,6 +43,10 @@ describe('MaterialRequestsController', () => {
 				{
 					provide: MaterialRequestsService,
 					useValue: mockMaterialRequestsService,
+				},
+				{
+					provide: EventsService,
+					useValue: mockEventsService,
 				},
 			],
 		})

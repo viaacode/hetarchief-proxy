@@ -10,10 +10,13 @@ import {
 	Post,
 	Put,
 	Query,
+	Req,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { Request } from 'express';
+import session from 'express-session';
 import { isEmpty, isNil } from 'lodash';
 
 import {
@@ -29,18 +32,26 @@ import {
 } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEvent, LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
+import { Idp } from '~shared/auth/auth.types';
+import { SessionHelper } from '~shared/auth/session-helper';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { EventsHelper } from '~shared/helpers/events';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('MaterialRequests')
 @Controller('material-requests')
 export class MaterialRequestsController {
-	constructor(private materialRequestsService: MaterialRequestsService) {}
+	constructor(
+		private materialRequestsService: MaterialRequestsService,
+		private eventsService: EventsService
+	) {}
 
 	@Get()
 	@ApiOperation({
@@ -156,7 +167,8 @@ export class MaterialRequestsController {
 	})
 	public async sendRequestList(
 		@Body() sendRequestListDto: SendRequestListDto,
-		@SessionUser() user: SessionUserEntity
+		@SessionUser() user: SessionUserEntity,
+		@Req() request: Request
 	): Promise<{ message: 'success' }> {
 		const dto = new MaterialRequestsQueryDto();
 		dto.isPending = true;
@@ -203,6 +215,24 @@ export class MaterialRequestsController {
 						}
 					);
 				})
+			);
+
+			// Log events for each material request
+			this.eventsService.insertEvents(
+				materialRequests.items.map(
+					(materialRequest): LogEvent => ({
+						id: EventsHelper.getEventId(request),
+						type: LogEventType.ITEM_REQUEST,
+						source: request.path,
+						subject: materialRequest.id,
+						time: new Date().toISOString(),
+						data: {
+							idp: Idp.MEEMOO,
+							user_group_name: user.getGroupName(),
+							user_group_id: user.getGroupId(),
+						},
+					})
+				)
 			);
 
 			return { message: 'success' };
