@@ -29,7 +29,7 @@
         },
         {
           "term": {
-            "schema_maintainer_id": "{{query}}"
+            "schema_maintainer.schema_identifier": "{{query}}"
           }
         }
       ],

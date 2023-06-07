@@ -62,7 +62,8 @@
         "dcterms_format",
         "ebucore_object_type",
         "meemoo_description_programme",
-        "meemoo_description_cast"
+        "meemoo_description_cast",
+        "schema_maintainer.schema_name"
       ]
     }
   },
