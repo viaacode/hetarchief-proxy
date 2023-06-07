@@ -1,4 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { Configuration } from '~config';
 
 import { mockSitemapConfig } from '../mocks/sitemap.mocks';
 import { SitemapService } from '../services/sitemap.service';
@@ -13,12 +16,22 @@ const mockSitemapService = {
 	getSitemapConfig: jest.fn(),
 };
 
+const mockConfigService = {
+	get: jest.fn((key: keyof Configuration): string => {
+		if (key === 'PROXY_API_KEY') {
+			return 'test api key for the proxy';
+		}
+
+		return key;
+	}),
+};
+
 describe('SitemapController', () => {
 	let sitemapController: SitemapController;
 	const env = process.env;
 
 	beforeEach(async () => {
-		process.env.ASSET_SERVER_ENDPOINT = 'https://asset-server.be/';
+		process.env.ASSET_SERVER_ENDPOINT = 'https://asset-server.be';
 		process.env.ASSET_SERVER_BUCKET_NAME = 'bucketname';
 
 		const module: TestingModule = await Test.createTestingModule({
@@ -28,6 +41,10 @@ describe('SitemapController', () => {
 				{
 					provide: SitemapService,
 					useValue: mockSitemapService,
+				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
 				},
 			],
 		})
@@ -52,7 +69,9 @@ describe('SitemapController', () => {
 			});
 			mockSitemapService.generateSitemap.mockResolvedValueOnce('');
 
-			const result = await sitemapController.generateSitemap();
+			const result = await sitemapController.generateSitemap(
+				mockConfigService.get('PROXY_API_KEY')
+			);
 
 			expect(result).toEqual(
 				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index.xml`
