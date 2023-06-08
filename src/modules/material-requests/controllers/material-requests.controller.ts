@@ -230,6 +230,16 @@ export class MaterialRequestsController {
 							idp: Idp.MEEMOO,
 							user_group_name: user.getGroupName(),
 							user_group_id: user.getGroupId(),
+							type: materialRequest.objectDctermsFormat,
+							external_id: materialRequest.objectMeemooIdentifier,
+							fragment_id: materialRequest.objectSchemaIdentifier,
+							contact_form: {
+								user_type: materialRequest.requesterCapacity,
+								problem_category: materialRequest.type,
+								problem_description: materialRequest.reason,
+								cp_id: materialRequest.maintainerId,
+								local_cp_id: materialRequest.objectMeemooLocalId,
+							},
 						},
 					})
 				)
