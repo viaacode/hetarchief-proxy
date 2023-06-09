@@ -61,40 +61,39 @@ export class CampaignMonitorController {
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user?: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		// Log event
-		this.eventsService.insertEvents([
-			{
-				id: EventsHelper.getEventId(request),
-				type: LogEventType.NEWSLETTER_SUBSCRIBE,
-				source: request.path,
-				subject: user?.getId() || 'ANONYMOUS',
-				time: new Date().toISOString(),
-				data: {
-					user_group_id: user?.getGroupId() || 'ANONYMOUS',
-					user_group_name: user?.getGroupName() || 'ANOYMOUS',
-				},
-			},
-		]);
-
 		if (!user?.getId()) {
+			// Logged out user requests to subscribe => send confirm email
 			await this.campaignMonitorService.sendConfirmationMail(preferences);
+		} else {
+			// Logged in user subscribes to the newsletter
+			await this.campaignMonitorService.updateNewsletterPreferences(
+				{
+					firstName: user?.getFirstName(),
+					lastName: user?.getLastName(),
+					email: user?.getMail(),
+					is_key_user: user?.getIsKeyUser(),
+					usergroup: user?.getGroupName(),
+					created_date: user?.getCreatedAt(),
+					last_access_date: user?.getLastAccessAt(),
+					organisation: user?.getOrganisationName(),
+				},
+				preferences.preferences
+			);
 
-			return { message: 'success' };
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.NEWSLETTER_SUBSCRIBE,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						user_group_id: user.getGroupId(),
+						user_group_name: user.getGroupName(),
+					},
+				},
+			]);
 		}
-
-		await this.campaignMonitorService.updateNewsletterPreferences(
-			{
-				firstName: user?.getFirstName(),
-				lastName: user?.getLastName(),
-				email: user?.getMail(),
-				is_key_user: user?.getIsKeyUser(),
-				usergroup: user?.getGroupName(),
-				created_date: user?.getCreatedAt(),
-				last_access_date: user?.getLastAccessAt(),
-				organisation: user?.getOrganisationName(),
-			},
-			preferences.preferences
-		);
 
 		return { message: 'success' };
 	}
@@ -102,9 +101,30 @@ export class CampaignMonitorController {
 	@Get('confirm-email')
 	@Redirect()
 	@ApiOperation({ description: 'Confirm email with token and sign user up for newsletter' })
-	async confirmMail(@Query() queryDto: CampaignMonitorConfirmMailQueryDto) {
+	async confirmMail(
+		@Query() queryDto: CampaignMonitorConfirmMailQueryDto,
+		@Req() request: Request
+	) {
 		try {
 			await this.campaignMonitorService.confirmEmail(queryDto);
+
+			this.eventsService.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.NEWSLETTER_SUBSCRIBE,
+					source: request.path,
+					subject: null,
+					time: new Date().toISOString(),
+					data: {
+						user_group_id: 'ANONYMOUS',
+						user_group_name: 'ANONYMOUS',
+						user_email: queryDto.mail,
+						user_first_name: queryDto.firstName,
+						user_last_name: queryDto.lastName,
+					},
+				},
+			]);
+
 			return {
 				url: `${process.env.CLIENT_HOST}/nieuwsbrief/bevestiging`,
 			};
