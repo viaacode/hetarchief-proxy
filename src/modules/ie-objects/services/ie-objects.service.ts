@@ -740,6 +740,7 @@ export class IeObjectsService {
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,
+			licenses: ieObject.licenses,
 		};
 	}
 

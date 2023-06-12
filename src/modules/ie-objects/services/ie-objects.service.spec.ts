@@ -426,14 +426,14 @@ describe('ieObjectsService', () => {
 	});
 
 	describe('defaultLimitedMetadata', () => {
-		it('should succesfully parse the object', () => {
+		it('should successfully parse the object', () => {
 			const result = ieObjectsService.defaultLimitedMetadata(mockIeObject);
 			expect(result).toEqual(mockIeObjectDefaultLimitedMetadata);
 		});
 	});
 
 	describe('limitObjectInFolder', () => {
-		it('should succesfully parse the object', () => {
+		it('should successfully parse the object', () => {
 			const result = ieObjectsService.limitObjectInFolder(
 				mockIeObject,
 				new SessionUserEntity(mockUser),
