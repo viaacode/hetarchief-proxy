@@ -9,6 +9,7 @@ import { CollectionsController } from './collections.controller';
 import { Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
 import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { mockIeObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
@@ -101,6 +102,7 @@ const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
+	findBySchemaIdentifier: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
@@ -262,6 +264,7 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
 				mockCollectionsResponse.items[0]
 			);
+			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValue(mockIeObject);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockRequest,
 				'referer',

@@ -306,6 +306,7 @@ export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	isPartOf: {},
+	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 };
 
 export const mockUser = {
