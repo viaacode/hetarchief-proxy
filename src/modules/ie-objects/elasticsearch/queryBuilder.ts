@@ -172,19 +172,13 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					wildcard: {
-						schema_publisher: {
+						schema_publisher_text: {
 							value: `*${searchFilter.value}*`,
 						},
 					},
 				},
 			};
 		}
-
-		// Used for other advanced filter fields
-		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
-		const value = this.buildValue(searchFilter);
-		const queryType = this.getQueryType(searchFilter, value);
-		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
 
 		// Contains, ContainsNot
 		if (
@@ -195,7 +189,7 @@ export class QueryBuilder {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					query_string: {
-						query: searchFilter.value + '*',
+						query: searchFilter.value.toLowerCase() + '*',
 						default_field: elasticKey,
 					},
 				},
@@ -203,6 +197,10 @@ export class QueryBuilder {
 		}
 
 		// Is, IsNot
+		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+		const value = this.buildValue(searchFilter);
+		const queryType = this.getQueryType(searchFilter, value);
+		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
 		return {
 			occurrenceType,
 			query: {
