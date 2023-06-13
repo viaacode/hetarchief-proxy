@@ -206,15 +206,24 @@ export const OCCURRENCE_TYPE: { [prop in Operator]?: string } = {
 
 export const VALUE_OPERATORS: Operator[] = [Operator.GTE, Operator.LTE];
 
-// By default add the 'format' aggregation
+// By default, add the 'format' aggregation
 export const AGGS_PROPERTIES: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.FORMAT,
 ];
 
 export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
+	[IeObjectsSearchFilterField.KEYWORD]: 'keyword',
 	[IeObjectsSearchFilterField.NAME]: 'keyword',
+	[IeObjectsSearchFilterField.FORMAT]: 'keyword',
+	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'keyword',
+	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'keyword',
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'keyword',
+	[IeObjectsSearchFilterField.LANGUAGE]: 'keyword',
+	[IeObjectsSearchFilterField.MEDIUM]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
+	[IeObjectsSearchFilterField.IDENTIFIER]: 'keyword',
+	[IeObjectsSearchFilterField.LICENSES]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
@@ -225,6 +234,6 @@ export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string }
 /*
 	This prefix is added before and after every digit before jsep parses it.
 	This has to be a string that's not expected to occur in any ES object's properties.
-	If the searchterm is a string starting with a digit and we don't do this, jsep will throw an error saying a variable cannot start with a digit.
+	If the search term is a string starting with a digit, and we don't do this, jsep will throw an error saying a variable cannot start with a digit.
 */
 export const JSEP_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';
