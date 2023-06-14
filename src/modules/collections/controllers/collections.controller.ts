@@ -188,6 +188,10 @@ export class CollectionsController {
 		);
 
 		// Log event
+		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
+			objectSchemaIdentifier,
+			referer
+		);
 		this.eventsService.insertEvents([
 			{
 				id: EventsHelper.getEventId(request),
@@ -196,7 +200,9 @@ export class CollectionsController {
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {
-					schema_identifier: objectSchemaIdentifier,
+					type: ieObject.dctermsFormat,
+					pid: ieObject.meemooIdentifier,
+					fragment_id: objectSchemaIdentifier,
 					folder_id: collectionId,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),

@@ -135,7 +135,10 @@ describe('CampaignMonitorController', () => {
 		it('redirect to nieuwsbrief/bevestiging when the token is valid', async () => {
 			mockCampaignMonitorService.confirmEmail.mockResolvedValueOnce({});
 
-			const result = await campaignMonitorController.confirmMail(mockSendMailQueryDto);
+			const result = await campaignMonitorController.confirmMail(mockSendMailQueryDto, {
+				path: 'campaign-monitor/confirm-email',
+				headers: { ['x-viaa-request-id']: 'test-meemoo-request-id' },
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				url: `${process.env.CLIENT_HOST}/nieuwsbrief/bevestiging`,
@@ -146,7 +149,10 @@ describe('CampaignMonitorController', () => {
 
 			const mockData = mockSendMailQueryDto;
 			mockData.mail = 'invalid@mail.com';
-			const result = await campaignMonitorController.confirmMail(mockData);
+			const result = await campaignMonitorController.confirmMail(mockData, {
+				path: 'campaign-monitor/confirm-email',
+				headers: { ['x-viaa-request-id']: 'test-meemoo-request-id' },
+			} as unknown as Request);
 
 			expect(result).toEqual({
 				url: `${process.env.CLIENT_HOST}/nieuwsbrief/mislukt`,

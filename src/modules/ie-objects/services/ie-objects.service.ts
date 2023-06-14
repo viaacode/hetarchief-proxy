@@ -95,7 +95,7 @@ export class IeObjectsService {
 
 		let spacesIds: string[] = [];
 
-		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter and it is set to 'true'
+		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter, and it is set to 'true'
 		if (inputQuery.filters && inputQuery.filters.length > 0) {
 			const consultableFilter = inputQuery.filters.find(
 				(filter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
@@ -740,6 +740,7 @@ export class IeObjectsService {
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,
+			licenses: ieObject.licenses,
 		};
 	}
 
