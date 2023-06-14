@@ -391,13 +391,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	): CampaignMonitorMaterialRequestData {
 		const MATERIAL_REQUEST_TYPE_TRANSLATIONS: Record<MaterialRequestType, string> = {
 			[MaterialRequestType.VIEW]: this.translationsService.t(
-				'modules/campaign-monitor/campaign-monitor___material-request-type-view'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren'
 			),
 			[MaterialRequestType.REUSE]: this.translationsService.t(
-				'modules/campaign-monitor/campaign-monitor___material-request-type-reuse'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken'
 			),
 			[MaterialRequestType.MORE_INFO]: this.translationsService.t(
-				'modules/campaign-monitor/campaign-monitor___material-request-type-more-info'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object'
 			),
 		};
 
