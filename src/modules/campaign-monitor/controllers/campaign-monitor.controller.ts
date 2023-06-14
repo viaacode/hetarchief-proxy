@@ -14,6 +14,7 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
@@ -113,11 +114,11 @@ export class CampaignMonitorController {
 					id: EventsHelper.getEventId(request),
 					type: LogEventType.NEWSLETTER_SUBSCRIBE,
 					source: request.path,
-					subject: null,
+					subject: null, // anonymous, subject can only be null or uuid
 					time: new Date().toISOString(),
 					data: {
-						user_group_id: 'ANONYMOUS',
-						user_group_name: 'ANONYMOUS',
+						user_group_id: null,
+						user_group_name: GroupName.ANONYMOUS,
 						user_email: queryDto.mail,
 						user_first_name: queryDto.firstName,
 						user_last_name: queryDto.lastName,
