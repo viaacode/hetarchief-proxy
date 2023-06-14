@@ -1,8 +1,10 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
+	OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
@@ -32,12 +34,13 @@ import {
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
+import { MaterialRequestType } from '~modules/material-requests/material-requests.types';
 import { Visit } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
 @Injectable()
-export class CampaignMonitorService {
+export class CampaignMonitorService implements OnApplicationBootstrap {
 	private logger: Logger = new Logger(CampaignMonitorService.name, { timestamp: true });
 
 	private gotInstance: Got;
@@ -45,7 +48,10 @@ export class CampaignMonitorService {
 	private clientHost: string;
 	private rerouteEmailsTo: string;
 
-	constructor(private configService: ConfigService<Configuration>) {
+	constructor(
+		private configService: ConfigService<Configuration>,
+		protected translationsService: TranslationsService
+	) {
 		checkRequiredEnvs([
 			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT',
 			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION',
@@ -64,6 +70,10 @@ export class CampaignMonitorService {
 		this.rerouteEmailsTo = this.configService.get('REROUTE_EMAILS_TO');
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
+	}
+
+	public async onApplicationBootstrap() {
+		await this.translationsService.refreshBackendTranslations();
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
@@ -378,21 +388,33 @@ export class CampaignMonitorService {
 	): CampaignMonitorMaterialRequestData {
 		// Maintainer Template
 		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
-			//TODO: change this return object to match to maintainertemplate
 			return {
 				user_firstname: emailInfo.firstName,
 				user_lastname: emailInfo.lastName,
 				cp_name: emailInfo.materialRequests[0]?.maintainerName,
-				request_list: emailInfo.materialRequests.map((mr) => ({
-					title: mr.objectSchemaName,
-					local_cp_id: mr.objectMeemooLocalId,
-					pid: mr.objectMeemooIdentifier,
-					page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
-						mr.maintainerSlug
-					}/${mr.objectSchemaIdentifier}`,
-					request_type: mr.type,
-					request_description: mr.reason,
-				})),
+				request_list: emailInfo.materialRequests.map((materialRequest) => {
+					const requestTypeTranslation = {
+						[MaterialRequestType.VIEW]: this.translationsService.t(
+							'modules/campaign-monitor/campaign-monitor___material-request-type-view'
+						),
+						[MaterialRequestType.REUSE]: this.translationsService.t(
+							'modules/campaign-monitor/campaign-monitor___material-request-type-reuse'
+						),
+						[MaterialRequestType.MORE_INFO]: this.translationsService.t(
+							'modules/campaign-monitor/campaign-monitor___material-request-type-more-info'
+						),
+					}[materialRequest.type];
+					return {
+						title: materialRequest.objectSchemaName,
+						local_cp_id: materialRequest.objectMeemooLocalId,
+						pid: materialRequest.objectMeemooIdentifier,
+						page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
+							materialRequest.maintainerSlug
+						}/${materialRequest.objectSchemaIdentifier}`,
+						request_type: requestTypeTranslation,
+						request_description: materialRequest.reason,
+					};
+				}),
 				user_request_context: emailInfo.sendRequestListDto.type,
 				user_organisation: emailInfo.sendRequestListDto.organisation,
 				user_email: emailInfo.materialRequests[0]?.requesterMail,
