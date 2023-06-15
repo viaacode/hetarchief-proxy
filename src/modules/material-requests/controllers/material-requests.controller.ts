@@ -18,6 +18,7 @@ import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 import session from 'express-session';
 import { isEmpty, isNil } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
 	CreateMaterialRequestDto,
@@ -218,21 +219,23 @@ export class MaterialRequestsController {
 			);
 
 			// Log events for each material request
+			const material_request_group_id = uuidv4();
 			this.eventsService.insertEvents(
 				materialRequests.items.map(
 					(materialRequest): LogEvent => ({
 						id: EventsHelper.getEventId(request),
 						type: LogEventType.ITEM_REQUEST,
 						source: request.path,
-						subject: materialRequest.id,
+						subject: user.getId(),
 						time: new Date().toISOString(),
 						data: {
-							idp: Idp.MEEMOO,
-							user_group_name: user.getGroupName(),
-							user_group_id: user.getGroupId(),
+							material_request_group_id,
 							type: materialRequest.objectDctermsFormat,
 							external_id: materialRequest.objectMeemooIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
+							idp: Idp.MEEMOO,
+							user_group_name: user.getGroupName(),
+							user_group_id: user.getGroupId(),
 							contact_form: {
 								user_type: materialRequest.requesterCapacity,
 								problem_category: materialRequest.type,
