@@ -215,15 +215,18 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.KEYWORD]: 'keyword',
 	[IeObjectsSearchFilterField.NAME]: 'keyword',
-	[IeObjectsSearchFilterField.FORMAT]: 'keyword',
 	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'keyword',
-	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'keyword',
-	[IeObjectsSearchFilterField.LANGUAGE]: 'keyword',
-	[IeObjectsSearchFilterField.MEDIUM]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
-	[IeObjectsSearchFilterField.IDENTIFIER]: 'keyword',
-	[IeObjectsSearchFilterField.LICENSES]: 'keyword',
+
+	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
+	// These are already type keyword:
+	// [IeObjectsSearchFilterField.FORMAT]: 'keyword',
+	// [IeObjectsSearchFilterField.MAINTAINER_ID]: 'keyword',
+	// [IeObjectsSearchFilterField.LANGUAGE]: 'keyword',
+	// [IeObjectsSearchFilterField.MEDIUM]: 'keyword',
+	// [IeObjectsSearchFilterField.IDENTIFIER]: 'keyword',
+	// [IeObjectsSearchFilterField.LICENSES]: 'keyword',
 };
 
 export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
