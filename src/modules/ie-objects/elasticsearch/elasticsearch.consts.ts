@@ -193,7 +193,6 @@ export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.ADVANCED_QUERY,
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.DESCRIPTION,
-	IeObjectsSearchFilterField.CREATOR,
 	IeObjectsSearchFilterField.IDENTIFIER,
 ];
 
@@ -233,6 +232,11 @@ export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string }
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 };
+
+export const FLATTENED_FIELDS: IeObjectsSearchFilterField[] = [
+	IeObjectsSearchFilterField.CREATOR,
+	IeObjectsSearchFilterField.PUBLISHER,
+];
 
 /*
 	This prefix is added before and after every digit before jsep parses it.
