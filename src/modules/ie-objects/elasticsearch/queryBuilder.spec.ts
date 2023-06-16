@@ -282,7 +282,7 @@ describe('QueryBuilder', () => {
 						{
 							bool: {
 								filter: [],
-								must: [{ term: { 'dcterms_format.keyword': 'video' } }],
+								must: [{ term: { dcterms_format: 'video' } }],
 							},
 						},
 						{
