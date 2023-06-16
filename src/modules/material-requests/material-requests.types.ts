@@ -59,6 +59,13 @@ export enum MaterialRequestType {
 	VIEW = 'VIEW',
 }
 
+export enum MaterialRequestRequesterCapacity {
+	OTHER = 'OTHER',
+	WORK = 'WORK',
+	PRIVATE_RESEARCH = 'PRIVATE_RESEARCH',
+	EDUCATION = 'EDUCATION',
+}
+
 export enum MaterialRequestOrderProp {
 	ID = 'id',
 	CREATED_AT = 'createdAt',
@@ -75,6 +82,7 @@ export enum MaterialRequestMaintainerContactType {
 	ONTSLUITING = 'ontsluiting',
 	FACTURATIE = 'facturatie',
 }
+
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];
