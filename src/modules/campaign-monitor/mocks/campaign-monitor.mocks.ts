@@ -86,7 +86,7 @@ export const mockRequestListItemToMaintainer: RequestListItem = {
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
 	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
-	request_type: mockMaterialRequest1.type,
+	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };
 
@@ -96,7 +96,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	cp_name: mockMaterialRequest1.maintainerName,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
 	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
-	request_type: mockMaterialRequest1.type,
+	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };
 
@@ -106,7 +106,7 @@ export const mockCampaignMonitorMaterialRequestDataToMaintainer: CampaignMonitor
 		user_lastname: mockMaterialRequestEmailInfo.lastName,
 		cp_name: mockMaterialRequestEmailInfo.materialRequests[0].maintainerName,
 		request_list: [mockRequestListItemToMaintainer],
-		user_request_context: mockMaterialRequestEmailInfo.sendRequestListDto.type,
+		user_request_context: 'Andere',
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
@@ -116,7 +116,7 @@ export const mockCampaignMonitorMaterialRequestDataToRequester: CampaignMonitorM
 		user_firstname: mockMaterialRequestEmailInfo.firstName,
 		user_lastname: mockMaterialRequestEmailInfo.lastName,
 		request_list: [mockRequestListItemToRequester],
-		user_request_context: mockMaterialRequestEmailInfo.sendRequestListDto.type,
+		user_request_context: 'Andere',
 		user_organisation: mockMaterialRequestEmailInfo.sendRequestListDto.organisation,
 		user_email: mockMaterialRequestEmailInfo.materialRequests[0].requesterMail,
 	};
