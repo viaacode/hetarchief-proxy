@@ -1,3 +1,4 @@
+import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
@@ -23,6 +24,7 @@ import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { Visit, VisitStatus } from '~modules/visits/types';
+import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService = {
@@ -132,6 +134,10 @@ describe('CampaignMonitorService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: TranslationsService,
+					useValue: mockTranslationsService,
 				},
 			],
 		})

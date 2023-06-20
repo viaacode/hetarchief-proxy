@@ -7,6 +7,7 @@ import { EventsService } from '../services/events.service';
 
 import { LogEvent } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -27,7 +28,7 @@ export class EventsController {
 			id: EventsHelper.getEventId(request),
 			type: createEventsDto.type,
 			source: createEventsDto.path,
-			subject: user.getId() || 'ANONYMOUS',
+			subject: user.getId() || null,
 			time: new Date().toISOString(),
 		};
 
@@ -37,8 +38,8 @@ export class EventsController {
 
 		logEvent.data = {
 			...logEvent.data,
-			user_group_name: user.getGroupName() || 'ANONYMOUS',
-			user_group_id: user.getGroupId() || 'ANONYMOUS',
+			user_group_name: user.getGroupName() || GroupName.ANONYMOUS,
+			user_group_id: user.getGroupId() || null,
 		};
 
 		await this.eventsService.insertEvents([logEvent]);

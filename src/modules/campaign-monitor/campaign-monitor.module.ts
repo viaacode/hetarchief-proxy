@@ -5,10 +5,11 @@ import { CampaignMonitorController } from './controllers/campaign-monitor.contro
 import { CampaignMonitorService } from './services/campaign-monitor.service';
 
 import { EventsModule } from '~modules/events';
+import { TranslationsModule } from '~modules/translations';
 
 @Module({
 	controllers: [CampaignMonitorController],
-	imports: [ConfigModule, EventsModule],
+	imports: [ConfigModule, EventsModule, TranslationsModule],
 	providers: [CampaignMonitorService],
 	exports: [CampaignMonitorService],
 })

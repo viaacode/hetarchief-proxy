@@ -1,5 +1,11 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
@@ -290,39 +296,48 @@ export class MaterialRequestsService {
 		sendRequestListDto: SendRequestListDto,
 		userInfo: MaterialRequestSendRequestListUserInfo
 	): Promise<void> {
-		const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
-		const groupedArray = [];
+		try {
+			const groupedMaterialRequests: any = groupBy(materialRequests, 'maintainerId');
+			const groupedArray = [];
 
-		Object.keys(groupedMaterialRequests).forEach((key) => {
-			groupedArray.push(groupedMaterialRequests[key]);
-		});
+			Object.keys(groupedMaterialRequests).forEach((key) => {
+				groupedArray.push(groupedMaterialRequests[key]);
+			});
 
-		// Send mail to each maintainer containing only material requests for objects they are the maintainer of
-		await Promise.all(
-			groupedArray.map(async (materialRequests: MaterialRequest[]) => {
-				const emailInfo: MaterialRequestEmailInfo = {
-					// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
-					to: materialRequests[0].contactMail,
-					template: Template.MATERIAL_REQUEST_MAINTAINER,
-					materialRequests: materialRequests,
-					sendRequestListDto,
-					firstName: userInfo.firstName,
-					lastName: userInfo.lastName,
-				};
-				await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
-			})
-		);
+			// Send mail to each maintainer containing only material requests for objects they are the maintainer of
+			await Promise.all(
+				groupedArray.map(async (materialRequests: MaterialRequest[]) => {
+					const emailInfo: MaterialRequestEmailInfo = {
+						// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
+						to: materialRequests[0].contactMail,
+						template: Template.MATERIAL_REQUEST_MAINTAINER,
+						materialRequests: materialRequests,
+						sendRequestListDto,
+						firstName: userInfo.firstName,
+						lastName: userInfo.lastName,
+					};
+					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+				})
+			);
 
-		// Send mail to the requester containing all of their material requests for all the objects they requested
-		const emailInfo: MaterialRequestEmailInfo = {
-			to: materialRequests[0]?.requesterMail,
-			template: Template.MATERIAL_REQUEST_REQUESTER,
-			materialRequests: materialRequests,
-			sendRequestListDto,
-			firstName: userInfo.firstName,
-			lastName: userInfo.lastName,
-		};
-		await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+			// Send mail to the requester containing all of their material requests for all the objects they requested
+			const emailInfo: MaterialRequestEmailInfo = {
+				to: materialRequests[0]?.requesterMail,
+				template: Template.MATERIAL_REQUEST_REQUESTER,
+				materialRequests: materialRequests,
+				sendRequestListDto,
+				firstName: userInfo.firstName,
+				lastName: userInfo.lastName,
+			};
+			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
+		} catch (err) {
+			const error = {
+				message: 'Failed to send the material requests',
+				innerException: err,
+			};
+			console.error(error);
+			throw new InternalServerErrorException(error);
+		}
 	}
 
 	/**

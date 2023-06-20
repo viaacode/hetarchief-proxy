@@ -14,6 +14,7 @@ import { IeObjectLicense } from '../ie-objects.types';
 import {
 	AGGS_PROPERTIES,
 	DEFAULT_QUERY_TYPE,
+	FLATTENED_FIELDS,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
@@ -164,15 +165,15 @@ export class QueryBuilder {
 		searchFilter: SearchFilter
 	): { occurrenceType: string; query: any } {
 		if (
-			searchFilter.field === IeObjectsSearchFilterField.PUBLISHER &&
+			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
 		) {
-			// Publisher is a special case since it is a flattened field
+			// Publisher/Creator are a special cases since they are flattened fields
 			return {
 				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
 				query: {
 					wildcard: {
-						schema_publisher_text: {
+						[elasticKey]: {
 							value: `*${searchFilter.value}*`,
 						},
 					},
