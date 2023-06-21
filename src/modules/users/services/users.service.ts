@@ -44,7 +44,7 @@ export class UsersService {
 			return null;
 		}
 
-		let adpatedUser: User = {
+		let adaptedUser: User = {
 			id: graphQlUser?.id,
 			fullName: graphQlUser?.full_name,
 			firstName: graphQlUser?.first_name,
@@ -69,22 +69,22 @@ export class UsersService {
 		};
 
 		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {
-			adpatedUser = {
-				...adpatedUser,
+			adaptedUser = {
+				...adaptedUser,
 				maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
 			};
 		}
 
 		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug) {
-			adpatedUser = {
-				...adpatedUser,
+			adaptedUser = {
+				...adaptedUser,
 				visitorSpaceSlug:
 					graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
 			};
 		}
 
 		/* istanbul ignore next */
-		return adpatedUser;
+		return adaptedUser;
 	}
 
 	public groupIdToName(groupId: keyof typeof GroupIdToName): GroupName | null {
