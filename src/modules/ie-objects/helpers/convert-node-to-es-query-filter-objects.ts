@@ -13,7 +13,17 @@ export const convertNodeToEsQueryFilterObjects = (
 	node.value = decodeSearchterm(node.value as string);
 	node.name = decodeSearchterm(node.name as string);
 	switch (node.type) {
-		case 'Compound':
+		case 'Compound': {
+			const bodyNodes = (node.body || []) as Expression[];
+			if (!bodyNodes.find((bodyNode) => bodyNode.type !== 'Identifier')) {
+				// Compound query with only identifier nodes below it. This is a simple text search, so we want to simplify the query
+				return buildFreeTextFilter(searchTemplates.fuzzy, {
+					...searchFilter,
+					value: bodyNodes.map((bodyNode) => bodyNode.name).join(' '),
+				});
+			}
+
+			// Compound query with other nodes below it => follow the regular recursive building of the elasticsearch query
 			return {
 				bool: {
 					should: ((node.body || []) as Expression[]).map((bodyNode) =>
@@ -22,6 +32,7 @@ export const convertNodeToEsQueryFilterObjects = (
 					minimum_should_match: ((node.body || []) as Expression[]).length,
 				},
 			};
+		}
 
 		case 'SequenceExpression':
 			return {
