@@ -57,7 +57,10 @@ import {
 	GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import {
+	IeObjectsSearchFilterField,
+	MAX_COUNT_SEARCH_RESULTS,
+} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -91,6 +94,21 @@ export class IeObjectsService {
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
+		if (inputQuery.page * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
+			// Limit number of results to MAX_COUNT_SEARCH_RESULTS
+			// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
+			return {
+				...Pagination<IeObject>({
+					items: [],
+					page: inputQuery.page,
+					size: 0,
+					total: MAX_COUNT_SEARCH_RESULTS,
+				}),
+				aggregations: [],
+				searchTerms: [],
+			};
+		}
+
 		const id = randomUUID();
 
 		let spacesIds: string[] = [];
@@ -160,7 +178,7 @@ export class IeObjectsService {
 				items: adaptedESResponse.hits.hits.map((esHit) =>
 					this.adaptESObjectToObject(esHit._source)
 				),
-				page: 1,
+				page: inputQuery.page,
 				size: adaptedESResponse.hits.hits.length,
 				total: adaptedESResponse.hits.total.value,
 			}),
