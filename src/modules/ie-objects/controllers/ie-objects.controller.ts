@@ -39,6 +39,10 @@ import { IeObjectsService } from '../services/ie-objects.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import {
+	IeObjectsSearchFilterField,
+	Operator,
+} from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
@@ -326,10 +330,18 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
+		// Only search in the visitor space elasticsearch index if the user is searching inside a visitor space
+		const maintainerFilter = queryDto.filters.find(
+			(filter) =>
+				filter.field === IeObjectsSearchFilterField.MAINTAINER_ID &&
+				filter.operator === Operator.IS
+		);
+		const esIndex = maintainerFilter?.value?.toLowerCase() || '_all';
+
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
 			queryDto,
-			'_all',
+			esIndex,
 			referer,
 			user,
 			visitorSpaceAccessInfo
