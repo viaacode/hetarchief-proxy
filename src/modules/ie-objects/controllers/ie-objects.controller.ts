@@ -331,7 +331,7 @@ export class IeObjectsController {
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		// Only search in the visitor space elasticsearch index if the user is searching inside a visitor space
-		const maintainerFilter = queryDto.filters.find(
+		const maintainerFilter = queryDto?.filters?.find(
 			(filter) =>
 				filter.field === IeObjectsSearchFilterField.MAINTAINER_ID &&
 				filter.operator === Operator.IS
