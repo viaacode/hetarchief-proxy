@@ -94,7 +94,7 @@ export class IeObjectsService {
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
-		if (inputQuery.page * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
+		if ((inputQuery.page - 1) * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
 			// Limit number of results to MAX_COUNT_SEARCH_RESULTS
 			// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
 			return {
