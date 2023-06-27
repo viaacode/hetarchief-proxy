@@ -8,12 +8,7 @@ import {
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
 } from '../ie-objects.conts';
-import {
-	IeObject,
-	IeObjectExtraUserGroupType,
-	IeObjectLicense,
-	IeObjectSector,
-} from '../ie-objects.types';
+import { IeObject, IeObjectExtraUserGroupType, IeObjectLicense } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
@@ -38,7 +33,9 @@ export const limitAccessToObjectDetails = (
 	const hasFolderAccess = userInfo.accessibleObjectIdsThroughFolders.includes(
 		ieObject?.schemaIdentifier
 	);
-	const hasFullAccess = userInfo.accessibleVisitorSpaceIds.includes(ieObject?.maintainerId);
+	const hasFullVisitorSpaceAccess = userInfo.accessibleVisitorSpaceIds.includes(
+		ieObject?.maintainerId
+	);
 
 	// Step 1a - Determine Licenses
 	// ---------------------------------------------------
@@ -85,26 +82,13 @@ export const limitAccessToObjectDetails = (
 		!isEmpty(objectIntraCpLicenses)
 	) {
 		// User from sector X can view an ieObject with sector Y
-		const licensesBySector =
-			IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userInfo.sector][ieObject.sector];
+		const licensesBySector = [
+			...IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userInfo.sector][ieObject.sector],
+		];
 
-		// Check if ie object licenses includes PUBLIC METADATA ALL AND
-		// Check if licenses by sector does not include PUBLIC METADATA ALL
-		// Add PUBLIC METADATA ALL to licenses by sector if the above is true
-		if (
-			ieObjectLicenses.includes(IeObjectLicense.PUBLIEK_METADATA_ALL) &&
-			!licensesBySector.includes(IeObjectLicense.PUBLIEK_METADATA_ALL)
-		) {
-			licensesBySector.push(IeObjectLicense.PUBLIEK_METADATA_ALL);
-		}
-
-		// Check to see of if user is checking its own content
-		if (
-			userInfo.sector === IeObjectSector.RURAL &&
-			ieObject.sector === IeObjectSector.RURAL &&
-			hasFullAccess
-		) {
-			licensesBySector.push(IeObjectLicense.INTRA_CP_CONTENT);
+		if (ieObject.maintainerId === userInfo.maintainerId) {
+			// User linked to maintainer of the object can always see everything that the object allows
+			licensesBySector.push(...IE_OBJECT_INTRA_CP_LICENSES);
 		}
 
 		// Determine common ground between ie object licenses and user group licenses
@@ -112,7 +96,7 @@ export const limitAccessToObjectDetails = (
 	}
 	// If user is part of VISITOR && has folder access -> add visitor metadata license to licenses
 	// If user is part of VISITOR && has full access -> add visitor content license to licenses
-	if (hasFolderAccess || hasFullAccess) {
+	if (hasFolderAccess || hasFullVisitorSpaceAccess) {
 		licensesByUserGroup.push(
 			IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 			IeObjectLicense.BEZOEKERTOOL_CONTENT
@@ -144,7 +128,7 @@ export const limitAccessToObjectDetails = (
 
 	// Determine access through
 	const accessThrough = getAccessThrough({
-		hasFullAccess,
+		hasFullAccess: hasFullVisitorSpaceAccess,
 		hasFolderAccess,
 		hasIntraCPLicenses:
 			intersection(accessibleLicenses, IE_OBJECT_INTRA_CP_LICENSES).length > 0,

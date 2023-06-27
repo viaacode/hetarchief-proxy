@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { IeObjectSector, IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import { IeObjectsVisitorSpaceInfo, IeSector } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';

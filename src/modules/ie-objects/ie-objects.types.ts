@@ -6,7 +6,7 @@ import {
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
 
-export type IeObjectSectorLicenseMatrix = Record<IeObjectSector, IeObjectLicense[]>;
+export type IeObjectSectorLicenseMatrix = Readonly<Record<IeSector, Readonly<IeObjectLicense[]>>>;
 
 export type IeObjectSeo = Pick<IeObject, 'name' | 'description'>;
 
@@ -36,7 +36,7 @@ export enum IeObjectMetadataSet {
 	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
 }
 
-export enum IeObjectSector {
+export enum IeSector {
 	CULTURE = 'Cultuur',
 	GOVERNMENT = 'Overheid',
 	PUBLIC = 'Publieke Omroep',
@@ -126,7 +126,7 @@ export interface IeObject {
 	temporal: string;
 	thumbnailUrl: string;
 	// EXTRA
-	sector?: IeObjectSector;
+	sector?: IeSector;
 	accessThrough?: IeObjectAccessThrough[];
 	// OPTIONAL
 	ebucoreObjectType?: string | null;
@@ -266,7 +266,7 @@ export interface ElasticsearchObject {
 		schema_identifier?: string;
 		schema_name?: string;
 		alt_label?: string | null; // not always available
-		organization_type?: IeObjectSector | null; // not always available
+		organization_type?: IeSector | null; // not always available
 	};
 	schema_name: string;
 	schema_publisher: {
