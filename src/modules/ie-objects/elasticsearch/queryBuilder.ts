@@ -405,10 +405,22 @@ export class QueryBuilder {
 				occurrenceType: 'filter',
 				query: [
 					{
-						terms: {
-							'schema_maintainer.organization_type': getSectorsWithEssenceAccess(
-								inputInfo.user.getSector()
-							),
+						bool: {
+							should: [
+								{
+									terms: {
+										'schema_maintainer.organization_type':
+											getSectorsWithEssenceAccess(inputInfo.user.getSector()),
+									},
+								},
+								{
+									term: {
+										'schema_maintainer.schema_identifier':
+											inputInfo.user.getMaintainerId(),
+									},
+								},
+							],
+							minimum_should_match: 1,
 						},
 					},
 					{
