@@ -29,7 +29,7 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
@@ -106,10 +106,39 @@ export class CollectionsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
+		const isKeyUser = user.getIsKeyUser();
+
 		// Limit access to the objects in the collection
-		folderObjects.items = (folderObjects.items ?? []).map((object) => {
-			return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
-		});
+		folderObjects.items = (folderObjects.items ?? [])
+			.filter((object) => {
+				// if user is no keyUser AND object has ONLY license INTRA_CP-CONTENT AND/OR INTRA_CP-METADATA_ALL, do not show object
+				const noKeyUserAndHasOnlyLicense =
+					!isKeyUser &&
+					object.licenses &&
+					object.licenses.length === 1 &&
+					object.licenses.includes(
+						IeObjectLicense.INTRA_CP_CONTENT || IeObjectLicense.INTRA_CP_METADATA_ALL
+					);
+				const noKeyUserAndHasLicenses =
+					!isKeyUser &&
+					object.licenses &&
+					object.licenses.length === 2 &&
+					object.licenses.includes(
+						IeObjectLicense.INTRA_CP_CONTENT && IeObjectLicense.INTRA_CP_METADATA_ALL
+					);
+				if (noKeyUserAndHasOnlyLicense || noKeyUserAndHasLicenses) {
+					return;
+				} else {
+					return object;
+				}
+			})
+			.map((object) => {
+				return this.ieObjectsService.limitObjectInFolder(
+					object,
+					user,
+					visitorSpaceAccessInfo
+				);
+			});
 
 		return folderObjects;
 	}
