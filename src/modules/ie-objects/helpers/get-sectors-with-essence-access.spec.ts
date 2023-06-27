@@ -48,7 +48,6 @@ describe('GetSectorsWithEssenceAccess', () => {
 			IeSector.CULTURE,
 			IeSector.GOVERNMENT,
 			IeSector.REGIONAL,
-			IeSector.RURAL,
 		]);
 	});
 });
