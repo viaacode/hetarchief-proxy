@@ -248,16 +248,20 @@ export class IeObjectsController {
 		// Limit the amount of props returned for an ie object based on licenses and sector
 		const licensedRelatedIeObjects = {
 			...relatedIeObjects,
-			items: relatedIeObjects.items.map((item) =>
-				limitAccessToObjectDetails(item, {
-					userId: user.getId(),
-					isKeyUser: user.getIsKeyUser(),
-					sector: user.getSector(),
-					groupId: user.getGroupId(),
-					maintainerId: user.getMaintainerId(),
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				})
+
+			// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
+			items: compact(
+				relatedIeObjects.items.map((item) =>
+					limitAccessToObjectDetails(item, {
+						userId: user.getId(),
+						isKeyUser: user.getIsKeyUser(),
+						sector: user.getSector(),
+						groupId: user.getGroupId(),
+						maintainerId: user.getMaintainerId(),
+						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					})
+				)
 			),
 		};
 
