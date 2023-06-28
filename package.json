@@ -44,7 +44,7 @@
     "@studiohyperdrive/pagination": "1.0.0",
     "@viaa/avo2-types": "2.48.15",
     "app-root-path": "3.0.0",
-    "aws-sdk": "2.1097.0",
+    "aws-sdk": "2.1393.0",
     "blend-promise-utils": "1.28.0",
     "cache-manager": "3.6.0",
     "class-transformer": "0.5.1",
