@@ -6,9 +6,15 @@ When uploading the templates in campaign monitor, choose "import HTML" and make 
 
 ## ID's & variables
 
-### qas_arc_request item enduser
+### arc_request item enduser
+
+#### QAS
 
 b573a74d-45cf-432a-bd0b-eb74a4cdec1e (https://meemoo.createsend.com/triggered/workflow/b573a74d-45cf-432a-bd0b-eb74a4cdec1e)
+
+#### PRD
+
+e3bb38f4-afe2-4d89-ac9b-c3c32caef083 (https://meemoo.createsend.com/triggered/workflow/e3bb38f4-afe2-4d89-ac9b-c3c32caef083)
 
 ```json
 {
@@ -32,9 +38,16 @@ b573a74d-45cf-432a-bd0b-eb74a4cdec1e (https://meemoo.createsend.com/triggered/wo
 
 ```
 
-### qas_arc_request item cp
+### arc_request item cp
+
+#### QAS
 
 d2691b7b-5119-42cc-9db8-08a94df37f4c (https://meemoo.createsend.com/triggered/workflow/d2691b7b-5119-42cc-9db8-08a94df37f4c)
+
+#### PRD
+
+0694e647-6fbc-474d-b8c8-4db735fb630a (https://meemoo.createsend.com/triggered/workflow/0694e647-6fbc-474d-b8c8-4db735fb630a)
+
 
 ```json
 {
