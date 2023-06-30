@@ -108,28 +108,23 @@ export class CollectionsController {
 
 		const isKeyUser = user.getIsKeyUser();
 
-		// Limit access to the objects in the collection
+		// Limit access to the objects in the collection:
+		// https://meemoo.atlassian.net/browse/ARC-1834
 		folderObjects.items = (folderObjects.items ?? [])
 			.filter((object) => {
 				// if user is no keyUser AND object has ONLY license INTRA_CP-CONTENT AND/OR INTRA_CP-METADATA_ALL, do not show object
-				const noKeyUserAndHasOnlyLicense =
-					!isKeyUser &&
-					object.licenses &&
-					object.licenses.length === 1 &&
-					object.licenses.includes(
-						IeObjectLicense.INTRA_CP_CONTENT || IeObjectLicense.INTRA_CP_METADATA_ALL
-					);
-				const noKeyUserAndHasLicenses =
-					!isKeyUser &&
-					object.licenses &&
-					object.licenses.length === 2 &&
-					object.licenses.includes(
-						IeObjectLicense.INTRA_CP_CONTENT && IeObjectLicense.INTRA_CP_METADATA_ALL
-					);
-				if (noKeyUserAndHasOnlyLicense || noKeyUserAndHasLicenses) {
-					return;
+				const hasOnlyIntraCpLicenses =
+					(object.licenses || []).filter(
+						(license) =>
+							![
+								IeObjectLicense.INTRA_CP_CONTENT,
+								IeObjectLicense.INTRA_CP_METADATA_ALL,
+							].includes(license)
+					).length === 0;
+				if (!isKeyUser && hasOnlyIntraCpLicenses) {
+					return false;
 				} else {
-					return object;
+					return true;
 				}
 			})
 			.map((object) => {
