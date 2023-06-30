@@ -29,7 +29,7 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
@@ -106,10 +106,34 @@ export class CollectionsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		// Limit access to the objects in the collection
-		folderObjects.items = (folderObjects.items ?? []).map((object) => {
-			return this.ieObjectsService.limitObjectInFolder(object, user, visitorSpaceAccessInfo);
-		});
+		const isKeyUser = user.getIsKeyUser();
+
+		// Limit access to the objects in the collection:
+		// https://meemoo.atlassian.net/browse/ARC-1834
+		folderObjects.items = (folderObjects.items ?? [])
+			.filter((object) => {
+				// if user is no keyUser AND object has ONLY license INTRA_CP-CONTENT AND/OR INTRA_CP-METADATA_ALL, do not show object
+				const hasOnlyIntraCpLicenses =
+					(object.licenses || []).filter(
+						(license) =>
+							![
+								IeObjectLicense.INTRA_CP_CONTENT,
+								IeObjectLicense.INTRA_CP_METADATA_ALL,
+							].includes(license)
+					).length === 0;
+				if (!isKeyUser && hasOnlyIntraCpLicenses) {
+					return false;
+				} else {
+					return true;
+				}
+			})
+			.map((object) => {
+				return this.ieObjectsService.limitObjectInFolder(
+					object,
+					user,
+					visitorSpaceAccessInfo
+				);
+			});
 
 		return folderObjects;
 	}
