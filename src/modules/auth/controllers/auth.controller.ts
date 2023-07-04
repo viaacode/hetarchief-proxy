@@ -68,10 +68,12 @@ export class AuthController {
 									last_access_date: new Date().toISOString(),
 									organisation: user?.getOrganisationName(),
 								})
-								.catch(() => {
+								.catch((err) => {
 									this.logger.error(
 										'Failed to update user in campaign monitor. user: ' +
-											JSON.stringify(user)
+											JSON.stringify(user) +
+											'   ' +
+											JSON.stringify(err)
 									);
 								});
 						})
