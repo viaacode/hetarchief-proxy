@@ -33,10 +33,10 @@ import {
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
-	IeObjectSector,
 	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
+	IeSector,
 } from '../ie-objects.types';
 
 import {
@@ -94,7 +94,7 @@ export class IeObjectsService {
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
-		if (inputQuery.page * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
+		if ((inputQuery.page - 1) * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
 			// Limit number of results to MAX_COUNT_SEARCH_RESULTS
 			// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
 			return {
@@ -467,8 +467,8 @@ export class IeObjectsService {
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
 			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
 			sector:
-				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
-				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector),
+				(gqlIeObject?.haorg_organization_type as IeSector) ??
+				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeSector),
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,

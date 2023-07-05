@@ -1,5 +1,5 @@
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
-import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeSector } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -17,49 +17,53 @@ describe('Limit access to object details', () => {
 	// INT - ARC2.0: test cases voor licenties en gebruikersgroepen
 	// https://docs.google.com/document/d/1Ejqag9Do7QngIBp2nj6sY0M1dYqO4Dh9ZFw0W3Vuwow/edit
 	it('Test case 1 - user sees metadataset all on detail page', () => {
-		const mockUserInfoTestCase1a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.VISITOR,
-			isKeyUser: true,
-			sector: IeObjectSector.PUBLIC,
-			accessibleVisitorSpaceIds: [],
-		};
 		const limitedAccessIeObject1a = limitAccessToObjectDetails(
-			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
+			// Object: DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				maintainerId: 'OR-zp3w03v',
+				sector: IeSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
-			// Basic user - isKeyUser - Public Sector
-			mockUserInfoTestCase1a
+			// User: Basic user - isKeyUser - Public Sector
+			{
+				...mockUserInfo,
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.PUBLIC,
+				accessibleVisitorSpaceIds: [],
+			}
 		);
 		expect(limitedAccessIeObject1a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-zp3w03v',
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.PUBLIC_INFO],
 		});
 	});
 
 	it('Test case 2 - user sees metadataset all en essence on detail page', () => {
-		const mockUserInfoTestCase2a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.CP_ADMIN,
-			isKeyUser: true,
-			sector: IeObjectSector.CULTURE,
-		};
 		const limitedAccessIeObject1b = limitAccessToObjectDetails(
-			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
+			// Object: ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-xs5jg6w',
+				sector: IeSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
-			// CP admin works for ADVN - hasVisitorSpace - Culture sector
-			mockUserInfoTestCase2a
+			// User: CP admin works for ADVN - hasVisitorSpace - Culture sector
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-xs5jg6w',
+				accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
+				groupId: GroupId.CP_ADMIN,
+				isKeyUser: true,
+				sector: IeSector.CULTURE,
+			}
 		);
 		expect(limitedAccessIeObject1b).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
+			maintainerId: 'OR-xs5jg6w',
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [
 				IeObjectAccessThrough.SECTOR,
@@ -70,28 +74,29 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 3 - user sees metadataset all en essence on detail page', () => {
-		const mockUserInfoTestCase3a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.VISITOR,
-			isKeyUser: true,
-			sector: IeObjectSector.CULTURE,
-		};
 		const limitedAccessIeObject1c = limitAccessToObjectDetails(
-			// VRT - VIAA-PUBLIEK_METADATA_LTD + VIAA-INTRA_CP-METADATA-ALL + BEZOEKERTOOL-CONTENT
+			// Object: VRT - VIAA-PUBLIEK_METADATA_LTD + VIAA-INTRA_CP-METADATA-ALL + BEZOEKERTOOL-CONTENT
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-rf5kf25',
+				sector: IeSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_METADATA_ALL,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
 				],
 			},
-			// Basis gebruiker - isKeyUser - Culture sector - temporary access visitor space VRT
-			mockUserInfoTestCase3a
+			// User: Basis gebruiker - isKeyUser - Culture sector - temporary access visitor space VRT
+			{
+				...mockUserInfo,
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.CULTURE,
+			}
 		);
 		expect(limitedAccessIeObject1c).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
+			maintainerId: 'OR-rf5kf25',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.INTRA_CP_METADATA_ALL,
@@ -106,29 +111,30 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 4 - user sees metadataset all on detail page', () => {
-		const mockUserInfoTestCase4a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.VISITOR,
-			isKeyUser: false,
-			sector: IeObjectSector.CULTURE,
-			accessibleVisitorSpaceIds: [],
-			accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
-		};
 		const limitedAccessIeObject1d = limitAccessToObjectDetails(
-			// Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
+			// Object: Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-154dn75',
+				sector: IeSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 				],
 			},
-			// Basis gebruiker - temporary access visitor space Amsab-ISG - Culture sector
-			mockUserInfoTestCase4a
+			// User: Basis gebruiker - folder access visitor space Amsab-ISG - Culture sector
+			{
+				...mockUserInfo,
+				groupId: GroupId.VISITOR,
+				isKeyUser: false,
+				sector: IeSector.CULTURE,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
+			}
 		);
 		expect(limitedAccessIeObject1d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-154dn75',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -141,31 +147,32 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 4b - user sees metadataset limited on detail page', () => {
-		const mockUserInfoTestCase4b: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.VISITOR,
-			isKeyUser: false,
-			sector: IeObjectSector.CULTURE,
-			accessibleVisitorSpaceIds: [],
-			accessibleObjectIdsThroughFolders: [
-				'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6743',
-			],
-		};
 		const limitedAccessIeObject1da = limitAccessToObjectDetails(
-			// Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
+			// Object: Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				maintainerId: 'OR-154dn75',
+				sector: IeSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 				],
 			},
-			// Basis gebruiker - temporary access visitor space MAAR NIET VOOR Amsab-ISG - Culture sector
-			mockUserInfoTestCase4b
+			// User: Basis gebruiker - folder access visitor space MAAR NIET VOOR Amsab-ISG - Culture sector
+			{
+				...mockUserInfo,
+				groupId: GroupId.VISITOR,
+				isKeyUser: false,
+				sector: IeSector.CULTURE,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [
+					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6743',
+				],
+			}
 		);
 		expect(limitedAccessIeObject1da).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
+			maintainerId: 'OR-154dn75',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -175,31 +182,32 @@ describe('Limit access to object details', () => {
 	});
 
 	it('Test case 5 - user sees metadataset all on detail page', () => {
-		const mockUserInfoTestCase5a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.MEEMOO_ADMIN,
-			isKeyUser: false,
-			sector: null,
-			maintainerId: 'OR-rf4kf25',
-			accessibleVisitorSpaceIds: ['OR-rf4kf25', 'OR-rf5kf25'], // MEEMOO_ADMIN has access to all visitor spaces
-			accessibleObjectIdsThroughFolders: [],
-		};
 		const limitedAccessIeObject1e = limitAccessToObjectDetails(
-			// DPG Media (sector = landelijke private omroep)
+			// Object: DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				maintainerId: 'OR-zp3w03v',
+				sector: IeSector.RURAL,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_CONTENT,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 				],
 			},
-			// MEEMOO ADMIN
-			mockUserInfoTestCase5a
+			// User: MEEMOO ADMIN
+			{
+				...mockUserInfo,
+				groupId: GroupId.MEEMOO_ADMIN,
+				isKeyUser: false,
+				sector: null,
+				maintainerId: 'OR-rf4kf25',
+				accessibleVisitorSpaceIds: ['OR-zp3w03v', 'OR-rf4kf25', 'OR-rf5kf25'], // MEEMOO_ADMIN has access to all visitor spaces
+				accessibleObjectIdsThroughFolders: [],
+			}
 		);
 		expect(limitedAccessIeObject1e).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-zp3w03v',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.INTRA_CP_CONTENT,
@@ -213,71 +221,66 @@ describe('Limit access to object details', () => {
 	});
 
 	it("Test case 6 - user doesn't see object", () => {
-		const mockUserInfoTestCase6a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.KIOSK_VISITOR,
-			maintainerId: 'OR-xs5jg6w', // ADVN
-			isKeyUser: false,
-			sector: IeObjectSector.CULTURE,
-			accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
-			accessibleObjectIdsThroughFolders: [],
-		};
 		const limitedAccessIeObject1f = limitAccessToObjectDetails(
-			// Letterenhuis (Culture sector)
+			// Object: Letterenhuis (Culture sector)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
 				maintainerId: 'OR-kw57h48', // Letterenhuis
+				sector: IeSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
 				],
 			},
-			// KIOSK - ADVN (Culture sector)
-			mockUserInfoTestCase6a
+			// User: KIOSK - ADVN (Culture sector)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-xs5jg6w', // ADVN
+				groupId: GroupId.KIOSK_VISITOR,
+				isKeyUser: false,
+				sector: IeSector.CULTURE,
+				accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
+				accessibleObjectIdsThroughFolders: [],
+			}
 		);
 		expect(limitedAccessIeObject1f).toEqual(null);
 	});
 
 	it('Test case 7 - user sees limited metadataset on detail page', () => {
-		const mockUserInfoTestCase7a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.CP_ADMIN,
-			isKeyUser: true,
-			sector: IeObjectSector.REGIONAL,
-			accessibleVisitorSpaceIds: [],
-			accessibleObjectIdsThroughFolders: [],
-		};
 		const limitedAccessIeObject1g = limitAccessToObjectDetails(
-			// SBS Belgium (Rural)
+			// Object: SBS Belgium (Rural)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				maintainerId: 'OR-wh2dd79',
+				sector: IeSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
-			// CP admin - isKeyUser - AVS (Regional sector)
-			mockUserInfoTestCase7a
+			// User: CP admin - isKeyUser - AVS (Regional sector)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-h41jm06',
+				groupId: GroupId.CP_ADMIN,
+				isKeyUser: true,
+				sector: IeSector.REGIONAL,
+				accessibleVisitorSpaceIds: ['OR-h41jm06'],
+				accessibleObjectIdsThroughFolders: [],
+			}
 		);
 		expect(limitedAccessIeObject1g).toEqual({
 			...mockIeObjectWithMetadataSetLTD,
+			maintainerId: 'OR-wh2dd79',
 			licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			accessThrough: [IeObjectAccessThrough.SECTOR],
 		});
 	});
 
 	it('Test case 8 - user sees metadataset all and essence on detail page', () => {
-		const mockUserInfoTestCase8a: LimitAccessUserInfo = {
-			...mockUserInfo,
-			groupId: GroupId.VISITOR,
-			isKeyUser: true,
-			sector: IeObjectSector.RURAL,
-			accessibleObjectIdsThroughFolders: [],
-		};
 		const limitedAccessIeObject1h = limitAccessToObjectDetails(
-			// SBS Belgium (Rural)
+			// Object: SBS Belgium (Rural)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				maintainerId: 'OR-wh2dd79',
+				sector: IeSector.RURAL,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -285,22 +288,111 @@ describe('Limit access to object details', () => {
 					IeObjectLicense.INTRA_CP_CONTENT,
 				],
 			},
-			// Basis gebruiker - isKeyUser - SBS Belgium (Rural)
-			mockUserInfoTestCase8a
+			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-wh2dd79',
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.RURAL,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
 		);
 		expect(limitedAccessIeObject1h).toEqual({
 			...mockIeObjectWithMetadataSetALLWithEssence,
+			maintainerId: 'OR-wh2dd79',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
 				IeObjectLicense.INTRA_CP_METADATA_ALL,
 				IeObjectLicense.INTRA_CP_CONTENT,
 			],
-			accessThrough: [
-				IeObjectAccessThrough.SECTOR,
-				IeObjectAccessThrough.VISITOR_SPACE_FULL,
-				IeObjectAccessThrough.PUBLIC_INFO,
-			],
+			accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.PUBLIC_INFO],
+		});
+	});
+
+	it('Test case 9 - user sees metadataset limited on detail page', () => {
+		const limitedAccessIeObject1h = limitAccessToObjectDetails(
+			// Object: SBS Belgium (Rural)
+			{
+				...mockIeObject,
+				maintainerId: 'OR-wh2dd79',
+				sector: IeSector.RURAL,
+				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
+			},
+			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-wh2dd79',
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.RURAL,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
+		);
+		expect(limitedAccessIeObject1h).toEqual({
+			...mockIeObjectWithMetadataSetALLWithEssence,
+			maintainerId: 'OR-wh2dd79',
+			licenses: [IeObjectLicense.INTRA_CP_CONTENT],
+			accessThrough: [IeObjectAccessThrough.SECTOR],
+		});
+	});
+
+	it('Test case 10 - user sees metadataset all on detail page', () => {
+		const limitedAccessIeObject = limitAccessToObjectDetails(
+			// Object: DPG Media (RURAL)
+			{
+				...mockIeObject,
+				maintainerId: 'OR-zp3w03v',
+				sector: IeSector.RURAL,
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
+			},
+			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-wh2dd79',
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.RURAL,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
+		);
+		expect(limitedAccessIeObject).toEqual({
+			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-zp3w03v',
+			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
+			accessThrough: [IeObjectAccessThrough.SECTOR, IeObjectAccessThrough.PUBLIC_INFO],
+		});
+	});
+
+	it('Test case 11 - user sees metadataset all on detail page', () => {
+		const limitedAccessIeObject1h = limitAccessToObjectDetails(
+			// Object: SBS Belgium (Rural)
+			{
+				...mockIeObject,
+				maintainerId: 'OR-wh2dd79',
+				sector: IeSector.RURAL,
+				licenses: [IeObjectLicense.INTRA_CP_METADATA_ALL],
+			},
+			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
+			{
+				...mockUserInfo,
+				maintainerId: 'OR-wh2dd79',
+				groupId: GroupId.VISITOR,
+				isKeyUser: true,
+				sector: IeSector.RURAL,
+				accessibleVisitorSpaceIds: [],
+				accessibleObjectIdsThroughFolders: [],
+			}
+		);
+		expect(limitedAccessIeObject1h).toEqual({
+			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-wh2dd79',
+			licenses: [IeObjectLicense.INTRA_CP_METADATA_ALL],
+			accessThrough: [IeObjectAccessThrough.SECTOR],
 		});
 	});
 
@@ -320,7 +412,7 @@ describe('Limit access to object details', () => {
 			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				sector: IeSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// Basic user
@@ -347,7 +439,7 @@ describe('Limit access to object details', () => {
 			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				sector: IeSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// CP admin
@@ -374,7 +466,7 @@ describe('Limit access to object details', () => {
 			// DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				sector: IeSector.CULTURE,
 				maintainerId: 'OR-rf5kf25',
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -413,7 +505,7 @@ describe('Limit access to object details', () => {
 			// Letterenhuis (Culture sector)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.CULTURE,
+				sector: IeSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
@@ -439,7 +531,7 @@ describe('Limit access to object details', () => {
 			// SBS Belgium (Rural)
 			{
 				...mockIeObject,
-				sector: IeObjectSector.RURAL,
+				sector: IeSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// CP admin

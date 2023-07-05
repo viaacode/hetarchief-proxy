@@ -10,6 +10,7 @@ import { IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
+	mockIeObjectWithMetadataSetALLWithEssence,
 	mockIeObjectWithMetadataSetLTD,
 	mockIeObjectWithMetadataSetLtdCsv,
 	mockIeObjectWithMetadataSetLtdXml,
@@ -343,8 +344,27 @@ describe('IeObjectsController', () => {
 
 	describe('getRelated', () => {
 		it('should get related ieObject items', async () => {
-			const mockResponse = { items: [{ id: 2 }, { id: 3 }] };
+			const mockResponse = {
+				items: [
+					{
+						...mockIeObjectWithMetadataSetALLWithEssence,
+						schemaIdentifier: '2',
+						maintainerId: 'OR-test',
+						licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+					},
+					{
+						...mockIeObjectWithMetadataSetALLWithEssence,
+						schemaIdentifier: '3',
+						maintainerId: 'OR-test',
+						licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+					},
+				] as IeObject[],
+			};
 			mockIeObjectsService.getRelated.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
+				visitorSpaceIds: ['OR-test'],
+				objectIds: [],
+			});
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getRelated(

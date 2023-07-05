@@ -373,8 +373,7 @@ describe('ieObjectsService', () => {
 
 	describe('getVisitorSpaceAccessInfoFromUser', () => {
 		it('should return empty arrays when the user is not logged in', async () => {
-			const user = mockUser;
-			user.id = null;
+			const user = { ...mockUser, id: null };
 			const result = await ieObjectsService.getVisitorSpaceAccessInfoFromUser(
 				new SessionUserEntity(user)
 			);

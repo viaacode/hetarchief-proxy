@@ -1,18 +1,17 @@
 import {
-	ElasticsearchHit,
 	GqlIeObject,
 	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSector,
 	IeObjectsSitemap,
+	IeSector,
 } from '../ie-objects.types';
 
 import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
-export const mockIeObject: IeObject = {
+export const mockIeObject: Readonly<IeObject> = {
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	meemooIdentifier: '8911p09j1g',
@@ -79,7 +78,7 @@ export const mockIeObject: IeObject = {
 	isPartOf: {},
 };
 
-export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
+export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
 	meemooIdentifier: '8911p09j1g',
@@ -126,7 +125,7 @@ export const mockIeObjectWithMetadataSetLTD: Partial<IeObject> = {
 	isPartOf: {},
 };
 
-export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
+export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
 	meemooIdentifier: '8911p09j1g',
@@ -183,7 +182,7 @@ export const mockIeObjectWithMetadataSetALL: Partial<IeObject> = {
 	isPartOf: {},
 };
 
-export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
+export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
 	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	representations: [],
@@ -243,7 +242,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Partial<IeObject> = {
 	isPartOf: {},
 };
 
-export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
+export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
@@ -293,7 +292,7 @@ export const mockIeObjectLimitedInFolder: Partial<IeObject> = {
 	isPartOf: {},
 };
 
-export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
+export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	maintainerName: 'vrt',
 	maintainerId: 'OR-rf5kf25',
@@ -309,7 +308,7 @@ export const mockIeObjectDefaultLimitedMetadata: Partial<IeObject> = {
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 };
 
-export const mockUser = {
+export const mockUser = Object.freeze({
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	firstName: 'Test',
 	lastName: 'Testers',
@@ -321,17 +320,17 @@ export const mockUser = {
 	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.EDIT_ANY_CONTENT_PAGES],
 	isKeyUser: false,
-};
+});
 
-export const mockUserInfo: {
+export const mockUserInfo: Readonly<{
 	userId: string | null;
 	isKeyUser: boolean;
-	sector: IeObjectSector | null;
+	sector: IeSector | null;
 	groupId: string;
 	maintainerId: string;
 	accessibleObjectIdsThroughFolders: string[];
 	accessibleVisitorSpaceIds: string[];
-} = {
+}> = {
 	userId: '2ca2fcad-0ef1-4b0c-ad14-ea83984161c9',
 	isKeyUser: false,
 	sector: null,
@@ -341,130 +340,7 @@ export const mockUserInfo: {
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockElasticObject1: ElasticsearchHit = {
-	_index: 'or-rf5kf25-2022-05-10t10.01.40.838',
-	_type: '_doc',
-	_id: '0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1f43c5688027647db866ff210addf29e9',
-	_score: 0,
-	_source: {
-		ebucore_object_type: 'footage',
-		schema_in_language: [],
-		dcterms_available: '2020-06-19T16:35:51',
-		meemoo_identifier: 'qsd50fvh8k',
-		schema_creator: null,
-		schema_identifier:
-			'0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1f43c5688027647db866ff210addf29e9',
-		schema_description:
-			"Une centaine de policiers poussent \"un cri contre la stigmatisation\" à Charleroi\n\nCHARLEROI 19/06 (BELGA)\nUne centaine de policiers se sont réunis vendredi sur le coup de 12H00 devant la tour de police de Charleroi pour pousser \"un cri contre la stigmatisation.\" Les policiers ont jeté leurs menottes au sol en signe de protestation contre le bashing médiatique et les réponses politiques lors des violences policières.\nLes policiers de la zone de police de Charleroi ont protesté vendredi à 12H00 sur l'esplanade de la tour de police à Charleroi. Ces derniers protestent contre le bashing médiatique et les réponses politiques qui font des violences policières non pas des comportements déviants isolés mais la règle, ce qui jette le discrédit et l'opprobre sur l'ensemble de la profession. Sur le coup de 12H00, la centaine de policiers réunis ont jeté leurs menottes au sol, en signe de protestation.\nSi la mort de George Floyd aux États-Unis a soulevé une vague de protestation populaire contre les violences policières alimentées par le racisme, les policiers belges veulent faire valoir que les abus de pouvoir ne sont pas légion et que beaucoup ont fait ce métier pour protéger la population et non pour jouir d'un rôle d'autorité. \"Il faut savoir que la politique policière est totalement différente aux États-Unis qu'en Belgique. Il faut que les gens comprennent également que le sentiment d'impunité n'est pas présent au sein de la police\", a confié un policier.\nLes médias ont également un important rôle à jouer. \"Ils se doivent de diffuser une information objective et replacer celle-ci dans les bonnes proportions. C'est le cas, par exemple, lorsqu'on diffuse des vidéos. Il faut montrer toute la scène et non pas une partie des faits, ce qui fausse la réalité des faits.\"\nDes actions similaires ont lieu un peu partout dans le pays, notamment à Bruxelles et Liège.\nBelga context\nRelated picture(s)\nView full context on BelgaBox (link: http://m.belga.be?m=algapgom)\nCOR 656/GFR\n191434 Jun 20\nBRIEF/DIVERS/HAINAUT/POLICE/SOCIETE",
-		schema_publisher: {
-			Distributeur: ['belga'],
-		},
-		schema_duration: '00:00:22',
-		dcterms_medium: null,
-		premis_is_part_of: null,
-		schema_abstract: null,
-		premis_identifier: {
-			MEDIA_ID: ['AIM10053310'],
-		},
-		schema_keywords: [],
-		schema_is_part_of: {
-			serie: ['Belga'],
-		},
-		schema_genre: [],
-		schema_date_published: '2020-06-19',
-		schema_license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
-		schema_date_created: '2020-06-19',
-		schema_maintainer: {
-			schema_identifier: 'OR-rf5kf25',
-			schema_name: 'VRT',
-			alt_label: 'vrt',
-			organization_type: IeObjectSector.CULTURE,
-		},
-		schema_thumbnail_url:
-			'https://media-qas.viaa.be/play/v2/VRT/0284a378c235465b8b547622ecbffe8c76a2519241404cefb7a32339c84287b1/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
-		dcterms_format: 'video',
-		schema_name:
-			'Une centaine de policiers poussent "un cri contre la stigmatisation" à Charleroi',
-		meemoo_description_cast: '',
-		meemoo_description_programme: '',
-		schema_spatial_coverage: '',
-		schema_temporal_coverage: '',
-		schema_copyrightholder: '',
-		duration_seconds: 3,
-		schema_number_of_pages: 3,
-		meemoofilm_color: true,
-		meemoofilm_base: '',
-		meemoofilm_image_or_sound: '',
-		meemoofilm_contains_embedded_caption: false,
-		meemoo_local_id: '',
-		meemoo_original_cp: '',
-		schema_alternate_name: '',
-		schema_contributor: {},
-	},
-};
-
-export const mockElasticObject2: ElasticsearchHit = {
-	_index: 'or-rf5kf25-2022-05-10t10.01.40.838',
-	_type: '_doc',
-	_id: '030460fb53684214a972e1b8ae35736d535c2b2f9c424b5693450ad0db5728e245c5cb0fe7e148128288006474a1a6a4',
-	_score: 0,
-	_source: {
-		ebucore_object_type: 'footage',
-		schema_in_language: [],
-		dcterms_available: '2021-02-11T11:29:02',
-		meemoo_identifier: 'qs4746qt93',
-		schema_creator: null,
-		schema_identifier:
-			'030460fb53684214a972e1b8ae35736d535c2b2f9c424b5693450ad0db5728e245c5cb0fe7e148128288006474a1a6a4',
-		schema_description:
-			"STVV: Daniel Schmidt, Jonathan Buatu, Maximiliano Caufriez, Pol García, Ibrahima Sankhon, Samuel Asamoah, Duckens Nazon (63' Facundo Colidio), Steve de Ridder, Liberato Cacace, Olexander Filippov (85' Lee Seung-Woo), Yuma Suzuki (70' Tatsuya Ito).\nTrainer: Kevin Muscat\n\nStandard: Arnaud Bodart, Laurent Jans, Merveille Bokadi, Zinho Vanheusden, Nicolas Gavory, Eddy Sylvestre (54' Aleksandar Boljevic), Gojko Cimirot, Selim Amallah, Samuel Bastien, Duje Cop (68' Obbi Oulare), Jackson Muleka (71' Mehdi Carcela-González).\nTrainer: Philippe Montanier\n\nScheidsrechter: Kevin Van Damme\n\n1-0 Duckens Nazon (37')\n2-0 Steve de Ridder (73')",
-		schema_publisher: {
-			Distributeur: ['Depot'],
-		},
-		schema_duration: '00:02:52',
-		dcterms_medium: null,
-		premis_is_part_of: null,
-		schema_abstract: null,
-		premis_identifier: {
-			MEDIA_ID: ['AIM10072170'],
-		},
-		schema_keywords: [],
-		schema_is_part_of: {
-			serie: ['Alleen Elvis'],
-		},
-		schema_genre: [],
-		schema_date_published: '2020-02-10',
-		schema_license: ['BEZOEKERTOOL-CONTENT', 'BEZOEKERTOOL-METADATA-ALL'],
-		schema_date_created: '2020-02-10',
-		schema_maintainer: {
-			schema_identifier: 'OR-rf5kf25',
-			schema_name: 'VRT',
-			alt_label: 'vrt',
-			organization_type: IeObjectSector.CULTURE,
-		},
-		schema_thumbnail_url:
-			'https://media-qas.viaa.be/play/v2/VRT/030460fb53684214a972e1b8ae35736d535c2b2f9c424b5693450ad0db5728e2/keyframes/keyframes_1_1/keyframe1.jpg?token=eyJraWQiOiIwMDAyIiwiYWxnIjoiSFMyNTYifQ.eyJhdWQiOiJPUi0qIiwiZXhwIjoxNjUyNzA1MjA3LCJzdWIiOiJURVNUQkVFTEQva2V5ZnJhbWVzX2FsbCIsImlwIjoiIiwicmVmZXJlciI6Imh0dHBzOi8vYmV6b2VrLXFhcy5oZXRhcmNoaWVmLmJlLyIsImZyYWdtZW50IjpbXX0.6ywQhi3Tjss0Up_JJo0auZ359VlsAZftwLsrd1YFjU0',
-		dcterms_format: 'video',
-		schema_name: 'E2E VideoDelivery from Arvato',
-		meemoo_description_cast: '',
-		meemoo_description_programme: '',
-		schema_spatial_coverage: '',
-		schema_temporal_coverage: '',
-		schema_copyrightholder: '',
-		duration_seconds: 3,
-		schema_number_of_pages: 3,
-		meemoofilm_color: true,
-		meemoofilm_base: '',
-		meemoofilm_image_or_sound: '',
-		meemoofilm_contains_embedded_caption: false,
-		meemoo_local_id: '',
-		meemoo_original_cp: '',
-		schema_alternate_name: '',
-		schema_contributor: {},
-	},
-};
-
-export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
+export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
 	object_ie: [
 		{
 			schema_identifier:
@@ -563,7 +439,7 @@ export const mockObjectIe: GetObjectDetailBySchemaIdentifierQuery = {
 	],
 };
 
-export const mockGqlIeObjectTuples: Partial<GqlIeObject>[] = [
+export const mockGqlIeObjectTuples: Readonly<Partial<GqlIeObject>[]> = [
 	{
 		schema_identifier:
 			'73d46f15abae4947912429864ef40472617630b7e5914d82809576457883dbb35d4b0399743941d082aa489c08e2d990',
@@ -586,7 +462,7 @@ export const mockGqlIeObjectTuples: Partial<GqlIeObject>[] = [
 	},
 ];
 
-export const mockGqlIeObjectFindByCollectionId = {
+export const mockGqlIeObjectFindByCollectionId = Object.freeze({
 	ie: {
 		schema_identifier:
 			'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
@@ -618,9 +494,9 @@ export const mockGqlIeObjectFindByCollectionId = {
 			'BEZOEKERTOOL-METADATA-ALL',
 		],
 	},
-};
+});
 
-export const mockGqlIeObjectFindByCollectionIdResult: Partial<IeObject> = {
+export const mockGqlIeObjectFindByCollectionIdResult: Readonly<Partial<IeObject>> = {
 	schemaIdentifier:
 		'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
 	premisIdentifier: {
@@ -640,7 +516,7 @@ export const mockGqlIeObjectFindByCollectionIdResult: Partial<IeObject> = {
 	},
 };
 
-export const mockGqlSitemapObject = {
+export const mockGqlSitemapObject = Object.freeze({
 	schema_identifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	maintainer: {
@@ -649,9 +525,9 @@ export const mockGqlSitemapObject = {
 	haorg_alt_label: 'vrt',
 	schema_name: 'Durf te vragen R002 A0001',
 	updated_at: '2023-04-13',
-};
+});
 
-export const mockSitemapObject: IeObjectsSitemap = {
+export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	maintainerSlug: 'vrt',
