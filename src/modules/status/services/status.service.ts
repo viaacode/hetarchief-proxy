@@ -7,6 +7,7 @@ import {
 	GetFirstObjectIdDocument,
 	GetFirstObjectIdQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import { ALL_INDEXES } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 
 @Injectable()
@@ -47,7 +48,7 @@ export class StatusService {
 
 	private async getElasticsearchStatus(): Promise<boolean> {
 		try {
-			const response = await this.mediaService.executeQuery('_all', {
+			const response = await this.mediaService.executeQuery(ALL_INDEXES, {
 				size: 1,
 				_source: ['_id'],
 				query: {

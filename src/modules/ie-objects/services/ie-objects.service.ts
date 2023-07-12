@@ -58,6 +58,7 @@ import {
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
+	ALL_INDEXES,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
@@ -331,7 +332,7 @@ export class IeObjectsService {
 			};
 		}
 
-		const mediaResponse = await this.executeQuery(esIndex || '_all', esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
 
 		return {

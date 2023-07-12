@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { IeObjectsVisitorSpaceInfo, IeSector } from '../ie-objects.types';
+import { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
@@ -11,6 +11,8 @@ import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.js
 import searchQueryFuzzy from './templates/fuzzy/search-query.json';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+
+export const ALL_INDEXES = 'or-*';
 
 const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
 const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
