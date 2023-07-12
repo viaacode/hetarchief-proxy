@@ -40,6 +40,7 @@ import { IeObjectsService } from '../services/ie-objects.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import {
+	ALL_INDEXES,
 	IeObjectsSearchFilterField,
 	Operator,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
@@ -340,7 +341,7 @@ export class IeObjectsController {
 				filter.field === IeObjectsSearchFilterField.MAINTAINER_ID &&
 				filter.operator === Operator.IS
 		);
-		const esIndex = maintainerFilter?.value?.toLowerCase() || '_all';
+		const esIndex = maintainerFilter?.value?.toLowerCase() || ALL_INDEXES;
 
 		// Get elastic search result based on given parameters
 		const searchResult = await this.ieObjectsService.findAll(
