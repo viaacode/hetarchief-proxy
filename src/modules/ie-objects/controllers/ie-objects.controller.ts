@@ -10,11 +10,12 @@ import {
 	Post,
 	Query,
 	Req,
+	Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { Request } from 'express';
-import { compact, intersection, isNil } from 'lodash';
+import { Request, Response } from 'express';
+import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
@@ -147,8 +148,9 @@ export class IeObjectsController {
 	public async exportXml(
 		@Param('id') id: string,
 		@Req() request: Request,
+		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
-	): Promise<string> {
+	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
 
 		// Log event
@@ -169,7 +171,7 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return convertObjectToXml(
+		const xmlContent = convertObjectToXml(
 			limitAccessToObjectDetails(objectMetadata, {
 				userId: user.getId(),
 				isKeyUser: user.getIsKeyUser(),
@@ -180,6 +182,12 @@ export class IeObjectsController {
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			})
 		);
+		res.set({
+			'Content-Disposition': `attachment; filename=${
+				kebabCase(objectMetadata?.name) || 'metadata'
+			}.xml`,
+		});
+		res.send(xmlContent);
 	}
 
 	@Get(':id/export/csv')
@@ -188,8 +196,9 @@ export class IeObjectsController {
 	public async exportCsv(
 		@Param('id') id: string,
 		@Req() request: Request,
+		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
-	): Promise<string> {
+	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
 
 		// Log event
@@ -210,7 +219,7 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return convertObjectToCsv(
+		const csvContent = convertObjectToCsv(
 			limitAccessToObjectDetails(objectMetadata, {
 				userId: user.getId(),
 				isKeyUser: user.getIsKeyUser(),
@@ -221,6 +230,12 @@ export class IeObjectsController {
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			})
 		);
+		res.set({
+			'Content-Disposition': `attachment; filename=${
+				kebabCase(objectMetadata?.name) || 'metadata'
+			}.csv`,
+		});
+		res.send(csvContent);
 	}
 
 	@Get(':schemaIdentifier/related/:meemooIdentifier')
