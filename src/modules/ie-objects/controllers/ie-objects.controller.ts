@@ -164,6 +164,7 @@ export class IeObjectsController {
 				data: {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
+					or_id: objectMetadata.maintainerId,
 				},
 			},
 		]);
@@ -212,6 +213,7 @@ export class IeObjectsController {
 				data: {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
+					or_id: objectMetadata.maintainerId,
 				},
 			},
 		]);

@@ -230,6 +230,7 @@ export class CollectionsController {
 					folder_id: collectionId,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
+					or_id: ieObject.maintainerId,
 				},
 			},
 		]);

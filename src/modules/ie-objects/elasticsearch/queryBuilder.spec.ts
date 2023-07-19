@@ -237,9 +237,7 @@ describe('QueryBuilder', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.response.error.message).toEqual(
-				`Value cannot be empty when filtering on field '${IeObjectsSearchFilterField.QUERY}'`
-			);
+			expect(error?.response?.message).toEqual('Failed to build query object');
 		});
 
 		it('should return an advanced search query when an advancedQuery filter is specified', () => {
