@@ -5,7 +5,7 @@ import {
 	OrganisationResponse,
 } from '../organisations.types';
 
-import { IeSector } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export const mockGqlOrganisation: GqlOrganisation = {
 	schema_identifier: 'OR-rf5kf25',
@@ -18,6 +18,7 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	logo: {
 		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},
+	slug: 'vrt',
 	primary_site: {
 		address: {
 			locality: 'Brussel',
@@ -33,7 +34,7 @@ export const mockGqlOrganisation: GqlOrganisation = {
 	description:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	// Remark here organization is with Z
-	haorg_organization_type: IeSector.PUBLIC,
+	haorg_organization_type: IeObjectSector.PUBLIC,
 	form_url:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 };
@@ -51,6 +52,7 @@ export const mockOrganisation1: Organisation = {
 	logo: {
 		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},
+	slug: 'vrt',
 	primarySite: {
 		address: {
 			locality: 'Brussel',
@@ -63,7 +65,7 @@ export const mockOrganisation1: Organisation = {
 	schemaName: 'VRT',
 	createdAt: '2023-04-03T13:28:01.434203+02:00',
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
-	sector: IeSector.PUBLIC,
+	sector: IeObjectSector.PUBLIC,
 	formUrl:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 };
@@ -80,6 +82,7 @@ export const mockOrganisation2: Organisation = {
 	logo: {
 		iri: 'https://assets.viaa.be/images/OR-w66976m',
 	},
+	slug: 'meemoo',
 	primarySite: {
 		address: {
 			locality: 'Gent',
@@ -92,7 +95,7 @@ export const mockOrganisation2: Organisation = {
 	schemaName: 'meemoo',
 	createdAt: '2023-04-03T13:28:01.434203+02:00',
 	updatedAt: '2023-04-03T13:28:01.434203+02:00',
-	sector: IeSector.CULTURE,
+	sector: IeObjectSector.CULTURE,
 	formUrl: null,
 };
 
@@ -101,13 +104,14 @@ export const mockOrganisationInfoV2: OrganisationInfoV2 = {
 	label: 'VRT',
 	description:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-	sector: IeSector.PUBLIC,
+	sector: IeObjectSector.PUBLIC,
 	form_url:
 		'https://www.vrt.be/heb-je-een-vraag/s/contactsupport-vrtarchief?name_user={first_name}&mail_user={email}&local_id={local_cp_id}&viaa_id={pid}&surname_user={last_name}&title={title}&serie={title_serie}',
 	homepage: 'https://www.vrt.be',
 	logo: {
 		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},
+	slug: 'vrt',
 	contact_point: [
 		{
 			contact_type: 'ontsluiting',

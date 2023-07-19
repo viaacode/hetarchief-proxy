@@ -1,6 +1,7 @@
-import { Controller, Headers, Logger, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 
@@ -24,5 +25,12 @@ export class OrganisationsController {
 		await this.organisationsService.updateOrganisationsCache();
 
 		return { message: 'cache has been updated successfully' };
+	}
+
+	@Get(':slug')
+	async getOrganisationBySchemaIdentifiers(
+		@Param('slug') slug: string
+	): Promise<Organisation | null> {
+		return this.organisationsService.findOrganisationBySlug(slug);
 	}
 }

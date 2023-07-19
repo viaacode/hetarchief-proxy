@@ -1,53 +1,53 @@
-import { IeSector } from '../ie-objects.types';
+import { IeObjectSector } from '../ie-objects.types';
 
 import { getSectorsWithEssenceAccess } from './get-sectors-with-essence-access';
 
 describe('GetSectorsWithEssenceAccess', () => {
 	it('Culture Sector', () => {
-		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeSector.CULTURE);
+		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeObjectSector.CULTURE);
 		expect(sectorsWithEssenceAccess).toEqual([
-			IeSector.CULTURE,
-			IeSector.GOVERNMENT,
-			IeSector.REGIONAL,
-			IeSector.PUBLIC,
-			IeSector.RURAL,
+			IeObjectSector.CULTURE,
+			IeObjectSector.GOVERNMENT,
+			IeObjectSector.REGIONAL,
+			IeObjectSector.PUBLIC,
+			IeObjectSector.RURAL,
 		]);
 	});
 
 	it('Government Sector', () => {
-		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeSector.GOVERNMENT);
+		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeObjectSector.GOVERNMENT);
 		expect(sectorsWithEssenceAccess).toEqual([
-			IeSector.CULTURE,
-			IeSector.GOVERNMENT,
-			IeSector.REGIONAL,
-			IeSector.PUBLIC,
-			IeSector.RURAL,
+			IeObjectSector.CULTURE,
+			IeObjectSector.GOVERNMENT,
+			IeObjectSector.REGIONAL,
+			IeObjectSector.PUBLIC,
+			IeObjectSector.RURAL,
 		]);
 	});
 	it('Regional Sector', () => {
-		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeSector.REGIONAL);
+		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeObjectSector.REGIONAL);
 		expect(sectorsWithEssenceAccess).toEqual([
-			IeSector.CULTURE,
-			IeSector.GOVERNMENT,
-			IeSector.REGIONAL,
+			IeObjectSector.CULTURE,
+			IeObjectSector.GOVERNMENT,
+			IeObjectSector.REGIONAL,
 		]);
 	});
 	it('Public Sector', () => {
-		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeSector.PUBLIC);
+		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeObjectSector.PUBLIC);
 		expect(sectorsWithEssenceAccess).toEqual([
-			IeSector.CULTURE,
-			IeSector.GOVERNMENT,
-			IeSector.REGIONAL,
-			IeSector.PUBLIC,
+			IeObjectSector.CULTURE,
+			IeObjectSector.GOVERNMENT,
+			IeObjectSector.REGIONAL,
+			IeObjectSector.PUBLIC,
 		]);
 	});
 
 	it('Rural Sector', () => {
-		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeSector.RURAL);
+		const sectorsWithEssenceAccess = getSectorsWithEssenceAccess(IeObjectSector.RURAL);
 		expect(sectorsWithEssenceAccess).toEqual([
-			IeSector.CULTURE,
-			IeSector.GOVERNMENT,
-			IeSector.REGIONAL,
+			IeObjectSector.CULTURE,
+			IeObjectSector.GOVERNMENT,
+			IeObjectSector.REGIONAL,
 		]);
 	});
 });

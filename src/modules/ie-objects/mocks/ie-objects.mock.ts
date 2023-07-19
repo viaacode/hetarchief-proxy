@@ -3,8 +3,8 @@ import {
 	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
+	IeObjectSector,
 	IeObjectsSitemap,
-	IeSector,
 } from '../ie-objects.types';
 
 import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
@@ -325,7 +325,7 @@ export const mockUser = Object.freeze({
 export const mockUserInfo: Readonly<{
 	userId: string | null;
 	isKeyUser: boolean;
-	sector: IeSector | null;
+	sector: IeObjectSector | null;
 	groupId: string;
 	maintainerId: string;
 	accessibleObjectIdsThroughFolders: string[];

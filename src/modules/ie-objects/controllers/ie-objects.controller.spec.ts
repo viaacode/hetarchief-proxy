@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IPagination } from '@studiohyperdrive/pagination';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { cloneDeep } from 'lodash';
 
 import { IeObject, IeObjectLicense } from '../ie-objects.types';
@@ -76,6 +76,11 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
 	findOrganisationsBySchemaIdentifiers: jest.fn(),
 };
+
+const mockResponseObject = {
+	set: jest.fn(),
+	send: jest.fn(),
+} as unknown as Response;
 
 const mockRequest = { path: '/ie-objects/export', headers: {} } as unknown as Request;
 
@@ -326,8 +331,13 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
-			const xml = await ieObjectsController.exportXml('1', mockRequest, mockSessionUser);
-			expect(xml).toEqual(mockIeObjectWithMetadataSetLtdXml);
+			await ieObjectsController.exportXml(
+				'1',
+				mockRequest,
+				mockResponseObject,
+				mockSessionUser
+			);
+			expect(mockResponseObject.send).toBeCalledWith(mockIeObjectWithMetadataSetLtdXml);
 		});
 	});
 
@@ -337,8 +347,13 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
-			const csv = await ieObjectsController.exportCsv('1', mockRequest, mockSessionUser);
-			expect(csv).toEqual(mockIeObjectWithMetadataSetLtdCsv);
+			await ieObjectsController.exportCsv(
+				'1',
+				mockRequest,
+				mockResponseObject,
+				mockSessionUser
+			);
+			expect(mockResponseObject.send).toBeCalledWith(mockIeObjectWithMetadataSetLtdCsv);
 		});
 	});
 
