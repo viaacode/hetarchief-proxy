@@ -3,8 +3,8 @@ import {
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectMetadataSet,
+	IeObjectSector,
 	IeObjectSectorLicenseMatrix,
-	IeSector,
 } from './ie-objects.types';
 
 import { GroupId } from '~modules/users/types';
@@ -48,46 +48,46 @@ export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
 };
 
 export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
-	Record<IeSector, Readonly<IeObjectSectorLicenseMatrix>>
+	Record<IeObjectSector, Readonly<IeObjectSectorLicenseMatrix>>
 > = {
 	// user sector => object sector => accessible licenses
-	[IeSector.CULTURE]: {
-		[IeSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
+	[IeObjectSector.CULTURE]: {
+		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
 	},
-	[IeSector.GOVERNMENT]: {
-		[IeSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
+	[IeObjectSector.GOVERNMENT]: {
+		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.RURAL]: IE_OBJECT_INTRA_CP_LICENSES,
 	},
-	[IeSector.REGIONAL]: {
-		[IeSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.PUBLIC]: [
+	[IeObjectSector.REGIONAL]: {
+		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.PUBLIC]: [
 			IeObjectLicense.INTRA_CP_METADATA_LTD,
 			IeObjectLicense.INTRA_CP_METADATA_ALL,
 		],
-		[IeSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
-	[IeSector.PUBLIC]: {
-		[IeSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+	[IeObjectSector.PUBLIC]: {
+		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.PUBLIC]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
-	[IeSector.RURAL]: {
-		[IeSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
-		[IeSector.PUBLIC]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
-		[IeSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+	[IeObjectSector.RURAL]: {
+		[IeObjectSector.CULTURE]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.GOVERNMENT]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.REGIONAL]: IE_OBJECT_INTRA_CP_LICENSES,
+		[IeObjectSector.PUBLIC]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
+		[IeObjectSector.RURAL]: [IeObjectLicense.INTRA_CP_METADATA_LTD],
 	},
 };
 

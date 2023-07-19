@@ -1,10 +1,11 @@
-import { IeSector } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export interface OrganisationInfoV2 {
 	id: string;
 	label: string;
 	description: string;
-	sector: IeSector | null;
+	sector: IeObjectSector | null;
+	slug: string | null;
 	form_url: string | null;
 	homepage: string | null;
 	logo: {
@@ -68,6 +69,7 @@ export interface GqlOrganisation {
 	logo: {
 		iri: string;
 	};
+	slug?: string | null;
 	primary_site: {
 		address: {
 			locality: string;
@@ -82,7 +84,7 @@ export interface GqlOrganisation {
 	schema_name?: string | null;
 	description?: string;
 	// Remark here organization is with Z
-	haorg_organization_type?: IeSector | null;
+	haorg_organization_type?: string | null;
 	form_url?: string | null;
 	homepage_url?: string | null;
 }
@@ -94,11 +96,12 @@ export interface Organisation {
 	logo: {
 		iri: string;
 	};
+	slug: string | null;
 	primarySite: OrganisationPrimarySite;
 	schemaName: string;
 	createdAt: string;
 	updatedAt: string;
-	sector: IeSector | null;
+	sector: IeObjectSector | null;
 	formUrl: string | null;
 }
 
