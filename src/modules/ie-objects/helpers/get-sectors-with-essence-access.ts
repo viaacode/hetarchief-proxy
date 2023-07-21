@@ -1,15 +1,15 @@
 import { compact } from 'lodash';
 
 import { IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR } from '../ie-objects.conts';
-import { IeObjectLicense, IeSector } from '../ie-objects.types';
+import { IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 
-export const getSectorsWithEssenceAccess = (userSector: IeSector): IeSector[] => {
-	const accessibleSectors: Readonly<Record<IeSector, Readonly<IeObjectLicense[]>>> =
+export const getSectorsWithEssenceAccess = (userSector: IeObjectSector): IeObjectSector[] => {
+	const accessibleSectors: Readonly<Record<IeObjectSector, Readonly<IeObjectLicense[]>>> =
 		IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR[userSector];
 
 	return compact(
 		Object.entries(accessibleSectors).map(
-			(accessibleSectorPair: [IeSector, IeObjectLicense[]]): IeSector | null => {
+			(accessibleSectorPair: [IeObjectSector, IeObjectLicense[]]): IeObjectSector | null => {
 				if (accessibleSectorPair[1].includes(IeObjectLicense.INTRA_CP_CONTENT)) {
 					return accessibleSectorPair[0];
 				}

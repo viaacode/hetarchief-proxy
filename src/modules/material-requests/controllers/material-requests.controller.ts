@@ -236,6 +236,7 @@ export class MaterialRequestsController {
 							idp: Idp.MEEMOO,
 							user_group_name: user.getGroupName(),
 							user_group_id: user.getGroupId(),
+							or_id: materialRequest.maintainerId,
 							contact_form: {
 								user_type: materialRequest.requesterCapacity,
 								problem_category: materialRequest.type,

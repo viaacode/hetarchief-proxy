@@ -5,6 +5,7 @@ query findOrganisationsBySchemaIds($schemaIdentifiers: [String!]!) {
 		updated_at
 		primary_site
 		logo
+		slug
 		description
 		created_at
 		contact_point

@@ -212,6 +212,16 @@ export class QueryBuilder {
 		};
 	}
 
+	private static isBooleanSearchTerm(searchTerm: string): boolean {
+		return (
+			searchTerm.includes('AND') ||
+			searchTerm.includes('OR') ||
+			searchTerm.includes('NOT') ||
+			searchTerm.includes('"') ||
+			searchTerm.includes('(')
+		);
+	}
+
 	/**
 	 * Creates the filter portion of the elasticsearch query object
 	 * Containing the search terms and the checked filters
@@ -275,16 +285,23 @@ export class QueryBuilder {
 
 					let textFilters;
 					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
-						textFilters = [
-							convertNodeToEsQueryFilterObjects(
-								jsep(encodeSearchterm(searchFilter.value)),
-								{
-									fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query,
-									exact: MULTI_MATCH_QUERY_MAPPING.exact.query,
-								},
-								searchFilter
-							),
-						];
+						// We only want to parse a boolean query if it contains some boolean operators or quotes or parentheses
+						if (this.isBooleanSearchTerm(searchFilter.value)) {
+							textFilters = [
+								convertNodeToEsQueryFilterObjects(
+									jsep(encodeSearchterm(searchFilter.value)),
+									{
+										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query,
+										exact: MULTI_MATCH_QUERY_MAPPING.exact.query,
+									},
+									searchFilter
+								),
+							];
+						} else {
+							// If no boolean operators were found, do a simple text search using the fuzzy search term template
+							const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query;
+							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
+						}
 					} else {
 						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];

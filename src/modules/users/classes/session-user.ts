@@ -3,7 +3,7 @@ import { get } from 'lodash';
 
 import { GroupName, Permission, User } from '../types';
 
-import { IeSector } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export class SessionUserEntity {
 	private logger = new Logger(SessionUserEntity.name, { timestamp: true });
@@ -55,7 +55,7 @@ export class SessionUserEntity {
 		return this.user?.maintainerId || this.user?.organisationId || null;
 	}
 
-	public getSector(): IeSector | null {
+	public getSector(): IeObjectSector | null {
 		return this.user?.sector || null;
 	}
 

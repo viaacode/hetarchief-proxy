@@ -1,5 +1,5 @@
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
-import { IeObjectAccessThrough, IeObjectLicense, IeSector } from '../ie-objects.types';
+import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -22,7 +22,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-zp3w03v',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// User: Basic user - isKeyUser - Public Sector
@@ -30,7 +30,7 @@ describe('Limit access to object details', () => {
 				...mockUserInfo,
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.PUBLIC,
+				sector: IeObjectSector.PUBLIC,
 				accessibleVisitorSpaceIds: [],
 			}
 		);
@@ -48,7 +48,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-xs5jg6w',
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// User: CP admin works for ADVN - hasVisitorSpace - Culture sector
@@ -58,7 +58,7 @@ describe('Limit access to object details', () => {
 				accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
 				groupId: GroupId.CP_ADMIN,
 				isKeyUser: true,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 			}
 		);
 		expect(limitedAccessIeObject1b).toEqual({
@@ -79,7 +79,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-rf5kf25',
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_METADATA_ALL,
@@ -91,7 +91,7 @@ describe('Limit access to object details', () => {
 				...mockUserInfo,
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 			}
 		);
 		expect(limitedAccessIeObject1c).toEqual({
@@ -116,7 +116,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-154dn75',
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -127,7 +127,7 @@ describe('Limit access to object details', () => {
 				...mockUserInfo,
 				groupId: GroupId.VISITOR,
 				isKeyUser: false,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
 			}
@@ -152,7 +152,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-154dn75',
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -163,7 +163,7 @@ describe('Limit access to object details', () => {
 				...mockUserInfo,
 				groupId: GroupId.VISITOR,
 				isKeyUser: false,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [
 					'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6743',
@@ -187,7 +187,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-zp3w03v',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.INTRA_CP_CONTENT,
@@ -226,7 +226,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-kw57h48', // Letterenhuis
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
@@ -238,7 +238,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-xs5jg6w', // ADVN
 				groupId: GroupId.KIOSK_VISITOR,
 				isKeyUser: false,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: ['OR-xs5jg6w'],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -252,7 +252,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-wh2dd79',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// User: CP admin - isKeyUser - AVS (Regional sector)
@@ -261,7 +261,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-h41jm06',
 				groupId: GroupId.CP_ADMIN,
 				isKeyUser: true,
-				sector: IeSector.REGIONAL,
+				sector: IeObjectSector.REGIONAL,
 				accessibleVisitorSpaceIds: ['OR-h41jm06'],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -280,7 +280,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-wh2dd79',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
@@ -294,7 +294,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-wh2dd79',
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -318,7 +318,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-wh2dd79',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
@@ -327,7 +327,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-wh2dd79',
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -346,7 +346,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-zp3w03v',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
@@ -355,7 +355,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-wh2dd79',
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -374,7 +374,7 @@ describe('Limit access to object details', () => {
 			{
 				...mockIeObject,
 				maintainerId: 'OR-wh2dd79',
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_METADATA_ALL],
 			},
 			// User: Basis gebruiker - isKeyUser - SBS Belgium (Rural)
@@ -383,7 +383,7 @@ describe('Limit access to object details', () => {
 				maintainerId: 'OR-wh2dd79',
 				groupId: GroupId.VISITOR,
 				isKeyUser: true,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				accessibleVisitorSpaceIds: [],
 				accessibleObjectIdsThroughFolders: [],
 			}
@@ -412,7 +412,7 @@ describe('Limit access to object details', () => {
 			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
 				...mockIeObject,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// Basic user
@@ -439,7 +439,7 @@ describe('Limit access to object details', () => {
 			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
 				...mockIeObject,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
 			// CP admin
@@ -466,7 +466,7 @@ describe('Limit access to object details', () => {
 			// DPG Media (sector = landelijke private omroep)
 			{
 				...mockIeObject,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				maintainerId: 'OR-rf5kf25',
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -505,7 +505,7 @@ describe('Limit access to object details', () => {
 			// Letterenhuis (Culture sector)
 			{
 				...mockIeObject,
-				sector: IeSector.CULTURE,
+				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
 					IeObjectLicense.BEZOEKERTOOL_CONTENT,
@@ -531,7 +531,7 @@ describe('Limit access to object details', () => {
 			// SBS Belgium (Rural)
 			{
 				...mockIeObject,
-				sector: IeSector.RURAL,
+				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
 			// CP admin

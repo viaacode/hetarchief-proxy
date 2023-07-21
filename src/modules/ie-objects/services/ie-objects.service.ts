@@ -33,10 +33,10 @@ import {
 	IeObjectFile,
 	IeObjectLicense,
 	IeObjectRepresentation,
+	IeObjectSector,
 	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
-	IeSector,
 } from '../ie-objects.types';
 
 import {
@@ -58,6 +58,7 @@ import {
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
+	ALL_INDEXES,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
@@ -331,7 +332,7 @@ export class IeObjectsService {
 			};
 		}
 
-		const mediaResponse = await this.executeQuery(esIndex || '_all', esQueryObject);
+		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
 
 		return {
@@ -467,8 +468,8 @@ export class IeObjectsService {
 			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
 			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
 			sector:
-				(gqlIeObject?.haorg_organization_type as IeSector) ??
-				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeSector),
+				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
+				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector),
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,

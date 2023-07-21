@@ -1,4 +1,4 @@
-import { IeSector, MediaFormat } from '../ie-objects.types';
+import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
 import { IeObjectsSearchFilterField, Operator, OrderProperty } from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
@@ -23,7 +23,7 @@ const mockInputInfo = {
 		isKeyUser: false,
 		maintainerId: '',
 		visitorSpaceSlug: 'vrt',
-		sector: IeSector.CULTURE,
+		sector: IeObjectSector.CULTURE,
 		organisationName: 'vrt',
 		organisationId: null,
 		lastAccessAt: null,
@@ -237,9 +237,7 @@ describe('QueryBuilder', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.response.error.message).toEqual(
-				`Value cannot be empty when filtering on field '${IeObjectsSearchFilterField.QUERY}'`
-			);
+			expect(error?.response?.message).toEqual('Failed to build query object');
 		});
 
 		it('should return an advanced search query when an advancedQuery filter is specified', () => {
@@ -731,7 +729,7 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeSector.CULTURE,
+						sector: IeObjectSector.CULTURE,
 					}),
 					visitorSpaceInfo: {
 						objectIds: [],

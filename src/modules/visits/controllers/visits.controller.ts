@@ -393,6 +393,7 @@ export class VisitsController {
 					visitor_space_id: visitorSpace.id,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
+					or_id: visit.spaceId,
 				},
 			},
 		]);
@@ -486,6 +487,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
+						or_id: visit.spaceId,
 					},
 				},
 			]);
@@ -508,6 +510,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
+						or_id: visit.spaceId,
 					},
 				},
 			]);
@@ -529,6 +532,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
+						or_id: visit.spaceId,
 					},
 				},
 			]);

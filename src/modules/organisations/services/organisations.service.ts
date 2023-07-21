@@ -24,8 +24,12 @@ import {
 	FindOrganisationsBySchemaIdsDocument,
 	FindOrganisationsBySchemaIdsQuery,
 	FindOrganisationsBySchemaIdsQueryVariables,
+	GetOrganisationBySlugDocument,
+	GetOrganisationBySlugQuery,
+	GetOrganisationBySlugQueryVariables,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 @Injectable()
 export class OrganisationsService implements OnApplicationBootstrap {
@@ -86,8 +90,9 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			schemaName: gqlOrganisation?.schema_name,
 			createdAt: gqlOrganisation?.created_at,
 			updatedAt: gqlOrganisation?.updated_at,
-			sector: gqlOrganisation?.haorg_organization_type,
+			sector: gqlOrganisation?.haorg_organization_type as IeObjectSector,
 			formUrl: gqlOrganisation?.form_url,
+			slug: gqlOrganisation?.slug,
 		};
 	}
 
@@ -104,6 +109,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
     label
     description
     sector
+    slug
     form_url
     homepage
     logo {
@@ -169,6 +175,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				schema_name: organization?.label,
 				description: organization.description,
 				logo: organization?.logo,
+				slug: organization?.slug,
 				contact_point: organization.contact_point,
 				primary_site: organization.primary_site,
 				// Remark here organization is with Z
@@ -209,5 +216,18 @@ export class OrganisationsService implements OnApplicationBootstrap {
 				innerException: err,
 			});
 		}
+	}
+
+	public async findOrganisationBySlug(slug: string): Promise<Organisation> {
+		const organisationsResponse = await this.dataService.execute<
+			GetOrganisationBySlugQuery,
+			GetOrganisationBySlugQueryVariables
+		>(GetOrganisationBySlugDocument, { slug });
+
+		if (!organisationsResponse?.maintainer_organisation[0]) {
+			return null;
+		}
+
+		return this.adapt(organisationsResponse?.maintainer_organisation[0]);
 	}
 }
