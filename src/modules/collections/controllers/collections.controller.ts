@@ -114,13 +114,17 @@ export class CollectionsController {
 			.filter((object) => {
 				// if user is no keyUser AND object has ONLY license INTRA_CP-CONTENT AND/OR INTRA_CP-METADATA_ALL, do not show object
 				const hasOnlyIntraCpLicenses =
-					(object.licenses || []).filter(
-						(license) =>
-							![
-								IeObjectLicense.INTRA_CP_CONTENT,
-								IeObjectLicense.INTRA_CP_METADATA_ALL,
-							].includes(license)
-					).length === 0;
+					(object.licenses || [])
+						// Filter the licenses to only the ones we care about inside hetarchief.be. eg we don't care about VIAA-ONDERZOEK or VIAA-ONDERWIJS
+						.filter((license) => Object.values(IeObjectLicense).includes(license))
+						// Check if all relevant licenses are intra cp licenses
+						.filter(
+							(license) =>
+								![
+									IeObjectLicense.INTRA_CP_CONTENT,
+									IeObjectLicense.INTRA_CP_METADATA_ALL,
+								].includes(license)
+						).length === 0;
 				if (!isKeyUser && hasOnlyIntraCpLicenses) {
 					return false;
 				} else {
