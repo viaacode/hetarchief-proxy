@@ -145,7 +145,7 @@ export class SpacesController {
 		if (
 			user.has(Permission.UPDATE_OWN_SPACE) &&
 			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
-			user.getMaintainerId() !== space.maintainerId
+			user.getOrganisationId() !== space.maintainerId
 		) {
 			throw new ForbiddenException('You are not authorized to update this visitor space');
 		}

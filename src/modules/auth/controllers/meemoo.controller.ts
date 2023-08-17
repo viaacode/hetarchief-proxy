@@ -140,18 +140,6 @@ export class MeemooController {
 				}
 			}
 
-			// Some userGroups require a link to the maintainer
-			if (this.idpService.userGroupRequiresMaintainerLink(userGroup)) {
-				await this.usersService.linkUserToMaintainer(
-					archiefUser.id,
-					get(ldapUser, 'attributes.o[0]')
-				);
-				// Refetch user to include visitor space info
-				archiefUser = await this.usersService.getUserByIdentityId(
-					ldapUser.attributes.entryUUID[0]
-				);
-			}
-
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
 			// Log event

@@ -104,10 +104,10 @@ export class QueryBuilder {
 	 * is converted into:
 	 *     [
 	 *        {
-	 *     			"schema_name": {
-	 *     				"order": "asc"
-	 *     			}
-	 *     		},
+	 *          "schema_name": {
+	 *            "order": "asc"
+	 *          }
+	 *        },
 	 *        "_score"
 	 *     ]
 	 * @param orderProperty
@@ -241,7 +241,7 @@ export class QueryBuilder {
 		if (inputInfo.user?.getGroupName() === GroupName.KIOSK_VISITOR) {
 			filterArray.push({
 				terms: {
-					'schema_maintainer.schema_identifier': [inputInfo.user?.getMaintainerId()],
+					'schema_maintainer.schema_identifier': [inputInfo.user?.getOrganisationId()],
 				},
 			});
 		}
@@ -366,7 +366,7 @@ export class QueryBuilder {
 	}
 
 	/**
-	 *	This function checks if the isConsultableFilters are present in the searchRequestFilters and returns the correct filter objects
+	 *  This function checks if the isConsultableFilters are present in the searchRequestFilters and returns the correct filter objects
 	 *
 	 * @param searchRequestFilters
 	 * @param inputInfo
@@ -433,7 +433,7 @@ export class QueryBuilder {
 								{
 									term: {
 										'schema_maintainer.schema_identifier':
-											inputInfo.user.getMaintainerId(),
+											inputInfo.user.getOrganisationId(),
 									},
 								},
 							],
@@ -519,7 +519,7 @@ export class QueryBuilder {
 		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
 		if (
 			[GroupName.CP_ADMIN, GroupName.KIOSK_VISITOR].includes(user?.getGroupName()) &&
-			user?.getMaintainerId()
+			user?.getOrganisationId()
 		) {
 			checkSchemaLicenses = [
 				...checkSchemaLicenses,
@@ -529,10 +529,10 @@ export class QueryBuilder {
 							{
 								terms: {
 									'schema_maintainer.schema_identifier': isNil(
-										user?.getMaintainerId()
+										user?.getOrganisationId()
 									)
 										? []
-										: [user?.getMaintainerId()],
+										: [user?.getOrganisationId()],
 								},
 							},
 							{
@@ -570,7 +570,7 @@ export class QueryBuilder {
 							{
 								terms: {
 									'schema_maintainer.schema_identifier': [
-										user?.getMaintainerId(),
+										user?.getOrganisationId(),
 									],
 								},
 							},

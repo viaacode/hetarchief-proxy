@@ -19,15 +19,15 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 			identities {
 				identity_provider_name
 			}
-			maintainer_users_profiles {
-				maintainer_identifier
-				maintainer {
-					visitor_space {
-						id
-						slug
-						schema_maintainer_id
-					}
-				}
+			organisation {
+				schema_identifier
+				schema_name
+				sector
+			}
+			visitor_space {
+				id
+				slug
+				schema_maintainer_id
 			}
 		}
 	}

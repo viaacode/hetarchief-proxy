@@ -75,7 +75,6 @@ export interface User {
 	permissions: Permission[];
 	idp: Idp;
 	isKeyUser: boolean;
-	maintainerId?: string;
 	visitorSpaceSlug?: string;
 	sector?: IeObjectSector | null;
 	organisationName?: string | null;

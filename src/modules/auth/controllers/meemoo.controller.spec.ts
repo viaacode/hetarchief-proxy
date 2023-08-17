@@ -62,7 +62,6 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	getUserByIdentityId: jest.fn(),
 	createUserWithIdp: jest.fn(),
 	updateUser: jest.fn(),
-	linkUserToMaintainer: jest.fn(),
 };
 
 const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {

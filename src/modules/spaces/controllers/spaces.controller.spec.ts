@@ -46,7 +46,8 @@ const mockUser: User = {
 	groupName: GroupName.CP_ADMIN,
 	permissions: [Permission.READ_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
-	maintainerId: 'OR-rf5kf25',
+	organisationId: 'OR-rf5kf25',
+	organisationName: 'VRT',
 	isKeyUser: false,
 };
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {

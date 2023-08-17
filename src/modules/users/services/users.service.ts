@@ -5,18 +5,9 @@ import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users
 import { GqlPermissionData, GqlUser, GroupIdToName, GroupName, Permission, User } from '../types';
 
 import {
-	DeleteLinkUserToMaintainerDocument,
-	DeleteLinkUserToMaintainerMutation,
-	DeleteLinkUserToMaintainerMutationVariables,
-	GetLinkUserToMaintainerDocument,
-	GetLinkUserToMaintainerQuery,
-	GetLinkUserToMaintainerQueryVariables,
 	GetUserByIdentityIdDocument,
 	GetUserByIdentityIdQuery,
 	GetUserByIdentityIdQueryVariables,
-	InsertLinkUserToMaintainerDocument,
-	InsertLinkUserToMaintainerMutation,
-	InsertLinkUserToMaintainerMutationVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	InsertUserIdentityMutation,
@@ -63,23 +54,20 @@ export class UsersService {
 				null,
 			createdAt:
 				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])?.created_at || null,
-			organisationName:
-				(graphQlUser as GetUserByIdentityIdQuery['users_profile'][0])
-					?.maintainer_users_profiles[0]?.maintainer?.schema_name || null,
 		};
 
-		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier) {
+		if (graphQlUser?.organisation) {
 			adaptedUser = {
 				...adaptedUser,
-				maintainerId: graphQlUser?.maintainer_users_profiles[0]?.maintainer_identifier,
+				organisationId: graphQlUser?.organisation?.schema_identifier || null,
+				organisationName: graphQlUser?.organisation?.schema_name || null,
 			};
 		}
 
-		if (graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug) {
+		if (graphQlUser?.visitor_space?.slug) {
 			adaptedUser = {
 				...adaptedUser,
-				visitorSpaceSlug:
-					graphQlUser?.maintainer_users_profiles[0]?.maintainer?.visitor_space?.slug,
+				visitorSpaceSlug: graphQlUser?.visitor_space?.slug,
 			};
 		}
 
@@ -195,68 +183,6 @@ export class UsersService {
 		}
 
 		return this.adapt(updatedUser?.returning[0]);
-	}
-
-	/**
-	 * Link a user profile to a visitor space. This can be for a CP Admin or a Kiosk user
-	 * @param userProfileId
-	 * @param maintainerId
-	 */
-	public async linkUserToMaintainer(
-		userProfileId: string,
-		maintainerId: string
-	): Promise<boolean> {
-		// Get current link
-		const response = await this.dataService.execute<
-			GetLinkUserToMaintainerQuery,
-			GetLinkUserToMaintainerQueryVariables
-		>(GetLinkUserToMaintainerDocument, {
-			userProfileId,
-		});
-		const maintainerUserProfiles = response?.maintainer_users_profile || [];
-
-		// Delete existing links if
-		// - More than one link exists
-		// - The existing link doesn't match the current maintainer id
-		if (
-			maintainerUserProfiles.length > 1 ||
-			(maintainerUserProfiles.length === 1 &&
-				maintainerUserProfiles[0]?.maintainer_identifier !== maintainerId)
-		) {
-			// We need to delete the existing link(s)
-			await this.dataService.execute<
-				DeleteLinkUserToMaintainerMutation,
-				DeleteLinkUserToMaintainerMutationVariables
-			>(DeleteLinkUserToMaintainerDocument, {
-				userProfileId,
-			});
-		}
-
-		// Insert a new link if
-		// - No link exists
-		// - The existing link is not for the current maintainerId
-		// - There is more than one link
-		if (
-			maintainerUserProfiles.length === 0 ||
-			(maintainerUserProfiles.length === 1 &&
-				maintainerUserProfiles[0]?.maintainer_identifier !== maintainerId) ||
-			maintainerUserProfiles.length > 1
-		) {
-			// We need to insert a new link
-			const response = await this.dataService.execute<
-				InsertLinkUserToMaintainerMutation,
-				InsertLinkUserToMaintainerMutationVariables
-			>(InsertLinkUserToMaintainerDocument, {
-				userProfileId,
-				maintainerId,
-			});
-
-			// Insert succeeded if we get a link id back
-			return !!response?.insert_maintainer_users_profile_one?.id;
-		}
-
-		// Return false if the user was already linked to the visitor space
-		return false;
 	}
 
 	public async updateLastAccessDate(id: string): Promise<UpdateResponse> {

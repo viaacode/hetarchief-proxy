@@ -155,6 +155,7 @@ export class HetArchiefController {
 					...archiefUser,
 					organisationId: organisationId,
 					organisationName: organisation?.schemaName ?? null,
+					sector: organisation?.sector ?? null,
 				};
 			}
 
@@ -211,18 +212,6 @@ export class HetArchiefController {
 					this.logger.debug(`User ${ldapUser.attributes.mail[0]} must be updated`);
 					archiefUser = await this.usersService.updateUser(archiefUser.id, userDto);
 				}
-			}
-
-			// Some userGroups require a link to the maintainer
-			if (this.idpService.userGroupRequiresMaintainerLink(userGroup)) {
-				await this.usersService.linkUserToMaintainer(
-					archiefUser.id,
-					get(ldapUser, 'attributes.o[0]')
-				);
-				// Refetch user to include visitor space info
-				archiefUser = await this.usersService.getUserByIdentityId(
-					ldapUser.attributes.entryUUID[0]
-				);
 			}
 
 			if (!archiefUser) {

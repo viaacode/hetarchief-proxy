@@ -1,5 +1,0 @@
-mutation deleteLinkUserToMaintainer($userProfileId: uuid!) {
-	delete_maintainer_users_profile(where: { users_profile_id: { _eq: $userProfileId } }) {
-		affected_rows
-	}
-}

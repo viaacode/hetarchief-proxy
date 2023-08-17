@@ -51,8 +51,8 @@ export class SessionUserEntity {
 		return this.user?.email || null;
 	}
 
-	public getMaintainerId(): string {
-		return this.user?.maintainerId || this.user?.organisationId || null;
+	public getOrganisationId(): string {
+		return this.user?.organisationId || null;
 	}
 
 	public getSector(): IeObjectSector | null {

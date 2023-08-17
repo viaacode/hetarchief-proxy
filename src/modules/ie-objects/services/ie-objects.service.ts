@@ -142,10 +142,10 @@ export class IeObjectsService {
 			});
 		} catch (err) {
 			/*
-				If the QueryBuilder throws an error, we try the query with a literal string.
-				If that also throws an error, we return http 500
-				We update the inputQuery because it is later used.
-			*/
+        If the QueryBuilder throws an error, we try the query with a literal string.
+        If that also throws an error, we return http 500
+        We update the inputQuery because it is later used.
+      */
 			inputQuery = convertQueryToLiteralString(inputQuery);
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
@@ -715,7 +715,7 @@ export class IeObjectsService {
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
 			accessibleVisitorSpaceIds = [
 				...visitorSpaceAccessInfo.visitorSpaceIds,
-				user.getMaintainerId(),
+				user.getOrganisationId(),
 			];
 		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const spaces = await this.spacesService.findAll(
@@ -732,10 +732,10 @@ export class IeObjectsService {
 			);
 			accessibleVisitorSpaceIds = [
 				...spaces.items.map((space) => space.maintainerId),
-				user.getMaintainerId(),
+				user.getOrganisationId(),
 			];
 		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
-			accessibleVisitorSpaceIds = [user.getMaintainerId()];
+			accessibleVisitorSpaceIds = [user.getOrganisationId()];
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}
@@ -771,7 +771,7 @@ export class IeObjectsService {
 		const limitedObjectDetails = limitAccessToObjectDetails(folderObjectItem, {
 			userId: user.getId(),
 			sector: user.getSector(),
-			maintainerId: user.getMaintainerId(),
+			maintainerId: user.getOrganisationId(),
 			groupId: user.getGroupId(),
 			isKeyUser: user.getIsKeyUser(),
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,

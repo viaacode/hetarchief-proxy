@@ -100,7 +100,7 @@ export class IeObjectsController {
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
 			groupId: user.getGroupId(),
-			maintainerId: user.getMaintainerId(),
+			maintainerId: user.getOrganisationId(),
 			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 		});
@@ -178,7 +178,7 @@ export class IeObjectsController {
 				isKeyUser: user.getIsKeyUser(),
 				sector: user.getSector(),
 				groupId: user.getGroupId(),
-				maintainerId: user.getMaintainerId(),
+				maintainerId: user.getOrganisationId(),
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			})
@@ -227,7 +227,7 @@ export class IeObjectsController {
 				isKeyUser: user.getIsKeyUser(),
 				sector: user.getSector(),
 				groupId: user.getGroupId(),
-				maintainerId: user.getMaintainerId(),
+				maintainerId: user.getOrganisationId(),
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 			})
@@ -275,7 +275,7 @@ export class IeObjectsController {
 						isKeyUser: user.getIsKeyUser(),
 						sector: user.getSector(),
 						groupId: user.getGroupId(),
-						maintainerId: user.getMaintainerId(),
+						maintainerId: user.getOrganisationId(),
 						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 					})
@@ -321,7 +321,7 @@ export class IeObjectsController {
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
-					maintainerId: user.getMaintainerId(),
+					maintainerId: user.getOrganisationId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
@@ -378,7 +378,7 @@ export class IeObjectsController {
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
 					groupId: user.getGroupId(),
-					maintainerId: user.getMaintainerId(),
+					maintainerId: user.getOrganisationId(),
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})

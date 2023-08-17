@@ -270,7 +270,7 @@ export class MaterialRequestsController {
 			}
 
 			if (user.getGroupId() === GroupId.CP_ADMIN) {
-				queryDto.maintainerIds = [user.getMaintainerId()];
+				queryDto.maintainerIds = [user.getOrganisationId()];
 			}
 		}
 
