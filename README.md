@@ -6,9 +6,9 @@ This repository contains the NodeJS backend proxy for Het Archief.
 
 It is build with:
 
--   node: `v16.x.x` ( ~ `lts/gallium`)
--   npm: `v7.x.x`
--   Nest: `v8.2.3`
+- node: `v20.x.x` ( ~ `lts/20.4`)
+- npm: `v9.x.x`
+- Nest: `v9.5.0`
 
 For a complete list of packages and version check out the `package.json` file.
 
@@ -32,7 +32,7 @@ To start working, simply run `docker-compose up`, the project will be available 
 The available commands for development are:
 
 | command    | runs                                      |
-| ---------- | ----------------------------------------- |
+|------------|-------------------------------------------|
 | start      | Run the develompent server.               |
 | start:dev  | Run the development server in watch mode. |
 | start:prod | Run the server in production mode.        |
@@ -42,7 +42,7 @@ The available commands for development are:
 The available commands for building the project are:
 
 | command | runs                                                |
-| ------- | --------------------------------------------------- |
+|---------|-----------------------------------------------------|
 | build   | Build a production ready app to the `/dist` folder. |
 
 <br>
@@ -50,7 +50,7 @@ The available commands for building the project are:
 The available commands for testing the project are:
 
 | command    | runs                                            |
-| ---------- | ----------------------------------------------- |
+|------------|-------------------------------------------------|
 | test       | Run all the unit tests.                         |
 | test:watch | Run all the unit tests in watch mode.           |
 | test:cov   | Run all the unit tests with coverage collected. |
@@ -61,7 +61,7 @@ The available commands for testing the project are:
 Other available commands are:
 
 | command  | runs                                                       |
-| -------- | ---------------------------------------------------------- |
+|----------|------------------------------------------------------------|
 | format   | Format all files with prettier.                            |
 | lint     | Lint all files with ESLint.                                |
 | lint:fix | Lint all files and automatically fix most of the problems. |
@@ -80,37 +80,37 @@ They are provided through the `env_file` property in the `docker-compose.yml` fi
 
 There are a few debug env vars that can be useful:
 
--   Log queries and responses from the elasticsearch instance:
+- Log queries and responses from the elasticsearch instance:
 
-    ```
-    ELASTICSEARCH_LOG_QUERIES=true
-    ```
+  ```
+  ELASTICSEARCH_LOG_QUERIES=true
+  ```
 
--   Log queries and responses from the graphql instance:
+- Log queries and responses from the graphql instance:
 
-    ```
-    GRAPHQL_LOG_QUERIES=true
-    ```
+  ```
+  GRAPHQL_LOG_QUERIES=true
+  ```
 
--   Ignore object licenses in the database:
+- Ignore object licenses in the database:
 
-    ```
-    IGNORE_OBJECT_LICENSES=true
-    ```
+  ```
+  IGNORE_OBJECT_LICENSES=true
+  ```
 
--   Enable sending email and redirect CP emails to a different email address:
+- Enable sending email and redirect CP emails to a different email address:
 
-    ```
-    ENABLE_SEND_EMAIL=true
-    REROUTE_EMAILS_TO=bert.verhelst@studiohyperdrive.be
-    ```
+  ```
+  ENABLE_SEND_EMAIL=true
+  REROUTE_EMAILS_TO=bert.verhelst@studiohyperdrive.be
+  ```
 
--   Change the elasticsearch endpoint to debug with more search results on QAS or PRD:
-    ```
-    ELASTICSEARCH_URL=http://es-prd-hetarchief.private.cloud.meemoo.be
-    ELASTICSEARCH_URL=http://es-qas-hetarchief.private.cloud.meemoo.be
-    ELASTICSEARCH_URL=http://es-int-hetarchief.private.cloud.meemoo.be
-    ```
+- Change the elasticsearch endpoint to debug with more search results on QAS or PRD:
+  ```
+  ELASTICSEARCH_URL=http://es-prd-hetarchief.private.cloud.meemoo.be
+  ELASTICSEARCH_URL=http://es-qas-hetarchief.private.cloud.meemoo.be
+  ELASTICSEARCH_URL=http://es-int-hetarchief.private.cloud.meemoo.be
+  ```
 
 ## External services
 
@@ -144,8 +144,8 @@ hasura seed apply --endpoint https://hasura-graphql-tst-hetarchief.private.cloud
 
 secrets for databases can be found in the environment variables and secrets in openshift:
 
--   https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/configmaps
--   https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/secrets
+- https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/configmaps
+- https://console-openshift-console.meemoo2-2bc857e5f10eb63ab790a3a1d19a696c-i000.eu-de.containers.appdomain.cloud/k8s/ns/hetarchief/secrets
 
 ## Deploy
 
@@ -155,15 +155,15 @@ Follow Slite doc: https://studiohyperdrive.slite.com/app/docs/L0Alk6HWq5w7il
 
 This project has been created by:
 
--   Andry Charlier: andry.charlier@studiohyperdrive.be
+- Andry Charlier: andry.charlier@studiohyperdrive.be
 
 Has been worked on by:
 
--   Bart Naessens: bart.naessens@studiohyperdrive.be
--   Ian Emsens: ian.emsens@studiohyperdrive.be
+- Bart Naessens: bart.naessens@studiohyperdrive.be
+- Ian Emsens: ian.emsens@studiohyperdrive.be
 
 It is currently maintained by:
 
--   Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
--   Bert Verhelst: bert.verhelst@studiohyperdrive.be
--   Brecht Tourlousse: brecht.tourlousse@studiohyperdrive.be
+- Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
+- Bert Verhelst: bert.verhelst@studiohyperdrive.be
+- Brecht Tourlousse: brecht.tourlousse@studiohyperdrive.be

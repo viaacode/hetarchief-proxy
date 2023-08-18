@@ -182,7 +182,7 @@ pipeline {
 }
 
 void getImageFromDockerfile() {
-    return 'node:gallium'
+    return 'node:20.4'
 }
 void getBaseImageName() {
     return getImageFromDockerfile().split(':')[0]
