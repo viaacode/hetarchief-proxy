@@ -393,7 +393,7 @@ export class VisitsController {
 					visitor_space_id: visitorSpace.id,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
-					or_id: visit.spaceId,
+					or_id: visit.spaceMaintainerId,
 				},
 			},
 		]);
@@ -443,7 +443,7 @@ export class VisitsController {
 		// update the Visit
 		const visit = await this.visitsService.update(id, updateVisitDto, user.getId());
 
-		// Post processing for notifications
+		// Post-processing for notifications
 		if (updateVisitDto.status) {
 			await this.postProcessVisitStatusChange(
 				request,
@@ -487,7 +487,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
-						or_id: visit.spaceId,
+						or_id: visit.spaceMaintainerId,
 					},
 				},
 			]);
@@ -510,7 +510,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
-						or_id: visit.spaceId,
+						or_id: visit.spaceMaintainerId,
 					},
 				},
 			]);
@@ -532,7 +532,7 @@ export class VisitsController {
 						visitor_space_id: visit.spaceId,
 						user_group_name: user.getGroupName(),
 						user_group_id: user.getGroupId(),
-						or_id: visit.spaceId,
+						or_id: visit.spaceMaintainerId,
 					},
 				},
 			]);
