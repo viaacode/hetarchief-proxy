@@ -30,7 +30,7 @@ COPY --chown=node:node --from=builder /app/scripts/ /app/scripts/
 USER node
 
 ## disable prepare no need for husky in docker
-RUN npm pkg set scripts.prepare="" &&\
+RUN npm pkg delete scripts.prepare &&\
    npm ci
 #--omit=dev
 
