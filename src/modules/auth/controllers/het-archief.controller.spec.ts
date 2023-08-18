@@ -48,7 +48,8 @@ const archiefUser = {
 	permissions: [],
 	isKeyUser: false,
 	organisationId: 'OR-1v5bc86',
-	organisationName: null,
+	organisationName: 'VRT',
+	sector: 'Overheid',
 };
 
 const samlResponse = {

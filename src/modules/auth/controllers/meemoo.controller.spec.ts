@@ -144,6 +144,14 @@ describe('MeemooController', () => {
 		configService = module.get<ConfigService<Configuration>>(ConfigService);
 	});
 
+	afterEach(() => {
+		mockIdpService.determineUserGroup.mockRestore();
+		mockMeemooService.assertSamlResponse.mockRestore();
+		mockUsersService.createUserWithIdp.mockRestore();
+		mockUsersService.getUserByIdentityId.mockRestore();
+		mockUsersService.updateUser.mockRestore();
+	});
+
 	it('should be defined', () => {
 		expect(meemooController).toBeDefined();
 	});
@@ -249,7 +257,6 @@ describe('MeemooController', () => {
 			});
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).toBeCalled();
-			mockUsersService.updateUser.mockClear();
 		});
 
 		it('should throw an exception on invalid saml response', async () => {

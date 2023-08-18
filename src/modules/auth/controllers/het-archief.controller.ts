@@ -202,10 +202,15 @@ export class HetArchiefController {
 							'groupId',
 							'isKeyUser',
 							'organisationId',
-							'organisationName',
-							'sector',
 						]),
-						userDto
+						pick(userDto, [
+							'firstName',
+							'lastName',
+							'email',
+							'groupId',
+							'isKeyUser',
+							'organisationId',
+						])
 					)
 				) {
 					// update user

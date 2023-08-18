@@ -33,7 +33,6 @@ const archiefUser: User = {
 	permissions: [Permission.READ_ALL_VISIT_REQUESTS],
 	isKeyUser: true,
 	lastAccessAt: null,
-	organisationName: null,
 	createdAt: null,
 };
 
