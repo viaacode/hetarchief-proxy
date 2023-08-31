@@ -1,7 +1,8 @@
 import { Readable } from 'stream';
 
-import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
+import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { AssetType } from '@viaa/avo2-types';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -13,8 +14,6 @@ import {
 	GetSitemapConfigDocument,
 	GetSitemapConfigQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { AssetsService } from '~modules/assets/services/assets.service';
-import { AssetFileType } from '~modules/assets/types';
 import { IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -169,7 +168,7 @@ export class SitemapService {
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
 		return await this.assetsService.upload(
-			AssetFileType.SITEMAP,
+			AssetType.SITEMAP,
 			{
 				fieldname: name,
 				originalname: name,

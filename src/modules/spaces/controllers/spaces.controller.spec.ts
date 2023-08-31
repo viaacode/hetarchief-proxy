@@ -1,4 +1,4 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { SpacesService } from '../services/spaces.service';
@@ -6,7 +6,6 @@ import { SpacesService } from '../services/spaces.service';
 import { SpacesController } from './spaces.controller';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
-import { AssetsService } from '~modules/assets/services/assets.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';

@@ -1,4 +1,4 @@
-import { ContentPagesService, DataService } from '@meemoo/admin-core-api';
+import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import {
@@ -11,7 +11,6 @@ import { SitemapItemInfo } from '../sitemap.types';
 
 import { SitemapService } from './sitemap.service';
 
-import { AssetsService } from '~modules/assets/services/assets.service';
 import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';

@@ -1,4 +1,4 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { AssetsService, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	BadRequestException,
 	Body,
@@ -19,6 +19,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
+import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
@@ -26,8 +27,6 @@ import { SpacesService } from '../services/spaces.service';
 import { Space } from '../types';
 
 import { VisitorSpaceStatus } from '~generated/database-aliases';
-import { AssetsService } from '~modules/assets/services/assets.service';
-import { AssetFileType } from '~modules/assets/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -37,8 +36,6 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 @ApiTags('Spaces')
 @Controller('spaces')
 export class SpacesController {
-	private logger: Logger = new Logger(SpacesController.name, { timestamp: true });
-
 	constructor(
 		private spacesService: SpacesService,
 		private assetsService: AssetsService,
@@ -155,7 +152,7 @@ export class SpacesController {
 		}
 
 		if (file) {
-			updateSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
+			updateSpaceDto.image = await this.assetsService.upload(AssetType.SPACE_IMAGE, file);
 			if (space.image) {
 				// space already has an image: delete existing one
 				await this.assetsService.delete(space.image);
@@ -204,7 +201,7 @@ export class SpacesController {
 		}
 
 		if (file) {
-			createSpaceDto.image = await this.assetsService.upload(AssetFileType.SPACE_IMAGE, file);
+			createSpaceDto.image = await this.assetsService.upload(AssetType.SPACE_IMAGE, file);
 		}
 		// Space is always created with 'REQUESTED' status
 		createSpaceDto.status = VisitorSpaceStatus.Requested;

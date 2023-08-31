@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AssetType } from '@viaa/avo2-types';
 
 import { Configuration } from '~config';
 
@@ -8,7 +9,6 @@ import { SitemapService } from '../services/sitemap.service';
 
 import { SitemapController } from './sitemap.controller';
 
-import { AssetFileType } from '~modules/assets/types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockSitemapService = {
@@ -74,7 +74,7 @@ describe('SitemapController', () => {
 			);
 
 			expect(result).toEqual(
-				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetFileType.SITEMAP}/index.xml`
+				`${process.env.ASSET_SERVER_ENDPOINT}/${process.env.ASSET_SERVER_BUCKET_NAME}/${AssetType.SITEMAP}/index.xml`
 			);
 		});
 	});

@@ -6,11 +6,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import config, { configValidationSchema } from '~config';
 
-import { MaterialRequestsModule } from './modules/material-requests';
-import { ZendeskModule } from './modules/zendesk';
-import { ZendeskService } from './modules/zendesk/services/zendesk.service';
-
-import { AssetsModule } from '~modules/assets';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
@@ -18,6 +13,7 @@ import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
+import { MaterialRequestsModule } from '~modules/material-requests';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
 import { NotificationsModule } from '~modules/notifications';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
@@ -28,6 +24,8 @@ import { TosModule } from '~modules/tos';
 import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
+import { ZendeskModule } from '~modules/zendesk';
+import { ZendeskService } from '~modules/zendesk/services/zendesk.service';
 import { PermissionGuard } from '~shared/guards/permission.guard';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { SessionService } from '~shared/services/session.service';
@@ -48,7 +46,6 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		CampaignMonitorModule,
 		CollectionsModule,
 		ContentPartnersModule,
-		AssetsModule,
 		DataModule,
 		EventsModule,
 		OrganisationsModule,
