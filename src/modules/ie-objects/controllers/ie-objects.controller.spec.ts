@@ -1,4 +1,8 @@
-import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
+import {
+	PlayerTicketController,
+	PlayerTicketService,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -64,6 +68,13 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getThumbnailUrl: jest.fn(),
 };
 
+const mockPlayerTicketController: Partial<Record<keyof PlayerTicketController, jest.SpyInstance>> =
+	{
+		getPlayableUrl: jest.fn(),
+		getPlayableUrlFromBrowsePath: jest.fn(),
+		getPlayableUrlByExternalId: jest.fn(),
+	};
+
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
 	insertEvents: jest.fn(),
 };
@@ -99,6 +110,10 @@ describe('IeObjectsController', () => {
 				{
 					provide: PlayerTicketService,
 					useValue: mockPlayerTicketService,
+				},
+				{
+					provide: PlayerTicketController,
+					useValue: mockPlayerTicketController,
 				},
 				{
 					provide: EventsService,
@@ -158,7 +173,9 @@ describe('IeObjectsController', () => {
 
 	describe('getPlayableUrl', () => {
 		it('should return a playable url', async () => {
-			mockPlayerTicketService.getPlayableUrl.mockResolvedValueOnce('http://playme');
+			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
+				'http://playme'
+			);
 			const url = await ieObjectsController.getPlayableUrl('referer', { id: '1' });
 			expect(url).toEqual('http://playme');
 		});
