@@ -431,6 +431,8 @@ export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
 							ebucore_is_media_fragment_of: null,
 							schema_embed_url:
 								'VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
+							schema_identifier:
+								'https://archief-media.viaa.be/viaa/ATV/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
 						},
 					],
 				},

@@ -51,6 +51,8 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		meemoo_description_programme
 		meemoo_description_cast
 		meemoofilm_contains_embedded_caption
+		haorg_alt_label
+		haorg_organization_type
 		premis_is_represented_by {
 			ie_schema_identifier
 			schema_name
@@ -63,13 +65,12 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 				schema_name
 				schema_alternate_name
 				schema_description
+				schema_identifier
 				representation_schema_identifier
 				ebucore_media_type
 				ebucore_is_media_fragment_of
 				schema_embed_url
 			}
 		}
-		haorg_alt_label
-		haorg_organization_type
 	}
 }

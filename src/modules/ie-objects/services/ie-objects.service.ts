@@ -647,10 +647,11 @@ export class IeObjectsService {
 				name: file?.schema_name,
 				alternateName: file?.schema_alternate_name,
 				description: file?.schema_description,
-				schemaIdentifier: file?.representation_schema_identifier,
+				representationSchemaIdentifier: file?.representation_schema_identifier,
 				ebucoreMediaType: file?.ebucore_media_type,
 				ebucoreIsMediaFragmentOf: file?.ebucore_is_media_fragment_of,
 				embedUrl: file?.schema_embed_url,
+				schemaIdentifier: file?.schema_identifier,
 			})
 		);
 	}

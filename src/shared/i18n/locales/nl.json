@@ -1,5 +1,4 @@
 {
-  "modules/assets/controllers/assets___the-request-should-contain-a-file-to-upload": "The request should contain a file to upload",
   "modules/auth/controllers/het-archief___account-configuratie": "Account configuratie",
   "modules/auth/controllers/meemoo___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___account-configuratie": "",

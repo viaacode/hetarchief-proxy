@@ -49,6 +49,8 @@ query getRelatedObjects(
 		schema_date_created_lower_bound
 		ebucore_object_type
 		schema_genre
+		haorg_alt_label
+		haorg_organization_type
 		premis_is_represented_by {
 			ie_schema_identifier
 			schema_name
@@ -61,6 +63,7 @@ query getRelatedObjects(
 				schema_name
 				schema_alternate_name
 				schema_description
+				schema_identifier
 				representation_schema_identifier
 				ebucore_media_type
 				ebucore_is_media_fragment_of

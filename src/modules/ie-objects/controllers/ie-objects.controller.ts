@@ -1,4 +1,4 @@
-import { PlayerTicketService, TranslationsService } from '@meemoo/admin-core-api';
+import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -47,7 +47,6 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
-import { VisitsService } from '~modules/visits/services/visits.service';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
@@ -57,10 +56,9 @@ import { EventsHelper } from '~shared/helpers/events';
 export class IeObjectsController {
 	constructor(
 		private ieObjectsService: IeObjectsService,
-		private translationsService: TranslationsService,
 		private eventsService: EventsService,
-		private visitsService: VisitsService,
-		private playerTicketService: PlayerTicketService
+		private playerTicketService: PlayerTicketService,
+		private playerTicketController: PlayerTicketController
 	) {}
 
 	@Get('player-ticket')
@@ -71,8 +69,7 @@ export class IeObjectsController {
 		const embedUrl = await this.playerTicketService.getEmbedUrl(
 			decodeURIComponent(playerTicketsQuery.id)
 		);
-		const url = await this.playerTicketService.getPlayableUrl(embedUrl, referer);
-		return url;
+		return this.playerTicketController.getPlayableUrlFromBrowsePath(embedUrl, referer);
 	}
 
 	@Get('thumbnail-ticket')
@@ -80,8 +77,7 @@ export class IeObjectsController {
 		@Headers('referer') referer: string,
 		@Query() thumbnailQuery: ThumbnailQueryDto
 	): Promise<string> {
-		const url = await this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
-		return url;
+		return this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
 	}
 
 	@Get(':id')
