@@ -66,10 +66,8 @@ export class IeObjectsController {
 		@Headers('referer') referer: string,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
 	): Promise<string> {
-		const embedUrl = await this.playerTicketService.getEmbedUrl(
-			decodeURIComponent(playerTicketsQuery.id)
-		);
-		return this.playerTicketController.getPlayableUrlFromBrowsePath(embedUrl, referer);
+		const schemaIdentifier = decodeURIComponent(playerTicketsQuery.schemaIdentifier);
+		return this.playerTicketController.getPlayableUrlFromBrowsePath(schemaIdentifier, referer);
 	}
 
 	@Get('thumbnail-ticket')

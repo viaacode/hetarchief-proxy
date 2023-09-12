@@ -121,9 +121,9 @@ export class PlayerTicketsQueryDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
-		description: 'Get the playable url for the file with this representation schemaIdentifier',
+		description: 'Get the playable url for the file with this schemaIdentifier',
 	})
-	id: string;
+	schemaIdentifier: string;
 }
 
 export class ThumbnailQueryDto {
