@@ -118,9 +118,8 @@ export class SitemapService {
 
 	public async getSitemapConfig(): Promise<SitemapConfig> {
 		try {
-			const { app_config: config } = await this.dataService.execute<GetSitemapConfigQuery>(
-				GetSitemapConfigDocument
-			);
+			const { app_config: config } =
+				await this.dataService.execute<GetSitemapConfigQuery>(GetSitemapConfigDocument);
 			if (!config) {
 				throw new InternalServerErrorException(
 					'Database value for SITEMAP_CONFIG is not defined in app.config. Aborting Sitemap generation.'
@@ -167,7 +166,7 @@ export class SitemapService {
 	}
 
 	private async uploadXml(xml: string, name: string): Promise<string> {
-		return await this.assetsService.upload(
+		return this.assetsService.uploadAndTrack(
 			AssetType.SITEMAP,
 			{
 				fieldname: name,

@@ -7,8 +7,7 @@ import {
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectSector, MediaFormat } from '~modules/ie-objects/ie-objects.types';
-import { Organisation } from '~modules/organisations/organisations.types';
+import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 

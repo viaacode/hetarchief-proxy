@@ -18,7 +18,7 @@ const mockExecutionContextWithPermissions = (permissions) =>
 		}),
 		getClass: jest.fn(),
 		getHandler: jest.fn(),
-	} as unknown as ExecutionContext);
+	}) as unknown as ExecutionContext;
 
 const mockReflector = {
 	get: jest.fn(),

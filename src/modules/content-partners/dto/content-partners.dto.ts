@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional } from 'class-validator';
 
-import { MaterialRequestType } from '~modules/material-requests/material-requests.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 
 export class ContentPartnersQueryDto {

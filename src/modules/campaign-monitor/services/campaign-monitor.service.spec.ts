@@ -298,9 +298,8 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
-			const result = await campaignMonitorService.sendForMaterialRequest(
-				materialRequestEmailInfo
-			);
+			const result =
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			expect(result).toBeFalsy();
 			campaignMonitorService.setIsEnabled(true);
 		});

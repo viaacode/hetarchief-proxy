@@ -46,9 +46,8 @@ describe('OrganisationController', () => {
 		it('should return a message when the update is succesful', async () => {
 			mockOrganisationsService.updateOrganisationsCache.mockResolvedValueOnce({});
 
-			const result = await organisationsController.getOrganisationElementsForUser(
-				'fakeApiKey'
-			);
+			const result =
+				await organisationsController.getOrganisationElementsForUser('fakeApiKey');
 
 			expect(result).toEqual({ message: 'cache has been updated successfully' });
 		});

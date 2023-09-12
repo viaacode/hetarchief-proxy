@@ -6,7 +6,6 @@ import {
 	ForbiddenException,
 	Get,
 	GoneException,
-	Logger,
 	NotFoundException,
 	Param,
 	ParseUUIDPipe,
@@ -152,7 +151,11 @@ export class SpacesController {
 		}
 
 		if (file) {
-			updateSpaceDto.image = await this.assetsService.upload(AssetType.SPACE_IMAGE, file);
+			updateSpaceDto.image = await this.assetsService.uploadAndTrack(
+				AssetType.SPACE_IMAGE,
+				file,
+				space.maintainerId
+			);
 			if (space.image) {
 				// space already has an image: delete existing one
 				await this.assetsService.delete(space.image);
@@ -201,7 +204,11 @@ export class SpacesController {
 		}
 
 		if (file) {
-			createSpaceDto.image = await this.assetsService.upload(AssetType.SPACE_IMAGE, file);
+			createSpaceDto.image = await this.assetsService.uploadAndTrack(
+				AssetType.SPACE_IMAGE,
+				file,
+				createSpaceDto.orId
+			);
 		}
 		// Space is always created with 'REQUESTED' status
 		createSpaceDto.status = VisitorSpaceStatus.Requested;

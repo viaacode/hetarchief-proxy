@@ -10,7 +10,12 @@ module.exports = {
 	testEnvironment: 'node',
 	testRegex: '.*\\.spec\\.ts$',
 	transform: {
-		'^.+\\.(t|j)s$': 'ts-jest',
+		'^.+\\.(t|j)s$': [
+			'ts-jest',
+			{
+				isolatedModules: true,
+			},
+		],
 	},
 	collectCoverageFrom: ['**/*.(t|j)s'],
 	coverageDirectory: '../coverage',
@@ -24,9 +29,4 @@ module.exports = {
 	},
 	setupFilesAfterEnv: ['../jest.setup.redis-mock.ts'],
 	coveragePathIgnorePatterns: ['node_modules', '.module.ts', '.dto.ts', 'index.ts'],
-	globals: {
-		'ts-jest': {
-			isolatedModules: true,
-		},
-	},
 };

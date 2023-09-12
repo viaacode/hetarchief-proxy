@@ -335,9 +335,9 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				}).json<void>();
 			} else {
 				this.logger.log(
-					`Mock email sent. To: '${data.to}'. Template: ${
-						emailInfo?.template
-					}, data: ${JSON.stringify(data)}`
+					`Mock email sent. To: '${
+						data.to
+					}'. Template: ${emailInfo?.template}, data: ${JSON.stringify(data)}`
 				);
 			}
 		} catch (err) {

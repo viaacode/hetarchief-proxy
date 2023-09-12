@@ -14,7 +14,10 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 export class StatusService {
 	private logger: Logger = new Logger(StatusService.name, { timestamp: true });
 
-	constructor(private dataService: DataService, private mediaService: IeObjectsService) {}
+	constructor(
+		private dataService: DataService,
+		private mediaService: IeObjectsService
+	) {}
 
 	getStatus(): Record<string, string> {
 		return {
@@ -34,9 +37,8 @@ export class StatusService {
 
 	private async getGraphQlStatus(): Promise<boolean> {
 		try {
-			const response = await this.dataService.execute<GetFirstObjectIdQuery>(
-				GetFirstObjectIdDocument
-			);
+			const response =
+				await this.dataService.execute<GetFirstObjectIdQuery>(GetFirstObjectIdDocument);
 
 			/* istanbul ignore next */
 			return !!response?.object_ie?.[0]?.schema_identifier;

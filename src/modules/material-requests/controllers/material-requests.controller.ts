@@ -16,7 +16,6 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
-import session from 'express-session';
 import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,7 +37,6 @@ import { LogEvent, LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';

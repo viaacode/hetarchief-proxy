@@ -60,7 +60,7 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 };
 
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
-	upload: jest.fn(),
+	uploadAndTrack: jest.fn(),
 	delete: jest.fn(),
 };
 
@@ -215,7 +215,7 @@ describe('SpacesController', () => {
 
 		it('can upload an image for a space', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
-			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce('http://image.jpg');
 			mockSpacesService.update.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			const space = await spacesController.updateSpace(
 				'1',
@@ -291,7 +291,7 @@ describe('SpacesController', () => {
 
 	describe('createSpace', () => {
 		it('should create a space', async () => {
-			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce('http://image.jpg');
 			mockSpacesService.create.mockResolvedValueOnce({ id: '1' });
 			const space = await spacesController.createSpace(
 				{
@@ -315,7 +315,7 @@ describe('SpacesController', () => {
 		});
 
 		it('should throw an exception if slug was not  a space', async () => {
-			mockAssetsService.upload.mockResolvedValueOnce('http://image.jpg');
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce('http://image.jpg');
 			mockSpacesService.create.mockResolvedValueOnce({ id: '1' });
 			let error;
 			try {

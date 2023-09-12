@@ -1,7 +1,5 @@
 import { Template } from './campaign-monitor.types';
 
-import { MaterialRequestType } from '~modules/material-requests/material-requests.types';
-
 export const getTemplateId = (template: string): string => {
 	const templateIds = {
 		[Template.SHARE_FOLDER]: process.env.CAMPAIGN_MONITOR_EMAIL_TEMPLATE_SHARE_FOLDER as string,

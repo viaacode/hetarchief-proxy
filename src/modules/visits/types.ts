@@ -8,7 +8,6 @@ import {
 	FindVisitsQuery,
 	InsertVisitMutation,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
-	UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
 
 export { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as VisitAccessType } from '~generated/graphql-db-types-hetarchief';

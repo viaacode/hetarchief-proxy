@@ -29,7 +29,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findIeObjectsForSitemap: jest.fn(),
 };
 const mockAssetsService: Partial<Record<keyof AssetsService, jest.SpyInstance>> = {
-	upload: jest.fn(),
+	uploadAndTrack: jest.fn(),
 };
 
 describe('SitemapService', () => {
@@ -130,7 +130,7 @@ describe('SitemapService', () => {
 				{ loc: '/geheime-content-pagina', changefreq: 'weekly' },
 			];
 
-			const response = await sitemapService.blacklistAndPrioritizePages(
+			const response = sitemapService.blacklistAndPrioritizePages(
 				mockPages,
 				mockSitemapConfig
 			);
@@ -149,13 +149,13 @@ describe('SitemapService', () => {
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
 			});
-			mockAssetsService.upload.mockResolvedValueOnce(
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
 				'https://asset-server.be/bucketname/SITEMAP/general'
 			);
-			mockAssetsService.upload.mockResolvedValueOnce(
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
 				'https://asset-server.be/bucketname/SITEMAP/object-detail-0'
 			);
-			mockAssetsService.upload.mockResolvedValueOnce(
+			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
 				'https://asset-server.be/bucketname/SITEMAP/index'
 			);
 

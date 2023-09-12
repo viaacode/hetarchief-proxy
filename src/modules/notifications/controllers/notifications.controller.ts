@@ -29,7 +29,6 @@ import { NotificationsService } from '~modules/notifications/services/notificati
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
-import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
