@@ -368,7 +368,7 @@ export class VisitsService {
 		parameters: {
 			visitorSpaceSlug?: string | null; // Meemoo admins should pass null, CP admins need to pass their own cpSpaceId
 			userProfileId?: string;
-			visitorSpaceStatus?: VisitorSpaceStatus | null;
+			visitorSpaceStatuses?: VisitorSpaceStatus[];
 		}
 	): Promise<IPagination<Visit>> {
 		const { query, status, timeframe, accessType, page, size, orderProp, orderDirection } =
@@ -406,10 +406,10 @@ export class VisitsService {
 			};
 		}
 
-		if (!isEmpty(parameters.visitorSpaceStatus)) {
+		if (parameters.visitorSpaceStatuses.length > 0) {
 			where.visitor_space = {
 				...(where.visitor_space ? where.visitor_space : {}),
-				status: { _eq: VisitorSpaceStatus.Active },
+				status: { _in: parameters.visitorSpaceStatuses },
 			};
 		}
 

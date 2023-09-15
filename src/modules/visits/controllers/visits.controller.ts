@@ -160,7 +160,9 @@ export class VisitsController {
 
 		const visits = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
-			visitorSpaceStatus: VisitorSpaceStatus.Active, // a visitor should only see visits for active spaces
+			// a visitor can see visit requests that have been approved for visitor spaces with status requested and active
+			// https://meemoo.atlassian.net/browse/ARC-1949
+			visitorSpaceStatuses: [VisitorSpaceStatus.Requested, VisitorSpaceStatus.Active],
 		});
 
 		if (user.getGroupName() === GroupName.CP_ADMIN) {

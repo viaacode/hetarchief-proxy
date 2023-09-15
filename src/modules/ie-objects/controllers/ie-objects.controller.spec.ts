@@ -176,7 +176,9 @@ describe('IeObjectsController', () => {
 			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
 				'http://playme'
 			);
-			const url = await ieObjectsController.getPlayableUrl('referer', { id: '1' });
+			const url = await ieObjectsController.getPlayableUrl('referer', {
+				schemaIdentifier: '1',
+			});
 			expect(url).toEqual('http://playme');
 		});
 	});

@@ -703,7 +703,9 @@ export class IeObjectsService {
 			},
 			{
 				userProfileId: user.getId(),
-				visitorSpaceStatus: VisitorSpaceStatus.Active,
+				// a visitor can see visit requests that have been approved for visitor spaces with status requested and active
+				// https://meemoo.atlassian.net/browse/ARC-1949
+				visitorSpaceStatuses: [VisitorSpaceStatus.Requested, VisitorSpaceStatus.Active],
 			}
 		);
 		const visitorSpaceAccessInfo = getVisitorSpaceAccessInfoFromVisits(activeVisits.items);
