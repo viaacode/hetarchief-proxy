@@ -406,7 +406,7 @@ export class VisitsService {
 			};
 		}
 
-		if (parameters.visitorSpaceStatuses.length > 0) {
+		if (parameters.visitorSpaceStatuses?.length > 0) {
 			where.visitor_space = {
 				...(where.visitor_space ? where.visitor_space : {}),
 				status: { _in: parameters.visitorSpaceStatuses },
