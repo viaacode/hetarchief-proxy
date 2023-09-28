@@ -69,6 +69,10 @@ export class HetArchiefController {
 			}
 
 			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl);
+			console.log({
+				url,
+				statusCode: HttpStatus.TEMPORARY_REDIRECT,
+			});
 			return {
 				url,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
