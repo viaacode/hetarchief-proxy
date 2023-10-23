@@ -1,0 +1,18 @@
+query getFilterOptions {
+	object_ie__ebucore_object_type: object_ie(distinct_on: ebucore_object_type) {
+		ebucore_object_type
+	}
+	object_ie__schema_in_language: object_ie(distinct_on: schema_in_language) {
+		schema_in_language
+	}
+	object_ie__dcterms_medium: object_ie(distinct_on: dcterms_medium) {
+		dcterms_medium
+	}
+	object_ie__schema_genre: object_ie(distinct_on: schema_genre) {
+		schema_genre
+	}
+	object_ie__schema_maintainer: object_ie(distinct_on: schema_maintainer_name) {
+		schema_maintainer_name
+		schema_maintainer_id
+	}
+}

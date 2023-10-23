@@ -5,6 +5,7 @@ import {
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
@@ -310,3 +311,14 @@ export interface IeObjectsSitemap {
 	name: string;
 	updatedAt: string;
 }
+
+export type FilterOptions = {
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: string[];
+	[IeObjectsSearchFilterField.LANGUAGE]: string[];
+	[IeObjectsSearchFilterField.MEDIUM]: string[];
+	[IeObjectsSearchFilterField.GENRE]: string[];
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: {
+		id: string;
+		name: string;
+	}[];
+};

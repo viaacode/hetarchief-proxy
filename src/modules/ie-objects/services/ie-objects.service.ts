@@ -10,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import got, { Got } from 'got';
-import { find, isEmpty, kebabCase } from 'lodash';
+import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -27,6 +27,7 @@ import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-de
 import {
 	ElasticsearchObject,
 	ElasticsearchResponse,
+	FilterOptions,
 	GqlIeObject,
 	GqlLimitedIeObject,
 	IeObject,
@@ -46,6 +47,9 @@ import {
 	FindIeObjectsForSitemapDocument,
 	FindIeObjectsForSitemapQuery,
 	FindIeObjectsForSitemapQueryVariables,
+	GetFilterOptionsDocument,
+	GetFilterOptionsQuery,
+	GetFilterOptionsQueryVariables,
 	GetObjectDetailBySchemaIdentifierDocument,
 	GetObjectDetailBySchemaIdentifierQuery,
 	GetObjectDetailBySchemaIdentifierQueryVariables,
@@ -798,5 +802,40 @@ export class IeObjectsService {
 			return [];
 		}
 		return convertStringToSearchTerms(searchTerm);
+	}
+
+	private sortAndUnique(values: string[]): string[] {
+		return sortBy(uniq(compact(values)), (option) => option.toLowerCase());
+	}
+
+	public async getFilterOptions(): Promise<FilterOptions> {
+		const response = await this.dataService.execute<
+			GetFilterOptionsQuery,
+			GetFilterOptionsQueryVariables
+		>(GetFilterOptionsDocument, {});
+
+		return {
+			[IeObjectsSearchFilterField.OBJECT_TYPE]: this.sortAndUnique(
+				response.object_ie__ebucore_object_type.map((obj) => obj.ebucore_object_type)
+			),
+			[IeObjectsSearchFilterField.LANGUAGE]: this.sortAndUnique(
+				response.object_ie__schema_in_language.flatMap((obj) => obj.schema_in_language)
+			),
+			[IeObjectsSearchFilterField.MEDIUM]: this.sortAndUnique(
+				response.object_ie__dcterms_medium.flatMap((obj) => obj.dcterms_medium)
+			),
+			[IeObjectsSearchFilterField.GENRE]: this.sortAndUnique(
+				response.object_ie__schema_genre.flatMap((obj) => obj.schema_genre)
+			),
+			[IeObjectsSearchFilterField.MAINTAINER_ID]: sortBy(
+				uniq(
+					response.object_ie__schema_maintainer.flatMap((obj) => ({
+						id: obj.schema_maintainer_id,
+						name: obj.schema_maintainer_name,
+					}))
+				),
+				(obj) => obj.name?.toLowerCase()
+			),
+		};
 	}
 }

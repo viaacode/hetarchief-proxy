@@ -30,6 +30,7 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
+	FilterOptions,
 	IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -78,44 +79,9 @@ export class IeObjectsController {
 		return this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
 	}
 
-	@Get(':id')
-	public async getIeObjectById(
-		@Headers('referer') referer: string,
-		@Param('id') id: string,
-		@SessionUser() user: SessionUserEntity
-	): Promise<IeObject | Partial<IeObject>> {
-		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
-
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-
-		const limitedObject = limitAccessToObjectDetails(ieObject, {
-			userId: user.getId(),
-			isKeyUser: user.getIsKeyUser(),
-			sector: user.getSector(),
-			groupId: user.getGroupId(),
-			maintainerId: user.getOrganisationId(),
-			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-		});
-
-		if (!limitedObject) {
-			throw new ForbiddenException('You do not have access to this object');
-		}
-
-		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
-		if (
-			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
-			visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
-			intersection(limitedObject?.licenses, [
-				IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-			]).length > 0
-		) {
-			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
-		}
-
-		return limitedObject;
+	@Get('filter-options')
+	public async getFilterOptions(): Promise<FilterOptions> {
+		return this.ieObjectsService.getFilterOptions();
 	}
 
 	@Get('seo/:id')
@@ -395,5 +361,45 @@ export class IeObjectsController {
 		}
 
 		return licensedSearchResult;
+	}
+
+	@Get(':id')
+	public async getIeObjectById(
+		@Headers('referer') referer: string,
+		@Param('id') id: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IeObject | Partial<IeObject>> {
+		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		const limitedObject = limitAccessToObjectDetails(ieObject, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: user.getSector(),
+			groupId: user.getGroupId(),
+			maintainerId: user.getOrganisationId(),
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		});
+
+		if (!limitedObject) {
+			throw new ForbiddenException('You do not have access to this object');
+		}
+
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+		if (
+			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+			visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+			intersection(limitedObject?.licenses, [
+				IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			]).length > 0
+		) {
+			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		}
+
+		return limitedObject;
 	}
 }
