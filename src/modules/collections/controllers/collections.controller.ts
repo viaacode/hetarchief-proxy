@@ -52,7 +52,7 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Collection>> {
-		// For Anonymous users it should return empty array
+		// For Anonymous users, it should return an empty array
 		if (isNil(user.getId())) {
 			return Pagination<Collection>({
 				items: [],
