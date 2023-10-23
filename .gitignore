@@ -48,3 +48,7 @@ lerna-debug.log*
 
 # temp upload files
 tmp
+
+graphql.config.yml
+
+schema.graphql
