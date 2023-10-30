@@ -105,7 +105,7 @@ const mockUser: User = {
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.READ_CP_VISIT_REQUESTS],
+	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
 };
