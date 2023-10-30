@@ -5,17 +5,16 @@ query getObjectDetailBySchemaIdentifier($schemaIdentifier: String!) {
 		premis_identifier
 		premis_is_part_of
 		schema_is_part_of
-		maintainer {
+		organisation {
 			schema_identifier
 			schema_name
-			information {
-				primary_site
-				logo
-				form_url
-				description
-				homepage_url
-				haorg_organization_type
-			}
+			logo
+			form_url
+			description
+			homepage_url
+			haorg_organization_type
+			primary_site
+			overlay
 		}
 		schema_copyright_holder
 		schema_copyright_notice

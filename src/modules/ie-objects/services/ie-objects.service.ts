@@ -462,18 +462,19 @@ export class IeObjectsService {
 			inLanguage: gqlIeObject?.schema_in_language,
 			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
-			maintainerId: gqlIeObject?.maintainer.schema_identifier,
-			maintainerName: gqlIeObject?.maintainer?.schema_name,
+			maintainerId: gqlIeObject?.organisation.schema_identifier,
+			maintainerName: gqlIeObject?.organisation?.schema_name,
 			maintainerSlug:
 				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
-			maintainerLogo: gqlIeObject?.maintainer?.information?.logo?.iri,
-			maintainerDescription: gqlIeObject?.maintainer?.information?.description,
-			maintainerSiteUrl: gqlIeObject?.maintainer?.information?.homepage_url,
-			maintainerFormUrl: gqlIeObject?.maintainer?.information?.form_url,
+				kebabCase(gqlIeObject?.organisation?.schema_name || ''),
+			maintainerLogo: gqlIeObject?.organisation?.logo?.iri,
+			maintainerDescription: gqlIeObject?.organisation?.description,
+			maintainerSiteUrl: gqlIeObject?.organisation?.homepage_url,
+			maintainerFormUrl: gqlIeObject?.organisation?.form_url,
+			maintainerOverlay: gqlIeObject?.organisation?.overlay,
 			sector:
 				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
-				(gqlIeObject?.maintainer?.information?.haorg_organization_type as IeObjectSector),
+				(gqlIeObject?.organisation?.haorg_organization_type as IeObjectSector),
 			name: gqlIeObject?.schema_name,
 			publisher: gqlIeObject?.schema_publisher,
 			spatial: gqlIeObject?.schema_spatial_coverage,
@@ -574,6 +575,7 @@ export class IeObjectsService {
 				esObject?.schema_maintainer?.alt_label ??
 				kebabCase(esObject?.schema_maintainer?.schema_name || ''),
 			maintainerLogo: null,
+			maintainerOverlay: null,
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,

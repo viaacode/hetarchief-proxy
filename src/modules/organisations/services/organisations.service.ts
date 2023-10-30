@@ -112,6 +112,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
     slug
     form_url
     homepage
+    overlay
     logo {
       iri
     }
@@ -170,14 +171,15 @@ export class OrganisationsService implements OnApplicationBootstrap {
 
 	private async insertOrganizations(organizations: OrganisationInfoV2[]): Promise<void> {
 		const parsedOrganizations: ParsedOrganisation[] = organizations.map(
-			(organization: OrganisationInfoV2) => ({
+			(organization: OrganisationInfoV2): ParsedOrganisation => ({
 				schema_identifier: organization?.id,
 				schema_name: organization?.label,
 				description: organization.description,
-				logo: organization?.logo,
+				logo: organization?.logo || {}, // Hasura v2.6.0 complains about null jsonb values
 				slug: organization?.slug,
-				contact_point: organization.contact_point,
-				primary_site: organization.primary_site,
+				overlay: organization?.overlay ?? true,
+				contact_point: organization.contact_point || [], // Hasura v2.6.0 complains about null jsonb values
+				primary_site: organization.primary_site || {}, // Hasura v2.6.0 complains about null jsonb values
 				// Remark here organization is with Z
 				haorg_organization_type: organization?.sector || null,
 				form_url: organization?.form_url || null,
@@ -186,18 +188,10 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		);
 
 		const uniqueOrganisations = uniqBy(parsedOrganizations, 'schema_identifier');
-		const fillLogoOrganisations = uniqueOrganisations.map((org) => {
-			return {
-				...org,
-				logo: org.logo || {}, // Hasura v2.6.0 complains about null jsonb values
-				primary_site: org.primary_site || {}, // Hasura v2.6.0 complains about null jsonb values
-				contact_point: org.contact_point || {}, // Hasura v2.6.0 complains about null jsonb values
-			};
-		});
 
 		try {
 			await this.dataService.execute(InsertOrganisationsDocument, {
-				organizations: fillLogoOrganisations,
+				organizations: uniqueOrganisations,
 			});
 		} catch (err) {
 			throw new InternalServerErrorException({
