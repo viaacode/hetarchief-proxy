@@ -89,6 +89,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
+	maintainerOverlay: true,
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
@@ -138,6 +139,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
+	maintainerOverlay: true,
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
@@ -198,6 +200,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
+	maintainerOverlay: true,
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
@@ -254,6 +257,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
+	maintainerOverlay: true,
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
