@@ -23,6 +23,7 @@ export const mockIeObject: Readonly<IeObject> = {
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
+	maintainerOverlay: true,
 	maintainerLogo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
@@ -351,22 +352,27 @@ export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
 			schema_copyright_holder: 'vrt',
 			schema_copyright_notice:
 				'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
-			maintainer: {
+			organisation: {
 				schema_identifier: 'OR-rf5kf25',
-				information: {
-					primary_site: {
-						address: {
-							email: null,
-							locality: 'Brussel',
-							postal_code: '1043',
-							street: 'Auguste Reyerslaan 52',
-							telephone: null,
-							post_office_box_number: null,
-						},
+				schema_name: 'VRT',
+				description:
+					'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
+				haorg_organization_type: 'Publieke Omroep',
+				form_url: null,
+				homepage_url: 'https://www.vrt.be',
+				overlay: true,
+				primary_site: {
+					address: {
+						email: null,
+						locality: 'Brussel',
+						postal_code: '1043',
+						street: 'Auguste Reyerslaan 52',
+						telephone: null,
+						post_office_box_number: null,
 					},
-					logo: {
-						iri: 'https://assets.viaa.be/images/OR-rf5kf25',
-					},
+				},
+				logo: {
+					iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 				},
 			},
 			schema_duration_in_seconds: null,

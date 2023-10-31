@@ -112,6 +112,7 @@ export const mockOrganisationInfoV2: OrganisationInfoV2 = {
 		iri: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},
 	slug: 'vrt',
+	overlay: true,
 	contact_point: [
 		{
 			contact_type: 'ontsluiting',

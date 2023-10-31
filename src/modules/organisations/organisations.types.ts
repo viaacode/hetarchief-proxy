@@ -8,6 +8,7 @@ export interface OrganisationInfoV2 {
 	slug: string | null;
 	form_url: string | null;
 	homepage: string | null;
+	overlay: boolean;
 	logo: {
 		iri: string;
 	};
@@ -37,8 +38,8 @@ export interface OrganisationResponse {
 export interface ParsedOrganisation {
 	schema_identifier: string;
 	contact_point: {
-		contact_type: string;
-		email: string;
+		contact_type?: string;
+		email?: string;
 	}[];
 	schema_name: string;
 	description: string;
@@ -46,11 +47,13 @@ export interface ParsedOrganisation {
 	haorg_organization_type: string;
 	form_url: string | null;
 	homepage_url: string | null;
+	slug: string | null;
+	overlay: boolean;
 	logo: {
-		iri: string;
+		iri?: string;
 	};
 	primary_site: {
-		address: {
+		address?: {
 			locality: string;
 			postal_code: string;
 			street: string;
