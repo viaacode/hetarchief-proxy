@@ -16,7 +16,7 @@ export const mockUserResponse: { users_profile: GqlUser[] } = {
 				permissions: [
 					{
 						permission: {
-							name: Permission.READ_ALL_VISIT_REQUESTS,
+							name: Permission.MANAGE_ALL_VISIT_REQUESTS,
 						},
 					},
 				],

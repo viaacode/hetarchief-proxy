@@ -61,12 +61,15 @@ export class VisitsController {
 		description:
 			'Get Visits endpoint for Meemoo Admins and CP Admins. Visitors should use the /personal endpoint. ',
 	})
-	@RequireAnyPermissions(Permission.READ_ALL_VISIT_REQUESTS, Permission.READ_CP_VISIT_REQUESTS)
+	@RequireAnyPermissions(
+		Permission.MANAGE_ALL_VISIT_REQUESTS,
+		Permission.MANAGE_CP_VISIT_REQUESTS
+	)
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Visit>> {
-		if (user.has(Permission.READ_ALL_VISIT_REQUESTS)) {
+		if (user.has(Permission.MANAGE_ALL_VISIT_REQUESTS)) {
 			const visits = await this.visitsService.findAll(queryDto, {
 				...(queryDto?.visitorSpaceSlug
 					? { visitorSpaceSlug: queryDto.visitorSpaceSlug }
@@ -220,8 +223,8 @@ export class VisitsController {
 
 	@Get(':id')
 	@RequireAnyPermissions(
-		Permission.READ_ALL_VISIT_REQUESTS,
-		Permission.READ_CP_VISIT_REQUESTS,
+		Permission.MANAGE_ALL_VISIT_REQUESTS,
+		Permission.MANAGE_CP_VISIT_REQUESTS,
 		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
 	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<Visit> {
@@ -408,8 +411,8 @@ export class VisitsController {
 		description: 'Update a Visit request.',
 	})
 	@RequireAnyPermissions(
-		Permission.APPROVE_DENY_ALL_VISIT_REQUESTS,
-		Permission.APPROVE_DENY_CP_VISIT_REQUESTS,
+		Permission.MANAGE_ALL_VISIT_REQUESTS,
+		Permission.MANAGE_CP_VISIT_REQUESTS,
 		Permission.CANCEL_OWN_VISIT_REQUEST
 	)
 	public async update(
@@ -422,8 +425,8 @@ export class VisitsController {
 
 		if (
 			user.has(Permission.CANCEL_OWN_VISIT_REQUEST) &&
-			user.hasNot(Permission.APPROVE_DENY_ALL_VISIT_REQUESTS) &&
-			user.hasNot(Permission.APPROVE_DENY_CP_VISIT_REQUESTS)
+			user.hasNot(Permission.MANAGE_ALL_VISIT_REQUESTS) &&
+			user.hasNot(Permission.MANAGE_CP_VISIT_REQUESTS)
 		) {
 			if (
 				originalVisit.userProfileId !== user.getId() ||

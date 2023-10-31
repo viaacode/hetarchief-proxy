@@ -43,7 +43,7 @@ const mockUser: User = {
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
-	permissions: [Permission.READ_CP_VISIT_REQUESTS],
+	permissions: [Permission.MANAGE_CP_VISIT_REQUESTS],
 	idp: Idp.HETARCHIEF,
 	organisationId: 'OR-rf5kf25',
 	organisationName: 'VRT',
