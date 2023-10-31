@@ -1,5 +1,5 @@
-query getUserByIdentityId($identityId: uuid!) {
-	users_profile(where: { identities: { id: { _eq: $identityId } } }) {
+query getUserByIdentityId($identityId: String!) {
+	users_profile(where: { identities: { identity_id: { _eq: $identityId } } }) {
 		id
 		first_name
 		last_name
