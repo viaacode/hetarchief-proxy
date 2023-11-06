@@ -25,7 +25,7 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format:fix": "prettier --write \"src/**/*.ts\" \"src/**/*.graphql\" \"!src/generated/**/*.ts\"",
     "test": "jest --maxWorkers=8",
-    "test:ci": "./node_modules/.bin/jest --maxWorkers=2",
+    "test:ci": "npx jest --maxWorkers=1",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
