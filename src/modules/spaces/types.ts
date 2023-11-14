@@ -1,7 +1,7 @@
 import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
-	FindSpaceByCpAdminIdQuery,
 	FindSpaceByIdQuery,
+	FindSpaceByOrganisationIdQuery,
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -36,4 +36,4 @@ export type GqlSpace =
 	| FindSpaceByIdQuery['maintainer_visitor_space'][0]
 	| FindSpacesQuery['maintainer_visitor_space'][0]
 	| FindSpaceBySlugQuery['maintainer_visitor_space'][0]
-	| FindSpaceByCpAdminIdQuery['maintainer_visitor_space'][0];
+	| FindSpaceByOrganisationIdQuery['maintainer_visitor_space'][0];

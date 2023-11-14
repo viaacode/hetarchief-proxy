@@ -79,7 +79,9 @@ export class VisitsController {
 			return visits;
 		}
 		// CP_VISIT_REQUESTS (user has any of these permissions as enforced by guard)
-		const cpSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
+		const cpSpace = await this.spacesService.findSpaceByOrganisationId(
+			user.getOrganisationId()
+		);
 
 		if (!cpSpace) {
 			throw new NotFoundException(
