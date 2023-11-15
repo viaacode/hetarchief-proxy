@@ -156,7 +156,7 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	getMaintainerProfiles: jest.fn(),
 	findBySlug: jest.fn(),
 	findById: jest.fn(),
-	findSpaceByCpUserId: jest.fn(),
+	findSpaceByOrganisationId: jest.fn(),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
@@ -233,7 +233,7 @@ describe('VisitsController', () => {
 
 		it('should return all visits of a single cpSpace for cp admin', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(mockSpace);
 
 			const visits = await visitsController.getVisits(
 				null,
@@ -248,7 +248,7 @@ describe('VisitsController', () => {
 
 		it('should throw a not found exception if the maintainer is not linked to any cp users', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-			mockSpacesService.findSpaceByCpUserId.mockResolvedValueOnce(null);
+			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(null);
 
 			let error;
 			try {

@@ -1,11 +1,5 @@
-query findSpaceByCpAdminId($cpAdminId: uuid!) {
-	maintainer_visitor_space(
-		where: {
-			content_partner: {
-				maintainer_users_profiles: { users_profile_id: { _eq: $cpAdminId } }
-			}
-		}
-	) {
+query findSpaceByOrganisationId($organisationId: String!) {
+	maintainer_visitor_space(where: { schema_maintainer_id: { _eq: $organisationId } }) {
 		id
 		slug
 		schema_image

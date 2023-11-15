@@ -52,7 +52,7 @@ const mockUser: User = {
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
 	findById: jest.fn(),
-	findSpaceByCpUserId: jest.fn(),
+	findSpaceByOrganisationId: jest.fn(),
 	getMaintainerProfiles: jest.fn(),
 	findBySlug: jest.fn(),
 	update: jest.fn(),

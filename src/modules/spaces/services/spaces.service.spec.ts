@@ -481,7 +481,7 @@ describe('SpacesService', () => {
 				] as FindSpaceBySlugQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const response = await spacesService.findSpaceByCpUserId('1');
+			const response = await spacesService.findSpaceByOrganisationId('1');
 			expect(response.id).toBe('1');
 		});
 
@@ -491,7 +491,7 @@ describe('SpacesService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const space = await spacesService.findSpaceByCpUserId('unknown-id');
+			const space = await spacesService.findSpaceByOrganisationId('unknown-id');
 			expect(space).toBeNull();
 		});
 	});
@@ -499,24 +499,22 @@ describe('SpacesService', () => {
 	describe('getMaintainerProfiles', () => {
 		it('returns all profile ids for all maintainers of a VisitorSpace', async () => {
 			const mockMaintainerIds: GetSpaceMaintainerProfilesQuery = {
-				maintainer_users_profile: [
+				maintainer_visitor_space: [
 					{
-						users_profile_id: '181c014f-365a-40ab-8694-1792768e57ee',
-						profile: {
-							mail: 'test.testers@meemoo.be',
-						},
-					},
-					{
-						users_profile_id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
-						profile: {
-							mail: 'test.testers2@meemoo.be',
-						},
-					},
-					{
-						users_profile_id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
-						profile: {
-							mail: 'test.testers3@meemoo.be',
-						},
+						profiles: [
+							{
+								id: '181c014f-365a-40ab-8694-1792768e57ee',
+								mail: 'test.testers@meemoo.be',
+							},
+							{
+								id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
+								mail: 'test.testers2@meemoo.be',
+							},
+							{
+								id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
+								mail: 'test.testers3@meemoo.be',
+							},
+						],
 					},
 				],
 			};
@@ -524,8 +522,8 @@ describe('SpacesService', () => {
 			const response = await spacesService.getMaintainerProfiles('1');
 			expect(response).toHaveLength(3);
 			expect(response[0]).toEqual({
-				id: mockMaintainerIds.maintainer_users_profile[0].users_profile_id,
-				email: mockMaintainerIds.maintainer_users_profile[0].profile.mail,
+				id: mockMaintainerIds.maintainer_visitor_space[0].profiles[0].id,
+				email: mockMaintainerIds.maintainer_visitor_space[0].profiles[0].mail,
 			});
 		});
 	});
