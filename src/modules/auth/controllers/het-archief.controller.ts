@@ -150,15 +150,6 @@ export class HetArchiefController {
 				ldapUser.attributes.entryUUID[0]
 			);
 
-			if (archiefUser) {
-				archiefUser = {
-					...archiefUser,
-					organisationId: organisationId,
-					organisationName: organisation?.schemaName ?? null,
-					sector: organisation?.sector ?? null,
-				};
-			}
-
 			// determine user group
 			const userGroup = await this.idpService.determineUserGroup(ldapUser, organisation);
 
@@ -170,6 +161,7 @@ export class HetArchiefController {
 				isKeyUser: apps.includes(LdapApp.CATALOGUS_PRO),
 				organisationId,
 				organisationName: organisation?.schemaName ?? null,
+				organisationSector: organisation?.sector ?? null,
 			};
 
 			if (!archiefUser) {
@@ -225,12 +217,6 @@ export class HetArchiefController {
 
 			// Inject CAN_EDIT_PROFILE_INFO permission only for users in HetArchief IDP
 			archiefUser.permissions.push(Permission.CAN_EDIT_PROFILE_INFO);
-
-			if (organisation) {
-				archiefUser.sector = organisation?.sector || null;
-				archiefUser.organisationId = organisation?.schemaIdentifier || null;
-				archiefUser.organisationName = organisation?.schemaName || null;
-			}
 
 			SessionHelper.setArchiefUserInfo(session, archiefUser);
 
