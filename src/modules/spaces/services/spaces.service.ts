@@ -10,15 +10,15 @@ import {
 	CreateSpaceDocument,
 	CreateSpaceMutation,
 	CreateSpaceMutationVariables,
-	FindSpaceByCpAdminIdDocument,
-	FindSpaceByCpAdminIdQuery,
-	FindSpaceByCpAdminIdQueryVariables,
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
 	FindSpaceByIdQueryVariables,
 	FindSpaceByMaintainerIdDocument,
 	FindSpaceByMaintainerIdQuery,
 	FindSpaceByMaintainerIdQueryVariables,
+	FindSpaceByOrganisationIdDocument,
+	FindSpaceByOrganisationIdQuery,
+	FindSpaceByOrganisationIdQueryVariables,
 	FindSpaceBySlugDocument,
 	FindSpaceBySlugQuery,
 	FindSpaceBySlugQueryVariables,
@@ -274,12 +274,12 @@ export class SpacesService {
 		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
-	public async findSpaceByCpUserId(cpAdminId: string): Promise<Space | null> {
+	public async findSpaceByOrganisationId(organisationId: string): Promise<Space | null> {
 		const spaceResponse = await this.dataService.execute<
-			FindSpaceByCpAdminIdQuery,
-			FindSpaceByCpAdminIdQueryVariables
-		>(FindSpaceByCpAdminIdDocument, {
-			cpAdminId,
+			FindSpaceByOrganisationIdQuery,
+			FindSpaceByOrganisationIdQueryVariables
+		>(FindSpaceByOrganisationIdDocument, {
+			organisationId,
 		});
 		if (!spaceResponse.maintainer_visitor_space[0]) {
 			return null;
@@ -288,7 +288,7 @@ export class SpacesService {
 	}
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
-		const profiles = await this.dataService.execute<
+		const spaces = await this.dataService.execute<
 			GetSpaceMaintainerProfilesQuery,
 			GetSpaceMaintainerProfilesQueryVariables
 		>(GetSpaceMaintainerProfilesDocument, {
@@ -296,10 +296,12 @@ export class SpacesService {
 		});
 
 		/* istanbul ignore next */
-		return (profiles?.maintainer_users_profile || []).map((item) => ({
-			id: item.users_profile_id,
-			email: item.profile.mail,
-		}));
+		return (spaces?.maintainer_visitor_space || []).flatMap((space) => {
+			return (space.profiles || []).map((profile) => ({
+				id: profile.id,
+				email: profile.mail,
+			}));
+		});
 	}
 
 	public handleException(e: Error, inputDto: Partial<CreateSpaceDto>): void {

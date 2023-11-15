@@ -70,7 +70,9 @@ export class SpacesController {
 
 		// CP ADMINS always have access to their own space
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			const ownSpace = await this.spacesService.findSpaceByCpUserId(user.getId());
+			const ownSpace = await this.spacesService.findSpaceByOrganisationId(
+				user.getOrganisationId()
+			);
 			if (ownSpace) {
 				spaces.items = uniqBy([...spaces.items, ownSpace], (space) => space.id);
 			}

@@ -21,6 +21,7 @@ import {
 	UpdateUserProfileMutation,
 	UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
+import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Idp } from '~shared/auth/auth.types';
 import { UpdateResponse } from '~shared/types/types';
 
@@ -61,6 +62,7 @@ export class UsersService {
 				...adaptedUser,
 				organisationId: graphQlUser?.organisation?.schema_identifier || null,
 				organisationName: graphQlUser?.organisation?.schema_name || null,
+				sector: (graphQlUser?.organisation?.sector || null) as IeObjectSector | null,
 			};
 		}
 
