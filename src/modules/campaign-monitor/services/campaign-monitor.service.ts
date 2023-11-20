@@ -256,7 +256,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				method: 'post',
 				json: {
 					Subscribers: [subscriberInfo],
-					Resubscribe: false,
+					Resubscribe: true,
 				},
 				throwHttpErrors: true,
 			});
