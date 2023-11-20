@@ -22,7 +22,7 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 			organisation {
 				schema_identifier
 				schema_name
-				sector
+				sector: haorg_organization_type
 			}
 			visitor_space {
 				id
