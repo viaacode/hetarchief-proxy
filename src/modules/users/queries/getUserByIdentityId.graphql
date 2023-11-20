@@ -23,7 +23,7 @@ query getUserByIdentityId($identityId: String!) {
 		organisation {
 			schema_identifier
 			schema_name
-			sector
+			sector: haorg_organization_type
 		}
 		visitor_space {
 			id

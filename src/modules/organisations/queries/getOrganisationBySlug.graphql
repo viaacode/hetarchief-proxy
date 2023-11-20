@@ -1,13 +1,12 @@
 query getOrganisationBySlug($slug: String!) {
 	maintainer_organisation(where: { slug: { _eq: $slug } }) {
 		form_url
-		haorg_organization_type
+		sector: haorg_organization_type
 		homepage_url
 		logo
 		primary_site
 		schema_identifier
 		schema_name
-		sector
 		slug
 		updated_at
 		description
