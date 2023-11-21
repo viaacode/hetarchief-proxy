@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Query, Redirect, Req, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	Post,
+	Query,
+	Redirect,
+	Req,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
@@ -62,41 +72,52 @@ export class CampaignMonitorController {
 		@Body() preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
 		@SessionUser() user?: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		if (!user?.getId()) {
-			// Logged out user requests to subscribe => send confirm email
-			await this.campaignMonitorService.sendConfirmationMail(preferences);
-		} else {
-			// Logged in user subscribes to the newsletter
-			await this.campaignMonitorService.updateNewsletterPreferences(
-				{
-					firstName: user?.getFirstName(),
-					lastName: user?.getLastName(),
-					email: user?.getMail(),
-					is_key_user: user?.getIsKeyUser(),
-					usergroup: user?.getGroupName(),
-					created_date: user?.getCreatedAt(),
-					last_access_date: user?.getLastAccessAt(),
-					organisation: user?.getOrganisationName(),
-				},
-				preferences.preferences
-			);
-
-			this.eventsService.insertEvents([
-				{
-					id: EventsHelper.getEventId(request),
-					type: LogEventType.NEWSLETTER_SUBSCRIBE,
-					source: request.path,
-					subject: user.getId(),
-					time: new Date().toISOString(),
-					data: {
-						user_group_id: user.getGroupId(),
-						user_group_name: user.getGroupName(),
+		try {
+			if (!user?.getId()) {
+				// Logged out user requests to subscribe => send confirm email
+				await this.campaignMonitorService.sendConfirmationMail(preferences);
+			} else {
+				// Logged in user subscribes to the newsletter
+				await this.campaignMonitorService.updateNewsletterPreferences(
+					{
+						firstName: user?.getFirstName(),
+						lastName: user?.getLastName(),
+						email: user?.getMail(),
+						is_key_user: user?.getIsKeyUser(),
+						usergroup: user?.getGroupName(),
+						created_date: user?.getCreatedAt(),
+						last_access_date: user?.getLastAccessAt(),
+						organisation: user?.getOrganisationName(),
 					},
-				},
-			]);
-		}
+					preferences.preferences
+				);
 
-		return { message: 'success' };
+				this.eventsService.insertEvents([
+					{
+						id: EventsHelper.getEventId(request),
+						type: LogEventType.NEWSLETTER_SUBSCRIBE,
+						source: request.path,
+						subject: user.getId(),
+						time: new Date().toISOString(),
+						data: {
+							user_group_id: user.getGroupId(),
+							user_group_name: user.getGroupName(),
+						},
+					},
+				]);
+			}
+
+			return { message: 'success' };
+		} catch (err) {
+			throw new InternalServerErrorException({
+				message: 'Failed to update preferences for campaign monitor',
+				innerException: err,
+				additionalInfo: {
+					preferences,
+					userId: user?.getId(),
+				},
+			});
+		}
 	}
 
 	@Get('confirm-email')
