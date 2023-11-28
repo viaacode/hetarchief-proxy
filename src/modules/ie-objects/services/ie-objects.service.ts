@@ -760,6 +760,7 @@ export class IeObjectsService {
 			name: ieObject?.name,
 			maintainerName: ieObject?.maintainerName,
 			maintainerId: ieObject?.maintainerId,
+			maintainerSlug: ieObject?.maintainerSlug,
 			isPartOf: ieObject?.isPartOf || {},
 			dctermsFormat: ieObject?.dctermsFormat,
 			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
