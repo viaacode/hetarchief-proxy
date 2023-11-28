@@ -115,9 +115,8 @@ export class UsersService {
 		this.logger.debug(`user ${createdUser.id} created`);
 
 		// Link the user with the identity
-		const newUserIdentity = {
-			id: idpId,
-			identity_id: idp,
+		const newUserIdentity: InsertUserIdentityMutationVariables['newUserIdentity'] = {
+			identity_id: idpId,
 			identity_provider_name: idp,
 			profile_id: createdUser.id,
 		};
