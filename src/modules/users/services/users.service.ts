@@ -101,12 +101,13 @@ export class UsersService {
 		idpId: string
 	): Promise<User> {
 		// TODO duplicate user handling
-		const newUser = {
+		const newUser: InsertUserMutationVariables['newUser'] = {
 			first_name: createUserDto.firstName,
 			last_name: createUserDto.lastName,
 			mail: createUserDto.email,
 			group_id: createUserDto.groupId,
 			is_key_user: createUserDto.isKeyUser,
+			organisation_schema_identifier: createUserDto.organisationId,
 		};
 		const { insert_users_profile_one: createdUser } = await this.dataService.execute<
 			InsertUserMutation,
@@ -115,9 +116,8 @@ export class UsersService {
 		this.logger.debug(`user ${createdUser.id} created`);
 
 		// Link the user with the identity
-		const newUserIdentity = {
-			id: idpId,
-			identity_id: idp,
+		const newUserIdentity: InsertUserIdentityMutationVariables['newUserIdentity'] = {
+			identity_id: idpId,
 			identity_provider_name: idp,
 			profile_id: createdUser.id,
 		};

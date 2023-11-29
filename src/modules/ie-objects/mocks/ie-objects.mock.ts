@@ -300,6 +300,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	maintainerName: 'vrt',
+	maintainerSlug: 'vrt',
 	maintainerId: 'OR-rf5kf25',
 	dctermsFormat: 'video',
 	dateCreatedLowerBound: '2020-09-01',
