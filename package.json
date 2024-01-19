@@ -18,7 +18,7 @@
     "start": "nest start",
     "__predev": "npm run generate-database-types",
     "prestart:debug": "npm run generate-database-types",
-    "dev": "dotenv -e .env/.env.local nest start -- --watch",
+    "dev": "dotenv -e .env/.env.local nest start",
     "start:debug": "dotenv -e .env/.env.local nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --cache",
@@ -35,7 +35,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "3.1.13",
+    "@meemoo/admin-core-api": "3.1.26",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.0.0",
     "@nestjs/core": "9.4.3",
@@ -43,7 +43,8 @@
     "@nestjs/schedule": "3.0.1",
     "@nestjs/swagger": "7.1.1",
     "@studiohyperdrive/pagination": "1.0.0",
-    "@viaa/avo2-types": "2.48.40",
+    "@viaa/avo2-types": "2.49.5",
+
     "app-root-path": "3.0.0",
     "aws-sdk": "2.1097.0",
     "blend-promise-utils": "1.28.0",

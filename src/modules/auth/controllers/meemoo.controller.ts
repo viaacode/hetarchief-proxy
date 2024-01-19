@@ -33,6 +33,7 @@ import { UsersService } from '~modules/users/services/users.service';
 import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
+import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
@@ -125,7 +126,8 @@ export class MeemooController {
 							'modules/collections/controllers___default-collection-name'
 						),
 					},
-					null // referer not important here
+					null, // referer not important here
+					getIpFromRequest(request)
 				);
 			} else {
 				if (

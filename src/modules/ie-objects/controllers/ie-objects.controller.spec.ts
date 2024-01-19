@@ -165,7 +165,8 @@ describe('IeObjectsController', () => {
 			const ieObjects = await ieObjectsController.getIeObjects(
 				'referer',
 				null,
-				mockSessionUser
+				mockSessionUser,
+				mockRequest
 			);
 			expect(ieObjects.items.length).toEqual(3);
 		});
@@ -176,7 +177,7 @@ describe('IeObjectsController', () => {
 			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
 				'http://playme'
 			);
-			const url = await ieObjectsController.getPlayableUrl('referer', {
+			const url = await ieObjectsController.getPlayableUrl('referer', mockRequest, {
 				schemaIdentifier: '1',
 			});
 			expect(url).toEqual('http://playme');
@@ -186,7 +187,9 @@ describe('IeObjectsController', () => {
 	describe('getThumbnailUrl', () => {
 		it('should return a thumbnail url', async () => {
 			mockPlayerTicketService.getThumbnailUrl.mockResolvedValueOnce('http://playme');
-			const url = await ieObjectsController.getThumbnailUrl('referer', { id: '1' });
+			const url = await ieObjectsController.getThumbnailUrl('referer', mockRequest, {
+				id: '1',
+			});
 			expect(url).toEqual('http://playme');
 		});
 	});
@@ -201,6 +204,7 @@ describe('IeObjectsController', () => {
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
+				mockRequest,
 				'1',
 				mockSessionUser
 			);
@@ -216,7 +220,12 @@ describe('IeObjectsController', () => {
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 
 			try {
-				await ieObjectsController.getIeObjectById('referer', '1', mockSessionUser);
+				await ieObjectsController.getIeObjectById(
+					'referer',
+					mockRequest,
+					'1',
+					mockSessionUser
+				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual('You do not have access to this object');
@@ -232,7 +241,12 @@ describe('IeObjectsController', () => {
 			);
 
 			try {
-				await ieObjectsController.getIeObjectById('referer', '1', mockSessionUser);
+				await ieObjectsController.getIeObjectById(
+					'referer',
+					mockRequest,
+					'1',
+					mockSessionUser
+				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual(
@@ -252,6 +266,7 @@ describe('IeObjectsController', () => {
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
+				mockRequest,
 				'1',
 				mockSessionUser
 			);
@@ -271,6 +286,7 @@ describe('IeObjectsController', () => {
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
+				mockRequest,
 				'1',
 				mockSessionUser
 			);
@@ -287,6 +303,7 @@ describe('IeObjectsController', () => {
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
+				mockRequest,
 				'1',
 				mockSessionUser
 			);
@@ -305,7 +322,11 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+			const result = await ieObjectsController.getIeObjectSeoById(
+				'referer',
+				mockRequest,
+				'1'
+			);
 
 			expect(result).toEqual({
 				name: mockIeObject.name,
@@ -320,7 +341,11 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+			const result = await ieObjectsController.getIeObjectSeoById(
+				'referer',
+				mockRequest,
+				'1'
+			);
 
 			expect(result).toEqual({
 				name: mockIeObject.name,
@@ -335,7 +360,11 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
 
-			const result = await ieObjectsController.getIeObjectSeoById('referer', '1');
+			const result = await ieObjectsController.getIeObjectSeoById(
+				'referer',
+				mockRequest,
+				'1'
+			);
 
 			expect(result).toEqual({
 				name: null,
@@ -403,6 +432,7 @@ describe('IeObjectsController', () => {
 
 			const ieObject = await ieObjectsController.getRelated(
 				'referer',
+				mockRequest,
 				'1',
 				'8911p09j1g',
 				{ maintainerId: '' },
@@ -429,6 +459,7 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const ieObject = await ieObjectsController.getSimilar(
 				'referer',
+				mockRequest,
 				'1',
 				{ maintainerId: '' },
 				mockSessionUser

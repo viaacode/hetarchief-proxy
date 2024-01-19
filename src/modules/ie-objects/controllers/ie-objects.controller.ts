@@ -51,6 +51,7 @@ import { GroupName, Permission } from '~modules/users/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
+import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
 @ApiTags('Ie Objects')
 @Controller('ie-objects')
@@ -65,18 +66,28 @@ export class IeObjectsController {
 	@Get('player-ticket')
 	public async getPlayableUrl(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
 	): Promise<string> {
 		const schemaIdentifier = decodeURIComponent(playerTicketsQuery.schemaIdentifier);
-		return this.playerTicketController.getPlayableUrlFromBrowsePath(schemaIdentifier, referer);
+		return this.playerTicketController.getPlayableUrlFromBrowsePath(
+			schemaIdentifier,
+			referer,
+			getIpFromRequest(request)
+		);
 	}
 
 	@Get('thumbnail-ticket')
 	public async getThumbnailUrl(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Query() thumbnailQuery: ThumbnailQueryDto
 	): Promise<string> {
-		return this.playerTicketService.getThumbnailUrl(thumbnailQuery.id, referer);
+		return this.playerTicketService.getThumbnailUrl(
+			thumbnailQuery.id,
+			referer,
+			getIpFromRequest(request)
+		);
 	}
 
 	@Get('filter-options')
@@ -87,9 +98,14 @@ export class IeObjectsController {
 	@Get('seo/:id')
 	public async getIeObjectSeoById(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
+			id,
+			referer,
+			getIpFromRequest(request)
+		);
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
@@ -111,7 +127,10 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
+		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(
+			id,
+			getIpFromRequest(request)
+		);
 
 		// Log event
 		this.eventsService.insertEvents([
@@ -160,7 +179,10 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(id);
+		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(
+			id,
+			getIpFromRequest(request)
+		);
 
 		// Log event
 		this.eventsService.insertEvents([
@@ -207,6 +229,7 @@ export class IeObjectsController {
 	})
 	public async getRelated(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Param('meemooIdentifier') meemooIdentifier: string,
 		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
@@ -220,6 +243,7 @@ export class IeObjectsController {
 			schemaIdentifier,
 			meemooIdentifier,
 			referer,
+			getIpFromRequest(request),
 			ieObjectRelatedQueryDto
 		);
 
@@ -259,6 +283,7 @@ export class IeObjectsController {
 	})
 	public async getSimilar(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('id') id: string,
 		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
@@ -269,6 +294,7 @@ export class IeObjectsController {
 		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
 			id,
 			referer,
+			getIpFromRequest(request),
 			ieObjectSimilarQueryDto,
 			4,
 			user
@@ -302,7 +328,8 @@ export class IeObjectsController {
 	public async getIeObjects(
 		@Headers('referer') referer: string,
 		@Body() queryDto: IeObjectsQueryDto | null,
-		@SessionUser() user: SessionUserEntity | null
+		@SessionUser() user: SessionUserEntity | null,
+		@Req() request: Request
 	): Promise<IeObjectsWithAggregations> {
 		// Filter on format video should also include film format
 		checkAndFixFormatFilter(queryDto);
@@ -325,6 +352,7 @@ export class IeObjectsController {
 			queryDto,
 			esIndex,
 			referer,
+			getIpFromRequest(request),
 			user,
 			visitorSpaceAccessInfo
 		);
@@ -366,10 +394,15 @@ export class IeObjectsController {
 	@Get(':id')
 	public async getIeObjectById(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(id, referer);
+		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(
+			id,
+			referer,
+			getIpFromRequest(request)
+		);
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);

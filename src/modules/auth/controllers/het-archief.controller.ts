@@ -182,7 +182,8 @@ export class HetArchiefController {
 							'modules/collections/controllers___default-collection-name'
 						),
 					},
-					null // referer not important here
+					null, // referer not important here
+					''
 				);
 			} else {
 				if (

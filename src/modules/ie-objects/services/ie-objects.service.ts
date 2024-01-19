@@ -96,6 +96,7 @@ export class IeObjectsService {
 		inputQuery: IeObjectsQueryDto,
 		esIndex: string | null,
 		referer: string,
+		ip: string,
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
@@ -176,7 +177,7 @@ export class IeObjectsService {
 			);
 		}
 
-		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer);
+		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer, ip);
 
 		return {
 			...Pagination<IeObject>({
@@ -213,6 +214,7 @@ export class IeObjectsService {
 		schemaIdentifier: string,
 		meemooIdentifier: string,
 		referer: string,
+		ip: string,
 		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
 	): Promise<IPagination<IeObject>> {
 		const mediaObjects = await this.dataService.execute<
@@ -229,7 +231,8 @@ export class IeObjectsService {
 				const adapted = this.adaptFromDB(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
-					referer
+					referer,
+					ip
 				);
 				return adapted;
 			})
@@ -246,6 +249,7 @@ export class IeObjectsService {
 	public async getSimilar(
 		schemaIdentifier: string,
 		referer: string,
+		ip: string,
 		ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		limit = 4,
 		user?: SessionUserEntity
@@ -337,7 +341,7 @@ export class IeObjectsService {
 		}
 
 		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
-		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer);
+		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer, ip);
 
 		return {
 			...Pagination<IeObject>({
@@ -357,7 +361,8 @@ export class IeObjectsService {
 	 */
 	public async findBySchemaIdentifier(
 		schemaIdentifier: string,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<IeObject> {
 		const { object_ie: objectIe } = await this.dataService.execute<
 			GetObjectDetailBySchemaIdentifierQuery,
@@ -373,7 +378,8 @@ export class IeObjectsService {
 		const adapted = this.adaptFromDB(objectIe[0]);
 		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			adapted.thumbnailUrl,
-			referer
+			referer,
+			ip
 		);
 		return adapted;
 	}
@@ -382,9 +388,10 @@ export class IeObjectsService {
 	 * Get the object detail fields that are exposed as metadata
 	 */
 	public async findMetadataBySchemaIdentifier(
-		schemaIdentifier: string
+		schemaIdentifier: string,
+		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findBySchemaIdentifier(schemaIdentifier, null);
+		const object = await this.findBySchemaIdentifier(schemaIdentifier, null, ip);
 		return this.adaptMetadata(object);
 	}
 
@@ -498,7 +505,8 @@ export class IeObjectsService {
 
 	public async adaptESResponse(
 		esResponse: ElasticsearchResponse,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<ElasticsearchResponse> {
 		// merge 'film' aggregations with 'video' if need be
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
@@ -533,7 +541,8 @@ export class IeObjectsService {
 				hit._source.schema_thumbnail_url =
 					await this.playerTicketService.resolveThumbnailUrl(
 						hit._source.schema_thumbnail_url,
-						referer
+						referer,
+						ip
 					);
 				return hit;
 			})

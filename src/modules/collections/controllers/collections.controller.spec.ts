@@ -163,6 +163,7 @@ describe('CollectionsController', () => {
 			);
 			const collections = await collectionsController.getCollections(
 				'referer',
+				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
 			expect(collections.items.length).toEqual(2);
@@ -182,6 +183,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				{},
+				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObjects.items[0]?.name).toEqual(
@@ -196,7 +198,7 @@ describe('CollectionsController', () => {
 	// 		mockIeObjectsService.findAllObjectMetadataByCollectionId.mockResolvedValueOnce([]);
 	// 		mockIeObjectsService.convertObjectsToXml.mockReturnValueOnce('</objects>');
 	// 		const result = await collectionsController.exportCollection(
-	// 			'referer',
+	// 			'referer', '',
 	// 			'collection-id',
 	// 			new SessionUserEntity(mockUser),
 	// 			mockRequest
@@ -210,6 +212,8 @@ describe('CollectionsController', () => {
 			mockCollectionsService.create.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
 			const collection = await collectionsController.createCollection(
 				'referer',
+
+				mockRequest,
 				{
 					name: 'test collection',
 				},
@@ -224,6 +228,8 @@ describe('CollectionsController', () => {
 			mockCollectionsService.update.mockResolvedValueOnce(mockCollectionsResponse.items[0]);
 			const collection = await collectionsController.updateCollection(
 				'referer',
+
+				mockRequest,
 				mockCollectionsResponse.items[0].id,
 				{
 					name: 'test collection',
@@ -310,6 +316,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
+				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual({ status: 'object has been deleted' });
@@ -324,6 +331,7 @@ describe('CollectionsController', () => {
 				'referer',
 				mockCollectionsResponse.items[0].id,
 				'non-existing-object-id',
+				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
 			expect(collectionObject).toEqual({
@@ -344,6 +352,7 @@ describe('CollectionsController', () => {
 					'referer',
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
+					mockRequest,
 					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
@@ -366,6 +375,7 @@ describe('CollectionsController', () => {
 
 			const collectionObject = await collectionsController.moveObjectToAnotherCollection(
 				'referer',
+				mockRequest,
 				mockCollectionsResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockCollectionsResponse.items[1].id,
@@ -391,6 +401,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					'referer',
+					mockRequest,
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
@@ -419,6 +430,7 @@ describe('CollectionsController', () => {
 			try {
 				await collectionsController.moveObjectToAnotherCollection(
 					'referer',
+					mockRequest,
 					mockCollectionsResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockCollectionsResponse.items[1].id,
@@ -439,6 +451,7 @@ describe('CollectionsController', () => {
 
 			const sharedCollection = await collectionsController.shareCollection(
 				'referer',
+				mockRequest,
 				mockCollectionsResponse.items[0].id,
 				new SessionUserEntity({
 					...mockUser,
@@ -463,6 +476,7 @@ describe('CollectionsController', () => {
 
 			const sharedCollection = await collectionsController.shareCollection(
 				'referer',
+				mockRequest,
 				mockCollectionsResponse.items[0].id,
 				new SessionUserEntity(mockUser)
 			);

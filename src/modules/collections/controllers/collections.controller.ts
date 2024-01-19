@@ -18,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
-import { isNil } from 'lodash';
+import { isNil, noop } from 'lodash';
 
 import { Collection, CollectionShared, CollectionStatus } from '../types';
 
@@ -37,6 +37,7 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
 @ApiTags('Collections')
 @Controller('collections')
@@ -50,6 +51,7 @@ export class CollectionsController {
 	@Get()
 	public async getCollections(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Collection>> {
 		// For Anonymous users, it should return an empty array
@@ -65,6 +67,7 @@ export class CollectionsController {
 		const collections = await this.collectionsService.findCollectionsByUser(
 			user.getId(),
 			referer,
+			getIpFromRequest(request),
 			1,
 			1000
 		);
@@ -93,6 +96,7 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId', ParseUUIDPipe) collectionId: string,
 		@Query() queryDto: CollectionObjectsQueryDto,
+		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const folderObjects: IPagination<Partial<IeObject>> =
@@ -100,7 +104,8 @@ export class CollectionsController {
 				collectionId,
 				user.getId(),
 				queryDto,
-				referer
+				referer,
+				getIpFromRequest(request)
 			);
 
 		const visitorSpaceAccessInfo =
@@ -147,18 +152,19 @@ export class CollectionsController {
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async createCollection(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Body() createCollectionDto: CreateOrUpdateCollectionDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Collection> {
-		const collection = await this.collectionsService.create(
+		return this.collectionsService.create(
 			{
 				name: createCollectionDto.name,
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
-		return collection;
 	}
 
 	@Patch(':collectionId')
@@ -166,17 +172,18 @@ export class CollectionsController {
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async updateCollection(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('collectionId') collectionId: string,
 		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Collection> {
-		const collection = await this.collectionsService.update(
+		return await this.collectionsService.update(
 			collectionId,
 			user.getId(),
 			updateCollectionDto,
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
-		return collection;
 	}
 
 	@Delete(':collectionId')
@@ -204,7 +211,11 @@ export class CollectionsController {
 		@Param('objectId') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
-		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
+		const collection = await this.collectionsService.findCollectionById(
+			collectionId,
+			referer,
+			getIpFromRequest(request)
+		);
 		if (collection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only add objects to your own collections');
 		}
@@ -212,32 +223,36 @@ export class CollectionsController {
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			collectionId,
 			objectSchemaIdentifier,
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
 
 		// Log event
 		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
 			objectSchemaIdentifier,
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
-		this.eventsService.insertEvents([
-			{
-				id: EventsHelper.getEventId(request),
-				type: LogEventType.ITEM_BOOKMARK,
-				source: request.path,
-				subject: user.getId(),
-				time: new Date().toISOString(),
-				data: {
-					type: ieObject.dctermsFormat,
-					pid: ieObject.meemooIdentifier,
-					fragment_id: objectSchemaIdentifier,
-					folder_id: collectionId,
-					user_group_name: user.getGroupName(),
-					user_group_id: user.getGroupId(),
-					or_id: ieObject.maintainerId,
+		this.eventsService
+			.insertEvents([
+				{
+					id: EventsHelper.getEventId(request),
+					type: LogEventType.ITEM_BOOKMARK,
+					source: request.path,
+					subject: user.getId(),
+					time: new Date().toISOString(),
+					data: {
+						type: ieObject.dctermsFormat,
+						pid: ieObject.meemooIdentifier,
+						fragment_id: objectSchemaIdentifier,
+						folder_id: collectionId,
+						user_group_name: user.getGroupName(),
+						user_group_id: user.getGroupId(),
+						or_id: ieObject.maintainerId,
+					},
 				},
-			},
-		]);
+			])
+			.then(noop);
 
 		return collectionObject;
 	}
@@ -249,9 +264,14 @@ export class CollectionsController {
 		@Headers('referer') referer: string,
 		@Param('collectionId') collectionId: string,
 		@Param('objectId') objectId: string,
+		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
+		const collection = await this.collectionsService.findCollectionById(
+			collectionId,
+			referer,
+			getIpFromRequest(request)
+		);
 		if (collection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only delete objects from your own collections');
 		}
@@ -272,6 +292,7 @@ export class CollectionsController {
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async moveObjectToAnotherCollection(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('oldCollectionId') oldCollectionId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@Query('newCollectionId') newCollectionId: string,
@@ -279,8 +300,16 @@ export class CollectionsController {
 	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
 		// Check user is owner of both collections
 		const [oldCollection, newCollection] = await Promise.all([
-			this.collectionsService.findCollectionById(oldCollectionId, referer),
-			this.collectionsService.findCollectionById(newCollectionId, referer),
+			this.collectionsService.findCollectionById(
+				oldCollectionId,
+				referer,
+				getIpFromRequest(request)
+			),
+			this.collectionsService.findCollectionById(
+				newCollectionId,
+				referer,
+				getIpFromRequest(request)
+			),
 		]);
 		if (oldCollection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only move objects from your own collections');
@@ -292,7 +321,8 @@ export class CollectionsController {
 		const collectionObject = await this.collectionsService.addObjectToCollection(
 			newCollectionId,
 			objectSchemaIdentifier,
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
 		await this.collectionsService.removeObjectFromCollection(
 			oldCollectionId,
@@ -307,10 +337,15 @@ export class CollectionsController {
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async shareCollection(
 		@Headers('referer') referer: string,
+		@Req() request: Request,
 		@Param('collectionId') collectionId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<CollectionShared> {
-		const collection = await this.collectionsService.findCollectionById(collectionId, referer);
+		const collection = await this.collectionsService.findCollectionById(
+			collectionId,
+			referer,
+			getIpFromRequest(request)
+		);
 
 		if (collection?.userProfileId === user.getId()) {
 			return {
@@ -326,7 +361,8 @@ export class CollectionsController {
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
-			referer
+			referer,
+			getIpFromRequest(request)
 		);
 
 		// Get all the objects from the original collection and add them to the new collection
@@ -336,14 +372,16 @@ export class CollectionsController {
 				collectionId,
 				collection?.userProfileId,
 				{ size: 1000 },
-				referer
+				referer,
+				getIpFromRequest(request)
 			);
 			// TODO: make it possible to insert all objects to the new collection at once
 			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
 				await this.collectionsService.addObjectToCollection(
 					createdCollection.id,
 					item?.schemaIdentifier,
-					referer
+					referer,
+					getIpFromRequest(request)
 				);
 			});
 		} catch (err) {

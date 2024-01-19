@@ -107,7 +107,8 @@ export class CollectionsService {
 	 */
 	public async adaptCollection(
 		gqlCollection: GqlCollection | undefined,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<Collection | undefined> {
 		if (!gqlCollection) {
 			return undefined;
@@ -135,7 +136,7 @@ export class CollectionsService {
 			objects: await Promise.all(
 				(gqlCollection as GqlCollectionWithObjects).ies
 					? (gqlCollection as GqlCollectionWithObjects).ies.map((object) =>
-							this.adaptCollectionObjectLink(object, referer)
+							this.adaptCollectionObjectLink(object, referer, ip)
 					  )
 					: []
 			),
@@ -144,7 +145,8 @@ export class CollectionsService {
 
 	public async adaptCollectionObjectLink(
 		gqlCollectionObjectLink: CollectionObjectLink | undefined,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<(Partial<IeObject> & { collectionEntryCreatedAt: string }) | undefined> {
 		if (!gqlCollectionObjectLink) {
 			return undefined;
@@ -155,7 +157,8 @@ export class CollectionsService {
 		const objectIe = this.adaptIeObject(gqlCollectionObjectLink?.ie as GqlObject);
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
-			referer
+			referer,
+			ip
 		);
 		return {
 			collectionEntryCreatedAt: gqlCollectionObjectLink?.created_at,
@@ -167,6 +170,7 @@ export class CollectionsService {
 	public async findCollectionsByUser(
 		userProfileId: string,
 		referer: string,
+		ip: string,
 		page = 1,
 		size = 1000
 	): Promise<IPagination<Collection>> {
@@ -183,7 +187,7 @@ export class CollectionsService {
 		return Pagination<Collection>({
 			items: await Promise.all(
 				collectionsResponse.users_folder.map((collection: any) =>
-					this.adaptCollection(collection, referer)
+					this.adaptCollection(collection, referer, ip)
 				)
 			),
 			page,
@@ -192,7 +196,11 @@ export class CollectionsService {
 		});
 	}
 
-	public async findCollectionById(collectionId: string, referer: string): Promise<Collection> {
+	public async findCollectionById(
+		collectionId: string,
+		referer: string,
+		ip: string
+	): Promise<Collection> {
 		const collectionResponse = await this.dataService.execute<
 			FindCollectionByIdQuery,
 			FindCollectionByIdQueryVariables
@@ -200,14 +208,15 @@ export class CollectionsService {
 			collectionId,
 		});
 
-		return this.adaptCollection(collectionResponse.users_folder[0], referer);
+		return this.adaptCollection(collectionResponse.users_folder[0], referer, ip);
 	}
 
 	public async findObjectsByCollectionId(
 		collectionId: string,
 		userProfileId: string,
 		queryDto: CollectionObjectsQueryDto,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<IPagination<Partial<IeObject> & { collectionEntryCreatedAt: string }>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -262,7 +271,7 @@ export class CollectionsService {
 		return {
 			items: await Promise.all(
 				collectionObjectsResponse.users_folder_ie.map((collectionObject) =>
-					this.adaptCollectionObjectLink(collectionObject, referer)
+					this.adaptCollectionObjectLink(collectionObject, referer, ip)
 				)
 			),
 			page,
@@ -274,7 +283,8 @@ export class CollectionsService {
 
 	public async create(
 		collection: InsertCollectionsMutationVariables['object'],
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<Collection> {
 		const response = await this.dataService.execute<
 			InsertCollectionsMutation,
@@ -285,14 +295,15 @@ export class CollectionsService {
 		const createdCollection = response.insert_users_folder.returning[0];
 		this.logger.debug(`Collection ${createdCollection.id} created`);
 
-		return this.adaptCollection(createdCollection, referer);
+		return this.adaptCollection(createdCollection, referer, ip);
 	}
 
 	public async update(
 		collectionId: string,
 		userProfileId: string,
 		collection: GqlUpdateCollection,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<Collection> {
 		const response = await this.dataService.execute<
 			UpdateCollectionMutation,
@@ -306,7 +317,7 @@ export class CollectionsService {
 		const updatedCollection = response.update_users_folder.returning[0];
 		this.logger.debug(`Collection ${updatedCollection.id} updated`);
 
-		return this.adaptCollection(updatedCollection, referer);
+		return this.adaptCollection(updatedCollection, referer, ip);
 	}
 
 	public async delete(collectionId: string, userProfileId: string): Promise<number> {
@@ -325,7 +336,8 @@ export class CollectionsService {
 	public async findObjectInCollectionBySchemaIdentifier(
 		collectionId: string,
 		objectSchemaIdentifier: string,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<(Partial<IeObject> & { collectionEntryCreatedAt: string }) | null> {
 		const response = await this.dataService.execute<
 			FindObjectInCollectionQuery,
@@ -339,7 +351,7 @@ export class CollectionsService {
 		const foundObject = response?.users_folder_ie?.[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${collectionId}`);
 
-		return this.adaptCollectionObjectLink(foundObject, referer);
+		return this.adaptCollectionObjectLink(foundObject, referer, ip);
 	}
 
 	public async findObjectBySchemaIdentifier(
@@ -360,12 +372,14 @@ export class CollectionsService {
 	public async addObjectToCollection(
 		collectionId: string,
 		objectSchemaIdentifier: string,
-		referer: string
+		referer: string,
+		ip: string
 	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
 		const collectionObject = await this.findObjectInCollectionBySchemaIdentifier(
 			collectionId,
 			objectSchemaIdentifier,
-			referer
+			referer,
+			ip
 		);
 		if (collectionObject) {
 			throw new BadRequestException({
@@ -392,7 +406,7 @@ export class CollectionsService {
 		const createdObject = response.insert_users_folder_ie.returning[0];
 		this.logger.debug(`Collection object ${objectSchemaIdentifier} created`);
 
-		return this.adaptCollectionObjectLink(createdObject, referer);
+		return this.adaptCollectionObjectLink(createdObject, referer, ip);
 	}
 
 	public async removeObjectFromCollection(
