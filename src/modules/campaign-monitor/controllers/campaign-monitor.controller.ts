@@ -45,7 +45,7 @@ export class CampaignMonitorController {
 	@ApiOperation({
 		description: `Send transactional mails through Campaign Monitor. Template value is one of following values (${Object.values(
 			Template
-		).join(', ')}). Data custom fields are dependend on provided template type.`,
+		).join(', ')}). Data custom fields are dependent on provided template type.`,
 	})
 	async sendTransactionalMail(
 		@Body() emailInfo: CampaignMonitorSendMailDto

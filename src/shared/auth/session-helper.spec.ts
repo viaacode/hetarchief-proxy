@@ -23,7 +23,7 @@ const mockLdapUser = {
 		givenName: ['Test'],
 		externalid: ['36630857-416d-4de0-8e61-1cc99cde8830'],
 		'x-be-viaa-eduLevelName': ['Secundair onderwijs'],
-		apps: [LdapApp.ADMINS, LdapApp.AVO, LdapApp.HETARCHIEF, LdapApp.ACCOUNT_MANAGER],
+		apps: [LdapApp.ADMINS, LdapApp.AVO, LdapApp.ACCOUNT_MANAGER],
 		oNickname: ['Testbeeld'],
 	},
 };
