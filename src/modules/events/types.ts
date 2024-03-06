@@ -28,3 +28,9 @@ export interface LogEvent {
 	time: string; // timestamp
 	data?: Record<string, unknown>;
 }
+
+export interface CrawlerInfo {
+	pattern: string;
+	url?: string;
+	instances: string[];
+}
