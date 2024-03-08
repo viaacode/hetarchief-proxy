@@ -18,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
-import { isNil, noop } from 'lodash';
+import { isNil } from 'lodash';
 
 import { Collection, CollectionShared, CollectionStatus } from '../types';
 
@@ -233,26 +233,24 @@ export class CollectionsController {
 			referer,
 			getIpFromRequest(request)
 		);
-		this.eventsService
-			.insertEvents([
-				{
-					id: EventsHelper.getEventId(request),
-					type: LogEventType.ITEM_BOOKMARK,
-					source: request.path,
-					subject: user.getId(),
-					time: new Date().toISOString(),
-					data: {
-						type: ieObject.dctermsFormat,
-						pid: ieObject.meemooIdentifier,
-						fragment_id: objectSchemaIdentifier,
-						folder_id: collectionId,
-						user_group_name: user.getGroupName(),
-						user_group_id: user.getGroupId(),
-						or_id: ieObject.maintainerId,
-					},
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.ITEM_BOOKMARK,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+				data: {
+					type: ieObject.dctermsFormat,
+					pid: ieObject.meemooIdentifier,
+					fragment_id: objectSchemaIdentifier,
+					folder_id: collectionId,
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
+					or_id: ieObject.maintainerId,
 				},
-			])
-			.then(noop);
+			},
+		]);
 
 		return collectionObject;
 	}
