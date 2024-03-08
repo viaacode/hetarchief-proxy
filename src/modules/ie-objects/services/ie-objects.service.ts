@@ -807,13 +807,13 @@ export class IeObjectsService {
 	public getSimpleSearchTermsFromBooleanExpression(
 		filters: IeObjectsQueryDto['filters']
 	): string[] {
-		const searchTerm = filters.find(
-			(searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY
-		)?.value;
-		if (!searchTerm) {
+		const searchTerms = filters
+			.filter((searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY)
+			.map((filter) => filter.value);
+		if (!searchTerms || searchTerms.length === 0) {
 			return [];
 		}
-		return convertStringToSearchTerms(searchTerm);
+		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
 	}
 
 	private sortAndUnique(values: string[]): string[] {
