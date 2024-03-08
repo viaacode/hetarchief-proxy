@@ -28,9 +28,7 @@ export class OrganisationsController {
 	}
 
 	@Get(':slug')
-	async getOrganisationBySchemaIdentifiers(
-		@Param('slug') slug: string
-	): Promise<Organisation | null> {
+	async getOrganisationBySlug(@Param('slug') slug: string): Promise<Organisation | null> {
 		return this.organisationsService.findOrganisationBySlug(slug);
 	}
 }
