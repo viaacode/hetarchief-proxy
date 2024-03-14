@@ -4,7 +4,7 @@ import { AssetType } from '@viaa/avo2-types';
 
 import { SitemapService } from '../services/sitemap.service';
 
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 @ApiTags('Sitemap')
 @Controller('sitemap')
@@ -15,7 +15,7 @@ export class SitemapController {
 	@UseGuards(ApiKeyGuard)
 	public async generateSitemap(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
+		@Headers(APIKEY) apikey: string
 	): Promise<string> {
 		const sitemapConfig = await this.sitemapService.getSitemapConfig();
 		this.sitemapService.generateSitemap(sitemapConfig); // no await because this can take a while, and we don't want FE to crash

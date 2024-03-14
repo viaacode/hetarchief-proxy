@@ -26,7 +26,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { SessionService } from '~shared/services/session.service';
 
 @ApiTags('Auth')
@@ -143,7 +143,7 @@ export class AuthController {
 	@UseGuards(ApiKeyGuard)
 	async clearSessions(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
+		@Headers(APIKEY) apikey: string
 	): Promise<{ message: string }> {
 		await this.sessionService.clearRedis();
 		return { message: 'User sessions have been cleared' };

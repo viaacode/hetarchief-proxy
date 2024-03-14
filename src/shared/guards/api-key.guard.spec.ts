@@ -20,7 +20,7 @@ const mockExecutionContextCorrect = {
 	switchToHttp: jest.fn().mockReturnValue({
 		getRequest: jest.fn().mockReturnValue({
 			header: (headerName: string) => {
-				if (headerName === 'apikey') {
+				if (headerName === APIKEY) {
 					return mockApiKey;
 				} else {
 					return undefined;
@@ -44,7 +44,7 @@ const mockExecutionContextWrong = {
 	switchToHttp: jest.fn().mockReturnValue({
 		getRequest: jest.fn().mockReturnValue({
 			header: (headerName: string) => {
-				if (headerName === 'apikey') {
+				if (headerName === APIKEY) {
 					return 'wrongApiKey';
 				} else {
 					return undefined;

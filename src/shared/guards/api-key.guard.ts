@@ -4,6 +4,8 @@ import { Request } from 'express';
 
 import { Configuration } from '~config';
 
+export const APIKEY = 'apikey';
+
 export const API_KEY_EXCEPTION = new BadRequestException(
 	'You need to provide an valid api key for this endpoint under the header "apikey"'
 );
@@ -26,7 +28,7 @@ export class ApiKeyGuard implements CanActivate {
 
 	private static getApiKey(ctxOrReq: ExecutionContext | Request): string | undefined {
 		const request = ApiKeyGuard.getRequest(ctxOrReq);
-		return request.header('apikey');
+		return request.header(APIKEY);
 	}
 
 	canActivate(ctx: ExecutionContext): boolean {

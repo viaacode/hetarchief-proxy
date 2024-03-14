@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 @ApiTags('Organisations')
 @Controller('organisations')
@@ -20,7 +20,7 @@ export class OrganisationsController {
 	@UseGuards(ApiKeyGuard)
 	async getOrganisationElementsForUser(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
+		@Headers(APIKEY) apikey: string
 	): Promise<{ message: string }> {
 		await this.organisationsService.updateOrganisationsCache();
 
