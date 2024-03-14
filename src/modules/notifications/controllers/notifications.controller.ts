@@ -30,7 +30,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Visit } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
-import { ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
@@ -94,7 +94,7 @@ export class NotificationsController {
 	@Post('check-new')
 	public async checkNewNotifications(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
+		@Headers(APIKEY) apikey: string
 	): Promise<{
 		status: string;
 		notifications?: Partial<Record<NotificationType, number>>;

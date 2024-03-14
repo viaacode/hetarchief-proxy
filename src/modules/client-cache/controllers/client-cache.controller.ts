@@ -8,6 +8,7 @@ import { Configuration } from '~config';
 
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
+import { APIKEY } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
 @ApiTags('Client Cache')
@@ -24,7 +25,7 @@ export class ClientCacheController {
 	async getOrganisationElementsForUser(
 		@Query('path') path: string,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		@Headers('apikey') apikey: string
+		@Headers(APIKEY) apikey: string
 	): Promise<{ message: string }> {
 		const clientHost: string = this.configService.get('CLIENT_HOST');
 		const clientApiKey: string = this.configService.get('CLIENT_API_KEY');
