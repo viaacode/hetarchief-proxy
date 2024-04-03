@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { Configuration } from '~config';
 
-import { API_KEY_EXCEPTION, ApiKeyGuard } from '~shared/guards/api-key.guard';
+import { API_KEY_EXCEPTION, APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
 const mockApiKey = 'MySecretApiKey';
 
