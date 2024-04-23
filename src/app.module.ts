@@ -21,7 +21,6 @@ import { SitemapModule } from '~modules/sitemap';
 import { SpacesModule } from '~modules/spaces';
 import { StatusModule } from '~modules/status';
 import { TosModule } from '~modules/tos';
-import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { VisitsModule } from '~modules/visits';
 import { ZendeskModule } from '~modules/zendesk';
@@ -53,7 +52,6 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 		SpacesModule,
 		StatusModule,
 		TosModule,
-		TranslationsModule,
 		UsersModule,
 		VisitsModule,
 		ClientCacheModule,
