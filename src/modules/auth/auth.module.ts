@@ -1,3 +1,4 @@
+import { AdminTranslationsModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -15,7 +16,6 @@ import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
-import { TranslationsModule } from '~modules/translations';
 import { UsersModule } from '~modules/users';
 import { SessionService } from '~shared/services/session.service';
 
@@ -47,7 +47,7 @@ export const meemooServiceFactory = {
 		CollectionsModule,
 		SpacesModule,
 		EventsModule,
-		TranslationsModule,
+		AdminTranslationsModule,
 		OrganisationsModule,
 		CampaignMonitorModule,
 	],
