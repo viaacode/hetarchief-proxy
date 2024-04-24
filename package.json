@@ -91,7 +91,7 @@
     "@nestjs/cli": "9.5.0",
     "@nestjs/schematics": "9.2.0",
     "@nestjs/testing": "9.4.3",
-    "@studiohyperdrive/commitlint-config": "^2.1.0",
+    "@studiohyperdrive/commitlint-config": "^2.2.0",
     "@types/cache-manager": "3.4.3",
     "@types/connect-redis": "0.0.18",
     "@types/cron": "1.7.3",
