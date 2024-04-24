@@ -223,7 +223,7 @@ export class NotificationsService {
 				},
 				recipients.map((recipient) => recipient.id)
 			),
-			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
+			// important: the mail on new visit request is sent to the general email address, not to all maintainers
 			// See ARC-305
 			this.campaignMonitorService.sendForVisit({
 				to: [

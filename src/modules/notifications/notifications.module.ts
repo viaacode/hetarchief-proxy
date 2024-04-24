@@ -1,4 +1,8 @@
-import { DataModule, MaintenanceAlertsModule } from '@meemoo/admin-core-api';
+import {
+	AdminTranslationsModule,
+	DataModule,
+	MaintenanceAlertsModule,
+} from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -6,7 +10,6 @@ import { NotificationsController } from './controllers/notifications.controller'
 import { NotificationsService } from './services/notifications.service';
 
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
-import { TranslationsModule } from '~modules/translations';
 import { VisitsModule } from '~modules/visits';
 
 @Module({
@@ -16,7 +19,7 @@ import { VisitsModule } from '~modules/visits';
 		forwardRef(() => VisitsModule),
 		ConfigModule,
 		CampaignMonitorModule,
-		TranslationsModule,
+		AdminTranslationsModule,
 		MaintenanceAlertsModule,
 	],
 	providers: [NotificationsService, ConfigService],

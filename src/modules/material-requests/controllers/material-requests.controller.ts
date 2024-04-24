@@ -81,7 +81,7 @@ export class MaterialRequestsController {
 		@Query() queryDto: MaterialRequestsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<MaterialRequest>> {
-		// ARC-1472 Validatie the user group if the request has maintainerIds
+		// ARC-1472 Validate the user group if the request has maintainerIds
 		queryDto = this.validateMaintainerIdsWithUserGroup(user, queryDto);
 
 		return this.materialRequestsService.findAll(queryDto, {

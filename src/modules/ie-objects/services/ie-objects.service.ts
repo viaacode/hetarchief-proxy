@@ -138,7 +138,7 @@ export class IeObjectsService {
 			}
 		}
 
-		let esQuery;
+		let esQuery: any;
 		try {
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
