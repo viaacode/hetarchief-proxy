@@ -1,3 +1,4 @@
+import { LanguageCode } from '@meemoo/admin-core-api';
 import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -23,6 +24,7 @@ export class ClientCacheController {
 	@UseGuards(LoggedInGuard)
 	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 	async getOrganisationElementsForUser(
+		@Query('language') language: LanguageCode,
 		@Query('path') path: string,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers(APIKEY) apikey: string
@@ -35,6 +37,7 @@ export class ClientCacheController {
 				url: stringifyUrl({
 					url: clientHost + '/api/clear-cache',
 					query: {
+						language,
 						path,
 					},
 				}),

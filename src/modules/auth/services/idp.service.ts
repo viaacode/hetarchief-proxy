@@ -69,7 +69,7 @@ export class IdpService {
 			(apps.includes(LdapApp.HETARCHIEF_BEHEER) || apps.includes(LdapApp.CATALOGUS_PRO))
 		) {
 			throw new Error(
-				`${NO_ORG_LINKED}${this.translationsService.t(
+				`${NO_ORG_LINKED}${this.translationsService.tText(
 					'modules/auth/services/idp___account-configuratie'
 				)}`
 			);
@@ -80,7 +80,7 @@ export class IdpService {
 			const maintainerId = get(ldapUser, 'attributes.o[0]');
 			if (!maintainerId) {
 				throw new Error(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
 					)
 				);
@@ -107,7 +107,7 @@ export class IdpService {
 			// 3. organizationalStatus = kiosk + cp has no visitor space → error (account misconfiguration)
 			if (!maintainerId) {
 				throw new Error(
-					`${NO_ORG_LINKED}${this.translationsService.t(
+					`${NO_ORG_LINKED}${this.translationsService.tText(
 						'modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
 					)}`
 				);

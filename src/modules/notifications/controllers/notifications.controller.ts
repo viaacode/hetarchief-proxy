@@ -110,7 +110,7 @@ export class NotificationsController {
 			accessEndedNotifications.length;
 		if (totalNotificationsSent > 0) {
 			return {
-				status: this.translationsService.t(
+				status: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___notificaties-verzonden'
 				),
 				notifications: {
@@ -125,7 +125,7 @@ export class NotificationsController {
 			};
 		} else {
 			return {
-				status: this.translationsService.t(
+				status: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
 				),
 				total: 0,
@@ -144,13 +144,13 @@ export class NotificationsController {
 			(visit): GqlCreateOrUpdateNotification => {
 				const endDate = formatAsBelgianDate(visit.endAt);
 				return {
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 						{
 							name: visit.spaceName,
 						}
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
 						{
 							endDate,
@@ -176,14 +176,14 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: this.translationsService.t(
+				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
 						name: visit.spaceName,
 						minutes: 15,
 					}
 				),
-				description: this.translationsService.t(
+				description: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
 				),
 				visit_id: visit.id,
@@ -205,13 +205,13 @@ export class NotificationsController {
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
 		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
 			(visit): GqlCreateOrUpdateNotification => ({
-				title: this.translationsService.t(
+				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{
 						name: visit.spaceName,
 					}
 				),
-				description: this.translationsService.t(
+				description: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
 				),
 				visit_id: visit.id,
@@ -251,7 +251,7 @@ export class NotificationsController {
 		return Object.fromEntries(
 			notificationTranslationKeys.map((translationKey) => [
 				translationKey,
-				this.translationsService.t(translationKey),
+				this.translationsService.tText(translationKey),
 			])
 		);
 	}

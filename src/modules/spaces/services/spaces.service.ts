@@ -325,7 +325,7 @@ export class SpacesService {
 				'Uniqueness violation. duplicate key value violates unique constraint "visitor_space_slug_key"'
 			) {
 				throw new InternalServerErrorException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/spaces/services/spaces___a-space-already-exists-with-slug-slug',
 						{ slug: inputDto.slug }
 					)

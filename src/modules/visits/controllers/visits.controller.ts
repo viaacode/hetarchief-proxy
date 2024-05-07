@@ -85,7 +85,7 @@ export class VisitsController {
 
 		if (!cpSpace) {
 			throw new NotFoundException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
 				)
 			);
@@ -250,7 +250,7 @@ export class VisitsController {
 
 			if (!spaceInfo) {
 				throw new NotFoundException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
 						{ name: visitorSpaceSlug }
 					)
@@ -300,7 +300,7 @@ export class VisitsController {
 			if (space) {
 				if (space.status === VisitorSpaceStatus.Inactive) {
 					throw new GoneException(
-						this.translationsService.t(
+						this.translationsService.tText(
 							'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests',
 							{ name: visitorSpaceSlug }
 						)
@@ -309,7 +309,7 @@ export class VisitsController {
 
 				// User does not have access to existing space
 				throw new ForbiddenException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name',
 						{
 							name: visitorSpaceSlug,
@@ -319,7 +319,7 @@ export class VisitsController {
 			} else {
 				// Space does not exist
 				throw new NotFoundException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
 						{ name: visitorSpaceSlug }
 					)
@@ -355,7 +355,7 @@ export class VisitsController {
 	): Promise<Visit> {
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
 				)
 			);
@@ -366,7 +366,7 @@ export class VisitsController {
 
 		if (!visitorSpace) {
 			throw new BadRequestException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found',
 					{
 						name: createVisitDto.visitorSpaceSlug,
@@ -435,7 +435,7 @@ export class VisitsController {
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
 				throw new ForbiddenException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
 					)
 				);
