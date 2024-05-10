@@ -258,6 +258,7 @@ export class IeObjectsService {
 
 		// We can reuse the license checking part from the regular search queries:
 		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
+		const searchInsideVisitorSpace = !!esIndex;
 		const regularQuery = QueryBuilder.build(
 			{ filters: [], page: 0, size: 0 },
 			{
@@ -267,79 +268,55 @@ export class IeObjectsService {
 			}
 		);
 
-		let esQueryObject;
-
-		if (esIndex) {
-			// if esIndex is passed, we only want to return objects that are inside a visitor space
-			esQueryObject = {
-				size: limit,
-				from: 0,
-				query: {
-					bool: {
-						should: [
-							{
-								bool: {
-									should: [
-										{
-											more_like_this: {
-												fields: ['schema_name', 'schema_description'],
-												like: [
-													{
-														_index: esIndex,
-														_id: schemaIdentifier,
-													},
-												],
-												min_term_freq: 1,
-												min_doc_freq: 1,
-											},
-										},
-										{
-											// if esIndex is passed, we only want to return objects that are inside a visitor space
-											terms: {
-												schema_license: [
-													IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-													IeObjectLicense.BEZOEKERTOOL_CONTENT,
-												],
-											},
-										},
-									],
-									minimum_should_match: 2,
-								},
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				bool: {
+					should: [
+						{
+							more_like_this: {
+								fields: [
+									'schema_name',
+									'schema_description',
+									'schema_keywords.keyword',
+									'schema_is_part_of.*.keyword',
+									'schema_creator_text',
+								],
+								like: [
+									{
+										_index: esIndex,
+										_id: schemaIdentifier,
+									},
+								],
+								min_term_freq: 2,
+								min_doc_freq: 2,
+								max_doc_freq: 6,
+								max_query_terms: 12,
+								min_word_length: 4,
 							},
-							regularQuery.query.bool.should[1],
-						],
-						minimum_should_match: 2,
-					},
-				},
-			};
-		} else {
-			// If no esIndex is passed, we want to find similar objects in the whole database
-			esQueryObject = {
-				size: limit,
-				from: 0,
-				query: {
-					bool: {
-						should: [
-							{
-								more_like_this: {
-									fields: ['schema_name', 'schema_description'],
-									like: [
-										{
-											_id: schemaIdentifier,
+						},
+						...(searchInsideVisitorSpace
+							? [
+									{
+										// if esIndex is passed, we only want to return objects that are inside a visitor space
+										terms: {
+											schema_license: [
+												IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+												IeObjectLicense.BEZOEKERTOOL_CONTENT,
+											],
 										},
-									],
-									min_term_freq: 1,
-									min_doc_freq: 1,
-								},
-							},
-							regularQuery.query.bool.should[1],
-						],
-						minimum_should_match: 2,
-					},
+									},
+							  ]
+							: []),
+						regularQuery.query.bool.should[1],
+					],
+					minimum_should_match: searchInsideVisitorSpace ? 3 : 2,
 				},
-			};
-		}
+			},
+		};
 
+		// if esIndex is passed, we only want to return objects that are inside a visitor space
 		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer, ip);
 
