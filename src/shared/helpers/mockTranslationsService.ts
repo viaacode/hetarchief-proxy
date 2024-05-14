@@ -6,5 +6,5 @@ export const mockTranslationsService: Partial<Record<keyof TranslationsService, 
 	{
 		onApplicationBootstrap: jest.fn(),
 		refreshBackendTranslations: jest.fn(),
-		t: jest.fn().mockImplementation(getTranslationFallback),
+		tText: jest.fn().mockImplementation(getTranslationFallback),
 	};

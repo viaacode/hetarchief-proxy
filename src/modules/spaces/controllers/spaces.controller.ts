@@ -57,7 +57,7 @@ export class SpacesController {
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
 			throw new ForbiddenException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
 				)
 			);
@@ -92,7 +92,7 @@ export class SpacesController {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
 			throw new NotFoundException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found',
 					{
 						slug,

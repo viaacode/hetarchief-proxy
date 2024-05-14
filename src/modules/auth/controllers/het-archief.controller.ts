@@ -178,7 +178,7 @@ export class HetArchiefController {
 					{
 						is_default: true,
 						user_profile_id: archiefUser.id,
-						name: this.translationsService.t(
+						name: this.translationsService.tText(
 							'modules/collections/controllers___default-collection-name'
 						),
 					},
@@ -257,7 +257,7 @@ export class HetArchiefController {
 					proxyHost,
 					Idp.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/auth/controllers/het-archief___account-configuratie'
 					)
 				);

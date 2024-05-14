@@ -122,7 +122,7 @@ export class MeemooController {
 					{
 						is_default: true,
 						user_profile_id: archiefUser.id,
-						name: this.translationsService.t(
+						name: this.translationsService.tText(
 							'modules/collections/controllers___default-collection-name'
 						),
 					},
@@ -178,7 +178,7 @@ export class MeemooController {
 					proxyHost,
 					Idp.MEEMOO,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/auth/controllers/meemoo___account-configuratie'
 					)
 				);

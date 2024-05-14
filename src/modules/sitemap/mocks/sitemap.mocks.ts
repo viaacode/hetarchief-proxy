@@ -1,4 +1,4 @@
-import { DbContentPage } from '@meemoo/admin-core-api';
+import { DbContentPage, LanguageCode } from '@meemoo/admin-core-api';
 
 import { SitemapConfig } from '../sitemap.types';
 
@@ -53,6 +53,17 @@ export const mockContentPage: DbContentPage = {
 	userGroupIds: [],
 	content_blocks: [],
 	labels: [],
+	language: LanguageCode.Nl,
+	nlParentPageId: '3be90381-2a80-4c0e-8f30-d618ab6e2d77',
+	translatedPages: [
+		{
+			id: '3be90381-2a80-4c0e-8f30-d618ab6e2d77',
+			title: 'mock content page',
+			path: '/mock-content-page-url',
+			language: LanguageCode.Nl,
+			isPublic: true,
+		},
+	],
 };
 
 export const mockSitemapSpaces = {

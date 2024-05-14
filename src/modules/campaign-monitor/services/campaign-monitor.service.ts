@@ -390,13 +390,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		emailInfo: MaterialRequestEmailInfo
 	): CampaignMonitorMaterialRequestData {
 		const MATERIAL_REQUEST_TYPE_TRANSLATIONS: Record<MaterialRequestType, string> = {
-			[MaterialRequestType.VIEW]: this.translationsService.t(
+			[MaterialRequestType.VIEW]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren'
 			),
-			[MaterialRequestType.REUSE]: this.translationsService.t(
+			[MaterialRequestType.REUSE]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken'
 			),
-			[MaterialRequestType.MORE_INFO]: this.translationsService.t(
+			[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object'
 			),
 		};
@@ -405,16 +405,16 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			MaterialRequestRequesterCapacity,
 			string
 		> = {
-			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.t(
+			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___andere'
 			),
-			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.t(
+			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs'
 			),
-			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.t(
+			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek'
 			),
-			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.t(
+			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.tText(
 				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever'
 			),
 		};

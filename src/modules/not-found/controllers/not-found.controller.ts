@@ -30,12 +30,14 @@ export class NotFoundController {
 				.replace(
 					/\{\{TITLE\}\}/g,
 					title ||
-						this.translationsService.t('modules/not-found/controllers/not-found___404')
+						this.translationsService.tText(
+							'modules/not-found/controllers/not-found___404'
+						)
 				)
 				.replace(
 					/\{\{MESSAGE\}\}/g,
 					message ||
-						this.translationsService.t(
+						this.translationsService.tText(
 							'modules/not-found/controllers/not-found___sorry-deze-pagina-konden-we-niet-terugvinden-de-link-die-je-volgde-kan-stuk-zijn-of-de-pagina-kan-niet-meer-bestaan'
 						)
 				);

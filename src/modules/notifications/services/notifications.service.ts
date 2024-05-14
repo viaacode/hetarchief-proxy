@@ -208,10 +208,10 @@ export class NotificationsService {
 		const [notifications] = await Promise.all([
 			this.createForMultipleRecipients(
 				{
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken'
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
 						{
 							name,
@@ -248,13 +248,13 @@ export class NotificationsService {
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd',
 						{
 							name: space.name,
 						}
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd-je-zal-toegang-hebben-van-start-date-tot-end-date',
 						{
 							name: space.name,
@@ -289,19 +289,19 @@ export class NotificationsService {
 	): Promise<Notification> {
 		const reasonWithFallback =
 			reason ||
-			this.translationsService.t(
+			this.translationsService.tText(
 				'modules/notifications/services/notifications___er-werd-geen-reden-opgegeven'
 			);
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd',
 						{
 							name: space.name,
 						}
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___reden-reason',
 						{
 							reason: reasonWithFallback,
@@ -333,10 +333,10 @@ export class NotificationsService {
 		const name = user.getFullName();
 		return this.createForMultipleRecipients(
 			{
-				title: this.translationsService.t(
+				title: this.translationsService.tText(
 					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd'
 				),
-				description: this.translationsService.t(
+				description: this.translationsService.tText(
 					'modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd',
 					{
 						name,
