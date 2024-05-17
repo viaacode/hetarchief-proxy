@@ -798,6 +798,7 @@ export type App_Content_Label = {
   created_at: Scalars['timestamp'];
   id: Scalars['uuid'];
   label: Scalars['String'];
+  language: Lookup_Languages_Enum;
   link_to?: Maybe<Scalars['jsonb']>;
   updated_at: Scalars['timestamp'];
 };
@@ -866,6 +867,7 @@ export type App_Content_Label_Bool_Exp = {
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   label?: InputMaybe<String_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
   link_to?: InputMaybe<Jsonb_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
@@ -901,6 +903,7 @@ export type App_Content_Label_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
   label?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   link_to?: InputMaybe<Scalars['jsonb']>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
 };
@@ -954,6 +957,7 @@ export type App_Content_Label_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   label?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
   link_to?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
@@ -979,6 +983,8 @@ export enum App_Content_Label_Select_Column {
   /** column name */
   Label = 'label',
   /** column name */
+  Language = 'language',
+  /** column name */
   LinkTo = 'link_to',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -990,6 +996,7 @@ export type App_Content_Label_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
   label?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   link_to?: InputMaybe<Scalars['jsonb']>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
 };
@@ -1004,6 +1011,8 @@ export enum App_Content_Label_Update_Column {
   Id = 'id',
   /** column name */
   Label = 'label',
+  /** column name */
+  Language = 'language',
   /** column name */
   LinkTo = 'link_to',
   /** column name */
@@ -1031,7 +1040,9 @@ export type App_Content_Page = {
   is_deleted: Scalars['Boolean'];
   is_protected: Scalars['Boolean'];
   is_public?: Maybe<Scalars['Boolean']>;
+  language: Lookup_Languages_Enum;
   meta_description?: Maybe<Scalars['String']>;
+  nl_parent_page_id?: Maybe<Scalars['uuid']>;
   /** An object relationship */
   owner_profile?: Maybe<Users_Profile>;
   /** slug van de pagina */
@@ -1044,6 +1055,10 @@ export type App_Content_Page = {
   seo_title?: Maybe<Scalars['String']>;
   thumbnail_path?: Maybe<Scalars['String']>;
   title: Scalars['String'];
+  /** An array relationship */
+  translated_content_pages: Array<App_Content_Page>;
+  /** An aggregate relationship */
+  translated_content_pages_aggregate: App_Content_Page_Aggregate;
   updated_at?: Maybe<Scalars['timestamp']>;
   updated_by_profile_id?: Maybe<Scalars['uuid']>;
   /** An object relationship */
@@ -1094,6 +1109,26 @@ export type App_Content_PageContent_Content_Labels_AggregateArgs = {
 
 
 /** columns and relationships of "app.content_page" */
+export type App_Content_PageTranslated_Content_PagesArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
+export type App_Content_PageTranslated_Content_Pages_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Content_Page_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Content_Page_Order_By>>;
+  where?: InputMaybe<App_Content_Page_Bool_Exp>;
+};
+
+
+/** columns and relationships of "app.content_page" */
 export type App_Content_PageUser_Group_IdsArgs = {
   path?: InputMaybe<Scalars['String']>;
 };
@@ -1120,9 +1155,23 @@ export type App_Content_Page_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "app.content_page" */
+export type App_Content_Page_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<App_Content_Page_Max_Order_By>;
+  min?: InputMaybe<App_Content_Page_Min_Order_By>;
+};
+
 /** append existing jsonb value of filtered columns with new jsonb value */
 export type App_Content_Page_Append_Input = {
   user_group_ids?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** input type for inserting array relation for remote table "app.content_page" */
+export type App_Content_Page_Arr_Rel_Insert_Input = {
+  data: Array<App_Content_Page_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<App_Content_Page_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "app.content_page". All fields are combined with a logical 'AND'. */
@@ -1142,7 +1191,9 @@ export type App_Content_Page_Bool_Exp = {
   is_deleted?: InputMaybe<Boolean_Comparison_Exp>;
   is_protected?: InputMaybe<Boolean_Comparison_Exp>;
   is_public?: InputMaybe<Boolean_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
   meta_description?: InputMaybe<String_Comparison_Exp>;
+  nl_parent_page_id?: InputMaybe<Uuid_Comparison_Exp>;
   owner_profile?: InputMaybe<Users_Profile_Bool_Exp>;
   path?: InputMaybe<String_Comparison_Exp>;
   publish_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -1153,6 +1204,7 @@ export type App_Content_Page_Bool_Exp = {
   seo_title?: InputMaybe<String_Comparison_Exp>;
   thumbnail_path?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
+  translated_content_pages?: InputMaybe<App_Content_Page_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   updated_by_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
   updater_profile?: InputMaybe<Users_Profile_Bool_Exp>;
@@ -1165,7 +1217,7 @@ export enum App_Content_Page_Constraint {
   /** unique or primary key constraint */
   ContentIdKey = 'content_id_key',
   /** unique or primary key constraint */
-  ContentPathKey = 'content_path_key',
+  ContentPagePathLanguageKey = 'content_page_path_language_key',
   /** unique or primary key constraint */
   ContentPkey = 'content_pkey'
 }
@@ -1387,7 +1439,9 @@ export type App_Content_Page_Insert_Input = {
   is_deleted?: InputMaybe<Scalars['Boolean']>;
   is_protected?: InputMaybe<Scalars['Boolean']>;
   is_public?: InputMaybe<Scalars['Boolean']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   meta_description?: InputMaybe<Scalars['String']>;
+  nl_parent_page_id?: InputMaybe<Scalars['uuid']>;
   owner_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
   /** slug van de pagina */
   path?: InputMaybe<Scalars['String']>;
@@ -1399,6 +1453,7 @@ export type App_Content_Page_Insert_Input = {
   seo_title?: InputMaybe<Scalars['String']>;
   thumbnail_path?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
+  translated_content_pages?: InputMaybe<App_Content_Page_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
   updated_by_profile_id?: InputMaybe<Scalars['uuid']>;
   updater_profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
@@ -1417,6 +1472,7 @@ export type App_Content_Page_Max_Fields = {
   header_path?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   meta_description?: Maybe<Scalars['String']>;
+  nl_parent_page_id?: Maybe<Scalars['uuid']>;
   /** slug van de pagina */
   path?: Maybe<Scalars['String']>;
   publish_at?: Maybe<Scalars['timestamp']>;
@@ -1432,6 +1488,32 @@ export type App_Content_Page_Max_Fields = {
   user_profile_id?: Maybe<Scalars['uuid']>;
 };
 
+/** order by max() on columns of table "app.content_page" */
+export type App_Content_Page_Max_Order_By = {
+  content_type?: InputMaybe<Order_By>;
+  content_width?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  depublish_at?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  header_path?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  meta_description?: InputMaybe<Order_By>;
+  nl_parent_page_id?: InputMaybe<Order_By>;
+  /** slug van de pagina */
+  path?: InputMaybe<Order_By>;
+  publish_at?: InputMaybe<Order_By>;
+  published_at?: InputMaybe<Order_By>;
+  seo_description?: InputMaybe<Order_By>;
+  seo_image_path?: InputMaybe<Order_By>;
+  seo_keywords?: InputMaybe<Order_By>;
+  seo_title?: InputMaybe<Order_By>;
+  thumbnail_path?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by_profile_id?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type App_Content_Page_Min_Fields = {
   __typename?: 'app_content_page_min_fields';
@@ -1443,6 +1525,7 @@ export type App_Content_Page_Min_Fields = {
   header_path?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
   meta_description?: Maybe<Scalars['String']>;
+  nl_parent_page_id?: Maybe<Scalars['uuid']>;
   /** slug van de pagina */
   path?: Maybe<Scalars['String']>;
   publish_at?: Maybe<Scalars['timestamp']>;
@@ -1456,6 +1539,32 @@ export type App_Content_Page_Min_Fields = {
   updated_at?: Maybe<Scalars['timestamp']>;
   updated_by_profile_id?: Maybe<Scalars['uuid']>;
   user_profile_id?: Maybe<Scalars['uuid']>;
+};
+
+/** order by min() on columns of table "app.content_page" */
+export type App_Content_Page_Min_Order_By = {
+  content_type?: InputMaybe<Order_By>;
+  content_width?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  depublish_at?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  header_path?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  meta_description?: InputMaybe<Order_By>;
+  nl_parent_page_id?: InputMaybe<Order_By>;
+  /** slug van de pagina */
+  path?: InputMaybe<Order_By>;
+  publish_at?: InputMaybe<Order_By>;
+  published_at?: InputMaybe<Order_By>;
+  seo_description?: InputMaybe<Order_By>;
+  seo_image_path?: InputMaybe<Order_By>;
+  seo_keywords?: InputMaybe<Order_By>;
+  seo_title?: InputMaybe<Order_By>;
+  thumbnail_path?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  updated_by_profile_id?: InputMaybe<Order_By>;
+  user_profile_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "app.content_page" */
@@ -1495,7 +1604,9 @@ export type App_Content_Page_Order_By = {
   is_deleted?: InputMaybe<Order_By>;
   is_protected?: InputMaybe<Order_By>;
   is_public?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
   meta_description?: InputMaybe<Order_By>;
+  nl_parent_page_id?: InputMaybe<Order_By>;
   owner_profile?: InputMaybe<Users_Profile_Order_By>;
   path?: InputMaybe<Order_By>;
   publish_at?: InputMaybe<Order_By>;
@@ -1506,6 +1617,7 @@ export type App_Content_Page_Order_By = {
   seo_title?: InputMaybe<Order_By>;
   thumbnail_path?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
+  translated_content_pages_aggregate?: InputMaybe<App_Content_Page_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   updated_by_profile_id?: InputMaybe<Order_By>;
   updater_profile?: InputMaybe<Users_Profile_Order_By>;
@@ -1546,7 +1658,11 @@ export enum App_Content_Page_Select_Column {
   /** column name */
   IsPublic = 'is_public',
   /** column name */
+  Language = 'language',
+  /** column name */
   MetaDescription = 'meta_description',
+  /** column name */
+  NlParentPageId = 'nl_parent_page_id',
   /** column name */
   Path = 'path',
   /** column name */
@@ -1587,7 +1703,9 @@ export type App_Content_Page_Set_Input = {
   is_deleted?: InputMaybe<Scalars['Boolean']>;
   is_protected?: InputMaybe<Scalars['Boolean']>;
   is_public?: InputMaybe<Scalars['Boolean']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   meta_description?: InputMaybe<Scalars['String']>;
+  nl_parent_page_id?: InputMaybe<Scalars['uuid']>;
   /** slug van de pagina */
   path?: InputMaybe<Scalars['String']>;
   publish_at?: InputMaybe<Scalars['timestamp']>;
@@ -1627,7 +1745,11 @@ export enum App_Content_Page_Update_Column {
   /** column name */
   IsPublic = 'is_public',
   /** column name */
+  Language = 'language',
+  /** column name */
   MetaDescription = 'meta_description',
+  /** column name */
+  NlParentPageId = 'nl_parent_page_id',
   /** column name */
   Path = 'path',
   /** column name */
@@ -1661,6 +1783,7 @@ export type App_Maintenance_Alerts = {
   __typename?: 'app_maintenance_alerts';
   from_date: Scalars['timestamp'];
   id: Scalars['uuid'];
+  language: Lookup_Languages_Enum;
   message: Scalars['String'];
   title: Scalars['String'];
   type?: Maybe<Scalars['String']>;
@@ -1708,6 +1831,7 @@ export type App_Maintenance_Alerts_Bool_Exp = {
   _or?: InputMaybe<Array<App_Maintenance_Alerts_Bool_Exp>>;
   from_date?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
   message?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   type?: InputMaybe<String_Comparison_Exp>;
@@ -1740,6 +1864,7 @@ export type App_Maintenance_Alerts_Delete_Key_Input = {
 export type App_Maintenance_Alerts_Insert_Input = {
   from_date?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   message?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
@@ -1789,6 +1914,7 @@ export type App_Maintenance_Alerts_On_Conflict = {
 export type App_Maintenance_Alerts_Order_By = {
   from_date?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
   message?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
@@ -1813,6 +1939,8 @@ export enum App_Maintenance_Alerts_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Language = 'language',
+  /** column name */
   Message = 'message',
   /** column name */
   Title = 'title',
@@ -1828,6 +1956,7 @@ export enum App_Maintenance_Alerts_Select_Column {
 export type App_Maintenance_Alerts_Set_Input = {
   from_date?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['uuid']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   message?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
@@ -1841,6 +1970,8 @@ export enum App_Maintenance_Alerts_Update_Column {
   FromDate = 'from_date',
   /** column name */
   Id = 'id',
+  /** column name */
+  Language = 'language',
   /** column name */
   Message = 'message',
   /** column name */
@@ -2070,7 +2201,8 @@ export type App_Navigation = {
   description?: Maybe<Scalars['String']>;
   icon_name: Scalars['String'];
   id: Scalars['uuid'];
-  label: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
+  language: Lookup_Languages_Enum;
   /** open in new tab of in zelfde tab */
   link_target?: Maybe<Scalars['String']>;
   /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
@@ -2143,6 +2275,7 @@ export type App_Navigation_Bool_Exp = {
   icon_name?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   label?: InputMaybe<String_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
   link_target?: InputMaybe<String_Comparison_Exp>;
   placement?: InputMaybe<String_Comparison_Exp>;
   position?: InputMaybe<Int_Comparison_Exp>;
@@ -2190,6 +2323,7 @@ export type App_Navigation_Insert_Input = {
   icon_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
   label?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   /** open in new tab of in zelfde tab */
   link_target?: InputMaybe<Scalars['String']>;
   /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
@@ -2273,6 +2407,7 @@ export type App_Navigation_Order_By = {
   icon_name?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   label?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
   link_target?: InputMaybe<Order_By>;
   placement?: InputMaybe<Order_By>;
   position?: InputMaybe<Order_By>;
@@ -2310,6 +2445,8 @@ export enum App_Navigation_Select_Column {
   /** column name */
   Label = 'label',
   /** column name */
+  Language = 'language',
+  /** column name */
   LinkTarget = 'link_target',
   /** column name */
   Placement = 'placement',
@@ -2335,6 +2472,7 @@ export type App_Navigation_Set_Input = {
   icon_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
   label?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   /** open in new tab of in zelfde tab */
   link_target?: InputMaybe<Scalars['String']>;
   /** In welk navigatiemenu verschijnt dit, vb. navigatiemenu linksboven, of footermenu. */
@@ -2392,6 +2530,8 @@ export enum App_Navigation_Update_Column {
   Id = 'id',
   /** column name */
   Label = 'label',
+  /** column name */
+  Language = 'language',
   /** column name */
   LinkTarget = 'link_target',
   /** column name */
@@ -2679,6 +2819,164 @@ export enum App_Notification_Update_Column {
   UpdatedAt = 'updated_at',
   /** column name */
   VisitId = 'visit_id'
+}
+
+/** Contains the translated labels in all languages for the hetarchief frontend client */
+export type App_Translations = {
+  __typename?: 'app_translations';
+  component: Scalars['String'];
+  key: Scalars['String'];
+  language: Lookup_Languages_Enum;
+  location: Scalars['String'];
+  value: Scalars['String'];
+  value_type: Scalars['String'];
+};
+
+/** aggregated selection of "app.translations" */
+export type App_Translations_Aggregate = {
+  __typename?: 'app_translations_aggregate';
+  aggregate?: Maybe<App_Translations_Aggregate_Fields>;
+  nodes: Array<App_Translations>;
+};
+
+/** aggregate fields of "app.translations" */
+export type App_Translations_Aggregate_Fields = {
+  __typename?: 'app_translations_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<App_Translations_Max_Fields>;
+  min?: Maybe<App_Translations_Min_Fields>;
+};
+
+
+/** aggregate fields of "app.translations" */
+export type App_Translations_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<App_Translations_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "app.translations". All fields are combined with a logical 'AND'. */
+export type App_Translations_Bool_Exp = {
+  _and?: InputMaybe<Array<App_Translations_Bool_Exp>>;
+  _not?: InputMaybe<App_Translations_Bool_Exp>;
+  _or?: InputMaybe<Array<App_Translations_Bool_Exp>>;
+  component?: InputMaybe<String_Comparison_Exp>;
+  key?: InputMaybe<String_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
+  location?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+  value_type?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "app.translations" */
+export enum App_Translations_Constraint {
+  /** unique or primary key constraint */
+  TranslationsPkey = 'translations_pkey'
+}
+
+/** input type for inserting data into table "app.translations" */
+export type App_Translations_Insert_Input = {
+  component?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
+  location?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+  value_type?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type App_Translations_Max_Fields = {
+  __typename?: 'app_translations_max_fields';
+  component?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+  value_type?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type App_Translations_Min_Fields = {
+  __typename?: 'app_translations_min_fields';
+  component?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+  value_type?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "app.translations" */
+export type App_Translations_Mutation_Response = {
+  __typename?: 'app_translations_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<App_Translations>;
+};
+
+/** on_conflict condition type for table "app.translations" */
+export type App_Translations_On_Conflict = {
+  constraint: App_Translations_Constraint;
+  update_columns?: Array<App_Translations_Update_Column>;
+  where?: InputMaybe<App_Translations_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "app.translations". */
+export type App_Translations_Order_By = {
+  component?: InputMaybe<Order_By>;
+  key?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
+  location?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+  value_type?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: app_translations */
+export type App_Translations_Pk_Columns_Input = {
+  component: Scalars['String'];
+  key: Scalars['String'];
+  language: Lookup_Languages_Enum;
+  location: Scalars['String'];
+};
+
+/** select columns of table "app.translations" */
+export enum App_Translations_Select_Column {
+  /** column name */
+  Component = 'component',
+  /** column name */
+  Key = 'key',
+  /** column name */
+  Language = 'language',
+  /** column name */
+  Location = 'location',
+  /** column name */
+  Value = 'value',
+  /** column name */
+  ValueType = 'value_type'
+}
+
+/** input type for updating data in table "app.translations" */
+export type App_Translations_Set_Input = {
+  component?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
+  location?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+  value_type?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "app.translations" */
+export enum App_Translations_Update_Column {
+  /** column name */
+  Component = 'component',
+  /** column name */
+  Key = 'key',
+  /** column name */
+  Language = 'language',
+  /** column name */
+  Location = 'location',
+  /** column name */
+  Value = 'value',
+  /** column name */
+  ValueType = 'value_type'
 }
 
 /** Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'. */
@@ -3424,6 +3722,135 @@ export type Lookup_App_Notification_Type_Set_Input = {
 
 /** update columns of table "lookup.app_notification_type" */
 export enum Lookup_App_Notification_Type_Update_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** Contains the list of languages that the hetarchief website is translated into. For now only NL and EN */
+export type Lookup_Languages = {
+  __typename?: 'lookup_languages';
+  comment: Scalars['String'];
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "lookup.languages" */
+export type Lookup_Languages_Aggregate = {
+  __typename?: 'lookup_languages_aggregate';
+  aggregate?: Maybe<Lookup_Languages_Aggregate_Fields>;
+  nodes: Array<Lookup_Languages>;
+};
+
+/** aggregate fields of "lookup.languages" */
+export type Lookup_Languages_Aggregate_Fields = {
+  __typename?: 'lookup_languages_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Lookup_Languages_Max_Fields>;
+  min?: Maybe<Lookup_Languages_Min_Fields>;
+};
+
+
+/** aggregate fields of "lookup.languages" */
+export type Lookup_Languages_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Lookup_Languages_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "lookup.languages". All fields are combined with a logical 'AND'. */
+export type Lookup_Languages_Bool_Exp = {
+  _and?: InputMaybe<Array<Lookup_Languages_Bool_Exp>>;
+  _not?: InputMaybe<Lookup_Languages_Bool_Exp>;
+  _or?: InputMaybe<Array<Lookup_Languages_Bool_Exp>>;
+  comment?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "lookup.languages" */
+export enum Lookup_Languages_Constraint {
+  /** unique or primary key constraint */
+  LanguagesPkey = 'languages_pkey'
+}
+
+export enum Lookup_Languages_Enum {
+  /** English */
+  En = 'EN',
+  /** Nederlands */
+  Nl = 'NL'
+}
+
+/** Boolean expression to compare columns of type "lookup_languages_enum". All fields are combined with logical 'AND'. */
+export type Lookup_Languages_Enum_Comparison_Exp = {
+  _eq?: InputMaybe<Lookup_Languages_Enum>;
+  _in?: InputMaybe<Array<Lookup_Languages_Enum>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _neq?: InputMaybe<Lookup_Languages_Enum>;
+  _nin?: InputMaybe<Array<Lookup_Languages_Enum>>;
+};
+
+/** input type for inserting data into table "lookup.languages" */
+export type Lookup_Languages_Insert_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Lookup_Languages_Max_Fields = {
+  __typename?: 'lookup_languages_max_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Lookup_Languages_Min_Fields = {
+  __typename?: 'lookup_languages_min_fields';
+  comment?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "lookup.languages" */
+export type Lookup_Languages_Mutation_Response = {
+  __typename?: 'lookup_languages_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Lookup_Languages>;
+};
+
+/** on_conflict condition type for table "lookup.languages" */
+export type Lookup_Languages_On_Conflict = {
+  constraint: Lookup_Languages_Constraint;
+  update_columns?: Array<Lookup_Languages_Update_Column>;
+  where?: InputMaybe<Lookup_Languages_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "lookup.languages". */
+export type Lookup_Languages_Order_By = {
+  comment?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: lookup_languages */
+export type Lookup_Languages_Pk_Columns_Input = {
+  value: Scalars['String'];
+};
+
+/** select columns of table "lookup.languages" */
+export enum Lookup_Languages_Select_Column {
+  /** column name */
+  Comment = 'comment',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "lookup.languages" */
+export type Lookup_Languages_Set_Input = {
+  comment?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "lookup.languages" */
+export enum Lookup_Languages_Update_Column {
   /** column name */
   Comment = 'comment',
   /** column name */
@@ -4707,7 +5134,6 @@ export type Maintainer_Organisation = {
   primary_site: Scalars['jsonb'];
   schema_identifier: Scalars['String'];
   schema_name?: Maybe<Scalars['String']>;
-  sector?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
@@ -4799,7 +5225,6 @@ export type Maintainer_Organisation_Bool_Exp = {
   primary_site?: InputMaybe<Jsonb_Comparison_Exp>;
   schema_identifier?: InputMaybe<String_Comparison_Exp>;
   schema_name?: InputMaybe<String_Comparison_Exp>;
-  sector?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   users?: InputMaybe<Users_Profile_Bool_Exp>;
@@ -4845,7 +5270,6 @@ export type Maintainer_Organisation_Insert_Input = {
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
-  sector?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   users?: InputMaybe<Users_Profile_Arr_Rel_Insert_Input>;
@@ -4861,7 +5285,6 @@ export type Maintainer_Organisation_Max_Fields = {
   homepage_url?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
-  sector?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -4876,7 +5299,6 @@ export type Maintainer_Organisation_Min_Fields = {
   homepage_url?: Maybe<Scalars['String']>;
   schema_identifier?: Maybe<Scalars['String']>;
   schema_name?: Maybe<Scalars['String']>;
-  sector?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -4917,7 +5339,6 @@ export type Maintainer_Organisation_Order_By = {
   primary_site?: InputMaybe<Order_By>;
   schema_identifier?: InputMaybe<Order_By>;
   schema_name?: InputMaybe<Order_By>;
-  sector?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   users_aggregate?: InputMaybe<Users_Profile_Aggregate_Order_By>;
@@ -4960,8 +5381,6 @@ export enum Maintainer_Organisation_Select_Column {
   /** column name */
   SchemaName = 'schema_name',
   /** column name */
-  Sector = 'sector',
-  /** column name */
   Slug = 'slug',
   /** column name */
   UpdatedAt = 'updated_at'
@@ -4980,7 +5399,6 @@ export type Maintainer_Organisation_Set_Input = {
   primary_site?: InputMaybe<Scalars['jsonb']>;
   schema_identifier?: InputMaybe<Scalars['String']>;
   schema_name?: InputMaybe<Scalars['String']>;
-  sector?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
@@ -5009,8 +5427,6 @@ export enum Maintainer_Organisation_Update_Column {
   SchemaIdentifier = 'schema_identifier',
   /** column name */
   SchemaName = 'schema_name',
-  /** column name */
-  Sector = 'sector',
   /** column name */
   Slug = 'slug',
   /** column name */
@@ -6338,6 +6754,10 @@ export type Mutation_Root = {
   delete_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** delete single row from the table: "app.notification" */
   delete_app_notification_by_pk?: Maybe<App_Notification>;
+  /** delete data from the table: "app.translations" */
+  delete_app_translations?: Maybe<App_Translations_Mutation_Response>;
+  /** delete single row from the table: "app.translations" */
+  delete_app_translations_by_pk?: Maybe<App_Translations>;
   /** delete data from the table: "lookup.app_content_block_type" */
   delete_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_content_block_type" */
@@ -6358,6 +6778,10 @@ export type Mutation_Root = {
   delete_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_notification_type" */
   delete_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** delete data from the table: "lookup.languages" */
+  delete_lookup_languages?: Maybe<Lookup_Languages_Mutation_Response>;
+  /** delete single row from the table: "lookup.languages" */
+  delete_lookup_languages_by_pk?: Maybe<Lookup_Languages>;
   /** delete data from the table: "lookup.maintainer_visitor_space_request_access_type" */
   delete_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.maintainer_visitor_space_request_access_type" */
@@ -6510,6 +6934,10 @@ export type Mutation_Root = {
   insert_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** insert a single row into the table: "app.notification" */
   insert_app_notification_one?: Maybe<App_Notification>;
+  /** insert data into the table: "app.translations" */
+  insert_app_translations?: Maybe<App_Translations_Mutation_Response>;
+  /** insert a single row into the table: "app.translations" */
+  insert_app_translations_one?: Maybe<App_Translations>;
   /** insert data into the table: "lookup.app_content_block_type" */
   insert_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_content_block_type" */
@@ -6530,6 +6958,10 @@ export type Mutation_Root = {
   insert_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_notification_type" */
   insert_lookup_app_notification_type_one?: Maybe<Lookup_App_Notification_Type>;
+  /** insert data into the table: "lookup.languages" */
+  insert_lookup_languages?: Maybe<Lookup_Languages_Mutation_Response>;
+  /** insert a single row into the table: "lookup.languages" */
+  insert_lookup_languages_one?: Maybe<Lookup_Languages>;
   /** insert data into the table: "lookup.maintainer_visitor_space_request_access_type" */
   insert_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.maintainer_visitor_space_request_access_type" */
@@ -6682,6 +7114,10 @@ export type Mutation_Root = {
   update_app_notification?: Maybe<App_Notification_Mutation_Response>;
   /** update single row of the table: "app.notification" */
   update_app_notification_by_pk?: Maybe<App_Notification>;
+  /** update data of the table: "app.translations" */
+  update_app_translations?: Maybe<App_Translations_Mutation_Response>;
+  /** update single row of the table: "app.translations" */
+  update_app_translations_by_pk?: Maybe<App_Translations>;
   /** update data of the table: "lookup.app_content_block_type" */
   update_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_content_block_type" */
@@ -6702,6 +7138,10 @@ export type Mutation_Root = {
   update_lookup_app_notification_type?: Maybe<Lookup_App_Notification_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_notification_type" */
   update_lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** update data of the table: "lookup.languages" */
+  update_lookup_languages?: Maybe<Lookup_Languages_Mutation_Response>;
+  /** update single row of the table: "lookup.languages" */
+  update_lookup_languages_by_pk?: Maybe<Lookup_Languages>;
   /** update data of the table: "lookup.maintainer_visitor_space_request_access_type" */
   update_lookup_maintainer_visitor_space_request_access_type?: Maybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Response>;
   /** update single row of the table: "lookup.maintainer_visitor_space_request_access_type" */
@@ -6938,6 +7378,21 @@ export type Mutation_RootDelete_App_Notification_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_App_TranslationsArgs = {
+  where: App_Translations_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_App_Translations_By_PkArgs = {
+  component: Scalars['String'];
+  key: Scalars['String'];
+  language: Lookup_Languages_Enum;
+  location: Scalars['String'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Lookup_App_Content_Block_TypeArgs = {
   where: Lookup_App_Content_Block_Type_Bool_Exp;
 };
@@ -6993,6 +7448,18 @@ export type Mutation_RootDelete_Lookup_App_Notification_TypeArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Lookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_LanguagesArgs = {
+  where: Lookup_Languages_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Lookup_Languages_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -7475,6 +7942,20 @@ export type Mutation_RootInsert_App_Notification_OneArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_App_TranslationsArgs = {
+  objects: Array<App_Translations_Insert_Input>;
+  on_conflict?: InputMaybe<App_Translations_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_App_Translations_OneArgs = {
+  object: App_Translations_Insert_Input;
+  on_conflict?: InputMaybe<App_Translations_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_Lookup_App_Content_Block_TypeArgs = {
   objects: Array<Lookup_App_Content_Block_Type_Insert_Input>;
   on_conflict?: InputMaybe<Lookup_App_Content_Block_Type_On_Conflict>;
@@ -7541,6 +8022,20 @@ export type Mutation_RootInsert_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootInsert_Lookup_App_Notification_Type_OneArgs = {
   object: Lookup_App_Notification_Type_Insert_Input;
   on_conflict?: InputMaybe<Lookup_App_Notification_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_LanguagesArgs = {
+  objects: Array<Lookup_Languages_Insert_Input>;
+  on_conflict?: InputMaybe<Lookup_Languages_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Lookup_Languages_OneArgs = {
+  object: Lookup_Languages_Insert_Input;
+  on_conflict?: InputMaybe<Lookup_Languages_On_Conflict>;
 };
 
 
@@ -8141,6 +8636,20 @@ export type Mutation_RootUpdate_App_Notification_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_App_TranslationsArgs = {
+  _set?: InputMaybe<App_Translations_Set_Input>;
+  where: App_Translations_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_App_Translations_By_PkArgs = {
+  _set?: InputMaybe<App_Translations_Set_Input>;
+  pk_columns: App_Translations_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Lookup_App_Content_Block_TypeArgs = {
   _set?: InputMaybe<Lookup_App_Content_Block_Type_Set_Input>;
   where: Lookup_App_Content_Block_Type_Bool_Exp;
@@ -8207,6 +8716,20 @@ export type Mutation_RootUpdate_Lookup_App_Notification_TypeArgs = {
 export type Mutation_RootUpdate_Lookup_App_Notification_Type_By_PkArgs = {
   _set?: InputMaybe<Lookup_App_Notification_Type_Set_Input>;
   pk_columns: Lookup_App_Notification_Type_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_LanguagesArgs = {
+  _set?: InputMaybe<Lookup_Languages_Set_Input>;
+  where: Lookup_Languages_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Lookup_Languages_By_PkArgs = {
+  _set?: InputMaybe<Lookup_Languages_Set_Input>;
+  pk_columns: Lookup_Languages_Pk_Columns_Input;
 };
 
 
@@ -10629,6 +11152,12 @@ export type Query_Root = {
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
+  /** fetch data from the table: "app.translations" */
+  app_translations: Array<App_Translations>;
+  /** fetch aggregated fields from the table: "app.translations" */
+  app_translations_aggregate: App_Translations_Aggregate;
+  /** fetch data from the table: "app.translations" using primary key columns */
+  app_translations_by_pk?: Maybe<App_Translations>;
   /** fetch data from the table: "lookup.app_content_block_type" */
   lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
   /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
@@ -10659,6 +11188,12 @@ export type Query_Root = {
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** fetch data from the table: "lookup.languages" */
+  lookup_languages: Array<Lookup_Languages>;
+  /** fetch aggregated fields from the table: "lookup.languages" */
+  lookup_languages_aggregate: Lookup_Languages_Aggregate;
+  /** fetch data from the table: "lookup.languages" using primary key columns */
+  lookup_languages_by_pk?: Maybe<Lookup_Languages>;
   /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" */
   lookup_maintainer_visitor_space_request_access_type: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_access_type" */
@@ -11080,6 +11615,32 @@ export type Query_RootApp_Notification_By_PkArgs = {
 };
 
 
+export type Query_RootApp_TranslationsArgs = {
+  distinct_on?: InputMaybe<Array<App_Translations_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Translations_Order_By>>;
+  where?: InputMaybe<App_Translations_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Translations_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Translations_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Translations_Order_By>>;
+  where?: InputMaybe<App_Translations_Bool_Exp>;
+};
+
+
+export type Query_RootApp_Translations_By_PkArgs = {
+  component: Scalars['String'];
+  key: Scalars['String'];
+  language: Lookup_Languages_Enum;
+  location: Scalars['String'];
+};
+
+
 export type Query_RootLookup_App_Content_Block_TypeArgs = {
   distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -11191,6 +11752,29 @@ export type Query_RootLookup_App_Notification_Type_AggregateArgs = {
 
 
 export type Query_RootLookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Query_RootLookup_LanguagesArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Languages_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Languages_Order_By>>;
+  where?: InputMaybe<Lookup_Languages_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Languages_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Languages_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Languages_Order_By>>;
+  where?: InputMaybe<Lookup_Languages_Bool_Exp>;
+};
+
+
+export type Query_RootLookup_Languages_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -11991,6 +12575,12 @@ export type Subscription_Root = {
   app_notification_aggregate: App_Notification_Aggregate;
   /** fetch data from the table: "app.notification" using primary key columns */
   app_notification_by_pk?: Maybe<App_Notification>;
+  /** fetch data from the table: "app.translations" */
+  app_translations: Array<App_Translations>;
+  /** fetch aggregated fields from the table: "app.translations" */
+  app_translations_aggregate: App_Translations_Aggregate;
+  /** fetch data from the table: "app.translations" using primary key columns */
+  app_translations_by_pk?: Maybe<App_Translations>;
   /** fetch data from the table: "lookup.app_content_block_type" */
   lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
   /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
@@ -12021,6 +12611,12 @@ export type Subscription_Root = {
   lookup_app_notification_type_aggregate: Lookup_App_Notification_Type_Aggregate;
   /** fetch data from the table: "lookup.app_notification_type" using primary key columns */
   lookup_app_notification_type_by_pk?: Maybe<Lookup_App_Notification_Type>;
+  /** fetch data from the table: "lookup.languages" */
+  lookup_languages: Array<Lookup_Languages>;
+  /** fetch aggregated fields from the table: "lookup.languages" */
+  lookup_languages_aggregate: Lookup_Languages_Aggregate;
+  /** fetch data from the table: "lookup.languages" using primary key columns */
+  lookup_languages_by_pk?: Maybe<Lookup_Languages>;
   /** fetch data from the table: "lookup.maintainer_visitor_space_request_access_type" */
   lookup_maintainer_visitor_space_request_access_type: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
   /** fetch aggregated fields from the table: "lookup.maintainer_visitor_space_request_access_type" */
@@ -12442,6 +13038,32 @@ export type Subscription_RootApp_Notification_By_PkArgs = {
 };
 
 
+export type Subscription_RootApp_TranslationsArgs = {
+  distinct_on?: InputMaybe<Array<App_Translations_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Translations_Order_By>>;
+  where?: InputMaybe<App_Translations_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Translations_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<App_Translations_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<App_Translations_Order_By>>;
+  where?: InputMaybe<App_Translations_Bool_Exp>;
+};
+
+
+export type Subscription_RootApp_Translations_By_PkArgs = {
+  component: Scalars['String'];
+  key: Scalars['String'];
+  language: Lookup_Languages_Enum;
+  location: Scalars['String'];
+};
+
+
 export type Subscription_RootLookup_App_Content_Block_TypeArgs = {
   distinct_on?: InputMaybe<Array<Lookup_App_Content_Block_Type_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -12553,6 +13175,29 @@ export type Subscription_RootLookup_App_Notification_Type_AggregateArgs = {
 
 
 export type Subscription_RootLookup_App_Notification_Type_By_PkArgs = {
+  value: Scalars['String'];
+};
+
+
+export type Subscription_RootLookup_LanguagesArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Languages_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Languages_Order_By>>;
+  where?: InputMaybe<Lookup_Languages_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Languages_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lookup_Languages_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lookup_Languages_Order_By>>;
+  where?: InputMaybe<Lookup_Languages_Bool_Exp>;
+};
+
+
+export type Subscription_RootLookup_Languages_By_PkArgs = {
   value: Scalars['String'];
 };
 
@@ -15497,6 +16142,7 @@ export type Users_Profile = {
   /** An aggregate relationship */
   identities_aggregate: Users_Identity_Aggregate;
   is_key_user: Scalars['Boolean'];
+  language: Lookup_Languages_Enum;
   last_access_at?: Maybe<Scalars['timestamptz']>;
   last_name?: Maybe<Scalars['String']>;
   mail?: Maybe<Scalars['String']>;
@@ -15696,6 +16342,7 @@ export type Users_Profile_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   identities?: InputMaybe<Users_Identity_Bool_Exp>;
   is_key_user?: InputMaybe<Boolean_Comparison_Exp>;
+  language?: InputMaybe<Lookup_Languages_Enum_Comparison_Exp>;
   last_access_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   last_name?: InputMaybe<String_Comparison_Exp>;
   mail?: InputMaybe<String_Comparison_Exp>;
@@ -15726,6 +16373,7 @@ export type Users_Profile_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']>;
   identities?: InputMaybe<Users_Identity_Arr_Rel_Insert_Input>;
   is_key_user?: InputMaybe<Scalars['Boolean']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   last_access_at?: InputMaybe<Scalars['timestamptz']>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
@@ -15833,6 +16481,7 @@ export type Users_Profile_Order_By = {
   id?: InputMaybe<Order_By>;
   identities_aggregate?: InputMaybe<Users_Identity_Aggregate_Order_By>;
   is_key_user?: InputMaybe<Order_By>;
+  language?: InputMaybe<Order_By>;
   last_access_at?: InputMaybe<Order_By>;
   last_name?: InputMaybe<Order_By>;
   mail?: InputMaybe<Order_By>;
@@ -15866,6 +16515,8 @@ export enum Users_Profile_Select_Column {
   /** column name */
   IsKeyUser = 'is_key_user',
   /** column name */
+  Language = 'language',
+  /** column name */
   LastAccessAt = 'last_access_at',
   /** column name */
   LastName = 'last_name',
@@ -15885,6 +16536,7 @@ export type Users_Profile_Set_Input = {
   group_id?: InputMaybe<Scalars['uuid']>;
   id?: InputMaybe<Scalars['uuid']>;
   is_key_user?: InputMaybe<Scalars['Boolean']>;
+  language?: InputMaybe<Lookup_Languages_Enum>;
   last_access_at?: InputMaybe<Scalars['timestamptz']>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
@@ -15906,6 +16558,8 @@ export enum Users_Profile_Update_Column {
   Id = 'id',
   /** column name */
   IsKeyUser = 'is_key_user',
+  /** column name */
+  Language = 'language',
   /** column name */
   LastAccessAt = 'last_access_at',
   /** column name */

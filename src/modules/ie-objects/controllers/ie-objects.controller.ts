@@ -90,6 +90,11 @@ export class IeObjectsController {
 		);
 	}
 
+	@Get('newspaper-titles')
+	public async getNewspaperTitles() {
+		return this.ieObjectsService.getNewspaperTitles();
+	}
+
 	@Get('filter-options')
 	public async getFilterOptions(): Promise<FilterOptions> {
 		return this.ieObjectsService.getFilterOptions();

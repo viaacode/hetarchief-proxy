@@ -18,7 +18,7 @@
     "start": "nest start",
     "__predev": "npm run generate-database-types",
     "prestart:debug": "npm run generate-database-types",
-    "dev": "dotenv -e .env/.env.local nest start",
+    "dev": "dotenv -e .env/.env.local nest start --watch",
     "dev-bun": "bun --env-file=.env/.env.local ./node_modules/@nestjs/cli/bin/nest.js start",
     "start:debug": "dotenv -e .env/.env.local nest start --debug --watch",
     "start:prod": "node dist/main",
