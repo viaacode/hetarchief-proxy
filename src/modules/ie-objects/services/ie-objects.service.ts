@@ -38,7 +38,7 @@ import {
 	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
-	InewspaperTitle,
+	NewspaperTitle,
 } from '../ie-objects.types';
 
 import {
@@ -212,7 +212,7 @@ export class IeObjectsService {
 		return count;
 	}
 
-	public async getNewspaperTitles(): Promise<InewspaperTitle[]> {
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
 		return mockNewspapers;
 	}
 
