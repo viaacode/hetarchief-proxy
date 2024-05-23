@@ -38,7 +38,11 @@ lerna-debug.log*
 .eslintcache
 
 # Env files
-.env.local
+.env
+.env.*
+.env/.env.*
+.env/.env
+!.env/.env.template
 
 # Intellij IDE
 .idea
