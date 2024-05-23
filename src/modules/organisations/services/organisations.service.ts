@@ -1,18 +1,24 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
 	OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cache } from 'cache-manager';
 import got from 'got';
-import { uniqBy } from 'lodash';
+import { shuffle, uniqBy } from 'lodash';
 
 import { Configuration } from '~config';
 
 import {
+	ContentPartner,
+	ContentPartnersResponse,
 	GqlOrganisation,
+	MaintainerGridOrganisation,
 	Organisation,
 	OrganisationInfoV2,
 	OrganisationResponse,
@@ -37,7 +43,8 @@ export class OrganisationsService implements OnApplicationBootstrap {
 
 	constructor(
 		private dataService: DataService,
-		private configService: ConfigService<Configuration>
+		private configService: ConfigService<Configuration>,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {}
 
 	public async onApplicationBootstrap() {
@@ -96,6 +103,16 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		};
 	}
 
+	public adaptContentPartner(gqlContentPartner: ContentPartner): MaintainerGridOrganisation {
+		return {
+			id: gqlContentPartner.id,
+			name: gqlContentPartner.label,
+			logoUrl: gqlContentPartner.logo?.iri,
+			homepageUrl: gqlContentPartner.homepage,
+			slug: gqlContentPartner.slug,
+		};
+	}
+
 	public async updateOrganisationsCache() {
 		let url;
 
@@ -113,6 +130,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
     form_url
     homepage
     overlay
+    type
     logo {
       iri
     }
@@ -223,5 +241,72 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		}
 
 		return this.adapt(organisationsResponse?.maintainer_organisation[0]);
+	}
+
+	public async fetchAllContentPartners(): Promise<MaintainerGridOrganisation[]> {
+		let url;
+
+		try {
+			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
+
+			const queryBody = {
+				query: `query contentpartners {
+  contentpartners {
+    id
+    label
+    slug
+    homepage
+    logo {
+      iri
+    }
+  }
+}`,
+			};
+			const contentPartnersResponse: ContentPartnersResponse = await got({
+				url,
+				method: 'post',
+				throwHttpErrors: true,
+				json: queryBody,
+			}).json<ContentPartnersResponse>();
+
+			return contentPartnersResponse.data.contentpartners.map(this.adaptContentPartner);
+		} catch (err: any) {
+			throw new InternalServerErrorException(
+				JSON.stringify({
+					message: 'Failed to get all content partners from the org api',
+					innerException: err,
+					additionalInfo: {
+						query: 'contentpartners',
+					},
+				})
+			);
+		}
+	}
+
+	public async fetchRandomContentPartnersForMaintainerGrid(
+		limit: number
+	): Promise<MaintainerGridOrganisation[]> {
+		try {
+			const allContentPartners = await this.cacheManager.wrap(
+				'CONTENT_PARTNERS_MAINTAINER_GRID',
+				() => this.fetchAllContentPartners(),
+				// cache for 60 minutes
+				3_600_000
+			);
+
+			return shuffle(
+				allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)
+			).slice(0, limit);
+		} catch (err: any) {
+			throw new InternalServerErrorException(
+				JSON.stringify({
+					message: 'Failed to get organisations from the org api',
+					innerException: err,
+					additionalInfo: {
+						query: 'contentpartners',
+					},
+				})
+			);
+		}
 	}
 }
