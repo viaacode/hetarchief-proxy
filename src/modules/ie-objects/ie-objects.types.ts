@@ -313,6 +313,10 @@ export interface IeObjectsSitemap {
 	updatedAt: string;
 }
 
+export interface NewspaperTitle {
+	title: string;
+}
+
 export type FilterOptions = {
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: string[];
 	[IeObjectsSearchFilterField.LANGUAGE]: string[];

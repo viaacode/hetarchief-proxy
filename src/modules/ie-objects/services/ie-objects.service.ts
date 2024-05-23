@@ -38,6 +38,7 @@ import {
 	IeObjectsSitemap,
 	IeObjectsVisitorSpaceInfo,
 	IeObjectsWithAggregations,
+	NewspaperTitle,
 } from '../ie-objects.types';
 
 import {
@@ -67,6 +68,7 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -208,6 +210,10 @@ export class IeObjectsService {
 		});
 
 		return count;
+	}
+
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		return mockNewspapers;
 	}
 
 	public async getRelated(
