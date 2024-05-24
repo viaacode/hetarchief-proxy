@@ -452,7 +452,7 @@ export class IeObjectsService {
 			inLanguage: gqlIeObject?.schema_in_language,
 			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
-			maintainerId: gqlIeObject?.organisation.schema_identifier,
+			maintainerId: gqlIeObject?.organisation?.schema_identifier,
 			maintainerName: gqlIeObject?.organisation?.schema_name,
 			maintainerSlug:
 				gqlIeObject?.haorg_alt_label ??
