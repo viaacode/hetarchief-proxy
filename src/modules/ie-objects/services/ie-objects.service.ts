@@ -343,10 +343,10 @@ export class IeObjectsService {
 	 * (not all details are in ES)
 	 */
 	public async findBySchemaIdentifier(
-		schemaIdentifier: string,
+		schemaIdentifier: string[],
 		referer: string,
 		ip: string
-	): Promise<IeObject> {
+	): Promise<IeObject[]> {
 		const { object_ie: objectIe } = await this.dataService.execute<
 			GetObjectDetailBySchemaIdentifierQuery,
 			GetObjectDetailBySchemaIdentifierQueryVariables
@@ -354,17 +354,17 @@ export class IeObjectsService {
 			schemaIdentifier,
 		});
 
-		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
-		}
-
-		const adapted = this.adaptFromDB(objectIe[0]);
-		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-			adapted.thumbnailUrl,
-			referer,
-			ip
+		return await Promise.all(
+			objectIe.map(async (object) => {
+				const adapted = this.adaptFromDB(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer,
+					ip
+				);
+				return adapted;
+			})
 		);
-		return adapted;
 	}
 
 	/**
@@ -374,8 +374,8 @@ export class IeObjectsService {
 		schemaIdentifier: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findBySchemaIdentifier(schemaIdentifier, null, ip);
-		return this.adaptMetadata(object);
+		const object = await this.findBySchemaIdentifier([schemaIdentifier], null, ip);
+		return this.adaptMetadata(object[0]);
 	}
 
 	/**
