@@ -107,10 +107,10 @@ export class IeObjectsController {
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
 		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
-			id,
+			[id],
 			referer,
 			getIpFromRequest(request)
-		);
+		)[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
@@ -403,8 +403,8 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(
-			id,
+		const ieObject: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+			[id],
 			referer,
 			getIpFromRequest(request)
 		);
@@ -412,7 +412,7 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const limitedObject = limitAccessToObjectDetails(ieObject, {
+		const limitedObject = limitAccessToObjectDetails(ieObject[0], {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
@@ -439,5 +439,52 @@ export class IeObjectsController {
 		}
 
 		return limitedObject;
+	}
+
+	@Get()
+	public async getIeObjectByIds(
+		@Query('id') ids: string[],
+		@Headers('referer') referer: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IeObject[] | Partial<IeObject>[]> {
+		const ieObject: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+			ids,
+			referer,
+			getIpFromRequest(request)
+		);
+
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return ieObject.map((ieObject) => {
+			const limitedObject = limitAccessToObjectDetails(ieObject, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			});
+
+			if (!limitedObject) {
+				throw new ForbiddenException('You do not have access to this object');
+			}
+
+			// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+			if (
+				user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+				visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+				intersection(limitedObject?.licenses, [
+					IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+				]).length > 0
+			) {
+				limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+			}
+
+			return limitedObject;
+		});
 	}
 }
