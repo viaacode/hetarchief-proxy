@@ -354,9 +354,6 @@ export class IeObjectsService {
 			schemaIdentifier,
 		});
 
-		// if (!objectIe[0]) {
-		// 	throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
-		// }
 		return await Promise.all(
 			objectIe.map(async (object) => {
 				const adapted = this.adaptFromDB(object);

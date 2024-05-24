@@ -6,6 +6,7 @@ import {
 	Get,
 	Header,
 	Headers,
+	NotFoundException,
 	Param,
 	Post,
 	Query,
@@ -404,16 +405,21 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObject: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
 			[id],
 			referer,
 			getIpFromRequest(request)
 		);
+		const ieObject = ieObjects[0];
+
+		if (!ieObject) {
+			throw new NotFoundException(`Object IE with id '${id}' not found`);
+		}
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const limitedObject = limitAccessToObjectDetails(ieObject[0], {
+		const limitedObject = limitAccessToObjectDetails(ieObject, {
 			userId: user.getId(),
 			isKeyUser: user.getIsKeyUser(),
 			sector: user.getSector(),
@@ -449,7 +455,7 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject[] | Partial<IeObject>[]> {
-		const ieObject: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
 			ids,
 			referer,
 			getIpFromRequest(request)
@@ -458,7 +464,7 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return ieObject.map((ieObject) => {
+		return ieObjects.map((ieObject) => {
 			const limitedObject = limitAccessToObjectDetails(ieObject, {
 				userId: user.getId(),
 				isKeyUser: user.getIsKeyUser(),
