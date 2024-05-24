@@ -124,3 +124,27 @@ export interface OrganisationPrimarySiteAddress {
 	telephone: string;
 	post_office_box_number: string;
 }
+
+export interface MaintainerGridOrganisation {
+	id: string;
+	name: string;
+	logoUrl: string;
+	homepageUrl: string;
+	slug: string;
+}
+
+export interface ContentPartnersResponse {
+	data: {
+		contentpartners: ContentPartner[];
+	};
+}
+
+export interface ContentPartner {
+	id: string;
+	label: string;
+	slug: string;
+	homepage: string;
+	logo: {
+		iri: string;
+	};
+}

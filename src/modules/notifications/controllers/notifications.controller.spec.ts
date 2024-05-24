@@ -110,7 +110,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 
 const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
 	getTranslations: jest.fn(),
-	t: jest.fn((translationKey: string) => nlJson[translationKey]),
+	tText: jest.fn((translationKey: string) => nlJson[translationKey]),
 	refreshBackendTranslations: jest.fn(),
 	onApplicationBootstrap: jest.fn(),
 };

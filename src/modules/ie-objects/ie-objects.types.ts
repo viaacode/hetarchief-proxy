@@ -313,7 +313,7 @@ export interface IeObjectsSitemap {
 	updatedAt: string;
 }
 
-export interface InewspaperTitle {
+export interface NewspaperTitle {
 	title: string;
 }
 

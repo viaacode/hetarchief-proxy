@@ -265,7 +265,7 @@ describe('VisitsController', () => {
 
 			expect(error.response).toEqual({
 				statusCode: 404,
-				message: translationsService.t(
+				message: translationsService.tText(
 					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
 				),
 				error: 'Not Found',

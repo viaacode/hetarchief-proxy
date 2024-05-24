@@ -36,6 +36,7 @@ import {
 	IeObjectLicense,
 	IeObjectSeo,
 	IeObjectsWithAggregations,
+	NewspaperTitle,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
@@ -91,7 +92,7 @@ export class IeObjectsController {
 	}
 
 	@Get('newspaper-titles')
-	public async getNewspaperTitles() {
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
 		return this.ieObjectsService.getNewspaperTitles();
 	}
 
