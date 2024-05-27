@@ -132,19 +132,3 @@ export interface MaintainerGridOrganisation {
 	homepageUrl: string;
 	slug: string;
 }
-
-export interface ContentPartnersResponse {
-	data: {
-		contentpartners: ContentPartner[];
-	};
-}
-
-export interface ContentPartner {
-	id: string;
-	label: string;
-	slug: string;
-	homepage: string;
-	logo: {
-		iri: string;
-	};
-}

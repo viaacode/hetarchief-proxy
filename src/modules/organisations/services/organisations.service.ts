@@ -15,8 +15,6 @@ import { shuffle, uniqBy } from 'lodash';
 import { Configuration } from '~config';
 
 import {
-	ContentPartner,
-	ContentPartnersResponse,
 	GqlOrganisation,
 	MaintainerGridOrganisation,
 	Organisation,
@@ -33,6 +31,8 @@ import {
 	GetOrganisationBySlugDocument,
 	GetOrganisationBySlugQuery,
 	GetOrganisationBySlugQueryVariables,
+	GetOrganisationsThatHaveObjectsDocument,
+	GetOrganisationsThatHaveObjectsQuery,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
@@ -103,12 +103,14 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		};
 	}
 
-	public adaptContentPartner(gqlContentPartner: ContentPartner): MaintainerGridOrganisation {
+	public adaptContentPartner(
+		gqlContentPartner: GetOrganisationsThatHaveObjectsQuery['maintainer_organisations_with_objects'][0]
+	): MaintainerGridOrganisation {
 		return {
-			id: gqlContentPartner.id,
-			name: gqlContentPartner.label,
+			id: gqlContentPartner.schema_identifier,
+			name: gqlContentPartner.schema_name,
 			logoUrl: gqlContentPartner.logo?.iri,
-			homepageUrl: gqlContentPartner.homepage,
+			homepageUrl: gqlContentPartner.homepage_url,
 			slug: gqlContentPartner.slug,
 		};
 	}
@@ -130,7 +132,6 @@ export class OrganisationsService implements OnApplicationBootstrap {
     form_url
     homepage
     overlay
-    type
     logo {
       iri
     }
@@ -243,33 +244,16 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		return this.adapt(organisationsResponse?.maintainer_organisation[0]);
 	}
 
-	public async fetchAllContentPartners(): Promise<MaintainerGridOrganisation[]> {
-		let url;
-
+	public async fetchAllContentPartnersThatHaveObjects(): Promise<MaintainerGridOrganisation[]> {
 		try {
-			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
+			const organisationsResponse =
+				await this.dataService.execute<GetOrganisationsThatHaveObjectsQuery>(
+					GetOrganisationsThatHaveObjectsDocument
+				);
 
-			const queryBody = {
-				query: `query contentpartners {
-  contentpartners {
-    id
-    label
-    slug
-    homepage
-    logo {
-      iri
-    }
-  }
-}`,
-			};
-			const contentPartnersResponse: ContentPartnersResponse = await got({
-				url,
-				method: 'post',
-				throwHttpErrors: true,
-				json: queryBody,
-			}).json<ContentPartnersResponse>();
-
-			return contentPartnersResponse.data.contentpartners.map(this.adaptContentPartner);
+			return organisationsResponse.maintainer_organisations_with_objects.map(
+				this.adaptContentPartner
+			);
 		} catch (err: any) {
 			throw new InternalServerErrorException(
 				JSON.stringify({
@@ -289,7 +273,7 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		try {
 			const allContentPartners = await this.cacheManager.wrap(
 				'CONTENT_PARTNERS_MAINTAINER_GRID',
-				() => this.fetchAllContentPartners(),
+				() => this.fetchAllContentPartnersThatHaveObjects(),
 				// cache for 60 minutes
 				3_600_000
 			);
