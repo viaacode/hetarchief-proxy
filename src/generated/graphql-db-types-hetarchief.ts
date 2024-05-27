@@ -3093,7 +3093,6 @@ export enum Lookup_App_Content_Block_Type_Constraint {
 export enum Lookup_App_Content_Block_Type_Enum {
   Accordions = 'ACCORDIONS',
   AnchorLinks = 'ANCHOR_LINKS',
-  BlockOverviewNewspaperTitles = 'BLOCK_OVERVIEW_NEWSPAPER_TITLES',
   Buttons = 'BUTTONS',
   Cards = 'CARDS',
   CardsNoDescription = 'CARDS_NO_DESCRIPTION',
@@ -3117,6 +3116,7 @@ export enum Lookup_App_Content_Block_Type_Enum {
   MediaGrid = 'MEDIA_GRID',
   MediaPlayer = 'MEDIA_PLAYER',
   MediaPlayerTitleTextButton = 'MEDIA_PLAYER_TITLE_TEXT_BUTTON',
+  OverviewNewspaperTitles = 'OVERVIEW_NEWSPAPER_TITLES',
   PageOverview = 'PAGE_OVERVIEW',
   ProjectsSpotlight = 'PROJECTS_SPOTLIGHT',
   Quote = 'QUOTE',
@@ -3776,9 +3776,9 @@ export enum Lookup_Languages_Constraint {
 
 export enum Lookup_Languages_Enum {
   /** English */
-  En = 'EN',
+  En = 'en',
   /** Nederlands */
-  Nl = 'NL'
+  Nl = 'nl'
 }
 
 /** Boolean expression to compare columns of type "lookup_languages_enum". All fields are combined with logical 'AND'. */
@@ -5435,6 +5435,237 @@ export enum Maintainer_Organisation_Update_Column {
   UpdatedAt = 'updated_at'
 }
 
+/** columns and relationships of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects = {
+  __typename?: 'maintainer_organisations_with_objects';
+  contact_point?: Maybe<Scalars['jsonb']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
+  homepage_url?: Maybe<Scalars['String']>;
+  logo?: Maybe<Scalars['jsonb']>;
+  overlay?: Maybe<Scalars['Boolean']>;
+  primary_site?: Maybe<Scalars['jsonb']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_ObjectsContact_PointArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_ObjectsLogoArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_ObjectsPrimary_SiteArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Aggregate = {
+  __typename?: 'maintainer_organisations_with_objects_aggregate';
+  aggregate?: Maybe<Maintainer_Organisations_With_Objects_Aggregate_Fields>;
+  nodes: Array<Maintainer_Organisations_With_Objects>;
+};
+
+/** aggregate fields of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Aggregate_Fields = {
+  __typename?: 'maintainer_organisations_with_objects_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Maintainer_Organisations_With_Objects_Max_Fields>;
+  min?: Maybe<Maintainer_Organisations_With_Objects_Min_Fields>;
+};
+
+
+/** aggregate fields of "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Maintainer_Organisations_With_Objects_Append_Input = {
+  contact_point?: InputMaybe<Scalars['jsonb']>;
+  logo?: InputMaybe<Scalars['jsonb']>;
+  primary_site?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** Boolean expression to filter rows from the table "maintainer.organisations_with_objects". All fields are combined with a logical 'AND'. */
+export type Maintainer_Organisations_With_Objects_Bool_Exp = {
+  _and?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Bool_Exp>>;
+  _not?: InputMaybe<Maintainer_Organisations_With_Objects_Bool_Exp>;
+  _or?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Bool_Exp>>;
+  contact_point?: InputMaybe<Jsonb_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
+  form_url?: InputMaybe<String_Comparison_Exp>;
+  haorg_organization_type?: InputMaybe<String_Comparison_Exp>;
+  homepage_url?: InputMaybe<String_Comparison_Exp>;
+  logo?: InputMaybe<Jsonb_Comparison_Exp>;
+  overlay?: InputMaybe<Boolean_Comparison_Exp>;
+  primary_site?: InputMaybe<Jsonb_Comparison_Exp>;
+  schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  slug?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Maintainer_Organisations_With_Objects_Delete_At_Path_Input = {
+  contact_point?: InputMaybe<Array<Scalars['String']>>;
+  logo?: InputMaybe<Array<Scalars['String']>>;
+  primary_site?: InputMaybe<Array<Scalars['String']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Maintainer_Organisations_With_Objects_Delete_Elem_Input = {
+  contact_point?: InputMaybe<Scalars['Int']>;
+  logo?: InputMaybe<Scalars['Int']>;
+  primary_site?: InputMaybe<Scalars['Int']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Maintainer_Organisations_With_Objects_Delete_Key_Input = {
+  contact_point?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['String']>;
+  primary_site?: InputMaybe<Scalars['String']>;
+};
+
+/** input type for inserting data into table "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Insert_Input = {
+  contact_point?: InputMaybe<Scalars['jsonb']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  description?: InputMaybe<Scalars['String']>;
+  form_url?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
+  homepage_url?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['jsonb']>;
+  overlay?: InputMaybe<Scalars['Boolean']>;
+  primary_site?: InputMaybe<Scalars['jsonb']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Maintainer_Organisations_With_Objects_Max_Fields = {
+  __typename?: 'maintainer_organisations_with_objects_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
+  homepage_url?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Maintainer_Organisations_With_Objects_Min_Fields = {
+  __typename?: 'maintainer_organisations_with_objects_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  description?: Maybe<Scalars['String']>;
+  form_url?: Maybe<Scalars['String']>;
+  haorg_organization_type?: Maybe<Scalars['String']>;
+  homepage_url?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Mutation_Response = {
+  __typename?: 'maintainer_organisations_with_objects_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Maintainer_Organisations_With_Objects>;
+};
+
+/** Ordering options when selecting data from "maintainer.organisations_with_objects". */
+export type Maintainer_Organisations_With_Objects_Order_By = {
+  contact_point?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  form_url?: InputMaybe<Order_By>;
+  haorg_organization_type?: InputMaybe<Order_By>;
+  homepage_url?: InputMaybe<Order_By>;
+  logo?: InputMaybe<Order_By>;
+  overlay?: InputMaybe<Order_By>;
+  primary_site?: InputMaybe<Order_By>;
+  schema_identifier?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  slug?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Maintainer_Organisations_With_Objects_Prepend_Input = {
+  contact_point?: InputMaybe<Scalars['jsonb']>;
+  logo?: InputMaybe<Scalars['jsonb']>;
+  primary_site?: InputMaybe<Scalars['jsonb']>;
+};
+
+/** select columns of table "maintainer.organisations_with_objects" */
+export enum Maintainer_Organisations_With_Objects_Select_Column {
+  /** column name */
+  ContactPoint = 'contact_point',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  FormUrl = 'form_url',
+  /** column name */
+  HaorgOrganizationType = 'haorg_organization_type',
+  /** column name */
+  HomepageUrl = 'homepage_url',
+  /** column name */
+  Logo = 'logo',
+  /** column name */
+  Overlay = 'overlay',
+  /** column name */
+  PrimarySite = 'primary_site',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  Slug = 'slug',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "maintainer.organisations_with_objects" */
+export type Maintainer_Organisations_With_Objects_Set_Input = {
+  contact_point?: InputMaybe<Scalars['jsonb']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  description?: InputMaybe<Scalars['String']>;
+  form_url?: InputMaybe<Scalars['String']>;
+  haorg_organization_type?: InputMaybe<Scalars['String']>;
+  homepage_url?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['jsonb']>;
+  overlay?: InputMaybe<Scalars['Boolean']>;
+  primary_site?: InputMaybe<Scalars['jsonb']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
 /** DEPRECATED: use users.profile.organisation_schema_identifier instead */
 export type Maintainer_Users_Profile = {
   __typename?: 'maintainer_users_profile';
@@ -6816,6 +7047,8 @@ export type Mutation_Root = {
   delete_maintainer_organisation?: Maybe<Maintainer_Organisation_Mutation_Response>;
   /** delete single row from the table: "maintainer.organisation" */
   delete_maintainer_organisation_by_pk?: Maybe<Maintainer_Organisation>;
+  /** delete data from the table: "maintainer.organisations_with_objects" */
+  delete_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
   /** delete data from the table: "maintainer.users_profile" */
   delete_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
   /** delete single row from the table: "maintainer.users_profile" */
@@ -6996,6 +7229,10 @@ export type Mutation_Root = {
   insert_maintainer_organisation?: Maybe<Maintainer_Organisation_Mutation_Response>;
   /** insert a single row into the table: "maintainer.organisation" */
   insert_maintainer_organisation_one?: Maybe<Maintainer_Organisation>;
+  /** insert data into the table: "maintainer.organisations_with_objects" */
+  insert_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
+  /** insert a single row into the table: "maintainer.organisations_with_objects" */
+  insert_maintainer_organisations_with_objects_one?: Maybe<Maintainer_Organisations_With_Objects>;
   /** insert data into the table: "maintainer.users_profile" */
   insert_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
   /** insert a single row into the table: "maintainer.users_profile" */
@@ -7176,6 +7413,8 @@ export type Mutation_Root = {
   update_maintainer_organisation?: Maybe<Maintainer_Organisation_Mutation_Response>;
   /** update single row of the table: "maintainer.organisation" */
   update_maintainer_organisation_by_pk?: Maybe<Maintainer_Organisation>;
+  /** update data of the table: "maintainer.organisations_with_objects" */
+  update_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
   /** update data of the table: "maintainer.users_profile" */
   update_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
   /** update single row of the table: "maintainer.users_profile" */
@@ -7559,6 +7798,12 @@ export type Mutation_RootDelete_Maintainer_OrganisationArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Maintainer_Organisation_By_PkArgs = {
   schema_identifier: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Maintainer_Organisations_With_ObjectsArgs = {
+  where: Maintainer_Organisations_With_Objects_Bool_Exp;
 };
 
 
@@ -8150,6 +8395,18 @@ export type Mutation_RootInsert_Maintainer_OrganisationArgs = {
 export type Mutation_RootInsert_Maintainer_Organisation_OneArgs = {
   object: Maintainer_Organisation_Insert_Input;
   on_conflict?: InputMaybe<Maintainer_Organisation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Organisations_With_ObjectsArgs = {
+  objects: Array<Maintainer_Organisations_With_Objects_Insert_Input>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Maintainer_Organisations_With_Objects_OneArgs = {
+  object: Maintainer_Organisations_With_Objects_Insert_Input;
 };
 
 
@@ -8858,6 +9115,18 @@ export type Mutation_RootUpdate_Maintainer_Organisation_By_PkArgs = {
   _prepend?: InputMaybe<Maintainer_Organisation_Prepend_Input>;
   _set?: InputMaybe<Maintainer_Organisation_Set_Input>;
   pk_columns: Maintainer_Organisation_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Maintainer_Organisations_With_ObjectsArgs = {
+  _append?: InputMaybe<Maintainer_Organisations_With_Objects_Append_Input>;
+  _delete_at_path?: InputMaybe<Maintainer_Organisations_With_Objects_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Maintainer_Organisations_With_Objects_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Maintainer_Organisations_With_Objects_Delete_Key_Input>;
+  _prepend?: InputMaybe<Maintainer_Organisations_With_Objects_Prepend_Input>;
+  _set?: InputMaybe<Maintainer_Organisations_With_Objects_Set_Input>;
+  where: Maintainer_Organisations_With_Objects_Bool_Exp;
 };
 
 
@@ -11252,6 +11521,10 @@ export type Query_Root = {
   maintainer_organisation_aggregate: Maintainer_Organisation_Aggregate;
   /** fetch data from the table: "maintainer.organisation" using primary key columns */
   maintainer_organisation_by_pk?: Maybe<Maintainer_Organisation>;
+  /** fetch data from the table: "maintainer.organisations_with_objects" */
+  maintainer_organisations_with_objects: Array<Maintainer_Organisations_With_Objects>;
+  /** fetch aggregated fields from the table: "maintainer.organisations_with_objects" */
+  maintainer_organisations_with_objects_aggregate: Maintainer_Organisations_With_Objects_Aggregate;
   /** fetch data from the table: "maintainer.users_profile" */
   maintainer_users_profile: Array<Maintainer_Users_Profile>;
   /** fetch aggregated fields from the table: "maintainer.users_profile" */
@@ -12001,6 +12274,24 @@ export type Query_RootMaintainer_Organisation_By_PkArgs = {
 };
 
 
+export type Query_RootMaintainer_Organisations_With_ObjectsArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Order_By>>;
+  where?: InputMaybe<Maintainer_Organisations_With_Objects_Bool_Exp>;
+};
+
+
+export type Query_RootMaintainer_Organisations_With_Objects_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Order_By>>;
+  where?: InputMaybe<Maintainer_Organisations_With_Objects_Bool_Exp>;
+};
+
+
 export type Query_RootMaintainer_Users_ProfileArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -12675,6 +12966,10 @@ export type Subscription_Root = {
   maintainer_organisation_aggregate: Maintainer_Organisation_Aggregate;
   /** fetch data from the table: "maintainer.organisation" using primary key columns */
   maintainer_organisation_by_pk?: Maybe<Maintainer_Organisation>;
+  /** fetch data from the table: "maintainer.organisations_with_objects" */
+  maintainer_organisations_with_objects: Array<Maintainer_Organisations_With_Objects>;
+  /** fetch aggregated fields from the table: "maintainer.organisations_with_objects" */
+  maintainer_organisations_with_objects_aggregate: Maintainer_Organisations_With_Objects_Aggregate;
   /** fetch data from the table: "maintainer.users_profile" */
   maintainer_users_profile: Array<Maintainer_Users_Profile>;
   /** fetch aggregated fields from the table: "maintainer.users_profile" */
@@ -13421,6 +13716,24 @@ export type Subscription_RootMaintainer_Organisation_AggregateArgs = {
 
 export type Subscription_RootMaintainer_Organisation_By_PkArgs = {
   schema_identifier: Scalars['String'];
+};
+
+
+export type Subscription_RootMaintainer_Organisations_With_ObjectsArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Order_By>>;
+  where?: InputMaybe<Maintainer_Organisations_With_Objects_Bool_Exp>;
+};
+
+
+export type Subscription_RootMaintainer_Organisations_With_Objects_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Maintainer_Organisations_With_Objects_Order_By>>;
+  where?: InputMaybe<Maintainer_Organisations_With_Objects_Bool_Exp>;
 };
 
 
@@ -16837,6 +17150,11 @@ export type GetOrganisationBySlugQueryVariables = Exact<{
 
 export type GetOrganisationBySlugQuery = { __typename?: 'query_root', maintainer_organisation: Array<{ __typename?: 'maintainer_organisation', form_url?: string | null, homepage_url?: string | null, logo: any, primary_site: any, schema_identifier: string, schema_name?: string | null, slug?: string | null, updated_at?: any | null, description?: string | null, created_at?: any | null, contact_point: any, sector?: string | null }> };
 
+export type GetOrganisationsThatHaveObjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOrganisationsThatHaveObjectsQuery = { __typename?: 'query_root', maintainer_organisations_with_objects: Array<{ __typename?: 'maintainer_organisations_with_objects', logo?: any | null, schema_name?: string | null, schema_identifier?: string | null, slug?: string | null, homepage_url?: string | null }> };
+
 export type InsertOrganisationsMutationVariables = Exact<{
   organizations: Array<Maintainer_Organisation_Insert_Input> | Maintainer_Organisation_Insert_Input;
 }>;
@@ -17100,6 +17418,7 @@ export const UpdateNotificationDocument = {"kind":"Document","definitions":[{"ki
 export const DeleteOrganisationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteOrganisations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteOrganisationsMutation, DeleteOrganisationsMutationVariables>;
 export const FindOrganisationsBySchemaIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findOrganisationsBySchemaIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"haorg_organization_type"}}]}}]}}]} as unknown as DocumentNode<FindOrganisationsBySchemaIdsQuery, FindOrganisationsBySchemaIdsQueryVariables>;
 export const GetOrganisationBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisationBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"form_url"}},{"kind":"Field","alias":{"kind":"Name","value":"sector"},"name":{"kind":"Name","value":"haorg_organization_type"}},{"kind":"Field","name":{"kind":"Name","value":"homepage_url"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"contact_point"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationBySlugQuery, GetOrganisationBySlugQueryVariables>;
+export const GetOrganisationsThatHaveObjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getOrganisationsThatHaveObjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_organisations_with_objects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"homepage_url"}}]}}]}}]} as unknown as DocumentNode<GetOrganisationsThatHaveObjectsQuery, GetOrganisationsThatHaveObjectsQueryVariables>;
 export const InsertOrganisationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"insertOrganisations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizations"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_organisation_insert_input"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_organisation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizations"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<InsertOrganisationsMutation, InsertOrganisationsMutationVariables>;
 export const GetSitemapConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getSitemapConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_config"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"SITEMAP_CONFIG","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]} as unknown as DocumentNode<GetSitemapConfigQuery, GetSitemapConfigQueryVariables>;
 export const CreateSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"maintainer_visitor_space_insert_input"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insert_maintainer_visitor_space_one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"object"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createSpace"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"schema_image"}},{"kind":"Field","name":{"kind":"Name","value":"schema_color"}},{"kind":"Field","name":{"kind":"Name","value":"schema_audience_type"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_public_access"}},{"kind":"Field","name":{"kind":"Name","value":"schema_service_description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"content_partner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"information"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contact_point"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"primary_site"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateSpaceMutation, CreateSpaceMutationVariables>;

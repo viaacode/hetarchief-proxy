@@ -1,0 +1,9 @@
+query getOrganisationsThatHaveObjects {
+	maintainer_organisations_with_objects {
+		logo
+		schema_name
+		schema_identifier
+		slug
+		homepage_url
+	}
+}
