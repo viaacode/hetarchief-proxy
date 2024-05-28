@@ -53,7 +53,10 @@ export class PermissionGuard implements CanActivate {
 		}
 		// user needs any of the anyPermissions
 		if (!user.hasAny(allAnyPermissions)) {
-			throw new ForbiddenException("You don't have the required permission for this route");
+			throw new ForbiddenException(
+				"You don't have the required permission for this route: " +
+					context.getArgs()?.[0]?.url
+			);
 		}
 		return true;
 	}
