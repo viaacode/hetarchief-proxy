@@ -11,7 +11,7 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
 >;
 
-export type IeObjectSeo = Pick<IeObject, 'name' | 'description'>;
+export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
 export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];

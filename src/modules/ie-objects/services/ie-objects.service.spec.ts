@@ -190,15 +190,16 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
-			const response = await ieObjectsService.findBySchemaIdentifier(
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
 				mockObjectSchemaIdentifier,
 				'referer',
 				''
 			);
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.maintainerId).toEqual('OR-rf5kf25');
-			expect(response.copyrightHolder).toEqual('vrt');
-			expect(response.keywords.length).toBeGreaterThan(10);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
+			expect(ieObject.copyrightHolder).toEqual('vrt');
+			expect(ieObject.keywords.length).toBeGreaterThan(10);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
@@ -207,14 +208,15 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await ieObjectsService.findBySchemaIdentifier(
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
 				mockObjectSchemaIdentifier,
 				'referer',
 				''
 			);
 
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.representations).toEqual([]);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.representations).toEqual([]);
 		});
 
 		it('returns an empty array if no files were found', async () => {
@@ -222,14 +224,15 @@ describe('ieObjectsService', () => {
 			objectIeMock.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await ieObjectsService.findBySchemaIdentifier(
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
 				mockObjectSchemaIdentifier,
 				'referer',
 				''
 			);
 
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.representations[0].files).toEqual([]);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.representations[0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {
@@ -238,13 +241,12 @@ describe('ieObjectsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			try {
-				await ieObjectsService.findBySchemaIdentifier('invalidId', 'referer', '');
-				fail('findBySchemaIdentifier should have thrown an error');
-			} catch (err) {
-				expect(err.name).toEqual('NotFoundException');
-				expect(err.message).toEqual("Object IE with id 'invalidId' not found");
-			}
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
+				['invalidId'],
+				'referer',
+				''
+			);
+			expect(ieObjects).toEqual([]);
 		});
 	});
 

@@ -102,7 +102,7 @@ const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
-	findBySchemaIdentifier: jest.fn(),
+	findBySchemaIdentifiers: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
@@ -270,7 +270,13 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
 				mockCollectionsResponse.items[0]
 			);
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValue(mockIeObject);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(
+				mockCollectionsResponse.items[0]
+			);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject]);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockRequest,
 				'referer',
@@ -289,6 +295,9 @@ describe('CollectionsController', () => {
 				...mockCollectionsResponse.items[0],
 				userProfileId: 'other-profile-id',
 			});
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([
+				mockCollectionsResponse.items[0],
+			]);
 
 			let error;
 			try {
