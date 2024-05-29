@@ -191,7 +191,7 @@ describe('ieObjectsService', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
 			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				mockObjectSchemaIdentifier,
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);
@@ -209,7 +209,7 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				mockObjectSchemaIdentifier,
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);
@@ -225,7 +225,7 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				mockObjectSchemaIdentifier,
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);

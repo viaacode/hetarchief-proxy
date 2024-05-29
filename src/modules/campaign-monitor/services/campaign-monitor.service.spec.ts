@@ -271,11 +271,9 @@ describe('CampaignMonitorService', () => {
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
 		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
-			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			const result =
-				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
-					materialRequestEmailInfo
-				);
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+				mockMaterialRequestEmailInfo
+			);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToMaintainer);
 		});
 
@@ -295,6 +293,11 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
+			const sendTransactionalMailSpy = jest.spyOn(
+				campaignMonitorService,
+				'sendTransactionalMail'
+			);
+			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {

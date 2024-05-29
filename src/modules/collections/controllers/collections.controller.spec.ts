@@ -15,7 +15,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCollectionsResponse: IPagination<Collection> = {
@@ -113,7 +112,6 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
-	let sessionHelperSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -142,14 +140,10 @@ describe('CollectionsController', () => {
 			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
-
-		sessionHelperSpy = jest
-			.spyOn(SessionHelper, 'getArchiefUserInfo')
-			.mockReturnValue(mockUser);
 	});
 
-	afterEach(async () => {
-		sessionHelperSpy?.mockRestore();
+	afterEach(() => {
+		jest.resetAllMocks();
 	});
 
 	it('should be defined', () => {
