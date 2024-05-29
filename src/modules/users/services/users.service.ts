@@ -1,7 +1,12 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { CreateUserDto, UpdateAcceptedTosDto, UpdateUserDto } from '../dto/users.dto';
+import {
+	CreateUserDto,
+	UpdateAcceptedTosDto,
+	UpdateUserDto,
+	UpdateUserLangDto,
+} from '../dto/users.dto';
 import { GqlPermissionData, GqlUser, GroupIdToName, GroupName, Permission, User } from '../types';
 
 import {
@@ -14,6 +19,9 @@ import {
 	InsertUserIdentityMutationVariables,
 	InsertUserMutation,
 	InsertUserMutationVariables,
+	UpdateUserLanguageDocument,
+	UpdateUserLanguageMutation,
+	UpdateUserLanguageMutationVariables,
 	UpdateUserLastAccessDateDocument,
 	UpdateUserLastAccessDateMutation,
 	UpdateUserLastAccessDateMutationVariables,
@@ -162,6 +170,16 @@ export class UsersService {
 		}
 
 		return this.adapt(updatedUser?.returning[0]);
+	}
+
+	public async updateUserLanguage(id: string, updateLanguage: UpdateUserLangDto): Promise<any> {
+		await this.dataService.execute<
+			UpdateUserLanguageMutation,
+			UpdateUserLanguageMutationVariables
+		>(UpdateUserLanguageDocument, {
+			lang: updateLanguage.language as UpdateUserLanguageMutationVariables['lang'],
+			id: id,
+		});
 	}
 
 	public async updateAcceptedTos(

@@ -1,6 +1,8 @@
 import {
 	Body,
 	Controller,
+	HttpException,
+	HttpStatus,
 	Logger,
 	Param,
 	ParseUUIDPipe,
@@ -10,10 +12,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { UpdateAcceptedTosDto } from '../dto/users.dto';
+import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
 import { User } from '../types';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
@@ -23,7 +26,30 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 export class UsersController {
 	private logger: Logger = new Logger(UsersController.name, { timestamp: true });
 
-	constructor(private usersService: UsersService) {}
+	constructor(
+		private usersService: UsersService,
+		private campaignMonitorService: CampaignMonitorService
+	) {}
+
+	@Patch('/update-language')
+	public async updateUser(
+		@Body() updateUserLangDto: UpdateUserLangDto,
+		@Session() session: Record<string, any>
+	): Promise<Record<string, string>> {
+		try {
+			const sessionUser = SessionHelper.getArchiefUserInfo(session);
+			await this.usersService.updateUserLanguage(sessionUser.id, updateUserLangDto);
+			await this.campaignMonitorService.updateNewsletterPreferences({
+				email: sessionUser.email,
+				firstName: sessionUser.firstName,
+				lastName: sessionUser.lastName,
+				language: updateUserLangDto.language,
+			});
+			return { message: 'Language updated' };
+		} catch (e) {
+			throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@Patch(':id/accepted-tos')
 	public async updateTos(

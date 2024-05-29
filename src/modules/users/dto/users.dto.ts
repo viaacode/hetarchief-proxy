@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
@@ -56,4 +56,9 @@ export class UpdateAcceptedTosDto {
 		description: 'The date and time the user accepted the Terms of Service',
 	})
 	acceptedTosAt: string;
+}
+
+export class UpdateUserLangDto {
+	@IsIn(['nl', 'en'])
+	language: string;
 }
