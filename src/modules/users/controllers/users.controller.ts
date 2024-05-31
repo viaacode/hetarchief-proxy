@@ -39,6 +39,9 @@ export class UsersController {
 		try {
 			const sessionUser = SessionHelper.getArchiefUserInfo(session);
 			await this.usersService.updateUserLanguage(sessionUser.id, updateUserLangDto);
+			sessionUser.language = updateUserLangDto.language;
+			console.log('sessionUser', sessionUser);
+			SessionHelper.setArchiefUserInfo(session, sessionUser);
 			await this.campaignMonitorService.updateNewsletterPreferences({
 				email: sessionUser.email,
 				firstName: sessionUser.firstName,

@@ -75,6 +75,7 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	email: string;
+	language: string;
 	acceptedTosAt: string;
 	groupId: string;
 	groupName: GroupName;

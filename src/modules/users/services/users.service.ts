@@ -50,6 +50,7 @@ export class UsersService {
 			firstName: graphQlUser?.first_name,
 			lastName: graphQlUser?.last_name,
 			email: graphQlUser?.mail,
+			language: graphQlUser?.language,
 			acceptedTosAt: graphQlUser?.accepted_tos_at,
 			groupId: graphQlUser?.group_id,
 			groupName: this.groupIdToName(graphQlUser?.group_id) as GroupName,
