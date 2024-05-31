@@ -108,20 +108,26 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects = await this.ieObjectsService.findBySchemaIdentifiers(
 			[id],
 			referer,
 			getIpFromRequest(request)
-		)[0];
+		);
+		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
 				license
 			)
 		);
+
+		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
+			[IeObjectLicense.PUBLIEK_METADATA_ALL].includes(license)
+		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
 			description: hasPublicAccess ? ieObject?.description : null,
+			thumbnailUrl: hasPublicAccessThumbnail ? ieObject?.thumbnailUrl : null,
 		};
 	}
 
@@ -405,7 +411,7 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject[] | Partial<IeObject>[]> {
-		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
 			ids,
 			referer,
 			getIpFromRequest(request)
@@ -452,7 +458,7 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
 			[id],
 			referer,
 			getIpFromRequest(request)

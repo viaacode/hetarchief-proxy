@@ -8,6 +8,8 @@ module.exports = {
 	env: {
 		node: true,
 		jest: true,
+		// https://stackoverflow.com/a/64414048/373207
+		jasmine: true,
 	},
 	plugins: ['@typescript-eslint/eslint-plugin'],
 	extends: [

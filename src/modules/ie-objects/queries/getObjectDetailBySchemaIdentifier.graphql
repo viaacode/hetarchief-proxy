@@ -1,5 +1,5 @@
-query getObjectDetailBySchemaIdentifier($schemaIdentifier: [String!]!) {
-	object_ie(where: { schema_identifier: { _in: $schemaIdentifier } }) {
+query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
+	object_ie(where: { schema_identifier: { _in: $schemaIdentifiers } }) {
 		schema_identifier
 		meemoo_identifier
 		premis_identifier

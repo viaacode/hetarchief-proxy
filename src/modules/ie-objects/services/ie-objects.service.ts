@@ -51,9 +51,9 @@ import {
 	GetFilterOptionsDocument,
 	GetFilterOptionsQuery,
 	GetFilterOptionsQueryVariables,
-	GetObjectDetailBySchemaIdentifierDocument,
-	GetObjectDetailBySchemaIdentifierQuery,
-	GetObjectDetailBySchemaIdentifierQueryVariables,
+	GetObjectDetailBySchemaIdentifiersDocument,
+	GetObjectDetailBySchemaIdentifiersQuery,
+	GetObjectDetailBySchemaIdentifiersQueryVariables,
 	GetObjectIdentifierTupleDocument,
 	GetObjectIdentifierTupleQuery,
 	GetObjectIdentifierTupleQueryVariables,
@@ -342,20 +342,20 @@ export class IeObjectsService {
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findBySchemaIdentifier(
-		schemaIdentifier: string[],
+	public async findBySchemaIdentifiers(
+		schemaIdentifiers: string[],
 		referer: string,
 		ip: string
 	): Promise<IeObject[]> {
-		const { object_ie: objectIe } = await this.dataService.execute<
-			GetObjectDetailBySchemaIdentifierQuery,
-			GetObjectDetailBySchemaIdentifierQueryVariables
-		>(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
+		const response = await this.dataService.execute<
+			GetObjectDetailBySchemaIdentifiersQuery,
+			GetObjectDetailBySchemaIdentifiersQueryVariables
+		>(GetObjectDetailBySchemaIdentifiersDocument, {
+			schemaIdentifiers,
 		});
 
 		return await Promise.all(
-			objectIe.map(async (object) => {
+			response.object_ie.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
@@ -374,7 +374,7 @@ export class IeObjectsService {
 		schemaIdentifier: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findBySchemaIdentifier([schemaIdentifier], null, ip);
+		const object = await this.findBySchemaIdentifiers([schemaIdentifier], null, ip);
 		return this.adaptMetadata(object[0]);
 	}
 

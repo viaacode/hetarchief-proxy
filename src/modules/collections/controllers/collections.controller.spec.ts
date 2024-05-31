@@ -15,7 +15,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCollectionsResponse: IPagination<Collection> = {
@@ -102,7 +101,7 @@ const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
-	findBySchemaIdentifier: jest.fn(),
+	findBySchemaIdentifiers: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
@@ -113,7 +112,6 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
-	let sessionHelperSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -142,14 +140,10 @@ describe('CollectionsController', () => {
 			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
-
-		sessionHelperSpy = jest
-			.spyOn(SessionHelper, 'getArchiefUserInfo')
-			.mockReturnValue(mockUser);
 	});
 
-	afterEach(async () => {
-		sessionHelperSpy?.mockRestore();
+	afterEach(() => {
+		jest.resetAllMocks();
 	});
 
 	it('should be defined', () => {
@@ -270,7 +264,13 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
 				mockCollectionsResponse.items[0]
 			);
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValue(mockIeObject);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(
+				mockCollectionsResponse.items[0]
+			);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject]);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockRequest,
 				'referer',
@@ -289,6 +289,9 @@ describe('CollectionsController', () => {
 				...mockCollectionsResponse.items[0],
 				userProfileId: 'other-profile-id',
 			});
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([
+				mockCollectionsResponse.items[0],
+			]);
 
 			let error;
 			try {

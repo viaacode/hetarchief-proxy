@@ -1,6 +1,8 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Cache } from 'cache-manager';
 import nock from 'nock';
 
 import { Configuration } from '~config';
@@ -24,8 +26,13 @@ const mockConfigService = {
 		return key;
 	}),
 };
+
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
+	wrap: jest.fn().mockImplementation((key, cb) => cb()),
 };
 
 describe('OrganisationService', () => {
@@ -42,6 +49,10 @@ describe('OrganisationService', () => {
 				{
 					provide: ConfigService,
 					useValue: mockConfigService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheService,
 				},
 			],
 		})

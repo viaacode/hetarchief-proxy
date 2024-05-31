@@ -183,17 +183,41 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		it('should log and not send to an empty recipients email adres', async () => {
+		it('should use fallback email if email address is undefined for a maintainer', async () => {
 			const visit = getMockVisit();
-			try {
-				await campaignMonitorService.sendForVisit({
-					to: [{ id: visit.visitorId, email: null }],
-					template: Template.VISIT_APPROVED,
-					visit: getMockVisit(),
-				});
-			} catch (err) {
-				expect(err.name).toEqual('BadRequestException');
-			}
+			const sendTransactionalMailSpy = jest.spyOn(
+				campaignMonitorService,
+				'sendTransactionalMail'
+			);
+			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
+
+			await campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: null }],
+				template: Template.VISIT_APPROVED,
+				visit,
+			});
+			expect(sendTransactionalMailSpy).toBeCalledWith({
+				template: Template.VISIT_APPROVED,
+				data: {
+					to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
+					consentToTrack: 'unchanged',
+					data: {
+						client_firstname: 'Tom',
+						client_lastname: 'Testerom',
+						client_email: 'test@studiohyperdrive.be',
+						contentpartner_name: 'VRT',
+						contentpartner_email: 'cp-VRT@studiohyperdrive.be',
+						request_reason: 'fake news investigation',
+						request_time: 'july 2022',
+						request_url: 'http://bezoekerstool/beheer/aanvragen',
+						request_remark: 'Visit is limited to max. 2h',
+						start_date: '1 juli 2022',
+						start_time: '12:00',
+						end_date: '31 juli 2022',
+						end_time: '20:00',
+					},
+				},
+			});
 		});
 		// ARC-1537 Re-enable this test ones the FE has switched to using enum templates name
 		// it('should NOT call the campaign monitor if the template was not found', async () => {
@@ -247,11 +271,9 @@ describe('CampaignMonitorService', () => {
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
 		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
-			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			const result =
-				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
-					materialRequestEmailInfo
-				);
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+				mockMaterialRequestEmailInfo
+			);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToMaintainer);
 		});
 
@@ -271,6 +293,11 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
+			const sendTransactionalMailSpy = jest.spyOn(
+				campaignMonitorService,
+				'sendTransactionalMail'
+			);
+			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {

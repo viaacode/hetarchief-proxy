@@ -2,7 +2,7 @@ import { IPagination } from '@studiohyperdrive/pagination';
 
 import {
 	FindAllObjectsByCollectionIdQuery,
-	GetObjectDetailBySchemaIdentifierQuery,
+	GetObjectDetailBySchemaIdentifiersQuery,
 	GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
@@ -11,9 +11,9 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
 >;
 
-export type IeObjectSeo = Pick<IeObject, 'name' | 'description'>;
+export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
-export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];
 
 export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];

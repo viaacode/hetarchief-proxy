@@ -228,11 +228,12 @@ export class CollectionsController {
 		);
 
 		// Log event
-		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
+		const ieObjects = await this.ieObjectsService.findBySchemaIdentifiers(
 			[objectSchemaIdentifier],
 			referer,
 			getIpFromRequest(request)
-		)[0];
+		);
+		const ieObject = ieObjects[0];
 		this.eventsService.insertEvents([
 			{
 				id: EventsHelper.getEventId(request),

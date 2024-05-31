@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got, { Got } from 'got';
-import { compact, get, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
+import { compact, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
@@ -378,7 +378,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			request_reason: visit.reason,
 			request_time: visit.timeframe,
 			request_url: this.buildUrlToAdminVisit(), // TODO deeplink to visit & extract to shared url builder?
-			request_remark: get(visit.note, 'note', ''),
+			request_remark: visit.note?.note || '',
 			start_date: visit.startAt ? formatAsBelgianDate(visit.startAt, 'd MMMM yyyy') : '',
 			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
 			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',

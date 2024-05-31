@@ -7,7 +7,7 @@ import {
 	IeObjectsSitemap,
 } from '../ie-objects.types';
 
-import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
+import { GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
@@ -346,7 +346,7 @@ export const mockUserInfo: Readonly<{
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
+export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
 	object_ie: [
 		{
 			schema_identifier:
