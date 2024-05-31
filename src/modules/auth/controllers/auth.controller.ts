@@ -85,8 +85,6 @@ export class AuthController {
 				}
 			}
 
-			console.log('🚀', user.getUser().language);
-
 			return {
 				userInfo: user.getUser(),
 				commonUserInfo: convertUserInfoToCommonUser(
