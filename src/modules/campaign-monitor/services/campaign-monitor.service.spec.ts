@@ -30,7 +30,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'CLIENT_HOST') {
-			return 'http://bezoekerstool';
+			return 'http://hetarchief.be';
 		}
 		if (key === 'HOST') {
 			return 'http://fakeclienthost';
@@ -209,7 +209,7 @@ describe('CampaignMonitorService', () => {
 						contentpartner_email: 'cp-VRT@studiohyperdrive.be',
 						request_reason: 'fake news investigation',
 						request_time: 'july 2022',
-						request_url: 'http://bezoekerstool/beheer/aanvragen',
+						request_url: 'http://hetarchief.be/beheer/aanvragen',
 						request_remark: 'Visit is limited to max. 2h',
 						start_date: '1 juli 2022',
 						start_time: '12:00',
