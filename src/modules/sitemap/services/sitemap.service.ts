@@ -131,17 +131,12 @@ export class SitemapService {
 
 		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general.xml'));
 
-		// Create sitemap files for all ie_objects
+		// Create sitemap files for all public ie_objects
 		const publicIeObjectXmlUrls = await this.createAndUploadPublicIeObjectSitemapEntries(
 			sitemapConfig,
 			0
 		);
-		const nonPublicIeObjectXmlUrls = await this.createAndUploadNonPublicIeObjectSitemapEntries(
-			sitemapConfig,
-			publicIeObjectXmlUrls.length
-		);
 		xmlUrls.push(...publicIeObjectXmlUrls);
-		xmlUrls.push(...nonPublicIeObjectXmlUrls);
 
 		// Generate index xml
 		const indexXml = xmlFormat(
@@ -232,46 +227,6 @@ export class SitemapService {
 		for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
 			const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
 				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
-				i,
-				SITEMAP_XML_OBJECTS_SIZE
-			);
-
-			const xmlUrl = await this.formatAndUploadIeObjectAsSitemapXml(
-				ieObjectsResponse.items,
-				pageOffset + ieObjectsResponse.page,
-				sitemapConfig
-			);
-			xmlUrls.push(xmlUrl);
-		}
-		return xmlUrls;
-	}
-
-	private async createAndUploadNonPublicIeObjectSitemapEntries(
-		sitemapConfig: SitemapConfig,
-		pageOffset: number
-	) {
-		const result = await this.ieObjectsService.findIeObjectsForSitemap(
-			[
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				IeObjectLicense.INTRA_CP_METADATA_LTD,
-				IeObjectLicense.INTRA_CP_METADATA_ALL,
-				IeObjectLicense.INTRA_CP_CONTENT,
-			],
-			0,
-			0
-		);
-		const totalIeObjects = result.total;
-		const xmlUrls: string[] = [];
-		for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
-			const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
-				[
-					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-					IeObjectLicense.INTRA_CP_METADATA_LTD,
-					IeObjectLicense.INTRA_CP_METADATA_ALL,
-					IeObjectLicense.INTRA_CP_CONTENT,
-				],
 				i,
 				SITEMAP_XML_OBJECTS_SIZE
 			);
