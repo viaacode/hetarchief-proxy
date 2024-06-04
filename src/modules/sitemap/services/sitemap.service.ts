@@ -132,11 +132,18 @@ export class SitemapService {
 		xmlUrls.push(await this.uploadXml(renderedGeneralXml, 'general.xml'));
 
 		// Create sitemap files for all public ie_objects
-		const publicIeObjectXmlUrls = await this.createAndUploadPublicIeObjectSitemapEntries(
+		const publicContentIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
+			[IeObjectLicense.PUBLIEK_CONTENT],
 			sitemapConfig,
 			0
 		);
-		xmlUrls.push(...publicIeObjectXmlUrls);
+		const publicMetadataIeObjectXmlUrls = await this.createAndUploadIeObjectSitemapEntries(
+			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+			sitemapConfig,
+			publicContentIeObjectXmlUrls.length
+		);
+		xmlUrls.push(...publicContentIeObjectXmlUrls);
+		xmlUrls.push(...publicMetadataIeObjectXmlUrls);
 
 		// Generate index xml
 		const indexXml = xmlFormat(
@@ -213,20 +220,17 @@ export class SitemapService {
 
 	// Helpers
 	// ------------------------------------------------------------------------
-	private async createAndUploadPublicIeObjectSitemapEntries(
+	private async createAndUploadIeObjectSitemapEntries(
+		licenses: IeObjectLicense[],
 		sitemapConfig: SitemapConfig,
 		pageOffset: number
 	) {
-		const result = await this.ieObjectsService.findIeObjectsForSitemap(
-			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
-			0,
-			0
-		);
+		const result = await this.ieObjectsService.findIeObjectsForSitemap(licenses, 0, 0);
 		const totalIeObjects = result.total;
 		const xmlUrls: string[] = [];
 		for (let i = 0; i < totalIeObjects; i += SITEMAP_XML_OBJECTS_SIZE) {
 			const ieObjectsResponse = await this.ieObjectsService.findIeObjectsForSitemap(
-				[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL],
+				licenses,
 				i,
 				SITEMAP_XML_OBJECTS_SIZE
 			);
