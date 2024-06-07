@@ -178,7 +178,7 @@ export class UsersService {
 			UpdateUserLanguageMutation,
 			UpdateUserLanguageMutationVariables
 		>(UpdateUserLanguageDocument, {
-			lang: updateLanguage.language as UpdateUserLanguageMutationVariables['lang'],
+			lang: updateLanguage.language,
 			id: id,
 		});
 	}

@@ -1,5 +1,6 @@
+import { LanguageCode } from '@meemoo/admin-core-api';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
@@ -59,6 +60,10 @@ export class UpdateAcceptedTosDto {
 }
 
 export class UpdateUserLangDto {
-	@IsIn(['nl', 'en'])
-	language: string;
+	@IsString()
+	@ApiProperty({
+		type: String,
+		enum: LanguageCode,
+	})
+	language: LanguageCode;
 }
