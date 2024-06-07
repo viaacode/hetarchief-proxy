@@ -1,3 +1,4 @@
+import { Locale } from '@meemoo/admin-core-api';
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
 import {
@@ -36,6 +37,7 @@ export const mockUser: User = {
 export const mockUserInfo: CampaignMonitorUserInfo = {
 	firstName: mockUser.firstName,
 	lastName: mockUser.lastName,
+	language: Locale.nl,
 	email: mockUser.email,
 	is_key_user: mockUser.isKeyUser,
 	usergroup: mockUser.groupName,
@@ -166,6 +168,11 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Clear: false,
 			Key: CampaignMonitorCustomFieldName.optin_mail_lists,
 			Value: 'newsletter',
+		},
+		{
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.language,
+			Value: mockUserInfo.language,
 		},
 	],
 };
