@@ -9,6 +9,7 @@ mutation updateUserProfile($id: uuid!, $updateUser: users_profile_set_input!) {
 			is_key_user
 			accepted_tos_at
 			group_id
+			language
 			group {
 				permissions {
 					permission {

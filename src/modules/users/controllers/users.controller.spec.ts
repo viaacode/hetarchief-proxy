@@ -4,6 +4,7 @@ import { UsersService } from '../services/users.service';
 
 import { UsersController } from './users.controller';
 
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockUserResponse = {
@@ -28,7 +29,7 @@ describe('UsersController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [UsersController],
-			imports: [],
+			imports: [CampaignMonitorModule],
 			providers: [
 				{
 					provide: UsersService,

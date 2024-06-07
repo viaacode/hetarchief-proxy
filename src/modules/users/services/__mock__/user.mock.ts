@@ -1,3 +1,4 @@
+import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import { GqlUser, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 
@@ -9,6 +10,7 @@ export const mockUserResponse: { users_profile: GqlUser[] } = {
 			last_name: 'Odhiambo',
 			full_name: 'Marie Odhiambo',
 			mail: 'marie.odhiambo@example.com',
+			language: Lookup_Languages_Enum.Nl,
 			accepted_tos_at: null,
 			group_id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
 			is_key_user: true,

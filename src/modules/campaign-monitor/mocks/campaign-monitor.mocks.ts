@@ -1,3 +1,4 @@
+import { Locale } from '@meemoo/admin-core-api';
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
 import {
@@ -25,6 +26,7 @@ export const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.nl,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,

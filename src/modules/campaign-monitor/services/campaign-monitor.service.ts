@@ -471,7 +471,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	public convertPreferencesToNewsletterTemplateData(
 		userInfo: CampaignMonitorUserInfo,
 		resubscribe: boolean,
-		optin_mail_lists?: string
+		optin_mail_lists?: string,
+		language?: string
 	): CampaignMonitorUpdatePreferencesData {
 		const customFields: Record<string, string | boolean> = {
 			[CampaignMonitorCustomFieldName.usergroup]: userInfo.usergroup,
@@ -484,6 +485,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		};
 		if (!isNil(optin_mail_lists)) {
 			customFields[CampaignMonitorCustomFieldName.optin_mail_lists] = optin_mail_lists;
+		}
+
+		if (language) {
+			customFields[CampaignMonitorCustomFieldName.language] = language;
 		}
 
 		return {
