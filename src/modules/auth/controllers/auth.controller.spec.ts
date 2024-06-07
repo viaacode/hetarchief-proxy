@@ -21,6 +21,7 @@ import { mockTranslationsService } from '~shared/helpers/mockTranslationsService
 import { sleep } from '~shared/helpers/sleep';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
+import { Locale } from '~shared/types/types';
 
 const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
@@ -28,6 +29,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,

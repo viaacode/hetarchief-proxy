@@ -14,6 +14,7 @@ query findMaterialRequestsById($id: uuid!) {
 			id
 			full_name
 			mail
+			language
 			group {
 				name
 				label

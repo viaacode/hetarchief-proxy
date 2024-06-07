@@ -13,6 +13,7 @@ import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -24,6 +25,7 @@ const archiefUser: User = {
 	id: mockUser.id,
 	acceptedTosAt: null,
 	email: mockUser.mail,
+	language: Locale.Nl,
 	firstName: mockUser.first_name,
 	lastName: mockUser.last_name,
 	fullName: mockUser.full_name,

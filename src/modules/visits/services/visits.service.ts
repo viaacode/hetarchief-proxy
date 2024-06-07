@@ -19,8 +19,8 @@ import {
 	GqlVisit,
 	GqlVisitWithNotes,
 	Note,
-	Visit,
 	VisitAccessType,
+	VisitRequest,
 	VisitSpaceCount,
 	VisitStatus,
 	VisitTimeframe,
@@ -141,7 +141,7 @@ export class VisitsService {
 		return contactPoint?.telephone || null;
 	}
 
-	public adapt(graphQlVisit: GqlVisit): Visit | null {
+	public adapt(graphQlVisit: GqlVisit): VisitRequest | null {
 		if (!graphQlVisit) {
 			return null;
 		}
@@ -184,6 +184,7 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
+			visitorLanguage: graphQlVisit?.requested_by?.language,
 			accessibleFolderIds: uniq(
 				graphQlVisit.accessible_folders.map(
 					(accessibleFolderLink) => accessibleFolderLink.folder.id
@@ -223,7 +224,7 @@ export class VisitsService {
 	public async create(
 		createVisitDto: CreateVisitDto & { visitorSpaceId: string },
 		userProfileId: string
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
 		const newVisit = {
 			cp_space_id: createVisitDto.visitorSpaceId,
 			user_profile_id: userProfileId,
@@ -247,7 +248,7 @@ export class VisitsService {
 		id: string,
 		updateVisitDto: UpdateVisitDto,
 		userProfileId: string
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
 		const { startAt, endAt, accessType } = updateVisitDto;
 		let { accessFolderIds } = updateVisitDto;
 		// if any of these is set, both must be set (db constraint)
@@ -370,7 +371,7 @@ export class VisitsService {
 			userProfileId?: string;
 			visitorSpaceStatuses?: VisitorSpaceStatus[];
 		}
-	): Promise<IPagination<Visit>> {
+	): Promise<IPagination<VisitRequest>> {
 		const { query, status, timeframe, accessType, page, size, orderProp, orderDirection } =
 			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -460,7 +461,7 @@ export class VisitsService {
 			),
 		});
 
-		return Pagination<Visit>({
+		return Pagination<VisitRequest>({
 			items: visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 				this.adapt(visit)
 			),
@@ -470,7 +471,7 @@ export class VisitsService {
 		});
 	}
 
-	public async findById(id: string): Promise<Visit> {
+	public async findById(id: string): Promise<VisitRequest> {
 		const visitResponse = await this.dataService.execute<
 			FindVisitByIdQuery,
 			FindVisitByIdQueryVariables
@@ -497,7 +498,7 @@ export class VisitsService {
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
 		visitorSpaceSlug: string
-	): Promise<Visit | null> {
+	): Promise<VisitRequest | null> {
 		const visitResponse = await this.dataService.execute<
 			FindActiveVisitByUserAndSpaceQuery,
 			FindActiveVisitByUserAndSpaceQueryVariables
@@ -533,7 +534,7 @@ export class VisitsService {
 		};
 	}
 
-	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
+	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<VisitRequest[]> {
 		const visitsResponse = await this.dataService.execute<
 			FindApprovedStartedVisitsWithoutNotificationQuery,
 			FindApprovedStartedVisitsWithoutNotificationQueryVariables

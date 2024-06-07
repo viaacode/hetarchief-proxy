@@ -1,4 +1,4 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { Locale, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -26,6 +26,7 @@ import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
+import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -151,7 +152,11 @@ export class HetArchiefController {
 			);
 
 			// determine user group
-			const userGroup = await this.idpService.determineUserGroup(ldapUser, organisation);
+			const userGroup = await this.idpService.determineUserGroup(
+				ldapUser,
+				organisation,
+				(archiefUser?.language || Locale.Nl) as Lookup_Languages_Enum
+			);
 
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
@@ -179,7 +184,9 @@ export class HetArchiefController {
 						is_default: true,
 						user_profile_id: archiefUser.id,
 						name: this.translationsService.tText(
-							'modules/collections/controllers___default-collection-name'
+							'modules/collections/controllers___default-collection-name',
+							null,
+							(archiefUser?.language || Locale.Nl) as Lookup_Languages_Enum
 						),
 					},
 					null, // referer not important here
@@ -258,7 +265,9 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.tText(
-						'modules/auth/controllers/het-archief___account-configuratie'
+						'modules/auth/controllers/het-archief___account-configuratie',
+						null,
+						Locale.En
 					)
 				);
 			}

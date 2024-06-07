@@ -1,4 +1,4 @@
-import { Locale } from '@meemoo/admin-core-api';
+import { Locale } from '~shared/types/types';
 
 export interface SitemapItemInfo {
 	loc: string;

@@ -5,6 +5,7 @@ query getUserByIdentityId($identityId: String!) {
 		last_name
 		full_name
 		mail
+		language
 		is_key_user
 		accepted_tos_at
 		group_id

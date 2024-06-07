@@ -14,12 +14,13 @@ import { Notification, NotificationStatus, NotificationType } from '~modules/not
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockNotification1: Notification = {
 	description:
@@ -55,7 +56,7 @@ const mockNotificationsResponse: IPagination<Notification> = {
 	size: 20,
 };
 
-const mockVisit: Visit = {
+const mockVisit: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
@@ -75,6 +76,7 @@ const mockVisit: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	note: {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
@@ -93,6 +95,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,

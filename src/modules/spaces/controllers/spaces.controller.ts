@@ -58,7 +58,9 @@ export class SpacesController {
 		) {
 			throw new ForbiddenException(
 				this.translationsService.tText(
-					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
+					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data',
+					null,
+					user.getLanguage()
 				)
 			);
 		}
@@ -96,7 +98,8 @@ export class SpacesController {
 					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found',
 					{
 						slug,
-					}
+					},
+					user.getLanguage()
 				)
 			);
 		}
@@ -167,7 +170,7 @@ export class SpacesController {
 			await this.assetsService.delete(space.image);
 		}
 
-		return this.spacesService.update(id, updateSpaceDto);
+		return this.spacesService.update(id, updateSpaceDto, user.getLanguage());
 	}
 
 	@Post()
@@ -197,7 +200,8 @@ export class SpacesController {
 	@RequireAllPermissions(Permission.CREATE_SPACES)
 	public async createSpace(
 		@Body() createSpaceDto: CreateSpaceDto,
-		@UploadedFile() file: Express.Multer.File
+		@UploadedFile() file: Express.Multer.File,
+		@SessionUser() user: SessionUserEntity
 	): Promise<Space> {
 		// create dto is inherited from update, and conflicts with slug: required here, optional in update
 		if (!createSpaceDto.slug) {
@@ -215,6 +219,6 @@ export class SpacesController {
 		// Space is always created with 'REQUESTED' status
 		createSpaceDto.status = VisitorSpaceStatus.Requested;
 
-		return this.spacesService.create(createSpaceDto);
+		return this.spacesService.create(createSpaceDto, user.getLanguage());
 	}
 }

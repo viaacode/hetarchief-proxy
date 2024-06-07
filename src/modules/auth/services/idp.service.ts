@@ -1,5 +1,5 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
-import { Injectable, Logger } from '@nestjs/common';
+import { Locale, TranslationsService } from '@meemoo/admin-core-api';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get, intersection } from 'lodash';
 import queryString from 'query-string';
@@ -15,7 +15,6 @@ import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {
-	private logger: Logger = new Logger(IdpService.name, { timestamp: true });
 	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF, Idp.MEEMOO];
 
 	protected meemooAdminOrganizationIds: string[];
@@ -56,7 +55,8 @@ export class IdpService {
 	 */
 	public async determineUserGroup(
 		ldapUser: LdapUser,
-		organisation?: Organisation | null
+		organisation: Organisation | undefined | null,
+		locale: Locale
 	): Promise<GroupId> {
 		const organizationalStatus = get(ldapUser, 'attributes.organizationalStatus', []);
 		// permissions check
@@ -70,7 +70,9 @@ export class IdpService {
 		) {
 			throw new Error(
 				`${NO_ORG_LINKED}${this.translationsService.tText(
-					'modules/auth/services/idp___account-configuratie'
+					'modules/auth/services/idp___account-configuratie',
+					null,
+					locale
 				)}`
 			);
 		}
@@ -81,7 +83,9 @@ export class IdpService {
 			if (!maintainerId) {
 				throw new Error(
 					this.translationsService.tText(
-						'modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
+						'modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked',
+						null,
+						locale
 					)
 				);
 			}
@@ -108,7 +112,9 @@ export class IdpService {
 			if (!maintainerId) {
 				throw new Error(
 					`${NO_ORG_LINKED}${this.translationsService.tText(
-						'modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked'
+						'modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked',
+						null,
+						locale
 					)}`
 				);
 			}

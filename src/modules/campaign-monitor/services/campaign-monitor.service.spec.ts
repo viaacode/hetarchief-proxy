@@ -23,9 +23,10 @@ import {
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
@@ -83,7 +84,7 @@ const mockConfigService = {
 	}),
 };
 
-const getMockVisit = (): Visit => ({
+const getMockVisitRequest = (): VisitRequest => ({
 	id: '1',
 	spaceId: 'space-1',
 	spaceSlug: 'vrt',
@@ -110,6 +111,7 @@ const getMockVisit = (): Visit => ({
 	visitorFirstName: 'Tom',
 	visitorLastName: 'Testerom',
 	visitorName: 'Tom Testerom',
+	visitorLanguage: Locale.Nl,
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
 	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
@@ -171,7 +173,7 @@ describe('CampaignMonitorService', () => {
 
 	describe('convertVisitToEmailTemplateData', () => {
 		it('should parse visits with empty startAt / endAt', () => {
-			const visit = getMockVisit();
+			const visit = getMockVisitRequest();
 			visit.startAt = null;
 			visit.endAt = null;
 			const result = campaignMonitorService.convertVisitToEmailTemplateData(visit);
@@ -184,7 +186,7 @@ describe('CampaignMonitorService', () => {
 
 	describe('sendForVisit', () => {
 		it('should use fallback email if email address is undefined for a maintainer', async () => {
-			const visit = getMockVisit();
+			const visit = getMockVisitRequest();
 			const sendTransactionalMailSpy = jest.spyOn(
 				campaignMonitorService,
 				'sendTransactionalMail'
@@ -192,9 +194,9 @@ describe('CampaignMonitorService', () => {
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 
 			await campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: null }],
+				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
 				template: Template.VISIT_APPROVED,
-				visit,
+				visitRequest: visit,
 			});
 			expect(sendTransactionalMailSpy).toBeCalledWith({
 				template: Template.VISIT_APPROVED,
@@ -238,14 +240,20 @@ describe('CampaignMonitorService', () => {
 		// 	}
 		// });
 
-		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+		it('should NOT call the campaign monitor api if email sending is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
-			const visit = getMockVisit();
+			const visitRequest = getMockVisitRequest();
 			try {
 				await campaignMonitorService.sendForVisit({
 					template: Template.VISIT_APPROVED,
-					visit,
-					to: [{ id: visit.visitorId, email: visit.visitorMail }],
+					visitRequest: visitRequest,
+					to: [
+						{
+							id: visitRequest.visitorId,
+							email: visitRequest.visitorMail,
+							language: visitRequest.visitorLanguage,
+						},
+					],
 				});
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
@@ -257,7 +265,7 @@ describe('CampaignMonitorService', () => {
 			try {
 				await campaignMonitorService.sendForVisit({
 					template: Template.VISIT_APPROVED,
-					visit: getMockVisit(),
+					visitRequest: getMockVisitRequest(),
 					to: [],
 				});
 				fail(

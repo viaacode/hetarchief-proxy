@@ -29,7 +29,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit } from '~modules/visits/types';
+import { VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -160,7 +160,7 @@ describe('IeObjectsController', () => {
 				size: 1,
 				total: 1,
 				pages: 1,
-			} as IPagination<Visit>);
+			} as IPagination<VisitRequest>);
 			mockIeObjectsService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			const ieObjects = await ieObjectsController.getIeObjects(
 				'referer',

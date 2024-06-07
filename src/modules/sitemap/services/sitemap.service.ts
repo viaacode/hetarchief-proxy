@@ -5,12 +5,11 @@ import {
 	ContentPagesService,
 	DataService,
 	DbContentPage,
-	Locale,
 } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
 import { format } from 'date-fns';
-import _, { uniqBy } from 'lodash';
+import { compact, kebabCase, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
 import { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
@@ -24,6 +23,7 @@ import { IeObjectLicense, IeObjectsSitemap } from '~modules/ie-objects/ie-object
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
+import { Locale } from '~shared/types/types';
 
 @Injectable()
 export class SitemapService {
@@ -41,48 +41,48 @@ export class SitemapService {
 				loc: '/',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/', hreflang: Locale.en },
-					{ href: '/', hreflang: Locale.nl },
+					{ href: '/', hreflang: Locale.En },
+					{ href: '/', hreflang: Locale.Nl },
 				],
 			},
 			{
 				loc: '/bezoek',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/visit', hreflang: Locale.en },
-					{ href: '/bezoek', hreflang: Locale.nl },
+					{ href: '/visit', hreflang: Locale.En },
+					{ href: '/bezoek', hreflang: Locale.Nl },
 				],
 			},
 			{
 				loc: '/zoeken',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/search', hreflang: Locale.en },
-					{ href: '/zoeken', hreflang: Locale.nl },
+					{ href: '/search', hreflang: Locale.En },
+					{ href: '/zoeken', hreflang: Locale.Nl },
 				],
 			},
 			{
 				loc: '/gebruiksvoorwaarden',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/user-conditions', hreflang: Locale.en },
-					{ href: '/gebruiksvoorwaarden', hreflang: Locale.nl },
+					{ href: '/user-conditions', hreflang: Locale.En },
+					{ href: '/gebruiksvoorwaarden', hreflang: Locale.Nl },
 				],
 			},
 			{
 				loc: '/cookiebeleid',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/cookie-policy', hreflang: Locale.en },
-					{ href: '/cookiebeleid', hreflang: Locale.nl },
+					{ href: '/cookie-policy', hreflang: Locale.En },
+					{ href: '/cookiebeleid', hreflang: Locale.Nl },
 				],
 			},
 			{
 				loc: '/nieuwsbrief',
 				changefreq: 'monthly',
 				links: [
-					{ href: '/newsletter', hreflang: Locale.en },
-					{ href: '/nieuwsbrief', hreflang: Locale.nl },
+					{ href: '/newsletter', hreflang: Locale.En },
+					{ href: '/nieuwsbrief', hreflang: Locale.Nl },
 				],
 			},
 		];
@@ -106,11 +106,11 @@ export class SitemapService {
 					links: [
 						{
 							href: '/zoeken/?aanbieders=' + space.maintainerId,
-							hreflang: Locale.nl,
+							hreflang: Locale.Nl,
 						},
 						{
 							href: '/search/?aanbieders=' + space.maintainerId,
-							hreflang: Locale.en,
+							hreflang: Locale.En,
 						},
 					],
 					changefreq: 'weekly',
@@ -184,7 +184,7 @@ export class SitemapService {
 				'',
 				{
 					content_type: { _eq: 'PAGINA' },
-					language: { _eq: Locale.nl },
+					language: { _eq: Locale.Nl },
 					is_public: { _eq: true },
 				}
 			);
@@ -202,7 +202,7 @@ export class SitemapService {
 								})),
 							{
 								href: contentPage.path,
-								hreflang: Locale.nl,
+								hreflang: Locale.Nl,
 							},
 						],
 						(entry) => entry.href + entry.hreflang
@@ -255,7 +255,7 @@ export class SitemapService {
 					const hreflang = translatedPage.hreflang;
 					const href =
 						process.env.CLIENT_HOST +
-						(translatedPage.hreflang === Locale.nl
+						(translatedPage.hreflang === Locale.Nl
 							? ''
 							: '/' + translatedPage.hreflang) +
 						translatedPage.href;
@@ -306,7 +306,7 @@ export class SitemapService {
 		config: SitemapConfig
 	): SitemapItemInfo[] {
 		const configPaths = config.value.map((c) => c.path);
-		return _.compact(
+		return compact(
 			pages.map((page) => {
 				if (configPaths.includes(page.loc)) {
 					const configValue = config.value.find((c) => c.path === page.loc);
@@ -324,18 +324,18 @@ export class SitemapService {
 
 	private mapIeObjectToSitemapInfo(object: IeObjectsSitemap): SitemapItemInfo {
 		const objectPath =
-			object.maintainerSlug + '/' + object.schemaIdentifier + '/' + _.kebabCase(object.name);
+			object.maintainerSlug + '/' + object.schemaIdentifier + '/' + kebabCase(object.name);
 
 		return {
 			loc: '/zoeken/' + objectPath,
 			links: [
 				{
 					href: '/search/' + objectPath,
-					hreflang: Locale.en,
+					hreflang: Locale.En,
 				},
 				{
 					href: '/zoeken/' + objectPath,
-					hreflang: Locale.nl,
+					hreflang: Locale.Nl,
 				},
 			],
 			changefreq: 'weekly',

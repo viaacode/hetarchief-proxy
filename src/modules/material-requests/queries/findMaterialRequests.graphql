@@ -19,6 +19,7 @@ query findMaterialRequests(
 			id
 			full_name
 			mail
+			language
 			group {
 				name
 				label

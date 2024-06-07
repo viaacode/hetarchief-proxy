@@ -36,7 +36,7 @@ import {
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { Recipient } from '~shared/types/types';
+import { Locale, Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {
@@ -111,7 +111,7 @@ export class SpacesService {
 		};
 	}
 
-	public async create(createSpaceDto: CreateSpaceDto): Promise<Space> {
+	public async create(createSpaceDto: CreateSpaceDto, language: Locale): Promise<Space> {
 		const createSpace = this.buildSpaceDatabaseObject(createSpaceDto);
 		try {
 			const response = await this.dataService.execute<
@@ -123,11 +123,15 @@ export class SpacesService {
 
 			return this.adapt(response.insert_maintainer_visitor_space_one);
 		} catch (e) {
-			this.handleException(e, createSpaceDto);
+			this.handleException(e, createSpaceDto, language);
 		}
 	}
 
-	public async update(id: string, updateSpaceDto: UpdateSpaceDto): Promise<Space> {
+	public async update(
+		id: string,
+		updateSpaceDto: UpdateSpaceDto,
+		language: Locale
+	): Promise<Space> {
 		const updateSpace = this.buildSpaceDatabaseObject(updateSpaceDto);
 		try {
 			const response = await this.dataService.execute<
@@ -146,7 +150,7 @@ export class SpacesService {
 
 			return this.adapt(updatedSpace);
 		} catch (e) {
-			this.handleException(e, updateSpaceDto);
+			this.handleException(e, updateSpaceDto, language);
 		}
 	}
 
@@ -300,11 +304,12 @@ export class SpacesService {
 			return (space.profiles || []).map((profile) => ({
 				id: profile.id,
 				email: profile.mail,
+				language: profile.language,
 			}));
 		});
 	}
 
-	public handleException(e: Error, inputDto: Partial<CreateSpaceDto>): void {
+	public handleException(e: Error, inputDto: Partial<CreateSpaceDto>, language: Locale): void {
 		if (e instanceof DuplicateKeyException) {
 			if (
 				e.data.message ===
@@ -327,7 +332,8 @@ export class SpacesService {
 				throw new InternalServerErrorException(
 					this.translationsService.tText(
 						'modules/spaces/services/spaces___a-space-already-exists-with-slug-slug',
-						{ slug: inputDto.slug }
+						{ slug: inputDto.slug },
+						language
 					)
 				);
 			}

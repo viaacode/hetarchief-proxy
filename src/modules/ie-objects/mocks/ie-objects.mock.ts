@@ -10,6 +10,7 @@ import {
 import { GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export const mockIeObject: Readonly<IeObject> = {
 	schemaIdentifier:
@@ -320,6 +321,7 @@ export const mockUser = Object.freeze({
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
