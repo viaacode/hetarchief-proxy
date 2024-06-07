@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
@@ -9,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { Cache } from 'cache-manager';
 import got, { Got } from 'got';
 import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
 
@@ -85,7 +88,8 @@ export class IeObjectsService {
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService,
-		protected spacesService: SpacesService
+		protected spacesService: SpacesService,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -169,7 +173,13 @@ export class IeObjectsService {
 			);
 		}
 
-		const objectResponse = await this.executeQuery(esIndex, esQuery);
+		const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+		const objectResponse = await this.cacheManager.wrap(
+			cacheKey,
+			() => this.executeQuery(esIndex, esQuery),
+			// cache for 60 minutes
+			3_600_000
+		);
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
