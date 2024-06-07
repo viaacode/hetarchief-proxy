@@ -34,14 +34,13 @@ import {
 	VisitStatus,
 } from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Space } from '~modules/spaces/types';
+import { VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -49,6 +48,7 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { VisitorSpaceStatus } from '~shared/types/types';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Visits')
@@ -130,7 +130,7 @@ export class VisitsController {
 				user.getId()
 			);
 
-			const visits = spaces.items.map((space: Space) => {
+			const visits = spaces.items.map((space: VisitorSpace) => {
 				return {
 					id: `permanent-id--${randomUUID()}`,
 					status: VisitStatus.APPROVED,

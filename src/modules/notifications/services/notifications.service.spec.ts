@@ -4,7 +4,6 @@ import { addHours, addMonths, subHours } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
-import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	DeleteNotificationsMutation,
 	FindNotificationsByUserQuery,
@@ -22,14 +21,14 @@ import {
 	NotificationStatus,
 	NotificationType,
 } from '~modules/notifications/types';
-import { Space } from '~modules/spaces/types';
+import { VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
-import { Locale } from '~shared/types/types';
+import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 const mockGqlNotification1: GqlNotification = {
 	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',
@@ -144,14 +143,16 @@ const mockVisitRequest: VisitRequest = {
 	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
 };
 
-const mockSpace: Space = {
+const mockSpace: VisitorSpace = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	slug: 'amsab',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description: null,
 	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
-	serviceDescription: null,
+	descriptionNl: 'mijn-bezoekersruimte',
+	serviceDescriptionNl: 'service beschrijving',
+	descriptionEn: 'my-space',
+	serviceDescriptionEn: 'service description',
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',

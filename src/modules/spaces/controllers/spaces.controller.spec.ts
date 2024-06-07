@@ -5,13 +5,12 @@ import { SpacesService } from '../services/spaces.service';
 
 import { SpacesController } from './spaces.controller';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
-import { Locale } from '~shared/types/types';
+import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 const mockSpacesResponse = {
 	items: [

@@ -75,8 +75,10 @@ export interface VisitRequest {
 	spaceImage?: string;
 	spaceLogo?: string;
 	spaceInfo?: string;
-	spaceDescription?: string;
-	spaceServiceDescription?: string;
+	spaceDescriptionNl?: string;
+	spaceServiceDescriptionNl?: string;
+	spaceDescriptionEn?: string;
+	spaceServiceDescriptionEn?: string;
 	startAt: string;
 	status: VisitStatus;
 	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;

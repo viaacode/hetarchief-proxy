@@ -44,9 +44,11 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 				schema_image
 				schema_color
 				schema_audience_type
-				schema_description
 				schema_public_access
-				schema_service_description
+				schema_description_nl
+				schema_service_description_nl
+				schema_description_en
+				schema_service_description_en
 				status
 				published_at
 				created_at

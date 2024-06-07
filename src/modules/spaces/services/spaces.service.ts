@@ -4,7 +4,7 @@ import { IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, GqlSpace, Space } from '../types';
+import { AccessType, GqlSpace, VisitorSpace } from '../types';
 
 import {
 	CreateSpaceDocument,
@@ -13,9 +13,6 @@ import {
 	FindSpaceByIdDocument,
 	FindSpaceByIdQuery,
 	FindSpaceByIdQueryVariables,
-	FindSpaceByMaintainerIdDocument,
-	FindSpaceByMaintainerIdQuery,
-	FindSpaceByMaintainerIdQueryVariables,
 	FindSpaceByOrganisationIdDocument,
 	FindSpaceByOrganisationIdQuery,
 	FindSpaceByOrganisationIdQueryVariables,
@@ -25,9 +22,9 @@ import {
 	FindSpacesDocument,
 	FindSpacesQuery,
 	FindSpacesQueryVariables,
-	GetSpaceMaintainerProfilesDocument,
-	GetSpaceMaintainerProfilesQuery,
-	GetSpaceMaintainerProfilesQueryVariables,
+	GetVisitorSpaceProfilesDocument,
+	GetVisitorSpaceProfilesQuery,
+	GetVisitorSpaceProfilesQueryVariables,
 	Maintainer_Visitor_Space_Set_Input,
 	UpdateSpaceDocument,
 	UpdateSpaceMutation,
@@ -48,7 +45,7 @@ export class SpacesService {
 	/**
 	 * Adapt a space as returned by a typical graphQl response to our internal space data model
 	 */
-	public adapt(graphQlSpace: GqlSpace): Space {
+	public adapt(graphQlSpace: GqlSpace): VisitorSpace {
 		/* istanbul ignore next */
 		const information = graphQlSpace?.content_partner?.information as OrganisationInfoV2;
 		/* istanbul ignore next */
@@ -58,8 +55,10 @@ export class SpacesService {
 			maintainerId: graphQlSpace?.content_partner?.schema_identifier,
 			name: graphQlSpace?.content_partner?.schema_name,
 			info: information?.description,
-			description: graphQlSpace?.schema_description,
-			serviceDescription: graphQlSpace?.schema_service_description,
+			descriptionNl: graphQlSpace?.schema_description_nl,
+			serviceDescriptionNl: graphQlSpace?.schema_service_description_nl,
+			descriptionEn: graphQlSpace?.schema_description_en,
+			serviceDescriptionEn: graphQlSpace?.schema_service_description_en,
 			image: graphQlSpace?.schema_image,
 			color: graphQlSpace?.schema_color,
 			logo: information?.logo?.iri,
@@ -100,18 +99,24 @@ export class SpacesService {
 			...(inputKeys.includes('orId') ? { schema_maintainer_id: inputDto.orId } : {}),
 			...(inputKeys.includes('slug') ? { slug: inputDto.slug } : {}),
 			...(inputKeys.includes('color') ? { schema_color: inputDto.color } : {}),
-			...(inputKeys.includes('description')
-				? { schema_description: inputDto.description }
+			...(inputKeys.includes('descriptionNl')
+				? { schema_description_nl: inputDto.descriptionNl }
 				: {}),
-			...(inputKeys.includes('serviceDescription')
-				? { schema_service_description: inputDto.serviceDescription }
+			...(inputKeys.includes('serviceDescriptionNl')
+				? { schema_service_description_nl: inputDto.serviceDescriptionNl }
+				: {}),
+			...(inputKeys.includes('descriptionEn')
+				? { schema_description_en: inputDto.descriptionEn }
+				: {}),
+			...(inputKeys.includes('serviceDescriptionEn')
+				? { schema_service_description_en: inputDto.serviceDescriptionEn }
 				: {}),
 			...(inputKeys.includes('image') ? { schema_image: inputDto.image } : {}),
 			...(inputKeys.includes('status') ? { status: inputDto.status } : {}),
 		};
 	}
 
-	public async create(createSpaceDto: CreateSpaceDto, language: Locale): Promise<Space> {
+	public async create(createSpaceDto: CreateSpaceDto, language: Locale): Promise<VisitorSpace> {
 		const createSpace = this.buildSpaceDatabaseObject(createSpaceDto);
 		try {
 			const response = await this.dataService.execute<
@@ -131,7 +136,7 @@ export class SpacesService {
 		id: string,
 		updateSpaceDto: UpdateSpaceDto,
 		language: Locale
-	): Promise<Space> {
+	): Promise<VisitorSpace> {
 		const updateSpace = this.buildSpaceDatabaseObject(updateSpaceDto);
 		try {
 			const response = await this.dataService.execute<
@@ -157,7 +162,7 @@ export class SpacesService {
 	public async findAll(
 		inputQuery: SpacesQueryDto,
 		userProfileId: string | undefined
-	): Promise<IPagination<Space>> {
+	): Promise<IPagination<VisitorSpace>> {
 		const { query, accessType, status, page, size, orderProp, orderDirection } = inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
@@ -175,7 +180,7 @@ export class SpacesService {
 
 		if (accessType) {
 			if (!userProfileId) {
-				return Pagination<Space>({
+				return Pagination<VisitorSpace>({
 					items: [],
 					page,
 					size,
@@ -235,7 +240,7 @@ export class SpacesService {
 			FindSpacesQueryVariables
 		>(FindSpacesDocument, queryVariables);
 
-		return Pagination<Space>({
+		return Pagination<VisitorSpace>({
 			items: spacesResponse.maintainer_visitor_space.map((space) => this.adapt(space)),
 			page,
 			size,
@@ -243,7 +248,7 @@ export class SpacesService {
 		});
 	}
 
-	public async findById(id: string): Promise<Space | null> {
+	public async findById(id: string): Promise<VisitorSpace | null> {
 		const spaceResponse = await this.dataService.execute<
 			FindSpaceByIdQuery,
 			FindSpaceByIdQueryVariables
@@ -254,18 +259,18 @@ export class SpacesService {
 		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
-	public async findByMaintainerId(maintainerId: string): Promise<Space | null> {
-		const spaceResponse = await this.dataService.execute<
-			FindSpaceByMaintainerIdQuery,
-			FindSpaceByMaintainerIdQueryVariables
-		>(FindSpaceByMaintainerIdDocument, { maintainerId });
-		if (!spaceResponse.maintainer_visitor_space[0]) {
+	public async findByMaintainerId(organisationId: string): Promise<VisitorSpace | null> {
+		const visitorSpaceResponse = await this.dataService.execute<
+			FindSpaceByOrganisationIdQuery,
+			FindSpaceByOrganisationIdQueryVariables
+		>(FindSpaceByOrganisationIdDocument, { organisationId });
+		if (!visitorSpaceResponse.maintainer_visitor_space[0]) {
 			return null;
 		}
-		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
+		return this.adapt(visitorSpaceResponse.maintainer_visitor_space[0]);
 	}
 
-	public async findBySlug(slug: string): Promise<Space | null> {
+	public async findBySlug(slug: string): Promise<VisitorSpace | null> {
 		const spaceResponse = await this.dataService.execute<
 			FindSpaceBySlugQuery,
 			FindSpaceBySlugQueryVariables
@@ -278,7 +283,7 @@ export class SpacesService {
 		return this.adapt(spaceResponse.maintainer_visitor_space[0]);
 	}
 
-	public async findSpaceByOrganisationId(organisationId: string): Promise<Space | null> {
+	public async findSpaceByOrganisationId(organisationId: string): Promise<VisitorSpace | null> {
 		const spaceResponse = await this.dataService.execute<
 			FindSpaceByOrganisationIdQuery,
 			FindSpaceByOrganisationIdQueryVariables
@@ -293,9 +298,9 @@ export class SpacesService {
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
 		const spaces = await this.dataService.execute<
-			GetSpaceMaintainerProfilesQuery,
-			GetSpaceMaintainerProfilesQueryVariables
-		>(GetSpaceMaintainerProfilesDocument, {
+			GetVisitorSpaceProfilesQuery,
+			GetVisitorSpaceProfilesQueryVariables
+		>(GetVisitorSpaceProfilesDocument, {
 			spaceId,
 		});
 

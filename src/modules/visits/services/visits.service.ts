@@ -26,7 +26,6 @@ import {
 	VisitTimeframe,
 } from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	DeleteVisitFolderAccessDocument,
 	DeleteVisitFolderAccessMutation,
@@ -79,6 +78,7 @@ import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
+import { VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class VisitsService {
@@ -169,8 +169,10 @@ export class VisitsService {
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
 			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information?.logo?.iri,
 			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information?.description,
-			spaceDescription: graphQlVisit?.visitor_space?.schema_description,
-			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
+			spaceDescriptionNl: graphQlVisit?.visitor_space?.schema_description_nl,
+			spaceServiceDescriptionNl: graphQlVisit?.visitor_space?.schema_service_description_nl,
+			spaceDescriptionEn: graphQlVisit?.visitor_space?.schema_description_en,
+			spaceServiceDescriptionEn: graphQlVisit?.visitor_space?.schema_service_description_en,
 			startAt: graphQlVisit?.start_date,
 			status: graphQlVisit?.status as VisitStatus,
 			accessType: graphQlVisit?.access_type || VisitAccessType.Full,
@@ -322,7 +324,7 @@ export class VisitsService {
 				InsertVisitFolderAccessMutationVariables
 			>(InsertVisitFolderAccessDocument, {
 				objects: [
-					...accessFolderIds.map((accessFolderId: string) => ({
+					...(accessFolderIds as string[]).map((accessFolderId: string) => ({
 						folder_id: accessFolderId,
 						visit_request_id: currentVisit.id,
 					})),
@@ -569,8 +571,8 @@ export class VisitsService {
 
 	/**
 	 * Checks if the user has access to a maintainer's space because he has an approved visit request for the current date
-	 * @param userProfileId: UUID of a user
-	 * @param maintainerOrId: OR-id of a maintainer
+	 * @param userProfileId
+	 * @param maintainerOrId
 	 */
 	async hasAccess(userProfileId: string, maintainerOrId: string): Promise<boolean> {
 		const visitsResponse = await this.dataService.execute<

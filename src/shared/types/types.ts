@@ -32,4 +32,8 @@ export interface UpdateResponse {
 	affectedRows: number;
 }
 
-export { Lookup_Languages_Enum as Locale } from '~generated/graphql-db-types-hetarchief';
+export {
+	Lookup_Languages_Enum as Locale,
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
+} from '~generated/graphql-db-types-hetarchief';

@@ -8,20 +8,19 @@ import { VisitRequest, VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
-import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Space } from '~modules/spaces/types';
+import { VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
-import { Locale } from '~shared/types/types';
+import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 const mockVisit1: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
@@ -114,14 +113,16 @@ const mockUser: User = {
 	isKeyUser: false,
 };
 
-const mockSpace: Space = {
+const mockVisitorSpace: VisitorSpace = {
 	id: '52caf5a2-a6d1-4e54-90cc-1b6e5fb66a21',
 	slug: 'amsab',
 	maintainerId: 'OR-154dn75',
 	name: 'Amsab-ISG',
-	description: null,
 	info: 'Amsab-ISG is het Instituut voor Sociale Geschiedenis. Het bewaart, ontsluit, onderzoekt en valoriseert het erfgoed van sociale en humanitaire bewegingen.',
-	serviceDescription: null,
+	descriptionNl: 'mijn-bezoekersruimte',
+	serviceDescriptionNl: 'service beschrijving',
+	descriptionEn: 'my-space',
+	serviceDescriptionEn: 'service description',
 	image: null,
 	color: null,
 	logo: 'https://assets.viaa.be/images/OR-154dn75',
@@ -248,7 +249,7 @@ describe('VisitsController', () => {
 
 		it('should return all visits of a single cpSpace for cp admin', async () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
-			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(mockVisitorSpace);
 
 			const visits = await visitsController.getVisits(
 				null,
@@ -342,7 +343,7 @@ describe('VisitsController', () => {
 
 		it('should return a generated active visit for kiosk and cpAdmins if they are linked to the space', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(mockVisit1);
-			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
 			const visit = await visitsController.getActiveVisitForUserAndSpace(
 				'space-1',
 				new SessionUserEntity({
@@ -356,9 +357,9 @@ describe('VisitsController', () => {
 
 		it('should throw a Gone exception if an active visit was not found and the space is inactive', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
-			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
-			const status = mockSpace.status;
-			mockSpace.status = VisitorSpaceStatus.Inactive;
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
+			const status = mockVisitorSpace.status;
+			mockVisitorSpace.status = VisitorSpaceStatus.Inactive;
 
 			let error;
 			try {
@@ -375,12 +376,12 @@ describe('VisitsController', () => {
 			expect(error.response.statusCode).toEqual(410);
 
 			// reset
-			mockSpace.status = status;
+			mockVisitorSpace.status = status;
 		});
 
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
-			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
 
 			let error;
 			try {
@@ -539,7 +540,7 @@ describe('VisitsController', () => {
 		it('should update a visit', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -605,7 +606,7 @@ describe('VisitsController', () => {
 		it('should update a visit status: approved', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit1);
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -629,7 +630,7 @@ describe('VisitsController', () => {
 			mockVisit3.status = VisitStatus.DENIED;
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit2);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -653,7 +654,7 @@ describe('VisitsController', () => {
 			mockVisit3.status = VisitStatus.DENIED;
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
@@ -677,7 +678,7 @@ describe('VisitsController', () => {
 			mockVisit3.status = VisitStatus.CANCELLED_BY_VISITOR;
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
 			mockVisitsService.update.mockResolvedValueOnce(mockVisit3);
-			mockSpacesService.findById.mockResolvedValueOnce(mockSpace);
+			mockSpacesService.findById.mockResolvedValueOnce(mockVisitorSpace);
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
