@@ -1,8 +1,7 @@
 import {
 	Body,
 	Controller,
-	HttpException,
-	HttpStatus,
+	InternalServerErrorException,
 	Logger,
 	Param,
 	ParseUUIDPipe,
@@ -46,8 +45,11 @@ export class UsersController {
 				language: updateUserLangDto.language,
 			});
 			return { message: 'Language updated' };
-		} catch (e) {
-			throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (err) {
+			throw new InternalServerErrorException({
+				message: 'Failed to update the user language',
+				error: err,
+			});
 		}
 	}
 
