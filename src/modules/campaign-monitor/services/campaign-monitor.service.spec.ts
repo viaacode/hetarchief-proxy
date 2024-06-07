@@ -422,7 +422,7 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-			expect(result.CustomFields[7]).toEqual(
+			expect(result.CustomFields[8]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
 			);
 		});
@@ -463,7 +463,12 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-			expect(result.CustomFields[7]).toBeUndefined();
+
+			expect(result.CustomFields[7]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[8]
+			);
+
+			expect(result.CustomFields[8]).toBeUndefined();
 		});
 	});
 
