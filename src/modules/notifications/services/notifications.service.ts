@@ -36,7 +36,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { Space } from '~modules/spaces/types';
+import { VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
@@ -235,7 +235,7 @@ export class NotificationsService {
 	 */
 	public async onApproveVisitRequest(
 		visitRequest: VisitRequest,
-		space: Space
+		space: VisitorSpace
 	): Promise<Notification> {
 		const startDate = formatAsBelgianDate(visitRequest.startAt);
 		const endDate = formatAsBelgianDate(visitRequest.endAt);
@@ -286,7 +286,7 @@ export class NotificationsService {
 	 */
 	public async onDenyVisitRequest(
 		visitRequest: VisitRequest,
-		space: Space,
+		space: VisitorSpace,
 		reason?: string
 	): Promise<Notification> {
 		const reasonWithFallback =

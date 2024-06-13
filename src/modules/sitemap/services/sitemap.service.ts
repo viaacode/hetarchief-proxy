@@ -14,7 +14,6 @@ import xmlFormat from 'xml-formatter';
 
 import { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	GetSitemapConfigDocument,
 	GetSitemapConfigQuery,
@@ -23,7 +22,7 @@ import { IeObjectLicense, IeObjectsSitemap } from '~modules/ie-objects/ie-object
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Locale } from '~shared/types/types';
+import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class SitemapService {

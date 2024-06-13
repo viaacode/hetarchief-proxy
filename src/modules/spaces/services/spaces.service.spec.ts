@@ -8,14 +8,13 @@ import { CreateSpaceDto } from '../dto/spaces.dto';
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	CreateSpaceMutation,
 	FindSpaceByIdQuery,
-	FindSpaceByMaintainerIdQuery,
+	FindSpaceByOrganisationIdQuery,
 	FindSpaceBySlugQuery,
 	FindSpacesQuery,
-	GetSpaceMaintainerProfilesQuery,
+	GetVisitorSpaceProfilesQuery,
 	UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
@@ -26,7 +25,7 @@ import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exceptio
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SortDirection } from '~shared/types';
-import { Locale } from '~shared/types/types';
+import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
@@ -46,8 +45,10 @@ const mockCreateSpace: CreateSpaceDto = {
 	orId: 'test',
 	slug: 'test-slug',
 	color: 'red',
-	description: 'my-space',
-	serviceDescription: 'service description',
+	descriptionNl: 'mijn-bezoekersruimte',
+	serviceDescriptionNl: 'service beschrijving',
+	descriptionEn: 'my-space',
+	serviceDescriptionEn: 'service description',
 	image: '',
 	status: VisitorSpaceStatus.Active,
 };
@@ -114,12 +115,12 @@ describe('SpacesService', () => {
 
 		it('if the space description is empty it falls back to the maintainer description', () => {
 			const mockCpSpace = cloneDeep(mockGqlSpace);
-			mockCpSpace.schema_description = 'Space specific description';
+			mockCpSpace.schema_description_nl = 'Space specific description';
 
 			const adapted = spacesService.adapt(mockCpSpace);
 
 			// test some sample keys
-			expect(adapted.description).toEqual('Space specific description');
+			expect(adapted.descriptionNl).toEqual('Space specific description');
 		});
 	});
 
@@ -156,8 +157,10 @@ describe('SpacesService', () => {
 				'1',
 				{
 					color: 'red',
-					description: 'my-space',
-					serviceDescription: 'service description',
+					descriptionNl: 'mijn-bezoekersruimte',
+					serviceDescriptionNl: 'service beschrijving',
+					descriptionEn: 'my-space',
+					serviceDescriptionEn: 'service description',
 					image: '',
 					status: VisitorSpaceStatus.Active,
 				},
@@ -426,12 +429,12 @@ describe('SpacesService', () => {
 
 	describe('findByMaintainerId', () => {
 		it('returns a single space by maintainer id', async () => {
-			const mockData: FindSpaceByMaintainerIdQuery = {
+			const mockData: FindSpaceByOrganisationIdQuery = {
 				maintainer_visitor_space: [
 					{
 						id: '1',
 					},
-				] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+				] as FindSpaceByOrganisationIdQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await spacesService.findByMaintainerId('1');
@@ -439,9 +442,9 @@ describe('SpacesService', () => {
 		});
 
 		it('returns null if the space was not found', async () => {
-			const mockData: FindSpaceByMaintainerIdQuery = {
+			const mockData: FindSpaceByOrganisationIdQuery = {
 				maintainer_visitor_space:
-					[] as FindSpaceByMaintainerIdQuery['maintainer_visitor_space'],
+					[] as FindSpaceByOrganisationIdQuery['maintainer_visitor_space'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
@@ -504,7 +507,7 @@ describe('SpacesService', () => {
 
 	describe('getMaintainerProfiles', () => {
 		it('returns all profile ids for all maintainers of a VisitorSpace', async () => {
-			const mockMaintainerIds: GetSpaceMaintainerProfilesQuery = {
+			const mockMaintainerIds: GetVisitorSpaceProfilesQuery = {
 				maintainer_visitor_space: [
 					{
 						profiles: [
