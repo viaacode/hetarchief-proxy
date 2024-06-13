@@ -16,6 +16,7 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			first_name
 			last_name
 			mail
+			language
 			collections {
 				ies {
 					ie_schema_identifier

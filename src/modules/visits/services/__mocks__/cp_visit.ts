@@ -4,10 +4,11 @@ import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	GqlVisit,
 	GqlVisitWithNotes,
-	Visit,
 	VisitAccessType,
+	VisitRequest,
 	VisitStatus,
 } from '~modules/visits/types';
+import { Locale } from '~shared/types/types';
 
 export const mockGqlVisitRequest: GqlVisit = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
@@ -19,6 +20,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 		first_name: 'Ineke',
 		last_name: 'van Dams',
 		mail: 'ineke.vandam@meemoo.be',
+		language: Locale.Nl,
 		collections: [
 			{
 				ies: [
@@ -81,7 +83,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 	accessible_folders: [],
 };
 
-export const mockVisitRequest: Visit = {
+export const mockVisitRequest: VisitRequest = {
 	accessType: VisitAccessType.Full,
 	accessibleFolderIds: [],
 	createdAt: '2022-03-18T08:32:57.256264',
@@ -114,10 +116,11 @@ export const mockVisitRequest: Visit = {
 	visitorId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	visitorLastName: 'van Dams',
 	visitorMail: 'ineke.vandam@meemoo.be',
+	visitorLanguage: Locale.Nl,
 	visitorName: 'Ineke van Dams',
 };
 
-export const mockVisitApproved: Visit = {
+export const mockVisitApproved: VisitRequest = {
 	id: mockGqlVisitRequest.id,
 	spaceId: mockGqlVisitRequest.cp_space_id,
 	spaceSlug: 'vrt',
@@ -137,6 +140,7 @@ export const mockVisitApproved: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	updatedById: null,
 	updatedByName: null,

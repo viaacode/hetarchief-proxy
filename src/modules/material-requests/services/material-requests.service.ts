@@ -315,6 +315,7 @@ export class MaterialRequestsService {
 						sendRequestListDto,
 						firstName: userInfo.firstName,
 						lastName: userInfo.lastName,
+						language: userInfo.language,
 					};
 					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 				})
@@ -328,6 +329,7 @@ export class MaterialRequestsService {
 				sendRequestListDto,
 				firstName: userInfo.firstName,
 				lastName: userInfo.lastName,
+				language: userInfo.language,
 			};
 			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 		} catch (err) {

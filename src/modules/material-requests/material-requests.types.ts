@@ -6,6 +6,7 @@ import {
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
 	id: string;
@@ -51,6 +52,7 @@ export interface MaterialRequestFindAllExtraParameters {
 export interface MaterialRequestSendRequestListUserInfo {
 	firstName: string;
 	lastName: string;
+	language: Locale;
 }
 
 export enum MaterialRequestType {

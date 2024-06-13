@@ -1,4 +1,3 @@
-import { LanguageCode } from '@meemoo/admin-core-api';
 import { Controller, Headers, Post, Query, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -11,6 +10,7 @@ import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { APIKEY } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Client Cache')
 @Controller('client-cache')
@@ -24,7 +24,7 @@ export class ClientCacheController {
 	@UseGuards(LoggedInGuard)
 	@RequireAnyPermissions(Permission.EDIT_ANY_CONTENT_PAGES, Permission.EDIT_OWN_CONTENT_PAGES)
 	async getOrganisationElementsForUser(
-		@Query('language') language: LanguageCode,
+		@Query('language') language: Locale,
 		@Query('path') path: string,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		@Headers(APIKEY) apikey: string

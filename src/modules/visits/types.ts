@@ -9,6 +9,7 @@ import {
 	InsertVisitMutation,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
+import { Locale } from '~shared/types/types';
 
 export { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum as VisitAccessType } from '~generated/graphql-db-types-hetarchief';
 
@@ -57,7 +58,7 @@ export interface GqlUpdateVisit {
 	access_type?: string;
 }
 
-export interface Visit {
+export interface VisitRequest {
 	id: string;
 	createdAt: string;
 	endAt: string;
@@ -89,6 +90,7 @@ export interface Visit {
 	visitorName: string;
 	visitorFirstName: string;
 	visitorLastName: string;
+	visitorLanguage: Locale;
 	accessibleFolderIds?: string[];
 	accessibleObjectIds?: string[];
 }

@@ -9,6 +9,7 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 			first_name
 			last_name
 			mail
+			language
 			collections {
 				ies {
 					ie_schema_identifier

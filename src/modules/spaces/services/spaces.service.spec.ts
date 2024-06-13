@@ -26,6 +26,7 @@ import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exceptio
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SortDirection } from '~shared/types';
+import { Locale } from '~shared/types/types';
 
 const mockUser: User = {
 	id: '0f5e3c9d-cf2a-4213-b888-dbf69b773c8e',
@@ -33,6 +34,7 @@ const mockUser: User = {
 	lastName: 'Testerom',
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
+	language: Locale.Nl,
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
@@ -150,13 +152,17 @@ describe('SpacesService', () => {
 				} as UpdateSpaceMutation['update_maintainer_visitor_space_by_pk'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const response = await spacesService.update('1', {
-				color: 'red',
-				description: 'my-space',
-				serviceDescription: 'service description',
-				image: '',
-				status: VisitorSpaceStatus.Active,
-			});
+			const response = await spacesService.update(
+				'1',
+				{
+					color: 'red',
+					description: 'my-space',
+					serviceDescription: 'service description',
+					image: '',
+					status: VisitorSpaceStatus.Active,
+				},
+				Locale.Nl
+			);
 			expect(response.id).toEqual('1');
 		});
 
@@ -167,7 +173,7 @@ describe('SpacesService', () => {
 				} as UpdateSpaceMutation['update_maintainer_visitor_space_by_pk'],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const response = await spacesService.update('1', {});
+			const response = await spacesService.update('1', {}, Locale.Nl);
 			expect(response.id).toEqual('1');
 		});
 
@@ -178,7 +184,7 @@ describe('SpacesService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
-				await spacesService.update('0', {});
+				await spacesService.update('0', {}, Locale.Nl);
 			} catch (e) {
 				error = e;
 			}
@@ -196,7 +202,7 @@ describe('SpacesService', () => {
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const response = await spacesService.create(mockCreateSpace);
+			const response = await spacesService.create(mockCreateSpace, Locale.Nl);
 			expect(response.id).toEqual('1');
 		});
 
@@ -213,7 +219,7 @@ describe('SpacesService', () => {
 
 			let error;
 			try {
-				await spacesService.create(mockCreateSpace);
+				await spacesService.create(mockCreateSpace, Locale.Nl);
 			} catch (e) {
 				error = e;
 			}
@@ -233,7 +239,7 @@ describe('SpacesService', () => {
 
 			let error;
 			try {
-				await spacesService.create(mockCreateSpace);
+				await spacesService.create(mockCreateSpace, Locale.Nl);
 			} catch (e) {
 				error = e;
 			}
@@ -253,7 +259,7 @@ describe('SpacesService', () => {
 
 			let error;
 			try {
-				await spacesService.create(mockCreateSpace);
+				await spacesService.create(mockCreateSpace, Locale.Nl);
 			} catch (e) {
 				error = e;
 			}
@@ -267,7 +273,7 @@ describe('SpacesService', () => {
 
 			let error;
 			try {
-				await spacesService.create(mockCreateSpace);
+				await spacesService.create(mockCreateSpace, Locale.Nl);
 			} catch (e) {
 				error = e;
 			}
@@ -505,14 +511,17 @@ describe('SpacesService', () => {
 							{
 								id: '181c014f-365a-40ab-8694-1792768e57ee',
 								mail: 'test.testers@meemoo.be',
+								language: Locale.Nl,
 							},
 							{
 								id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 								mail: 'test.testers2@meemoo.be',
+								language: Locale.Nl,
 							},
 							{
 								id: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 								mail: 'test.testers3@meemoo.be',
+								language: Locale.Nl,
 							},
 						],
 					},

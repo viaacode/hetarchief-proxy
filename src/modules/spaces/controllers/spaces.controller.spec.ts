@@ -11,6 +11,7 @@ import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockSpacesResponse = {
 	items: [
@@ -40,6 +41,7 @@ const mockUser: User = {
 	lastName: 'Testerom',
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
+	language: Locale.Nl,
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
@@ -309,7 +311,8 @@ describe('SpacesController', () => {
 					buffer: null,
 					stream: null,
 					destination: null,
-				}
+				},
+				new SessionUserEntity(mockUser)
 			);
 			expect(space.id).toEqual('1');
 		});
@@ -323,7 +326,8 @@ describe('SpacesController', () => {
 					{
 						orId: 'OR-test',
 					},
-					null
+					null,
+					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
 				error = e;

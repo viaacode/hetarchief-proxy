@@ -25,10 +25,11 @@ import {
 import { Space } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockGqlNotification1: GqlNotification = {
 	id: '1586f042-c61a-46b8-946b-ca2c2ea351ad',
@@ -102,6 +103,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	acceptedTosAt: '2022-01-24T17:21:58.937169+00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
@@ -109,7 +111,7 @@ const mockUser: User = {
 	idp: Idp.HETARCHIEF,
 	isKeyUser: false,
 };
-const mockVisit: Visit = {
+const mockVisitRequest: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceSlug: 'vrt',
@@ -129,6 +131,7 @@ const mockVisit: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	note: {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
@@ -285,10 +288,13 @@ describe('NotificationsService', () => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, recipient, ...createNotification } =
 				mockGqlNotification1;
-			const response = await notificationsService.createForMultipleRecipients(
-				createNotification as Partial<GqlCreateOrUpdateNotification>,
-				[recipient, recipient]
-			);
+			const response = await notificationsService.create([
+				{
+					...(createNotification as Partial<GqlCreateOrUpdateNotification>),
+					recipient,
+				},
+				{ ...(createNotification as Partial<GqlCreateOrUpdateNotification>), recipient },
+			]);
 			expect(response).toHaveLength(2);
 			createNotificationsSpy.mockRestore();
 		});
@@ -296,16 +302,16 @@ describe('NotificationsService', () => {
 
 	describe('onCreateVisit', () => {
 		it('should send the email to the first maintainer (recipient) if there is no mail space email', async () => {
-			const originalSpaceMail = mockVisit.spaceMail;
-			mockVisit.spaceMail = null;
+			const originalSpaceMail = mockVisitRequest.spaceMail;
+			mockVisitRequest.spaceMail = null;
 
 			const createForMultipleRecipientsSpy = jest
-				.spyOn(notificationsService, 'createForMultipleRecipients')
-				.mockResolvedValueOnce([mockNotification]);
+				.spyOn(notificationsService, 'create')
+				.mockResolvedValue([mockNotification]);
 
 			const response = await notificationsService.onCreateVisit(
-				mockVisit,
-				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				mockVisitRequest,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be', language: Locale.Nl }],
 				new SessionUserEntity(mockUser)
 			);
 
@@ -320,19 +326,19 @@ describe('NotificationsService', () => {
 			createForMultipleRecipientsSpy.mockRestore();
 			mockCampaignMonitorService.sendForVisit.mockClear();
 
-			mockVisit.spaceMail = originalSpaceMail;
+			mockVisitRequest.spaceMail = originalSpaceMail;
 		});
 
 		it('should not send the email if there is no spaceMail and no first recipient', async () => {
-			const originalSpaceMail = mockVisit.spaceMail;
-			mockVisit.spaceMail = null;
+			const originalSpaceMail = mockVisitRequest.spaceMail;
+			mockVisitRequest.spaceMail = null;
 
 			const createForMultipleRecipientsSpy = jest
-				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
 			const response = await notificationsService.onCreateVisit(
-				mockVisit,
+				mockVisitRequest,
 				[],
 				new SessionUserEntity(mockUser)
 			);
@@ -348,17 +354,17 @@ describe('NotificationsService', () => {
 			createForMultipleRecipientsSpy.mockRestore();
 			mockCampaignMonitorService.sendForVisit.mockClear();
 
-			mockVisit.spaceMail = originalSpaceMail;
+			mockVisitRequest.spaceMail = originalSpaceMail;
 		});
 
 		it('should send a notification about a visit request creation', async () => {
 			const createForMultipleRecipientsSpy = jest
-				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
 			const response = await notificationsService.onCreateVisit(
-				mockVisit,
-				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				mockVisitRequest,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be', language: Locale.Nl }],
 				new SessionUserEntity(mockUser)
 			);
 
@@ -370,7 +376,7 @@ describe('NotificationsService', () => {
 
 	describe('onApproveVisitRequest', () => {
 		it('should send a notification about a visit request approval', async () => {
-			const visit = { ...mockVisit };
+			const visit = { ...mockVisitRequest };
 			visit.startAt = addHours(new Date(), 1).toISOString();
 			visit.endAt = addHours(new Date(), 2).toISOString();
 			const createNotificationSpy = jest
@@ -384,7 +390,7 @@ describe('NotificationsService', () => {
 		});
 
 		it('should create a read notification if the visit already started', async () => {
-			const visit = { ...mockVisit };
+			const visit = { ...mockVisitRequest };
 			visit.startAt = subHours(new Date(), 1).toISOString();
 			const createNotificationSpy = jest
 				.spyOn(notificationsService, 'create')
@@ -405,7 +411,10 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
-			const response = await notificationsService.onDenyVisitRequest(mockVisit, mockSpace);
+			const response = await notificationsService.onDenyVisitRequest(
+				mockVisitRequest,
+				mockSpace
+			);
 
 			expect(response.status).toEqual(NotificationStatus.UNREAD);
 			createNotificationSpy.mockRestore();
@@ -415,12 +424,12 @@ describe('NotificationsService', () => {
 	describe('onCancelVisitRequest', () => {
 		it('should send a notification about a visit request cancellation', async () => {
 			const createForMultipleRecipientsSpy = jest
-				.spyOn(notificationsService, 'createForMultipleRecipients')
+				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification]);
 
 			const response = await notificationsService.onCancelVisitRequest(
-				mockVisit,
-				[{ id: mockUser.id, email: 'test.testers@meemoo.be' }],
+				mockVisitRequest,
+				[{ id: mockUser.id, email: 'test.testers@meemoo.be', language: Locale.Nl }],
 				new SessionUserEntity(mockUser)
 			);
 

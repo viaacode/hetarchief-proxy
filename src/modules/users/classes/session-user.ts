@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { get } from 'lodash';
 
 import { GroupName, Permission, User } from '../types';
 
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { Locale } from '~shared/types/types';
 
 export class SessionUserEntity {
 	private logger = new Logger(SessionUserEntity.name, { timestamp: true });
@@ -22,8 +22,8 @@ export class SessionUserEntity {
 		// can be archief-user or avo-user, where permissions are stored differently
 		// merge them into 1 unified array
 		this.permissions = [
-			...get(user, 'permissions', []),
-			...get(user, 'profile.permissions', []),
+			...(user?.permissions || []),
+			...((user as any)?.profile?.permissions || []),
 		];
 	}
 
@@ -32,15 +32,15 @@ export class SessionUserEntity {
 	}
 
 	public getId(): string {
-		return get(this.user, 'id') || null;
+		return this.user?.id || null;
 	}
 
 	public getFirstName(): string {
-		return get(this.user, 'firstName');
+		return this.user?.firstName;
 	}
 
 	public getLastName(): string {
-		return get(this.user, 'lastName');
+		return this.user?.lastName;
 	}
 
 	public getFullName(): string {
@@ -49,6 +49,10 @@ export class SessionUserEntity {
 
 	public getMail(): string {
 		return this.user?.email || null;
+	}
+
+	public getLanguage(): Locale {
+		return this.user?.language || Locale.Nl;
 	}
 
 	public getOrganisationId(): string {
@@ -60,7 +64,7 @@ export class SessionUserEntity {
 	}
 
 	public getVisitorSpaceSlug(): string {
-		return get(this.user, 'visitorSpaceSlug');
+		return this.user?.visitorSpaceSlug;
 	}
 
 	public getGroupName(): GroupName {

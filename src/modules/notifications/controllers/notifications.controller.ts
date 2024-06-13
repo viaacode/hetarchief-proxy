@@ -1,4 +1,4 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { Locale, TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	ForbiddenException,
@@ -28,7 +28,7 @@ import {
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit } from '~modules/visits/types';
+import { VisitRequest } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -111,7 +111,9 @@ export class NotificationsController {
 		if (totalNotificationsSent > 0) {
 			return {
 				status: this.translationsService.tText(
-					'modules/notifications/controllers/notifications___notificaties-verzonden'
+					'modules/notifications/controllers/notifications___notificaties-verzonden',
+					null,
+					Locale.En // Admin only endpoint, no logged in user since we use an apikey
 				),
 				notifications: {
 					[NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED]:
@@ -126,7 +128,9 @@ export class NotificationsController {
 		} else {
 			return {
 				status: this.translationsService.tText(
-					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent'
+					'modules/notifications/controllers/notifications___no-notifications-had-to-be-sent',
+					null,
+					Locale.En // Admin only endpoint, no logged in user since we use an apikey
 				),
 				total: 0,
 			};
@@ -138,28 +142,30 @@ export class NotificationsController {
 	 * @private
 	 */
 	private async sendAccessStartNotifications(): Promise<Notification[]> {
-		const visits: Visit[] =
+		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndStartedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
-			(visit): GqlCreateOrUpdateNotification => {
-				const endDate = formatAsBelgianDate(visit.endAt);
+		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
+			(visitRequest): GqlCreateOrUpdateNotification => {
+				const endDate = formatAsBelgianDate(visitRequest.endAt);
 				return {
 					title: this.translationsService.tText(
 						'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 						{
-							name: visit.spaceName,
-						}
+							name: visitRequest.spaceName,
+						},
+						visitRequest.visitorLanguage
 					),
 					description: this.translationsService.tText(
 						'modules/notifications/controllers/notifications___je-toegang-vervalt-terug-op-end-date',
 						{
 							endDate,
-						}
+						},
+						visitRequest.visitorLanguage
 					),
-					visit_id: visit.id,
+					visit_id: visitRequest.id,
 					type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED,
 					status: NotificationStatus.UNREAD,
-					recipient: visit.userProfileId,
+					recipient: visitRequest.userProfileId,
 				};
 			}
 		);
@@ -172,24 +178,27 @@ export class NotificationsController {
 	 * @private
 	 */
 	private async sendAccessAlmostEndedNotifications(): Promise<Notification[]> {
-		const visits: Visit[] =
+		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
-			(visit): GqlCreateOrUpdateNotification => ({
+		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
+			(visitRequest): GqlCreateOrUpdateNotification => ({
 				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
-						name: visit.spaceName,
+						name: visitRequest.spaceName,
 						minutes: 15,
-					}
+					},
+					visitRequest.visitorLanguage
 				),
 				description: this.translationsService.tText(
-					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest'
+					'modules/notifications/controllers/notifications___sla-je-werk-op-voor-je-toegang-verliest',
+					null,
+					visitRequest.visitorLanguage
 				),
-				visit_id: visit.id,
+				visit_id: visitRequest.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_END_WARNING,
 				status: NotificationStatus.UNREAD,
-				recipient: visit.userProfileId,
+				recipient: visitRequest.userProfileId,
 			})
 		);
 
@@ -201,23 +210,26 @@ export class NotificationsController {
 	 * @private
 	 */
 	private async sendAccessEndNotifications(): Promise<Notification[]> {
-		const visits: Visit[] =
+		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visits.map(
-			(visit): GqlCreateOrUpdateNotification => ({
+		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
+			(visitRequest): GqlCreateOrUpdateNotification => ({
 				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{
-						name: visit.spaceName,
-					}
+						name: visitRequest.spaceName,
+					},
+					visitRequest.visitorLanguage
 				),
 				description: this.translationsService.tText(
-					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen'
+					'modules/notifications/controllers/notifications___om-opnieuw-toegang-te-krijgen-tot-deze-bezoekersruimte-kan-je-een-nieuwe-aanvraag-indienen',
+					null,
+					visitRequest.visitorLanguage
 				),
-				visit_id: visit.id,
+				visit_id: visitRequest.id,
 				type: NotificationType.ACCESS_PERIOD_VISITOR_SPACE_ENDED,
 				status: NotificationStatus.UNREAD,
-				recipient: visit.userProfileId,
+				recipient: visitRequest.userProfileId,
 			})
 		);
 
@@ -228,7 +240,8 @@ export class NotificationsController {
 	 * Endpoint used for debugging the translations that are used for sending out notifications
 	 */
 	@Get('translations')
-	public async checkNotificationTranslations(): Promise<Record<string, string>> {
+	public async checkNotificationTranslations(): Promise<Record<Locale, Record<string, string>>> {
+		const languages = await this.translationsService.getLanguages();
 		const notificationTranslationKeys = [
 			'modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name',
 			'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
@@ -249,10 +262,20 @@ export class NotificationsController {
 			'modules/notifications/services/notifications___reden-reason',
 		];
 		return Object.fromEntries(
-			notificationTranslationKeys.map((translationKey) => [
-				translationKey,
-				this.translationsService.tText(translationKey),
-			])
+			languages.map((language) => {
+				const translationsInLanguage = Object.fromEntries(
+					notificationTranslationKeys.map((translationKey) => [
+						translationKey,
+						this.translationsService.tText(
+							translationKey,
+							null,
+							language.languageCode as Locale
+						),
+					])
+				);
+
+				return [language, translationsInLanguage];
+			})
 		);
 	}
 

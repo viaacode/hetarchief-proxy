@@ -38,7 +38,7 @@ import {
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
-import { Visit } from '~modules/visits/types';
+import { VisitRequest } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 
@@ -94,7 +94,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',
-			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
+			data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
 		};
 
 		await this.sendTransactionalMail({
@@ -368,7 +368,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		return this.rerouteEmailsTo ? this.rerouteEmailsTo : email;
 	}
 
-	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
+	public convertVisitToEmailTemplateData(visit: VisitRequest): CampaignMonitorVisitData {
 		return {
 			client_firstname: visit.visitorFirstName,
 			client_lastname: visit.visitorLastName,
@@ -391,13 +391,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	): CampaignMonitorMaterialRequestData {
 		const MATERIAL_REQUEST_TYPE_TRANSLATIONS: Record<MaterialRequestType, string> = {
 			[MaterialRequestType.VIEW]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren',
+				null,
+				emailInfo.language
 			),
 			[MaterialRequestType.REUSE]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken',
+				null,
+				emailInfo.language
 			),
 			[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object'
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object',
+				null,
+				emailInfo.language
 			),
 		};
 
@@ -406,16 +412,24 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			string
 		> = {
 			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___andere'
+				'modules/campaign-monitor/services/campaign-monitor___andere',
+				null,
+				emailInfo.language
 			),
 			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs'
+				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs',
+				null,
+				emailInfo.language
 			),
 			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek'
+				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek',
+				null,
+				emailInfo.language
 			),
 			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.tText(
-				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever'
+				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever',
+				null,
+				emailInfo.language
 			),
 		};
 
