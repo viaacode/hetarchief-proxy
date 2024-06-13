@@ -160,6 +160,7 @@ export class CollectionsController {
 			{
 				name: createCollectionDto.name,
 				user_profile_id: user.getId(),
+				description: createCollectionDto.description,
 				is_default: false,
 			},
 			referer,
