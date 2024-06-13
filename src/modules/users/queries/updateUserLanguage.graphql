@@ -1,0 +1,5 @@
+mutation updateUserLanguage($id: uuid!, $lang: lookup_languages_enum!) {
+	update_users_profile(_set: { language: $lang }, where: { id: { _eq: $id } }) {
+		affected_rows
+	}
+}

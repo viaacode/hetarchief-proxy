@@ -59,6 +59,7 @@ export interface CampaignMonitorUserInfo {
 	created_date?: string;
 	last_access_date?: string;
 	organisation?: string; //organisationName
+	language?: string;
 }
 
 export enum CampaignMonitorCustomFieldName {
@@ -70,4 +71,5 @@ export enum CampaignMonitorCustomFieldName {
 	created_date = 'created_date',
 	last_access_date = 'last_access_date',
 	organisation = 'organisation',
+	language = 'language',
 }

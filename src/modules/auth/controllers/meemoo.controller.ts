@@ -1,4 +1,4 @@
-import { Locale, TranslationsService } from '@meemoo/admin-core-api';
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -25,7 +25,6 @@ import { IdpService } from '../services/idp.service';
 import { MeemooService } from '../services/meemoo.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
-import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -36,6 +35,7 @@ import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 import { getLocaleFromUrl } from '~shared/helpers/get-locale-from-url';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
@@ -131,7 +131,7 @@ export class MeemooController {
 						name: this.translationsService.tText(
 							'modules/collections/controllers___default-collection-name',
 							null,
-							(archiefUser.language || Locale.Nl) as Lookup_Languages_Enum
+							(archiefUser.language || Locale.Nl) as Locale
 						),
 					},
 					null, // referer not important here

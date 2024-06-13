@@ -495,6 +495,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			[CampaignMonitorCustomFieldName.created_date]: userInfo.created_date,
 			[CampaignMonitorCustomFieldName.last_access_date]: userInfo.last_access_date,
 			[CampaignMonitorCustomFieldName.organisation]: userInfo.organisation,
+			[CampaignMonitorCustomFieldName.language]: userInfo.language,
 		};
 		if (!isNil(optin_mail_lists)) {
 			customFields[CampaignMonitorCustomFieldName.optin_mail_lists] = optin_mail_lists;

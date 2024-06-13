@@ -1,4 +1,4 @@
-import { Locale, TranslationsService } from '@meemoo/admin-core-api';
+import { TranslationsService } from '@meemoo/admin-core-api';
 import {
 	Body,
 	Controller,
@@ -26,7 +26,6 @@ import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 import { RelayState, SamlCallbackBody } from '../types';
 
-import { Lookup_Languages_Enum } from '~generated/graphql-db-types-hetarchief';
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
@@ -38,6 +37,7 @@ import { Permission } from '~modules/users/types';
 import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
@@ -155,7 +155,7 @@ export class HetArchiefController {
 			const userGroup = await this.idpService.determineUserGroup(
 				ldapUser,
 				organisation,
-				(archiefUser?.language || Locale.Nl) as Lookup_Languages_Enum
+				(archiefUser?.language || Locale.Nl) as Locale
 			);
 
 			const userDto = {
@@ -186,7 +186,7 @@ export class HetArchiefController {
 						name: this.translationsService.tText(
 							'modules/collections/controllers___default-collection-name',
 							null,
-							(archiefUser?.language || Locale.Nl) as Lookup_Languages_Enum
+							(archiefUser?.language || Locale.Nl) as Locale
 						),
 					},
 					null, // referer not important here
