@@ -13,6 +13,7 @@ import { IeObject } from '~modules/ie-objects/ie-objects.types';
 export interface Collection {
 	id: string;
 	name: string;
+	description: string;
 	createdAt: string;
 	updatedAt: string;
 	isDefault: boolean;

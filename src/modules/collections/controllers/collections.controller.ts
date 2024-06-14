@@ -159,6 +159,7 @@ export class CollectionsController {
 		return this.collectionsService.create(
 			{
 				name: createCollectionDto.name,
+				description: createCollectionDto.description,
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
