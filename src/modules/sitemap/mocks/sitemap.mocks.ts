@@ -1,4 +1,4 @@
-import { DbContentPage, LanguageCode } from '@meemoo/admin-core-api';
+import { DbContentPage, Locale } from '@meemoo/admin-core-api';
 
 import { SitemapConfig } from '../sitemap.types';
 
@@ -53,15 +53,22 @@ export const mockContentPage: DbContentPage = {
 	userGroupIds: [],
 	content_blocks: [],
 	labels: [],
-	language: LanguageCode.Nl,
+	language: Locale.Nl,
 	nlParentPageId: '3be90381-2a80-4c0e-8f30-d618ab6e2d77',
 	translatedPages: [
 		{
 			id: '3be90381-2a80-4c0e-8f30-d618ab6e2d77',
-			title: 'mock content page',
-			path: '/mock-content-page-url',
-			language: LanguageCode.Nl,
+			title: 'mock content page en',
+			path: '/mock-content-page-url-en',
+			language: Locale.En,
 			isPublic: true,
+		},
+		{
+			id: '3be90381-2a80-4c0e-8f30-d618ab6e2d77',
+			title: 'mock content page fr',
+			path: '/mock-content-page-url-fr',
+			language: 'fr' as any,
+			isPublic: false,
 		},
 	],
 };
@@ -82,5 +89,105 @@ export const mockSitemapSpaces = {
 	],
 };
 
-export const mockGeneralXml =
-	'<?xml version="1.0" encoding="UTF-8"?>\n\t\t<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\t\t\t<url>\n\t\t\t<loc>http://bezoekerstool/</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t<priority>1</priority>\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/bezoek</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t<priority>1</priority>\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/mock-content-page-url</loc>\n\t\t\t\n\t\t\t<changefreq>monthly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken/?aanbieders=OR-rf5kf25</loc>\n\t\t\t\n\t\t\t<changefreq>weekly</changefreq>\n\t\t\t\n\t\t\t</url>\n<url>\n\t\t\t<loc>http://bezoekerstool/zoeken/?aanbieders=OR-spacex</loc>\n\t\t\t\n\t\t\t<changefreq>weekly</changefreq>\n\t\t\t\n\t\t\t</url>\n\t\t</urlset>\n\t\t';
+export const mockGeneralXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>
+            http://hetarchief.be/
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/"/>
+        <changefreq>
+            monthly
+        </changefreq>
+        <priority>
+            1
+        </priority>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/bezoek
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/visit"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/bezoek"/>
+        <changefreq>
+            monthly
+        </changefreq>
+        <priority>
+            1
+        </priority>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/zoeken
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/search"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/zoeken"/>
+        <changefreq>
+            monthly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/gebruiksvoorwaarden
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/user-conditions"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/gebruiksvoorwaarden"/>
+        <changefreq>
+            monthly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/cookiebeleid
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/cookie-policy"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/cookiebeleid"/>
+        <changefreq>
+            monthly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/nieuwsbrief
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/newsletter"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/nieuwsbrief"/>
+        <changefreq>
+            monthly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/mock-content-page-url
+        </loc>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/mock-content-page-url-en"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/mock-content-page-url"/>
+        <lastmod>
+            2023-04-18
+        </lastmod>
+        <changefreq>
+            monthly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25
+        </loc>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/zoeken/?aanbieders=OR-rf5kf25"/>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/search/?aanbieders=OR-rf5kf25"/>
+        <changefreq>
+            weekly
+        </changefreq>
+    </url>
+    <url>
+        <loc>
+            http://hetarchief.be/zoeken/?aanbieders=OR-spacex
+        </loc>
+        <xhtml:link rel="alternate" hreflang="nl" href="http://hetarchief.be/zoeken/?aanbieders=OR-spacex"/>
+        <xhtml:link rel="alternate" hreflang="en" href="http://hetarchief.be/en/search/?aanbieders=OR-spacex"/>
+        <changefreq>
+            weekly
+        </changefreq>
+    </url>
+</urlset>`;

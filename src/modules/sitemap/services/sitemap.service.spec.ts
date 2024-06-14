@@ -15,6 +15,7 @@ import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -37,7 +38,7 @@ describe('SitemapService', () => {
 	const env = process.env;
 
 	beforeEach(async () => {
-		process.env.CLIENT_HOST = 'http://bezoekerstool';
+		process.env.CLIENT_HOST = 'http://hetarchief.be';
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -74,10 +75,6 @@ describe('SitemapService', () => {
 		process.env = env;
 	});
 
-	it('services should be defined', () => {
-		expect(sitemapService).toBeDefined();
-	});
-
 	describe('getSitemapConfig', () => {
 		it('returns a SitemapItemConfig object', async () => {
 			const mockdata = {
@@ -106,18 +103,34 @@ describe('SitemapService', () => {
 			const mockdata = [[mockContentPage], 1];
 			mockContentPagesService.fetchContentPages.mockResolvedValueOnce(mockdata);
 
-			const response = await sitemapService.getContentPagesPaths();
-			expect(response).toEqual([mockContentPage.path]);
+			const response = await sitemapService.getContentPageSitemapEntries();
+			expect(response).toEqual([
+				{
+					loc: mockContentPage.path,
+					links: [
+						{
+							href: mockContentPage.translatedPages[0].path,
+							hreflang: 'en',
+						},
+						{
+							href: mockContentPage.path,
+							hreflang: 'nl',
+						},
+					],
+					changefreq: 'monthly',
+					lastmod: '2023-04-18',
+				},
+			]);
 		});
 
 		it('throw an error when it fails to get the content pages', async () => {
 			mockContentPagesService.fetchContentPages.mockRejectedValueOnce('');
 
 			try {
-				await sitemapService.getContentPagesPaths();
+				await sitemapService.getContentPageSitemapEntries();
 				fail('getContentPagesPaths should have thrown an error');
 			} catch (err) {
-				expect(err.message).toEqual('Failed getting all the content pages');
+				expect(err.message).toEqual('Failed to getContentPageSitemapEntries: ""');
 			}
 		});
 	});
@@ -125,9 +138,33 @@ describe('SitemapService', () => {
 	describe('blacklistAndPrioritizePages', () => {
 		it('should remove the blacklisted items and add priority', async () => {
 			const mockPages: SitemapItemInfo[] = [
-				{ loc: '/bezoek', changefreq: 'monthly' },
-				{ loc: '/dynamic', changefreq: 'monthly' },
-				{ loc: '/geheime-content-pagina', changefreq: 'weekly' },
+				{
+					loc: '/bezoek',
+					links: [
+						{ href: '/visit', hreflang: Locale.En },
+						{ href: '/bezoek', hreflang: Locale.Nl },
+					],
+					changefreq: 'monthly',
+				},
+				{
+					loc: '/dynamic',
+					links: [
+						{ href: '/dynamic-en', hreflang: Locale.En },
+						{ href: '/dynamic', hreflang: Locale.Nl },
+					],
+					changefreq: 'monthly',
+				},
+				{
+					loc: '/geheime-content-pagina',
+					links: [
+						{ href: '/secret-content-pagina', hreflang: Locale.En },
+						{
+							href: '/geheime-content-pagina',
+							hreflang: Locale.Nl,
+						},
+					],
+					changefreq: 'weekly',
+				},
 			];
 
 			const response = sitemapService.blacklistAndPrioritizePages(
@@ -135,8 +172,23 @@ describe('SitemapService', () => {
 				mockSitemapConfig
 			);
 			expect(response).toEqual([
-				{ loc: '/bezoek', changefreq: 'monthly', priority: 1 },
-				{ loc: '/dynamic', changefreq: 'monthly' },
+				{
+					loc: '/bezoek',
+					links: [
+						{ href: '/visit', hreflang: Locale.En },
+						{ href: '/bezoek', hreflang: Locale.Nl },
+					],
+					changefreq: 'monthly',
+					priority: 1,
+				},
+				{
+					loc: '/dynamic',
+					links: [
+						{ href: '/dynamic-en', hreflang: Locale.En },
+						{ href: '/dynamic', hreflang: Locale.Nl },
+					],
+					changefreq: 'monthly',
+				},
 			]);
 		});
 	});
@@ -145,10 +197,19 @@ describe('SitemapService', () => {
 		it('should return the xml for the general sitemap xml', async () => {
 			mockContentPagesService.fetchContentPages.mockResolvedValueOnce([[mockContentPage], 1]);
 			mockSpacesService.findAll.mockResolvedValueOnce(mockSitemapSpaces);
+
+			// Public ie objects
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
 			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
 				items: [mockSitemapObject],
 			});
+
+			// Non-public ie objects
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({ total: 1 });
+			mockIeObjectsService.findIeObjectsForSitemap.mockResolvedValueOnce({
+				items: [mockSitemapObject],
+			});
+
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce(
 				'https://asset-server.be/bucketname/SITEMAP/general'
 			);

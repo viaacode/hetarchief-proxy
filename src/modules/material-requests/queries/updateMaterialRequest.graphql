@@ -22,6 +22,7 @@ mutation updateMaterialRequest(
 				id
 				full_name
 				mail
+				language
 			}
 			object {
 				maintainer {

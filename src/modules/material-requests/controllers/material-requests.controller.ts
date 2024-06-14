@@ -196,6 +196,7 @@ export class MaterialRequestsController {
 				{
 					firstName: user.getFirstName(),
 					lastName: user.getLastName(),
+					language: user.getLanguage(),
 				}
 			);
 

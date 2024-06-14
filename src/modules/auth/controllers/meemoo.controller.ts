@@ -34,6 +34,8 @@ import { Idp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
+import { getLocaleFromUrl } from '~shared/helpers/get-locale-from-url';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Auth')
 @Controller('auth/meemoo')
@@ -100,7 +102,11 @@ export class MeemooController {
 			);
 
 			// determine user group
-			const userGroup = await this.idpService.determineUserGroup(ldapUser);
+			const userGroup = await this.idpService.determineUserGroup(
+				ldapUser,
+				null,
+				archiefUser.language
+			);
 
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
@@ -123,7 +129,9 @@ export class MeemooController {
 						is_default: true,
 						user_profile_id: archiefUser.id,
 						name: this.translationsService.tText(
-							'modules/collections/controllers___default-collection-name'
+							'modules/collections/controllers___default-collection-name',
+							null,
+							(archiefUser.language || Locale.Nl) as Locale
 						),
 					},
 					null, // referer not important here
@@ -179,7 +187,9 @@ export class MeemooController {
 					Idp.MEEMOO,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.tText(
-						'modules/auth/controllers/meemoo___account-configuratie'
+						'modules/auth/controllers/meemoo___account-configuratie',
+						null,
+						getLocaleFromUrl(info.returnToUrl)
 					)
 				);
 			}
