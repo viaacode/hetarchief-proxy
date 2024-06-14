@@ -18,11 +18,10 @@ export function getTranslationFallback(
 
 export function resolveTranslationVariables(
 	translation: string,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	variables: Record<string, string | number> = {}
+	variables?: Record<string, string | number>
 ): string {
 	let resolvedTranslation = translation;
-	Object.keys(variables).forEach((variableName) => {
+	Object.keys(variables || {}).forEach((variableName) => {
 		resolvedTranslation = resolvedTranslation.replace(
 			new RegExp(`{{${variableName}}}`, 'g'),
 			String(variables[variableName])
