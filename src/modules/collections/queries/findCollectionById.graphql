@@ -4,6 +4,7 @@ query findCollectionById($collectionId: uuid) {
 		id
 		is_default
 		name
+		description
 		updated_at
 		user_profile_id
 	}

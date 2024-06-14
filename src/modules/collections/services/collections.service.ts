@@ -128,6 +128,7 @@ export class CollectionsService {
 		return {
 			id: gqlCollection.id,
 			name: gqlCollection.name,
+			description: gqlCollection.description,
 			userProfileId: gqlCollection.user_profile_id,
 			createdAt: gqlCollection.created_at,
 			updatedAt: gqlCollection.updated_at,

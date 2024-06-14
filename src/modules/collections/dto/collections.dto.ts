@@ -12,6 +12,15 @@ export class CreateOrUpdateCollectionDto {
 		example: 'Favorites',
 	})
 	name: string;
+
+	@IsString()
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: string,
+		description: 'The description of the folder',
+		example: 'My favorite movies',
+	})
+	description?: string;
 }
 
 export class CollectionObjectsQueryDto {
