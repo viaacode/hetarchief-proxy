@@ -17,7 +17,7 @@ export class CreateOrUpdateCollectionDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: string,
-		description: 'The description of the collection',
+		description: 'The description of the folder',
 		example: 'My favorite movies',
 	})
 	description?: string;
