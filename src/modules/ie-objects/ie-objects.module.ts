@@ -21,7 +21,9 @@ import { VisitsModule } from '~modules/visits';
 		VisitsModule,
 		OrganisationsModule,
 		SpacesModule,
-		CacheModule.register(),
+		CacheModule.register({
+			max: 1000,
+		}),
 	],
 	providers: [IeObjectsService],
 	exports: [IeObjectsService],
