@@ -1,6 +1,5 @@
 {
   "modules/auth/controllers/het-archief___account-configuratie": "Account configuratie",
-  "modules/auth/controllers/meemoo___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___account-configuratie": "Account configuratie",
   "modules/auth/services/idp___de-account-is-een-beheerder-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked": "Er is een probleem met deze admin account: er is geen organisatie geregistreerd. Neem contact op met <a href=\"mailto:support@meemoo.be\" target=\"\">support@meemoo.be</a> en laat even weten welk e-mailadres je gebruikt om in te loggen. We brengen het zo snel mogelijk in orde.",
   "modules/auth/services/idp___de-account-is-een-kiosk-gebruiker-maar-heeft-geen-organisatie-in-de-acm-voeg-een-organisatie-toe-in-de-acm-no-org-linked": "Er is een probleem met deze kiosk-account: er is geen organisatie geregistreerd. Neem contact op met <a href=\"mailto:support@meemoo.be\" target=\"\">support@meemoo.be</a> en laat even weten welk e-mailadres je gebruikt om in te loggen. We brengen het zo snel mogelijk in orde.",
