@@ -1,5 +1,6 @@
 import { AdminTranslationsModule, DataModule } from '@meemoo/admin-core-api';
-import { CacheModule, forwardRef, Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { OrganisationsController } from '~modules/organisations/controllers/organisations.controller';

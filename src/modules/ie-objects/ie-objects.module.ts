@@ -1,4 +1,5 @@
 import { DataModule, PlayerTicketModule } from '@meemoo/admin-core-api';
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -20,6 +21,9 @@ import { VisitsModule } from '~modules/visits';
 		VisitsModule,
 		OrganisationsModule,
 		SpacesModule,
+		CacheModule.register({
+			max: 1000,
+		}),
 	],
 	providers: [IeObjectsService],
 	exports: [IeObjectsService],
