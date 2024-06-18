@@ -72,6 +72,7 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
+import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -175,7 +176,7 @@ export class IeObjectsService {
 
 		const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
 		const objectResponse = await this.cacheManager.wrap(
-			cacheKey,
+			CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
 			() => this.executeQuery(esIndex, esQuery),
 			// cache for 60 minutes
 			3_600_000
