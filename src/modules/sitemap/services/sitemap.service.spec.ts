@@ -1,4 +1,4 @@
-import { AssetsService, ContentPagesService, DataService, Locale } from '@meemoo/admin-core-api';
+import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import {
@@ -15,6 +15,7 @@ import { mockSitemapObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -140,26 +141,26 @@ describe('SitemapService', () => {
 				{
 					loc: '/bezoek',
 					links: [
-						{ href: '/visit', hreflang: Locale.en },
-						{ href: '/bezoek', hreflang: Locale.nl },
+						{ href: '/visit', hreflang: Locale.En },
+						{ href: '/bezoek', hreflang: Locale.Nl },
 					],
 					changefreq: 'monthly',
 				},
 				{
 					loc: '/dynamic',
 					links: [
-						{ href: '/dynamic-en', hreflang: Locale.en },
-						{ href: '/dynamic', hreflang: Locale.nl },
+						{ href: '/dynamic-en', hreflang: Locale.En },
+						{ href: '/dynamic', hreflang: Locale.Nl },
 					],
 					changefreq: 'monthly',
 				},
 				{
 					loc: '/geheime-content-pagina',
 					links: [
-						{ href: '/secret-content-pagina', hreflang: Locale.en },
+						{ href: '/secret-content-pagina', hreflang: Locale.En },
 						{
 							href: '/geheime-content-pagina',
-							hreflang: Locale.nl,
+							hreflang: Locale.Nl,
 						},
 					],
 					changefreq: 'weekly',
@@ -174,8 +175,8 @@ describe('SitemapService', () => {
 				{
 					loc: '/bezoek',
 					links: [
-						{ href: '/visit', hreflang: Locale.en },
-						{ href: '/bezoek', hreflang: Locale.nl },
+						{ href: '/visit', hreflang: Locale.En },
+						{ href: '/bezoek', hreflang: Locale.Nl },
 					],
 					changefreq: 'monthly',
 					priority: 1,
@@ -183,8 +184,8 @@ describe('SitemapService', () => {
 				{
 					loc: '/dynamic',
 					links: [
-						{ href: '/dynamic-en', hreflang: Locale.en },
-						{ href: '/dynamic', hreflang: Locale.nl },
+						{ href: '/dynamic-en', hreflang: Locale.En },
+						{ href: '/dynamic', hreflang: Locale.Nl },
 					],
 					changefreq: 'monthly',
 				},

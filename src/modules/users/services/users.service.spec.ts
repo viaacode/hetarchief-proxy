@@ -9,6 +9,7 @@ import {
 	UpdateUserLastAccessDateMutation,
 	UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, Permission, User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -24,6 +25,7 @@ const archiefUser: User = {
 	id: mockUser.id,
 	acceptedTosAt: null,
 	email: mockUser.mail,
+	language: mockUser.language,
 	firstName: mockUser.first_name,
 	lastName: mockUser.last_name,
 	fullName: mockUser.full_name,
@@ -48,6 +50,7 @@ describe('UsersService', () => {
 					useValue: mockDataService,
 				},
 			],
+			imports: [CampaignMonitorModule],
 		})
 			.setLogger(new TestingLogger())
 			.compile();

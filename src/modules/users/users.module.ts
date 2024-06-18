@@ -4,9 +4,11 @@ import { forwardRef, Module } from '@nestjs/common';
 import { UsersController } from './controllers/users.controller';
 import { UsersService } from './services/users.service';
 
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
+
 @Module({
 	controllers: [UsersController],
-	imports: [forwardRef(() => DataModule)],
+	imports: [forwardRef(() => DataModule), CampaignMonitorModule],
 	providers: [UsersService],
 	exports: [UsersService],
 })

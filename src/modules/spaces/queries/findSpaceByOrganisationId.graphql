@@ -1,13 +1,15 @@
-query findSpaceByMaintainerId($maintainerId: String!) {
-	maintainer_visitor_space(where: { schema_maintainer_id: { _eq: $maintainerId } }) {
+query findSpaceByOrganisationId($organisationId: String!) {
+	maintainer_visitor_space(where: { schema_maintainer_id: { _eq: $organisationId } }) {
 		id
 		slug
 		schema_image
 		schema_color
 		schema_audience_type
-		schema_description
 		schema_public_access
-		schema_service_description
+		schema_description_nl
+		schema_service_description_nl
+		schema_description_en
+		schema_service_description_en
 		status
 		published_at
 		created_at

@@ -10,6 +10,7 @@ mutation updateCollection(
 		returning {
 			id
 			name
+			description
 			user_profile_id
 			is_default
 			created_at

@@ -5,6 +5,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export enum Permission {
 	SEARCH = 'SEARCH',
@@ -75,6 +76,7 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	email: string;
+	language: Locale;
 	acceptedTosAt: string;
 	groupId: string;
 	groupName: GroupName;

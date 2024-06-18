@@ -16,6 +16,7 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			first_name
 			last_name
 			mail
+			language
 			collections {
 				ies {
 					ie_schema_identifier
@@ -41,9 +42,11 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			schema_image
 			schema_color
 			schema_audience_type
-			schema_description
 			schema_public_access
-			schema_service_description
+			schema_description_nl
+			schema_service_description_nl
+			schema_description_en
+			schema_service_description_en
 			status
 			published_at
 			created_at

@@ -2,10 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { AccessType } from '~modules/spaces/types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
+import { VisitorSpaceStatus } from '~shared/types/types';
 
 export class SpacesQueryDto {
 	@IsString()
@@ -74,9 +74,11 @@ export class SpacesQueryDto {
 			'schema_image',
 			'schema_color',
 			'schema_audience_type',
-			'schema_description',
 			'schema_public_access',
-			'schema_service_description',
+			'schema_description_nl',
+			'schema_service_description_nl',
+			'schema_description_en',
+			'schema_service_description_en',
 			'status',
 			'published_at',
 			'created_at',
@@ -114,16 +116,6 @@ export class UpdateSpaceDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description: 'The description for this space',
-		default: undefined,
-	})
-	description?: string;
-
-	@IsString()
-	@Type(() => String)
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: String,
 		description: 'The (background) color for this space',
 		default: undefined,
 		example: '#ffffff',
@@ -135,11 +127,42 @@ export class UpdateSpaceDto {
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
-		description:
-			'The service description for this space. This is shown as additional info when making a visit request',
+		description: 'The description for this space in Dutch',
 		default: undefined,
 	})
-	serviceDescription?: string;
+	descriptionNl?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'The service description for this space in Dutch. This is shown as additional info when making a visit request',
+		default: undefined,
+	})
+	serviceDescriptionNl?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description: 'The description for this space in English',
+		default: undefined,
+	})
+	descriptionEn?: string;
+
+	@IsString()
+	@Type(() => String)
+	@IsOptional()
+	@ApiPropertyOptional({
+		type: String,
+		description:
+			'The service description for this space in English. This is shown as additional info when making a visit request',
+		default: undefined,
+	})
+	serviceDescriptionEn?: string;
 
 	@IsString()
 	@Type(() => String)

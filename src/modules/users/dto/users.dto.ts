@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
+import { Locale } from '~shared/types/types';
+
 export class CreateUserDto {
 	@IsString()
 	firstName: string;
@@ -56,4 +58,13 @@ export class UpdateAcceptedTosDto {
 		description: 'The date and time the user accepted the Terms of Service',
 	})
 	acceptedTosAt: string;
+}
+
+export class UpdateUserLangDto {
+	@IsString()
+	@ApiProperty({
+		type: String,
+		enum: Locale,
+	})
+	language: Locale;
 }

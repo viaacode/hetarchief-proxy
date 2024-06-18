@@ -37,6 +37,7 @@ import { Permission } from '~modules/users/types';
 import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Auth')
 @Controller('auth/hetarchief')
@@ -83,7 +84,8 @@ export class HetArchiefController {
 	@Redirect()
 	public async registerRoute(
 		@Session() session: Record<string, any>,
-		@Query('returnToUrl') returnToUrl: string
+		@Query('returnToUrl') returnToUrl: string,
+		@Query('locale') locale: Locale = Locale.Nl
 	) {
 		try {
 			const serverRedirectUrl = stringifyUrl({
@@ -91,7 +93,7 @@ export class HetArchiefController {
 				query: { returnToUrl },
 			});
 			const url = stringifyUrl({
-				url: this.configService.get('SSUM_REGISTRATION_PAGE'),
+				url: this.configService.get('SSUM_REGISTRATION_PAGE').replace('{locale}', locale),
 				query: {
 					redirect_to: serverRedirectUrl,
 					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
@@ -151,7 +153,11 @@ export class HetArchiefController {
 			);
 
 			// determine user group
-			const userGroup = await this.idpService.determineUserGroup(ldapUser, organisation);
+			const userGroup = await this.idpService.determineUserGroup(
+				ldapUser,
+				organisation,
+				(archiefUser?.language || Locale.Nl) as Locale
+			);
 
 			const userDto = {
 				firstName: ldapUser.attributes.givenName[0],
@@ -179,7 +185,9 @@ export class HetArchiefController {
 						is_default: true,
 						user_profile_id: archiefUser.id,
 						name: this.translationsService.tText(
-							'modules/collections/controllers___default-collection-name'
+							'modules/collections/controllers___default-collection-name',
+							null,
+							(archiefUser?.language || Locale.Nl) as Locale
 						),
 					},
 					null, // referer not important here
@@ -258,7 +266,9 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
 					this.translationsService.tText(
-						'modules/auth/controllers/het-archief___account-configuratie'
+						'modules/auth/controllers/het-archief___account-configuratie',
+						null,
+						Locale.En
 					)
 				);
 			}
