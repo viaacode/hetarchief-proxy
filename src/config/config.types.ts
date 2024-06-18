@@ -23,8 +23,6 @@ export interface Configuration {
 	SAML_SP_ENTITY_ID: string;
 	SAML_SP_PRIVATE_KEY: string;
 	SAML_SP_CERTIFICATE: string;
-	SAML_MEEMOO_IDP_META_DATA_ENDPOINT: string;
-	SAML_MEEMOO_SP_ENTITY_ID: string;
 	CORS_ENABLE_WHITELIST: boolean;
 	CORS_OPTIONS: any;
 	TICKET_SERVICE_URL: string;

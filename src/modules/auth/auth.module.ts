@@ -8,7 +8,6 @@ import { AuthController } from './controllers/auth.controller';
 import { HetArchiefController } from './controllers/het-archief.controller';
 import { HetArchiefService } from './services/het-archief.service';
 import { IdpService } from './services/idp.service';
-import { MeemooService } from './services/meemoo.service';
 
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CollectionsModule } from '~modules/collections';
@@ -28,16 +27,6 @@ export const archiefServiceFactory = {
 	inject: [ConfigService],
 };
 
-export const meemooServiceFactory = {
-	provide: MeemooService,
-	useFactory: async (configService: ConfigService<Configuration>) => {
-		const meemooService = new MeemooService(configService);
-		await meemooService.initialize();
-		return meemooService;
-	},
-	inject: [ConfigService],
-};
-
 @Module({
 	controllers: [AuthController, HetArchiefController],
 	imports: [
@@ -50,6 +39,6 @@ export const meemooServiceFactory = {
 		OrganisationsModule,
 		CampaignMonitorModule,
 	],
-	providers: [archiefServiceFactory, meemooServiceFactory, IdpService, SessionService],
+	providers: [archiefServiceFactory, IdpService, SessionService],
 })
 export class AuthModule {}

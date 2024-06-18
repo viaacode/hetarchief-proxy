@@ -23,6 +23,7 @@ const mockCollectionsResponse: IPagination<Collection> = {
 		{
 			id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 			name: 'Favorieten',
+			description: 'Mijn favoriete items',
 			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 			isDefault: true,
 			createdAt: '2022-02-18T09:19:09.487977',
@@ -30,7 +31,8 @@ const mockCollectionsResponse: IPagination<Collection> = {
 		},
 		{
 			id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
-			name: 'my favorite movies',
+			name: 'mijn favorite films',
+			description: 'Mijn favoriete films',
 			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 			isDefault: false,
 			createdAt: '2022-02-22T13:51:01.995293',
