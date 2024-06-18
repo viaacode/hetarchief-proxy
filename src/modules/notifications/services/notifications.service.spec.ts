@@ -322,6 +322,7 @@ describe('NotificationsService', () => {
 				{
 					id: 'space-3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 					email: 'test.testers@meemoo.be',
+					language: Locale.Nl,
 				},
 			]);
 			createForMultipleRecipientsSpy.mockRestore();
@@ -350,6 +351,7 @@ describe('NotificationsService', () => {
 				{
 					id: 'space-3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 					email: undefined,
+					language: Locale.Nl,
 				},
 			]);
 			createForMultipleRecipientsSpy.mockRestore();

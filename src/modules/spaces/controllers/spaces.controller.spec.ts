@@ -262,7 +262,7 @@ describe('SpacesController', () => {
 			expect(error.response).toEqual({
 				error: 'Forbidden',
 				statusCode: 403,
-				message: 'You are not authorized to update this visitor space',
+				message: 'You are not authorized to update this visitorSpace',
 			});
 			mockUser.permissions.pop();
 		});

@@ -536,6 +536,7 @@ describe('SpacesService', () => {
 			expect(response[0]).toEqual({
 				id: mockMaintainerIds.maintainer_visitor_space[0].profiles[0].id,
 				email: mockMaintainerIds.maintainer_visitor_space[0].profiles[0].mail,
+				language: mockMaintainerIds.maintainer_visitor_space[0].profiles[0].language,
 			});
 		});
 	});
