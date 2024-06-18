@@ -20,8 +20,6 @@ export const configValidationSchema = Joi.object({
 	SAML_SP_ENTITY_ID: Joi.string(),
 	SAML_SP_PRIVATE_KEY: Joi.string().allow(''),
 	SAML_SP_CERTIFICATE: Joi.string().allow(''),
-	SAML_MEEMOO_IDP_META_DATA_ENDPOINT: Joi.string(),
-	SAML_MEEMOO_SP_ENTITY_ID: Joi.string(),
 	TICKET_SERVICE_URL: Joi.string(),
 	TICKET_SERVICE_CERT: Joi.string(),
 	TICKET_SERVICE_KEY: Joi.string(),

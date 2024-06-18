@@ -36,6 +36,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 const mockGqlCollection1: FindCollectionsByUserQuery['users_folder'][0] = {
 	id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 	name: 'Favorieten',
+	description: 'Favorieten',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	is_default: true,
 	created_at: '2022-02-18T09:19:09.487977',
@@ -45,7 +46,8 @@ const mockGqlCollection1: FindCollectionsByUserQuery['users_folder'][0] = {
 
 const mockGqlCollection2: FindCollectionsByUserQuery['users_folder'][0] = {
 	id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
-	name: 'my favorite movies',
+	name: 'mijn favorite films',
+	description: 'mijn favorite films',
 	user_profile_id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 	is_default: false,
 	created_at: '2022-02-22T13:51:01.995293',
