@@ -1,6 +1,8 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import nock from 'nock';
 
@@ -69,6 +71,10 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findAll: jest.fn(),
 };
 
+const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
+	wrap: jest.fn().mockImplementation((key, cb) => cb()),
+};
+
 const mockObjectSchemaIdentifier = mockObjectIe.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
@@ -119,6 +125,10 @@ describe('ieObjectsService', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheService,
 				},
 			],
 		})
