@@ -1,5 +1,5 @@
 import { AssetsService, ContentPagesService, DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
 	mockContentPage,
@@ -7,7 +7,7 @@ import {
 	mockSitemapConfig,
 	mockSitemapSpaces,
 } from '../mocks/sitemap.mocks';
-import { SitemapItemInfo } from '../sitemap.types';
+import { type SitemapItemInfo } from '../sitemap.types';
 
 import { SitemapService } from './sitemap.service';
 

@@ -1,39 +1,39 @@
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { find, set } from 'lodash';
 
-import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, GqlSpace, VisitorSpace } from '../types';
+import { type CreateSpaceDto, type SpacesQueryDto, type UpdateSpaceDto } from '../dto/spaces.dto';
+import { AccessType, type GqlSpace, type VisitorSpace } from '../types';
 
 import {
 	CreateSpaceDocument,
-	CreateSpaceMutation,
-	CreateSpaceMutationVariables,
+	type CreateSpaceMutation,
+	type CreateSpaceMutationVariables,
 	FindSpaceByIdDocument,
-	FindSpaceByIdQuery,
-	FindSpaceByIdQueryVariables,
+	type FindSpaceByIdQuery,
+	type FindSpaceByIdQueryVariables,
 	FindSpaceByOrganisationIdDocument,
-	FindSpaceByOrganisationIdQuery,
-	FindSpaceByOrganisationIdQueryVariables,
+	type FindSpaceByOrganisationIdQuery,
+	type FindSpaceByOrganisationIdQueryVariables,
 	FindSpaceBySlugDocument,
-	FindSpaceBySlugQuery,
-	FindSpaceBySlugQueryVariables,
+	type FindSpaceBySlugQuery,
+	type FindSpaceBySlugQueryVariables,
 	FindSpacesDocument,
-	FindSpacesQuery,
-	FindSpacesQueryVariables,
+	type FindSpacesQuery,
+	type FindSpacesQueryVariables,
 	GetVisitorSpaceProfilesDocument,
-	GetVisitorSpaceProfilesQuery,
-	GetVisitorSpaceProfilesQueryVariables,
-	Maintainer_Visitor_Space_Set_Input,
+	type GetVisitorSpaceProfilesQuery,
+	type GetVisitorSpaceProfilesQueryVariables,
+	type Maintainer_Visitor_Space_Set_Input,
 	UpdateSpaceDocument,
-	UpdateSpaceMutation,
-	UpdateSpaceMutationVariables,
+	type UpdateSpaceMutation,
+	type UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { Locale, Recipient } from '~shared/types/types';
+import { type Locale, type Recipient } from '~shared/types/types';
 
 @Injectable()
 export class SpacesService {

@@ -1,10 +1,10 @@
-import { InternalServerErrorException, Logger, LoggerService } from '@nestjs/common';
+import { InternalServerErrorException, Logger, type LoggerService } from '@nestjs/common';
 import { addDays, getHours, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import { get } from 'lodash';
 import flow from 'lodash/fp/flow';
 
-import { User } from '~modules/users/types';
-import { Idp, LdapUser } from '~shared/auth/auth.types';
+import { type User } from '~modules/users/types';
+import { Idp, type LdapUser } from '~shared/auth/auth.types';
 import { SpecialPermissionGroups } from '~shared/types/types';
 
 const IDP = 'idp';

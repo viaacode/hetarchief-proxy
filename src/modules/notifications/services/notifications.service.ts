@@ -5,43 +5,43 @@ import {
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
-import { DeleteNotificationDto } from '../dto/notifications.dto';
+import { type DeleteNotificationDto } from '../dto/notifications.dto';
 import {
-	GqlCreateOrUpdateNotification,
-	GqlNotification,
-	Notification,
+	type GqlCreateOrUpdateNotification,
+	type GqlNotification,
+	type Notification,
 	NotificationStatus,
 	NotificationType,
 } from '../types';
 
 import {
 	DeleteNotificationsDocument,
-	DeleteNotificationsMutation,
-	DeleteNotificationsMutationVariables,
+	type DeleteNotificationsMutation,
+	type DeleteNotificationsMutationVariables,
 	FindNotificationsByUserDocument,
-	FindNotificationsByUserQuery,
-	FindNotificationsByUserQueryVariables,
+	type FindNotificationsByUserQuery,
+	type FindNotificationsByUserQueryVariables,
 	InsertNotificationsDocument,
-	InsertNotificationsMutation,
-	InsertNotificationsMutationVariables,
+	type InsertNotificationsMutation,
+	type InsertNotificationsMutationVariables,
 	UpdateAllNotificationsForUserDocument,
-	UpdateAllNotificationsForUserMutation,
-	UpdateAllNotificationsForUserMutationVariables,
+	type UpdateAllNotificationsForUserMutation,
+	type UpdateAllNotificationsForUserMutationVariables,
 	UpdateNotificationDocument,
-	UpdateNotificationMutation,
-	UpdateNotificationMutationVariables,
+	type UpdateNotificationMutation,
+	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { VisitorSpace } from '~modules/spaces/types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { VisitRequest } from '~modules/visits/types';
+import { type VisitorSpace } from '~modules/spaces/types';
+import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import { type VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { Recipient } from '~shared/types/types';
+import { type Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {

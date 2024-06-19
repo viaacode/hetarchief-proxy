@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 
-import { GroupName, Permission, User } from '../types';
+import { type GroupName, type Permission, type User } from '../types';
 
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { Locale } from '~shared/types/types';
 
 export class SessionUserEntity {

@@ -2,21 +2,21 @@ import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/adm
 
 import {
 	CampaignMonitorCustomFieldName,
-	CampaignMonitorUserInfo,
-	MaterialRequestEmailInfo,
+	type CampaignMonitorUserInfo,
+	type MaterialRequestEmailInfo,
 	Template,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorConfirmMailQueryDto,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	RequestListItem,
+	type CampaignMonitorConfirmationData,
+	type CampaignMonitorConfirmMailQueryDto,
+	type CampaignMonitorMaterialRequestData,
+	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	type RequestListItem,
 } from '../dto/campaign-monitor.dto';
 
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 

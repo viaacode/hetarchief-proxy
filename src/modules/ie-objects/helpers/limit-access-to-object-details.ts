@@ -8,11 +8,11 @@ import {
 	IE_OBJECT_PROPS_BY_METADATA_SET,
 	IE_OBJECT_PUBLIC_LICENSES,
 } from '../ie-objects.conts';
-import { IeObject, IeObjectExtraUserGroupType, IeObjectLicense } from '../ie-objects.types';
+import { type IeObject, IeObjectExtraUserGroupType, IeObjectLicense } from '../ie-objects.types';
 
 import { getAccessThrough } from './get-access-through';
 
-import { LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
+import { type LimitAccessUserInfo } from '~modules/ie-objects/helpers/limit-access-to-object-details.types';
 import { GroupId } from '~modules/users/types';
 
 // figure out what properties the user can see and which should be stripped

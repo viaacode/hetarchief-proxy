@@ -14,13 +14,13 @@ import {
 	Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
-	IeObjectsQueryDto,
+	type IeObjectsQueryDto,
 	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
@@ -31,13 +31,13 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	FilterOptions,
-	IeObject,
+	type FilterOptions,
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSeo,
-	IeObjectsWithAggregations,
-	NewspaperTitle,
+	type IeObjectSeo,
+	type IeObjectsWithAggregations,
+	type NewspaperTitle,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 

@@ -1,17 +1,17 @@
-import { Locale, TranslationsService } from '@meemoo/admin-core-api';
+import { type Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get, intersection } from 'lodash';
 import queryString from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
-import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, type LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {

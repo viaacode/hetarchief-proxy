@@ -1,10 +1,10 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { NotFoundController } from './not-found.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { Locale } from '~shared/types/types';

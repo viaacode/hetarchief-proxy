@@ -15,12 +15,12 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
 import { isNil } from 'lodash';
 
-import { Collection, CollectionShared, CollectionStatus } from '../types';
+import { type Collection, type CollectionShared, CollectionStatus } from '../types';
 
 import {
 	CollectionObjectsQueryDto,
@@ -29,7 +29,7 @@ import {
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';

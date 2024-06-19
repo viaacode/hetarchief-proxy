@@ -4,13 +4,13 @@ import {
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
-import { Request, Response } from 'express';
+import { type ConfigService } from '@nestjs/config';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
+import { type Request, type Response } from 'express';
 import { cloneDeep } from 'lodash';
 
-import { IeObject, IeObjectLicense } from '../ie-objects.types';
+import { type IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -29,7 +29,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitRequest } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 

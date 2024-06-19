@@ -1,9 +1,9 @@
-import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
+import { type CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { MaterialRequest } from '~modules/material-requests/material-requests.types';
-import { VisitRequest } from '~modules/visits/types';
-import { Locale, Recipient } from '~shared/types/types';
+import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { type MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { type VisitRequest } from '~modules/visits/types';
+import { type Locale, type Recipient } from '~shared/types/types';
 
 export enum Template {
 	VISIT_REQUEST_CP = 'visitRequestCp',

@@ -4,33 +4,33 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	Logger,
-	OnApplicationBootstrap,
+	type OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import got, { Got } from 'got';
+import got, { type Got } from 'got';
 import { compact, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorCustomFieldName,
-	CampaignMonitorNewsletterPreferences,
-	CampaignMonitorUserInfo,
-	MaterialRequestEmailInfo,
+	type CampaignMonitorNewsletterPreferences,
+	type CampaignMonitorUserInfo,
+	type MaterialRequestEmailInfo,
 	Template,
-	VisitEmailInfo,
+	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorConfirmMailQueryDto,
-	CampaignMonitorData,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	CampaignMonitorSendMailDto,
-	CampaignMonitorUpdatePreferencesData,
-	CampaignMonitorVisitData,
+	type CampaignMonitorConfirmationData,
+	type CampaignMonitorConfirmMailQueryDto,
+	type CampaignMonitorData,
+	type CampaignMonitorMaterialRequestData,
+	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	type CampaignMonitorSendMailDto,
+	type CampaignMonitorUpdatePreferencesData,
+	type CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
@@ -38,7 +38,7 @@ import {
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
-import { VisitRequest } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 

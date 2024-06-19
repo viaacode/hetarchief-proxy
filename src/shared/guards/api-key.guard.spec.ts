@@ -1,7 +1,7 @@
-import { ExecutionContext } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { type ExecutionContext } from '@nestjs/common';
+import { type ConfigService } from '@nestjs/config';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { API_KEY_EXCEPTION, APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 

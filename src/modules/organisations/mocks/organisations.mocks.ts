@@ -1,8 +1,8 @@
 import {
-	GqlOrganisation,
-	Organisation,
-	OrganisationInfoV2,
-	OrganisationResponse,
+	type GqlOrganisation,
+	type Organisation,
+	type OrganisationInfoV2,
+	type OrganisationResponse,
 } from '../organisations.types';
 
 import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';

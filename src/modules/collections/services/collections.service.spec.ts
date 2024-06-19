@@ -1,23 +1,23 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
 
 import { CollectionsService } from './collections.service';
 
 import {
-	FindCollectionObjectsByCollectionIdQuery,
-	FindCollectionsByUserQuery,
-	FindObjectBySchemaIdentifierQuery,
-	FindObjectInCollectionQuery,
-	InsertCollectionsMutation,
-	InsertObjectIntoCollectionMutation,
-	RemoveObjectFromCollectionMutation,
-	SoftDeleteCollectionMutation,
-	UpdateCollectionMutation,
+	type FindCollectionObjectsByCollectionIdQuery,
+	type FindCollectionsByUserQuery,
+	type FindObjectBySchemaIdentifierQuery,
+	type FindObjectInCollectionQuery,
+	type InsertCollectionsMutation,
+	type InsertObjectIntoCollectionMutation,
+	type RemoveObjectFromCollectionMutation,
+	type SoftDeleteCollectionMutation,
+	type UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { CollectionObjectLink, GqlObject } from '~modules/collections/types';
-import { IeObject, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
+import { type CollectionObjectLink, type GqlObject } from '~modules/collections/types';
+import { type IeObject, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 

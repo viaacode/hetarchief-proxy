@@ -1,12 +1,12 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { IdpService } from './idp.service';
 
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp } from '~shared/auth/auth.types';

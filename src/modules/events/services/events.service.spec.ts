@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { LogEventType } from '../types';
 

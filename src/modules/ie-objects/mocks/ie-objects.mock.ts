@@ -1,13 +1,13 @@
 import {
-	GqlIeObject,
-	IeObject,
+	type GqlIeObject,
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSector,
-	IeObjectsSitemap,
+	type IeObjectSector,
+	type IeObjectsSitemap,
 } from '../ie-objects.types';
 
-import { GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
+import { type GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';

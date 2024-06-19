@@ -19,7 +19,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Pagination } from '@studiohyperdrive/pagination';
-import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { type IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { addYears, isFuture } from 'date-fns';
 import { Request } from 'express';
 import { uniqBy } from 'lodash';
@@ -27,10 +27,10 @@ import { uniqBy } from 'lodash';
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
 import {
-	AccessStatus,
+	type AccessStatus,
 	VisitAccessType,
-	VisitRequest,
-	VisitSpaceCount,
+	type VisitRequest,
+	type VisitSpaceCount,
 	VisitStatus,
 } from '../types';
 
@@ -40,7 +40,7 @@ import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';

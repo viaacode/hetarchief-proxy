@@ -2,10 +2,10 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { ConfigService } from '@nestjs/config';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { createClient, RedisClient } from 'redis';
+import { createClient, type RedisClient } from 'redis';
 import SessionFileStore from 'session-file-store';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 const FileStore = SessionFileStore(session);
 

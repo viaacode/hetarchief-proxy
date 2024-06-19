@@ -19,22 +19,22 @@ import { Request, Response } from 'express';
 import { get, isEmpty, isEqual, pick } from 'lodash';
 import { stringifyUrl } from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { NO_ORG_LINKED } from '../constants';
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
-import { RelayState, SamlCallbackBody } from '../types';
+import { type RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
-import { Idp, LdapApp, LdapUser } from '~shared/auth/auth.types';
+import { Idp, LdapApp, type LdapUser } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { EventsHelper } from '~shared/helpers/events';
 import { Locale } from '~shared/types/types';

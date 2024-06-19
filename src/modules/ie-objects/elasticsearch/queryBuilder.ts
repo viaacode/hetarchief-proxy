@@ -2,7 +2,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import jsep from 'jsep';
 import { clamp, forEach, isArray, isNil, set } from 'lodash';
 
-import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { type IeObjectsQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
 import {
 	buildFreeTextFilter,
 	convertNodeToEsQueryFilterObjects,
@@ -28,7 +28,7 @@ import {
 	Operator,
 	ORDER_MAPPINGS,
 	OrderProperty,
-	QueryBuilderInputInfo,
+	type QueryBuilderInputInfo,
 	QueryType,
 	READABLE_TO_ELASTIC_FILTER_NAMES,
 	VALUE_OPERATORS,
@@ -36,7 +36,7 @@ import {
 
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { SortDirection } from '~shared/types';
+import { type SortDirection } from '~shared/types';
 
 (jsep as any).removeAllBinaryOps();
 (jsep as any).removeAllUnaryOps();

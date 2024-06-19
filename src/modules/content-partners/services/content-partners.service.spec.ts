@@ -1,5 +1,5 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ContentPartnersService } from './content-partners.service';
 

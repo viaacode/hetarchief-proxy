@@ -11,12 +11,12 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
 
 import {
-	GqlCreateOrUpdateNotification,
-	Notification,
+	type GqlCreateOrUpdateNotification,
+	type Notification,
 	NotificationStatus,
 	NotificationType,
 } from '../types';
@@ -28,7 +28,7 @@ import {
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitRequest } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
