@@ -180,6 +180,7 @@ export class HetArchiefController {
 					Idp.HETARCHIEF,
 					ldapUser.attributes.entryUUID[0]
 				);
+				const locale = (archiefUser?.language || Locale.Nl) as Locale;
 				await this.collectionsService.create(
 					{
 						is_default: true,
@@ -187,7 +188,7 @@ export class HetArchiefController {
 						name: this.translationsService.tText(
 							'modules/collections/controllers___default-collection-name',
 							null,
-							(archiefUser?.language || Locale.Nl) as Locale
+							locale
 						),
 					},
 					null, // referer not important here

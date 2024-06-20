@@ -192,20 +192,21 @@ export class NotificationsService {
 		const newVisitRequestEmail = visitRequest.spaceMail || recipients[0]?.email;
 
 		const name = user.getFullName();
+		const userLanguage = user.getLanguage();
 		const [notifications] = await Promise.all([
 			this.create(
 				recipients.map((recipient) => ({
 					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken',
 						null,
-						user.getLanguage()
+						userLanguage
 					),
 					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
 						{
 							name,
 						},
-						user.getLanguage()
+						userLanguage
 					),
 					visit_id: visitRequest.id,
 					type: NotificationType.NEW_VISIT_REQUEST,

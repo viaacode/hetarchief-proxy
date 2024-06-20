@@ -20,7 +20,7 @@ import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
 	IeObjectsMeemooIdentifiersQueryDto,
-	type IeObjectsQueryDto,
+	IeObjectsQueryDto,
 	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,

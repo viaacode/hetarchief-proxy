@@ -89,11 +89,12 @@ export class VisitsController {
 		);
 
 		if (!cpSpace) {
+			const userLanguage = user.getLanguage();
 			throw new NotFoundException(
 				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space',
 					null,
-					user.getLanguage()
+					userLanguage
 				)
 			);
 		}
@@ -256,11 +257,12 @@ export class VisitsController {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
 
 			if (!spaceInfo) {
+				const userLanguage = user.getLanguage();
 				throw new NotFoundException(
 					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
 						{ name: visitorSpaceSlug },
-						user.getLanguage()
+						userLanguage
 					)
 				);
 			}
@@ -306,13 +308,14 @@ export class VisitsController {
 			// Check if space exists
 			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
 
+			const userLanguage = user.getLanguage();
 			if (space) {
 				if (space.status === VisitorSpaceStatus.Inactive) {
 					throw new GoneException(
 						this.translationsService.tText(
 							'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests',
 							{ name: visitorSpaceSlug },
-							user.getLanguage()
+							userLanguage
 						)
 					);
 				}
@@ -324,7 +327,7 @@ export class VisitsController {
 						{
 							name: visitorSpaceSlug,
 						},
-						user.getLanguage()
+						userLanguage
 					)
 				);
 			} else {
@@ -333,7 +336,7 @@ export class VisitsController {
 					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
 						{ name: visitorSpaceSlug },
-						user.getLanguage()
+						userLanguage
 					)
 				);
 			}
@@ -365,12 +368,13 @@ export class VisitsController {
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<VisitRequest> {
+		const userLanguage = user.getLanguage();
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
 				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit',
 					null,
-					user.getLanguage()
+					userLanguage
 				)
 			);
 		}
@@ -385,7 +389,7 @@ export class VisitsController {
 					{
 						name: createVisitDto.visitorSpaceSlug,
 					},
-					user.getLanguage()
+					userLanguage
 				)
 			);
 		}
@@ -449,11 +453,12 @@ export class VisitsController {
 				originalVisit.userProfileId !== user.getId() ||
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
+				const userLanguage = user.getLanguage();
 				throw new ForbiddenException(
 					this.translationsService.tText(
 						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route',
 						undefined,
-						user.getLanguage()
+						userLanguage
 					)
 				);
 			}
