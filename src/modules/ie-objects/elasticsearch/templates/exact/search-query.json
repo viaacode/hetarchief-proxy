@@ -11,11 +11,6 @@
   },
   {
     "term": {
-      "meemoo_identifier": "{{query}}"
-    }
-  },
-  {
-    "term": {
       "premis_is_part_of": "{{query}}"
     }
   },
