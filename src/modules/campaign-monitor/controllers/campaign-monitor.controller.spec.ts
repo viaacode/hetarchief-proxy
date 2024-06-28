@@ -124,7 +124,10 @@ describe('CampaignMonitorController', () => {
 
 			const sent = await campaignMonitorController.updatePreferences(
 				mockRequest,
-				mockNewsletterUpdatePreferencesQueryDto
+				mockNewsletterUpdatePreferencesQueryDto,
+				new SessionUserEntity({
+					...mockUser,
+				})
 			);
 
 			expect(sent).toEqual({ message: 'success' });

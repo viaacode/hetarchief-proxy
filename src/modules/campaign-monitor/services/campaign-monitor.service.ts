@@ -297,7 +297,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 			let cmTemplateId: string;
 			if (Object.values(Template).includes(emailInfo.template as any)) {
-				console.log('we here');
 				cmTemplateId = getTemplateId(emailInfo.template, lang);
 				console.log(cmTemplateId);
 			} else {
