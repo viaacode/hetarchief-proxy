@@ -79,7 +79,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		await this.translationsService.refreshBackendTranslations();
 	}
 
-	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
+	public async sendForVisit(emailInfo: VisitEmailInfo, language: 'nl' | 'en'): Promise<void> {
 		const recipients: string[] = [];
 
 		emailInfo.to.forEach((recipient) => {
@@ -97,13 +97,19 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: emailInfo.template,
+				data,
+			},
+			language
+		);
 	}
 
-	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
+	public async sendForMaterialRequest(
+		emailInfo: MaterialRequestEmailInfo,
+		language: 'en' | 'nl'
+	): Promise<void> {
 		const recipients: string[] = [];
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
@@ -118,14 +124,18 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: emailInfo.template,
+				data,
+			},
+			language
+		);
 	}
 
 	public async sendConfirmationMail(
-		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+		language: 'nl' | 'en'
 	): Promise<void> {
 		const recipients: string[] = [];
 		if (preferences?.mail) {
@@ -146,10 +156,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertToConfirmationEmailTemplateData(preferences),
 		};
 
-		await this.sendTransactionalMail({
-			template: Template.EMAIL_CONFIRMATION,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: Template.EMAIL_CONFIRMATION,
+				data,
+			},
+			language
+		);
 	}
 
 	public async confirmEmail({
@@ -269,7 +282,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		}
 	}
 
-	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<void> {
+	public async sendTransactionalMail(
+		emailInfo: CampaignMonitorSendMailDto,
+		lang: 'nl' | 'en'
+	): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
 				const error = new BadRequestException(
@@ -281,7 +297,9 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 			let cmTemplateId: string;
 			if (Object.values(Template).includes(emailInfo.template as any)) {
-				cmTemplateId = getTemplateId(emailInfo.template);
+				console.log('we here');
+				cmTemplateId = getTemplateId(emailInfo.template, lang);
+				console.log(cmTemplateId);
 			} else {
 				cmTemplateId = emailInfo.template;
 			}

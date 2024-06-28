@@ -48,9 +48,13 @@ export class CampaignMonitorController {
 		).join(', ')}). Data custom fields are dependent on provided template type.`,
 	})
 	async sendTransactionalMail(
-		@Body() emailInfo: CampaignMonitorSendMailDto
+		@Body() emailInfo: CampaignMonitorSendMailDto,
+		@SessionUser() user?: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		await this.campaignMonitorService.sendTransactionalMail(emailInfo);
+		await this.campaignMonitorService.sendTransactionalMail(
+			emailInfo,
+			user?.getLanguage() || 'nl'
+		);
 		return { message: 'success' };
 	}
 
@@ -75,7 +79,10 @@ export class CampaignMonitorController {
 		try {
 			if (!user?.getId()) {
 				// Logged out user requests to subscribe => send confirm email
-				await this.campaignMonitorService.sendConfirmationMail(preferences);
+				await this.campaignMonitorService.sendConfirmationMail(
+					preferences,
+					user.getLanguage()
+				);
 			} else {
 				// Logged in user subscribes to the newsletter
 				await this.campaignMonitorService.updateNewsletterPreferences(

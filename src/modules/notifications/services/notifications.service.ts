@@ -215,17 +215,20 @@ export class NotificationsService {
 			),
 			// important: the mail on new visit request is sent to the general email address, not to all maintainers
 			// See ARC-305
-			this.campaignMonitorService.sendForVisit({
-				to: [
-					{
-						id: `space-${visitRequest.spaceId}`,
-						email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
-						language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
-					},
-				],
-				template: Template.VISIT_REQUEST_CP,
-				visitRequest: visitRequest,
-			}),
+			this.campaignMonitorService.sendForVisit(
+				{
+					to: [
+						{
+							id: `space-${visitRequest.spaceId}`,
+							email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
+							language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
+						},
+					],
+					template: Template.VISIT_REQUEST_CP,
+					visitRequest: visitRequest,
+				},
+				user.getLanguage()
+			),
 		]);
 		return notifications;
 	}
@@ -235,7 +238,8 @@ export class NotificationsService {
 	 */
 	public async onApproveVisitRequest(
 		visitRequest: VisitRequest,
-		space: VisitorSpace
+		space: VisitorSpace,
+		language: 'en' | 'nl'
 	): Promise<Notification> {
 		const startDate = formatAsBelgianDate(visitRequest.startAt);
 		const endDate = formatAsBelgianDate(visitRequest.endAt);
@@ -266,17 +270,20 @@ export class NotificationsService {
 					recipient: visitRequest.visitorId,
 				},
 			]),
-			this.campaignMonitorService.sendForVisit({
-				to: [
-					{
-						id: visitRequest.visitorId,
-						email: visitRequest.visitorMail,
-						language: visitRequest.visitorLanguage,
-					},
-				],
-				template: Template.VISIT_APPROVED,
-				visitRequest: visitRequest,
-			}),
+			this.campaignMonitorService.sendForVisit(
+				{
+					to: [
+						{
+							id: visitRequest.visitorId,
+							email: visitRequest.visitorMail,
+							language: visitRequest.visitorLanguage,
+						},
+					],
+					template: Template.VISIT_APPROVED,
+					visitRequest: visitRequest,
+				},
+				language
+			),
 		]);
 		return notifications[0];
 	}
@@ -287,6 +294,7 @@ export class NotificationsService {
 	public async onDenyVisitRequest(
 		visitRequest: VisitRequest,
 		space: VisitorSpace,
+		language: 'en' | 'nl',
 		reason?: string
 	): Promise<Notification> {
 		const reasonWithFallback =
@@ -319,17 +327,20 @@ export class NotificationsService {
 					recipient: visitRequest.visitorId,
 				},
 			]),
-			this.campaignMonitorService.sendForVisit({
-				to: [
-					{
-						id: visitRequest.visitorId,
-						email: visitRequest.visitorMail,
-						language: visitRequest.visitorLanguage,
-					},
-				],
-				template: Template.VISIT_DENIED,
-				visitRequest: visitRequest,
-			}),
+			this.campaignMonitorService.sendForVisit(
+				{
+					to: [
+						{
+							id: visitRequest.visitorId,
+							email: visitRequest.visitorMail,
+							language: visitRequest.visitorLanguage,
+						},
+					],
+					template: Template.VISIT_DENIED,
+					visitRequest: visitRequest,
+				},
+				language
+			),
 		]);
 		return notifications[0];
 	}

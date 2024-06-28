@@ -496,7 +496,7 @@ export class VisitsController {
 	) {
 		const space = await this.spacesService.findById(visit.spaceId);
 		if (visit.status === VisitStatus.APPROVED) {
-			await this.notificationsService.onApproveVisitRequest(visit, space);
+			await this.notificationsService.onApproveVisitRequest(visit, space, user.getLanguage());
 
 			// Log event
 			this.eventsService.insertEvents([
@@ -516,7 +516,12 @@ export class VisitsController {
 				},
 			]);
 		} else if (visit.status === VisitStatus.DENIED) {
-			await this.notificationsService.onDenyVisitRequest(visit, space, updateVisitDto.note);
+			await this.notificationsService.onDenyVisitRequest(
+				visit,
+				space,
+				user.getLanguage(),
+				updateVisitDto.note
+			);
 
 			// Log event
 			this.eventsService.insertEvents([
