@@ -26,14 +26,12 @@ module.exports = {
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'@typescript-eslint/no-explicit-any': 'off',
-		// For now this breaks Dto classes in nestjs controller decorators
-		// https://github.com/typescript-eslint/typescript-eslint/issues/2559
-		// '@typescript-eslint/consistent-type-imports': [
-		// 	'error',
-		// 	{
-		// 		fixStyle: 'inline-type-imports',
-		// 	},
-		// ],
+		'@typescript-eslint/consistent-type-imports': [
+			'error',
+			{
+				fixStyle: 'inline-type-imports',
+			},
+		],
 
 		'import/first': 'error',
 		'import/no-duplicates': 'error',

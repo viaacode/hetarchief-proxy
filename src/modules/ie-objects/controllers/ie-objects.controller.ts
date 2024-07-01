@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+// Disable consistent imports since they try to import IeObjectsQueryDto as a type
+// But that breaks the endpoint body validation
+
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Body,
