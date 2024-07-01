@@ -1,14 +1,14 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 
-import { ContentPartnersQueryDto } from '../dto/content-partners.dto';
-import { ContentPartner } from '../types';
+import { type ContentPartnersQueryDto } from '../dto/content-partners.dto';
+import { type ContentPartner } from '../types';
 
 import {
 	FindContentPartnersDocument,
-	FindContentPartnersQuery,
-	FindContentPartnersQueryVariables,
+	type FindContentPartnersQuery,
+	type FindContentPartnersQueryVariables,
 } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()

@@ -1,7 +1,7 @@
-import { Response } from 'express';
+import { type Response } from 'express';
 import queryString from 'query-string';
 
-import { Idp } from '~shared/auth/auth.types';
+import { type Idp } from '~shared/auth/auth.types';
 
 /**
  * If a kiosk user or a maintainer admin is not linked to a space in the ACM (Account manager meemoo)

@@ -1,52 +1,52 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
 import { isEmpty, maxBy } from 'lodash';
 
 import {
-	Collection,
-	CollectionObjectLink,
-	GqlCollection,
-	GqlCollectionWithObjects,
-	GqlObject,
-	GqlUpdateCollection,
+	type Collection,
+	type CollectionObjectLink,
+	type GqlCollection,
+	type GqlCollectionWithObjects,
+	type GqlObject,
+	type GqlUpdateCollection,
 } from '../types';
 
 import {
 	FindCollectionByIdDocument,
-	FindCollectionByIdQuery,
-	FindCollectionByIdQueryVariables,
+	type FindCollectionByIdQuery,
+	type FindCollectionByIdQueryVariables,
 	FindCollectionObjectsByCollectionIdDocument,
-	FindCollectionObjectsByCollectionIdQuery,
-	FindCollectionObjectsByCollectionIdQueryVariables,
+	type FindCollectionObjectsByCollectionIdQuery,
+	type FindCollectionObjectsByCollectionIdQueryVariables,
 	FindCollectionsByUserDocument,
-	FindCollectionsByUserQuery,
-	FindCollectionsByUserQueryVariables,
+	type FindCollectionsByUserQuery,
+	type FindCollectionsByUserQueryVariables,
 	FindObjectBySchemaIdentifierDocument,
-	FindObjectBySchemaIdentifierQuery,
-	FindObjectBySchemaIdentifierQueryVariables,
+	type FindObjectBySchemaIdentifierQuery,
+	type FindObjectBySchemaIdentifierQueryVariables,
 	FindObjectInCollectionDocument,
-	FindObjectInCollectionQuery,
-	FindObjectInCollectionQueryVariables,
+	type FindObjectInCollectionQuery,
+	type FindObjectInCollectionQueryVariables,
 	InsertCollectionsDocument,
-	InsertCollectionsMutation,
-	InsertCollectionsMutationVariables,
+	type InsertCollectionsMutation,
+	type InsertCollectionsMutationVariables,
 	InsertObjectIntoCollectionDocument,
-	InsertObjectIntoCollectionMutation,
-	InsertObjectIntoCollectionMutationVariables,
+	type InsertObjectIntoCollectionMutation,
+	type InsertObjectIntoCollectionMutationVariables,
 	RemoveObjectFromCollectionDocument,
-	RemoveObjectFromCollectionMutation,
-	RemoveObjectFromCollectionMutationVariables,
+	type RemoveObjectFromCollectionMutation,
+	type RemoveObjectFromCollectionMutationVariables,
 	SoftDeleteCollectionDocument,
-	SoftDeleteCollectionMutation,
-	SoftDeleteCollectionMutationVariables,
+	type SoftDeleteCollectionMutation,
+	type SoftDeleteCollectionMutationVariables,
 	UpdateCollectionDocument,
-	UpdateCollectionMutation,
-	UpdateCollectionMutationVariables,
+	type UpdateCollectionMutation,
+	type UpdateCollectionMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
-import { IeObject, IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type CollectionObjectsQueryDto } from '~modules/collections/dto/collections.dto';
+import { type IeObject, type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 

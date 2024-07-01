@@ -10,17 +10,17 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
-import got, { Got } from 'got';
+import got, { type Got } from 'got';
 import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
-	IeObjectsQueryDto,
-	IeObjectsRelatedQueryDto,
-	IeObjectsSimilarQueryDto,
+	type IeObjectsQueryDto,
+	type IeObjectsRelatedQueryDto,
+	type IeObjectsSimilarQueryDto,
 } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
@@ -28,41 +28,41 @@ import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	ElasticsearchObject,
-	ElasticsearchResponse,
-	FilterOptions,
-	GqlIeObject,
-	GqlLimitedIeObject,
-	IeObject,
-	IeObjectFile,
+	type ElasticsearchObject,
+	type ElasticsearchResponse,
+	type FilterOptions,
+	type GqlIeObject,
+	type GqlLimitedIeObject,
+	type IeObject,
+	type IeObjectFile,
 	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectSector,
-	IeObjectsSitemap,
-	IeObjectsVisitorSpaceInfo,
-	IeObjectsWithAggregations,
-	NewspaperTitle,
+	type IeObjectRepresentation,
+	type IeObjectSector,
+	type IeObjectsSitemap,
+	type IeObjectsVisitorSpaceInfo,
+	type IeObjectsWithAggregations,
+	type NewspaperTitle,
 } from '../ie-objects.types';
 
 import {
 	FindAllObjectsByCollectionIdDocument,
-	FindAllObjectsByCollectionIdQuery,
-	FindAllObjectsByCollectionIdQueryVariables,
+	type FindAllObjectsByCollectionIdQuery,
+	type FindAllObjectsByCollectionIdQueryVariables,
 	FindIeObjectsForSitemapDocument,
-	FindIeObjectsForSitemapQuery,
-	FindIeObjectsForSitemapQueryVariables,
+	type FindIeObjectsForSitemapQuery,
+	type FindIeObjectsForSitemapQueryVariables,
 	GetFilterOptionsDocument,
-	GetFilterOptionsQuery,
-	GetFilterOptionsQueryVariables,
+	type GetFilterOptionsQuery,
+	type GetFilterOptionsQueryVariables,
 	GetObjectDetailBySchemaIdentifiersDocument,
-	GetObjectDetailBySchemaIdentifiersQuery,
-	GetObjectDetailBySchemaIdentifiersQueryVariables,
+	type GetObjectDetailBySchemaIdentifiersQuery,
+	type GetObjectDetailBySchemaIdentifiersQueryVariables,
 	GetObjectIdentifierTupleDocument,
-	GetObjectIdentifierTupleQuery,
-	GetObjectIdentifierTupleQueryVariables,
+	type GetObjectIdentifierTupleQuery,
+	type GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
-	GetRelatedObjectsQuery,
-	GetRelatedObjectsQueryVariables,
+	type GetRelatedObjectsQuery,
+	type GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -74,7 +74,7 @@ import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-
 import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';

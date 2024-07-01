@@ -1,11 +1,11 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Cache } from 'cache-manager';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type Cache } from 'cache-manager';
 import nock from 'nock';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
 	getMockOrganisationResponse,

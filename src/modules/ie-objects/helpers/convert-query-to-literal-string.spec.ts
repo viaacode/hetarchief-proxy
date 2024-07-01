@@ -1,6 +1,6 @@
 import { SortDirection } from '@meemoo/admin-core-api';
 
-import { IeObjectsQueryDto } from '../dto/ie-objects.dto';
+import { type IeObjectsQueryDto } from '../dto/ie-objects.dto';
 import {
 	IeObjectsSearchFilterField,
 	Operator,

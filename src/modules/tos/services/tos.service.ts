@@ -1,11 +1,11 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Tos } from '../types';
+import { type Tos } from '../types';
 
 import {
 	GetTosLastUpdatedAtDocument,
-	GetTosLastUpdatedAtQuery,
+	type GetTosLastUpdatedAtQuery,
 } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()

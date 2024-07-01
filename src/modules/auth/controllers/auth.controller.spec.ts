@@ -1,13 +1,13 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { isFuture } from 'date-fns';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { IdpService } from '../services/idp.service';
-import { LoginMessage, LoginResponse } from '../types';
+import { LoginMessage, type LoginResponse } from '../types';
 
 import { AuthController } from './auth.controller';
 
@@ -15,7 +15,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { sleep } from '~shared/helpers/sleep';

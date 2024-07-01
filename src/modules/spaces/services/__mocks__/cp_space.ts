@@ -1,4 +1,4 @@
-import { GqlSpace } from '~modules/spaces/types';
+import { type GqlSpace } from '~modules/spaces/types';
 import { AudienceType, VisitorSpaceStatus } from '~shared/types/types';
 
 export const mockGqlSpace: GqlSpace = {

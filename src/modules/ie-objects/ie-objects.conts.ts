@@ -1,10 +1,10 @@
 import {
-	IeObject,
+	type IeObject,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
 	IeObjectMetadataSet,
 	IeObjectSector,
-	IeObjectSectorLicenseMatrix,
+	type IeObjectSectorLicenseMatrix,
 } from './ie-objects.types';
 
 import { GroupId } from '~modules/users/types';

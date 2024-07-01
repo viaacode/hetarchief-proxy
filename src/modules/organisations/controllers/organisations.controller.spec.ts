@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config/dist/config.service';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { OrganisationsService } from '../services/organisations.service';
 

@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 
-import { IeObjectsQueryDto, SearchFilter } from '../dto/ie-objects.dto';
+import { type IeObjectsQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
 import { MediaFormat } from '../ie-objects.types';
 
 export const checkAndFixFormatFilter = (queryDto: IeObjectsQueryDto | null): IeObjectsQueryDto => {

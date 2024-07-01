@@ -4,7 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import got from 'got';
 import { stringifyUrl } from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';

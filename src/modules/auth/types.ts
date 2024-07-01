@@ -1,7 +1,7 @@
-import { Avo } from '@viaa/avo2-types';
+import { type Avo } from '@viaa/avo2-types';
 
-import { User } from '~modules/users/types';
-import { LdapUser } from '~shared/auth/auth.types';
+import { type User } from '~modules/users/types';
+import { type LdapUser } from '~shared/auth/auth.types';
 
 export interface IdpMetaData {
 	'md:EntityDescriptor': {

@@ -1,14 +1,14 @@
-import { MaterialRequest, MaterialRequestType } from '../material-requests.types';
+import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 import {
-	FindMaintainersWithMaterialRequestsQuery,
-	FindMaterialRequestsByIdQuery,
-	FindMaterialRequestsQuery,
+	type FindMaintainersWithMaterialRequestsQuery,
+	type FindMaterialRequestsByIdQuery,
+	type FindMaterialRequestsQuery,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 

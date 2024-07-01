@@ -1,21 +1,25 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours } from 'date-fns';
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { VisitsService } from '../services/visits.service';
-import { VisitRequest, VisitSpaceCount, VisitStatus } from '../types';
+import { type VisitRequest, type VisitSpaceCount, VisitStatus } from '../types';
 
 import { VisitsController } from './visits.controller';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
-import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import {
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';

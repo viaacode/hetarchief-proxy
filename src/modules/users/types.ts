@@ -1,11 +1,11 @@
 import {
-	GetUserByIdentityIdQuery,
-	InsertUserMutation,
-	UpdateUserProfileMutation,
+	type GetUserByIdentityIdQuery,
+	type InsertUserMutation,
+	type UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
-import { Idp } from '~shared/auth/auth.types';
-import { Locale } from '~shared/types/types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type Idp } from '~shared/auth/auth.types';
+import { type Locale } from '~shared/types/types';
 
 export enum Permission {
 	SEARCH = 'SEARCH',

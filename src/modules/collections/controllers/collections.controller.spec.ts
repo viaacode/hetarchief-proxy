@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
-import { Request } from 'express';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
+import { type Request } from 'express';
 
 import { CollectionsService } from '../services/collections.service';
 
 import { CollectionsController } from './collections.controller';
 
-import { Collection, CollectionStatus } from '~modules/collections/types';
+import { type Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 import { mockIeObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';

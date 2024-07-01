@@ -1,10 +1,10 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import packageJson from '../../../../package.json';
 import { StatusService } from '../services/status.service';
 
-import { GetFirstObjectIdQuery } from '~generated/graphql-db-types-hetarchief';
+import { type GetFirstObjectIdQuery } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 

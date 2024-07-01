@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+// Disable consistent imports since they try to import IeObjectsQueryDto as a type
+// But that breaks the endpoint body validation
+
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Body,
@@ -14,7 +18,7 @@ import {
 	Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
@@ -31,13 +35,13 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	FilterOptions,
-	IeObject,
+	type FilterOptions,
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSeo,
-	IeObjectsWithAggregations,
-	NewspaperTitle,
+	type IeObjectSeo,
+	type IeObjectsWithAggregations,
+	type NewspaperTitle,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 

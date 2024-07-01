@@ -1,4 +1,4 @@
-import jsep, { Expression } from 'jsep';
+import jsep, { type Expression } from 'jsep';
 import { compact } from 'lodash';
 
 import { decodeSearchterm, encodeSearchterm } from './encode-search-term';

@@ -1,11 +1,11 @@
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 
 import {
-	FindAllObjectsByCollectionIdQuery,
-	GetObjectDetailBySchemaIdentifiersQuery,
-	GetRelatedObjectsQuery,
+	type FindAllObjectsByCollectionIdQuery,
+	type GetObjectDetailBySchemaIdentifiersQuery,
+	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { type IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>

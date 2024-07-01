@@ -17,13 +17,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
-import { VisitorSpace } from '../types';
+import { type VisitorSpace } from '../types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
@@ -56,11 +56,12 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
+			const userLanguage = user.getLanguage();
 			throw new ForbiddenException(
 				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data',
 					null,
-					user.getLanguage()
+					userLanguage
 				)
 			);
 		}
@@ -93,13 +94,14 @@ export class SpacesController {
 	): Promise<VisitorSpace | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
+			const userLanguage = user.getLanguage();
 			throw new NotFoundException(
 				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found',
 					{
 						slug,
 					},
-					user.getLanguage()
+					userLanguage
 				)
 			);
 		}

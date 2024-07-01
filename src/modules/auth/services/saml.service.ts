@@ -1,15 +1,20 @@
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { type Logger } from '@nestjs/common';
+import { type ConfigService } from '@nestjs/config';
 import got from 'got';
 import { get } from 'lodash';
-import saml2, { IdentityProvider, ServiceProvider } from 'saml2-js';
+import saml2, { type IdentityProvider, type ServiceProvider } from 'saml2-js';
 import convert from 'xml-js';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
-import { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
+import {
+	type DecodedSamlResponse,
+	type IdpMetaData,
+	type SamlCallbackBody,
+	type SamlConfig,
+} from '../types';
 
-import { LdapUser } from '~shared/auth/auth.types';
+import { type LdapUser } from '~shared/auth/auth.types';
 
 export abstract class SamlService {
 	protected logger: Logger;

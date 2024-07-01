@@ -1,5 +1,5 @@
 import {
-	GqlNotification,
+	type GqlNotification,
 	NotificationStatus,
 	NotificationType,
 } from '~modules/notifications/types';
