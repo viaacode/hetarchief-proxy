@@ -82,22 +82,24 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
-		const groupedRecipientsByLanguage = toPairs(
+		const groupedRecipientsByLanguage = Object.entries(
 			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
 		);
+
 		await promiseUtils.map(groupedRecipientsByLanguage, async ([language, recipients]) => {
+			const recipientsForLanguage: string[] = [];
 			recipients.forEach((recipient) => {
 				if (recipient.email) {
-					recipients.push(recipient.email as any);
+					recipientsForLanguage.push(recipient.email);
 				} else {
 					// If there are no recipients, the mails will be sent to a fallback email address
-					recipients.push(
+					recipientsForLanguage.push(
 						this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK')
 					);
 				}
 			});
 			const data: CampaignMonitorData = {
-				to: recipients,
+				to: recipientsForLanguage,
 				consentToTrack: 'unchanged',
 				data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
 			};
@@ -112,10 +114,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		});
 	}
 
-	public async sendForMaterialRequest(
-		emailInfo: MaterialRequestEmailInfo,
-		language: 'en' | 'nl'
-	): Promise<void> {
+	public async sendForMaterialRequest(emailInfo: MaterialRequestEmailInfo): Promise<void> {
 		const recipients: string[] = [];
 		if (emailInfo.to) {
 			recipients.push(emailInfo.to);
@@ -135,13 +134,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				template: emailInfo.template,
 				data,
 			},
-			language
+			emailInfo.language
 		);
 	}
 
 	public async sendConfirmationMail(
 		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-		language: 'nl' | 'en'
+		language: Locale
 	): Promise<void> {
 		const recipients: string[] = [];
 		if (preferences?.mail) {
@@ -155,6 +154,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		if (!preferences.firstName || !preferences.lastName) {
 			throw new BadRequestException('Both "firstName" and "lastName" must be filled in');
 		}
+
+		console.log('preferences', preferences);
 
 		const data: CampaignMonitorData = {
 			to: recipients,
@@ -304,7 +305,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			let cmTemplateId: string;
 			if (Object.values(Template).includes(emailInfo.template as any)) {
 				cmTemplateId = getTemplateId(emailInfo.template, lang);
-				console.log(cmTemplateId);
 			} else {
 				cmTemplateId = emailInfo.template;
 			}

@@ -194,14 +194,11 @@ describe('CampaignMonitorService', () => {
 			);
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 
-			await campaignMonitorService.sendForVisit(
-				{
-					to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
-					template: Template.VISIT_APPROVED,
-					visitRequest: visit,
-				},
-				'nl'
-			);
+			await campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
+				template: Template.VISIT_APPROVED,
+				visitRequest: visit,
+			});
 			expect(sendTransactionalMailSpy).toBeCalledWith(
 				{
 					template: Template.VISIT_APPROVED,
@@ -251,20 +248,17 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(false);
 			const visitRequest = getMockVisitRequest();
 			try {
-				await campaignMonitorService.sendForVisit(
-					{
-						template: Template.VISIT_APPROVED,
-						visitRequest: visitRequest,
-						to: [
-							{
-								id: visitRequest.visitorId,
-								email: visitRequest.visitorMail,
-								language: visitRequest.visitorLanguage,
-							},
-						],
-					},
-					Locale.Nl
-				);
+				await campaignMonitorService.sendForVisit({
+					template: Template.VISIT_APPROVED,
+					visitRequest: visitRequest,
+					to: [
+						{
+							id: visitRequest.visitorId,
+							email: visitRequest.visitorMail,
+							language: visitRequest.visitorLanguage,
+						},
+					],
+				});
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -273,14 +267,11 @@ describe('CampaignMonitorService', () => {
 
 		it('should return false if there is no email address', async () => {
 			try {
-				await campaignMonitorService.sendForVisit(
-					{
-						template: Template.VISIT_APPROVED,
-						visitRequest: getMockVisitRequest(),
-						to: [],
-					},
-					'nl'
-				);
+				await campaignMonitorService.sendForVisit({
+					template: Template.VISIT_APPROVED,
+					visitRequest: getMockVisitRequest(),
+					to: [],
+				});
 				fail(
 					new Error('sendForVisit should throw an error when there is no email address')
 				);
@@ -320,7 +311,7 @@ describe('CampaignMonitorService', () => {
 			);
 			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
-				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo, 'nl');
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -347,10 +338,8 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 
-			const result = await campaignMonitorService.sendForMaterialRequest(
-				materialRequestEmailInfo,
-				'nl'
-			);
+			const result =
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			expect(result).toBeFalsy();
 			campaignMonitorService.setIsEnabled(true);
 		});
@@ -362,7 +351,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, 'nl')}/send`
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
@@ -376,7 +365,7 @@ describe('CampaignMonitorService', () => {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
-				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo, 'nl');
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {
 				expect(err).toBeUndefined();
 			}
@@ -389,14 +378,14 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, 'nl')}/send`
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.replyWithError('');
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
-				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo, 'nl');
+				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 				fail(
 					new Error(
 						'sendForMaterialRequest should have thrown an error when CM throws an error'
@@ -680,7 +669,7 @@ describe('CampaignMonitorService', () => {
 			const preferences = mockNewsletterUpdatePreferencesQueryDto;
 			preferences.mail = null;
 			try {
-				await campaignMonitorService.sendConfirmationMail(preferences, 'nl');
+				await campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -691,7 +680,7 @@ describe('CampaignMonitorService', () => {
 			const preferences = mockNewsletterUpdatePreferencesQueryDto;
 			preferences.firstName = null;
 			try {
-				await campaignMonitorService.sendConfirmationMail(preferences, 'nl');
+				await campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -705,7 +694,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.EMAIL_CONFIRMATION, 'nl')}/send`
+					)}/${getTemplateId(Template.EMAIL_CONFIRMATION, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
@@ -718,7 +707,7 @@ describe('CampaignMonitorService', () => {
 			try {
 				await campaignMonitorService.sendConfirmationMail(
 					mockNewsletterUpdatePreferencesQueryDto,
-					'nl'
+					Locale.Nl
 				);
 			} catch (err) {
 				expect(err).toBeUndefined;

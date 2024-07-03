@@ -13,7 +13,6 @@ export enum Template {
 	MATERIAL_REQUEST_REQUESTER = 'materialRequestRequester',
 	MATERIAL_REQUEST_MAINTAINER = 'materialRequestMaintainer',
 	EMAIL_CONFIRMATION = 'emailConfirmation',
-	CREATE_VISIT_REQUEST = 'createVisitRequest',
 }
 
 export interface VisitEmailInfo {

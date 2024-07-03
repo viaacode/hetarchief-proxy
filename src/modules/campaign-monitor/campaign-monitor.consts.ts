@@ -25,10 +25,6 @@ export const getTemplateId = (template: string, language: Locale): string => {
 		[Template.EMAIL_CONFIRMATION]: process.env[
 			`CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION__${language.toUpperCase()}`
 		] as string,
-		[Template.CREATE_VISIT_REQUEST]:
-			process.env[
-				`CAMPAIGN_MONITOR_EMAIL_TEMPLATE_CREATE_VISIT_REQUEST_FOR_USER__${language.toUpperCase()}`
-			],
 	};
 	return templateIds[template];
 };

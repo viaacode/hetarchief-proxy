@@ -317,10 +317,7 @@ export class MaterialRequestsService {
 						lastName: userInfo.lastName,
 						language: userInfo.language,
 					};
-					await this.campaignMonitorService.sendForMaterialRequest(
-						emailInfo,
-						userInfo.language
-					);
+					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 				})
 			);
 
@@ -334,7 +331,7 @@ export class MaterialRequestsService {
 				lastName: userInfo.lastName,
 				language: userInfo.language,
 			};
-			await this.campaignMonitorService.sendForMaterialRequest(emailInfo, userInfo.language);
+			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 		} catch (err) {
 			const error = {
 				message: 'Failed to send the material requests',
