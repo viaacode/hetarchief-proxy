@@ -1,7 +1,8 @@
 import { Template } from './campaign-monitor.types';
 
-export const getTemplateId = (template: string, language: 'nl' | 'en'): string => {
-	console.log(template, language);
+import { Locale } from '~shared/types/types';
+
+export const getTemplateId = (template: string, language: Locale): string => {
 	const templateIds = {
 		[Template.SHARE_FOLDER]: process.env[
 			`CAMPAIGN_MONITOR_EMAIL_TEMPLATE_SHARE_FOLDER__${language.toUpperCase()}`

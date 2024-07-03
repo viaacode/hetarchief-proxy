@@ -57,7 +57,7 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER') {
 			return 'newsletter';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER__NL') {
+		if (key.startsWith('CAMPAIGN_MONITOR_TEMPLATE_')) {
 			return 'fakeTemplateId';
 		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER') {
@@ -263,7 +263,7 @@ describe('CampaignMonitorService', () => {
 							},
 						],
 					},
-					'nl'
+					Locale.Nl
 				);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');

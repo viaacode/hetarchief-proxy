@@ -7,8 +7,9 @@ import {
 	OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as promiseUtils from 'blend-promise-utils';
 import got, { Got } from 'got';
-import { compact, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
+import { compact, groupBy, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { Configuration } from '~config';
@@ -41,6 +42,7 @@ import {
 import { VisitRequest } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { Locale } from '~shared/types/types';
 
 @Injectable()
 export class CampaignMonitorService implements OnApplicationBootstrap {
@@ -79,31 +81,35 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		await this.translationsService.refreshBackendTranslations();
 	}
 
-	public async sendForVisit(emailInfo: VisitEmailInfo, language: 'nl' | 'en'): Promise<void> {
-		const recipients: string[] = [];
-
-		emailInfo.to.forEach((recipient) => {
-			if (recipient.email) {
-				recipients.push(recipient.email);
-			} else {
-				// If there are no recipients, the mails will be sent to a fallback email address
-				recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
-			}
-		});
-
-		const data: CampaignMonitorData = {
-			to: recipients,
-			consentToTrack: 'unchanged',
-			data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
-		};
-
-		await this.sendTransactionalMail(
-			{
-				template: emailInfo.template,
-				data,
-			},
-			language
+	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
+		const groupedRecipientsByLanguage = toPairs(
+			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
 		);
+		await promiseUtils.map(groupedRecipientsByLanguage, async ([language, recipients]) => {
+			recipients.forEach((recipient) => {
+				if (recipient.email) {
+					recipients.push(recipient.email as any);
+				} else {
+					// If there are no recipients, the mails will be sent to a fallback email address
+					recipients.push(
+						this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK')
+					);
+				}
+			});
+			const data: CampaignMonitorData = {
+				to: recipients,
+				consentToTrack: 'unchanged',
+				data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
+			};
+
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				language as Locale
+			);
+		});
 	}
 
 	public async sendForMaterialRequest(
@@ -284,7 +290,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 	public async sendTransactionalMail(
 		emailInfo: CampaignMonitorSendMailDto,
-		lang: 'nl' | 'en'
+		lang: Locale
 	): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
