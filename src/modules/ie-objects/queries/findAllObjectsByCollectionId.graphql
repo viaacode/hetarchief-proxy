@@ -16,7 +16,7 @@ query findAllObjectsByCollectionId($collectionId: uuid, $userProfileId: uuid) {
 			schema_date_created_lower_bound
 			schema_date_published
 			schema_is_part_of
-			meemoo_identifier
+			schema_identifier
 			meemoo_local_id
 			schema_license
 		}

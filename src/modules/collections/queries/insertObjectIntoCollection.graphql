@@ -9,7 +9,6 @@ mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier
 			created_at
 			ie {
 				schema_identifier
-				meemoo_identifier
 				dcterms_format
 				dcterms_available
 				schema_creator

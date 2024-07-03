@@ -14,7 +14,6 @@ export const mockGqlCollection: GqlCollectionWithObjects = {
 			ie: {
 				schema_identifier:
 					'5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534236bf4ccd04741f1a35b5240a69f758b',
-				meemoo_identifier: '8s4jm2514q',
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 			},
 		},
