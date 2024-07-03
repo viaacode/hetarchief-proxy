@@ -1,5 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import {
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
+import { type Observable } from 'rxjs';
 
 import { SessionHelper } from '~shared/auth/session-helper';
 

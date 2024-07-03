@@ -1,15 +1,15 @@
 import {
-	CanActivate,
-	ExecutionContext,
+	type CanActivate,
+	type ExecutionContext,
 	ForbiddenException,
 	Injectable,
 	Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
+import { type Observable } from 'rxjs';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
+import { type Permission } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 
 @Injectable()

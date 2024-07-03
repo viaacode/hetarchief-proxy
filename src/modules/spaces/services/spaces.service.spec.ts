@@ -1,25 +1,25 @@
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
 
-import { CreateSpaceDto } from '../dto/spaces.dto';
+import { type CreateSpaceDto } from '../dto/spaces.dto';
 
 import { mockGqlSpace } from './__mocks__/cp_space';
 import { SpacesService } from './spaces.service';
 
 import {
-	CreateSpaceMutation,
-	FindSpaceByIdQuery,
-	FindSpaceByOrganisationIdQuery,
-	FindSpaceBySlugQuery,
-	FindSpacesQuery,
-	GetVisitorSpaceProfilesQuery,
-	UpdateSpaceMutation,
+	type CreateSpaceMutation,
+	type FindSpaceByIdQuery,
+	type FindSpaceByOrganisationIdQuery,
+	type FindSpaceBySlugQuery,
+	type FindSpacesQuery,
+	type GetVisitorSpaceProfilesQuery,
+	type UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { AccessType } from '~modules/spaces/types';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';

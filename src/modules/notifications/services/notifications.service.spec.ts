@@ -1,30 +1,30 @@
 import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours, addMonths, subHours } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
 
 import {
-	DeleteNotificationsMutation,
-	FindNotificationsByUserQuery,
-	InsertNotificationsMutation,
+	type DeleteNotificationsMutation,
+	type FindNotificationsByUserQuery,
+	type InsertNotificationsMutation,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
-	UpdateAllNotificationsForUserMutation,
-	UpdateNotificationMutation,
+	type UpdateAllNotificationsForUserMutation,
+	type UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import {
-	GqlCreateOrUpdateNotification,
-	GqlNotification,
-	Notification,
+	type GqlCreateOrUpdateNotification,
+	type GqlNotification,
+	type Notification,
 	NotificationStatus,
 	NotificationType,
 } from '~modules/notifications/types';
-import { VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
-import { VisitRequest, VisitStatus } from '~modules/visits/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';

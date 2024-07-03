@@ -16,6 +16,7 @@ export type Scalars = {
   daterange: any;
   json: any;
   jsonb: any;
+  numeric: any;
   time: any;
   timestamp: any;
   timestamptz: any;
@@ -3005,6 +3006,5250 @@ export type Daterange_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['daterange']>>;
 };
 
+/** columns and relationships of "graph.carrier" */
+export type Graph_Carrier = {
+  __typename?: 'graph_carrier';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ha_des_coloring_type?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  premis_identifier?: Maybe<Scalars['String']>;
+  premis_medium?: Maybe<Scalars['String']>;
+  schema_height?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_material?: Maybe<Scalars['String']>;
+  schema_material_extent?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_width?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.carrier" */
+export type Graph_Carrier_Aggregate = {
+  __typename?: 'graph_carrier_aggregate';
+  aggregate?: Maybe<Graph_Carrier_Aggregate_Fields>;
+  nodes: Array<Graph_Carrier>;
+};
+
+/** aggregate fields of "graph.carrier" */
+export type Graph_Carrier_Aggregate_Fields = {
+  __typename?: 'graph_carrier_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Carrier_Max_Fields>;
+  min?: Maybe<Graph_Carrier_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.carrier" */
+export type Graph_Carrier_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Carrier_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.carrier". All fields are combined with a logical 'AND'. */
+export type Graph_Carrier_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Carrier_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Carrier_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Carrier_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  ha_des_coloring_type?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  premis_identifier?: InputMaybe<String_Comparison_Exp>;
+  premis_medium?: InputMaybe<String_Comparison_Exp>;
+  schema_height?: InputMaybe<String_Comparison_Exp>;
+  schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_material?: InputMaybe<String_Comparison_Exp>;
+  schema_material_extent?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_width?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.carrier" */
+export enum Graph_Carrier_Constraint {
+  /** unique or primary key constraint */
+  CarrierPkey = 'carrier_pkey'
+}
+
+/** input type for inserting data into table "graph.carrier" */
+export type Graph_Carrier_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  ha_des_coloring_type?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  premis_identifier?: InputMaybe<Scalars['String']>;
+  premis_medium?: InputMaybe<Scalars['String']>;
+  schema_height?: InputMaybe<Scalars['String']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_material?: InputMaybe<Scalars['String']>;
+  schema_material_extent?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_width?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Carrier_Max_Fields = {
+  __typename?: 'graph_carrier_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ha_des_coloring_type?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  premis_identifier?: Maybe<Scalars['String']>;
+  premis_medium?: Maybe<Scalars['String']>;
+  schema_height?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_material?: Maybe<Scalars['String']>;
+  schema_material_extent?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_width?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Carrier_Min_Fields = {
+  __typename?: 'graph_carrier_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ha_des_coloring_type?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  premis_identifier?: Maybe<Scalars['String']>;
+  premis_medium?: Maybe<Scalars['String']>;
+  schema_height?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_material?: Maybe<Scalars['String']>;
+  schema_material_extent?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_width?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.carrier" */
+export type Graph_Carrier_Mutation_Response = {
+  __typename?: 'graph_carrier_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Carrier>;
+};
+
+/** on_conflict condition type for table "graph.carrier" */
+export type Graph_Carrier_On_Conflict = {
+  constraint: Graph_Carrier_Constraint;
+  update_columns?: Array<Graph_Carrier_Update_Column>;
+  where?: InputMaybe<Graph_Carrier_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.carrier". */
+export type Graph_Carrier_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  ha_des_coloring_type?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  premis_identifier?: InputMaybe<Order_By>;
+  premis_medium?: InputMaybe<Order_By>;
+  schema_height?: InputMaybe<Order_By>;
+  schema_identifier?: InputMaybe<Order_By>;
+  schema_material?: InputMaybe<Order_By>;
+  schema_material_extent?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_width?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_carrier */
+export type Graph_Carrier_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.carrier" */
+export enum Graph_Carrier_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HaDesColoringType = 'ha_des_coloring_type',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PremisIdentifier = 'premis_identifier',
+  /** column name */
+  PremisMedium = 'premis_medium',
+  /** column name */
+  SchemaHeight = 'schema_height',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaMaterial = 'schema_material',
+  /** column name */
+  SchemaMaterialExtent = 'schema_material_extent',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaWidth = 'schema_width',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.carrier" */
+export type Graph_Carrier_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  ha_des_coloring_type?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  premis_identifier?: InputMaybe<Scalars['String']>;
+  premis_medium?: InputMaybe<Scalars['String']>;
+  schema_height?: InputMaybe<Scalars['String']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_material?: InputMaybe<Scalars['String']>;
+  schema_material_extent?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_width?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.carrier" */
+export enum Graph_Carrier_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  HaDesColoringType = 'ha_des_coloring_type',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PremisIdentifier = 'premis_identifier',
+  /** column name */
+  PremisMedium = 'premis_medium',
+  /** column name */
+  SchemaHeight = 'schema_height',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaMaterial = 'schema_material',
+  /** column name */
+  SchemaMaterialExtent = 'schema_material_extent',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaWidth = 'schema_width',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Tabel voor Collections */
+export type Graph_Collection = {
+  __typename?: 'graph_collection';
+  /** Titel die voorafging aan deze titel (newspaper.id) */
+  bibframe_preceeded_by?: Maybe<Scalars['String']>;
+  /** Titel die deze titel opvolgde (newspaper.id) */
+  bibframe_succeeded_by?: Maybe<Scalars['String']>;
+  /** Supplement of bijlage bij andere titel (newspaper.id) */
+  bibframe_supplement_to?: Maybe<Scalars['String']>;
+  collection_type?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** iri as id */
+  id: Scalars['String'];
+  /** Alternatieve titel */
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  /** Laatste jaar van uitgave in edtf (string) */
+  schema_end_date?: Maybe<Scalars['String']>;
+  schema_identifier: Scalars['String'];
+  schema_is_part_of?: Maybe<Scalars['String']>;
+  /** Plaats van uitgave */
+  schema_location_created?: Maybe<Scalars['String']>;
+  /** Titel */
+  schema_name: Scalars['String'];
+  /** Uitgever als Role */
+  schema_publisher?: Maybe<Scalars['String']>;
+  schema_season_number?: Maybe<Scalars['String']>;
+  /** Eerste jaar van uitgave in edtf (string) */
+  schema_start_date?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.collection" */
+export type Graph_Collection_Aggregate = {
+  __typename?: 'graph_collection_aggregate';
+  aggregate?: Maybe<Graph_Collection_Aggregate_Fields>;
+  nodes: Array<Graph_Collection>;
+};
+
+/** aggregate fields of "graph.collection" */
+export type Graph_Collection_Aggregate_Fields = {
+  __typename?: 'graph_collection_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Collection_Max_Fields>;
+  min?: Maybe<Graph_Collection_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.collection" */
+export type Graph_Collection_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Collection_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.collection". All fields are combined with a logical 'AND'. */
+export type Graph_Collection_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Collection_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Collection_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Collection_Bool_Exp>>;
+  bibframe_preceeded_by?: InputMaybe<String_Comparison_Exp>;
+  bibframe_succeeded_by?: InputMaybe<String_Comparison_Exp>;
+  bibframe_supplement_to?: InputMaybe<String_Comparison_Exp>;
+  collection_type?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  schema_alternate_name?: InputMaybe<String_Comparison_Exp>;
+  schema_end_date?: InputMaybe<String_Comparison_Exp>;
+  schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_is_part_of?: InputMaybe<String_Comparison_Exp>;
+  schema_location_created?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_publisher?: InputMaybe<String_Comparison_Exp>;
+  schema_season_number?: InputMaybe<String_Comparison_Exp>;
+  schema_start_date?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.collection" */
+export enum Graph_Collection_Constraint {
+  /** unique or primary key constraint */
+  NewspaperPkey = 'newspaper_pkey',
+  /** unique or primary key constraint */
+  NewspaperSchemaIdentifierKey = 'newspaper_schema_identifier_key'
+}
+
+/** input type for inserting data into table "graph.collection" */
+export type Graph_Collection_Insert_Input = {
+  /** Titel die voorafging aan deze titel (newspaper.id) */
+  bibframe_preceeded_by?: InputMaybe<Scalars['String']>;
+  /** Titel die deze titel opvolgde (newspaper.id) */
+  bibframe_succeeded_by?: InputMaybe<Scalars['String']>;
+  /** Supplement of bijlage bij andere titel (newspaper.id) */
+  bibframe_supplement_to?: InputMaybe<Scalars['String']>;
+  collection_type?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** iri as id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Alternatieve titel */
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  /** Laatste jaar van uitgave in edtf (string) */
+  schema_end_date?: InputMaybe<Scalars['String']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_is_part_of?: InputMaybe<Scalars['String']>;
+  /** Plaats van uitgave */
+  schema_location_created?: InputMaybe<Scalars['String']>;
+  /** Titel */
+  schema_name?: InputMaybe<Scalars['String']>;
+  /** Uitgever als Role */
+  schema_publisher?: InputMaybe<Scalars['String']>;
+  schema_season_number?: InputMaybe<Scalars['String']>;
+  /** Eerste jaar van uitgave in edtf (string) */
+  schema_start_date?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Collection_Max_Fields = {
+  __typename?: 'graph_collection_max_fields';
+  /** Titel die voorafging aan deze titel (newspaper.id) */
+  bibframe_preceeded_by?: Maybe<Scalars['String']>;
+  /** Titel die deze titel opvolgde (newspaper.id) */
+  bibframe_succeeded_by?: Maybe<Scalars['String']>;
+  /** Supplement of bijlage bij andere titel (newspaper.id) */
+  bibframe_supplement_to?: Maybe<Scalars['String']>;
+  collection_type?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** iri as id */
+  id?: Maybe<Scalars['String']>;
+  /** Alternatieve titel */
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  /** Laatste jaar van uitgave in edtf (string) */
+  schema_end_date?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_is_part_of?: Maybe<Scalars['String']>;
+  /** Plaats van uitgave */
+  schema_location_created?: Maybe<Scalars['String']>;
+  /** Titel */
+  schema_name?: Maybe<Scalars['String']>;
+  /** Uitgever als Role */
+  schema_publisher?: Maybe<Scalars['String']>;
+  schema_season_number?: Maybe<Scalars['String']>;
+  /** Eerste jaar van uitgave in edtf (string) */
+  schema_start_date?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Collection_Min_Fields = {
+  __typename?: 'graph_collection_min_fields';
+  /** Titel die voorafging aan deze titel (newspaper.id) */
+  bibframe_preceeded_by?: Maybe<Scalars['String']>;
+  /** Titel die deze titel opvolgde (newspaper.id) */
+  bibframe_succeeded_by?: Maybe<Scalars['String']>;
+  /** Supplement of bijlage bij andere titel (newspaper.id) */
+  bibframe_supplement_to?: Maybe<Scalars['String']>;
+  collection_type?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** iri as id */
+  id?: Maybe<Scalars['String']>;
+  /** Alternatieve titel */
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  /** Laatste jaar van uitgave in edtf (string) */
+  schema_end_date?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_is_part_of?: Maybe<Scalars['String']>;
+  /** Plaats van uitgave */
+  schema_location_created?: Maybe<Scalars['String']>;
+  /** Titel */
+  schema_name?: Maybe<Scalars['String']>;
+  /** Uitgever als Role */
+  schema_publisher?: Maybe<Scalars['String']>;
+  schema_season_number?: Maybe<Scalars['String']>;
+  /** Eerste jaar van uitgave in edtf (string) */
+  schema_start_date?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.collection" */
+export type Graph_Collection_Mutation_Response = {
+  __typename?: 'graph_collection_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Collection>;
+};
+
+/** on_conflict condition type for table "graph.collection" */
+export type Graph_Collection_On_Conflict = {
+  constraint: Graph_Collection_Constraint;
+  update_columns?: Array<Graph_Collection_Update_Column>;
+  where?: InputMaybe<Graph_Collection_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.collection". */
+export type Graph_Collection_Order_By = {
+  bibframe_preceeded_by?: InputMaybe<Order_By>;
+  bibframe_succeeded_by?: InputMaybe<Order_By>;
+  bibframe_supplement_to?: InputMaybe<Order_By>;
+  collection_type?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  schema_alternate_name?: InputMaybe<Order_By>;
+  schema_end_date?: InputMaybe<Order_By>;
+  schema_identifier?: InputMaybe<Order_By>;
+  schema_is_part_of?: InputMaybe<Order_By>;
+  schema_location_created?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_publisher?: InputMaybe<Order_By>;
+  schema_season_number?: InputMaybe<Order_By>;
+  schema_start_date?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_collection */
+export type Graph_Collection_Pk_Columns_Input = {
+  /** iri as id */
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.collection" */
+export enum Graph_Collection_Select_Column {
+  /** column name */
+  BibframePreceededBy = 'bibframe_preceeded_by',
+  /** column name */
+  BibframeSucceededBy = 'bibframe_succeeded_by',
+  /** column name */
+  BibframeSupplementTo = 'bibframe_supplement_to',
+  /** column name */
+  CollectionType = 'collection_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  SchemaEndDate = 'schema_end_date',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaIsPartOf = 'schema_is_part_of',
+  /** column name */
+  SchemaLocationCreated = 'schema_location_created',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaPublisher = 'schema_publisher',
+  /** column name */
+  SchemaSeasonNumber = 'schema_season_number',
+  /** column name */
+  SchemaStartDate = 'schema_start_date',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.collection" */
+export type Graph_Collection_Set_Input = {
+  /** Titel die voorafging aan deze titel (newspaper.id) */
+  bibframe_preceeded_by?: InputMaybe<Scalars['String']>;
+  /** Titel die deze titel opvolgde (newspaper.id) */
+  bibframe_succeeded_by?: InputMaybe<Scalars['String']>;
+  /** Supplement of bijlage bij andere titel (newspaper.id) */
+  bibframe_supplement_to?: InputMaybe<Scalars['String']>;
+  collection_type?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** iri as id */
+  id?: InputMaybe<Scalars['String']>;
+  /** Alternatieve titel */
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  /** Laatste jaar van uitgave in edtf (string) */
+  schema_end_date?: InputMaybe<Scalars['String']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_is_part_of?: InputMaybe<Scalars['String']>;
+  /** Plaats van uitgave */
+  schema_location_created?: InputMaybe<Scalars['String']>;
+  /** Titel */
+  schema_name?: InputMaybe<Scalars['String']>;
+  /** Uitgever als Role */
+  schema_publisher?: InputMaybe<Scalars['String']>;
+  schema_season_number?: InputMaybe<Scalars['String']>;
+  /** Eerste jaar van uitgave in edtf (string) */
+  schema_start_date?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.collection" */
+export enum Graph_Collection_Update_Column {
+  /** column name */
+  BibframePreceededBy = 'bibframe_preceeded_by',
+  /** column name */
+  BibframeSucceededBy = 'bibframe_succeeded_by',
+  /** column name */
+  BibframeSupplementTo = 'bibframe_supplement_to',
+  /** column name */
+  CollectionType = 'collection_type',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  SchemaEndDate = 'schema_end_date',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaIsPartOf = 'schema_is_part_of',
+  /** column name */
+  SchemaLocationCreated = 'schema_location_created',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaPublisher = 'schema_publisher',
+  /** column name */
+  SchemaSeasonNumber = 'schema_season_number',
+  /** column name */
+  SchemaStartDate = 'schema_start_date',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.dct_format" */
+export type Graph_Dct_Format = {
+  __typename?: 'graph_dct_format';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dct_format: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.dct_format" */
+export type Graph_Dct_Format_Aggregate = {
+  __typename?: 'graph_dct_format_aggregate';
+  aggregate?: Maybe<Graph_Dct_Format_Aggregate_Fields>;
+  nodes: Array<Graph_Dct_Format>;
+};
+
+/** aggregate fields of "graph.dct_format" */
+export type Graph_Dct_Format_Aggregate_Fields = {
+  __typename?: 'graph_dct_format_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Dct_Format_Max_Fields>;
+  min?: Maybe<Graph_Dct_Format_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.dct_format" */
+export type Graph_Dct_Format_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Dct_Format_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.dct_format". All fields are combined with a logical 'AND'. */
+export type Graph_Dct_Format_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Dct_Format_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Dct_Format_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  dct_format?: InputMaybe<String_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.dct_format" */
+export enum Graph_Dct_Format_Constraint {
+  /** unique or primary key constraint */
+  DctFormatPkey = 'dct_format_pkey'
+}
+
+/** input type for inserting data into table "graph.dct_format" */
+export type Graph_Dct_Format_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dct_format?: InputMaybe<Scalars['String']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Dct_Format_Max_Fields = {
+  __typename?: 'graph_dct_format_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dct_format?: Maybe<Scalars['String']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Dct_Format_Min_Fields = {
+  __typename?: 'graph_dct_format_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dct_format?: Maybe<Scalars['String']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.dct_format" */
+export type Graph_Dct_Format_Mutation_Response = {
+  __typename?: 'graph_dct_format_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Dct_Format>;
+};
+
+/** on_conflict condition type for table "graph.dct_format" */
+export type Graph_Dct_Format_On_Conflict = {
+  constraint: Graph_Dct_Format_Constraint;
+  update_columns?: Array<Graph_Dct_Format_Update_Column>;
+  where?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.dct_format". */
+export type Graph_Dct_Format_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  dct_format?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_dct_format */
+export type Graph_Dct_Format_Pk_Columns_Input = {
+  dct_format: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+};
+
+/** select columns of table "graph.dct_format" */
+export enum Graph_Dct_Format_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctFormat = 'dct_format',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.dct_format" */
+export type Graph_Dct_Format_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dct_format?: InputMaybe<Scalars['String']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.dct_format" */
+export enum Graph_Dct_Format_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctFormat = 'dct_format',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.file" */
+export type Graph_File = {
+  __typename?: 'graph_file';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ebucore_has_mime_type?: Maybe<Scalars['String']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  hasMediaFragment: Array<Graph_Representation>;
+  /** An aggregate relationship */
+  hasMediaFragment_aggregate: Graph_Representation_Aggregate;
+  id: Scalars['String'];
+  /** An array relationship */
+  isRootOf: Array<Graph_Representation>;
+  /** An aggregate relationship */
+  isRootOf_aggregate: Graph_Representation_Aggregate;
+  premis_original_name?: Maybe<Scalars['String']>;
+  premis_stored_at?: Maybe<Scalars['String']>;
+  relation_is_included_in?: Maybe<Scalars['String']>;
+  schema_duration?: Maybe<Scalars['numeric']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_thumbnail_url?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "graph.file" */
+export type Graph_FileHasMediaFragmentArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.file" */
+export type Graph_FileHasMediaFragment_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.file" */
+export type Graph_FileIsRootOfArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.file" */
+export type Graph_FileIsRootOf_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+/** aggregated selection of "graph.file" */
+export type Graph_File_Aggregate = {
+  __typename?: 'graph_file_aggregate';
+  aggregate?: Maybe<Graph_File_Aggregate_Fields>;
+  nodes: Array<Graph_File>;
+};
+
+/** aggregate fields of "graph.file" */
+export type Graph_File_Aggregate_Fields = {
+  __typename?: 'graph_file_aggregate_fields';
+  avg?: Maybe<Graph_File_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Graph_File_Max_Fields>;
+  min?: Maybe<Graph_File_Min_Fields>;
+  stddev?: Maybe<Graph_File_Stddev_Fields>;
+  stddev_pop?: Maybe<Graph_File_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Graph_File_Stddev_Samp_Fields>;
+  sum?: Maybe<Graph_File_Sum_Fields>;
+  var_pop?: Maybe<Graph_File_Var_Pop_Fields>;
+  var_samp?: Maybe<Graph_File_Var_Samp_Fields>;
+  variance?: Maybe<Graph_File_Variance_Fields>;
+};
+
+
+/** aggregate fields of "graph.file" */
+export type Graph_File_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_File_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Graph_File_Avg_Fields = {
+  __typename?: 'graph_file_avg_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.file". All fields are combined with a logical 'AND'. */
+export type Graph_File_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_File_Bool_Exp>>;
+  _not?: InputMaybe<Graph_File_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_File_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  ebucore_has_mime_type?: InputMaybe<String_Comparison_Exp>;
+  edm_is_next_in_sequence?: InputMaybe<String_Comparison_Exp>;
+  hasMediaFragment?: InputMaybe<Graph_Representation_Bool_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  isRootOf?: InputMaybe<Graph_Representation_Bool_Exp>;
+  premis_original_name?: InputMaybe<String_Comparison_Exp>;
+  premis_stored_at?: InputMaybe<String_Comparison_Exp>;
+  relation_is_included_in?: InputMaybe<String_Comparison_Exp>;
+  schema_duration?: InputMaybe<Numeric_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_thumbnail_url?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.file" */
+export enum Graph_File_Constraint {
+  /** unique or primary key constraint */
+  FilePkey = 'file_pkey'
+}
+
+/** input type for incrementing numeric columns in table "graph.file" */
+export type Graph_File_Inc_Input = {
+  schema_duration?: InputMaybe<Scalars['numeric']>;
+};
+
+/** input type for inserting data into table "graph.file" */
+export type Graph_File_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  ebucore_has_mime_type?: InputMaybe<Scalars['String']>;
+  edm_is_next_in_sequence?: InputMaybe<Scalars['String']>;
+  hasMediaFragment?: InputMaybe<Graph_Representation_Arr_Rel_Insert_Input>;
+  id?: InputMaybe<Scalars['String']>;
+  isRootOf?: InputMaybe<Graph_Representation_Arr_Rel_Insert_Input>;
+  premis_original_name?: InputMaybe<Scalars['String']>;
+  premis_stored_at?: InputMaybe<Scalars['String']>;
+  relation_is_included_in?: InputMaybe<Scalars['String']>;
+  schema_duration?: InputMaybe<Scalars['numeric']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_thumbnail_url?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_File_Max_Fields = {
+  __typename?: 'graph_file_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ebucore_has_mime_type?: Maybe<Scalars['String']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  premis_original_name?: Maybe<Scalars['String']>;
+  premis_stored_at?: Maybe<Scalars['String']>;
+  relation_is_included_in?: Maybe<Scalars['String']>;
+  schema_duration?: Maybe<Scalars['numeric']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_thumbnail_url?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_File_Min_Fields = {
+  __typename?: 'graph_file_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  ebucore_has_mime_type?: Maybe<Scalars['String']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  premis_original_name?: Maybe<Scalars['String']>;
+  premis_stored_at?: Maybe<Scalars['String']>;
+  relation_is_included_in?: Maybe<Scalars['String']>;
+  schema_duration?: Maybe<Scalars['numeric']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_thumbnail_url?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.file" */
+export type Graph_File_Mutation_Response = {
+  __typename?: 'graph_file_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_File>;
+};
+
+/** input type for inserting object relation for remote table "graph.file" */
+export type Graph_File_Obj_Rel_Insert_Input = {
+  data: Graph_File_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_File_On_Conflict>;
+};
+
+/** on_conflict condition type for table "graph.file" */
+export type Graph_File_On_Conflict = {
+  constraint: Graph_File_Constraint;
+  update_columns?: Array<Graph_File_Update_Column>;
+  where?: InputMaybe<Graph_File_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.file". */
+export type Graph_File_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  ebucore_has_mime_type?: InputMaybe<Order_By>;
+  edm_is_next_in_sequence?: InputMaybe<Order_By>;
+  hasMediaFragment_aggregate?: InputMaybe<Graph_Representation_Aggregate_Order_By>;
+  id?: InputMaybe<Order_By>;
+  isRootOf_aggregate?: InputMaybe<Graph_Representation_Aggregate_Order_By>;
+  premis_original_name?: InputMaybe<Order_By>;
+  premis_stored_at?: InputMaybe<Order_By>;
+  relation_is_included_in?: InputMaybe<Order_By>;
+  schema_duration?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_thumbnail_url?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_file */
+export type Graph_File_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.file" */
+export enum Graph_File_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EbucoreHasMimeType = 'ebucore_has_mime_type',
+  /** column name */
+  EdmIsNextInSequence = 'edm_is_next_in_sequence',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PremisOriginalName = 'premis_original_name',
+  /** column name */
+  PremisStoredAt = 'premis_stored_at',
+  /** column name */
+  RelationIsIncludedIn = 'relation_is_included_in',
+  /** column name */
+  SchemaDuration = 'schema_duration',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaThumbnailUrl = 'schema_thumbnail_url',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.file" */
+export type Graph_File_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  ebucore_has_mime_type?: InputMaybe<Scalars['String']>;
+  edm_is_next_in_sequence?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  premis_original_name?: InputMaybe<Scalars['String']>;
+  premis_stored_at?: InputMaybe<Scalars['String']>;
+  relation_is_included_in?: InputMaybe<Scalars['String']>;
+  schema_duration?: InputMaybe<Scalars['numeric']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_thumbnail_url?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Graph_File_Stddev_Fields = {
+  __typename?: 'graph_file_stddev_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Graph_File_Stddev_Pop_Fields = {
+  __typename?: 'graph_file_stddev_pop_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Graph_File_Stddev_Samp_Fields = {
+  __typename?: 'graph_file_stddev_samp_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Graph_File_Sum_Fields = {
+  __typename?: 'graph_file_sum_fields';
+  schema_duration?: Maybe<Scalars['numeric']>;
+};
+
+/** update columns of table "graph.file" */
+export enum Graph_File_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EbucoreHasMimeType = 'ebucore_has_mime_type',
+  /** column name */
+  EdmIsNextInSequence = 'edm_is_next_in_sequence',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PremisOriginalName = 'premis_original_name',
+  /** column name */
+  PremisStoredAt = 'premis_stored_at',
+  /** column name */
+  RelationIsIncludedIn = 'relation_is_included_in',
+  /** column name */
+  SchemaDuration = 'schema_duration',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaThumbnailUrl = 'schema_thumbnail_url',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Graph_File_Var_Pop_Fields = {
+  __typename?: 'graph_file_var_pop_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Graph_File_Var_Samp_Fields = {
+  __typename?: 'graph_file_var_samp_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Graph_File_Variance_Fields = {
+  __typename?: 'graph_file_variance_fields';
+  schema_duration?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity = {
+  __typename?: 'graph_intellectual_entity';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_available?: Maybe<Scalars['String']>;
+  dcterms_format?: Maybe<Scalars['String']>;
+  dcterms_rights?: Maybe<Scalars['String']>;
+  ebucore_has_cast_member?: Maybe<Scalars['String']>;
+  ebucore_has_object_type?: Maybe<Scalars['String']>;
+  ebucore_synopsis?: Maybe<Scalars['String']>;
+  ha_des_number_of_pages?: Maybe<Scalars['Int']>;
+  ha_des_primary_identifier?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  /** An array relationship */
+  isRepresentedBy: Array<Graph_Representation>;
+  /** An aggregate relationship */
+  isRepresentedBy_aggregate: Graph_Representation_Aggregate;
+  /** An object relationship */
+  organization: Graph_Organization;
+  /** An array relationship */
+  premis_identifier: Array<Graph_Premis_Identifier>;
+  /** An aggregate relationship */
+  premis_identifier_aggregate: Graph_Premis_Identifier_Aggregate;
+  relation_is_part_of?: Maybe<Scalars['String']>;
+  schema_abstract?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  schema_alternateName: Array<Graph_Schema_Alternate_Name>;
+  /** An aggregate relationship */
+  schema_alternateName_aggregate: Graph_Schema_Alternate_Name_Aggregate;
+  schema_copyright_holder?: Maybe<Scalars['String']>;
+  schema_copyright_notice?: Maybe<Scalars['String']>;
+  schema_copyright_year?: Maybe<Scalars['date']>;
+  schema_credit_text?: Maybe<Scalars['String']>;
+  schema_date_created?: Maybe<Scalars['String']>;
+  schema_date_published?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  schema_genre: Array<Graph_Schema_Genre>;
+  /** An aggregate relationship */
+  schema_genre_aggregate: Graph_Schema_Genre_Aggregate;
+  schema_identifier?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  schema_inLanguage: Array<Graph_Schema_In_Language>;
+  /** An aggregate relationship */
+  schema_inLanguage_aggregate: Graph_Schema_In_Language_Aggregate;
+  /** An array relationship */
+  schema_isPartOf: Array<Graph_Schema_Is_Part_Of>;
+  /** An aggregate relationship */
+  schema_isPartOf_aggregate: Graph_Schema_Is_Part_Of_Aggregate;
+  /** An array relationship */
+  schema_keywords: Array<Graph_Schema_Keywords>;
+  /** An aggregate relationship */
+  schema_keywords_aggregate: Graph_Schema_Keywords_Aggregate;
+  /** An array relationship */
+  schema_licenses: Array<Graph_Schema_License>;
+  /** An aggregate relationship */
+  schema_licenses_aggregate: Graph_Schema_License_Aggregate;
+  schema_maintainer: Scalars['String'];
+  /** An array relationship */
+  schema_mentions: Array<Graph_Schema_Mentions>;
+  /** An aggregate relationship */
+  schema_mentions_aggregate: Graph_Schema_Mentions_Aggregate;
+  schema_name: Scalars['String'];
+  schema_position?: Maybe<Scalars['Int']>;
+  /** An array relationship */
+  schema_spatial: Array<Graph_Schema_Spatial>;
+  /** An aggregate relationship */
+  schema_spatial_aggregate: Graph_Schema_Spatial_Aggregate;
+  /** An array relationship */
+  schema_temporal: Array<Graph_Schema_Temporal>;
+  /** An aggregate relationship */
+  schema_temporal_aggregate: Graph_Schema_Temporal_Aggregate;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntityIsRepresentedByArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntityIsRepresentedBy_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntityPremis_IdentifierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntityPremis_Identifier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_AlternateNameArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_AlternateName_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_GenreArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Genre_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_InLanguageArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_InLanguage_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_IsPartOfArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_IsPartOf_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_KeywordsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Keywords_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_LicensesArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Licenses_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_MentionsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Mentions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_SpatialArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Spatial_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_TemporalArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.intellectual_entity" */
+export type Graph_Intellectual_EntitySchema_Temporal_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+/** aggregated selection of "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Aggregate = {
+  __typename?: 'graph_intellectual_entity_aggregate';
+  aggregate?: Maybe<Graph_Intellectual_Entity_Aggregate_Fields>;
+  nodes: Array<Graph_Intellectual_Entity>;
+};
+
+/** aggregate fields of "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Aggregate_Fields = {
+  __typename?: 'graph_intellectual_entity_aggregate_fields';
+  avg?: Maybe<Graph_Intellectual_Entity_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Intellectual_Entity_Max_Fields>;
+  min?: Maybe<Graph_Intellectual_Entity_Min_Fields>;
+  stddev?: Maybe<Graph_Intellectual_Entity_Stddev_Fields>;
+  stddev_pop?: Maybe<Graph_Intellectual_Entity_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Graph_Intellectual_Entity_Stddev_Samp_Fields>;
+  sum?: Maybe<Graph_Intellectual_Entity_Sum_Fields>;
+  var_pop?: Maybe<Graph_Intellectual_Entity_Var_Pop_Fields>;
+  var_samp?: Maybe<Graph_Intellectual_Entity_Var_Samp_Fields>;
+  variance?: Maybe<Graph_Intellectual_Entity_Variance_Fields>;
+};
+
+
+/** aggregate fields of "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Intellectual_Entity_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Graph_Intellectual_Entity_Avg_Fields = {
+  __typename?: 'graph_intellectual_entity_avg_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.intellectual_entity". All fields are combined with a logical 'AND'. */
+export type Graph_Intellectual_Entity_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Intellectual_Entity_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Intellectual_Entity_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  dcterms_available?: InputMaybe<String_Comparison_Exp>;
+  dcterms_format?: InputMaybe<String_Comparison_Exp>;
+  dcterms_rights?: InputMaybe<String_Comparison_Exp>;
+  ebucore_has_cast_member?: InputMaybe<String_Comparison_Exp>;
+  ebucore_has_object_type?: InputMaybe<String_Comparison_Exp>;
+  ebucore_synopsis?: InputMaybe<String_Comparison_Exp>;
+  ha_des_number_of_pages?: InputMaybe<Int_Comparison_Exp>;
+  ha_des_primary_identifier?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  isRepresentedBy?: InputMaybe<Graph_Representation_Bool_Exp>;
+  organization?: InputMaybe<Graph_Organization_Bool_Exp>;
+  premis_identifier?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+  relation_is_part_of?: InputMaybe<String_Comparison_Exp>;
+  schema_abstract?: InputMaybe<String_Comparison_Exp>;
+  schema_alternateName?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+  schema_copyright_holder?: InputMaybe<String_Comparison_Exp>;
+  schema_copyright_notice?: InputMaybe<String_Comparison_Exp>;
+  schema_copyright_year?: InputMaybe<Date_Comparison_Exp>;
+  schema_credit_text?: InputMaybe<String_Comparison_Exp>;
+  schema_date_created?: InputMaybe<String_Comparison_Exp>;
+  schema_date_published?: InputMaybe<String_Comparison_Exp>;
+  schema_description?: InputMaybe<String_Comparison_Exp>;
+  schema_genre?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+  schema_identifier?: InputMaybe<String_Comparison_Exp>;
+  schema_inLanguage?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+  schema_isPartOf?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+  schema_keywords?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+  schema_licenses?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+  schema_maintainer?: InputMaybe<String_Comparison_Exp>;
+  schema_mentions?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_position?: InputMaybe<Int_Comparison_Exp>;
+  schema_spatial?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+  schema_temporal?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.intellectual_entity" */
+export enum Graph_Intellectual_Entity_Constraint {
+  /** unique or primary key constraint */
+  IntellectualEntityPkey = 'intellectual_entity_pkey'
+}
+
+/** input type for incrementing numeric columns in table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Inc_Input = {
+  ha_des_number_of_pages?: InputMaybe<Scalars['Int']>;
+  schema_position?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dcterms_available?: InputMaybe<Scalars['String']>;
+  dcterms_format?: InputMaybe<Scalars['String']>;
+  dcterms_rights?: InputMaybe<Scalars['String']>;
+  ebucore_has_cast_member?: InputMaybe<Scalars['String']>;
+  ebucore_has_object_type?: InputMaybe<Scalars['String']>;
+  ebucore_synopsis?: InputMaybe<Scalars['String']>;
+  ha_des_number_of_pages?: InputMaybe<Scalars['Int']>;
+  ha_des_primary_identifier?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  isRepresentedBy?: InputMaybe<Graph_Representation_Arr_Rel_Insert_Input>;
+  organization?: InputMaybe<Graph_Organization_Obj_Rel_Insert_Input>;
+  premis_identifier?: InputMaybe<Graph_Premis_Identifier_Arr_Rel_Insert_Input>;
+  relation_is_part_of?: InputMaybe<Scalars['String']>;
+  schema_abstract?: InputMaybe<Scalars['String']>;
+  schema_alternateName?: InputMaybe<Graph_Schema_Alternate_Name_Arr_Rel_Insert_Input>;
+  schema_copyright_holder?: InputMaybe<Scalars['String']>;
+  schema_copyright_notice?: InputMaybe<Scalars['String']>;
+  schema_copyright_year?: InputMaybe<Scalars['date']>;
+  schema_credit_text?: InputMaybe<Scalars['String']>;
+  schema_date_created?: InputMaybe<Scalars['String']>;
+  schema_date_published?: InputMaybe<Scalars['String']>;
+  schema_description?: InputMaybe<Scalars['String']>;
+  schema_genre?: InputMaybe<Graph_Schema_Genre_Arr_Rel_Insert_Input>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_inLanguage?: InputMaybe<Graph_Schema_In_Language_Arr_Rel_Insert_Input>;
+  schema_isPartOf?: InputMaybe<Graph_Schema_Is_Part_Of_Arr_Rel_Insert_Input>;
+  schema_keywords?: InputMaybe<Graph_Schema_Keywords_Arr_Rel_Insert_Input>;
+  schema_licenses?: InputMaybe<Graph_Schema_License_Arr_Rel_Insert_Input>;
+  schema_maintainer?: InputMaybe<Scalars['String']>;
+  schema_mentions?: InputMaybe<Graph_Schema_Mentions_Arr_Rel_Insert_Input>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_position?: InputMaybe<Scalars['Int']>;
+  schema_spatial?: InputMaybe<Graph_Schema_Spatial_Arr_Rel_Insert_Input>;
+  schema_temporal?: InputMaybe<Graph_Schema_Temporal_Arr_Rel_Insert_Input>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Intellectual_Entity_Max_Fields = {
+  __typename?: 'graph_intellectual_entity_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_available?: Maybe<Scalars['String']>;
+  dcterms_format?: Maybe<Scalars['String']>;
+  dcterms_rights?: Maybe<Scalars['String']>;
+  ebucore_has_cast_member?: Maybe<Scalars['String']>;
+  ebucore_has_object_type?: Maybe<Scalars['String']>;
+  ebucore_synopsis?: Maybe<Scalars['String']>;
+  ha_des_number_of_pages?: Maybe<Scalars['Int']>;
+  ha_des_primary_identifier?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  relation_is_part_of?: Maybe<Scalars['String']>;
+  schema_abstract?: Maybe<Scalars['String']>;
+  schema_copyright_holder?: Maybe<Scalars['String']>;
+  schema_copyright_notice?: Maybe<Scalars['String']>;
+  schema_copyright_year?: Maybe<Scalars['date']>;
+  schema_credit_text?: Maybe<Scalars['String']>;
+  schema_date_created?: Maybe<Scalars['String']>;
+  schema_date_published?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_maintainer?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_position?: Maybe<Scalars['Int']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Intellectual_Entity_Min_Fields = {
+  __typename?: 'graph_intellectual_entity_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_available?: Maybe<Scalars['String']>;
+  dcterms_format?: Maybe<Scalars['String']>;
+  dcterms_rights?: Maybe<Scalars['String']>;
+  ebucore_has_cast_member?: Maybe<Scalars['String']>;
+  ebucore_has_object_type?: Maybe<Scalars['String']>;
+  ebucore_synopsis?: Maybe<Scalars['String']>;
+  ha_des_number_of_pages?: Maybe<Scalars['Int']>;
+  ha_des_primary_identifier?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  relation_is_part_of?: Maybe<Scalars['String']>;
+  schema_abstract?: Maybe<Scalars['String']>;
+  schema_copyright_holder?: Maybe<Scalars['String']>;
+  schema_copyright_notice?: Maybe<Scalars['String']>;
+  schema_copyright_year?: Maybe<Scalars['date']>;
+  schema_credit_text?: Maybe<Scalars['String']>;
+  schema_date_created?: Maybe<Scalars['String']>;
+  schema_date_published?: Maybe<Scalars['String']>;
+  schema_description?: Maybe<Scalars['String']>;
+  schema_identifier?: Maybe<Scalars['String']>;
+  schema_maintainer?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_position?: Maybe<Scalars['Int']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Mutation_Response = {
+  __typename?: 'graph_intellectual_entity_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Intellectual_Entity>;
+};
+
+/** input type for inserting object relation for remote table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Obj_Rel_Insert_Input = {
+  data: Graph_Intellectual_Entity_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Intellectual_Entity_On_Conflict>;
+};
+
+/** on_conflict condition type for table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_On_Conflict = {
+  constraint: Graph_Intellectual_Entity_Constraint;
+  update_columns?: Array<Graph_Intellectual_Entity_Update_Column>;
+  where?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.intellectual_entity". */
+export type Graph_Intellectual_Entity_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  dcterms_available?: InputMaybe<Order_By>;
+  dcterms_format?: InputMaybe<Order_By>;
+  dcterms_rights?: InputMaybe<Order_By>;
+  ebucore_has_cast_member?: InputMaybe<Order_By>;
+  ebucore_has_object_type?: InputMaybe<Order_By>;
+  ebucore_synopsis?: InputMaybe<Order_By>;
+  ha_des_number_of_pages?: InputMaybe<Order_By>;
+  ha_des_primary_identifier?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  isRepresentedBy_aggregate?: InputMaybe<Graph_Representation_Aggregate_Order_By>;
+  organization?: InputMaybe<Graph_Organization_Order_By>;
+  premis_identifier_aggregate?: InputMaybe<Graph_Premis_Identifier_Aggregate_Order_By>;
+  relation_is_part_of?: InputMaybe<Order_By>;
+  schema_abstract?: InputMaybe<Order_By>;
+  schema_alternateName_aggregate?: InputMaybe<Graph_Schema_Alternate_Name_Aggregate_Order_By>;
+  schema_copyright_holder?: InputMaybe<Order_By>;
+  schema_copyright_notice?: InputMaybe<Order_By>;
+  schema_copyright_year?: InputMaybe<Order_By>;
+  schema_credit_text?: InputMaybe<Order_By>;
+  schema_date_created?: InputMaybe<Order_By>;
+  schema_date_published?: InputMaybe<Order_By>;
+  schema_description?: InputMaybe<Order_By>;
+  schema_genre_aggregate?: InputMaybe<Graph_Schema_Genre_Aggregate_Order_By>;
+  schema_identifier?: InputMaybe<Order_By>;
+  schema_inLanguage_aggregate?: InputMaybe<Graph_Schema_In_Language_Aggregate_Order_By>;
+  schema_isPartOf_aggregate?: InputMaybe<Graph_Schema_Is_Part_Of_Aggregate_Order_By>;
+  schema_keywords_aggregate?: InputMaybe<Graph_Schema_Keywords_Aggregate_Order_By>;
+  schema_licenses_aggregate?: InputMaybe<Graph_Schema_License_Aggregate_Order_By>;
+  schema_maintainer?: InputMaybe<Order_By>;
+  schema_mentions_aggregate?: InputMaybe<Graph_Schema_Mentions_Aggregate_Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_position?: InputMaybe<Order_By>;
+  schema_spatial_aggregate?: InputMaybe<Graph_Schema_Spatial_Aggregate_Order_By>;
+  schema_temporal_aggregate?: InputMaybe<Graph_Schema_Temporal_Aggregate_Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_intellectual_entity */
+export type Graph_Intellectual_Entity_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.intellectual_entity" */
+export enum Graph_Intellectual_Entity_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctermsAvailable = 'dcterms_available',
+  /** column name */
+  DctermsFormat = 'dcterms_format',
+  /** column name */
+  DctermsRights = 'dcterms_rights',
+  /** column name */
+  EbucoreHasCastMember = 'ebucore_has_cast_member',
+  /** column name */
+  EbucoreHasObjectType = 'ebucore_has_object_type',
+  /** column name */
+  EbucoreSynopsis = 'ebucore_synopsis',
+  /** column name */
+  HaDesNumberOfPages = 'ha_des_number_of_pages',
+  /** column name */
+  HaDesPrimaryIdentifier = 'ha_des_primary_identifier',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RelationIsPartOf = 'relation_is_part_of',
+  /** column name */
+  SchemaAbstract = 'schema_abstract',
+  /** column name */
+  SchemaCopyrightHolder = 'schema_copyright_holder',
+  /** column name */
+  SchemaCopyrightNotice = 'schema_copyright_notice',
+  /** column name */
+  SchemaCopyrightYear = 'schema_copyright_year',
+  /** column name */
+  SchemaCreditText = 'schema_credit_text',
+  /** column name */
+  SchemaDateCreated = 'schema_date_created',
+  /** column name */
+  SchemaDatePublished = 'schema_date_published',
+  /** column name */
+  SchemaDescription = 'schema_description',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaMaintainer = 'schema_maintainer',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaPosition = 'schema_position',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.intellectual_entity" */
+export type Graph_Intellectual_Entity_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dcterms_available?: InputMaybe<Scalars['String']>;
+  dcterms_format?: InputMaybe<Scalars['String']>;
+  dcterms_rights?: InputMaybe<Scalars['String']>;
+  ebucore_has_cast_member?: InputMaybe<Scalars['String']>;
+  ebucore_has_object_type?: InputMaybe<Scalars['String']>;
+  ebucore_synopsis?: InputMaybe<Scalars['String']>;
+  ha_des_number_of_pages?: InputMaybe<Scalars['Int']>;
+  ha_des_primary_identifier?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  relation_is_part_of?: InputMaybe<Scalars['String']>;
+  schema_abstract?: InputMaybe<Scalars['String']>;
+  schema_copyright_holder?: InputMaybe<Scalars['String']>;
+  schema_copyright_notice?: InputMaybe<Scalars['String']>;
+  schema_copyright_year?: InputMaybe<Scalars['date']>;
+  schema_credit_text?: InputMaybe<Scalars['String']>;
+  schema_date_created?: InputMaybe<Scalars['String']>;
+  schema_date_published?: InputMaybe<Scalars['String']>;
+  schema_description?: InputMaybe<Scalars['String']>;
+  schema_identifier?: InputMaybe<Scalars['String']>;
+  schema_maintainer?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_position?: InputMaybe<Scalars['Int']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate stddev on columns */
+export type Graph_Intellectual_Entity_Stddev_Fields = {
+  __typename?: 'graph_intellectual_entity_stddev_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Graph_Intellectual_Entity_Stddev_Pop_Fields = {
+  __typename?: 'graph_intellectual_entity_stddev_pop_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Graph_Intellectual_Entity_Stddev_Samp_Fields = {
+  __typename?: 'graph_intellectual_entity_stddev_samp_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Graph_Intellectual_Entity_Sum_Fields = {
+  __typename?: 'graph_intellectual_entity_sum_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Int']>;
+  schema_position?: Maybe<Scalars['Int']>;
+};
+
+/** update columns of table "graph.intellectual_entity" */
+export enum Graph_Intellectual_Entity_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctermsAvailable = 'dcterms_available',
+  /** column name */
+  DctermsFormat = 'dcterms_format',
+  /** column name */
+  DctermsRights = 'dcterms_rights',
+  /** column name */
+  EbucoreHasCastMember = 'ebucore_has_cast_member',
+  /** column name */
+  EbucoreHasObjectType = 'ebucore_has_object_type',
+  /** column name */
+  EbucoreSynopsis = 'ebucore_synopsis',
+  /** column name */
+  HaDesNumberOfPages = 'ha_des_number_of_pages',
+  /** column name */
+  HaDesPrimaryIdentifier = 'ha_des_primary_identifier',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  RelationIsPartOf = 'relation_is_part_of',
+  /** column name */
+  SchemaAbstract = 'schema_abstract',
+  /** column name */
+  SchemaCopyrightHolder = 'schema_copyright_holder',
+  /** column name */
+  SchemaCopyrightNotice = 'schema_copyright_notice',
+  /** column name */
+  SchemaCopyrightYear = 'schema_copyright_year',
+  /** column name */
+  SchemaCreditText = 'schema_credit_text',
+  /** column name */
+  SchemaDateCreated = 'schema_date_created',
+  /** column name */
+  SchemaDatePublished = 'schema_date_published',
+  /** column name */
+  SchemaDescription = 'schema_description',
+  /** column name */
+  SchemaIdentifier = 'schema_identifier',
+  /** column name */
+  SchemaMaintainer = 'schema_maintainer',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaPosition = 'schema_position',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate var_pop on columns */
+export type Graph_Intellectual_Entity_Var_Pop_Fields = {
+  __typename?: 'graph_intellectual_entity_var_pop_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Graph_Intellectual_Entity_Var_Samp_Fields = {
+  __typename?: 'graph_intellectual_entity_var_samp_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Graph_Intellectual_Entity_Variance_Fields = {
+  __typename?: 'graph_intellectual_entity_variance_fields';
+  ha_des_number_of_pages?: Maybe<Scalars['Float']>;
+  schema_position?: Maybe<Scalars['Float']>;
+};
+
+/** Koppeltabel tussen ie en mediahaven fragment id's */
+export type Graph_Mh_Fragment_Identifier = {
+  __typename?: 'graph_mh_fragment_identifier';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  mh_fragment_identifier: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Aggregate = {
+  __typename?: 'graph_mh_fragment_identifier_aggregate';
+  aggregate?: Maybe<Graph_Mh_Fragment_Identifier_Aggregate_Fields>;
+  nodes: Array<Graph_Mh_Fragment_Identifier>;
+};
+
+/** aggregate fields of "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Aggregate_Fields = {
+  __typename?: 'graph_mh_fragment_identifier_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Mh_Fragment_Identifier_Max_Fields>;
+  min?: Maybe<Graph_Mh_Fragment_Identifier_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.mh_fragment_identifier". All fields are combined with a logical 'AND'. */
+export type Graph_Mh_Fragment_Identifier_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  mh_fragment_identifier?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.mh_fragment_identifier" */
+export enum Graph_Mh_Fragment_Identifier_Constraint {
+  /** unique or primary key constraint */
+  MhFragmentIdentifierPkey = 'mh_fragment_identifier_pkey'
+}
+
+/** input type for inserting data into table "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  mh_fragment_identifier?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Mh_Fragment_Identifier_Max_Fields = {
+  __typename?: 'graph_mh_fragment_identifier_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  mh_fragment_identifier?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Mh_Fragment_Identifier_Min_Fields = {
+  __typename?: 'graph_mh_fragment_identifier_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  mh_fragment_identifier?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Mutation_Response = {
+  __typename?: 'graph_mh_fragment_identifier_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Mh_Fragment_Identifier>;
+};
+
+/** on_conflict condition type for table "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_On_Conflict = {
+  constraint: Graph_Mh_Fragment_Identifier_Constraint;
+  update_columns?: Array<Graph_Mh_Fragment_Identifier_Update_Column>;
+  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.mh_fragment_identifier". */
+export type Graph_Mh_Fragment_Identifier_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  mh_fragment_identifier?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_mh_fragment_identifier */
+export type Graph_Mh_Fragment_Identifier_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  mh_fragment_identifier: Scalars['String'];
+};
+
+/** select columns of table "graph.mh_fragment_identifier" */
+export enum Graph_Mh_Fragment_Identifier_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  MhFragmentIdentifier = 'mh_fragment_identifier',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.mh_fragment_identifier" */
+export type Graph_Mh_Fragment_Identifier_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  mh_fragment_identifier?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.mh_fragment_identifier" */
+export enum Graph_Mh_Fragment_Identifier_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  MhFragmentIdentifier = 'mh_fragment_identifier',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name = {
+  __typename?: 'graph_newspaper_schema_alternate_name';
+  collection_id: Scalars['String'];
+  created_at?: Maybe<Scalars['timestamptz']>;
+  schema_alternate_name: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Aggregate = {
+  __typename?: 'graph_newspaper_schema_alternate_name_aggregate';
+  aggregate?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Aggregate_Fields>;
+  nodes: Array<Graph_Newspaper_Schema_Alternate_Name>;
+};
+
+/** aggregate fields of "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Aggregate_Fields = {
+  __typename?: 'graph_newspaper_schema_alternate_name_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Max_Fields>;
+  min?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.newspaper_schema_alternate_name". All fields are combined with a logical 'AND'. */
+export type Graph_Newspaper_Schema_Alternate_Name_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>>;
+  collection_id?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  schema_alternate_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.newspaper_schema_alternate_name" */
+export enum Graph_Newspaper_Schema_Alternate_Name_Constraint {
+  /** unique or primary key constraint */
+  NewspaperSchemaAlternateNamePkey = 'newspaper_schema_alternate_name_pkey'
+}
+
+/** input type for inserting data into table "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Insert_Input = {
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Newspaper_Schema_Alternate_Name_Max_Fields = {
+  __typename?: 'graph_newspaper_schema_alternate_name_max_fields';
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Newspaper_Schema_Alternate_Name_Min_Fields = {
+  __typename?: 'graph_newspaper_schema_alternate_name_min_fields';
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Mutation_Response = {
+  __typename?: 'graph_newspaper_schema_alternate_name_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Newspaper_Schema_Alternate_Name>;
+};
+
+/** on_conflict condition type for table "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_On_Conflict = {
+  constraint: Graph_Newspaper_Schema_Alternate_Name_Constraint;
+  update_columns?: Array<Graph_Newspaper_Schema_Alternate_Name_Update_Column>;
+  where?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.newspaper_schema_alternate_name". */
+export type Graph_Newspaper_Schema_Alternate_Name_Order_By = {
+  collection_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  schema_alternate_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_newspaper_schema_alternate_name */
+export type Graph_Newspaper_Schema_Alternate_Name_Pk_Columns_Input = {
+  collection_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+/** select columns of table "graph.newspaper_schema_alternate_name" */
+export enum Graph_Newspaper_Schema_Alternate_Name_Select_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.newspaper_schema_alternate_name" */
+export type Graph_Newspaper_Schema_Alternate_Name_Set_Input = {
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.newspaper_schema_alternate_name" */
+export enum Graph_Newspaper_Schema_Alternate_Name_Update_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Tabel voor talen van kranten */
+export type Graph_Newspaper_Schema_In_Language = {
+  __typename?: 'graph_newspaper_schema_in_language';
+  /** Identifier van de krant als collection */
+  collection_id: Scalars['String'];
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** ISO afkorting voor taal */
+  schema_in_language: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Aggregate = {
+  __typename?: 'graph_newspaper_schema_in_language_aggregate';
+  aggregate?: Maybe<Graph_Newspaper_Schema_In_Language_Aggregate_Fields>;
+  nodes: Array<Graph_Newspaper_Schema_In_Language>;
+};
+
+/** aggregate fields of "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Aggregate_Fields = {
+  __typename?: 'graph_newspaper_schema_in_language_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Newspaper_Schema_In_Language_Max_Fields>;
+  min?: Maybe<Graph_Newspaper_Schema_In_Language_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.newspaper_schema_in_language". All fields are combined with a logical 'AND'. */
+export type Graph_Newspaper_Schema_In_Language_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Bool_Exp>>;
+  collection_id?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  schema_in_language?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.newspaper_schema_in_language" */
+export enum Graph_Newspaper_Schema_In_Language_Constraint {
+  /** unique or primary key constraint */
+  NewspaperSchemaInLanguagePkey = 'newspaper_schema_in_language_pkey'
+}
+
+/** input type for inserting data into table "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Insert_Input = {
+  /** Identifier van de krant als collection */
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** ISO afkorting voor taal */
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Newspaper_Schema_In_Language_Max_Fields = {
+  __typename?: 'graph_newspaper_schema_in_language_max_fields';
+  /** Identifier van de krant als collection */
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** ISO afkorting voor taal */
+  schema_in_language?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Newspaper_Schema_In_Language_Min_Fields = {
+  __typename?: 'graph_newspaper_schema_in_language_min_fields';
+  /** Identifier van de krant als collection */
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** ISO afkorting voor taal */
+  schema_in_language?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Mutation_Response = {
+  __typename?: 'graph_newspaper_schema_in_language_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Newspaper_Schema_In_Language>;
+};
+
+/** on_conflict condition type for table "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_On_Conflict = {
+  constraint: Graph_Newspaper_Schema_In_Language_Constraint;
+  update_columns?: Array<Graph_Newspaper_Schema_In_Language_Update_Column>;
+  where?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.newspaper_schema_in_language". */
+export type Graph_Newspaper_Schema_In_Language_Order_By = {
+  collection_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_newspaper_schema_in_language */
+export type Graph_Newspaper_Schema_In_Language_Pk_Columns_Input = {
+  /** Identifier van de krant als collection */
+  collection_id: Scalars['String'];
+  /** ISO afkorting voor taal */
+  schema_in_language: Scalars['String'];
+};
+
+/** select columns of table "graph.newspaper_schema_in_language" */
+export enum Graph_Newspaper_Schema_In_Language_Select_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.newspaper_schema_in_language" */
+export type Graph_Newspaper_Schema_In_Language_Set_Input = {
+  /** Identifier van de krant als collection */
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** ISO afkorting voor taal */
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.newspaper_schema_in_language" */
+export enum Graph_Newspaper_Schema_In_Language_Update_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.organization" */
+export type Graph_Organization = {
+  __typename?: 'graph_organization';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_description?: Maybe<Scalars['String']>;
+  foaf_homepage?: Maybe<Scalars['String']>;
+  ha_org_allows_bzt?: Maybe<Scalars['Boolean']>;
+  ha_org_allows_overlay?: Maybe<Scalars['Boolean']>;
+  ha_org_has_logo?: Maybe<Scalars['String']>;
+  ha_org_request_form?: Maybe<Scalars['String']>;
+  ha_org_sector?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  org_classification?: Maybe<Scalars['String']>;
+  org_identifier: Scalars['String'];
+  skos_pref_label?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.organization" */
+export type Graph_Organization_Aggregate = {
+  __typename?: 'graph_organization_aggregate';
+  aggregate?: Maybe<Graph_Organization_Aggregate_Fields>;
+  nodes: Array<Graph_Organization>;
+};
+
+/** aggregate fields of "graph.organization" */
+export type Graph_Organization_Aggregate_Fields = {
+  __typename?: 'graph_organization_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Organization_Max_Fields>;
+  min?: Maybe<Graph_Organization_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.organization" */
+export type Graph_Organization_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Organization_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.organization". All fields are combined with a logical 'AND'. */
+export type Graph_Organization_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Organization_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Organization_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Organization_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  dcterms_description?: InputMaybe<String_Comparison_Exp>;
+  foaf_homepage?: InputMaybe<String_Comparison_Exp>;
+  ha_org_allows_bzt?: InputMaybe<Boolean_Comparison_Exp>;
+  ha_org_allows_overlay?: InputMaybe<Boolean_Comparison_Exp>;
+  ha_org_has_logo?: InputMaybe<String_Comparison_Exp>;
+  ha_org_request_form?: InputMaybe<String_Comparison_Exp>;
+  ha_org_sector?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  org_classification?: InputMaybe<String_Comparison_Exp>;
+  org_identifier?: InputMaybe<String_Comparison_Exp>;
+  skos_pref_label?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.organization" */
+export enum Graph_Organization_Constraint {
+  /** unique or primary key constraint */
+  OrganizationOrgIdentifierKey = 'organization_org_identifier_key',
+  /** unique or primary key constraint */
+  OrganizationPkey = 'organization_pkey'
+}
+
+/** input type for inserting data into table "graph.organization" */
+export type Graph_Organization_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dcterms_description?: InputMaybe<Scalars['String']>;
+  foaf_homepage?: InputMaybe<Scalars['String']>;
+  ha_org_allows_bzt?: InputMaybe<Scalars['Boolean']>;
+  ha_org_allows_overlay?: InputMaybe<Scalars['Boolean']>;
+  ha_org_has_logo?: InputMaybe<Scalars['String']>;
+  ha_org_request_form?: InputMaybe<Scalars['String']>;
+  ha_org_sector?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  org_classification?: InputMaybe<Scalars['String']>;
+  org_identifier?: InputMaybe<Scalars['String']>;
+  skos_pref_label?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Organization_Max_Fields = {
+  __typename?: 'graph_organization_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_description?: Maybe<Scalars['String']>;
+  foaf_homepage?: Maybe<Scalars['String']>;
+  ha_org_has_logo?: Maybe<Scalars['String']>;
+  ha_org_request_form?: Maybe<Scalars['String']>;
+  ha_org_sector?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  org_classification?: Maybe<Scalars['String']>;
+  org_identifier?: Maybe<Scalars['String']>;
+  skos_pref_label?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Organization_Min_Fields = {
+  __typename?: 'graph_organization_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  dcterms_description?: Maybe<Scalars['String']>;
+  foaf_homepage?: Maybe<Scalars['String']>;
+  ha_org_has_logo?: Maybe<Scalars['String']>;
+  ha_org_request_form?: Maybe<Scalars['String']>;
+  ha_org_sector?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  org_classification?: Maybe<Scalars['String']>;
+  org_identifier?: Maybe<Scalars['String']>;
+  skos_pref_label?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.organization" */
+export type Graph_Organization_Mutation_Response = {
+  __typename?: 'graph_organization_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Organization>;
+};
+
+/** input type for inserting object relation for remote table "graph.organization" */
+export type Graph_Organization_Obj_Rel_Insert_Input = {
+  data: Graph_Organization_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Organization_On_Conflict>;
+};
+
+/** on_conflict condition type for table "graph.organization" */
+export type Graph_Organization_On_Conflict = {
+  constraint: Graph_Organization_Constraint;
+  update_columns?: Array<Graph_Organization_Update_Column>;
+  where?: InputMaybe<Graph_Organization_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.organization". */
+export type Graph_Organization_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  dcterms_description?: InputMaybe<Order_By>;
+  foaf_homepage?: InputMaybe<Order_By>;
+  ha_org_allows_bzt?: InputMaybe<Order_By>;
+  ha_org_allows_overlay?: InputMaybe<Order_By>;
+  ha_org_has_logo?: InputMaybe<Order_By>;
+  ha_org_request_form?: InputMaybe<Order_By>;
+  ha_org_sector?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  org_classification?: InputMaybe<Order_By>;
+  org_identifier?: InputMaybe<Order_By>;
+  skos_pref_label?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_organization */
+export type Graph_Organization_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.organization" */
+export enum Graph_Organization_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctermsDescription = 'dcterms_description',
+  /** column name */
+  FoafHomepage = 'foaf_homepage',
+  /** column name */
+  HaOrgAllowsBzt = 'ha_org_allows_bzt',
+  /** column name */
+  HaOrgAllowsOverlay = 'ha_org_allows_overlay',
+  /** column name */
+  HaOrgHasLogo = 'ha_org_has_logo',
+  /** column name */
+  HaOrgRequestForm = 'ha_org_request_form',
+  /** column name */
+  HaOrgSector = 'ha_org_sector',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  OrgClassification = 'org_classification',
+  /** column name */
+  OrgIdentifier = 'org_identifier',
+  /** column name */
+  SkosPrefLabel = 'skos_pref_label',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.organization" */
+export type Graph_Organization_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  dcterms_description?: InputMaybe<Scalars['String']>;
+  foaf_homepage?: InputMaybe<Scalars['String']>;
+  ha_org_allows_bzt?: InputMaybe<Scalars['Boolean']>;
+  ha_org_allows_overlay?: InputMaybe<Scalars['Boolean']>;
+  ha_org_has_logo?: InputMaybe<Scalars['String']>;
+  ha_org_request_form?: InputMaybe<Scalars['String']>;
+  ha_org_sector?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  org_classification?: InputMaybe<Scalars['String']>;
+  org_identifier?: InputMaybe<Scalars['String']>;
+  skos_pref_label?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.organization" */
+export enum Graph_Organization_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  DctermsDescription = 'dcterms_description',
+  /** column name */
+  FoafHomepage = 'foaf_homepage',
+  /** column name */
+  HaOrgAllowsBzt = 'ha_org_allows_bzt',
+  /** column name */
+  HaOrgAllowsOverlay = 'ha_org_allows_overlay',
+  /** column name */
+  HaOrgHasLogo = 'ha_org_has_logo',
+  /** column name */
+  HaOrgRequestForm = 'ha_org_request_form',
+  /** column name */
+  HaOrgSector = 'ha_org_sector',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  OrgClassification = 'org_classification',
+  /** column name */
+  OrgIdentifier = 'org_identifier',
+  /** column name */
+  SkosPrefLabel = 'skos_pref_label',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.premis_identifier" */
+export type Graph_Premis_Identifier = {
+  __typename?: 'graph_premis_identifier';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Aggregate = {
+  __typename?: 'graph_premis_identifier_aggregate';
+  aggregate?: Maybe<Graph_Premis_Identifier_Aggregate_Fields>;
+  nodes: Array<Graph_Premis_Identifier>;
+};
+
+/** aggregate fields of "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Aggregate_Fields = {
+  __typename?: 'graph_premis_identifier_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Premis_Identifier_Max_Fields>;
+  min?: Maybe<Graph_Premis_Identifier_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Premis_Identifier_Max_Order_By>;
+  min?: InputMaybe<Graph_Premis_Identifier_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Premis_Identifier_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Premis_Identifier_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.premis_identifier". All fields are combined with a logical 'AND'. */
+export type Graph_Premis_Identifier_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Premis_Identifier_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Premis_Identifier_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.premis_identifier" */
+export enum Graph_Premis_Identifier_Constraint {
+  /** unique or primary key constraint */
+  PremisIdentifierPkey = 'premis_identifier_pkey'
+}
+
+/** input type for inserting data into table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Premis_Identifier_Max_Fields = {
+  __typename?: 'graph_premis_identifier_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** order by max() on columns of table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Premis_Identifier_Min_Fields = {
+  __typename?: 'graph_premis_identifier_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** order by min() on columns of table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Mutation_Response = {
+  __typename?: 'graph_premis_identifier_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Premis_Identifier>;
+};
+
+/** on_conflict condition type for table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_On_Conflict = {
+  constraint: Graph_Premis_Identifier_Constraint;
+  update_columns?: Array<Graph_Premis_Identifier_Update_Column>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.premis_identifier". */
+export type Graph_Premis_Identifier_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_premis_identifier */
+export type Graph_Premis_Identifier_Pk_Columns_Input = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+/** select columns of table "graph.premis_identifier" */
+export enum Graph_Premis_Identifier_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
+
+/** input type for updating data in table "graph.premis_identifier" */
+export type Graph_Premis_Identifier_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "graph.premis_identifier" */
+export enum Graph_Premis_Identifier_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Value = 'value'
+}
+
+/** columns and relationships of "graph.representation" */
+export type Graph_Representation = {
+  __typename?: 'graph_representation';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  hasRoot?: Maybe<Graph_File>;
+  id: Scalars['String'];
+  is_media_fragment_of?: Maybe<Scalars['String']>;
+  premis_represents?: Maybe<Scalars['String']>;
+  relation_has_root?: Maybe<Scalars['String']>;
+  relation_has_source?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  represents?: Maybe<Graph_Intellectual_Entity>;
+  schema_caption?: Maybe<Scalars['String']>;
+  schema_end_time?: Maybe<Scalars['time']>;
+  schema_in_language?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_start_time?: Maybe<Scalars['time']>;
+  schema_transcript?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.representation" */
+export type Graph_Representation_Aggregate = {
+  __typename?: 'graph_representation_aggregate';
+  aggregate?: Maybe<Graph_Representation_Aggregate_Fields>;
+  nodes: Array<Graph_Representation>;
+};
+
+/** aggregate fields of "graph.representation" */
+export type Graph_Representation_Aggregate_Fields = {
+  __typename?: 'graph_representation_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Representation_Max_Fields>;
+  min?: Maybe<Graph_Representation_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.representation" */
+export type Graph_Representation_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.representation" */
+export type Graph_Representation_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Representation_Max_Order_By>;
+  min?: InputMaybe<Graph_Representation_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.representation" */
+export type Graph_Representation_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Representation_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Representation_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.representation". All fields are combined with a logical 'AND'. */
+export type Graph_Representation_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Representation_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Representation_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Representation_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  edm_is_next_in_sequence?: InputMaybe<String_Comparison_Exp>;
+  hasRoot?: InputMaybe<Graph_File_Bool_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  is_media_fragment_of?: InputMaybe<String_Comparison_Exp>;
+  premis_represents?: InputMaybe<String_Comparison_Exp>;
+  relation_has_root?: InputMaybe<String_Comparison_Exp>;
+  relation_has_source?: InputMaybe<String_Comparison_Exp>;
+  represents?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+  schema_caption?: InputMaybe<String_Comparison_Exp>;
+  schema_end_time?: InputMaybe<Time_Comparison_Exp>;
+  schema_in_language?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  schema_start_time?: InputMaybe<Time_Comparison_Exp>;
+  schema_transcript?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.representation" */
+export enum Graph_Representation_Constraint {
+  /** unique or primary key constraint */
+  RepresentationPkey = 'representation_pkey'
+}
+
+/** input type for inserting data into table "graph.representation" */
+export type Graph_Representation_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  edm_is_next_in_sequence?: InputMaybe<Scalars['String']>;
+  hasRoot?: InputMaybe<Graph_File_Obj_Rel_Insert_Input>;
+  id?: InputMaybe<Scalars['String']>;
+  is_media_fragment_of?: InputMaybe<Scalars['String']>;
+  premis_represents?: InputMaybe<Scalars['String']>;
+  relation_has_root?: InputMaybe<Scalars['String']>;
+  relation_has_source?: InputMaybe<Scalars['String']>;
+  represents?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
+  schema_caption?: InputMaybe<Scalars['String']>;
+  schema_end_time?: InputMaybe<Scalars['time']>;
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_start_time?: InputMaybe<Scalars['time']>;
+  schema_transcript?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Representation_Max_Fields = {
+  __typename?: 'graph_representation_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  is_media_fragment_of?: Maybe<Scalars['String']>;
+  premis_represents?: Maybe<Scalars['String']>;
+  relation_has_root?: Maybe<Scalars['String']>;
+  relation_has_source?: Maybe<Scalars['String']>;
+  schema_caption?: Maybe<Scalars['String']>;
+  schema_in_language?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_transcript?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.representation" */
+export type Graph_Representation_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  edm_is_next_in_sequence?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  is_media_fragment_of?: InputMaybe<Order_By>;
+  premis_represents?: InputMaybe<Order_By>;
+  relation_has_root?: InputMaybe<Order_By>;
+  relation_has_source?: InputMaybe<Order_By>;
+  schema_caption?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_transcript?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Representation_Min_Fields = {
+  __typename?: 'graph_representation_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  edm_is_next_in_sequence?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  is_media_fragment_of?: Maybe<Scalars['String']>;
+  premis_represents?: Maybe<Scalars['String']>;
+  relation_has_root?: Maybe<Scalars['String']>;
+  relation_has_source?: Maybe<Scalars['String']>;
+  schema_caption?: Maybe<Scalars['String']>;
+  schema_in_language?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  schema_transcript?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.representation" */
+export type Graph_Representation_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  edm_is_next_in_sequence?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  is_media_fragment_of?: InputMaybe<Order_By>;
+  premis_represents?: InputMaybe<Order_By>;
+  relation_has_root?: InputMaybe<Order_By>;
+  relation_has_source?: InputMaybe<Order_By>;
+  schema_caption?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_transcript?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.representation" */
+export type Graph_Representation_Mutation_Response = {
+  __typename?: 'graph_representation_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Representation>;
+};
+
+/** on_conflict condition type for table "graph.representation" */
+export type Graph_Representation_On_Conflict = {
+  constraint: Graph_Representation_Constraint;
+  update_columns?: Array<Graph_Representation_Update_Column>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.representation". */
+export type Graph_Representation_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  edm_is_next_in_sequence?: InputMaybe<Order_By>;
+  hasRoot?: InputMaybe<Graph_File_Order_By>;
+  id?: InputMaybe<Order_By>;
+  is_media_fragment_of?: InputMaybe<Order_By>;
+  premis_represents?: InputMaybe<Order_By>;
+  relation_has_root?: InputMaybe<Order_By>;
+  relation_has_source?: InputMaybe<Order_By>;
+  represents?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
+  schema_caption?: InputMaybe<Order_By>;
+  schema_end_time?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  schema_start_time?: InputMaybe<Order_By>;
+  schema_transcript?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_representation */
+export type Graph_Representation_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.representation" */
+export enum Graph_Representation_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EdmIsNextInSequence = 'edm_is_next_in_sequence',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsMediaFragmentOf = 'is_media_fragment_of',
+  /** column name */
+  PremisRepresents = 'premis_represents',
+  /** column name */
+  RelationHasRoot = 'relation_has_root',
+  /** column name */
+  RelationHasSource = 'relation_has_source',
+  /** column name */
+  SchemaCaption = 'schema_caption',
+  /** column name */
+  SchemaEndTime = 'schema_end_time',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaStartTime = 'schema_start_time',
+  /** column name */
+  SchemaTranscript = 'schema_transcript',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.representation" */
+export type Graph_Representation_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  edm_is_next_in_sequence?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  is_media_fragment_of?: InputMaybe<Scalars['String']>;
+  premis_represents?: InputMaybe<Scalars['String']>;
+  relation_has_root?: InputMaybe<Scalars['String']>;
+  relation_has_source?: InputMaybe<Scalars['String']>;
+  schema_caption?: InputMaybe<Scalars['String']>;
+  schema_end_time?: InputMaybe<Scalars['time']>;
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  schema_start_time?: InputMaybe<Scalars['time']>;
+  schema_transcript?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.representation" */
+export enum Graph_Representation_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  EdmIsNextInSequence = 'edm_is_next_in_sequence',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsMediaFragmentOf = 'is_media_fragment_of',
+  /** column name */
+  PremisRepresents = 'premis_represents',
+  /** column name */
+  RelationHasRoot = 'relation_has_root',
+  /** column name */
+  RelationHasSource = 'relation_has_source',
+  /** column name */
+  SchemaCaption = 'schema_caption',
+  /** column name */
+  SchemaEndTime = 'schema_end_time',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  SchemaStartTime = 'schema_start_time',
+  /** column name */
+  SchemaTranscript = 'schema_transcript',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name = {
+  __typename?: 'graph_schema_alternate_name';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Aggregate = {
+  __typename?: 'graph_schema_alternate_name_aggregate';
+  aggregate?: Maybe<Graph_Schema_Alternate_Name_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Alternate_Name>;
+};
+
+/** aggregate fields of "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Aggregate_Fields = {
+  __typename?: 'graph_schema_alternate_name_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Alternate_Name_Max_Fields>;
+  min?: Maybe<Graph_Schema_Alternate_Name_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Alternate_Name_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Alternate_Name_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Alternate_Name_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Alternate_Name_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_alternate_name". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Alternate_Name_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Alternate_Name_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Alternate_Name_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_alternate_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_alternate_name" */
+export enum Graph_Schema_Alternate_Name_Constraint {
+  /** unique or primary key constraint */
+  SchemaAlternateNamePkey = 'schema_alternate_name_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Alternate_Name_Max_Fields = {
+  __typename?: 'graph_schema_alternate_name_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_alternate_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Alternate_Name_Min_Fields = {
+  __typename?: 'graph_schema_alternate_name_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_alternate_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_alternate_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Mutation_Response = {
+  __typename?: 'graph_schema_alternate_name_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Alternate_Name>;
+};
+
+/** on_conflict condition type for table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_On_Conflict = {
+  constraint: Graph_Schema_Alternate_Name_Constraint;
+  update_columns?: Array<Graph_Schema_Alternate_Name_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_alternate_name". */
+export type Graph_Schema_Alternate_Name_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_alternate_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_alternate_name */
+export type Graph_Schema_Alternate_Name_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_alternate_name" */
+export enum Graph_Schema_Alternate_Name_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_alternate_name" */
+export type Graph_Schema_Alternate_Name_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_alternate_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_alternate_name" */
+export enum Graph_Schema_Alternate_Name_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaAlternateName = 'schema_alternate_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_contributor" */
+export type Graph_Schema_Contributor = {
+  __typename?: 'graph_schema_contributor';
+  intellectual_entity_id: Scalars['String'];
+  roles?: Maybe<Scalars['json']>;
+  type: Scalars['String'];
+};
+
+
+/** columns and relationships of "graph.schema_contributor" */
+export type Graph_Schema_ContributorRolesArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Aggregate = {
+  __typename?: 'graph_schema_contributor_aggregate';
+  aggregate?: Maybe<Graph_Schema_Contributor_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Contributor>;
+};
+
+/** aggregate fields of "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Aggregate_Fields = {
+  __typename?: 'graph_schema_contributor_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Contributor_Max_Fields>;
+  min?: Maybe<Graph_Schema_Contributor_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Contributor_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_contributor". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Contributor_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Contributor_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Contributor_Bool_Exp>>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  roles?: InputMaybe<Json_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_contributor" */
+export enum Graph_Schema_Contributor_Constraint {
+  /** unique or primary key constraint */
+  SchemaContributorPkey = 'schema_contributor_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Insert_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Contributor_Max_Fields = {
+  __typename?: 'graph_schema_contributor_max_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Contributor_Min_Fields = {
+  __typename?: 'graph_schema_contributor_min_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Mutation_Response = {
+  __typename?: 'graph_schema_contributor_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Contributor>;
+};
+
+/** on_conflict condition type for table "graph.schema_contributor" */
+export type Graph_Schema_Contributor_On_Conflict = {
+  constraint: Graph_Schema_Contributor_Constraint;
+  update_columns?: Array<Graph_Schema_Contributor_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_contributor". */
+export type Graph_Schema_Contributor_Order_By = {
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  roles?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_contributor */
+export type Graph_Schema_Contributor_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_contributor" */
+export enum Graph_Schema_Contributor_Select_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** input type for updating data in table "graph.schema_contributor" */
+export type Graph_Schema_Contributor_Set_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "graph.schema_contributor" */
+export enum Graph_Schema_Contributor_Update_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** columns and relationships of "graph.schema_creator" */
+export type Graph_Schema_Creator = {
+  __typename?: 'graph_schema_creator';
+  intellectual_entity_id: Scalars['String'];
+  roles?: Maybe<Scalars['json']>;
+  type: Scalars['String'];
+};
+
+
+/** columns and relationships of "graph.schema_creator" */
+export type Graph_Schema_CreatorRolesArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "graph.schema_creator" */
+export type Graph_Schema_Creator_Aggregate = {
+  __typename?: 'graph_schema_creator_aggregate';
+  aggregate?: Maybe<Graph_Schema_Creator_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Creator>;
+};
+
+/** aggregate fields of "graph.schema_creator" */
+export type Graph_Schema_Creator_Aggregate_Fields = {
+  __typename?: 'graph_schema_creator_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Creator_Max_Fields>;
+  min?: Maybe<Graph_Schema_Creator_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_creator" */
+export type Graph_Schema_Creator_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Creator_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_creator". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Creator_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Creator_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Creator_Bool_Exp>>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  roles?: InputMaybe<Json_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_creator" */
+export enum Graph_Schema_Creator_Constraint {
+  /** unique or primary key constraint */
+  SchemaCreatorPkey = 'schema_creator_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_creator" */
+export type Graph_Schema_Creator_Insert_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Creator_Max_Fields = {
+  __typename?: 'graph_schema_creator_max_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Creator_Min_Fields = {
+  __typename?: 'graph_schema_creator_min_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "graph.schema_creator" */
+export type Graph_Schema_Creator_Mutation_Response = {
+  __typename?: 'graph_schema_creator_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Creator>;
+};
+
+/** on_conflict condition type for table "graph.schema_creator" */
+export type Graph_Schema_Creator_On_Conflict = {
+  constraint: Graph_Schema_Creator_Constraint;
+  update_columns?: Array<Graph_Schema_Creator_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_creator". */
+export type Graph_Schema_Creator_Order_By = {
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  roles?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_creator */
+export type Graph_Schema_Creator_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_creator" */
+export enum Graph_Schema_Creator_Select_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** input type for updating data in table "graph.schema_creator" */
+export type Graph_Schema_Creator_Set_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "graph.schema_creator" */
+export enum Graph_Schema_Creator_Update_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** columns and relationships of "graph.schema_genre" */
+export type Graph_Schema_Genre = {
+  __typename?: 'graph_schema_genre';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_genre: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_genre" */
+export type Graph_Schema_Genre_Aggregate = {
+  __typename?: 'graph_schema_genre_aggregate';
+  aggregate?: Maybe<Graph_Schema_Genre_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Genre>;
+};
+
+/** aggregate fields of "graph.schema_genre" */
+export type Graph_Schema_Genre_Aggregate_Fields = {
+  __typename?: 'graph_schema_genre_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Genre_Max_Fields>;
+  min?: Maybe<Graph_Schema_Genre_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_genre" */
+export type Graph_Schema_Genre_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_genre" */
+export type Graph_Schema_Genre_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Genre_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Genre_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_genre" */
+export type Graph_Schema_Genre_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Genre_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Genre_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_genre". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Genre_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Genre_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Genre_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_genre?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_genre" */
+export enum Graph_Schema_Genre_Constraint {
+  /** unique or primary key constraint */
+  SchemaGenrePkey = 'schema_genre_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_genre" */
+export type Graph_Schema_Genre_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_genre?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Genre_Max_Fields = {
+  __typename?: 'graph_schema_genre_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_genre?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_genre" */
+export type Graph_Schema_Genre_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_genre?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Genre_Min_Fields = {
+  __typename?: 'graph_schema_genre_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_genre?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_genre" */
+export type Graph_Schema_Genre_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_genre?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_genre" */
+export type Graph_Schema_Genre_Mutation_Response = {
+  __typename?: 'graph_schema_genre_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Genre>;
+};
+
+/** on_conflict condition type for table "graph.schema_genre" */
+export type Graph_Schema_Genre_On_Conflict = {
+  constraint: Graph_Schema_Genre_Constraint;
+  update_columns?: Array<Graph_Schema_Genre_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_genre". */
+export type Graph_Schema_Genre_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_genre?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_genre */
+export type Graph_Schema_Genre_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_genre: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_genre" */
+export enum Graph_Schema_Genre_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaGenre = 'schema_genre',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_genre" */
+export type Graph_Schema_Genre_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_genre?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_genre" */
+export enum Graph_Schema_Genre_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaGenre = 'schema_genre',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_in_language" */
+export type Graph_Schema_In_Language = {
+  __typename?: 'graph_schema_in_language';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Aggregate = {
+  __typename?: 'graph_schema_in_language_aggregate';
+  aggregate?: Maybe<Graph_Schema_In_Language_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_In_Language>;
+};
+
+/** aggregate fields of "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Aggregate_Fields = {
+  __typename?: 'graph_schema_in_language_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_In_Language_Max_Fields>;
+  min?: Maybe<Graph_Schema_In_Language_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_In_Language_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_In_Language_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_In_Language_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_In_Language_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_in_language". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_In_Language_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_In_Language_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_In_Language_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_in_language?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_in_language" */
+export enum Graph_Schema_In_Language_Constraint {
+  /** unique or primary key constraint */
+  SchemaInLanguagePkey = 'schema_in_language_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_In_Language_Max_Fields = {
+  __typename?: 'graph_schema_in_language_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_in_language?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_In_Language_Min_Fields = {
+  __typename?: 'graph_schema_in_language_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_in_language?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Mutation_Response = {
+  __typename?: 'graph_schema_in_language_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_In_Language>;
+};
+
+/** on_conflict condition type for table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_On_Conflict = {
+  constraint: Graph_Schema_In_Language_Constraint;
+  update_columns?: Array<Graph_Schema_In_Language_Update_Column>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_in_language". */
+export type Graph_Schema_In_Language_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_in_language?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_in_language */
+export type Graph_Schema_In_Language_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_in_language" */
+export enum Graph_Schema_In_Language_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_in_language" */
+export type Graph_Schema_In_Language_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_in_language?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_in_language" */
+export enum Graph_Schema_In_Language_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaInLanguage = 'schema_in_language',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Tabel voor is part of relations tussen IE en Collection */
+export type Graph_Schema_Is_Part_Of = {
+  __typename?: 'graph_schema_is_part_of';
+  /** Identifier van de Collection */
+  collection_id: Scalars['String'];
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** Identifier van de IE */
+  intellectual_entity_id: Scalars['String'];
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Aggregate = {
+  __typename?: 'graph_schema_is_part_of_aggregate';
+  aggregate?: Maybe<Graph_Schema_Is_Part_Of_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Is_Part_Of>;
+};
+
+/** aggregate fields of "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Aggregate_Fields = {
+  __typename?: 'graph_schema_is_part_of_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Is_Part_Of_Max_Fields>;
+  min?: Maybe<Graph_Schema_Is_Part_Of_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Is_Part_Of_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Is_Part_Of_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Is_Part_Of_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Is_Part_Of_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_is_part_of". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Is_Part_Of_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Bool_Exp>>;
+  collection_id?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_is_part_of" */
+export enum Graph_Schema_Is_Part_Of_Constraint {
+  /** unique or primary key constraint */
+  SchemaIsPartOfPkey = 'schema_is_part_of_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Insert_Input = {
+  /** Identifier van de Collection */
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Is_Part_Of_Max_Fields = {
+  __typename?: 'graph_schema_is_part_of_max_fields';
+  /** Identifier van de Collection */
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Max_Order_By = {
+  /** Identifier van de Collection */
+  collection_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Is_Part_Of_Min_Fields = {
+  __typename?: 'graph_schema_is_part_of_min_fields';
+  /** Identifier van de Collection */
+  collection_id?: Maybe<Scalars['String']>;
+  created_at?: Maybe<Scalars['timestamptz']>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Min_Order_By = {
+  /** Identifier van de Collection */
+  collection_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Mutation_Response = {
+  __typename?: 'graph_schema_is_part_of_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Is_Part_Of>;
+};
+
+/** on_conflict condition type for table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_On_Conflict = {
+  constraint: Graph_Schema_Is_Part_Of_Constraint;
+  update_columns?: Array<Graph_Schema_Is_Part_Of_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_is_part_of". */
+export type Graph_Schema_Is_Part_Of_Order_By = {
+  collection_id?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_is_part_of */
+export type Graph_Schema_Is_Part_Of_Pk_Columns_Input = {
+  /** Identifier van de Collection */
+  collection_id: Scalars['String'];
+  /** Identifier van de IE */
+  intellectual_entity_id: Scalars['String'];
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_is_part_of" */
+export enum Graph_Schema_Is_Part_Of_Select_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_is_part_of" */
+export type Graph_Schema_Is_Part_Of_Set_Input = {
+  /** Identifier van de Collection */
+  collection_id?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  /** Identifier van de IE */
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  /** Type collectie (creativeWorkSeries, newspaper, etc.) */
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_is_part_of" */
+export enum Graph_Schema_Is_Part_Of_Update_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_keywords" */
+export type Graph_Schema_Keywords = {
+  __typename?: 'graph_schema_keywords';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_keywords: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Aggregate = {
+  __typename?: 'graph_schema_keywords_aggregate';
+  aggregate?: Maybe<Graph_Schema_Keywords_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Keywords>;
+};
+
+/** aggregate fields of "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Aggregate_Fields = {
+  __typename?: 'graph_schema_keywords_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Keywords_Max_Fields>;
+  min?: Maybe<Graph_Schema_Keywords_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Keywords_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Keywords_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Keywords_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Keywords_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_keywords". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Keywords_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Keywords_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Keywords_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_keywords?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_keywords" */
+export enum Graph_Schema_Keywords_Constraint {
+  /** unique or primary key constraint */
+  SchemaKeywordsPkey = 'schema_keywords_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_keywords?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Keywords_Max_Fields = {
+  __typename?: 'graph_schema_keywords_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_keywords?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_keywords?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Keywords_Min_Fields = {
+  __typename?: 'graph_schema_keywords_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_keywords?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_keywords?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Mutation_Response = {
+  __typename?: 'graph_schema_keywords_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Keywords>;
+};
+
+/** on_conflict condition type for table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_On_Conflict = {
+  constraint: Graph_Schema_Keywords_Constraint;
+  update_columns?: Array<Graph_Schema_Keywords_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_keywords". */
+export type Graph_Schema_Keywords_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_keywords?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_keywords */
+export type Graph_Schema_Keywords_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_keywords: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_keywords" */
+export enum Graph_Schema_Keywords_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaKeywords = 'schema_keywords',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_keywords" */
+export type Graph_Schema_Keywords_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_keywords?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_keywords" */
+export enum Graph_Schema_Keywords_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaKeywords = 'schema_keywords',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_license" */
+export type Graph_Schema_License = {
+  __typename?: 'graph_schema_license';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_license: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_license" */
+export type Graph_Schema_License_Aggregate = {
+  __typename?: 'graph_schema_license_aggregate';
+  aggregate?: Maybe<Graph_Schema_License_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_License>;
+};
+
+/** aggregate fields of "graph.schema_license" */
+export type Graph_Schema_License_Aggregate_Fields = {
+  __typename?: 'graph_schema_license_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_License_Max_Fields>;
+  min?: Maybe<Graph_Schema_License_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_license" */
+export type Graph_Schema_License_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_license" */
+export type Graph_Schema_License_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_License_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_License_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_license" */
+export type Graph_Schema_License_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_License_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_License_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_license". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_License_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_License_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_License_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_license?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_license" */
+export enum Graph_Schema_License_Constraint {
+  /** unique or primary key constraint */
+  SchemaLicensePkey = 'schema_license_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_license" */
+export type Graph_Schema_License_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_license?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_License_Max_Fields = {
+  __typename?: 'graph_schema_license_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_license?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_license" */
+export type Graph_Schema_License_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_license?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_License_Min_Fields = {
+  __typename?: 'graph_schema_license_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_license?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_license" */
+export type Graph_Schema_License_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_license?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_license" */
+export type Graph_Schema_License_Mutation_Response = {
+  __typename?: 'graph_schema_license_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_License>;
+};
+
+/** on_conflict condition type for table "graph.schema_license" */
+export type Graph_Schema_License_On_Conflict = {
+  constraint: Graph_Schema_License_Constraint;
+  update_columns?: Array<Graph_Schema_License_Update_Column>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_license". */
+export type Graph_Schema_License_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_license?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_license */
+export type Graph_Schema_License_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_license: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_license" */
+export enum Graph_Schema_License_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaLicense = 'schema_license',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_license" */
+export type Graph_Schema_License_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_license?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_license" */
+export enum Graph_Schema_License_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaLicense = 'schema_license',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_mentions" */
+export type Graph_Schema_Mentions = {
+  __typename?: 'graph_schema_mentions';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  thing_id: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Aggregate = {
+  __typename?: 'graph_schema_mentions_aggregate';
+  aggregate?: Maybe<Graph_Schema_Mentions_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Mentions>;
+};
+
+/** aggregate fields of "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Aggregate_Fields = {
+  __typename?: 'graph_schema_mentions_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Mentions_Max_Fields>;
+  min?: Maybe<Graph_Schema_Mentions_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Mentions_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Mentions_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Mentions_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Mentions_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_mentions". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Mentions_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Mentions_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Mentions_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  thing_id?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_mentions" */
+export enum Graph_Schema_Mentions_Constraint {
+  /** unique or primary key constraint */
+  SchemaMentionsPkey = 'schema_mentions_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  thing_id?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Mentions_Max_Fields = {
+  __typename?: 'graph_schema_mentions_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  thing_id?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  thing_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Mentions_Min_Fields = {
+  __typename?: 'graph_schema_mentions_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  thing_id?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  thing_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Mutation_Response = {
+  __typename?: 'graph_schema_mentions_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Mentions>;
+};
+
+/** on_conflict condition type for table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_On_Conflict = {
+  constraint: Graph_Schema_Mentions_Constraint;
+  update_columns?: Array<Graph_Schema_Mentions_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_mentions". */
+export type Graph_Schema_Mentions_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  thing_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_mentions */
+export type Graph_Schema_Mentions_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  thing_id: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_mentions" */
+export enum Graph_Schema_Mentions_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  ThingId = 'thing_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_mentions" */
+export type Graph_Schema_Mentions_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  thing_id?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_mentions" */
+export enum Graph_Schema_Mentions_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  ThingId = 'thing_id',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_publisher" */
+export type Graph_Schema_Publisher = {
+  __typename?: 'graph_schema_publisher';
+  intellectual_entity_id: Scalars['String'];
+  roles?: Maybe<Scalars['json']>;
+  type: Scalars['String'];
+};
+
+
+/** columns and relationships of "graph.schema_publisher" */
+export type Graph_Schema_PublisherRolesArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Aggregate = {
+  __typename?: 'graph_schema_publisher_aggregate';
+  aggregate?: Maybe<Graph_Schema_Publisher_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Publisher>;
+};
+
+/** aggregate fields of "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Aggregate_Fields = {
+  __typename?: 'graph_schema_publisher_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Publisher_Max_Fields>;
+  min?: Maybe<Graph_Schema_Publisher_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Publisher_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_publisher". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Publisher_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Publisher_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Publisher_Bool_Exp>>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  roles?: InputMaybe<Json_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_publisher" */
+export enum Graph_Schema_Publisher_Constraint {
+  /** unique or primary key constraint */
+  SchemaPublisherPkey = 'schema_publisher_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Insert_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Publisher_Max_Fields = {
+  __typename?: 'graph_schema_publisher_max_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Publisher_Min_Fields = {
+  __typename?: 'graph_schema_publisher_min_fields';
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Mutation_Response = {
+  __typename?: 'graph_schema_publisher_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Publisher>;
+};
+
+/** on_conflict condition type for table "graph.schema_publisher" */
+export type Graph_Schema_Publisher_On_Conflict = {
+  constraint: Graph_Schema_Publisher_Constraint;
+  update_columns?: Array<Graph_Schema_Publisher_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_publisher". */
+export type Graph_Schema_Publisher_Order_By = {
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  roles?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_publisher */
+export type Graph_Schema_Publisher_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_publisher" */
+export enum Graph_Schema_Publisher_Select_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** input type for updating data in table "graph.schema_publisher" */
+export type Graph_Schema_Publisher_Set_Input = {
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Scalars['json']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "graph.schema_publisher" */
+export enum Graph_Schema_Publisher_Update_Column {
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  Roles = 'roles',
+  /** column name */
+  Type = 'type'
+}
+
+/** Alle personen en organisaties met een rol bij een IE */
+export type Graph_Schema_Role = {
+  __typename?: 'graph_schema_role';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_role_name: Scalars['String'];
+  thing_id: Scalars['String'];
+  type: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_role" */
+export type Graph_Schema_Role_Aggregate = {
+  __typename?: 'graph_schema_role_aggregate';
+  aggregate?: Maybe<Graph_Schema_Role_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Role>;
+};
+
+/** aggregate fields of "graph.schema_role" */
+export type Graph_Schema_Role_Aggregate_Fields = {
+  __typename?: 'graph_schema_role_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Role_Max_Fields>;
+  min?: Maybe<Graph_Schema_Role_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_role" */
+export type Graph_Schema_Role_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Role_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_role". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Role_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Role_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Role_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_role_name?: InputMaybe<String_Comparison_Exp>;
+  thing_id?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_role" */
+export enum Graph_Schema_Role_Constraint {
+  /** unique or primary key constraint */
+  RolePkey = 'role_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_role" */
+export type Graph_Schema_Role_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_role_name?: InputMaybe<Scalars['String']>;
+  thing_id?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Role_Max_Fields = {
+  __typename?: 'graph_schema_role_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_role_name?: Maybe<Scalars['String']>;
+  thing_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Role_Min_Fields = {
+  __typename?: 'graph_schema_role_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_role_name?: Maybe<Scalars['String']>;
+  thing_id?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.schema_role" */
+export type Graph_Schema_Role_Mutation_Response = {
+  __typename?: 'graph_schema_role_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Role>;
+};
+
+/** on_conflict condition type for table "graph.schema_role" */
+export type Graph_Schema_Role_On_Conflict = {
+  constraint: Graph_Schema_Role_Constraint;
+  update_columns?: Array<Graph_Schema_Role_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_role". */
+export type Graph_Schema_Role_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_role_name?: InputMaybe<Order_By>;
+  thing_id?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_role */
+export type Graph_Schema_Role_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_role_name: Scalars['String'];
+  thing_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_role" */
+export enum Graph_Schema_Role_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaRoleName = 'schema_role_name',
+  /** column name */
+  ThingId = 'thing_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_role" */
+export type Graph_Schema_Role_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_role_name?: InputMaybe<Scalars['String']>;
+  thing_id?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_role" */
+export enum Graph_Schema_Role_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaRoleName = 'schema_role_name',
+  /** column name */
+  ThingId = 'thing_id',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_spatial" */
+export type Graph_Schema_Spatial = {
+  __typename?: 'graph_schema_spatial';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_spatial: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Aggregate = {
+  __typename?: 'graph_schema_spatial_aggregate';
+  aggregate?: Maybe<Graph_Schema_Spatial_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Spatial>;
+};
+
+/** aggregate fields of "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Aggregate_Fields = {
+  __typename?: 'graph_schema_spatial_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Spatial_Max_Fields>;
+  min?: Maybe<Graph_Schema_Spatial_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Spatial_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Spatial_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Spatial_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Spatial_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_spatial". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Spatial_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Spatial_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Spatial_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_spatial?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_spatial" */
+export enum Graph_Schema_Spatial_Constraint {
+  /** unique or primary key constraint */
+  SchemaSpatialPkey = 'schema_spatial_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_spatial?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Spatial_Max_Fields = {
+  __typename?: 'graph_schema_spatial_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_spatial?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_spatial?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Spatial_Min_Fields = {
+  __typename?: 'graph_schema_spatial_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_spatial?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_spatial?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Mutation_Response = {
+  __typename?: 'graph_schema_spatial_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Spatial>;
+};
+
+/** on_conflict condition type for table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_On_Conflict = {
+  constraint: Graph_Schema_Spatial_Constraint;
+  update_columns?: Array<Graph_Schema_Spatial_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_spatial". */
+export type Graph_Schema_Spatial_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_spatial?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_spatial */
+export type Graph_Schema_Spatial_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_spatial: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_spatial" */
+export enum Graph_Schema_Spatial_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaSpatial = 'schema_spatial',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_spatial" */
+export type Graph_Schema_Spatial_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_spatial?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_spatial" */
+export enum Graph_Schema_Spatial_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaSpatial = 'schema_spatial',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.schema_temporal" */
+export type Graph_Schema_Temporal = {
+  __typename?: 'graph_schema_temporal';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id: Scalars['String'];
+  schema_temporal: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Aggregate = {
+  __typename?: 'graph_schema_temporal_aggregate';
+  aggregate?: Maybe<Graph_Schema_Temporal_Aggregate_Fields>;
+  nodes: Array<Graph_Schema_Temporal>;
+};
+
+/** aggregate fields of "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Aggregate_Fields = {
+  __typename?: 'graph_schema_temporal_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Schema_Temporal_Max_Fields>;
+  min?: Maybe<Graph_Schema_Temporal_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Schema_Temporal_Max_Order_By>;
+  min?: InputMaybe<Graph_Schema_Temporal_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Schema_Temporal_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Schema_Temporal_On_Conflict>;
+};
+
+/** Boolean expression to filter rows from the table "graph.schema_temporal". All fields are combined with a logical 'AND'. */
+export type Graph_Schema_Temporal_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Schema_Temporal_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Schema_Temporal_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  schema_temporal?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.schema_temporal" */
+export enum Graph_Schema_Temporal_Constraint {
+  /** unique or primary key constraint */
+  SchemaTemporalPkey = 'schema_temporal_pkey'
+}
+
+/** input type for inserting data into table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_temporal?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Schema_Temporal_Max_Fields = {
+  __typename?: 'graph_schema_temporal_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_temporal?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_temporal?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Schema_Temporal_Min_Fields = {
+  __typename?: 'graph_schema_temporal_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: Maybe<Scalars['String']>;
+  schema_temporal?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_temporal?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Mutation_Response = {
+  __typename?: 'graph_schema_temporal_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Schema_Temporal>;
+};
+
+/** on_conflict condition type for table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_On_Conflict = {
+  constraint: Graph_Schema_Temporal_Constraint;
+  update_columns?: Array<Graph_Schema_Temporal_Update_Column>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.schema_temporal". */
+export type Graph_Schema_Temporal_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  intellectual_entity_id?: InputMaybe<Order_By>;
+  schema_temporal?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_schema_temporal */
+export type Graph_Schema_Temporal_Pk_Columns_Input = {
+  intellectual_entity_id: Scalars['String'];
+  schema_temporal: Scalars['String'];
+};
+
+/** select columns of table "graph.schema_temporal" */
+export enum Graph_Schema_Temporal_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaTemporal = 'schema_temporal',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.schema_temporal" */
+export type Graph_Schema_Temporal_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  intellectual_entity_id?: InputMaybe<Scalars['String']>;
+  schema_temporal?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.schema_temporal" */
+export enum Graph_Schema_Temporal_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  SchemaTemporal = 'schema_temporal',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.thesaurus" */
+export type Graph_Thesaurus = {
+  __typename?: 'graph_thesaurus';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  object: Scalars['String'];
+  predicate: Scalars['String'];
+  subject: Scalars['String'];
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.thesaurus" */
+export type Graph_Thesaurus_Aggregate = {
+  __typename?: 'graph_thesaurus_aggregate';
+  aggregate?: Maybe<Graph_Thesaurus_Aggregate_Fields>;
+  nodes: Array<Graph_Thesaurus>;
+};
+
+/** aggregate fields of "graph.thesaurus" */
+export type Graph_Thesaurus_Aggregate_Fields = {
+  __typename?: 'graph_thesaurus_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Thesaurus_Max_Fields>;
+  min?: Maybe<Graph_Thesaurus_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.thesaurus" */
+export type Graph_Thesaurus_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Thesaurus_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.thesaurus". All fields are combined with a logical 'AND'. */
+export type Graph_Thesaurus_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Thesaurus_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Thesaurus_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  object?: InputMaybe<String_Comparison_Exp>;
+  predicate?: InputMaybe<String_Comparison_Exp>;
+  subject?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.thesaurus" */
+export enum Graph_Thesaurus_Constraint {
+  /** unique or primary key constraint */
+  ThesPkey = 'thes_pkey'
+}
+
+/** input type for inserting data into table "graph.thesaurus" */
+export type Graph_Thesaurus_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  object?: InputMaybe<Scalars['String']>;
+  predicate?: InputMaybe<Scalars['String']>;
+  subject?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Thesaurus_Max_Fields = {
+  __typename?: 'graph_thesaurus_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  object?: Maybe<Scalars['String']>;
+  predicate?: Maybe<Scalars['String']>;
+  subject?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Thesaurus_Min_Fields = {
+  __typename?: 'graph_thesaurus_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  object?: Maybe<Scalars['String']>;
+  predicate?: Maybe<Scalars['String']>;
+  subject?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.thesaurus" */
+export type Graph_Thesaurus_Mutation_Response = {
+  __typename?: 'graph_thesaurus_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Thesaurus>;
+};
+
+/** on_conflict condition type for table "graph.thesaurus" */
+export type Graph_Thesaurus_On_Conflict = {
+  constraint: Graph_Thesaurus_Constraint;
+  update_columns?: Array<Graph_Thesaurus_Update_Column>;
+  where?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.thesaurus". */
+export type Graph_Thesaurus_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  object?: InputMaybe<Order_By>;
+  predicate?: InputMaybe<Order_By>;
+  subject?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_thesaurus */
+export type Graph_Thesaurus_Pk_Columns_Input = {
+  object: Scalars['String'];
+  predicate: Scalars['String'];
+  subject: Scalars['String'];
+};
+
+/** select columns of table "graph.thesaurus" */
+export enum Graph_Thesaurus_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Object = 'object',
+  /** column name */
+  Predicate = 'predicate',
+  /** column name */
+  Subject = 'subject',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.thesaurus" */
+export type Graph_Thesaurus_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  object?: InputMaybe<Scalars['String']>;
+  predicate?: InputMaybe<Scalars['String']>;
+  subject?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.thesaurus" */
+export enum Graph_Thesaurus_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Object = 'object',
+  /** column name */
+  Predicate = 'predicate',
+  /** column name */
+  Subject = 'subject',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** columns and relationships of "graph.thing" */
+export type Graph_Thing = {
+  __typename?: 'graph_thing';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id: Scalars['String'];
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "graph.thing" */
+export type Graph_Thing_Aggregate = {
+  __typename?: 'graph_thing_aggregate';
+  aggregate?: Maybe<Graph_Thing_Aggregate_Fields>;
+  nodes: Array<Graph_Thing>;
+};
+
+/** aggregate fields of "graph.thing" */
+export type Graph_Thing_Aggregate_Fields = {
+  __typename?: 'graph_thing_aggregate_fields';
+  count: Scalars['Int'];
+  max?: Maybe<Graph_Thing_Max_Fields>;
+  min?: Maybe<Graph_Thing_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph.thing" */
+export type Graph_Thing_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Thing_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "graph.thing". All fields are combined with a logical 'AND'. */
+export type Graph_Thing_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Thing_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Thing_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Thing_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  schema_name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.thing" */
+export enum Graph_Thing_Constraint {
+  /** unique or primary key constraint */
+  ThingPkey = 'thing_pkey'
+}
+
+/** input type for inserting data into table "graph.thing" */
+export type Graph_Thing_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  id?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Thing_Max_Fields = {
+  __typename?: 'graph_thing_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregate min on columns */
+export type Graph_Thing_Min_Fields = {
+  __typename?: 'graph_thing_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']>;
+  id?: Maybe<Scalars['String']>;
+  schema_name?: Maybe<Scalars['String']>;
+  updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** response of any mutation on the table "graph.thing" */
+export type Graph_Thing_Mutation_Response = {
+  __typename?: 'graph_thing_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Thing>;
+};
+
+/** on_conflict condition type for table "graph.thing" */
+export type Graph_Thing_On_Conflict = {
+  constraint: Graph_Thing_Constraint;
+  update_columns?: Array<Graph_Thing_Update_Column>;
+  where?: InputMaybe<Graph_Thing_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.thing". */
+export type Graph_Thing_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  schema_name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph_thing */
+export type Graph_Thing_Pk_Columns_Input = {
+  id: Scalars['String'];
+};
+
+/** select columns of table "graph.thing" */
+export enum Graph_Thing_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** input type for updating data in table "graph.thing" */
+export type Graph_Thing_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  id?: InputMaybe<Scalars['String']>;
+  schema_name?: InputMaybe<Scalars['String']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** update columns of table "graph.thing" */
+export enum Graph_Thing_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  SchemaName = 'schema_name',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
 /** Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'. */
 export type Json_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['json']>;
@@ -3953,13 +9198,6 @@ export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Mutation_Respons
   returning: Array<Lookup_Maintainer_Visitor_Space_Request_Access_Type>;
 };
 
-/** input type for inserting object relation for remote table "lookup.maintainer_visitor_space_request_access_type" */
-export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_Obj_Rel_Insert_Input = {
-  data: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Insert_Input;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_On_Conflict>;
-};
-
 /** on_conflict condition type for table "lookup.maintainer_visitor_space_request_access_type" */
 export type Lookup_Maintainer_Visitor_Space_Request_Access_Type_On_Conflict = {
   constraint: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Constraint;
@@ -4198,8 +9436,6 @@ export type Lookup_Maintainer_Visitor_Space_Request_Status_Variance_Fields = {
 export type Lookup_Maintainer_Visitor_Space_Status = {
   __typename?: 'lookup_maintainer_visitor_space_status';
   comment?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  sort_order?: Maybe<Lookup_Maintainer_Visitor_Space_Status_Sort_Order>;
   value: Scalars['String'];
 };
 
@@ -4231,7 +9467,6 @@ export type Lookup_Maintainer_Visitor_Space_Status_Bool_Exp = {
   _not?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
   _or?: InputMaybe<Array<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>>;
   comment?: InputMaybe<String_Comparison_Exp>;
-  sort_order?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Bool_Exp>;
   value?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -4262,7 +9497,6 @@ export type Lookup_Maintainer_Visitor_Space_Status_Enum_Comparison_Exp = {
 /** input type for inserting data into table "lookup.maintainer_visitor_space_status" */
 export type Lookup_Maintainer_Visitor_Space_Status_Insert_Input = {
   comment?: InputMaybe<Scalars['String']>;
-  sort_order?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Obj_Rel_Insert_Input>;
   value?: InputMaybe<Scalars['String']>;
 };
 
@@ -4289,13 +9523,6 @@ export type Lookup_Maintainer_Visitor_Space_Status_Mutation_Response = {
   returning: Array<Lookup_Maintainer_Visitor_Space_Status>;
 };
 
-/** input type for inserting object relation for remote table "lookup.maintainer_visitor_space_status" */
-export type Lookup_Maintainer_Visitor_Space_Status_Obj_Rel_Insert_Input = {
-  data: Lookup_Maintainer_Visitor_Space_Status_Insert_Input;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_On_Conflict>;
-};
-
 /** on_conflict condition type for table "lookup.maintainer_visitor_space_status" */
 export type Lookup_Maintainer_Visitor_Space_Status_On_Conflict = {
   constraint: Lookup_Maintainer_Visitor_Space_Status_Constraint;
@@ -4306,7 +9533,6 @@ export type Lookup_Maintainer_Visitor_Space_Status_On_Conflict = {
 /** Ordering options when selecting data from "lookup.maintainer_visitor_space_status". */
 export type Lookup_Maintainer_Visitor_Space_Status_Order_By = {
   comment?: InputMaybe<Order_By>;
-  sort_order?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Order_By>;
   value?: InputMaybe<Order_By>;
 };
 
@@ -4419,13 +9645,6 @@ export type Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Mutation_Response 
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
   returning: Array<Lookup_Maintainer_Visitor_Space_Status_Sort_Order>;
-};
-
-/** input type for inserting object relation for remote table "lookup.maintainer_visitor_space_status_sort_order" */
-export type Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Obj_Rel_Insert_Input = {
-  data: Lookup_Maintainer_Visitor_Space_Status_Sort_Order_Insert_Input;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Sort_Order_On_Conflict>;
 };
 
 /** on_conflict condition type for table "lookup.maintainer_visitor_space_status_sort_order" */
@@ -5858,8 +11077,6 @@ export type Maintainer_Visitor_Space = {
   schema_service_description_nl?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   status: Lookup_Maintainer_Visitor_Space_Status_Enum;
-  /** An object relationship */
-  status_info: Lookup_Maintainer_Visitor_Space_Status;
   updated_at?: Maybe<Scalars['timestamp']>;
   /** An array relationship */
   visitor_space_requests: Array<Maintainer_Visitor_Space_Request>;
@@ -5950,7 +11167,6 @@ export type Maintainer_Visitor_Space_Bool_Exp = {
   schema_service_description_nl?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum_Comparison_Exp>;
-  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
 };
@@ -5983,7 +11199,6 @@ export type Maintainer_Visitor_Space_Insert_Input = {
   schema_service_description_nl?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Enum>;
-  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Obj_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']>;
   visitor_space_requests?: InputMaybe<Maintainer_Visitor_Space_Request_Arr_Rel_Insert_Input>;
 };
@@ -6063,7 +11278,6 @@ export type Maintainer_Visitor_Space_Order_By = {
   schema_service_description_nl?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
-  status_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Status_Order_By>;
   updated_at?: InputMaybe<Order_By>;
   visitor_space_requests_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Aggregate_Order_By>;
 };
@@ -6077,8 +11291,6 @@ export type Maintainer_Visitor_Space_Pk_Columns_Input = {
 export type Maintainer_Visitor_Space_Request = {
   __typename?: 'maintainer_visitor_space_request';
   access_type: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum;
-  /** An object relationship */
-  access_type_info: Lookup_Maintainer_Visitor_Space_Request_Access_Type;
   /** An array relationship */
   accessible_folders: Array<Maintainer_Visitor_Space_Request_Folder_Access>;
   /** An aggregate relationship */
@@ -6215,7 +11427,6 @@ export type Maintainer_Visitor_Space_Request_Bool_Exp = {
   _not?: InputMaybe<Maintainer_Visitor_Space_Request_Bool_Exp>;
   _or?: InputMaybe<Array<Maintainer_Visitor_Space_Request_Bool_Exp>>;
   access_type?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum_Comparison_Exp>;
-  access_type_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Bool_Exp>;
   accessible_folders?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Bool_Exp>;
   cp_space_id?: InputMaybe<Uuid_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -6462,7 +11673,6 @@ export enum Maintainer_Visitor_Space_Request_Folder_Access_Update_Column {
 /** input type for inserting data into table "maintainer.visitor_space_request" */
 export type Maintainer_Visitor_Space_Request_Insert_Input = {
   access_type?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum>;
-  access_type_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Obj_Rel_Insert_Input>;
   accessible_folders?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Arr_Rel_Insert_Input>;
   cp_space_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamp']>;
@@ -6780,7 +11990,6 @@ export type Maintainer_Visitor_Space_Request_On_Conflict = {
 /** Ordering options when selecting data from "maintainer.visitor_space_request". */
 export type Maintainer_Visitor_Space_Request_Order_By = {
   access_type?: InputMaybe<Order_By>;
-  access_type_info?: InputMaybe<Lookup_Maintainer_Visitor_Space_Request_Access_Type_Order_By>;
   accessible_folders_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Folder_Access_Aggregate_Order_By>;
   cp_space_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
@@ -7018,6 +12227,110 @@ export type Mutation_Root = {
   delete_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** delete single row from the table: "app.translations" */
   delete_app_translations_by_pk?: Maybe<App_Translations>;
+  /** delete data from the table: "graph.carrier" */
+  delete_graph_carrier?: Maybe<Graph_Carrier_Mutation_Response>;
+  /** delete single row from the table: "graph.carrier" */
+  delete_graph_carrier_by_pk?: Maybe<Graph_Carrier>;
+  /** delete data from the table: "graph.collection" */
+  delete_graph_collection?: Maybe<Graph_Collection_Mutation_Response>;
+  /** delete single row from the table: "graph.collection" */
+  delete_graph_collection_by_pk?: Maybe<Graph_Collection>;
+  /** delete data from the table: "graph.dct_format" */
+  delete_graph_dct_format?: Maybe<Graph_Dct_Format_Mutation_Response>;
+  /** delete single row from the table: "graph.dct_format" */
+  delete_graph_dct_format_by_pk?: Maybe<Graph_Dct_Format>;
+  /** delete data from the table: "graph.file" */
+  delete_graph_file?: Maybe<Graph_File_Mutation_Response>;
+  /** delete single row from the table: "graph.file" */
+  delete_graph_file_by_pk?: Maybe<Graph_File>;
+  /** delete data from the table: "graph.intellectual_entity" */
+  delete_graph_intellectual_entity?: Maybe<Graph_Intellectual_Entity_Mutation_Response>;
+  /** delete single row from the table: "graph.intellectual_entity" */
+  delete_graph_intellectual_entity_by_pk?: Maybe<Graph_Intellectual_Entity>;
+  /** delete data from the table: "graph.mh_fragment_identifier" */
+  delete_graph_mh_fragment_identifier?: Maybe<Graph_Mh_Fragment_Identifier_Mutation_Response>;
+  /** delete single row from the table: "graph.mh_fragment_identifier" */
+  delete_graph_mh_fragment_identifier_by_pk?: Maybe<Graph_Mh_Fragment_Identifier>;
+  /** delete data from the table: "graph.newspaper_schema_alternate_name" */
+  delete_graph_newspaper_schema_alternate_name?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Mutation_Response>;
+  /** delete single row from the table: "graph.newspaper_schema_alternate_name" */
+  delete_graph_newspaper_schema_alternate_name_by_pk?: Maybe<Graph_Newspaper_Schema_Alternate_Name>;
+  /** delete data from the table: "graph.newspaper_schema_in_language" */
+  delete_graph_newspaper_schema_in_language?: Maybe<Graph_Newspaper_Schema_In_Language_Mutation_Response>;
+  /** delete single row from the table: "graph.newspaper_schema_in_language" */
+  delete_graph_newspaper_schema_in_language_by_pk?: Maybe<Graph_Newspaper_Schema_In_Language>;
+  /** delete data from the table: "graph.organization" */
+  delete_graph_organization?: Maybe<Graph_Organization_Mutation_Response>;
+  /** delete single row from the table: "graph.organization" */
+  delete_graph_organization_by_pk?: Maybe<Graph_Organization>;
+  /** delete data from the table: "graph.premis_identifier" */
+  delete_graph_premis_identifier?: Maybe<Graph_Premis_Identifier_Mutation_Response>;
+  /** delete single row from the table: "graph.premis_identifier" */
+  delete_graph_premis_identifier_by_pk?: Maybe<Graph_Premis_Identifier>;
+  /** delete data from the table: "graph.representation" */
+  delete_graph_representation?: Maybe<Graph_Representation_Mutation_Response>;
+  /** delete single row from the table: "graph.representation" */
+  delete_graph_representation_by_pk?: Maybe<Graph_Representation>;
+  /** delete data from the table: "graph.schema_alternate_name" */
+  delete_graph_schema_alternate_name?: Maybe<Graph_Schema_Alternate_Name_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_alternate_name" */
+  delete_graph_schema_alternate_name_by_pk?: Maybe<Graph_Schema_Alternate_Name>;
+  /** delete data from the table: "graph.schema_contributor" */
+  delete_graph_schema_contributor?: Maybe<Graph_Schema_Contributor_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_contributor" */
+  delete_graph_schema_contributor_by_pk?: Maybe<Graph_Schema_Contributor>;
+  /** delete data from the table: "graph.schema_creator" */
+  delete_graph_schema_creator?: Maybe<Graph_Schema_Creator_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_creator" */
+  delete_graph_schema_creator_by_pk?: Maybe<Graph_Schema_Creator>;
+  /** delete data from the table: "graph.schema_genre" */
+  delete_graph_schema_genre?: Maybe<Graph_Schema_Genre_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_genre" */
+  delete_graph_schema_genre_by_pk?: Maybe<Graph_Schema_Genre>;
+  /** delete data from the table: "graph.schema_in_language" */
+  delete_graph_schema_in_language?: Maybe<Graph_Schema_In_Language_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_in_language" */
+  delete_graph_schema_in_language_by_pk?: Maybe<Graph_Schema_In_Language>;
+  /** delete data from the table: "graph.schema_is_part_of" */
+  delete_graph_schema_is_part_of?: Maybe<Graph_Schema_Is_Part_Of_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_is_part_of" */
+  delete_graph_schema_is_part_of_by_pk?: Maybe<Graph_Schema_Is_Part_Of>;
+  /** delete data from the table: "graph.schema_keywords" */
+  delete_graph_schema_keywords?: Maybe<Graph_Schema_Keywords_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_keywords" */
+  delete_graph_schema_keywords_by_pk?: Maybe<Graph_Schema_Keywords>;
+  /** delete data from the table: "graph.schema_license" */
+  delete_graph_schema_license?: Maybe<Graph_Schema_License_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_license" */
+  delete_graph_schema_license_by_pk?: Maybe<Graph_Schema_License>;
+  /** delete data from the table: "graph.schema_mentions" */
+  delete_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_mentions" */
+  delete_graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** delete data from the table: "graph.schema_publisher" */
+  delete_graph_schema_publisher?: Maybe<Graph_Schema_Publisher_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_publisher" */
+  delete_graph_schema_publisher_by_pk?: Maybe<Graph_Schema_Publisher>;
+  /** delete data from the table: "graph.schema_role" */
+  delete_graph_schema_role?: Maybe<Graph_Schema_Role_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_role" */
+  delete_graph_schema_role_by_pk?: Maybe<Graph_Schema_Role>;
+  /** delete data from the table: "graph.schema_spatial" */
+  delete_graph_schema_spatial?: Maybe<Graph_Schema_Spatial_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_spatial" */
+  delete_graph_schema_spatial_by_pk?: Maybe<Graph_Schema_Spatial>;
+  /** delete data from the table: "graph.schema_temporal" */
+  delete_graph_schema_temporal?: Maybe<Graph_Schema_Temporal_Mutation_Response>;
+  /** delete single row from the table: "graph.schema_temporal" */
+  delete_graph_schema_temporal_by_pk?: Maybe<Graph_Schema_Temporal>;
+  /** delete data from the table: "graph.thesaurus" */
+  delete_graph_thesaurus?: Maybe<Graph_Thesaurus_Mutation_Response>;
+  /** delete single row from the table: "graph.thesaurus" */
+  delete_graph_thesaurus_by_pk?: Maybe<Graph_Thesaurus>;
+  /** delete data from the table: "graph.thing" */
+  delete_graph_thing?: Maybe<Graph_Thing_Mutation_Response>;
+  /** delete single row from the table: "graph.thing" */
+  delete_graph_thing_by_pk?: Maybe<Graph_Thing>;
   /** delete data from the table: "lookup.app_content_block_type" */
   delete_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** delete single row from the table: "lookup.app_content_block_type" */
@@ -7200,6 +12513,110 @@ export type Mutation_Root = {
   insert_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** insert a single row into the table: "app.translations" */
   insert_app_translations_one?: Maybe<App_Translations>;
+  /** insert data into the table: "graph.carrier" */
+  insert_graph_carrier?: Maybe<Graph_Carrier_Mutation_Response>;
+  /** insert a single row into the table: "graph.carrier" */
+  insert_graph_carrier_one?: Maybe<Graph_Carrier>;
+  /** insert data into the table: "graph.collection" */
+  insert_graph_collection?: Maybe<Graph_Collection_Mutation_Response>;
+  /** insert a single row into the table: "graph.collection" */
+  insert_graph_collection_one?: Maybe<Graph_Collection>;
+  /** insert data into the table: "graph.dct_format" */
+  insert_graph_dct_format?: Maybe<Graph_Dct_Format_Mutation_Response>;
+  /** insert a single row into the table: "graph.dct_format" */
+  insert_graph_dct_format_one?: Maybe<Graph_Dct_Format>;
+  /** insert data into the table: "graph.file" */
+  insert_graph_file?: Maybe<Graph_File_Mutation_Response>;
+  /** insert a single row into the table: "graph.file" */
+  insert_graph_file_one?: Maybe<Graph_File>;
+  /** insert data into the table: "graph.intellectual_entity" */
+  insert_graph_intellectual_entity?: Maybe<Graph_Intellectual_Entity_Mutation_Response>;
+  /** insert a single row into the table: "graph.intellectual_entity" */
+  insert_graph_intellectual_entity_one?: Maybe<Graph_Intellectual_Entity>;
+  /** insert data into the table: "graph.mh_fragment_identifier" */
+  insert_graph_mh_fragment_identifier?: Maybe<Graph_Mh_Fragment_Identifier_Mutation_Response>;
+  /** insert a single row into the table: "graph.mh_fragment_identifier" */
+  insert_graph_mh_fragment_identifier_one?: Maybe<Graph_Mh_Fragment_Identifier>;
+  /** insert data into the table: "graph.newspaper_schema_alternate_name" */
+  insert_graph_newspaper_schema_alternate_name?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Mutation_Response>;
+  /** insert a single row into the table: "graph.newspaper_schema_alternate_name" */
+  insert_graph_newspaper_schema_alternate_name_one?: Maybe<Graph_Newspaper_Schema_Alternate_Name>;
+  /** insert data into the table: "graph.newspaper_schema_in_language" */
+  insert_graph_newspaper_schema_in_language?: Maybe<Graph_Newspaper_Schema_In_Language_Mutation_Response>;
+  /** insert a single row into the table: "graph.newspaper_schema_in_language" */
+  insert_graph_newspaper_schema_in_language_one?: Maybe<Graph_Newspaper_Schema_In_Language>;
+  /** insert data into the table: "graph.organization" */
+  insert_graph_organization?: Maybe<Graph_Organization_Mutation_Response>;
+  /** insert a single row into the table: "graph.organization" */
+  insert_graph_organization_one?: Maybe<Graph_Organization>;
+  /** insert data into the table: "graph.premis_identifier" */
+  insert_graph_premis_identifier?: Maybe<Graph_Premis_Identifier_Mutation_Response>;
+  /** insert a single row into the table: "graph.premis_identifier" */
+  insert_graph_premis_identifier_one?: Maybe<Graph_Premis_Identifier>;
+  /** insert data into the table: "graph.representation" */
+  insert_graph_representation?: Maybe<Graph_Representation_Mutation_Response>;
+  /** insert a single row into the table: "graph.representation" */
+  insert_graph_representation_one?: Maybe<Graph_Representation>;
+  /** insert data into the table: "graph.schema_alternate_name" */
+  insert_graph_schema_alternate_name?: Maybe<Graph_Schema_Alternate_Name_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_alternate_name" */
+  insert_graph_schema_alternate_name_one?: Maybe<Graph_Schema_Alternate_Name>;
+  /** insert data into the table: "graph.schema_contributor" */
+  insert_graph_schema_contributor?: Maybe<Graph_Schema_Contributor_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_contributor" */
+  insert_graph_schema_contributor_one?: Maybe<Graph_Schema_Contributor>;
+  /** insert data into the table: "graph.schema_creator" */
+  insert_graph_schema_creator?: Maybe<Graph_Schema_Creator_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_creator" */
+  insert_graph_schema_creator_one?: Maybe<Graph_Schema_Creator>;
+  /** insert data into the table: "graph.schema_genre" */
+  insert_graph_schema_genre?: Maybe<Graph_Schema_Genre_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_genre" */
+  insert_graph_schema_genre_one?: Maybe<Graph_Schema_Genre>;
+  /** insert data into the table: "graph.schema_in_language" */
+  insert_graph_schema_in_language?: Maybe<Graph_Schema_In_Language_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_in_language" */
+  insert_graph_schema_in_language_one?: Maybe<Graph_Schema_In_Language>;
+  /** insert data into the table: "graph.schema_is_part_of" */
+  insert_graph_schema_is_part_of?: Maybe<Graph_Schema_Is_Part_Of_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_is_part_of" */
+  insert_graph_schema_is_part_of_one?: Maybe<Graph_Schema_Is_Part_Of>;
+  /** insert data into the table: "graph.schema_keywords" */
+  insert_graph_schema_keywords?: Maybe<Graph_Schema_Keywords_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_keywords" */
+  insert_graph_schema_keywords_one?: Maybe<Graph_Schema_Keywords>;
+  /** insert data into the table: "graph.schema_license" */
+  insert_graph_schema_license?: Maybe<Graph_Schema_License_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_license" */
+  insert_graph_schema_license_one?: Maybe<Graph_Schema_License>;
+  /** insert data into the table: "graph.schema_mentions" */
+  insert_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_mentions" */
+  insert_graph_schema_mentions_one?: Maybe<Graph_Schema_Mentions>;
+  /** insert data into the table: "graph.schema_publisher" */
+  insert_graph_schema_publisher?: Maybe<Graph_Schema_Publisher_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_publisher" */
+  insert_graph_schema_publisher_one?: Maybe<Graph_Schema_Publisher>;
+  /** insert data into the table: "graph.schema_role" */
+  insert_graph_schema_role?: Maybe<Graph_Schema_Role_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_role" */
+  insert_graph_schema_role_one?: Maybe<Graph_Schema_Role>;
+  /** insert data into the table: "graph.schema_spatial" */
+  insert_graph_schema_spatial?: Maybe<Graph_Schema_Spatial_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_spatial" */
+  insert_graph_schema_spatial_one?: Maybe<Graph_Schema_Spatial>;
+  /** insert data into the table: "graph.schema_temporal" */
+  insert_graph_schema_temporal?: Maybe<Graph_Schema_Temporal_Mutation_Response>;
+  /** insert a single row into the table: "graph.schema_temporal" */
+  insert_graph_schema_temporal_one?: Maybe<Graph_Schema_Temporal>;
+  /** insert data into the table: "graph.thesaurus" */
+  insert_graph_thesaurus?: Maybe<Graph_Thesaurus_Mutation_Response>;
+  /** insert a single row into the table: "graph.thesaurus" */
+  insert_graph_thesaurus_one?: Maybe<Graph_Thesaurus>;
+  /** insert data into the table: "graph.thing" */
+  insert_graph_thing?: Maybe<Graph_Thing_Mutation_Response>;
+  /** insert a single row into the table: "graph.thing" */
+  insert_graph_thing_one?: Maybe<Graph_Thing>;
   /** insert data into the table: "lookup.app_content_block_type" */
   insert_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** insert a single row into the table: "lookup.app_content_block_type" */
@@ -7384,6 +12801,110 @@ export type Mutation_Root = {
   update_app_translations?: Maybe<App_Translations_Mutation_Response>;
   /** update single row of the table: "app.translations" */
   update_app_translations_by_pk?: Maybe<App_Translations>;
+  /** update data of the table: "graph.carrier" */
+  update_graph_carrier?: Maybe<Graph_Carrier_Mutation_Response>;
+  /** update single row of the table: "graph.carrier" */
+  update_graph_carrier_by_pk?: Maybe<Graph_Carrier>;
+  /** update data of the table: "graph.collection" */
+  update_graph_collection?: Maybe<Graph_Collection_Mutation_Response>;
+  /** update single row of the table: "graph.collection" */
+  update_graph_collection_by_pk?: Maybe<Graph_Collection>;
+  /** update data of the table: "graph.dct_format" */
+  update_graph_dct_format?: Maybe<Graph_Dct_Format_Mutation_Response>;
+  /** update single row of the table: "graph.dct_format" */
+  update_graph_dct_format_by_pk?: Maybe<Graph_Dct_Format>;
+  /** update data of the table: "graph.file" */
+  update_graph_file?: Maybe<Graph_File_Mutation_Response>;
+  /** update single row of the table: "graph.file" */
+  update_graph_file_by_pk?: Maybe<Graph_File>;
+  /** update data of the table: "graph.intellectual_entity" */
+  update_graph_intellectual_entity?: Maybe<Graph_Intellectual_Entity_Mutation_Response>;
+  /** update single row of the table: "graph.intellectual_entity" */
+  update_graph_intellectual_entity_by_pk?: Maybe<Graph_Intellectual_Entity>;
+  /** update data of the table: "graph.mh_fragment_identifier" */
+  update_graph_mh_fragment_identifier?: Maybe<Graph_Mh_Fragment_Identifier_Mutation_Response>;
+  /** update single row of the table: "graph.mh_fragment_identifier" */
+  update_graph_mh_fragment_identifier_by_pk?: Maybe<Graph_Mh_Fragment_Identifier>;
+  /** update data of the table: "graph.newspaper_schema_alternate_name" */
+  update_graph_newspaper_schema_alternate_name?: Maybe<Graph_Newspaper_Schema_Alternate_Name_Mutation_Response>;
+  /** update single row of the table: "graph.newspaper_schema_alternate_name" */
+  update_graph_newspaper_schema_alternate_name_by_pk?: Maybe<Graph_Newspaper_Schema_Alternate_Name>;
+  /** update data of the table: "graph.newspaper_schema_in_language" */
+  update_graph_newspaper_schema_in_language?: Maybe<Graph_Newspaper_Schema_In_Language_Mutation_Response>;
+  /** update single row of the table: "graph.newspaper_schema_in_language" */
+  update_graph_newspaper_schema_in_language_by_pk?: Maybe<Graph_Newspaper_Schema_In_Language>;
+  /** update data of the table: "graph.organization" */
+  update_graph_organization?: Maybe<Graph_Organization_Mutation_Response>;
+  /** update single row of the table: "graph.organization" */
+  update_graph_organization_by_pk?: Maybe<Graph_Organization>;
+  /** update data of the table: "graph.premis_identifier" */
+  update_graph_premis_identifier?: Maybe<Graph_Premis_Identifier_Mutation_Response>;
+  /** update single row of the table: "graph.premis_identifier" */
+  update_graph_premis_identifier_by_pk?: Maybe<Graph_Premis_Identifier>;
+  /** update data of the table: "graph.representation" */
+  update_graph_representation?: Maybe<Graph_Representation_Mutation_Response>;
+  /** update single row of the table: "graph.representation" */
+  update_graph_representation_by_pk?: Maybe<Graph_Representation>;
+  /** update data of the table: "graph.schema_alternate_name" */
+  update_graph_schema_alternate_name?: Maybe<Graph_Schema_Alternate_Name_Mutation_Response>;
+  /** update single row of the table: "graph.schema_alternate_name" */
+  update_graph_schema_alternate_name_by_pk?: Maybe<Graph_Schema_Alternate_Name>;
+  /** update data of the table: "graph.schema_contributor" */
+  update_graph_schema_contributor?: Maybe<Graph_Schema_Contributor_Mutation_Response>;
+  /** update single row of the table: "graph.schema_contributor" */
+  update_graph_schema_contributor_by_pk?: Maybe<Graph_Schema_Contributor>;
+  /** update data of the table: "graph.schema_creator" */
+  update_graph_schema_creator?: Maybe<Graph_Schema_Creator_Mutation_Response>;
+  /** update single row of the table: "graph.schema_creator" */
+  update_graph_schema_creator_by_pk?: Maybe<Graph_Schema_Creator>;
+  /** update data of the table: "graph.schema_genre" */
+  update_graph_schema_genre?: Maybe<Graph_Schema_Genre_Mutation_Response>;
+  /** update single row of the table: "graph.schema_genre" */
+  update_graph_schema_genre_by_pk?: Maybe<Graph_Schema_Genre>;
+  /** update data of the table: "graph.schema_in_language" */
+  update_graph_schema_in_language?: Maybe<Graph_Schema_In_Language_Mutation_Response>;
+  /** update single row of the table: "graph.schema_in_language" */
+  update_graph_schema_in_language_by_pk?: Maybe<Graph_Schema_In_Language>;
+  /** update data of the table: "graph.schema_is_part_of" */
+  update_graph_schema_is_part_of?: Maybe<Graph_Schema_Is_Part_Of_Mutation_Response>;
+  /** update single row of the table: "graph.schema_is_part_of" */
+  update_graph_schema_is_part_of_by_pk?: Maybe<Graph_Schema_Is_Part_Of>;
+  /** update data of the table: "graph.schema_keywords" */
+  update_graph_schema_keywords?: Maybe<Graph_Schema_Keywords_Mutation_Response>;
+  /** update single row of the table: "graph.schema_keywords" */
+  update_graph_schema_keywords_by_pk?: Maybe<Graph_Schema_Keywords>;
+  /** update data of the table: "graph.schema_license" */
+  update_graph_schema_license?: Maybe<Graph_Schema_License_Mutation_Response>;
+  /** update single row of the table: "graph.schema_license" */
+  update_graph_schema_license_by_pk?: Maybe<Graph_Schema_License>;
+  /** update data of the table: "graph.schema_mentions" */
+  update_graph_schema_mentions?: Maybe<Graph_Schema_Mentions_Mutation_Response>;
+  /** update single row of the table: "graph.schema_mentions" */
+  update_graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** update data of the table: "graph.schema_publisher" */
+  update_graph_schema_publisher?: Maybe<Graph_Schema_Publisher_Mutation_Response>;
+  /** update single row of the table: "graph.schema_publisher" */
+  update_graph_schema_publisher_by_pk?: Maybe<Graph_Schema_Publisher>;
+  /** update data of the table: "graph.schema_role" */
+  update_graph_schema_role?: Maybe<Graph_Schema_Role_Mutation_Response>;
+  /** update single row of the table: "graph.schema_role" */
+  update_graph_schema_role_by_pk?: Maybe<Graph_Schema_Role>;
+  /** update data of the table: "graph.schema_spatial" */
+  update_graph_schema_spatial?: Maybe<Graph_Schema_Spatial_Mutation_Response>;
+  /** update single row of the table: "graph.schema_spatial" */
+  update_graph_schema_spatial_by_pk?: Maybe<Graph_Schema_Spatial>;
+  /** update data of the table: "graph.schema_temporal" */
+  update_graph_schema_temporal?: Maybe<Graph_Schema_Temporal_Mutation_Response>;
+  /** update single row of the table: "graph.schema_temporal" */
+  update_graph_schema_temporal_by_pk?: Maybe<Graph_Schema_Temporal>;
+  /** update data of the table: "graph.thesaurus" */
+  update_graph_thesaurus?: Maybe<Graph_Thesaurus_Mutation_Response>;
+  /** update single row of the table: "graph.thesaurus" */
+  update_graph_thesaurus_by_pk?: Maybe<Graph_Thesaurus>;
+  /** update data of the table: "graph.thing" */
+  update_graph_thing?: Maybe<Graph_Thing_Mutation_Response>;
+  /** update single row of the table: "graph.thing" */
+  update_graph_thing_by_pk?: Maybe<Graph_Thing>;
   /** update data of the table: "lookup.app_content_block_type" */
   update_lookup_app_content_block_type?: Maybe<Lookup_App_Content_Block_Type_Mutation_Response>;
   /** update single row of the table: "lookup.app_content_block_type" */
@@ -7657,6 +13178,341 @@ export type Mutation_RootDelete_App_Translations_By_PkArgs = {
   key: Scalars['String'];
   language: Lookup_Languages_Enum;
   location: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_CarrierArgs = {
+  where: Graph_Carrier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Carrier_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_CollectionArgs = {
+  where: Graph_Collection_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Collection_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Dct_FormatArgs = {
+  where: Graph_Dct_Format_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Dct_Format_By_PkArgs = {
+  dct_format: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_FileArgs = {
+  where: Graph_File_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_File_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Intellectual_EntityArgs = {
+  where: Graph_Intellectual_Entity_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Mh_Fragment_IdentifierArgs = {
+  where: Graph_Mh_Fragment_Identifier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Mh_Fragment_Identifier_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  mh_fragment_identifier: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Newspaper_Schema_Alternate_NameArgs = {
+  where: Graph_Newspaper_Schema_Alternate_Name_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Newspaper_Schema_Alternate_Name_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Newspaper_Schema_In_LanguageArgs = {
+  where: Graph_Newspaper_Schema_In_Language_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Newspaper_Schema_In_Language_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_OrganizationArgs = {
+  where: Graph_Organization_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Organization_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Premis_IdentifierArgs = {
+  where: Graph_Premis_Identifier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Premis_Identifier_By_PkArgs = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_RepresentationArgs = {
+  where: Graph_Representation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Representation_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Alternate_NameArgs = {
+  where: Graph_Schema_Alternate_Name_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Alternate_Name_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_ContributorArgs = {
+  where: Graph_Schema_Contributor_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Contributor_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_CreatorArgs = {
+  where: Graph_Schema_Creator_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Creator_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_GenreArgs = {
+  where: Graph_Schema_Genre_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Genre_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_genre: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_In_LanguageArgs = {
+  where: Graph_Schema_In_Language_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_In_Language_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Is_Part_OfArgs = {
+  where: Graph_Schema_Is_Part_Of_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Is_Part_Of_By_PkArgs = {
+  collection_id: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_KeywordsArgs = {
+  where: Graph_Schema_Keywords_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Keywords_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_keywords: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_LicenseArgs = {
+  where: Graph_Schema_License_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_License_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_license: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_MentionsArgs = {
+  where: Graph_Schema_Mentions_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Mentions_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  thing_id: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_PublisherArgs = {
+  where: Graph_Schema_Publisher_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Publisher_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_RoleArgs = {
+  where: Graph_Schema_Role_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Role_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_role_name: Scalars['String'];
+  thing_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_SpatialArgs = {
+  where: Graph_Schema_Spatial_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Spatial_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_spatial: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_TemporalArgs = {
+  where: Graph_Schema_Temporal_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Schema_Temporal_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_temporal: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_ThesaurusArgs = {
+  where: Graph_Thesaurus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Thesaurus_By_PkArgs = {
+  object: Scalars['String'];
+  predicate: Scalars['String'];
+  subject: Scalars['String'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_ThingArgs = {
+  where: Graph_Thing_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Thing_By_PkArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -8226,6 +14082,370 @@ export type Mutation_RootInsert_App_TranslationsArgs = {
 export type Mutation_RootInsert_App_Translations_OneArgs = {
   object: App_Translations_Insert_Input;
   on_conflict?: InputMaybe<App_Translations_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_CarrierArgs = {
+  objects: Array<Graph_Carrier_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Carrier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Carrier_OneArgs = {
+  object: Graph_Carrier_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Carrier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_CollectionArgs = {
+  objects: Array<Graph_Collection_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Collection_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Collection_OneArgs = {
+  object: Graph_Collection_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Collection_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Dct_FormatArgs = {
+  objects: Array<Graph_Dct_Format_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Dct_Format_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Dct_Format_OneArgs = {
+  object: Graph_Dct_Format_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Dct_Format_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_FileArgs = {
+  objects: Array<Graph_File_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_File_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_File_OneArgs = {
+  object: Graph_File_Insert_Input;
+  on_conflict?: InputMaybe<Graph_File_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Intellectual_EntityArgs = {
+  objects: Array<Graph_Intellectual_Entity_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Intellectual_Entity_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Intellectual_Entity_OneArgs = {
+  object: Graph_Intellectual_Entity_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Intellectual_Entity_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Mh_Fragment_IdentifierArgs = {
+  objects: Array<Graph_Mh_Fragment_Identifier_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Mh_Fragment_Identifier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Mh_Fragment_Identifier_OneArgs = {
+  object: Graph_Mh_Fragment_Identifier_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Mh_Fragment_Identifier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Newspaper_Schema_Alternate_NameArgs = {
+  objects: Array<Graph_Newspaper_Schema_Alternate_Name_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Newspaper_Schema_Alternate_Name_OneArgs = {
+  object: Graph_Newspaper_Schema_Alternate_Name_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Newspaper_Schema_In_LanguageArgs = {
+  objects: Array<Graph_Newspaper_Schema_In_Language_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Newspaper_Schema_In_Language_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Newspaper_Schema_In_Language_OneArgs = {
+  object: Graph_Newspaper_Schema_In_Language_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Newspaper_Schema_In_Language_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_OrganizationArgs = {
+  objects: Array<Graph_Organization_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Organization_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Organization_OneArgs = {
+  object: Graph_Organization_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Organization_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Premis_IdentifierArgs = {
+  objects: Array<Graph_Premis_Identifier_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Premis_Identifier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Premis_Identifier_OneArgs = {
+  object: Graph_Premis_Identifier_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Premis_Identifier_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_RepresentationArgs = {
+  objects: Array<Graph_Representation_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Representation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Representation_OneArgs = {
+  object: Graph_Representation_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Representation_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Alternate_NameArgs = {
+  objects: Array<Graph_Schema_Alternate_Name_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Alternate_Name_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Alternate_Name_OneArgs = {
+  object: Graph_Schema_Alternate_Name_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Alternate_Name_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_ContributorArgs = {
+  objects: Array<Graph_Schema_Contributor_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Contributor_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Contributor_OneArgs = {
+  object: Graph_Schema_Contributor_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Contributor_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_CreatorArgs = {
+  objects: Array<Graph_Schema_Creator_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Creator_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Creator_OneArgs = {
+  object: Graph_Schema_Creator_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Creator_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_GenreArgs = {
+  objects: Array<Graph_Schema_Genre_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Genre_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Genre_OneArgs = {
+  object: Graph_Schema_Genre_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Genre_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_In_LanguageArgs = {
+  objects: Array<Graph_Schema_In_Language_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_In_Language_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_In_Language_OneArgs = {
+  object: Graph_Schema_In_Language_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_In_Language_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Is_Part_OfArgs = {
+  objects: Array<Graph_Schema_Is_Part_Of_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Is_Part_Of_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Is_Part_Of_OneArgs = {
+  object: Graph_Schema_Is_Part_Of_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Is_Part_Of_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_KeywordsArgs = {
+  objects: Array<Graph_Schema_Keywords_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Keywords_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Keywords_OneArgs = {
+  object: Graph_Schema_Keywords_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Keywords_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_LicenseArgs = {
+  objects: Array<Graph_Schema_License_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_License_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_License_OneArgs = {
+  object: Graph_Schema_License_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_License_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_MentionsArgs = {
+  objects: Array<Graph_Schema_Mentions_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Mentions_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Mentions_OneArgs = {
+  object: Graph_Schema_Mentions_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Mentions_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_PublisherArgs = {
+  objects: Array<Graph_Schema_Publisher_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Publisher_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Publisher_OneArgs = {
+  object: Graph_Schema_Publisher_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Publisher_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_RoleArgs = {
+  objects: Array<Graph_Schema_Role_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Role_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Role_OneArgs = {
+  object: Graph_Schema_Role_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Role_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_SpatialArgs = {
+  objects: Array<Graph_Schema_Spatial_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Spatial_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Spatial_OneArgs = {
+  object: Graph_Schema_Spatial_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Spatial_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_TemporalArgs = {
+  objects: Array<Graph_Schema_Temporal_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Schema_Temporal_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Schema_Temporal_OneArgs = {
+  object: Graph_Schema_Temporal_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Schema_Temporal_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_ThesaurusArgs = {
+  objects: Array<Graph_Thesaurus_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Thesaurus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Thesaurus_OneArgs = {
+  object: Graph_Thesaurus_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Thesaurus_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_ThingArgs = {
+  objects: Array<Graph_Thing_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Thing_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Thing_OneArgs = {
+  object: Graph_Thing_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Thing_On_Conflict>;
 };
 
 
@@ -8936,6 +15156,374 @@ export type Mutation_RootUpdate_App_Translations_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootUpdate_Graph_CarrierArgs = {
+  _set?: InputMaybe<Graph_Carrier_Set_Input>;
+  where: Graph_Carrier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Carrier_By_PkArgs = {
+  _set?: InputMaybe<Graph_Carrier_Set_Input>;
+  pk_columns: Graph_Carrier_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_CollectionArgs = {
+  _set?: InputMaybe<Graph_Collection_Set_Input>;
+  where: Graph_Collection_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Collection_By_PkArgs = {
+  _set?: InputMaybe<Graph_Collection_Set_Input>;
+  pk_columns: Graph_Collection_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Dct_FormatArgs = {
+  _set?: InputMaybe<Graph_Dct_Format_Set_Input>;
+  where: Graph_Dct_Format_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Dct_Format_By_PkArgs = {
+  _set?: InputMaybe<Graph_Dct_Format_Set_Input>;
+  pk_columns: Graph_Dct_Format_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_FileArgs = {
+  _inc?: InputMaybe<Graph_File_Inc_Input>;
+  _set?: InputMaybe<Graph_File_Set_Input>;
+  where: Graph_File_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_File_By_PkArgs = {
+  _inc?: InputMaybe<Graph_File_Inc_Input>;
+  _set?: InputMaybe<Graph_File_Set_Input>;
+  pk_columns: Graph_File_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Intellectual_EntityArgs = {
+  _inc?: InputMaybe<Graph_Intellectual_Entity_Inc_Input>;
+  _set?: InputMaybe<Graph_Intellectual_Entity_Set_Input>;
+  where: Graph_Intellectual_Entity_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Intellectual_Entity_By_PkArgs = {
+  _inc?: InputMaybe<Graph_Intellectual_Entity_Inc_Input>;
+  _set?: InputMaybe<Graph_Intellectual_Entity_Set_Input>;
+  pk_columns: Graph_Intellectual_Entity_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Mh_Fragment_IdentifierArgs = {
+  _set?: InputMaybe<Graph_Mh_Fragment_Identifier_Set_Input>;
+  where: Graph_Mh_Fragment_Identifier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Mh_Fragment_Identifier_By_PkArgs = {
+  _set?: InputMaybe<Graph_Mh_Fragment_Identifier_Set_Input>;
+  pk_columns: Graph_Mh_Fragment_Identifier_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Newspaper_Schema_Alternate_NameArgs = {
+  _set?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Set_Input>;
+  where: Graph_Newspaper_Schema_Alternate_Name_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Newspaper_Schema_Alternate_Name_By_PkArgs = {
+  _set?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Set_Input>;
+  pk_columns: Graph_Newspaper_Schema_Alternate_Name_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Newspaper_Schema_In_LanguageArgs = {
+  _set?: InputMaybe<Graph_Newspaper_Schema_In_Language_Set_Input>;
+  where: Graph_Newspaper_Schema_In_Language_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Newspaper_Schema_In_Language_By_PkArgs = {
+  _set?: InputMaybe<Graph_Newspaper_Schema_In_Language_Set_Input>;
+  pk_columns: Graph_Newspaper_Schema_In_Language_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_OrganizationArgs = {
+  _set?: InputMaybe<Graph_Organization_Set_Input>;
+  where: Graph_Organization_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Organization_By_PkArgs = {
+  _set?: InputMaybe<Graph_Organization_Set_Input>;
+  pk_columns: Graph_Organization_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Premis_IdentifierArgs = {
+  _set?: InputMaybe<Graph_Premis_Identifier_Set_Input>;
+  where: Graph_Premis_Identifier_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Premis_Identifier_By_PkArgs = {
+  _set?: InputMaybe<Graph_Premis_Identifier_Set_Input>;
+  pk_columns: Graph_Premis_Identifier_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_RepresentationArgs = {
+  _set?: InputMaybe<Graph_Representation_Set_Input>;
+  where: Graph_Representation_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Representation_By_PkArgs = {
+  _set?: InputMaybe<Graph_Representation_Set_Input>;
+  pk_columns: Graph_Representation_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Alternate_NameArgs = {
+  _set?: InputMaybe<Graph_Schema_Alternate_Name_Set_Input>;
+  where: Graph_Schema_Alternate_Name_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Alternate_Name_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Alternate_Name_Set_Input>;
+  pk_columns: Graph_Schema_Alternate_Name_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_ContributorArgs = {
+  _set?: InputMaybe<Graph_Schema_Contributor_Set_Input>;
+  where: Graph_Schema_Contributor_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Contributor_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Contributor_Set_Input>;
+  pk_columns: Graph_Schema_Contributor_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_CreatorArgs = {
+  _set?: InputMaybe<Graph_Schema_Creator_Set_Input>;
+  where: Graph_Schema_Creator_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Creator_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Creator_Set_Input>;
+  pk_columns: Graph_Schema_Creator_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_GenreArgs = {
+  _set?: InputMaybe<Graph_Schema_Genre_Set_Input>;
+  where: Graph_Schema_Genre_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Genre_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Genre_Set_Input>;
+  pk_columns: Graph_Schema_Genre_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_In_LanguageArgs = {
+  _set?: InputMaybe<Graph_Schema_In_Language_Set_Input>;
+  where: Graph_Schema_In_Language_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_In_Language_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_In_Language_Set_Input>;
+  pk_columns: Graph_Schema_In_Language_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Is_Part_OfArgs = {
+  _set?: InputMaybe<Graph_Schema_Is_Part_Of_Set_Input>;
+  where: Graph_Schema_Is_Part_Of_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Is_Part_Of_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Is_Part_Of_Set_Input>;
+  pk_columns: Graph_Schema_Is_Part_Of_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_KeywordsArgs = {
+  _set?: InputMaybe<Graph_Schema_Keywords_Set_Input>;
+  where: Graph_Schema_Keywords_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Keywords_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Keywords_Set_Input>;
+  pk_columns: Graph_Schema_Keywords_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_LicenseArgs = {
+  _set?: InputMaybe<Graph_Schema_License_Set_Input>;
+  where: Graph_Schema_License_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_License_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_License_Set_Input>;
+  pk_columns: Graph_Schema_License_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_MentionsArgs = {
+  _set?: InputMaybe<Graph_Schema_Mentions_Set_Input>;
+  where: Graph_Schema_Mentions_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Mentions_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Mentions_Set_Input>;
+  pk_columns: Graph_Schema_Mentions_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_PublisherArgs = {
+  _set?: InputMaybe<Graph_Schema_Publisher_Set_Input>;
+  where: Graph_Schema_Publisher_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Publisher_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Publisher_Set_Input>;
+  pk_columns: Graph_Schema_Publisher_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_RoleArgs = {
+  _set?: InputMaybe<Graph_Schema_Role_Set_Input>;
+  where: Graph_Schema_Role_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Role_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Role_Set_Input>;
+  pk_columns: Graph_Schema_Role_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_SpatialArgs = {
+  _set?: InputMaybe<Graph_Schema_Spatial_Set_Input>;
+  where: Graph_Schema_Spatial_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Spatial_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Spatial_Set_Input>;
+  pk_columns: Graph_Schema_Spatial_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_TemporalArgs = {
+  _set?: InputMaybe<Graph_Schema_Temporal_Set_Input>;
+  where: Graph_Schema_Temporal_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Schema_Temporal_By_PkArgs = {
+  _set?: InputMaybe<Graph_Schema_Temporal_Set_Input>;
+  pk_columns: Graph_Schema_Temporal_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_ThesaurusArgs = {
+  _set?: InputMaybe<Graph_Thesaurus_Set_Input>;
+  where: Graph_Thesaurus_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Thesaurus_By_PkArgs = {
+  _set?: InputMaybe<Graph_Thesaurus_Set_Input>;
+  pk_columns: Graph_Thesaurus_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_ThingArgs = {
+  _set?: InputMaybe<Graph_Thing_Set_Input>;
+  where: Graph_Thing_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Thing_By_PkArgs = {
+  _set?: InputMaybe<Graph_Thing_Set_Input>;
+  pk_columns: Graph_Thing_Pk_Columns_Input;
+};
+
+
+/** mutation root */
 export type Mutation_RootUpdate_Lookup_App_Content_Block_TypeArgs = {
   _set?: InputMaybe<Lookup_App_Content_Block_Type_Set_Input>;
   where: Lookup_App_Content_Block_Type_Bool_Exp;
@@ -9486,6 +16074,19 @@ export type Mutation_RootUpdate_Users_ProfileArgs = {
 export type Mutation_RootUpdate_Users_Profile_By_PkArgs = {
   _set?: InputMaybe<Users_Profile_Set_Input>;
   pk_columns: Users_Profile_Pk_Columns_Input;
+};
+
+/** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
+export type Numeric_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['numeric']>;
+  _gt?: InputMaybe<Scalars['numeric']>;
+  _gte?: InputMaybe<Scalars['numeric']>;
+  _in?: InputMaybe<Array<Scalars['numeric']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['numeric']>;
+  _lte?: InputMaybe<Scalars['numeric']>;
+  _neq?: InputMaybe<Scalars['numeric']>;
+  _nin?: InputMaybe<Array<Scalars['numeric']>>;
 };
 
 /** columns and relationships of "object.creator" */
@@ -11456,6 +18057,162 @@ export type Query_Root = {
   app_translations_aggregate: App_Translations_Aggregate;
   /** fetch data from the table: "app.translations" using primary key columns */
   app_translations_by_pk?: Maybe<App_Translations>;
+  /** fetch data from the table: "graph.carrier" */
+  graph_carrier: Array<Graph_Carrier>;
+  /** fetch aggregated fields from the table: "graph.carrier" */
+  graph_carrier_aggregate: Graph_Carrier_Aggregate;
+  /** fetch data from the table: "graph.carrier" using primary key columns */
+  graph_carrier_by_pk?: Maybe<Graph_Carrier>;
+  /** fetch data from the table: "graph.collection" */
+  graph_collection: Array<Graph_Collection>;
+  /** fetch aggregated fields from the table: "graph.collection" */
+  graph_collection_aggregate: Graph_Collection_Aggregate;
+  /** fetch data from the table: "graph.collection" using primary key columns */
+  graph_collection_by_pk?: Maybe<Graph_Collection>;
+  /** fetch data from the table: "graph.dct_format" */
+  graph_dct_format: Array<Graph_Dct_Format>;
+  /** fetch aggregated fields from the table: "graph.dct_format" */
+  graph_dct_format_aggregate: Graph_Dct_Format_Aggregate;
+  /** fetch data from the table: "graph.dct_format" using primary key columns */
+  graph_dct_format_by_pk?: Maybe<Graph_Dct_Format>;
+  /** fetch data from the table: "graph.file" */
+  graph_file: Array<Graph_File>;
+  /** fetch aggregated fields from the table: "graph.file" */
+  graph_file_aggregate: Graph_File_Aggregate;
+  /** fetch data from the table: "graph.file" using primary key columns */
+  graph_file_by_pk?: Maybe<Graph_File>;
+  /** fetch data from the table: "graph.intellectual_entity" */
+  graph_intellectual_entity: Array<Graph_Intellectual_Entity>;
+  /** fetch aggregated fields from the table: "graph.intellectual_entity" */
+  graph_intellectual_entity_aggregate: Graph_Intellectual_Entity_Aggregate;
+  /** fetch data from the table: "graph.intellectual_entity" using primary key columns */
+  graph_intellectual_entity_by_pk?: Maybe<Graph_Intellectual_Entity>;
+  /** fetch data from the table: "graph.mh_fragment_identifier" */
+  graph_mh_fragment_identifier: Array<Graph_Mh_Fragment_Identifier>;
+  /** fetch aggregated fields from the table: "graph.mh_fragment_identifier" */
+  graph_mh_fragment_identifier_aggregate: Graph_Mh_Fragment_Identifier_Aggregate;
+  /** fetch data from the table: "graph.mh_fragment_identifier" using primary key columns */
+  graph_mh_fragment_identifier_by_pk?: Maybe<Graph_Mh_Fragment_Identifier>;
+  /** fetch data from the table: "graph.newspaper_schema_alternate_name" */
+  graph_newspaper_schema_alternate_name: Array<Graph_Newspaper_Schema_Alternate_Name>;
+  /** fetch aggregated fields from the table: "graph.newspaper_schema_alternate_name" */
+  graph_newspaper_schema_alternate_name_aggregate: Graph_Newspaper_Schema_Alternate_Name_Aggregate;
+  /** fetch data from the table: "graph.newspaper_schema_alternate_name" using primary key columns */
+  graph_newspaper_schema_alternate_name_by_pk?: Maybe<Graph_Newspaper_Schema_Alternate_Name>;
+  /** fetch data from the table: "graph.newspaper_schema_in_language" */
+  graph_newspaper_schema_in_language: Array<Graph_Newspaper_Schema_In_Language>;
+  /** fetch aggregated fields from the table: "graph.newspaper_schema_in_language" */
+  graph_newspaper_schema_in_language_aggregate: Graph_Newspaper_Schema_In_Language_Aggregate;
+  /** fetch data from the table: "graph.newspaper_schema_in_language" using primary key columns */
+  graph_newspaper_schema_in_language_by_pk?: Maybe<Graph_Newspaper_Schema_In_Language>;
+  /** fetch data from the table: "graph.organization" */
+  graph_organization: Array<Graph_Organization>;
+  /** fetch aggregated fields from the table: "graph.organization" */
+  graph_organization_aggregate: Graph_Organization_Aggregate;
+  /** fetch data from the table: "graph.organization" using primary key columns */
+  graph_organization_by_pk?: Maybe<Graph_Organization>;
+  /** fetch data from the table: "graph.premis_identifier" */
+  graph_premis_identifier: Array<Graph_Premis_Identifier>;
+  /** fetch aggregated fields from the table: "graph.premis_identifier" */
+  graph_premis_identifier_aggregate: Graph_Premis_Identifier_Aggregate;
+  /** fetch data from the table: "graph.premis_identifier" using primary key columns */
+  graph_premis_identifier_by_pk?: Maybe<Graph_Premis_Identifier>;
+  /** fetch data from the table: "graph.representation" */
+  graph_representation: Array<Graph_Representation>;
+  /** fetch aggregated fields from the table: "graph.representation" */
+  graph_representation_aggregate: Graph_Representation_Aggregate;
+  /** fetch data from the table: "graph.representation" using primary key columns */
+  graph_representation_by_pk?: Maybe<Graph_Representation>;
+  /** fetch data from the table: "graph.schema_alternate_name" */
+  graph_schema_alternate_name: Array<Graph_Schema_Alternate_Name>;
+  /** fetch aggregated fields from the table: "graph.schema_alternate_name" */
+  graph_schema_alternate_name_aggregate: Graph_Schema_Alternate_Name_Aggregate;
+  /** fetch data from the table: "graph.schema_alternate_name" using primary key columns */
+  graph_schema_alternate_name_by_pk?: Maybe<Graph_Schema_Alternate_Name>;
+  /** fetch data from the table: "graph.schema_contributor" */
+  graph_schema_contributor: Array<Graph_Schema_Contributor>;
+  /** fetch aggregated fields from the table: "graph.schema_contributor" */
+  graph_schema_contributor_aggregate: Graph_Schema_Contributor_Aggregate;
+  /** fetch data from the table: "graph.schema_contributor" using primary key columns */
+  graph_schema_contributor_by_pk?: Maybe<Graph_Schema_Contributor>;
+  /** fetch data from the table: "graph.schema_creator" */
+  graph_schema_creator: Array<Graph_Schema_Creator>;
+  /** fetch aggregated fields from the table: "graph.schema_creator" */
+  graph_schema_creator_aggregate: Graph_Schema_Creator_Aggregate;
+  /** fetch data from the table: "graph.schema_creator" using primary key columns */
+  graph_schema_creator_by_pk?: Maybe<Graph_Schema_Creator>;
+  /** fetch data from the table: "graph.schema_genre" */
+  graph_schema_genre: Array<Graph_Schema_Genre>;
+  /** fetch aggregated fields from the table: "graph.schema_genre" */
+  graph_schema_genre_aggregate: Graph_Schema_Genre_Aggregate;
+  /** fetch data from the table: "graph.schema_genre" using primary key columns */
+  graph_schema_genre_by_pk?: Maybe<Graph_Schema_Genre>;
+  /** fetch data from the table: "graph.schema_in_language" */
+  graph_schema_in_language: Array<Graph_Schema_In_Language>;
+  /** fetch aggregated fields from the table: "graph.schema_in_language" */
+  graph_schema_in_language_aggregate: Graph_Schema_In_Language_Aggregate;
+  /** fetch data from the table: "graph.schema_in_language" using primary key columns */
+  graph_schema_in_language_by_pk?: Maybe<Graph_Schema_In_Language>;
+  /** fetch data from the table: "graph.schema_is_part_of" */
+  graph_schema_is_part_of: Array<Graph_Schema_Is_Part_Of>;
+  /** fetch aggregated fields from the table: "graph.schema_is_part_of" */
+  graph_schema_is_part_of_aggregate: Graph_Schema_Is_Part_Of_Aggregate;
+  /** fetch data from the table: "graph.schema_is_part_of" using primary key columns */
+  graph_schema_is_part_of_by_pk?: Maybe<Graph_Schema_Is_Part_Of>;
+  /** fetch data from the table: "graph.schema_keywords" */
+  graph_schema_keywords: Array<Graph_Schema_Keywords>;
+  /** fetch aggregated fields from the table: "graph.schema_keywords" */
+  graph_schema_keywords_aggregate: Graph_Schema_Keywords_Aggregate;
+  /** fetch data from the table: "graph.schema_keywords" using primary key columns */
+  graph_schema_keywords_by_pk?: Maybe<Graph_Schema_Keywords>;
+  /** fetch data from the table: "graph.schema_license" */
+  graph_schema_license: Array<Graph_Schema_License>;
+  /** fetch aggregated fields from the table: "graph.schema_license" */
+  graph_schema_license_aggregate: Graph_Schema_License_Aggregate;
+  /** fetch data from the table: "graph.schema_license" using primary key columns */
+  graph_schema_license_by_pk?: Maybe<Graph_Schema_License>;
+  /** fetch data from the table: "graph.schema_mentions" */
+  graph_schema_mentions: Array<Graph_Schema_Mentions>;
+  /** fetch aggregated fields from the table: "graph.schema_mentions" */
+  graph_schema_mentions_aggregate: Graph_Schema_Mentions_Aggregate;
+  /** fetch data from the table: "graph.schema_mentions" using primary key columns */
+  graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** fetch data from the table: "graph.schema_publisher" */
+  graph_schema_publisher: Array<Graph_Schema_Publisher>;
+  /** fetch aggregated fields from the table: "graph.schema_publisher" */
+  graph_schema_publisher_aggregate: Graph_Schema_Publisher_Aggregate;
+  /** fetch data from the table: "graph.schema_publisher" using primary key columns */
+  graph_schema_publisher_by_pk?: Maybe<Graph_Schema_Publisher>;
+  /** fetch data from the table: "graph.schema_role" */
+  graph_schema_role: Array<Graph_Schema_Role>;
+  /** fetch aggregated fields from the table: "graph.schema_role" */
+  graph_schema_role_aggregate: Graph_Schema_Role_Aggregate;
+  /** fetch data from the table: "graph.schema_role" using primary key columns */
+  graph_schema_role_by_pk?: Maybe<Graph_Schema_Role>;
+  /** fetch data from the table: "graph.schema_spatial" */
+  graph_schema_spatial: Array<Graph_Schema_Spatial>;
+  /** fetch aggregated fields from the table: "graph.schema_spatial" */
+  graph_schema_spatial_aggregate: Graph_Schema_Spatial_Aggregate;
+  /** fetch data from the table: "graph.schema_spatial" using primary key columns */
+  graph_schema_spatial_by_pk?: Maybe<Graph_Schema_Spatial>;
+  /** fetch data from the table: "graph.schema_temporal" */
+  graph_schema_temporal: Array<Graph_Schema_Temporal>;
+  /** fetch aggregated fields from the table: "graph.schema_temporal" */
+  graph_schema_temporal_aggregate: Graph_Schema_Temporal_Aggregate;
+  /** fetch data from the table: "graph.schema_temporal" using primary key columns */
+  graph_schema_temporal_by_pk?: Maybe<Graph_Schema_Temporal>;
+  /** fetch data from the table: "graph.thesaurus" */
+  graph_thesaurus: Array<Graph_Thesaurus>;
+  /** fetch aggregated fields from the table: "graph.thesaurus" */
+  graph_thesaurus_aggregate: Graph_Thesaurus_Aggregate;
+  /** fetch data from the table: "graph.thesaurus" using primary key columns */
+  graph_thesaurus_by_pk?: Maybe<Graph_Thesaurus>;
+  /** fetch data from the table: "graph.thing" */
+  graph_thing: Array<Graph_Thing>;
+  /** fetch aggregated fields from the table: "graph.thing" */
+  graph_thing_aggregate: Graph_Thing_Aggregate;
+  /** fetch data from the table: "graph.thing" using primary key columns */
+  graph_thing_by_pk?: Maybe<Graph_Thing>;
   /** fetch data from the table: "lookup.app_content_block_type" */
   lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
   /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
@@ -11940,6 +18697,627 @@ export type Query_RootApp_Translations_By_PkArgs = {
   key: Scalars['String'];
   language: Lookup_Languages_Enum;
   location: Scalars['String'];
+};
+
+
+export type Query_RootGraph_CarrierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Carrier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Carrier_Order_By>>;
+  where?: InputMaybe<Graph_Carrier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Carrier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Carrier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Carrier_Order_By>>;
+  where?: InputMaybe<Graph_Carrier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Carrier_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_CollectionArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Collection_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Collection_Order_By>>;
+  where?: InputMaybe<Graph_Collection_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Collection_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Collection_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Collection_Order_By>>;
+  where?: InputMaybe<Graph_Collection_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Collection_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Dct_FormatArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Dct_Format_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Dct_Format_Order_By>>;
+  where?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Dct_Format_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Dct_Format_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Dct_Format_Order_By>>;
+  where?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Dct_Format_By_PkArgs = {
+  dct_format: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_FileArgs = {
+  distinct_on?: InputMaybe<Array<Graph_File_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_File_Order_By>>;
+  where?: InputMaybe<Graph_File_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_File_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_File_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_File_Order_By>>;
+  where?: InputMaybe<Graph_File_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_File_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Intellectual_EntityArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Intellectual_Entity_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Mh_Fragment_IdentifierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Mh_Fragment_Identifier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Mh_Fragment_Identifier_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  mh_fragment_identifier: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_Alternate_NameArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_Alternate_Name_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_Alternate_Name_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_In_LanguageArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_In_Language_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Newspaper_Schema_In_Language_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+export type Query_RootGraph_OrganizationArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Organization_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Organization_Order_By>>;
+  where?: InputMaybe<Graph_Organization_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Organization_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Organization_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Organization_Order_By>>;
+  where?: InputMaybe<Graph_Organization_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Organization_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Premis_IdentifierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Premis_Identifier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Premis_Identifier_By_PkArgs = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+
+export type Query_RootGraph_RepresentationArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Representation_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Representation_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_Alternate_NameArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Alternate_Name_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Alternate_Name_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_ContributorArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Contributor_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Contributor_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Contributor_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Contributor_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Contributor_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Contributor_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_CreatorArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Creator_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Creator_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Creator_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Creator_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Creator_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Creator_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_GenreArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Genre_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Genre_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_genre: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_In_LanguageArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_In_Language_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_In_Language_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_Is_Part_OfArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Is_Part_Of_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Is_Part_Of_By_PkArgs = {
+  collection_id: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_KeywordsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Keywords_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Keywords_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_keywords: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_LicenseArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_License_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_License_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_license: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_MentionsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Mentions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Mentions_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  thing_id: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_PublisherArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Publisher_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Publisher_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Publisher_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Publisher_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Publisher_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Publisher_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_RoleArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Role_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Role_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Role_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Role_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Role_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Role_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_role_name: Scalars['String'];
+  thing_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_SpatialArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Spatial_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Spatial_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_spatial: Scalars['String'];
+};
+
+
+export type Query_RootGraph_Schema_TemporalArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Temporal_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Schema_Temporal_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_temporal: Scalars['String'];
+};
+
+
+export type Query_RootGraph_ThesaurusArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thesaurus_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thesaurus_Order_By>>;
+  where?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Thesaurus_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thesaurus_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thesaurus_Order_By>>;
+  where?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Thesaurus_By_PkArgs = {
+  object: Scalars['String'];
+  predicate: Scalars['String'];
+  subject: Scalars['String'];
+};
+
+
+export type Query_RootGraph_ThingArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thing_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thing_Order_By>>;
+  where?: InputMaybe<Graph_Thing_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Thing_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thing_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thing_Order_By>>;
+  where?: InputMaybe<Graph_Thing_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Thing_By_PkArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -12901,6 +20279,162 @@ export type Subscription_Root = {
   app_translations_aggregate: App_Translations_Aggregate;
   /** fetch data from the table: "app.translations" using primary key columns */
   app_translations_by_pk?: Maybe<App_Translations>;
+  /** fetch data from the table: "graph.carrier" */
+  graph_carrier: Array<Graph_Carrier>;
+  /** fetch aggregated fields from the table: "graph.carrier" */
+  graph_carrier_aggregate: Graph_Carrier_Aggregate;
+  /** fetch data from the table: "graph.carrier" using primary key columns */
+  graph_carrier_by_pk?: Maybe<Graph_Carrier>;
+  /** fetch data from the table: "graph.collection" */
+  graph_collection: Array<Graph_Collection>;
+  /** fetch aggregated fields from the table: "graph.collection" */
+  graph_collection_aggregate: Graph_Collection_Aggregate;
+  /** fetch data from the table: "graph.collection" using primary key columns */
+  graph_collection_by_pk?: Maybe<Graph_Collection>;
+  /** fetch data from the table: "graph.dct_format" */
+  graph_dct_format: Array<Graph_Dct_Format>;
+  /** fetch aggregated fields from the table: "graph.dct_format" */
+  graph_dct_format_aggregate: Graph_Dct_Format_Aggregate;
+  /** fetch data from the table: "graph.dct_format" using primary key columns */
+  graph_dct_format_by_pk?: Maybe<Graph_Dct_Format>;
+  /** fetch data from the table: "graph.file" */
+  graph_file: Array<Graph_File>;
+  /** fetch aggregated fields from the table: "graph.file" */
+  graph_file_aggregate: Graph_File_Aggregate;
+  /** fetch data from the table: "graph.file" using primary key columns */
+  graph_file_by_pk?: Maybe<Graph_File>;
+  /** fetch data from the table: "graph.intellectual_entity" */
+  graph_intellectual_entity: Array<Graph_Intellectual_Entity>;
+  /** fetch aggregated fields from the table: "graph.intellectual_entity" */
+  graph_intellectual_entity_aggregate: Graph_Intellectual_Entity_Aggregate;
+  /** fetch data from the table: "graph.intellectual_entity" using primary key columns */
+  graph_intellectual_entity_by_pk?: Maybe<Graph_Intellectual_Entity>;
+  /** fetch data from the table: "graph.mh_fragment_identifier" */
+  graph_mh_fragment_identifier: Array<Graph_Mh_Fragment_Identifier>;
+  /** fetch aggregated fields from the table: "graph.mh_fragment_identifier" */
+  graph_mh_fragment_identifier_aggregate: Graph_Mh_Fragment_Identifier_Aggregate;
+  /** fetch data from the table: "graph.mh_fragment_identifier" using primary key columns */
+  graph_mh_fragment_identifier_by_pk?: Maybe<Graph_Mh_Fragment_Identifier>;
+  /** fetch data from the table: "graph.newspaper_schema_alternate_name" */
+  graph_newspaper_schema_alternate_name: Array<Graph_Newspaper_Schema_Alternate_Name>;
+  /** fetch aggregated fields from the table: "graph.newspaper_schema_alternate_name" */
+  graph_newspaper_schema_alternate_name_aggregate: Graph_Newspaper_Schema_Alternate_Name_Aggregate;
+  /** fetch data from the table: "graph.newspaper_schema_alternate_name" using primary key columns */
+  graph_newspaper_schema_alternate_name_by_pk?: Maybe<Graph_Newspaper_Schema_Alternate_Name>;
+  /** fetch data from the table: "graph.newspaper_schema_in_language" */
+  graph_newspaper_schema_in_language: Array<Graph_Newspaper_Schema_In_Language>;
+  /** fetch aggregated fields from the table: "graph.newspaper_schema_in_language" */
+  graph_newspaper_schema_in_language_aggregate: Graph_Newspaper_Schema_In_Language_Aggregate;
+  /** fetch data from the table: "graph.newspaper_schema_in_language" using primary key columns */
+  graph_newspaper_schema_in_language_by_pk?: Maybe<Graph_Newspaper_Schema_In_Language>;
+  /** fetch data from the table: "graph.organization" */
+  graph_organization: Array<Graph_Organization>;
+  /** fetch aggregated fields from the table: "graph.organization" */
+  graph_organization_aggregate: Graph_Organization_Aggregate;
+  /** fetch data from the table: "graph.organization" using primary key columns */
+  graph_organization_by_pk?: Maybe<Graph_Organization>;
+  /** fetch data from the table: "graph.premis_identifier" */
+  graph_premis_identifier: Array<Graph_Premis_Identifier>;
+  /** fetch aggregated fields from the table: "graph.premis_identifier" */
+  graph_premis_identifier_aggregate: Graph_Premis_Identifier_Aggregate;
+  /** fetch data from the table: "graph.premis_identifier" using primary key columns */
+  graph_premis_identifier_by_pk?: Maybe<Graph_Premis_Identifier>;
+  /** fetch data from the table: "graph.representation" */
+  graph_representation: Array<Graph_Representation>;
+  /** fetch aggregated fields from the table: "graph.representation" */
+  graph_representation_aggregate: Graph_Representation_Aggregate;
+  /** fetch data from the table: "graph.representation" using primary key columns */
+  graph_representation_by_pk?: Maybe<Graph_Representation>;
+  /** fetch data from the table: "graph.schema_alternate_name" */
+  graph_schema_alternate_name: Array<Graph_Schema_Alternate_Name>;
+  /** fetch aggregated fields from the table: "graph.schema_alternate_name" */
+  graph_schema_alternate_name_aggregate: Graph_Schema_Alternate_Name_Aggregate;
+  /** fetch data from the table: "graph.schema_alternate_name" using primary key columns */
+  graph_schema_alternate_name_by_pk?: Maybe<Graph_Schema_Alternate_Name>;
+  /** fetch data from the table: "graph.schema_contributor" */
+  graph_schema_contributor: Array<Graph_Schema_Contributor>;
+  /** fetch aggregated fields from the table: "graph.schema_contributor" */
+  graph_schema_contributor_aggregate: Graph_Schema_Contributor_Aggregate;
+  /** fetch data from the table: "graph.schema_contributor" using primary key columns */
+  graph_schema_contributor_by_pk?: Maybe<Graph_Schema_Contributor>;
+  /** fetch data from the table: "graph.schema_creator" */
+  graph_schema_creator: Array<Graph_Schema_Creator>;
+  /** fetch aggregated fields from the table: "graph.schema_creator" */
+  graph_schema_creator_aggregate: Graph_Schema_Creator_Aggregate;
+  /** fetch data from the table: "graph.schema_creator" using primary key columns */
+  graph_schema_creator_by_pk?: Maybe<Graph_Schema_Creator>;
+  /** fetch data from the table: "graph.schema_genre" */
+  graph_schema_genre: Array<Graph_Schema_Genre>;
+  /** fetch aggregated fields from the table: "graph.schema_genre" */
+  graph_schema_genre_aggregate: Graph_Schema_Genre_Aggregate;
+  /** fetch data from the table: "graph.schema_genre" using primary key columns */
+  graph_schema_genre_by_pk?: Maybe<Graph_Schema_Genre>;
+  /** fetch data from the table: "graph.schema_in_language" */
+  graph_schema_in_language: Array<Graph_Schema_In_Language>;
+  /** fetch aggregated fields from the table: "graph.schema_in_language" */
+  graph_schema_in_language_aggregate: Graph_Schema_In_Language_Aggregate;
+  /** fetch data from the table: "graph.schema_in_language" using primary key columns */
+  graph_schema_in_language_by_pk?: Maybe<Graph_Schema_In_Language>;
+  /** fetch data from the table: "graph.schema_is_part_of" */
+  graph_schema_is_part_of: Array<Graph_Schema_Is_Part_Of>;
+  /** fetch aggregated fields from the table: "graph.schema_is_part_of" */
+  graph_schema_is_part_of_aggregate: Graph_Schema_Is_Part_Of_Aggregate;
+  /** fetch data from the table: "graph.schema_is_part_of" using primary key columns */
+  graph_schema_is_part_of_by_pk?: Maybe<Graph_Schema_Is_Part_Of>;
+  /** fetch data from the table: "graph.schema_keywords" */
+  graph_schema_keywords: Array<Graph_Schema_Keywords>;
+  /** fetch aggregated fields from the table: "graph.schema_keywords" */
+  graph_schema_keywords_aggregate: Graph_Schema_Keywords_Aggregate;
+  /** fetch data from the table: "graph.schema_keywords" using primary key columns */
+  graph_schema_keywords_by_pk?: Maybe<Graph_Schema_Keywords>;
+  /** fetch data from the table: "graph.schema_license" */
+  graph_schema_license: Array<Graph_Schema_License>;
+  /** fetch aggregated fields from the table: "graph.schema_license" */
+  graph_schema_license_aggregate: Graph_Schema_License_Aggregate;
+  /** fetch data from the table: "graph.schema_license" using primary key columns */
+  graph_schema_license_by_pk?: Maybe<Graph_Schema_License>;
+  /** fetch data from the table: "graph.schema_mentions" */
+  graph_schema_mentions: Array<Graph_Schema_Mentions>;
+  /** fetch aggregated fields from the table: "graph.schema_mentions" */
+  graph_schema_mentions_aggregate: Graph_Schema_Mentions_Aggregate;
+  /** fetch data from the table: "graph.schema_mentions" using primary key columns */
+  graph_schema_mentions_by_pk?: Maybe<Graph_Schema_Mentions>;
+  /** fetch data from the table: "graph.schema_publisher" */
+  graph_schema_publisher: Array<Graph_Schema_Publisher>;
+  /** fetch aggregated fields from the table: "graph.schema_publisher" */
+  graph_schema_publisher_aggregate: Graph_Schema_Publisher_Aggregate;
+  /** fetch data from the table: "graph.schema_publisher" using primary key columns */
+  graph_schema_publisher_by_pk?: Maybe<Graph_Schema_Publisher>;
+  /** fetch data from the table: "graph.schema_role" */
+  graph_schema_role: Array<Graph_Schema_Role>;
+  /** fetch aggregated fields from the table: "graph.schema_role" */
+  graph_schema_role_aggregate: Graph_Schema_Role_Aggregate;
+  /** fetch data from the table: "graph.schema_role" using primary key columns */
+  graph_schema_role_by_pk?: Maybe<Graph_Schema_Role>;
+  /** fetch data from the table: "graph.schema_spatial" */
+  graph_schema_spatial: Array<Graph_Schema_Spatial>;
+  /** fetch aggregated fields from the table: "graph.schema_spatial" */
+  graph_schema_spatial_aggregate: Graph_Schema_Spatial_Aggregate;
+  /** fetch data from the table: "graph.schema_spatial" using primary key columns */
+  graph_schema_spatial_by_pk?: Maybe<Graph_Schema_Spatial>;
+  /** fetch data from the table: "graph.schema_temporal" */
+  graph_schema_temporal: Array<Graph_Schema_Temporal>;
+  /** fetch aggregated fields from the table: "graph.schema_temporal" */
+  graph_schema_temporal_aggregate: Graph_Schema_Temporal_Aggregate;
+  /** fetch data from the table: "graph.schema_temporal" using primary key columns */
+  graph_schema_temporal_by_pk?: Maybe<Graph_Schema_Temporal>;
+  /** fetch data from the table: "graph.thesaurus" */
+  graph_thesaurus: Array<Graph_Thesaurus>;
+  /** fetch aggregated fields from the table: "graph.thesaurus" */
+  graph_thesaurus_aggregate: Graph_Thesaurus_Aggregate;
+  /** fetch data from the table: "graph.thesaurus" using primary key columns */
+  graph_thesaurus_by_pk?: Maybe<Graph_Thesaurus>;
+  /** fetch data from the table: "graph.thing" */
+  graph_thing: Array<Graph_Thing>;
+  /** fetch aggregated fields from the table: "graph.thing" */
+  graph_thing_aggregate: Graph_Thing_Aggregate;
+  /** fetch data from the table: "graph.thing" using primary key columns */
+  graph_thing_by_pk?: Maybe<Graph_Thing>;
   /** fetch data from the table: "lookup.app_content_block_type" */
   lookup_app_content_block_type: Array<Lookup_App_Content_Block_Type>;
   /** fetch aggregated fields from the table: "lookup.app_content_block_type" */
@@ -13385,6 +20919,627 @@ export type Subscription_RootApp_Translations_By_PkArgs = {
   key: Scalars['String'];
   language: Lookup_Languages_Enum;
   location: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_CarrierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Carrier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Carrier_Order_By>>;
+  where?: InputMaybe<Graph_Carrier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Carrier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Carrier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Carrier_Order_By>>;
+  where?: InputMaybe<Graph_Carrier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Carrier_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_CollectionArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Collection_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Collection_Order_By>>;
+  where?: InputMaybe<Graph_Collection_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Collection_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Collection_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Collection_Order_By>>;
+  where?: InputMaybe<Graph_Collection_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Collection_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Dct_FormatArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Dct_Format_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Dct_Format_Order_By>>;
+  where?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Dct_Format_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Dct_Format_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Dct_Format_Order_By>>;
+  where?: InputMaybe<Graph_Dct_Format_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Dct_Format_By_PkArgs = {
+  dct_format: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_FileArgs = {
+  distinct_on?: InputMaybe<Array<Graph_File_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_File_Order_By>>;
+  where?: InputMaybe<Graph_File_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_File_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_File_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_File_Order_By>>;
+  where?: InputMaybe<Graph_File_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_File_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Intellectual_EntityArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Intellectual_Entity_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Intellectual_Entity_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Intellectual_Entity_Order_By>>;
+  where?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Intellectual_Entity_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Mh_Fragment_IdentifierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Mh_Fragment_Identifier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Mh_Fragment_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Mh_Fragment_Identifier_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  mh_fragment_identifier: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_Alternate_NameArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_Alternate_Name_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_Alternate_Name_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_In_LanguageArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_In_Language_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Newspaper_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Newspaper_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Newspaper_Schema_In_Language_By_PkArgs = {
+  collection_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_OrganizationArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Organization_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Organization_Order_By>>;
+  where?: InputMaybe<Graph_Organization_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Organization_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Organization_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Organization_Order_By>>;
+  where?: InputMaybe<Graph_Organization_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Organization_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Premis_IdentifierArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Premis_Identifier_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Premis_Identifier_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Premis_Identifier_Order_By>>;
+  where?: InputMaybe<Graph_Premis_Identifier_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Premis_Identifier_By_PkArgs = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_RepresentationArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Representation_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Representation_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Representation_Order_By>>;
+  where?: InputMaybe<Graph_Representation_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Representation_By_PkArgs = {
+  id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_Alternate_NameArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Alternate_Name_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Alternate_Name_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Alternate_Name_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Alternate_Name_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Alternate_Name_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_alternate_name: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_ContributorArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Contributor_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Contributor_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Contributor_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Contributor_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Contributor_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Contributor_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Contributor_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_CreatorArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Creator_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Creator_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Creator_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Creator_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Creator_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Creator_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Creator_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_GenreArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Genre_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Genre_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Genre_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Genre_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Genre_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_genre: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_In_LanguageArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_In_Language_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_In_Language_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_In_Language_Order_By>>;
+  where?: InputMaybe<Graph_Schema_In_Language_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_In_Language_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_in_language: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_Is_Part_OfArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Is_Part_Of_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Is_Part_Of_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Is_Part_Of_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Is_Part_Of_By_PkArgs = {
+  collection_id: Scalars['String'];
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_KeywordsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Keywords_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Keywords_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Keywords_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Keywords_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Keywords_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_keywords: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_LicenseArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_License_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_License_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_License_Order_By>>;
+  where?: InputMaybe<Graph_Schema_License_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_License_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_license: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_MentionsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Mentions_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Mentions_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Mentions_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Mentions_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  thing_id: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_PublisherArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Publisher_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Publisher_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Publisher_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Publisher_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Publisher_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Publisher_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Publisher_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_RoleArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Role_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Role_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Role_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Role_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Role_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Role_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Role_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_role_name: Scalars['String'];
+  thing_id: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_SpatialArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Spatial_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Spatial_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Spatial_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Spatial_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Spatial_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_spatial: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_Schema_TemporalArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Temporal_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Schema_Temporal_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Schema_Temporal_Order_By>>;
+  where?: InputMaybe<Graph_Schema_Temporal_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Schema_Temporal_By_PkArgs = {
+  intellectual_entity_id: Scalars['String'];
+  schema_temporal: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_ThesaurusArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thesaurus_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thesaurus_Order_By>>;
+  where?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Thesaurus_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thesaurus_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thesaurus_Order_By>>;
+  where?: InputMaybe<Graph_Thesaurus_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Thesaurus_By_PkArgs = {
+  object: Scalars['String'];
+  predicate: Scalars['String'];
+  subject: Scalars['String'];
+};
+
+
+export type Subscription_RootGraph_ThingArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thing_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thing_Order_By>>;
+  where?: InputMaybe<Graph_Thing_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Thing_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Thing_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Graph_Thing_Order_By>>;
+  where?: InputMaybe<Graph_Thing_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Thing_By_PkArgs = {
+  id: Scalars['String'];
 };
 
 

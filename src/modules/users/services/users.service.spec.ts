@@ -1,17 +1,17 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
 import {
-	GetUserByIdentityIdQuery,
-	InsertUserMutation,
-	UpdateUserLastAccessDateMutation,
-	UpdateUserProfileMutation,
+	type GetUserByIdentityIdQuery,
+	type InsertUserMutation,
+	type UpdateUserLastAccessDateMutation,
+	type UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 

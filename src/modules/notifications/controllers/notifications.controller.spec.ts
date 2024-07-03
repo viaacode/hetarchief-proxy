@@ -1,20 +1,24 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { NotificationsService } from '../services/notifications.service';
 
 import { NotificationsController } from './notifications.controller';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import {
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { VisitRequest, VisitStatus } from '~modules/visits/types';
+import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';

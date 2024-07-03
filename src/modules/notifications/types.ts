@@ -1,6 +1,6 @@
 import {
-	InsertNotificationsMutation,
-	UpdateNotificationMutation,
+	type InsertNotificationsMutation,
+	type UpdateNotificationMutation,
 } from '~generated/graphql-db-types-hetarchief';
 
 export enum NotificationStatus {

@@ -1,4 +1,4 @@
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export interface LimitAccessUserInfo {
 	userId: string | null;

@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 
 export function getIpFromRequest(request: Request): string | undefined {
 	if (process.env.NODE_ENV === 'test') {

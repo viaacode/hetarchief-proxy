@@ -1,7 +1,7 @@
 import { Controller, Get, Headers, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 

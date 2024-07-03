@@ -13,13 +13,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { Avo } from '@viaa/avo2-types';
+import { type Avo } from '@viaa/avo2-types';
 import { isToday, parseISO } from 'date-fns';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { IdpService } from '../services/idp.service';
-import { LoginMessage, LoginResponse } from '../types';
+import { LoginMessage, type LoginResponse } from '../types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';

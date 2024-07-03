@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
-import { User } from '../types';
+import { type User } from '../types';
 
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';

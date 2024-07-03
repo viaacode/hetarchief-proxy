@@ -29,6 +29,7 @@ export class NotFoundController {
 		if (!this.notFoundHtml) {
 			const notFoundPagePath: string = path.join(__dirname, '../template/404.html');
 			this.notFoundHtml = (await fs.readFile(notFoundPagePath)).toString('utf8');
+			const userLanguage = user.getLanguage();
 			this.notFoundHtml = this.notFoundHtml
 				.replace(/\{\{CLIENT_HOST\}\}/g, process.env.CLIENT_HOST)
 				.replace(
@@ -37,7 +38,7 @@ export class NotFoundController {
 						this.translationsService.tText(
 							'modules/not-found/controllers/not-found___404',
 							null,
-							user.getLanguage()
+							userLanguage
 						)
 				)
 				.replace(
@@ -46,7 +47,7 @@ export class NotFoundController {
 						this.translationsService.tText(
 							'modules/not-found/controllers/not-found___sorry-deze-pagina-konden-we-niet-terugvinden-de-link-die-je-volgde-kan-stuk-zijn-of-de-pagina-kan-niet-meer-bestaan',
 							null,
-							user.getLanguage()
+							userLanguage
 						)
 				);
 		}

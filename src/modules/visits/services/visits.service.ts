@@ -7,78 +7,78 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { find, isArray, isEmpty, set, uniq } from 'lodash';
 
-import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { type CreateVisitDto, type UpdateVisitDto, type VisitsQueryDto } from '../dto/visits.dto';
 import {
 	AccessStatus,
-	GqlNote,
-	GqlUpdateVisit,
-	GqlVisit,
-	GqlVisitWithNotes,
-	Note,
+	type GqlNote,
+	type GqlUpdateVisit,
+	type GqlVisit,
+	type GqlVisitWithNotes,
+	type Note,
 	VisitAccessType,
-	VisitRequest,
-	VisitSpaceCount,
+	type VisitRequest,
+	type VisitSpaceCount,
 	VisitStatus,
 	VisitTimeframe,
 } from '../types';
 
 import {
 	DeleteVisitFolderAccessDocument,
-	DeleteVisitFolderAccessMutation,
-	DeleteVisitFolderAccessMutationVariables,
+	type DeleteVisitFolderAccessMutation,
+	type DeleteVisitFolderAccessMutationVariables,
 	FindActiveVisitByUserAndSpaceDocument,
-	FindActiveVisitByUserAndSpaceQuery,
-	FindActiveVisitByUserAndSpaceQueryVariables,
+	type FindActiveVisitByUserAndSpaceQuery,
+	type FindActiveVisitByUserAndSpaceQueryVariables,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
-	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
-	FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
-	FindApprovedEndedVisitsWithoutNotificationQuery,
-	FindApprovedEndedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedEndedVisitsWithoutNotificationQuery,
+	type FindApprovedEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedStartedVisitsWithoutNotificationDocument,
-	FindApprovedStartedVisitsWithoutNotificationQuery,
-	FindApprovedStartedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedStartedVisitsWithoutNotificationQuery,
+	type FindApprovedStartedVisitsWithoutNotificationQueryVariables,
 	FindPendingOrApprovedVisitRequestsForUserDocument,
-	FindPendingOrApprovedVisitRequestsForUserQuery,
-	FindPendingOrApprovedVisitRequestsForUserQueryVariables,
+	type FindPendingOrApprovedVisitRequestsForUserQuery,
+	type FindPendingOrApprovedVisitRequestsForUserQueryVariables,
 	FindVisitByIdDocument,
-	FindVisitByIdQuery,
-	FindVisitByIdQueryVariables,
+	type FindVisitByIdQuery,
+	type FindVisitByIdQueryVariables,
 	FindVisitEndDatesByFolderIdDocument,
-	FindVisitEndDatesByFolderIdQuery,
-	FindVisitEndDatesByFolderIdQueryVariables,
+	type FindVisitEndDatesByFolderIdQuery,
+	type FindVisitEndDatesByFolderIdQueryVariables,
 	FindVisitsDocument,
-	FindVisitsQuery,
-	FindVisitsQueryVariables,
+	type FindVisitsQuery,
+	type FindVisitsQueryVariables,
 	GetVisitRequestForAccessDocument,
-	GetVisitRequestForAccessQuery,
-	GetVisitRequestForAccessQueryVariables,
+	type GetVisitRequestForAccessQuery,
+	type GetVisitRequestForAccessQueryVariables,
 	InsertNoteDocument,
-	InsertNoteMutation,
-	InsertNoteMutationVariables,
+	type InsertNoteMutation,
+	type InsertNoteMutationVariables,
 	InsertVisitDocument,
 	InsertVisitFolderAccessDocument,
-	InsertVisitFolderAccessMutation,
-	InsertVisitFolderAccessMutationVariables,
-	InsertVisitMutation,
-	InsertVisitMutationVariables,
+	type InsertVisitFolderAccessMutation,
+	type InsertVisitFolderAccessMutationVariables,
+	type InsertVisitMutation,
+	type InsertVisitMutationVariables,
 	PendingVisitCountForUserBySlugDocument,
-	PendingVisitCountForUserBySlugQuery,
-	PendingVisitCountForUserBySlugQueryVariables,
+	type PendingVisitCountForUserBySlugQuery,
+	type PendingVisitCountForUserBySlugQueryVariables,
 	UpdateVisitDocument,
-	UpdateVisitMutation,
-	UpdateVisitMutationVariables,
+	type UpdateVisitMutation,
+	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
-import { VisitorSpaceStatus } from '~shared/types/types';
+import { type VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class VisitsService {

@@ -4,7 +4,7 @@ import {
 	AssetsService,
 	ContentPagesService,
 	DataService,
-	DbContentPage,
+	type DbContentPage,
 } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AssetType } from '@viaa/avo2-types';
@@ -12,13 +12,13 @@ import { format } from 'date-fns';
 import { compact, kebabCase, uniqBy } from 'lodash';
 import xmlFormat from 'xml-formatter';
 
-import { SitemapConfig, SitemapItemInfo } from '../sitemap.types';
+import { type SitemapConfig, type SitemapItemInfo } from '../sitemap.types';
 
 import {
 	GetSitemapConfigDocument,
-	GetSitemapConfigQuery,
+	type GetSitemapConfigQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectLicense, IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectLicense, type IeObjectsSitemap } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SITEMAP_XML_OBJECTS_SIZE } from '~modules/sitemap/sitemap.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';

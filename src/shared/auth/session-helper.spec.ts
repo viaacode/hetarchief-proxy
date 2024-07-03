@@ -3,7 +3,7 @@ import flow from 'lodash/fp/flow';
 
 import { Idp, LdapApp } from './auth.types';
 
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, SpecialPermissionGroups } from '~shared/types/types';

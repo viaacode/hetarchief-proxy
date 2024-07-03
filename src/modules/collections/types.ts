@@ -1,14 +1,14 @@
 import {
-	FindCollectionByIdQuery,
-	FindCollectionObjectsByCollectionIdQuery,
-	FindCollectionsByUserQuery,
-	FindObjectBySchemaIdentifierQuery,
-	FindObjectInCollectionQuery,
-	InsertCollectionsMutation,
-	InsertObjectIntoCollectionMutation,
-	UpdateCollectionMutation,
+	type FindCollectionByIdQuery,
+	type FindCollectionObjectsByCollectionIdQuery,
+	type FindCollectionsByUserQuery,
+	type FindObjectBySchemaIdentifierQuery,
+	type FindObjectInCollectionQuery,
+	type InsertCollectionsMutation,
+	type InsertObjectIntoCollectionMutation,
+	type UpdateCollectionMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 
 export interface Collection {
 	id: string;

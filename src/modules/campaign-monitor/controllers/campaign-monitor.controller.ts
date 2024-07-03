@@ -12,7 +12,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
+import { type CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,

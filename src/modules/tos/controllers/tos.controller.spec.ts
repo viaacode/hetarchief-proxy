@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TosService } from '../services/tos.service';
-import { Tos } from '../types';
+import { type Tos } from '../types';
 
 import { TosController } from './tos.controller';
 

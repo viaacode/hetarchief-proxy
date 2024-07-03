@@ -5,37 +5,37 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	Logger,
-	OnApplicationBootstrap,
+	type OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import got from 'got';
 import { shuffle, uniqBy } from 'lodash';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
-	GqlOrganisation,
-	MaintainerGridOrganisation,
-	Organisation,
-	OrganisationInfoV2,
-	OrganisationResponse,
-	ParsedOrganisation,
+	type GqlOrganisation,
+	type MaintainerGridOrganisation,
+	type Organisation,
+	type OrganisationInfoV2,
+	type OrganisationResponse,
+	type ParsedOrganisation,
 } from '../organisations.types';
 
 import {
 	DeleteOrganisationsDocument,
 	FindOrganisationsBySchemaIdsDocument,
-	FindOrganisationsBySchemaIdsQuery,
-	FindOrganisationsBySchemaIdsQueryVariables,
+	type FindOrganisationsBySchemaIdsQuery,
+	type FindOrganisationsBySchemaIdsQueryVariables,
 	GetOrganisationBySlugDocument,
-	GetOrganisationBySlugQuery,
-	GetOrganisationBySlugQueryVariables,
+	type GetOrganisationBySlugQuery,
+	type GetOrganisationBySlugQueryVariables,
 	GetOrganisationsThatHaveObjectsDocument,
-	GetOrganisationsThatHaveObjectsQuery,
+	type GetOrganisationsThatHaveObjectsQuery,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 @Injectable()
 export class OrganisationsService implements OnApplicationBootstrap {

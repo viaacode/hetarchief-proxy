@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-import { LoggerService } from '@nestjs/common';
+import { type LoggerService } from '@nestjs/common';
 
 export class TestingLogger implements LoggerService {
 	/**

@@ -1,17 +1,17 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Request, Response } from 'express';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type Request, type Response } from 'express';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
 
 import { HetArchiefController } from './het-archief.controller';
 
-import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { type CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';

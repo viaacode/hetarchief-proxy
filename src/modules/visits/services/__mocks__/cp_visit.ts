@@ -1,10 +1,10 @@
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
 import {
-	GqlVisit,
-	GqlVisitWithNotes,
+	type GqlVisit,
+	type GqlVisitWithNotes,
 	VisitAccessType,
-	VisitRequest,
+	type VisitRequest,
 	VisitStatus,
 } from '~modules/visits/types';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';

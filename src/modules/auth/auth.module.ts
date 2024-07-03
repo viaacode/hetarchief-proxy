@@ -2,7 +2,7 @@ import { AdminTranslationsModule } from '@meemoo/admin-core-api';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { AuthController } from './controllers/auth.controller';
 import { HetArchiefController } from './controllers/het-archief.controller';

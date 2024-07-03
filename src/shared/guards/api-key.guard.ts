@@ -1,8 +1,13 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request } from 'express';
+import { type Request } from 'express';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 export const APIKEY = 'apikey';
 

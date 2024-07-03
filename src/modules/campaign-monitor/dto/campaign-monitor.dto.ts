@@ -9,7 +9,7 @@ import {
 	ValidateNested,
 } from 'class-validator';
 
-import { CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
+import { type CampaignMonitorShareFolderInfo } from '../campaign-monitor.types';
 
 export class CampaignMonitorVisitData {
 	@IsString()

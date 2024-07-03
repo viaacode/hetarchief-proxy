@@ -1,5 +1,5 @@
-import { ConfigService as NestConfigService } from '@nestjs/config';
-import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { type ConfigService as NestConfigService } from '@nestjs/config';
+import { type MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import type { DatabaseType } from '@viaa/avo2-types';
 
 export interface Configuration {

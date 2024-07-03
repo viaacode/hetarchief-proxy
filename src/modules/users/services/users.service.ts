@@ -2,36 +2,43 @@ import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import {
-	CreateUserDto,
-	UpdateAcceptedTosDto,
-	UpdateUserDto,
-	UpdateUserLangDto,
+	type CreateUserDto,
+	type UpdateAcceptedTosDto,
+	type UpdateUserDto,
+	type UpdateUserLangDto,
 } from '../dto/users.dto';
-import { GqlPermissionData, GqlUser, GroupIdToName, GroupName, Permission, User } from '../types';
+import {
+	type GqlPermissionData,
+	type GqlUser,
+	GroupIdToName,
+	type GroupName,
+	type Permission,
+	type User,
+} from '../types';
 
 import {
 	GetUserByIdentityIdDocument,
-	GetUserByIdentityIdQuery,
-	GetUserByIdentityIdQueryVariables,
+	type GetUserByIdentityIdQuery,
+	type GetUserByIdentityIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
-	InsertUserIdentityMutation,
-	InsertUserIdentityMutationVariables,
-	InsertUserMutation,
-	InsertUserMutationVariables,
+	type InsertUserIdentityMutation,
+	type InsertUserIdentityMutationVariables,
+	type InsertUserMutation,
+	type InsertUserMutationVariables,
 	UpdateUserLanguageDocument,
-	UpdateUserLanguageMutation,
-	UpdateUserLanguageMutationVariables,
+	type UpdateUserLanguageMutation,
+	type UpdateUserLanguageMutationVariables,
 	UpdateUserLastAccessDateDocument,
-	UpdateUserLastAccessDateMutation,
-	UpdateUserLastAccessDateMutationVariables,
+	type UpdateUserLastAccessDateMutation,
+	type UpdateUserLastAccessDateMutationVariables,
 	UpdateUserProfileDocument,
-	UpdateUserProfileMutation,
-	UpdateUserProfileMutationVariables,
+	type UpdateUserProfileMutation,
+	type UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
-import { Idp } from '~shared/auth/auth.types';
-import { UpdateResponse } from '~shared/types/types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type Idp } from '~shared/auth/auth.types';
+import { type UpdateResponse } from '~shared/types/types';
 
 @Injectable()
 export class UsersService {
