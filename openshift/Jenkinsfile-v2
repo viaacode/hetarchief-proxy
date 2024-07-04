@@ -31,7 +31,7 @@ pipeline {
 		disableConcurrentBuilds()
 	}
 	environment {
-		OC_PROJECT = 'hetarchief-v3'
+		OC_PROJECT = 'hetarchief'
 		BASE_IMG = "${getImageFromDockerfile()}"
 		BASE_IMG_NAME = "${getBaseImageName()}"
 		OC_URL = 'https://c113-e.private.eu-de.containers.cloud.ibm.com:30227'
@@ -88,44 +88,6 @@ pipeline {
                         oc start-build $APP_NAME --from-dir=. --follow=true --wait=true
                         '''
 					}
-				}
-			}
-		}
-		stage('Deploy INT') {
-			when {
-				anyOf {
-					changeRequest target: 'main'
-					changeRequest target: 'master'
-					changeRequest target: 'develop'
-					changeRequest target: 'development'
-				}
-			}
-			steps {
-				container('oc') {
-					tagNewImage('int')
-				}
-			}
-			post {
-				always {
-					script {
-						env.BRANCH_NAME = env.CHANGE_BRANCH
-					}
-					jiraSendDeploymentInfo site: "${JIRA_URL}", environmentId: 'int', environmentName: 'int', environmentType: 'testing'
-				}
-			}
-		}
-		stage('Deploy TST') {
-			when {
-				anyOf { branch 'develop'; branch 'development' }
-			}
-			steps {
-				container('oc') {
-					tagNewImage('tst')
-				}
-			}
-			post {
-				always {
-					jiraSendDeploymentInfo site: "${JIRA_URL}", environmentId: 'tst', environmentName: 'tst', environmentType: 'staging'
 				}
 			}
 		}
