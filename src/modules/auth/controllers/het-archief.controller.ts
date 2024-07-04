@@ -93,7 +93,10 @@ export class HetArchiefController {
 				query: { returnToUrl },
 			});
 			const url = stringifyUrl({
-				url: this.configService.get('SSUM_REGISTRATION_PAGE').replace('{locale}', locale),
+				url: decodeURIComponent(this.configService.get('SSUM_REGISTRATION_PAGE')).replace(
+					'{locale}',
+					locale
+				),
 				query: {
 					redirect_to: serverRedirectUrl,
 					app_name: this.configService.get('SAML_SP_ENTITY_ID'),
