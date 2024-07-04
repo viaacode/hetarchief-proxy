@@ -12,7 +12,6 @@ export interface MaterialRequest {
 	id: string;
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
-	objectMeemooIdentifier: string;
 	objectMeemooLocalId?: string;
 	objectDctermsFormat: MediaFormat;
 	objectThumbnailUrl: string;

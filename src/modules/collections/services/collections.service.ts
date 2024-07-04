@@ -75,7 +75,6 @@ export class CollectionsService {
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,

@@ -128,8 +128,8 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	name: string;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	spatial: string | string[];
+	temporal: string | string[];
 	thumbnailUrl: string;
 	// EXTRA
 	sector?: IeObjectSector;

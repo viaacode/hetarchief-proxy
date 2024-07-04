@@ -411,7 +411,7 @@ export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
 				'AGRESSIE',
 				'KARAKTERVORMING',
 			],
-			schema_genre: 'program',
+			schema_genre: ['program'],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
 			schema_in_language: null,
