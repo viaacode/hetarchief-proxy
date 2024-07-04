@@ -593,7 +593,10 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
+			// Disabled matchbox filters for lemma split words
+			// https://meemoo.atlassian.net/browse/ARC-2405
+			// expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
 		});
 
 		it('Should return an exact filter object for free text search with quotes', () => {
