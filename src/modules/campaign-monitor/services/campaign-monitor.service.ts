@@ -155,8 +155,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			throw new BadRequestException('Both "firstName" and "lastName" must be filled in');
 		}
 
-		console.log('preferences', preferences);
-
 		const data: CampaignMonitorData = {
 			to: recipients,
 			consentToTrack: 'unchanged',

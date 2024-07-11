@@ -22,6 +22,7 @@ import { isNil } from 'lodash';
 
 import { type Collection, type CollectionShared, CollectionStatus } from '../types';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import {
 	CollectionObjectsQueryDto,
 	CreateOrUpdateCollectionDto,
@@ -38,6 +39,7 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Collections')
 @Controller('collections')
@@ -45,7 +47,8 @@ export class CollectionsController {
 	constructor(
 		private collectionsService: CollectionsService,
 		private eventsService: EventsService,
-		private ieObjectsService: IeObjectsService
+		private ieObjectsService: IeObjectsService,
+		private campaignMonitorService: CampaignMonitorService
 	) {}
 
 	@Get()
@@ -330,6 +333,49 @@ export class CollectionsController {
 			user.getId()
 		);
 		return collectionObject;
+	}
+
+	@Post('/share/:collectionId/create')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	public async createSharedCollection(
+		@Req() request: Request,
+		@Body() emailInfo: { data: { mail: string } },
+		@Param('collectionId') collectionId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<any> {
+		const shareUrl = {
+			nl: `${process.env.FRONTEND_URL}/account/map-delen/${collectionId}`,
+			en: `${process.env.FRONTEND_URL}/account/map-share/${collectionId}`,
+		};
+		const collection = await this.collectionsService.findCollectionById(
+			collectionId,
+			request.headers.referer,
+			getIpFromRequest(request)
+		);
+
+		await this.campaignMonitorService.sendTransactionalMail(
+			{
+				template: 'shareFolder',
+				data: {
+					to: emailInfo.data.mail,
+					consentToTrack: 'unchanged',
+					data: {
+						sharer_email: user.getMail(),
+						sharer_name: user.getFullName(),
+						folder_name: collection.name,
+						folder_sharelink: `${process.env.CLIENT_HOST}/${
+							shareUrl[user.getLanguage()]
+						}/${collectionId}`,
+						user_hasaccount: false,
+						user_firstname: '',
+					},
+				},
+			},
+			user?.getLanguage() || Locale.Nl
+		);
+
+		return { message: 'success' };
 	}
 
 	@Post('/share/:collectionId')
