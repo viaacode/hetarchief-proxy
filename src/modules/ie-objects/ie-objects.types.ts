@@ -128,8 +128,8 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	name: string;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	spatial: string[];
+	temporal: string[];
 	thumbnailUrl: string;
 	// EXTRA
 	sector?: IeObjectSector;
@@ -278,7 +278,7 @@ export interface ElasticsearchObject {
 	schema_publisher: {
 		Distributeur?: string[];
 	} | null;
-	schema_spatial_coverage: string;
+	schema_spatial_coverage: string[];
 	schema_temporal_coverage: string;
 	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT
