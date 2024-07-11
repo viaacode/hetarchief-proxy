@@ -1,6 +1,6 @@
 import { Template } from './campaign-monitor.types';
 
-import { Locale } from '~shared/types/types';
+import { type Locale } from '~shared/types/types';
 
 export const getTemplateId = (template: string, language: Locale): string => {
 	const templateIds = {
