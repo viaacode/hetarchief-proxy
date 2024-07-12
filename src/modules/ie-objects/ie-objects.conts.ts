@@ -112,7 +112,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'dctermsMedium',
 	'duration',
 	'dateCreated',
-	'dateCreatedLowerBound',
 	'datePublished',
 	'creator',
 	'description',

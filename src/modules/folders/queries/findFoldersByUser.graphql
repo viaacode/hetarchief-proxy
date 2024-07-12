@@ -1,4 +1,4 @@
-query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
+query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 	users_folder(
 		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		order_by: { created_at: asc }
@@ -12,9 +12,9 @@ query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 		is_default
 		created_at
 		updated_at
-		ies {
+		intellectualEntities {
 			created_at
-			ie {
+			intellectualEntity {
 				schema_identifier
 				meemoo_identifier
 				schema_name

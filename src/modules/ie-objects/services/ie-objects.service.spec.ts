@@ -11,8 +11,8 @@ import { type Configuration } from '~config';
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { type ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
 import {
-	mockGqlIeObjectFindByCollectionId,
-	mockGqlIeObjectFindByCollectionIdResult,
+	mockGqlIeObjectFindByFolderId,
+	mockGqlIeObjectFindByFolderIdResult,
 	mockGqlIeObjectTuples,
 	mockGqlSitemapObject,
 	mockIeObject,
@@ -260,7 +260,7 @@ describe('ieObjectsService', () => {
 		});
 	});
 
-	describe('findAllObjectMetadataByCollectionId', () => {
+	describe('findAllObjectMetadataByFolderId', () => {
 		it('should throw an error when there are no objects found with the collectionId', async () => {
 			const mockData = {
 				users_folder_ie: [],
@@ -269,21 +269,21 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			try {
-				await ieObjectsService.findAllObjectMetadataByCollectionId('ids', 'dontMatch');
-				fail('findAllObjectMetadataByCollectionId should have thrown an error');
+				await ieObjectsService.findAllIeObjectMetadataByFolderId('ids', 'dontMatch');
+				fail('findAllObjectMetadataByFolderId should have thrown an error');
 			} catch (err) {
 				expect(err.name).toEqual('NotFoundException');
 			}
 		});
 		it('should successfully return all objects by collectionId adapted', async () => {
 			const mockData = {
-				users_folder_ie: [mockGqlIeObjectFindByCollectionId],
+				users_folder_ie: [mockGqlIeObjectFindByFolderId],
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const result = await ieObjectsService.findAllObjectMetadataByCollectionId('1', '1');
+			const result = await ieObjectsService.findAllIeObjectMetadataByFolderId('1', '1');
 
-			expect(result).toEqual([mockGqlIeObjectFindByCollectionIdResult]);
+			expect(result).toEqual([mockGqlIeObjectFindByFolderIdResult]);
 		});
 	});
 

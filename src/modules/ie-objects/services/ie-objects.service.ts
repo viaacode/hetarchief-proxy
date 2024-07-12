@@ -45,9 +45,9 @@ import {
 } from '../ie-objects.types';
 
 import {
-	FindAllObjectsByCollectionIdDocument,
-	type FindAllObjectsByCollectionIdQuery,
-	type FindAllObjectsByCollectionIdQueryVariables,
+	FindAllIeObjectsByFolderIdDocument,
+	type FindAllIeObjectsByFolderIdQuery,
+	type FindAllIeObjectsByFolderIdQueryVariables,
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
@@ -392,15 +392,15 @@ export class IeObjectsService {
 	/**
 	 * Returns a limited set of metadata fields for export
 	 */
-	public async findAllObjectMetadataByCollectionId(
-		collectionId: string,
+	public async findAllIeObjectMetadataByFolderId(
+		folderId: string,
 		userProfileId: string
 	): Promise<Partial<IeObject>[]> {
 		const { users_folder_ie: allObjects } = await this.dataService.execute<
-			FindAllObjectsByCollectionIdQuery,
-			FindAllObjectsByCollectionIdQueryVariables
-		>(FindAllObjectsByCollectionIdDocument, {
-			collectionId,
+			FindAllIeObjectsByFolderIdQuery,
+			FindAllIeObjectsByFolderIdQueryVariables
+		>(FindAllIeObjectsByFolderIdDocument, {
+			folderId,
 			userProfileId,
 		});
 
@@ -419,11 +419,13 @@ export class IeObjectsService {
 		limit: number
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
-			const { object_ie: ieObjects, object_ie_aggregate: ieObjectAggregate } =
-				await this.dataService.execute<
-					FindIeObjectsForSitemapQuery,
-					FindIeObjectsForSitemapQueryVariables
-				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+			const {
+				graph__intellectual_entity: ieObjects,
+				graph__intellectual_entity_aggregate: ieObjectAggregate,
+			} = await this.dataService.execute<
+				FindIeObjectsForSitemapQuery,
+				FindIeObjectsForSitemapQueryVariables
+			>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
 
 			return Pagination<IeObjectsSitemap>({
 				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
@@ -454,7 +456,6 @@ export class IeObjectsService {
 			abstract: gqlIeObject?.schema_abstract,
 			creator: gqlIeObject?.schema_creator,
 			dateCreated: gqlIeObject?.schema_date_created,
-			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
 			duration: gqlIeObject?.schema_duration,
@@ -563,7 +564,6 @@ export class IeObjectsService {
 			copyrightHolder: esObject?.schema_copyrightholder,
 			creator: esObject?.schema_creator,
 			dateCreated: esObject?.schema_date_created,
-			dateCreatedLowerBound: esObject?.schema_date_created,
 			datePublished: esObject?.schema_date_published,
 			description: esObject?.schema_description,
 			duration: esObject?.schema_duration,
@@ -581,8 +581,8 @@ export class IeObjectsService {
 			maintainerOverlay: null,
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
-			spatial: esObject?.schema_spatial_coverage,
-			temporal: esObject?.schema_temporal_coverage,
+			spatial: [esObject?.schema_spatial_coverage],
+			temporal: [esObject?.schema_temporal_coverage],
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
@@ -607,16 +607,15 @@ export class IeObjectsService {
 	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<IeObject> {
 		/* istanbul ignore next */
 		return {
-			schemaIdentifier: graphQlObject.ie?.schema_identifier,
-			premisIdentifier: graphQlObject.ie?.premis_identifier,
-			maintainerName: graphQlObject.ie?.maintainer?.schema_name,
-			name: graphQlObject.ie?.schema_name,
-			dctermsFormat: graphQlObject.ie?.dcterms_format,
-			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
-			datePublished: graphQlObject.ie?.schema_date_published,
-			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
-			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
-			isPartOf: graphQlObject.ie?.schema_is_part_of || {},
+			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
+			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.org_identifier,
+			name: graphQlObject.intellectualEntity?.schema_name,
+			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
+			dateCreated: graphQlObject.intellectualEntity?.schema_date_created,
+			datePublished: graphQlObject.intellectualEntity?.schema_date_published,
+			meemooIdentifier: graphQlObject.intellectualEntity?.meemoo_identifier,
+			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id,
+			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
 	}
 
@@ -766,7 +765,6 @@ export class IeObjectsService {
 			maintainerSlug: ieObject?.maintainerSlug,
 			isPartOf: ieObject?.isPartOf || {},
 			dctermsFormat: ieObject?.dctermsFormat,
-			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
 			datePublished: ieObject?.datePublished,
 			meemooIdentifier: ieObject?.meemooIdentifier,
 			meemooLocalId: ieObject?.meemooLocalId,

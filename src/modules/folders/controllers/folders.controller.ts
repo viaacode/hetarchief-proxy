@@ -20,15 +20,12 @@ import * as promiseUtils from 'blend-promise-utils';
 import { Request } from 'express';
 import { isNil } from 'lodash';
 
-import { type Collection, type CollectionShared, CollectionStatus } from '../types';
+import { type Folder, type FolderShared, FolderStatus } from '../types';
 
-import {
-	CollectionObjectsQueryDto,
-	CreateOrUpdateCollectionDto,
-} from '~modules/collections/dto/collections.dto';
-import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+import { FoldersService } from '~modules/folders/services/folders.service';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -39,24 +36,24 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
-@ApiTags('Collections')
-@Controller('collections')
-export class CollectionsController {
+@ApiTags('Folders')
+@Controller('collections') // TODO rename this to folders, and also change this in the client
+export class FoldersController {
 	constructor(
-		private collectionsService: CollectionsService,
+		private foldersService: FoldersService,
 		private eventsService: EventsService,
 		private ieObjectsService: IeObjectsService
 	) {}
 
 	@Get()
-	public async getCollections(
+	public async getFolders(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Collection>> {
+	): Promise<IPagination<Folder>> {
 		// For Anonymous users, it should return an empty array
 		if (isNil(user.getId())) {
-			return Pagination<Collection>({
+			return Pagination<Folder>({
 				items: [],
 				page: 1,
 				size: 10,
@@ -64,7 +61,7 @@ export class CollectionsController {
 			});
 		}
 
-		const collections = await this.collectionsService.findCollectionsByUser(
+		const folders = await this.foldersService.findFoldersByUser(
 			user.getId(),
 			referer,
 			getIpFromRequest(request),
@@ -72,11 +69,11 @@ export class CollectionsController {
 			1000
 		);
 
-		// Limit access to the objects in the collections
+		// Limit access to the objects in the folders
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		collections.items.forEach((collection) => {
+		folders.items.forEach((collection) => {
 			collection.objects = (collection.objects ?? []).map((object) => {
 				return this.ieObjectsService.limitObjectInFolder(
 					object,
@@ -86,22 +83,22 @@ export class CollectionsController {
 			});
 		});
 
-		return collections;
+		return folders;
 	}
 
-	@Get(':collectionId')
+	@Get(':folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async getCollectionObjects(
+	public async getFolderObjects(
 		@Headers('referer') referer: string,
-		@Param('collectionId', ParseUUIDPipe) collectionId: string,
-		@Query() queryDto: CollectionObjectsQueryDto,
+		@Param('folderId', ParseUUIDPipe) folderId: string,
+		@Query() queryDto: FolderObjectsQueryDto,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const folderObjects: IPagination<Partial<IeObject>> =
-			await this.collectionsService.findObjectsByCollectionId(
-				collectionId,
+			await this.foldersService.findObjectsByFolderId(
+				folderId,
 				user.getId(),
 				queryDto,
 				referer,
@@ -150,16 +147,16 @@ export class CollectionsController {
 	@Post()
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async createCollection(
+	public async createFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Body() createCollectionDto: CreateOrUpdateCollectionDto,
+		@Body() createFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Collection> {
-		return this.collectionsService.create(
+	): Promise<Folder> {
+		return this.foldersService.create(
 			{
-				name: createCollectionDto.name,
-				description: createCollectionDto.description,
+				name: createFolderDto.name,
+				description: createFolderDto.description,
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
@@ -168,61 +165,61 @@ export class CollectionsController {
 		);
 	}
 
-	@Patch(':collectionId')
+	@Patch(':folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async updateCollection(
+	public async updateFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('collectionId') collectionId: string,
-		@Body() updateCollectionDto: CreateOrUpdateCollectionDto,
+		@Param('folderId') folderId: string,
+		@Body() updateFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Collection> {
-		return await this.collectionsService.update(
-			collectionId,
+	): Promise<Folder> {
+		return await this.foldersService.update(
+			folderId,
 			user.getId(),
-			updateCollectionDto,
+			updateFolderDto,
 			referer,
 			getIpFromRequest(request)
 		);
 	}
 
-	@Delete(':collectionId')
+	@Delete(':folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async deleteCollection(
-		@Param('collectionId') collectionId: string,
+	public async deleteFolder(
+		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const affectedRows = await this.collectionsService.delete(collectionId, user.getId());
+		const affectedRows = await this.foldersService.delete(folderId, user.getId());
 		if (affectedRows > 0) {
 			return { status: 'collection has been deleted' };
 		} else {
-			return { status: 'no collections found with that id' };
+			return { status: 'no folders found with that id' };
 		}
 	}
 
-	@Post(':collectionId/objects/:objectId')
+	@Post(':folderId/objects/:objectId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async addObjectToCollection(
+	public async addObjectToFolder(
 		@Req() request: Request,
 		@Headers('referer') referer: string,
-		@Param('collectionId') collectionId: string,
+		@Param('folderId') folderId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
-		const collection = await this.collectionsService.findCollectionById(
-			collectionId,
+	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
+		const collection = await this.foldersService.findFolderById(
+			folderId,
 			referer,
 			getIpFromRequest(request)
 		);
 		if (collection.userProfileId !== user.getId()) {
-			throw new ForbiddenException('You can only add objects to your own collections');
+			throw new ForbiddenException('You can only add objects to your own folders');
 		}
 
-		const collectionObject = await this.collectionsService.addObjectToCollection(
-			collectionId,
+		const folderObject = await this.foldersService.addObjectToFolder(
+			folderId,
 			objectSchemaIdentifier,
 			referer,
 			getIpFromRequest(request)
@@ -246,7 +243,7 @@ export class CollectionsController {
 					type: ieObject.dctermsFormat,
 					pid: ieObject.meemooIdentifier,
 					fragment_id: objectSchemaIdentifier,
-					folder_id: collectionId,
+					folder_id: folderId,
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					or_id: ieObject.maintainerId,
@@ -254,29 +251,29 @@ export class CollectionsController {
 			},
 		]);
 
-		return collectionObject;
+		return folderObject;
 	}
 
-	@Delete(':collectionId/objects/:objectId')
+	@Delete(':folderId/objects/:objectId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async removeObjectFromCollection(
+	public async removeObjectFromFolder(
 		@Headers('referer') referer: string,
-		@Param('collectionId') collectionId: string,
+		@Param('folderId') folderId: string,
 		@Param('objectId') objectId: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const collection = await this.collectionsService.findCollectionById(
-			collectionId,
+		const collection = await this.foldersService.findFolderById(
+			folderId,
 			referer,
 			getIpFromRequest(request)
 		);
 		if (collection.userProfileId !== user.getId()) {
-			throw new ForbiddenException('You can only delete objects from your own collections');
+			throw new ForbiddenException('You can only delete objects from your own folders');
 		}
-		const affectedRows = await this.collectionsService.removeObjectFromCollection(
-			collectionId,
+		const affectedRows = await this.foldersService.removeObjectFromFolder(
+			folderId,
 			objectId,
 			user.getId()
 		);
@@ -287,75 +284,67 @@ export class CollectionsController {
 		}
 	}
 
-	@Patch(':oldCollectionId/objects/:objectId/move')
+	@Patch(':oldFolderId/objects/:objectId/move')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async moveObjectToAnotherCollection(
+	public async moveObjectToAnotherFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('oldCollectionId') oldCollectionId: string,
+		@Param('oldFolderId') oldFolderId: string,
 		@Param('objectId') objectSchemaIdentifier: string,
-		@Query('newCollectionId') newCollectionId: string,
+		@Query('newFolderId') newFolderId: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Partial<IeObject> & { collectionEntryCreatedAt: string }> {
-		// Check user is owner of both collections
-		const [oldCollection, newCollection] = await Promise.all([
-			this.collectionsService.findCollectionById(
-				oldCollectionId,
-				referer,
-				getIpFromRequest(request)
-			),
-			this.collectionsService.findCollectionById(
-				newCollectionId,
-				referer,
-				getIpFromRequest(request)
-			),
+	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
+		// Check user is owner of both folders
+		const [oldFolder, newFolder] = await Promise.all([
+			this.foldersService.findFolderById(oldFolderId, referer, getIpFromRequest(request)),
+			this.foldersService.findFolderById(newFolderId, referer, getIpFromRequest(request)),
 		]);
-		if (oldCollection.userProfileId !== user.getId()) {
-			throw new ForbiddenException('You can only move objects from your own collections');
+		if (oldFolder.userProfileId !== user.getId()) {
+			throw new ForbiddenException('You can only move objects from your own folders');
 		}
-		if (newCollection.userProfileId !== user.getId()) {
-			throw new ForbiddenException('You can only move objects to your own collections');
+		if (newFolder.userProfileId !== user.getId()) {
+			throw new ForbiddenException('You can only move objects to your own folders');
 		}
 
-		const collectionObject = await this.collectionsService.addObjectToCollection(
-			newCollectionId,
+		const folderObject = await this.foldersService.addObjectToFolder(
+			newFolderId,
 			objectSchemaIdentifier,
 			referer,
 			getIpFromRequest(request)
 		);
-		await this.collectionsService.removeObjectFromCollection(
-			oldCollectionId,
+		await this.foldersService.removeObjectFromFolder(
+			oldFolderId,
 			objectSchemaIdentifier,
 			user.getId()
 		);
-		return collectionObject;
+		return folderObject;
 	}
 
-	@Post('/share/:collectionId')
+	@Post('/share/:folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async shareCollection(
+	public async shareFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('collectionId') collectionId: string,
+		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<CollectionShared> {
-		const collection = await this.collectionsService.findCollectionById(
-			collectionId,
+	): Promise<FolderShared> {
+		const collection = await this.foldersService.findFolderById(
+			folderId,
 			referer,
 			getIpFromRequest(request)
 		);
 
 		if (collection?.userProfileId === user.getId()) {
 			return {
-				status: CollectionStatus.ALREADY_OWNER,
+				status: FolderStatus.ALREADY_OWNER,
 				folderId: collection.id,
 				folderName: collection?.name,
 			};
 		}
 
-		const createdCollection = await this.collectionsService.create(
+		const createdFolder = await this.foldersService.create(
 			{
 				name: collection?.name,
 				user_profile_id: user.getId(),
@@ -368,8 +357,8 @@ export class CollectionsController {
 		// Get all the objects from the original collection and add them to the new collection
 		let folderObjects: IPagination<Partial<IeObject>>;
 		try {
-			folderObjects = await this.collectionsService.findObjectsByCollectionId(
-				collectionId,
+			folderObjects = await this.foldersService.findObjectsByFolderId(
+				folderId,
 				collection?.userProfileId,
 				{ size: 1000 },
 				referer,
@@ -377,8 +366,8 @@ export class CollectionsController {
 			);
 			// TODO: make it possible to insert all objects to the new collection at once
 			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
-				await this.collectionsService.addObjectToCollection(
-					createdCollection.id,
+				await this.foldersService.addObjectToFolder(
+					createdFolder.id,
 					item?.schemaIdentifier,
 					referer,
 					getIpFromRequest(request)
@@ -394,9 +383,9 @@ export class CollectionsController {
 		}
 
 		return {
-			status: CollectionStatus.ADDED,
-			folderId: createdCollection?.id,
-			folderName: createdCollection?.name,
+			status: FolderStatus.ADDED,
+			folderId: createdFolder?.id,
+			folderName: createdFolder?.name,
 		};
 	}
 }

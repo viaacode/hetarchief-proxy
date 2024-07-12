@@ -1,15 +1,15 @@
 import { DataModule, PlayerTicketModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 
-import { CollectionsController } from './controllers/collections.controller';
-import { CollectionsService } from './services/collections.service';
+import { FoldersController } from './controllers/folders.controller';
+import { FoldersService } from './services/folders.service';
 
 import { EventsModule } from '~modules/events';
 import { IeObjectsModule } from '~modules/ie-objects';
 import { VisitsModule } from '~modules/visits';
 
 @Module({
-	controllers: [CollectionsController],
+	controllers: [FoldersController],
 	imports: [
 		forwardRef(() => DataModule),
 		PlayerTicketModule,
@@ -17,7 +17,7 @@ import { VisitsModule } from '~modules/visits';
 		EventsModule,
 		VisitsModule,
 	],
-	providers: [CollectionsService],
-	exports: [CollectionsService],
+	providers: [FoldersService],
+	exports: [FoldersService],
 })
-export class CollectionsModule {}
+export class FoldersModule {}

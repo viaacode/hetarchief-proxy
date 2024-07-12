@@ -1,5 +1,5 @@
-query findCollectionObjectsByCollectionId(
-	$collectionId: uuid
+query findFolderIeObjectsByFolderId(
+	$folderId: uuid
 	$userProfileId: uuid
 	$where: users_folder_ie_bool_exp!
 	$offset: Int
@@ -7,14 +7,14 @@ query findCollectionObjectsByCollectionId(
 ) {
 	users_folder_ie(
 		where: {
-			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
+			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
 			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		}
 		offset: $offset
 		limit: $limit
 	) {
 		created_at
-		ie {
+		intellectualEntity {
 			schema_identifier
 			meemoo_identifier
 			meemoo_local_id
@@ -27,16 +27,13 @@ query findCollectionObjectsByCollectionId(
 			schema_number_of_pages
 			schema_is_part_of
 			schema_date_published
-			schema_date_created_lower_bound
 			schema_duration
 			schema_license
-			maintainer {
-				schema_identifier
-				schema_name
-				information {
-					haorg_organization_type
-				}
-				visitor_space {
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_sector
+				visitorSpace {
 					id
 					slug
 					schema_maintainer_id
@@ -46,7 +43,7 @@ query findCollectionObjectsByCollectionId(
 	}
 	users_folder_ie_aggregate(
 		where: {
-			_and: [{ user_collection_id: { _eq: $collectionId } }, $where]
+			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
 			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
 		}
 	) {

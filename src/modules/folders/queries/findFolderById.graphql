@@ -1,0 +1,11 @@
+query findFolderById($folderId: uuid) {
+	users_folder(where: { id: { _eq: $folderId }, is_deleted: { _eq: false } }) {
+		created_at
+		id
+		is_default
+		name
+		description
+		updated_at
+		user_profile_id
+	}
+}

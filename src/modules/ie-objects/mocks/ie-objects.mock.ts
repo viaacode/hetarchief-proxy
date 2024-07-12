@@ -65,7 +65,6 @@ export const mockIeObject: Readonly<IeObject> = {
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	dateCreated: '[2020-09-01]',
-	dateCreatedLowerBound: '2020-09-01',
 	meemooOriginalCp: null,
 	meemooLocalId: null,
 	meemoofilmBase: null,
@@ -100,7 +99,6 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
-	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -151,7 +149,6 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
-	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -212,7 +209,6 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
-	dateCreatedLowerBound: '2020-09-01',
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
@@ -293,7 +289,6 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	ebucoreIsMediaFragmentOf: null,
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	meemoofilmImageOrSound: null,
-	dateCreatedLowerBound: '2020-09-01',
 	premisIdentifier: null,
 	isPartOf: {},
 };
@@ -304,7 +299,6 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	maintainerSlug: 'vrt',
 	maintainerId: 'OR-rf5kf25',
 	dctermsFormat: 'video',
-	dateCreatedLowerBound: '2020-09-01',
 	datePublished: '2020-09-01',
 	meemooIdentifier: '8911p09j1g',
 	meemooLocalId: null,
@@ -411,7 +405,7 @@ export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
 				'AGRESSIE',
 				'KARAKTERVORMING',
 			],
-			schema_genre: 'program',
+			schema_genre: ['program'],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
 			schema_in_language: null,
@@ -477,7 +471,7 @@ export const mockGqlIeObjectTuples: Readonly<Partial<GqlIeObject>[]> = [
 	},
 ];
 
-export const mockGqlIeObjectFindByCollectionId = Object.freeze({
+export const mockGqlIeObjectFindByFolderId = Object.freeze({
 	ie: {
 		schema_identifier:
 			'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
@@ -511,7 +505,7 @@ export const mockGqlIeObjectFindByCollectionId = Object.freeze({
 	},
 });
 
-export const mockGqlIeObjectFindByCollectionIdResult: Readonly<Partial<IeObject>> = {
+export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
 	schemaIdentifier:
 		'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
 	premisIdentifier: {
@@ -520,7 +514,6 @@ export const mockGqlIeObjectFindByCollectionIdResult: Readonly<Partial<IeObject>
 	maintainerName: 'Huis van Alijn',
 	name: 'Op de boerderij',
 	dctermsFormat: 'video',
-	dateCreatedLowerBound: '2018-01-01',
 	datePublished: null,
 	meemooIdentifier: '4f1mg9x363',
 	meemooLocalId: 'VI-0011-0004',

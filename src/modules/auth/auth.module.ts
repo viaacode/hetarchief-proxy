@@ -10,8 +10,8 @@ import { HetArchiefService } from './services/het-archief.service';
 import { IdpService } from './services/idp.service';
 
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
-import { CollectionsModule } from '~modules/collections';
 import { EventsModule } from '~modules/events';
+import { FoldersModule } from '~modules/folders';
 import { OrganisationsModule } from '~modules/organisations/organisations.module';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
@@ -32,7 +32,7 @@ export const archiefServiceFactory = {
 	imports: [
 		ConfigModule,
 		UsersModule,
-		CollectionsModule,
+		FoldersModule,
 		SpacesModule,
 		EventsModule,
 		AdminTranslationsModule,

@@ -10,8 +10,8 @@ query findVisitById($id: uuid!) {
 			last_name
 			mail
 			language
-			collections {
-				ies {
+			folders {
+				intellectualEntities {
 					ie_schema_identifier
 				}
 			}
@@ -66,11 +66,11 @@ query findVisitById($id: uuid!) {
 		accessible_folders {
 			folder {
 				id
-				ies {
-					ie {
+				intellectualEntities {
+					intellectualEntity {
 						schema_identifier
-						maintainer {
-							schema_identifier
+						schemaMaintainer {
+							org_identifier
 						}
 					}
 				}

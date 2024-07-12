@@ -89,12 +89,19 @@ export class MaterialRequestsService {
 			if (parameters.userGroup === GroupId.MEEMOO_ADMIN) {
 				where._or = [
 					...where._or,
-					{ object: { maintainer: { schema_name: { _ilike: query } } } },
+					{
+						intellectualEntity: {
+							schemaMaintainer: { skos_pref_label: { _ilike: query } },
+						},
+					},
 				];
 			}
 
 			if (parameters.userGroup === GroupId.VISITOR) {
-				where._or = [...where._or, { object: { schema_name: { _ilike: query } } }];
+				where._or = [
+					...where._or,
+					{ intellectualEntity: { schema_name: { _ilike: query } } },
+				];
 			}
 		}
 
@@ -109,9 +116,9 @@ export class MaterialRequestsService {
 		}
 
 		if (!isEmpty(maintainerIds)) {
-			where.object = {
-				maintainer: {
-					schema_identifier: {
+			where.intellectualEntity = {
+				schemaMaintainer: {
+					org_identifier: {
 						_in: isArray(maintainerIds) ? maintainerIds : [maintainerIds],
 					},
 				},
@@ -140,7 +147,7 @@ export class MaterialRequestsService {
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact(
 				materialRequestsResponse.app_material_requests.map(
-					(matRequest) => matRequest?.object?.maintainer?.schema_identifier
+					(matRequest) => matRequest?.intellectualEntity?.schemaMaintainer?.org_identifier
 				)
 			)
 		);
@@ -168,7 +175,7 @@ export class MaterialRequestsService {
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
 			compact(
 				materialRequestResponse.app_material_requests.map(
-					(matRequest) => matRequest?.object?.maintainer?.schema_identifier
+					(matRequest) => matRequest?.intellectualEntity?.schemaMaintainer?.org_identifier
 				)
 			)
 		);
@@ -223,7 +230,7 @@ export class MaterialRequestsService {
 		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
-			compact([createdMaterialRequest?.object?.maintainer?.schema_identifier])
+			compact([createdMaterialRequest?.intellectualEntity?.schemaMaintainer?.org_identifier])
 		);
 
 		return this.adapt(createdMaterialRequest, organisations);
@@ -268,7 +275,10 @@ export class MaterialRequestsService {
 		this.logger.debug(`Material request ${updatedMaterialRequest.returning[0]?.id} updated.`);
 
 		const organisations = await this.organisationsService.findOrganisationsBySchemaIdentifiers(
-			compact([updatedMaterialRequest?.returning?.[0]?.object?.maintainer?.schema_identifier])
+			compact([
+				updatedMaterialRequest?.returning?.[0]?.intellectualEntity?.schemaMaintainer
+					?.org_identifier,
+			])
 		);
 
 		return this.adapt(updatedMaterialRequest.returning[0], organisations);
@@ -355,15 +365,17 @@ export class MaterialRequestsService {
 
 		const organisation = organisations.find(
 			(org) =>
-				org.schemaIdentifier === graphQlMaterialRequest.object.maintainer.schema_identifier
+				org.schemaIdentifier ===
+				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.org_identifier
 		);
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
 			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
-			objectSchemaName: graphQlMaterialRequest.object.schema_name,
-			objectMeemooIdentifier: graphQlMaterialRequest.object.meemoo_identifier,
-			objectDctermsFormat: graphQlMaterialRequest.object.dcterms_format as MediaFormat,
-			objectThumbnailUrl: graphQlMaterialRequest.object.schema_thumbnail_url,
+			objectSchemaName: graphQlMaterialRequest.intellectualEntity.schema_name,
+			objectMeemooIdentifier: graphQlMaterialRequest.intellectualEntity.meemoo_identifier,
+			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
+				.dcterms_format as MediaFormat,
+			objectThumbnailUrl: graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -382,16 +394,17 @@ export class MaterialRequestsService {
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
-				graphQlMaterialRequest.object.maintainer.visitor_space?.slug ||
+				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.visitorSpace?.slug ||
 				kebabCase(organisation?.schemaName),
 			maintainerLogo: organisation?.logo?.iri,
 			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
-			contactMail:
-				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					?.object?.maintainer?.information?.contact_point || null,
+			// TODO add contact point when https://meemoo.atlassian.net/browse/ARC-2420 is done
+			// contactMail:
+			// 	(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+			// 		?.intellectualEntity?.schemaMaintainer?.contact_point || null,
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					?.object?.meemoo_local_id || null,
+					?.intellectualEntity?.meemoo_local_id || null,
 		};
 
 		return transformedMaterialRequest;

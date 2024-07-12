@@ -1,12 +1,12 @@
-query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
+query findIeObjectInFolder($folderId: uuid, $objectSchemaIdentifier: String) {
 	users_folder_ie(
 		where: {
-			user_collection_id: { _eq: $collectionId }
+			user_collection_id: { _eq: $folderId }
 			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
 			collection: { is_deleted: { _eq: false } }
 		}
 	) {
-		ie {
+		intellectualEntity {
 			schema_identifier
 			meemoo_identifier
 			schema_name
@@ -18,19 +18,15 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 			schema_number_of_pages
 			schema_is_part_of
 			schema_date_published
-			schema_date_created_lower_bound
 			schema_duration
 			schema_license
-			maintainer {
-				schema_identifier
-				schema_name
-				information {
-					haorg_organization_type
-				}
-				visitor_space {
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_sector
+				visitorSpace {
 					id
 					slug
-					schema_maintainer_id
 				}
 			}
 		}

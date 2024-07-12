@@ -194,16 +194,18 @@ export class VisitsService {
 			),
 			accessibleObjectIds: uniq(
 				graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
-					accessibleFolderLink.folder.ies
+					accessibleFolderLink.folder.intellectualEntities
 						.filter(
 							(accessibleFolderIeLink) =>
 								graphQlVisit?.access_type === VisitAccessType.Full ||
 								(graphQlVisit?.access_type === VisitAccessType.Folders &&
 									graphQlVisit?.visitor_space?.schema_maintainer_id ===
-										accessibleFolderIeLink?.ie?.maintainer?.schema_identifier)
+										accessibleFolderIeLink?.intellectualEntity?.schemaMaintainer
+											?.org_identifier)
 						)
 						.map(
-							(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
+							(accessibleFolderIeLink) =>
+								accessibleFolderIeLink.intellectualEntity.schema_identifier
 						)
 				)
 			),

@@ -1,7 +1,7 @@
 import { type IPagination } from '@studiohyperdrive/pagination';
 
 import {
-	type FindAllObjectsByCollectionIdQuery,
+	type FindAllIeObjectsByFolderIdQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -16,7 +16,7 @@ export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'
 export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];
 
-export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];
+export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
 export enum MediaFormat {
 	VIDEO = 'video',
@@ -112,7 +112,7 @@ export interface IeObject {
 	premisIdentifier: any;
 	abstract: string;
 	creator: any;
-	dateCreated: string;
+	dateCreated: string | null;
 	datePublished: string;
 	description: string;
 	duration: string;
@@ -128,8 +128,8 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	name: string;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	spatial: string[];
+	temporal: string[];
 	thumbnailUrl: string;
 	// EXTRA
 	sector?: IeObjectSector;
@@ -158,7 +158,6 @@ export interface IeObject {
 	meemooMediaObjectId?: string;
 	ebucoreIsMediaFragmentOf?: string;
 	ebucoreHasMediaFragmentOf?: boolean;
-	dateCreatedLowerBound?: string;
 	actor?: string | null;
 	// Not yet available
 	transcript?: string;

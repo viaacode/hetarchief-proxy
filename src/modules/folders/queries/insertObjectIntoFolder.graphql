@@ -1,13 +1,10 @@
-mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier: String) {
+mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectSchemaIdentifier: String) {
 	insert_users_folder_ie(
-		objects: {
-			user_collection_id: $collectionId
-			ie_schema_identifier: $objectSchemaIdentifier
-		}
+		objects: { user_collection_id: $folderId, ie_schema_identifier: $ieObjectSchemaIdentifier }
 	) {
 		returning {
 			created_at
-			ie {
+			intellectualEntity {
 				schema_identifier
 				meemoo_identifier
 				dcterms_format
@@ -15,7 +12,7 @@ mutation insertObjectIntoCollection($collectionId: uuid, $objectSchemaIdentifier
 				schema_creator
 				schema_description
 				schema_name
-				schema_maintainer_id
+				schema_maintainer
 				schema_number_of_pages
 				schema_duration
 			}
