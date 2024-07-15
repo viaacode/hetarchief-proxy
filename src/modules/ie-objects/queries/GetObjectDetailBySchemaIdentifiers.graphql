@@ -1,11 +1,5 @@
-query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
-	graph__intellectual_entity(
-		where: {
-			schema_identifier: { _neq: $schemaIdentifier }
-			isPartOf: { intellectual_entity_id: { _eq: $schemaIdentifier } }
-			schemaMaintainer: { org_identifier: { _eq: $maintainerId } }
-		}
-	) {
+query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
+	graph__intellectual_entity(where: { schema_identifier: { _in: $schemaIdentifiers } }) {
 		schema_identifier
 		meemoo_identifier
 		schema_is_part_of
@@ -15,7 +9,9 @@ query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 			ha_org_has_logo
 			ha_org_request_form
 			dcterms_description
+			ha_org_sector
 			ha_org_allows_overlay
+			foaf_homepage
 		}
 		schema_duration
 		schema_number_of_pages
@@ -25,10 +21,12 @@ query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 		schema_description
 		schema_creator
 		dcterms_format
+		dcterms_medium
 		schema_thumbnail_url
 		schema_duration
 		schema_license
 		schema_date_created
+		meemoo_local_id
 		isRepresentedBy {
 			includes {
 				file {

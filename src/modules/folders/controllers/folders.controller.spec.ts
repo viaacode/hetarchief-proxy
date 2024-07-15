@@ -9,7 +9,7 @@ import { FoldersController } from './folders.controller';
 import { EventsService } from '~modules/events/services/events.service';
 import { type Folder, FolderStatus } from '~modules/folders/types';
 import { type IeObject } from '~modules/ie-objects/ie-objects.types';
-import { mockIeObject } from '~modules/ie-objects/mocks/ie-objects.mock';
+import { mockIeObject1 } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
@@ -267,7 +267,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(
 				mockFoldersResponse.items[0]
 			);
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject]);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject1]);
 			const collectionObject = await collectionsController.addObjectToFolder(
 				mockRequest,
 				'referer',

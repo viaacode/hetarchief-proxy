@@ -41,7 +41,7 @@ export class StatusService {
 				await this.dataService.execute<GetFirstObjectIdQuery>(GetFirstObjectIdDocument);
 
 			/* istanbul ignore next */
-			return !!response?.object_ie?.[0]?.schema_identifier;
+			return !!response?.graph_intellectual_entity?.[0]?.schema_identifier;
 		} catch (err) {
 			this.logger.error(err);
 			return false;

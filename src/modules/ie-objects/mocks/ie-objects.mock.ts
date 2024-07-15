@@ -1,5 +1,4 @@
 import {
-	type GqlIeObject,
 	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -7,12 +6,15 @@ import {
 	type IeObjectsSitemap,
 } from '../ie-objects.types';
 
-import { type GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	type FindIeObjectsForSitemapQuery,
+	type GetObjectDetailBySchemaIdentifiersQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
-export const mockIeObject: Readonly<IeObject> = {
+export const mockIeObject1: Readonly<IeObject> = {
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 	meemooIdentifier: '8911p09j1g',
@@ -342,134 +344,63 @@ export const mockUserInfo: Readonly<{
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
-	object_ie: [
+export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
+	graph__intellectual_entity: [
 		{
 			schema_identifier:
 				'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
 			meemoo_identifier: '8911p09j1g',
-			premis_identifier: 'WP00178829',
 			schema_is_part_of: null,
-			schema_copyright_holder: 'vrt',
-			schema_copyright_notice:
-				'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
-			organisation: {
-				schema_identifier: 'OR-rf5kf25',
-				schema_name: 'VRT',
-				description:
+			schemaMaintainer: {
+				org_identifier: 'OR-rf5kf25',
+				skos_pref_label: 'VRT',
+				dcterms_description:
 					'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-				haorg_organization_type: 'Publieke Omroep',
-				form_url: null,
-				homepage_url: 'https://www.vrt.be',
-				overlay: true,
-				primary_site: {
-					address: {
-						email: null,
-						locality: 'Brussel',
-						postal_code: '1043',
-						street: 'Auguste Reyerslaan 52',
-						telephone: null,
-						post_office_box_number: null,
-					},
-				},
-				logo: {
-					iri: 'https://assets.viaa.be/images/OR-rf5kf25',
-				},
+				ha_org_sector: 'Publieke Omroep',
+				ha_org_request_form: null,
+				foaf_homepage: 'https://www.vrt.be',
+				ha_org_allows_overlay: true,
+				ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 			},
-			schema_duration_in_seconds: null,
 			schema_number_of_pages: null,
 			schema_date_published: '2020-09-01',
 			dcterms_available: '2020-08-28T11:48:11',
 			schema_name: 'Durf te vragen R002 A0001',
 			schema_description:
 				"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-			schema_abstract:
-				'In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.\nDementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: "Kan je genezen?" en "Heb je al aan euthanasie gedacht?".\nMarleen noemt het een \'klotenziekte\' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.\n\nRoger Vanparijs  (66) Marleen Snauwaert (65)\nRoger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.\nRoger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.\n\nPaul Goossens  (67) en Katelijne Lefevre (60)\nPaul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.\nPaul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om."\n\nMarleen Peperstraete (62) en Dirk Cecabooter (64)\nMarleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.\nNaast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.\n\nChristine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)\nChristine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.\nAlleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.\n\nJohn  Buck (44) & Cindy De Buck (46)\nJohn heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.\nCindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.',
 			schema_creator: {
 				productionCompany: ['Roses Are Blue'],
 			},
-			schema_actor: null,
-			schema_publisher: null,
-			schema_spatial_coverage: null,
-			schema_temporal_coverage: null,
-			schema_keywords: [
-				'INTERVIEW',
-				'ZIEKTE',
-				'GEZONDHEID',
-				'ZIEKTE VAN ALZHEIMER',
-				'JONGDEMENTIE',
-				'THUISVERPLEGING',
-				'FIETS',
-				'GEHEUGEN',
-				'VERGETEN',
-				'AGRESSIE',
-				'KARAKTERVORMING',
-			],
-			schema_genre: ['program'],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
-			schema_in_language: null,
 			schema_thumbnail_url:
 				'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 			schema_duration: '00:39:52',
 			schema_license: null,
-			meemoo_media_object_id:
-				'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 			schema_date_created: '[2020-09-01,)',
-			schema_date_created_lower_bound: '2020-09-01',
-			premis_is_represented_by: [
+			isRepresentedBy: [
 				{
-					ie_schema_identifier:
-						'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-					schema_name: 'Durf te vragen R002 A0001',
-					schema_alternate_name: 'Durf te vragen R002 A0001',
-					schema_description: null,
-					dcterms_format: 'mp4',
-					schema_transcript: null,
-					schema_date_created: null,
-					premis_includes: [
+					includes: [
 						{
-							schema_name: 'browse.mp4',
-							schema_alternate_name: '8911p09j1g.MXF',
-							schema_description: null,
-							representation_schema_identifier:
-								'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793/mp4_vrt',
-							ebucore_media_type: 'mp4',
-							ebucore_is_media_fragment_of: null,
-							schema_embed_url:
-								'VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
-							schema_identifier:
-								'https://archief-media.viaa.be/viaa/ATV/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/browse.mp4',
+							file: {
+								id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+								schema_name: 'Durf te vragen R002 A0001',
+								ebucore_has_mime_type: 'video/mp4',
+								premis_stored_at:
+									'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/fbdfd287f3774f5d86ca075720c9c97392ff861b60bc478e840a85349baf6661/browse.m4a',
+								schema_thumbnail_url:
+									'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/fbdfd287f3774f5d86ca075720c9c97392ff861b60bc478e840a85349baf6661/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+								schema_duration: 3960,
+								edm_is_next_in_sequence: null,
+							},
 						},
 					],
 				},
 			],
+			hasPart: [],
 		},
 	],
 };
-
-export const mockGqlIeObjectTuples: Readonly<Partial<GqlIeObject>[]> = [
-	{
-		schema_identifier:
-			'73d46f15abae4947912429864ef40472617630b7e5914d82809576457883dbb35d4b0399743941d082aa489c08e2d990',
-		meemoo_identifier: 's46h14z19k',
-	},
-	{
-		schema_identifier:
-			'be81ec4b7a1f4fa69d8f7e123f9c89bebca89947ed454d5dbf1d919a9b50aef04a8efdbcb4d84807acd99e3003a88cad',
-		meemoo_identifier: 'w37kp8850k_001_wav',
-	},
-	{
-		schema_identifier:
-			'd1288c82c96747d7bb6bd6260c4e2db14bcad026f9cf4add9376c22a5c06db421985e236d7fb4b839ffcf2fbe88606cf',
-		meemoo_identifier: 'x921c4s60t',
-	},
-	{
-		schema_identifier:
-			'd1288c82c96747d7bb6bd6260c4e2db14bcad026f9cf4add9376c22a5c06db421985e236d7fb4b839ffc111111111111',
-		meemoo_identifier: 'x921c4s60t',
-	},
-];
 
 export const mockGqlIeObjectFindByFolderId = Object.freeze({
 	ie: {
@@ -524,23 +455,23 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 	},
 };
 
-export const mockGqlSitemapObject = Object.freeze({
-	schema_identifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-	maintainer: {
-		schema_name: 'VRT',
-	},
-	haorg_alt_label: 'vrt',
-	schema_name: 'Durf te vragen R002 A0001',
-	updated_at: '2023-04-13',
-});
+export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0] =
+	Object.freeze({
+		schema_identifier: '0000003g0k',
+		schema_name: 'Durf te vragen R002 A0001',
+		updated_at: '2023-04-13',
+		schemaMaintainer: {
+			org_identifier: 'OR-rf5kf25',
+			skos_pref_label: 'VRT',
+		},
+	});
 
 export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
 	schemaIdentifier:
 		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-	maintainerSlug: 'vrt',
 	name: 'Durf te vragen R002 A0001',
 	updatedAt: '2023-04-13',
+	maintainerSlug: 'vrt',
 };
 
 export const mockIeObjectWithMetadataSetLtdCsv =

@@ -23,7 +23,6 @@ import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
-	IeObjectsMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
@@ -35,7 +34,6 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	type FilterOptions,
 	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -99,11 +97,6 @@ export class IeObjectsController {
 	@Get('newspaper-titles')
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
 		return this.ieObjectsService.getNewspaperTitles();
-	}
-
-	@Get('filter-options')
-	public async getFilterOptions(): Promise<FilterOptions> {
-		return this.ieObjectsService.getFilterOptions();
 	}
 
 	@Get('seo/:id')
@@ -265,7 +258,7 @@ export class IeObjectsController {
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedRelatedIeObjects = {
+		return {
 			...relatedIeObjects,
 
 			// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
@@ -283,15 +276,6 @@ export class IeObjectsController {
 				)
 			),
 		};
-
-		return licensedRelatedIeObjects;
-	}
-
-	@Get('related/count')
-	public async countRelated(
-		@Query() countRelatedQuery: IeObjectsMeemooIdentifiersQueryDto
-	): Promise<Record<string, number>> {
-		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
 
 	@Get(':id/similar')
@@ -457,9 +441,9 @@ export class IeObjectsController {
 
 	@Get(':id')
 	public async getIeObjectById(
+		@Param('id') id: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
 		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(

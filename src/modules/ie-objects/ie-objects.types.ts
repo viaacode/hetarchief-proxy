@@ -13,8 +13,8 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 
 export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
-export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
-	GetRelatedObjectsQuery['object_ie'][0];
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0] &
+	GetRelatedObjectsQuery['graph__intellectual_entity'][0];
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 

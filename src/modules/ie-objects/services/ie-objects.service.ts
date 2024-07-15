@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
+import { find, isEmpty, kebabCase } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -30,7 +30,6 @@ import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-de
 import {
 	type ElasticsearchObject,
 	type ElasticsearchResponse,
-	type FilterOptions,
 	type GqlIeObject,
 	type GqlLimitedIeObject,
 	type IeObject,
@@ -51,15 +50,9 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
-	GetFilterOptionsDocument,
-	type GetFilterOptionsQuery,
-	type GetFilterOptionsQueryVariables,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
-	GetObjectIdentifierTupleDocument,
-	type GetObjectIdentifierTupleQuery,
-	type GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
 	type GetRelatedObjectsQuery,
 	type GetRelatedObjectsQueryVariables,
@@ -206,23 +199,6 @@ export class IeObjectsService {
 		};
 	}
 
-	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
-		const items = await this.dataService.execute<
-			GetObjectIdentifierTupleQuery,
-			GetObjectIdentifierTupleQueryVariables
-		>(GetObjectIdentifierTupleDocument, {
-			meemooIdentifiers,
-		});
-
-		const count: Record<string, number> = {};
-
-		items?.object_ie?.forEach((item) => {
-			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
-		});
-
-		return count;
-	}
-
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
 		return mockNewspapers;
 	}
@@ -239,12 +215,11 @@ export class IeObjectsService {
 			GetRelatedObjectsQueryVariables
 		>(GetRelatedObjectsDocument, {
 			schemaIdentifier,
-			meemooIdentifier,
 			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
 		});
 
 		const adaptedItems = await Promise.all(
-			mediaObjects.object_ie.map(async (object: any) => {
+			mediaObjects.graph__intellectual_entity.map(async (object: any) => {
 				const adapted = this.adaptFromDB(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
@@ -258,8 +233,8 @@ export class IeObjectsService {
 		return Pagination<IeObject>({
 			items: adaptedItems,
 			page: 1,
-			size: mediaObjects.object_ie.length,
-			total: mediaObjects.object_ie.length,
+			size: mediaObjects.graph__intellectual_entity.length,
+			total: mediaObjects.graph__intellectual_entity.length,
 		});
 	}
 
@@ -365,14 +340,21 @@ export class IeObjectsService {
 			schemaIdentifiers,
 		});
 
+		// TODO ARC-2403 add thumbnail url to objects
+		console.log({
+			referer,
+			ip,
+		});
+
 		return await Promise.all(
-			response.object_ie.map(async (object) => {
+			response.graph__intellectual_entity.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
-				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-					adapted.thumbnailUrl,
-					referer,
-					ip
-				);
+				// TODO ARC-2403 add thumbnail url to objects
+				// adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+				// 	adapted.thumbnailUrl,
+				// 	referer,
+				// 	ip
+				// );
 				return adapted;
 			})
 		);
@@ -443,58 +425,55 @@ export class IeObjectsService {
 
 	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
 		return {
+			schemaIdentifier: gqlIeObject?.schema_identifier,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
-			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
 			meemooIdentifier: gqlIeObject?.meemoo_identifier,
-			meemoofilmBase: gqlIeObject?.meemoofilm_base,
-			meemoofilmColor: gqlIeObject?.meemoofilm_color,
-			meemoofilmContainsEmbeddedCaption: gqlIeObject?.meemoofilm_contains_embedded_caption,
-			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
-			premisIdentifier: gqlIeObject?.premis_identifier,
-			abstract: gqlIeObject?.schema_abstract,
 			creator: gqlIeObject?.schema_creator,
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
 			duration: gqlIeObject?.schema_duration,
-			genre: gqlIeObject?.schema_genre,
-			schemaIdentifier: gqlIeObject?.schema_identifier,
-			inLanguage: gqlIeObject?.schema_in_language,
-			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
-			maintainerId: gqlIeObject?.organisation?.schema_identifier,
-			maintainerName: gqlIeObject?.organisation?.schema_name,
-			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.organisation?.schema_name || ''),
-			maintainerLogo: gqlIeObject?.organisation?.logo?.iri,
-			maintainerDescription: gqlIeObject?.organisation?.description,
-			maintainerSiteUrl: gqlIeObject?.organisation?.homepage_url,
-			maintainerFormUrl: gqlIeObject?.organisation?.form_url,
-			maintainerOverlay: gqlIeObject?.organisation?.overlay,
-			sector:
-				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
-				(gqlIeObject?.organisation?.haorg_organization_type as IeObjectSector),
+			// TODO ARC-2403 add missing fields
+			ebucoreObjectType: '', // gqlIeObject?.ebucore_object_type,
+			meemoofilmBase: '', // gqlIeObject?.meemoofilm_base,
+			meemoofilmColor: true, // gqlIeObject?.meemoofilm_color,
+			meemoofilmContainsEmbeddedCaption: false, // gqlIeObject?.meemoofilm_contains_embedded_caption,
+			meemoofilmImageOrSound: '', // gqlIeObject?.meemoofilm_image_or_sound,
+			premisIdentifier: '', // gqlIeObject?.premis_identifier,
+			abstract: '', // gqlIeObject?.schema_abstract,
+			genre: [''], // gqlIeObject?.schema_genre,
+			inLanguage: [''], // gqlIeObject?.schema_in_language,
+			keywords: [''], // gqlIeObject?.schema_keywords,
+			maintainerId: '', // gqlIeObject?.organisation?.schema_identifier,
+			maintainerName: '', // gqlIeObject?.organisation?.schema_name,
+			publisher: '', // gqlIeObject?.schema_publisher,
+			spatial: [''], // gqlIeObject?.schema_spatial_coverage,
+			temporal: [''], // gqlIeObject?.schema_temporal_coverage,
+			premisIsPartOf: '', // gqlIeObject?.premis_is_part_of,
+			copyrightHolder: '', // gqlIeObject?.schema_copyright_holder,
+			meemooDescriptionCast: '', // gqlIeObject?.meemoo_description_cast,
+			representations: [], // this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
+			meemooDescriptionProgramme: '', // gqlIeObject?.meemoo_description_programme,
+			meemooOriginalCp: '', // gqlIeObject?.meemoo_original_cp,
+			durationInSeconds: 10, // gqlIeObject?.schema_duration_in_seconds,
+			copyrightNotice: '', // gqlIeObject?.schema_copyright_notice,
+			meemooMediaObjectId: '', // gqlIeObject?.meemoo_media_object_id,
+			actor: '', // gqlIeObject?.schema_actor,
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
+			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo,
+			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
+			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
+			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
+			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
+			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			publisher: gqlIeObject?.schema_publisher,
-			spatial: gqlIeObject?.schema_spatial_coverage,
-			temporal: gqlIeObject?.schema_temporal_coverage,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
-			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			copyrightHolder: gqlIeObject?.schema_copyright_holder,
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast,
-			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
-			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
-			meemooOriginalCp: gqlIeObject?.meemoo_original_cp,
-			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
-			copyrightNotice: gqlIeObject?.schema_copyright_notice,
-			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
-			actor: gqlIeObject?.schema_actor,
 		};
 	}
 
@@ -806,40 +785,5 @@ export class IeObjectsService {
 			return [];
 		}
 		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
-	}
-
-	private sortAndUnique(values: string[]): string[] {
-		return sortBy(uniq(compact(values)), (option) => option.toLowerCase());
-	}
-
-	public async getFilterOptions(): Promise<FilterOptions> {
-		const response = await this.dataService.execute<
-			GetFilterOptionsQuery,
-			GetFilterOptionsQueryVariables
-		>(GetFilterOptionsDocument, {});
-
-		return {
-			[IeObjectsSearchFilterField.OBJECT_TYPE]: this.sortAndUnique(
-				response.object_ie__ebucore_object_type.map((obj) => obj.ebucore_object_type)
-			),
-			[IeObjectsSearchFilterField.LANGUAGE]: this.sortAndUnique(
-				response.object_ie__schema_in_language.flatMap((obj) => obj.schema_in_language)
-			),
-			[IeObjectsSearchFilterField.MEDIUM]: this.sortAndUnique(
-				response.object_ie__dcterms_medium.flatMap((obj) => obj.dcterms_medium)
-			),
-			[IeObjectsSearchFilterField.GENRE]: this.sortAndUnique(
-				response.object_ie__schema_genre.flatMap((obj) => obj.schema_genre)
-			),
-			[IeObjectsSearchFilterField.MAINTAINER_ID]: sortBy(
-				uniq(
-					response.object_ie__schema_maintainer.flatMap((obj) => ({
-						id: obj.schema_maintainer_id,
-						name: obj.schema_maintainer_name,
-					}))
-				),
-				(obj) => obj.name?.toLowerCase()
-			),
-		};
 	}
 }

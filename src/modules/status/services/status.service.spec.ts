@@ -57,7 +57,7 @@ describe('StatusService', () => {
 	describe('getStatusFull', () => {
 		it('should return the name and version of the app and the graphql and elasticsearch connectivity', async () => {
 			mockDataService.execute.mockReturnValueOnce({
-				object_ie: [{ schema_identifier: '1' }],
+				graph_intellectual_entity: [{ schema_identifier: '1' }],
 			} as GetFirstObjectIdQuery);
 			mockIeObjectsService.executeQuery.mockReturnValueOnce({
 				hits: {
@@ -73,7 +73,7 @@ describe('StatusService', () => {
 
 		it('should return graphql and elasticsearch unreachable if no data is returned', async () => {
 			mockDataService.execute.mockResolvedValueOnce({
-				object_ie: [],
+				graph_intellectual_entity: [],
 			} as GetFirstObjectIdQuery);
 			mockIeObjectsService.executeQuery.mockResolvedValueOnce({
 				hits: {
