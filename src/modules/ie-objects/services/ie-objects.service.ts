@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { find, isEmpty, kebabCase } from 'lodash';
+import { compact, find, isEmpty, kebabCase } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -453,7 +453,6 @@ export class IeObjectsService {
 			premisIsPartOf: '', // gqlIeObject?.premis_is_part_of,
 			copyrightHolder: '', // gqlIeObject?.schema_copyright_holder,
 			meemooDescriptionCast: '', // gqlIeObject?.meemoo_description_cast,
-			representations: [], // this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
 			meemooDescriptionProgramme: '', // gqlIeObject?.meemoo_description_programme,
 			meemooOriginalCp: '', // gqlIeObject?.meemoo_original_cp,
 			durationInSeconds: 10, // gqlIeObject?.schema_duration_in_seconds,
@@ -474,6 +473,7 @@ export class IeObjectsService {
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			representations: this.adaptRepresentations(gqlIeObject),
 		};
 	}
 
@@ -605,40 +605,53 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public adaptRepresentations(graphQlRepresentations: any): IeObjectRepresentation[] {
-		if (isEmpty(graphQlRepresentations)) {
+	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[] {
+		if (isEmpty(gqlIeObject.isRepresentedBy)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return graphQlRepresentations.map((representation) => ({
-			name: representation?.schema_name,
-			alternateName: representation?.schema_alternate_name,
-			description: representation?.schema_description,
-			schemaIdentifier: representation?.ie_schema_identifier,
-			dctermsFormat: representation?.dcterms_format,
-			transcript: representation?.schema_transcript,
-			dateCreated: representation?.schema_date_created,
-			files: this.adaptFiles(representation?.premis_includes),
-		}));
+		return compact(
+			gqlIeObject.isRepresentedBy.map((representation) => {
+				if (!representation) {
+					return null;
+				}
+				return {
+					id: representation.id,
+					schemaName: representation.schema_name,
+					isMediaFragmentOf: representation.is_media_fragment_of,
+					schemaInLanguage: representation.schema_in_language,
+					schemaStartTime: representation.schema_start_time,
+					schemaTranscript: representation.schema_transcript,
+					edmIsNextInSequence: representation.edm_is_next_in_sequence,
+					updatedAt: representation.updated_at,
+					files: this.adaptFiles(representation.includes),
+				};
+			})
+		);
 	}
 
-	public adaptFiles(graphQlFiles: any): IeObjectFile[] {
+	public adaptFiles(graphQlFiles: GqlIeObject['isRepresentedBy'][0]['includes']): IeObjectFile[] {
 		if (isEmpty(graphQlFiles)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return graphQlFiles.map(
-			(file): IeObjectFile => ({
-				name: file?.schema_name,
-				alternateName: file?.schema_alternate_name,
-				description: file?.schema_description,
-				representationSchemaIdentifier: file?.representation_schema_identifier,
-				ebucoreMediaType: file?.ebucore_media_type,
-				ebucoreIsMediaFragmentOf: file?.ebucore_is_media_fragment_of,
-				embedUrl: file?.schema_embed_url,
-				schemaIdentifier: file?.schema_identifier,
+		return compact(
+			graphQlFiles.map((includeFile): IeObjectFile => {
+				const file = includeFile.file;
+				if (!file) {
+					return null;
+				}
+				return {
+					id: file.id,
+					name: file.schema_name,
+					mimeType: file.ebucore_has_mime_type,
+					storedAt: file.premis_stored_at,
+					thumbnailUrl: file.schema_thumbnail_url,
+					duration: file.schema_duration,
+					edmIsNextInSequence: file.edm_is_next_in_sequence,
+				};
 			})
 		);
 	}

@@ -28,6 +28,14 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		schema_date_created
 		meemoo_local_id
 		isRepresentedBy {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_transcript
+			edm_is_next_in_sequence
+			updated_at
 			includes {
 				file {
 					id
@@ -42,6 +50,14 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		}
 		hasPart {
 			isRepresentedBy {
+				id
+				schema_name
+				is_media_fragment_of
+				schema_in_language
+				schema_start_time
+				schema_transcript
+				edm_is_next_in_sequence
+				updated_at
 				includes {
 					file {
 						id

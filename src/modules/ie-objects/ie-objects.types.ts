@@ -62,24 +62,24 @@ export enum IeObjectExtraUserGroupType {
 export type EbucoreObjectType = 'footage' | 'program';
 
 export interface IeObjectFile {
+	id: string;
 	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	representationSchemaIdentifier: string;
-	ebucoreMediaType: string;
-	ebucoreIsMediaFragmentOf: string;
-	embedUrl: string;
+	mimeType: string;
+	storedAt: string;
+	thumbnailUrl: string;
+	duration: string;
+	edmIsNextInSequence: string;
 }
 
 export interface IeObjectRepresentation {
-	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	dctermsFormat: string;
-	transcript: string;
-	dateCreated: string;
+	id: string;
+	schemaName: string;
+	isMediaFragmentOf: string;
+	schemaInLanguage: string;
+	schemaStartTime: string;
+	schemaTranscript: string;
+	edmIsNextInSequence: string;
+	updatedAt: IeObjectFile[];
 	files: IeObjectFile[];
 }
 

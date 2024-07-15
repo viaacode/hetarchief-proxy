@@ -380,6 +380,14 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 			schema_date_created: '[2020-09-01,)',
 			isRepresentedBy: [
 				{
+					id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+					schema_name: 'Durf te vragen R002 A0001',
+					is_media_fragment_of: '',
+					schema_in_language: '',
+					schema_start_time: '',
+					schema_transcript: '',
+					edm_is_next_in_sequence: '',
+					updated_at: '',
 					includes: [
 						{
 							file: {
