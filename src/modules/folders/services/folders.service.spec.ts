@@ -257,7 +257,7 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
+			expect(adapted.name).toEqual(mockGqlFolderObjectLink.intellectualEntity.schema_name);
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);

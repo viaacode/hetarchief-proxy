@@ -50,6 +50,7 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
+	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
@@ -560,8 +561,8 @@ export class IeObjectsService {
 			maintainerOverlay: null,
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
-			spatial: [esObject?.schema_spatial_coverage],
-			temporal: [esObject?.schema_temporal_coverage],
+			spatial: esObject?.schema_spatial_coverage,
+			temporal: esObject?.schema_temporal_coverage,
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
@@ -569,7 +570,7 @@ export class IeObjectsService {
 			meemooLocalId: esObject?.meemoo_local_id,
 			meemooOriginalCp: esObject?.meemoo_original_cp,
 			durationInSeconds: esObject?.duration_seconds,
-			representations: this?.adaptRepresentations(esObject?.premis_is_represented_by),
+			representations: [],
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_type,
 			// Other
