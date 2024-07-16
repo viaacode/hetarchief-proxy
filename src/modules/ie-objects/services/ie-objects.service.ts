@@ -54,6 +54,7 @@ import {
 	GetFilterOptionsDocument,
 	type GetFilterOptionsQuery,
 	type GetFilterOptionsQueryVariables,
+	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
@@ -71,7 +72,6 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
@@ -224,7 +224,11 @@ export class IeObjectsService {
 	}
 
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		return mockNewspapers;
+		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
+
+		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
 	public async getRelated(
@@ -582,7 +586,7 @@ export class IeObjectsService {
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
-			temporal: esObject?.schema_temporal_coverage,
+			temporal: [esObject?.schema_temporal_coverage],
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,

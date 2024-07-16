@@ -1,0 +1,6 @@
+query getNewspaperTitles {
+	graph__newspapers_public {
+		id
+		schema_name
+	}
+}
