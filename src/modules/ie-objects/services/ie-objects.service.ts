@@ -612,7 +612,10 @@ export class IeObjectsService {
 
 		/* istanbul ignore next */
 		return compact(
-			gqlIeObject.isRepresentedBy.map((representation) => {
+			[
+				...gqlIeObject.isRepresentedBy,
+				...(gqlIeObject.hasPart?.flatMap((part) => part?.isRepresentedBy) || []),
+			].map((representation) => {
 				if (!representation) {
 					return null;
 				}
