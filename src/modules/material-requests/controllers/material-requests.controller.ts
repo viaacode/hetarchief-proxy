@@ -230,7 +230,7 @@ export class MaterialRequestsController {
 						data: {
 							material_request_group_id,
 							type: materialRequest.objectDctermsFormat,
-							external_id: materialRequest.objectMeemooIdentifier,
+							external_id: materialRequest.objectSchemaIdentifier,
 							fragment_id: materialRequest.objectSchemaIdentifier,
 							idp: Idp.MEEMOO,
 							user_group_name: user.getGroupName(),

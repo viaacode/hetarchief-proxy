@@ -8,7 +8,6 @@ query findObjectInCollection($collectionId: uuid, $objectSchemaIdentifier: Strin
 	) {
 		ie {
 			schema_identifier
-			meemoo_identifier
 			schema_name
 			schema_creator
 			schema_description

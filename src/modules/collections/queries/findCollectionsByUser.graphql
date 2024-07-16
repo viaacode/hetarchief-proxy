@@ -16,7 +16,6 @@ query findCollectionsByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			created_at
 			ie {
 				schema_identifier
-				meemoo_identifier
 				schema_name
 				dcterms_available
 			}

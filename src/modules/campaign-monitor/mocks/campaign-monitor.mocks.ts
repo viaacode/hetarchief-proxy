@@ -88,7 +88,7 @@ export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 export const mockRequestListItemToMaintainer: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
-	pid: mockMaterialRequest1.objectMeemooIdentifier,
+	pid: mockMaterialRequest1.objectSchemaIdentifier,
 	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
@@ -98,7 +98,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	cp_name: mockMaterialRequest1.maintainerName,
-	pid: mockMaterialRequest1.objectMeemooIdentifier,
+	pid: mockMaterialRequest1.objectSchemaIdentifier,
 	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,

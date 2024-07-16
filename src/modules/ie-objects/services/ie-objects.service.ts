@@ -618,7 +618,6 @@ export class IeObjectsService {
 			dctermsFormat: graphQlObject.ie?.dcterms_format,
 			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
 			datePublished: graphQlObject.ie?.schema_date_published,
-			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
 			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
 			isPartOf: graphQlObject.ie?.schema_is_part_of || {},
 		};
