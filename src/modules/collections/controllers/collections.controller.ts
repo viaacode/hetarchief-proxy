@@ -244,7 +244,7 @@ export class CollectionsController {
 				time: new Date().toISOString(),
 				data: {
 					type: ieObject.dctermsFormat,
-					pid: ieObject.meemooIdentifier,
+					pid: ieObject.schemaIdentifier,
 					fragment_id: objectSchemaIdentifier,
 					folder_id: collectionId,
 					user_group_name: user.getGroupName(),

@@ -82,6 +82,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
+		if (emailInfo.to.length === 0) {
+			return;
+		}
+
 		const groupedRecipientsByLanguage = Object.entries(
 			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
 		);

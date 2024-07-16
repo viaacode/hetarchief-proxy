@@ -186,9 +186,6 @@ describe('MaterialRequestsService', () => {
 			);
 			// object
 			expect(adapted.objectSchemaName).toEqual(mockGqlMaterialRequest2.object.schema_name);
-			expect(adapted.objectMeemooIdentifier).toEqual(
-				mockGqlMaterialRequest2.object.meemoo_identifier
-			);
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.object.dcterms_format
 			);

@@ -265,19 +265,14 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(true);
 		});
 
-		it('should return false if there is no email address', async () => {
-			try {
-				await campaignMonitorService.sendForVisit({
-					template: Template.VISIT_APPROVED,
-					visitRequest: getMockVisitRequest(),
-					to: [],
-				});
-				fail(
-					new Error('sendForVisit should throw an error when there is no email address')
-				);
-			} catch (err) {
-				expect(err.name).toEqual('BadRequestException');
-			}
+		it('should early return when no recipients are provided', async () => {
+			const response = await campaignMonitorService.sendForVisit({
+				template: Template.VISIT_APPROVED,
+				visitRequest: getMockVisitRequest(),
+				to: [],
+			});
+
+			expect(response).toBeUndefined();
 		});
 	});
 

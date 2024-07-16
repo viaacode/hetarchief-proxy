@@ -227,7 +227,6 @@ export class CollectionsService {
 					{ ie: { schema_name: { _ilike: query } } },
 					{ ie: { maintainer: { schema_name: { _ilike: query } } } },
 					{ ie: { dcterms_format: { _ilike: query } } },
-					{ ie: { meemoo_identifier: { _ilike: query } } },
 					{ ie: { schema_identifier: { _ilike: query } } },
 					{
 						ie: {

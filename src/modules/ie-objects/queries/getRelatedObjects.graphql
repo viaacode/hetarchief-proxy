@@ -1,17 +1,12 @@
-query getRelatedObjects(
-	$schemaIdentifier: String!
-	$meemooIdentifier: String!
-	$maintainerId: String
-) {
+query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 	object_ie(
 		where: {
 			schema_identifier: { _neq: $schemaIdentifier }
-			meemoo_identifier: { _eq: $meemooIdentifier }
+			meemoo_identifier: { _eq: $schemaIdentifier }
 			maintainer: { schema_identifier: { _eq: $maintainerId } }
 		}
 	) {
 		schema_identifier
-		meemoo_identifier
 		premis_identifier
 		premis_is_part_of
 		schema_is_part_of

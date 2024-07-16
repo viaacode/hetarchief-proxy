@@ -105,7 +105,6 @@ export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: string;
 	dctermsMedium: string;
-	meemooIdentifier: string; // PID (not unique per object)
 	meemoofilmBase: string;
 	meemoofilmColor: boolean;
 	meemoofilmImageOrSound: string;
@@ -219,7 +218,6 @@ export interface ElasticsearchObject {
 	dcterms_format: string;
 	dcterms_medium: string | null;
 	ebucore_object_type: EbucoreObjectType | null;
-	meemoo_identifier: string;
 	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)

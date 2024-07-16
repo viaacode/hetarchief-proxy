@@ -13,7 +13,6 @@ import { type ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types
 import {
 	mockGqlIeObjectFindByCollectionId,
 	mockGqlIeObjectFindByCollectionIdResult,
-	mockGqlIeObjectTuples,
 	mockGqlSitemapObject,
 	mockIeObject,
 	mockIeObjectDefaultLimitedMetadata,
@@ -318,28 +317,11 @@ describe('ieObjectsService', () => {
 		});
 	});
 
-	describe('countRelated', () => {
-		it('should succesfully count the related objects', async () => {
-			mockDataService.execute.mockResolvedValueOnce({
-				object_ie: mockGqlIeObjectTuples,
-			});
-
-			const result = await ieObjectsService.countRelated(['1', '2', '3']);
-
-			expect(result).toEqual({
-				s46h14z19k: 1,
-				w37kp8850k_001_wav: 1,
-				x921c4s60t: 2,
-			});
-		});
-	});
-
 	describe('getRelated', () => {
 		it('returns the related objects for a given id and meemooIdentifier', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
 			const response = await ieObjectsService.getRelated(
 				mockObjectSchemaIdentifier,
-				'8911p09j1g',
 				'referer',
 				'',
 				{ maintainerId: 'my-index' }

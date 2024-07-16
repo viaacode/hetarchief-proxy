@@ -23,7 +23,6 @@ import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
-	IeObjectsMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
@@ -239,16 +238,15 @@ export class IeObjectsController {
 		res.send(csvContent);
 	}
 
-	@Get(':schemaIdentifier/related/:meemooIdentifier')
+	@Get(':schemaIdentifier/related')
 	@ApiOperation({
 		description:
 			'Get objects that cover the same subject as the passed object schema identifier.',
 	})
 	public async getRelated(
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('schemaIdentifier') schemaIdentifier: string,
-		@Param('meemooIdentifier') meemooIdentifier: string,
 		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
@@ -257,15 +255,15 @@ export class IeObjectsController {
 
 		// We use the esIndex as the maintainerId -- no need to lowercase
 		const relatedIeObjects = await this.ieObjectsService.getRelated(
+			// TODO change this query to fetch related ie objects by using the schema identifier and the is_part_of relationship
 			schemaIdentifier,
-			meemooIdentifier,
 			referer,
 			getIpFromRequest(request),
 			ieObjectRelatedQueryDto
 		);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedRelatedIeObjects = {
+		return {
 			...relatedIeObjects,
 
 			// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
@@ -283,15 +281,6 @@ export class IeObjectsController {
 				)
 			),
 		};
-
-		return licensedRelatedIeObjects;
-	}
-
-	@Get('related/count')
-	public async countRelated(
-		@Query() countRelatedQuery: IeObjectsMeemooIdentifiersQueryDto
-	): Promise<Record<string, number>> {
-		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
 	}
 
 	@Get(':id/similar')

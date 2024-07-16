@@ -58,9 +58,6 @@ import {
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
-	GetObjectIdentifierTupleDocument,
-	type GetObjectIdentifierTupleQuery,
-	type GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
 	type GetRelatedObjectsQuery,
 	type GetRelatedObjectsQueryVariables,
@@ -206,23 +203,6 @@ export class IeObjectsService {
 		};
 	}
 
-	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
-		const items = await this.dataService.execute<
-			GetObjectIdentifierTupleQuery,
-			GetObjectIdentifierTupleQueryVariables
-		>(GetObjectIdentifierTupleDocument, {
-			meemooIdentifiers,
-		});
-
-		const count: Record<string, number> = {};
-
-		items?.object_ie?.forEach((item) => {
-			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
-		});
-
-		return count;
-	}
-
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
 		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
 
@@ -233,7 +213,6 @@ export class IeObjectsService {
 
 	public async getRelated(
 		schemaIdentifier: string,
-		meemooIdentifier: string,
 		referer: string,
 		ip: string,
 		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
@@ -243,7 +222,6 @@ export class IeObjectsService {
 			GetRelatedObjectsQueryVariables
 		>(GetRelatedObjectsDocument, {
 			schemaIdentifier,
-			meemooIdentifier,
 			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
 		});
 
@@ -449,7 +427,6 @@ export class IeObjectsService {
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
 			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
 			meemoofilmBase: gqlIeObject?.meemoofilm_base,
 			meemoofilmColor: gqlIeObject?.meemoofilm_color,
 			meemoofilmContainsEmbeddedCaption: gqlIeObject?.meemoofilm_contains_embedded_caption,
@@ -555,7 +532,6 @@ export class IeObjectsService {
 			dctermsFormat: esObject?.dcterms_format,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemooIdentifier: esObject?.meemoo_identifier,
 			meemoofilmBase: esObject?.meemoofilm_base,
 			meemoofilmColor: esObject?.meemoofilm_color,
 			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
@@ -771,7 +747,6 @@ export class IeObjectsService {
 			dctermsFormat: ieObject?.dctermsFormat,
 			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
 			datePublished: ieObject?.datePublished,
-			meemooIdentifier: ieObject?.meemooIdentifier,
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,

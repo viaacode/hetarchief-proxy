@@ -54,7 +54,6 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findBySchemaIdentifiers: jest.fn(),
 	findMetadataBySchemaIdentifier: jest.fn(),
 	getRelated: jest.fn(),
-	countRelated: jest.fn(),
 	getSimilar: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
 		objectIds: [],
@@ -145,7 +144,6 @@ describe('IeObjectsController', () => {
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
 		mockIeObjectsService.getRelated.mockRestore();
-		mockIeObjectsService.countRelated.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -434,25 +432,13 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getRelated(
+				'8911p09j1g',
 				'referer',
 				mockRequest,
-				'1',
-				'8911p09j1g',
 				{ maintainerId: '' },
 				mockSessionUser
 			);
 			expect(ieObject.items.length).toEqual(2);
-		});
-	});
-	describe('countRelated', () => {
-		it('should get the number of related ieObject items', async () => {
-			mockIeObjectsService.countRelated.mockResolvedValueOnce({});
-
-			const result = await ieObjectsController.countRelated({
-				meemooIdentifiers: ['1', '2', '3'],
-			});
-
-			expect(result).toEqual({});
 		});
 	});
 
