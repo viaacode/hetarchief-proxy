@@ -1,7 +1,7 @@
-import { Controller, Get, Headers, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { APIKEY, ApiKeyGuard } from '~shared/guards/api-key.guard';
 
@@ -25,6 +25,11 @@ export class OrganisationsController {
 		await this.organisationsService.updateOrganisationsCache();
 
 		return { message: 'cache has been updated successfully' };
+	}
+
+	@Get('maintainer-grid')
+	public async fetchOrganisationsForMaintainerGrid(@Query('limit') limit: number): Promise<any> {
+		return this.organisationsService.fetchRandomContentPartnersForMaintainerGrid(limit);
 	}
 
 	@Get(':slug')

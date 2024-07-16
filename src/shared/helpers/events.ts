@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
 export class EventsHelper {

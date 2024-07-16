@@ -1,23 +1,29 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { addHours, subHours } from 'date-fns';
 
 import { mockGqlVisitRequest, mockVisitApproved } from './__mocks__/cp_visit';
 import { VisitsService } from './visits.service';
 
 import {
-	FindPendingOrApprovedVisitRequestsForUserQuery,
-	FindVisitsQuery,
-	GetVisitRequestForAccessQuery,
-	InsertNoteMutation,
-	InsertVisitMutation,
+	type FindPendingOrApprovedVisitRequestsForUserQuery,
+	type FindVisitsQuery,
+	type GetVisitRequestForAccessQuery,
+	type InsertNoteMutation,
+	type InsertVisitMutation,
 	Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum,
-	PendingVisitCountForUserBySlugQuery,
-	UpdateVisitMutation,
+	type PendingVisitCountForUserBySlugQuery,
+	type UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
-import { AccessStatus, Visit, VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import {
+	AccessStatus,
+	type VisitRequest,
+	VisitStatus,
+	VisitTimeframe,
+} from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -45,7 +51,7 @@ const getDefaultVisitAggregateResponse = (): PendingVisitCountForUserBySlugQuery
 	},
 });
 
-const mockVisit: Visit = {
+const mockVisit: VisitRequest = {
 	id: mockGqlVisitRequest.id,
 	spaceId: mockGqlVisitRequest.cp_space_id,
 	spaceSlug: 'vrt',
@@ -65,6 +71,7 @@ const mockVisit: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	updatedById: null,
 	updatedByName: null,

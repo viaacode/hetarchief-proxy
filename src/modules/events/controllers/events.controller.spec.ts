@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Request } from 'express';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type Request } from 'express';
 
 import { EventsService } from '../services/events.service';
 import { LogEventType } from '../types';
@@ -7,8 +7,9 @@ import { LogEventType } from '../types';
 import { EventsController } from './events.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
 	insertEvents: jest.fn(),
@@ -20,6 +21,7 @@ const mockUser: User = {
 	lastName: 'Testerom',
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
+	language: Locale.Nl,
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,

@@ -1,19 +1,19 @@
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 
 import {
-	FindAllObjectsByCollectionIdQuery,
-	GetObjectDetailBySchemaIdentifierQuery,
-	GetRelatedObjectsQuery,
+	type FindAllObjectsByCollectionIdQuery,
+	type GetObjectDetailBySchemaIdentifiersQuery,
+	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { type IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
 >;
 
-export type IeObjectSeo = Pick<IeObject, 'name' | 'description'>;
+export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
-export type GqlIeObject = GetObjectDetailBySchemaIdentifierQuery['object_ie'][0] &
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
 	GetRelatedObjectsQuery['object_ie'][0];
 
 export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];
@@ -26,6 +26,7 @@ export enum MediaFormat {
 export enum IeObjectLicense {
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
 	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
+	PUBLIEK_CONTENT = 'VIAA-PUBLIEK-CONTENT',
 	BEZOEKERTOOL_METADATA_ALL = 'BEZOEKERTOOL-METADATA-ALL',
 	BEZOEKERTOOL_CONTENT = 'BEZOEKERTOOL-CONTENT',
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
@@ -127,8 +128,8 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	name: string;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	spatial: string[];
+	temporal: string[];
 	thumbnailUrl: string;
 	// EXTRA
 	sector?: IeObjectSector;
@@ -277,7 +278,7 @@ export interface ElasticsearchObject {
 	schema_publisher: {
 		Distributeur?: string[];
 	} | null;
-	schema_spatial_coverage: string;
+	schema_spatial_coverage: string[];
 	schema_temporal_coverage: string;
 	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT
@@ -311,6 +312,10 @@ export interface IeObjectsSitemap {
 	maintainerSlug: string;
 	name: string;
 	updatedAt: string;
+}
+
+export interface NewspaperTitle {
+	title: string;
 }
 
 export type FilterOptions = {

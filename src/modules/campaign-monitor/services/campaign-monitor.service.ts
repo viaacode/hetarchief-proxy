@@ -4,33 +4,34 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	Logger,
-	OnApplicationBootstrap,
+	type OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import got, { Got } from 'got';
-import { compact, get, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
+import * as promiseUtils from 'blend-promise-utils';
+import got, { type Got } from 'got';
+import { compact, groupBy, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
 import {
 	CampaignMonitorCustomFieldName,
-	CampaignMonitorNewsletterPreferences,
-	CampaignMonitorUserInfo,
-	MaterialRequestEmailInfo,
+	type CampaignMonitorNewsletterPreferences,
+	type CampaignMonitorUserInfo,
+	type MaterialRequestEmailInfo,
 	Template,
-	VisitEmailInfo,
+	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorConfirmMailQueryDto,
-	CampaignMonitorData,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	CampaignMonitorSendMailDto,
-	CampaignMonitorUpdatePreferencesData,
-	CampaignMonitorVisitData,
+	type CampaignMonitorConfirmationData,
+	type CampaignMonitorConfirmMailQueryDto,
+	type CampaignMonitorData,
+	type CampaignMonitorMaterialRequestData,
+	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	type CampaignMonitorSendMailDto,
+	type CampaignMonitorUpdatePreferencesData,
+	type CampaignMonitorVisitData,
 } from '../dto/campaign-monitor.dto';
 import { decryptData, encryptData } from '../helpers/crypto-helper';
 
@@ -38,9 +39,10 @@ import {
 	MaterialRequestRequesterCapacity,
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
-import { Visit } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { type Locale } from '~shared/types/types';
 
 @Injectable()
 export class CampaignMonitorService implements OnApplicationBootstrap {
@@ -80,26 +82,35 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
-		const recipients: string[] = [];
+		const groupedRecipientsByLanguage = Object.entries(
+			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
+		);
 
-		emailInfo.to.forEach((recipient) => {
-			if (recipient.email) {
-				recipients.push(recipient.email);
-			} else {
-				// If there are no recipients, the mails will be sent to a fallback email address
-				recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
-			}
-		});
+		await promiseUtils.map(groupedRecipientsByLanguage, async ([language, recipients]) => {
+			const recipientsForLanguage: string[] = [];
+			recipients.forEach((recipient) => {
+				if (recipient.email) {
+					recipientsForLanguage.push(recipient.email);
+				} else {
+					// If there are no recipients, the mails will be sent to a fallback email address
+					recipientsForLanguage.push(
+						this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK')
+					);
+				}
+			});
+			const data: CampaignMonitorData = {
+				to: recipientsForLanguage,
+				consentToTrack: 'unchanged',
+				data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
+			};
 
-		const data: CampaignMonitorData = {
-			to: recipients,
-			consentToTrack: 'unchanged',
-			data: this.convertVisitToEmailTemplateData(emailInfo.visit),
-		};
-
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				language as Locale
+			);
 		});
 	}
 
@@ -118,14 +129,18 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: emailInfo.template,
+				data,
+			},
+			emailInfo.language
+		);
 	}
 
 	public async sendConfirmationMail(
-		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+		language: Locale
 	): Promise<void> {
 		const recipients: string[] = [];
 		if (preferences?.mail) {
@@ -146,10 +161,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertToConfirmationEmailTemplateData(preferences),
 		};
 
-		await this.sendTransactionalMail({
-			template: Template.EMAIL_CONFIRMATION,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: Template.EMAIL_CONFIRMATION,
+				data,
+			},
+			language
+		);
 	}
 
 	public async confirmEmail({
@@ -269,7 +287,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		}
 	}
 
-	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<void> {
+	public async sendTransactionalMail(
+		emailInfo: CampaignMonitorSendMailDto,
+		lang: Locale
+	): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
 				const error = new BadRequestException(
@@ -281,7 +302,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 			let cmTemplateId: string;
 			if (Object.values(Template).includes(emailInfo.template as any)) {
-				cmTemplateId = getTemplateId(emailInfo.template);
+				cmTemplateId = getTemplateId(emailInfo.template, lang);
 			} else {
 				cmTemplateId = emailInfo.template;
 			}
@@ -368,7 +389,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		return this.rerouteEmailsTo ? this.rerouteEmailsTo : email;
 	}
 
-	public convertVisitToEmailTemplateData(visit: Visit): CampaignMonitorVisitData {
+	public convertVisitToEmailTemplateData(visit: VisitRequest): CampaignMonitorVisitData {
 		return {
 			client_firstname: visit.visitorFirstName,
 			client_lastname: visit.visitorLastName,
@@ -378,7 +399,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			request_reason: visit.reason,
 			request_time: visit.timeframe,
 			request_url: this.buildUrlToAdminVisit(), // TODO deeplink to visit & extract to shared url builder?
-			request_remark: get(visit.note, 'note', ''),
+			request_remark: visit.note?.note || '',
 			start_date: visit.startAt ? formatAsBelgianDate(visit.startAt, 'd MMMM yyyy') : '',
 			start_time: visit.startAt ? formatAsBelgianDate(visit.startAt, 'HH:mm') : '',
 			end_date: visit.endAt ? formatAsBelgianDate(visit.endAt, 'd MMMM yyyy') : '',
@@ -390,14 +411,20 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		emailInfo: MaterialRequestEmailInfo
 	): CampaignMonitorMaterialRequestData {
 		const MATERIAL_REQUEST_TYPE_TRANSLATIONS: Record<MaterialRequestType, string> = {
-			[MaterialRequestType.VIEW]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren'
+			[MaterialRequestType.VIEW]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren',
+				null,
+				emailInfo.language
 			),
-			[MaterialRequestType.REUSE]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken'
+			[MaterialRequestType.REUSE]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken',
+				null,
+				emailInfo.language
 			),
-			[MaterialRequestType.MORE_INFO]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object'
+			[MaterialRequestType.MORE_INFO]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object',
+				null,
+				emailInfo.language
 			),
 		};
 
@@ -405,17 +432,25 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			MaterialRequestRequesterCapacity,
 			string
 		> = {
-			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___andere'
+			[MaterialRequestRequesterCapacity.OTHER]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___andere',
+				null,
+				emailInfo.language
 			),
-			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs'
+			[MaterialRequestRequesterCapacity.WORK]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-op-in-het-kader-van-mijn-beroep-uitgezonderd-onderwijs',
+				null,
+				emailInfo.language
 			),
-			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek'
+			[MaterialRequestRequesterCapacity.PRIVATE_RESEARCH]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-vraag-de-fragmenten-aan-in-het-kader-van-prive-onderzoek',
+				null,
+				emailInfo.language
 			),
-			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.t(
-				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever'
+			[MaterialRequestRequesterCapacity.EDUCATION]: this.translationsService.tText(
+				'modules/campaign-monitor/services/campaign-monitor___ik-ben-verbonden-aan-een-onderwijsinstelling-als-student-onderzoeker-of-lesgever',
+				null,
+				emailInfo.language
 			),
 		};
 
@@ -481,6 +516,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			[CampaignMonitorCustomFieldName.created_date]: userInfo.created_date,
 			[CampaignMonitorCustomFieldName.last_access_date]: userInfo.last_access_date,
 			[CampaignMonitorCustomFieldName.organisation]: userInfo.organisation,
+			[CampaignMonitorCustomFieldName.language]: userInfo.language,
 		};
 		if (!isNil(optin_mail_lists)) {
 			customFields[CampaignMonitorCustomFieldName.optin_mail_lists] = optin_mail_lists;

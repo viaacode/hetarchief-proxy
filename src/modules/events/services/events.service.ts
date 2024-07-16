@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import got, { Got } from 'got';
+import got, { type Got } from 'got';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { INSERT_EVENTS } from '../queries/queries.gql';
-import { LogEvent } from '../types';
+import { type LogEvent } from '../types';
 
 @Injectable()
 export class EventsService {

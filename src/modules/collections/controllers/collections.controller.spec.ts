@@ -1,28 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
-import { Request } from 'express';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
+import { type Request } from 'express';
 
 import { CollectionsService } from '../services/collections.service';
 
 import { CollectionsController } from './collections.controller';
 
-import { Collection, CollectionStatus } from '~modules/collections/types';
+import { type Collection, CollectionStatus } from '~modules/collections/types';
 import { EventsService } from '~modules/events/services/events.service';
-import { IeObject } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject } from '~modules/ie-objects/ie-objects.types';
 import { mockIeObject } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
-import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockCollectionsResponse: IPagination<Collection> = {
 	items: [
 		{
 			id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 			name: 'Favorieten',
+			description: 'Mijn favoriete items',
 			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 			isDefault: true,
 			createdAt: '2022-02-18T09:19:09.487977',
@@ -30,7 +31,8 @@ const mockCollectionsResponse: IPagination<Collection> = {
 		},
 		{
 			id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
-			name: 'my favorite movies',
+			name: 'mijn favorite films',
+			description: 'Mijn favoriete films',
 			userProfileId: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
 			isDefault: false,
 			createdAt: '2022-02-22T13:51:01.995293',
@@ -74,6 +76,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
@@ -102,7 +105,7 @@ const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllObjectMetadataByCollectionId: jest.fn(),
-	findBySchemaIdentifier: jest.fn(),
+	findBySchemaIdentifiers: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
@@ -113,7 +116,6 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 
 describe('CollectionsController', () => {
 	let collectionsController: CollectionsController;
-	let sessionHelperSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -142,14 +144,10 @@ describe('CollectionsController', () => {
 			.compile();
 
 		collectionsController = module.get<CollectionsController>(CollectionsController);
-
-		sessionHelperSpy = jest
-			.spyOn(SessionHelper, 'getArchiefUserInfo')
-			.mockReturnValue(mockUser);
 	});
 
-	afterEach(async () => {
-		sessionHelperSpy?.mockRestore();
+	afterEach(() => {
+		jest.resetAllMocks();
 	});
 
 	it('should be defined', () => {
@@ -270,7 +268,13 @@ describe('CollectionsController', () => {
 			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
 				mockCollectionsResponse.items[0]
 			);
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValue(mockIeObject);
+			mockCollectionsService.findCollectionById.mockResolvedValueOnce(
+				mockCollectionsResponse.items[0]
+			);
+			mockCollectionsService.findObjectInCollectionBySchemaIdentifier.mockResolvedValue(
+				mockCollectionsResponse.items[0]
+			);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject]);
 			const collectionObject = await collectionsController.addObjectToCollection(
 				mockRequest,
 				'referer',
@@ -289,6 +293,9 @@ describe('CollectionsController', () => {
 				...mockCollectionsResponse.items[0],
 				userProfileId: 'other-profile-id',
 			});
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([
+				mockCollectionsResponse.items[0],
+			]);
 
 			let error;
 			try {

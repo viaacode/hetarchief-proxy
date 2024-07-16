@@ -1,4 +1,5 @@
-import jsep, { Expression } from 'jsep';
+import jsep, { type Expression } from 'jsep';
+import { compact } from 'lodash';
 
 import { decodeSearchterm, encodeSearchterm } from './encode-search-term';
 
@@ -14,8 +15,12 @@ export function convertStringToSearchTerms(searchQuery: string): string[] {
 	if (!searchQuery) {
 		return [];
 	}
-	const node = jsep(encodeSearchterm(searchQuery));
-	return convertNodeToSearchTerms(node);
+	try {
+		const node = jsep(encodeSearchterm(searchQuery));
+		return convertNodeToSearchTerms(node);
+	} catch (err) {
+		return compact(searchQuery.replace(/[^a-zA-Z0-9]+/g, ' ').split(' '));
+	}
 }
 
 export function convertNodeToSearchTerms(node: Expression): string[] {

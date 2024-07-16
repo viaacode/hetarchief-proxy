@@ -17,20 +17,20 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { AssetType } from '@viaa/avo2-types';
 import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
-import { Space } from '../types';
+import { type VisitorSpace } from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { VisitorSpaceStatus } from '~shared/types/types';
 
 @ApiTags('Spaces')
 @Controller('spaces')
@@ -48,7 +48,7 @@ export class SpacesController {
 	public async getSpaces(
 		@Query() queryDto: SpacesQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Space>> {
+	): Promise<IPagination<VisitorSpace>> {
 		// status filter on inactive requires special permission
 		if (
 			queryDto.status &&
@@ -56,9 +56,12 @@ export class SpacesController {
 				queryDto.status.includes(VisitorSpaceStatus.Requested)) &&
 			!user.has(Permission.READ_ALL_SPACES)
 		) {
+			const userLanguage = user.getLanguage();
 			throw new ForbiddenException(
-				this.translationsService.t(
-					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data'
+				this.translationsService.tText(
+					'modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data',
+					null,
+					userLanguage
 				)
 			);
 		}
@@ -88,15 +91,17 @@ export class SpacesController {
 	public async getSpaceBySlug(
 		@Param('slug') slug: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Space | null> {
+	): Promise<VisitorSpace | null> {
 		const space = await this.spacesService.findBySlug(slug);
 		if (!space) {
+			const userLanguage = user.getLanguage();
 			throw new NotFoundException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found',
 					{
 						slug,
-					}
+					},
+					userLanguage
 				)
 			);
 		}
@@ -124,8 +129,10 @@ export class SpacesController {
 					format: 'binary',
 				},
 				slug: { type: 'string' },
-				description: { type: 'string' },
-				serviceDescription: { type: 'string' },
+				descriptionNl: { type: 'string' },
+				serviceDescriptionNl: { type: 'string' },
+				descriptionEn: { type: 'string' },
+				serviceDescriptionEn: { type: 'string' },
 				color: { type: 'string' },
 				image: { type: 'string' },
 				status: { type: 'string' },
@@ -138,14 +145,14 @@ export class SpacesController {
 		@Body() updateSpaceDto: UpdateSpaceDto,
 		@UploadedFile() file: Express.Multer.File,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Space> {
-		const space = await this.spacesService.findById(id);
+	): Promise<VisitorSpace> {
+		const visitorSpace = await this.spacesService.findById(id);
 		if (
 			user.has(Permission.UPDATE_OWN_SPACE) &&
 			user.hasNot(Permission.UPDATE_ALL_SPACES) &&
-			user.getOrganisationId() !== space.maintainerId
+			user.getOrganisationId() !== visitorSpace.maintainerId
 		) {
-			throw new ForbiddenException('You are not authorized to update this visitor space');
+			throw new ForbiddenException('You are not authorized to update this visitorSpace');
 		}
 
 		if (updateSpaceDto.slug && user.hasNot(Permission.UPDATE_ALL_SPACES)) {
@@ -156,18 +163,18 @@ export class SpacesController {
 			updateSpaceDto.image = await this.assetsService.uploadAndTrack(
 				AssetType.SPACE_IMAGE,
 				file,
-				space.maintainerId
+				visitorSpace.maintainerId
 			);
-			if (space.image) {
-				// space already has an image: delete existing one
-				await this.assetsService.delete(space.image);
+			if (visitorSpace.image) {
+				// visitorSpace already has an image: delete existing one
+				await this.assetsService.delete(visitorSpace.image);
 			}
-		} else if (space.image && updateSpaceDto.image === '') {
+		} else if (visitorSpace.image && updateSpaceDto.image === '') {
 			// image is empty: delete current image
-			await this.assetsService.delete(space.image);
+			await this.assetsService.delete(visitorSpace.image);
 		}
 
-		return this.spacesService.update(id, updateSpaceDto);
+		return this.spacesService.update(id, updateSpaceDto, user.getLanguage());
 	}
 
 	@Post()
@@ -186,8 +193,10 @@ export class SpacesController {
 					type: 'string',
 					format: 'binary',
 				},
-				description: { type: 'string' },
-				serviceDescription: { type: 'string' },
+				descriptionNl: { type: 'string' },
+				serviceDescriptionNl: { type: 'string' },
+				descriptionEn: { type: 'string' },
+				serviceDescriptionEn: { type: 'string' },
 				color: { type: 'string' },
 				image: { type: 'string' },
 				status: { type: 'string' },
@@ -197,8 +206,9 @@ export class SpacesController {
 	@RequireAllPermissions(Permission.CREATE_SPACES)
 	public async createSpace(
 		@Body() createSpaceDto: CreateSpaceDto,
-		@UploadedFile() file: Express.Multer.File
-	): Promise<Space> {
+		@UploadedFile() file: Express.Multer.File,
+		@SessionUser() user: SessionUserEntity
+	): Promise<VisitorSpace> {
 		// create dto is inherited from update, and conflicts with slug: required here, optional in update
 		if (!createSpaceDto.slug) {
 			// same error as other validation errors
@@ -215,6 +225,6 @@ export class SpacesController {
 		// Space is always created with 'REQUESTED' status
 		createSpaceDto.status = VisitorSpaceStatus.Requested;
 
-		return this.spacesService.create(createSpaceDto);
+		return this.spacesService.create(createSpaceDto, user.getLanguage());
 	}
 }

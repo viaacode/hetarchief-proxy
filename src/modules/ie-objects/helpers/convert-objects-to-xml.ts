@@ -2,7 +2,7 @@ import _ from 'lodash';
 import convert from 'xml-js';
 
 import { IE_OBJECT_PROPS_METADATA_EXPORT } from '../ie-objects.conts';
-import { IeObject } from '../ie-objects.types';
+import { type IeObject } from '../ie-objects.types';
 
 export const convertObjectsToXml = (objects: Partial<IeObject>[]): string => {
 	// this structure defines the parent 'objects' tag, which includes

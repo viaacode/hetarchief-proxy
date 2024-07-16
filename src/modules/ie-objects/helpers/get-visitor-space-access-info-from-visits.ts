@@ -1,16 +1,19 @@
-import { IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
+import { type IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
-import { Visit, VisitAccessType } from '~modules/visits/types';
+import { VisitAccessType, type VisitRequest } from '~modules/visits/types';
 
 export const getVisitorSpaceAccessInfoFromVisits = (
-	activeVisits: Visit[]
+	activeVisits: VisitRequest[]
 ): IeObjectsVisitorSpaceInfo => {
 	return {
 		visitorSpaceIds:
 			activeVisits
-				?.filter((activeVisit: Visit) => activeVisit.accessType === VisitAccessType.Full)
-				?.map((activeVisit: Visit) => activeVisit.spaceMaintainerId) || [],
+				?.filter(
+					(activeVisit: VisitRequest) => activeVisit.accessType === VisitAccessType.Full
+				)
+				?.map((activeVisit: VisitRequest) => activeVisit.spaceMaintainerId) || [],
 		objectIds:
-			activeVisits?.flatMap((activeVisit: Visit) => activeVisit.accessibleObjectIds) || [],
+			activeVisits?.flatMap((activeVisit: VisitRequest) => activeVisit.accessibleObjectIds) ||
+			[],
 	};
 };

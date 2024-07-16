@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@nestjs/common';
 import { NotImplementedException } from '@nestjs/common/exceptions/not-implemented.exception';
-import { DatabaseType } from '@viaa/avo2-types';
+import { type DatabaseType } from '@viaa/avo2-types';
 
 import { DEFAULT_CONFIG } from './config.const';
-import { Configuration } from './config.types';
+import { type Configuration } from './config.types';
 
 const WHITE_LIST_DOMAINS = ['http://localhost:3000'];
 const VALID_MIME_TYPES: string[] = ['image/png', 'image/gif', 'image/jpeg', 'image/bmp'];
@@ -55,8 +55,6 @@ const config = (): Configuration => {
 		SAML_SP_ENTITY_ID: getEnvValue('SAML_SP_ENTITY_ID', true),
 		SAML_SP_PRIVATE_KEY: cleanMultilineEnv(getEnvValue('SAML_SP_PRIVATE_KEY', false)),
 		SAML_SP_CERTIFICATE: cleanMultilineEnv(getEnvValue('SAML_SP_CERTIFICATE', false)),
-		SAML_MEEMOO_IDP_META_DATA_ENDPOINT: getEnvValue('SAML_MEEMOO_IDP_META_DATA_ENDPOINT', true),
-		SAML_MEEMOO_SP_ENTITY_ID: getEnvValue('SAML_MEEMOO_SP_ENTITY_ID', true),
 		CORS_ENABLE_WHITELIST: getEnvValue('CORS_ENABLE_WHITELIST', false) === 'true',
 		CORS_OPTIONS: {
 			origin: (origin: string, callback: (err: Error, allow: boolean) => void) => {

@@ -7,78 +7,78 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
 import { find, isArray, isEmpty, set, uniq } from 'lodash';
 
-import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
+import { type CreateVisitDto, type UpdateVisitDto, type VisitsQueryDto } from '../dto/visits.dto';
 import {
 	AccessStatus,
-	GqlNote,
-	GqlUpdateVisit,
-	GqlVisit,
-	GqlVisitWithNotes,
-	Note,
-	Visit,
+	type GqlNote,
+	type GqlUpdateVisit,
+	type GqlVisit,
+	type GqlVisitWithNotes,
+	type Note,
 	VisitAccessType,
-	VisitSpaceCount,
+	type VisitRequest,
+	type VisitSpaceCount,
 	VisitStatus,
 	VisitTimeframe,
 } from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import {
 	DeleteVisitFolderAccessDocument,
-	DeleteVisitFolderAccessMutation,
-	DeleteVisitFolderAccessMutationVariables,
+	type DeleteVisitFolderAccessMutation,
+	type DeleteVisitFolderAccessMutationVariables,
 	FindActiveVisitByUserAndSpaceDocument,
-	FindActiveVisitByUserAndSpaceQuery,
-	FindActiveVisitByUserAndSpaceQueryVariables,
+	type FindActiveVisitByUserAndSpaceQuery,
+	type FindActiveVisitByUserAndSpaceQueryVariables,
 	FindApprovedAlmostEndedVisitsWithoutNotificationDocument,
-	FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
-	FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedAlmostEndedVisitsWithoutNotificationQuery,
+	type FindApprovedAlmostEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedEndedVisitsWithoutNotificationDocument,
-	FindApprovedEndedVisitsWithoutNotificationQuery,
-	FindApprovedEndedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedEndedVisitsWithoutNotificationQuery,
+	type FindApprovedEndedVisitsWithoutNotificationQueryVariables,
 	FindApprovedStartedVisitsWithoutNotificationDocument,
-	FindApprovedStartedVisitsWithoutNotificationQuery,
-	FindApprovedStartedVisitsWithoutNotificationQueryVariables,
+	type FindApprovedStartedVisitsWithoutNotificationQuery,
+	type FindApprovedStartedVisitsWithoutNotificationQueryVariables,
 	FindPendingOrApprovedVisitRequestsForUserDocument,
-	FindPendingOrApprovedVisitRequestsForUserQuery,
-	FindPendingOrApprovedVisitRequestsForUserQueryVariables,
+	type FindPendingOrApprovedVisitRequestsForUserQuery,
+	type FindPendingOrApprovedVisitRequestsForUserQueryVariables,
 	FindVisitByIdDocument,
-	FindVisitByIdQuery,
-	FindVisitByIdQueryVariables,
+	type FindVisitByIdQuery,
+	type FindVisitByIdQueryVariables,
 	FindVisitEndDatesByFolderIdDocument,
-	FindVisitEndDatesByFolderIdQuery,
-	FindVisitEndDatesByFolderIdQueryVariables,
+	type FindVisitEndDatesByFolderIdQuery,
+	type FindVisitEndDatesByFolderIdQueryVariables,
 	FindVisitsDocument,
-	FindVisitsQuery,
-	FindVisitsQueryVariables,
+	type FindVisitsQuery,
+	type FindVisitsQueryVariables,
 	GetVisitRequestForAccessDocument,
-	GetVisitRequestForAccessQuery,
-	GetVisitRequestForAccessQueryVariables,
+	type GetVisitRequestForAccessQuery,
+	type GetVisitRequestForAccessQueryVariables,
 	InsertNoteDocument,
-	InsertNoteMutation,
-	InsertNoteMutationVariables,
+	type InsertNoteMutation,
+	type InsertNoteMutationVariables,
 	InsertVisitDocument,
 	InsertVisitFolderAccessDocument,
-	InsertVisitFolderAccessMutation,
-	InsertVisitFolderAccessMutationVariables,
-	InsertVisitMutation,
-	InsertVisitMutationVariables,
+	type InsertVisitFolderAccessMutation,
+	type InsertVisitFolderAccessMutationVariables,
+	type InsertVisitMutation,
+	type InsertVisitMutationVariables,
 	PendingVisitCountForUserBySlugDocument,
-	PendingVisitCountForUserBySlugQuery,
-	PendingVisitCountForUserBySlugQueryVariables,
+	type PendingVisitCountForUserBySlugQuery,
+	type PendingVisitCountForUserBySlugQueryVariables,
 	UpdateVisitDocument,
-	UpdateVisitMutation,
-	UpdateVisitMutationVariables,
+	type UpdateVisitMutation,
+	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
+import { type VisitorSpaceStatus } from '~shared/types/types';
 
 @Injectable()
 export class VisitsService {
@@ -141,7 +141,7 @@ export class VisitsService {
 		return contactPoint?.telephone || null;
 	}
 
-	public adapt(graphQlVisit: GqlVisit): Visit | null {
+	public adapt(graphQlVisit: GqlVisit): VisitRequest | null {
 		if (!graphQlVisit) {
 			return null;
 		}
@@ -169,8 +169,10 @@ export class VisitsService {
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
 			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information?.logo?.iri,
 			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information?.description,
-			spaceDescription: graphQlVisit?.visitor_space?.schema_description,
-			spaceServiceDescription: graphQlVisit?.visitor_space?.schema_service_description,
+			spaceDescriptionNl: graphQlVisit?.visitor_space?.schema_description_nl,
+			spaceServiceDescriptionNl: graphQlVisit?.visitor_space?.schema_service_description_nl,
+			spaceDescriptionEn: graphQlVisit?.visitor_space?.schema_description_en,
+			spaceServiceDescriptionEn: graphQlVisit?.visitor_space?.schema_service_description_en,
 			startAt: graphQlVisit?.start_date,
 			status: graphQlVisit?.status as VisitStatus,
 			accessType: graphQlVisit?.access_type || VisitAccessType.Full,
@@ -184,6 +186,7 @@ export class VisitsService {
 			visitorName: graphQlVisit?.requested_by?.full_name,
 			visitorFirstName: graphQlVisit?.requested_by?.first_name,
 			visitorLastName: graphQlVisit?.requested_by?.last_name,
+			visitorLanguage: graphQlVisit?.requested_by?.language,
 			accessibleFolderIds: uniq(
 				graphQlVisit.accessible_folders.map(
 					(accessibleFolderLink) => accessibleFolderLink.folder.id
@@ -223,7 +226,7 @@ export class VisitsService {
 	public async create(
 		createVisitDto: CreateVisitDto & { visitorSpaceId: string },
 		userProfileId: string
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
 		const newVisit = {
 			cp_space_id: createVisitDto.visitorSpaceId,
 			user_profile_id: userProfileId,
@@ -247,7 +250,7 @@ export class VisitsService {
 		id: string,
 		updateVisitDto: UpdateVisitDto,
 		userProfileId: string
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
 		const { startAt, endAt, accessType } = updateVisitDto;
 		let { accessFolderIds } = updateVisitDto;
 		// if any of these is set, both must be set (db constraint)
@@ -321,7 +324,7 @@ export class VisitsService {
 				InsertVisitFolderAccessMutationVariables
 			>(InsertVisitFolderAccessDocument, {
 				objects: [
-					...accessFolderIds.map((accessFolderId: string) => ({
+					...(accessFolderIds as string[]).map((accessFolderId: string) => ({
 						folder_id: accessFolderId,
 						visit_request_id: currentVisit.id,
 					})),
@@ -370,7 +373,7 @@ export class VisitsService {
 			userProfileId?: string;
 			visitorSpaceStatuses?: VisitorSpaceStatus[];
 		}
-	): Promise<IPagination<Visit>> {
+	): Promise<IPagination<VisitRequest>> {
 		const { query, status, timeframe, accessType, page, size, orderProp, orderDirection } =
 			inputQuery;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
@@ -460,7 +463,7 @@ export class VisitsService {
 			),
 		});
 
-		return Pagination<Visit>({
+		return Pagination<VisitRequest>({
 			items: visitsResponse.maintainer_visitor_space_request.map((visit: any) =>
 				this.adapt(visit)
 			),
@@ -470,7 +473,7 @@ export class VisitsService {
 		});
 	}
 
-	public async findById(id: string): Promise<Visit> {
+	public async findById(id: string): Promise<VisitRequest> {
 		const visitResponse = await this.dataService.execute<
 			FindVisitByIdQuery,
 			FindVisitByIdQueryVariables
@@ -497,7 +500,7 @@ export class VisitsService {
 	public async getActiveVisitForUserAndSpace(
 		userProfileId: string,
 		visitorSpaceSlug: string
-	): Promise<Visit | null> {
+	): Promise<VisitRequest | null> {
 		const visitResponse = await this.dataService.execute<
 			FindActiveVisitByUserAndSpaceQuery,
 			FindActiveVisitByUserAndSpaceQueryVariables
@@ -533,7 +536,7 @@ export class VisitsService {
 		};
 	}
 
-	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<Visit[]> {
+	public async getApprovedAndStartedVisitsWithoutNotification(): Promise<VisitRequest[]> {
 		const visitsResponse = await this.dataService.execute<
 			FindApprovedStartedVisitsWithoutNotificationQuery,
 			FindApprovedStartedVisitsWithoutNotificationQueryVariables
@@ -568,8 +571,8 @@ export class VisitsService {
 
 	/**
 	 * Checks if the user has access to a maintainer's space because he has an approved visit request for the current date
-	 * @param userProfileId: UUID of a user
-	 * @param maintainerOrId: OR-id of a maintainer
+	 * @param userProfileId
+	 * @param maintainerOrId
 	 */
 	async hasAccess(userProfileId: string, maintainerOrId: string): Promise<boolean> {
 		const visitsResponse = await this.dataService.execute<

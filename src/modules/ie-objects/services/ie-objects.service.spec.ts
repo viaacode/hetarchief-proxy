@@ -1,13 +1,15 @@
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 import nock from 'nock';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
+import { type ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
 import {
 	mockGqlIeObjectFindByCollectionId,
 	mockGqlIeObjectFindByCollectionIdResult,
@@ -69,6 +71,10 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findAll: jest.fn(),
 };
 
+const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
+	wrap: jest.fn().mockImplementation((key, cb) => cb()),
+};
+
 const mockObjectSchemaIdentifier = mockObjectIe.object_ie[0].schema_identifier;
 
 const getMockMediaResponse = () => ({
@@ -119,6 +125,10 @@ describe('ieObjectsService', () => {
 				{
 					provide: SpacesService,
 					useValue: mockSpacesService,
+				},
+				{
+					provide: CACHE_MANAGER,
+					useValue: mockCacheService,
 				},
 			],
 		})
@@ -190,15 +200,16 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockObjectIe);
-			const response = await ieObjectsService.findBySchemaIdentifier(
-				mockObjectSchemaIdentifier,
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.maintainerId).toEqual('OR-rf5kf25');
-			expect(response.copyrightHolder).toEqual('vrt');
-			expect(response.keywords.length).toBeGreaterThan(10);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
+			expect(ieObject.copyrightHolder).toEqual('vrt');
+			expect(ieObject.keywords.length).toBeGreaterThan(10);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
@@ -207,14 +218,15 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await ieObjectsService.findBySchemaIdentifier(
-				mockObjectSchemaIdentifier,
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);
 
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.representations).toEqual([]);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.representations).toEqual([]);
 		});
 
 		it('returns an empty array if no files were found', async () => {
@@ -222,14 +234,15 @@ describe('ieObjectsService', () => {
 			objectIeMock.object_ie[0].premis_is_represented_by[0].premis_includes = null;
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const response = await ieObjectsService.findBySchemaIdentifier(
-				mockObjectSchemaIdentifier,
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
+				[mockObjectSchemaIdentifier],
 				'referer',
 				''
 			);
 
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.representations[0].files).toEqual([]);
+			const ieObject = ieObjects[0];
+			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(ieObject.representations[0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {
@@ -238,13 +251,12 @@ describe('ieObjectsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			try {
-				await ieObjectsService.findBySchemaIdentifier('invalidId', 'referer', '');
-				fail('findBySchemaIdentifier should have thrown an error');
-			} catch (err) {
-				expect(err.name).toEqual('NotFoundException');
-				expect(err.message).toEqual("Object IE with id 'invalidId' not found");
-			}
+			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
+				['invalidId'],
+				'referer',
+				''
+			);
+			expect(ieObjects).toEqual([]);
 		});
 	});
 

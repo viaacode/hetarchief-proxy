@@ -12,7 +12,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
+import { type CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
@@ -28,6 +28,7 @@ import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Campaign-monitor')
 @Controller('campaign-monitor')
@@ -48,9 +49,13 @@ export class CampaignMonitorController {
 		).join(', ')}). Data custom fields are dependent on provided template type.`,
 	})
 	async sendTransactionalMail(
-		@Body() emailInfo: CampaignMonitorSendMailDto
+		@Body() emailInfo: CampaignMonitorSendMailDto,
+		@SessionUser() user?: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		await this.campaignMonitorService.sendTransactionalMail(emailInfo);
+		await this.campaignMonitorService.sendTransactionalMail(
+			emailInfo,
+			user?.getLanguage() || Locale.Nl
+		);
 		return { message: 'success' };
 	}
 
@@ -75,7 +80,7 @@ export class CampaignMonitorController {
 		try {
 			if (!user?.getId()) {
 				// Logged out user requests to subscribe => send confirm email
-				await this.campaignMonitorService.sendConfirmationMail(preferences);
+				await this.campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} else {
 				// Logged in user subscribes to the newsletter
 				await this.campaignMonitorService.updateNewsletterPreferences(

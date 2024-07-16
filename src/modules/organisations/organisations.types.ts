@@ -1,4 +1,4 @@
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 export interface OrganisationInfoV2 {
 	id: string;
@@ -123,4 +123,12 @@ export interface OrganisationPrimarySiteAddress {
 	street: string;
 	telephone: string;
 	post_office_box_number: string;
+}
+
+export interface MaintainerGridOrganisation {
+	id: string;
+	name: string;
+	logoUrl: string;
+	homepageUrl: string;
+	slug: string;
 }

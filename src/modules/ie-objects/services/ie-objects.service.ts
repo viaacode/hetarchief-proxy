@@ -1,23 +1,26 @@
 import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
-import got, { Got } from 'got';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { Cache } from 'cache-manager';
+import got, { type Got } from 'got';
 import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
-	IeObjectsQueryDto,
-	IeObjectsRelatedQueryDto,
-	IeObjectsSimilarQueryDto,
+	type IeObjectsQueryDto,
+	type IeObjectsRelatedQueryDto,
+	type IeObjectsSimilarQueryDto,
 } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
@@ -25,40 +28,42 @@ import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	ElasticsearchObject,
-	ElasticsearchResponse,
-	FilterOptions,
-	GqlIeObject,
-	GqlLimitedIeObject,
-	IeObject,
-	IeObjectFile,
+	type ElasticsearchObject,
+	type ElasticsearchResponse,
+	type FilterOptions,
+	type GqlIeObject,
+	type GqlLimitedIeObject,
+	type IeObject,
+	type IeObjectFile,
 	IeObjectLicense,
-	IeObjectRepresentation,
-	IeObjectSector,
-	IeObjectsSitemap,
-	IeObjectsVisitorSpaceInfo,
-	IeObjectsWithAggregations,
+	type IeObjectRepresentation,
+	type IeObjectSector,
+	type IeObjectsSitemap,
+	type IeObjectsVisitorSpaceInfo,
+	type IeObjectsWithAggregations,
+	type NewspaperTitle,
 } from '../ie-objects.types';
 
 import {
 	FindAllObjectsByCollectionIdDocument,
-	FindAllObjectsByCollectionIdQuery,
-	FindAllObjectsByCollectionIdQueryVariables,
+	type FindAllObjectsByCollectionIdQuery,
+	type FindAllObjectsByCollectionIdQueryVariables,
 	FindIeObjectsForSitemapDocument,
-	FindIeObjectsForSitemapQuery,
-	FindIeObjectsForSitemapQueryVariables,
+	type FindIeObjectsForSitemapQuery,
+	type FindIeObjectsForSitemapQueryVariables,
 	GetFilterOptionsDocument,
-	GetFilterOptionsQuery,
-	GetFilterOptionsQueryVariables,
-	GetObjectDetailBySchemaIdentifierDocument,
-	GetObjectDetailBySchemaIdentifierQuery,
-	GetObjectDetailBySchemaIdentifierQueryVariables,
+	type GetFilterOptionsQuery,
+	type GetFilterOptionsQueryVariables,
+	GetNewspaperTitlesDocument,
+	GetObjectDetailBySchemaIdentifiersDocument,
+	type GetObjectDetailBySchemaIdentifiersQuery,
+	type GetObjectDetailBySchemaIdentifiersQueryVariables,
 	GetObjectIdentifierTupleDocument,
-	GetObjectIdentifierTupleQuery,
-	GetObjectIdentifierTupleQueryVariables,
+	type GetObjectIdentifierTupleQuery,
+	type GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
-	GetRelatedObjectsQuery,
-	GetRelatedObjectsQueryVariables,
+	type GetRelatedObjectsQuery,
+	type GetRelatedObjectsQueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -67,8 +72,9 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
@@ -83,7 +89,8 @@ export class IeObjectsService {
 		protected dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService,
-		protected spacesService: SpacesService
+		protected spacesService: SpacesService,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {
 		this.gotInstance = got.extend({
 			prefixUrl: this.configService.get('ELASTIC_SEARCH_URL'),
@@ -167,7 +174,13 @@ export class IeObjectsService {
 			);
 		}
 
-		const objectResponse = await this.executeQuery(esIndex, esQuery);
+		const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+		const objectResponse = await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
+			() => this.executeQuery(esIndex, esQuery),
+			// cache for 60 minutes
+			3_600_000
+		);
 
 		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 			this.logger.log(
@@ -208,6 +221,14 @@ export class IeObjectsService {
 		});
 
 		return count;
+	}
+
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
+
+		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
 	public async getRelated(
@@ -258,6 +279,7 @@ export class IeObjectsService {
 
 		// We can reuse the license checking part from the regular search queries:
 		const visitorSpaceAccessInfo = await this.getVisitorSpaceAccessInfoFromUser(user);
+		const searchInsideVisitorSpace = !!esIndex;
 		const regularQuery = QueryBuilder.build(
 			{ filters: [], page: 0, size: 0 },
 			{
@@ -267,79 +289,55 @@ export class IeObjectsService {
 			}
 		);
 
-		let esQueryObject;
-
-		if (esIndex) {
-			// if esIndex is passed, we only want to return objects that are inside a visitor space
-			esQueryObject = {
-				size: limit,
-				from: 0,
-				query: {
-					bool: {
-						should: [
-							{
-								bool: {
-									should: [
-										{
-											more_like_this: {
-												fields: ['schema_name', 'schema_description'],
-												like: [
-													{
-														_index: esIndex,
-														_id: schemaIdentifier,
-													},
-												],
-												min_term_freq: 1,
-												min_doc_freq: 1,
-											},
-										},
-										{
-											// if esIndex is passed, we only want to return objects that are inside a visitor space
-											terms: {
-												schema_license: [
-													IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-													IeObjectLicense.BEZOEKERTOOL_CONTENT,
-												],
-											},
-										},
-									],
-									minimum_should_match: 2,
-								},
+		const esQueryObject = {
+			size: limit,
+			from: 0,
+			query: {
+				bool: {
+					should: [
+						{
+							more_like_this: {
+								fields: [
+									'schema_name',
+									'schema_description',
+									'schema_keywords.keyword',
+									'schema_is_part_of.*.keyword',
+									'schema_creator_text',
+								],
+								like: [
+									{
+										_index: esIndex,
+										_id: schemaIdentifier,
+									},
+								],
+								min_term_freq: 2,
+								min_doc_freq: 2,
+								max_doc_freq: 6,
+								max_query_terms: 12,
+								min_word_length: 4,
 							},
-							regularQuery.query.bool.should[1],
-						],
-						minimum_should_match: 2,
-					},
-				},
-			};
-		} else {
-			// If no esIndex is passed, we want to find similar objects in the whole database
-			esQueryObject = {
-				size: limit,
-				from: 0,
-				query: {
-					bool: {
-						should: [
-							{
-								more_like_this: {
-									fields: ['schema_name', 'schema_description'],
-									like: [
-										{
-											_id: schemaIdentifier,
+						},
+						...(searchInsideVisitorSpace
+							? [
+									{
+										// if esIndex is passed, we only want to return objects that are inside a visitor space
+										terms: {
+											schema_license: [
+												IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+												IeObjectLicense.BEZOEKERTOOL_CONTENT,
+											],
 										},
-									],
-									min_term_freq: 1,
-									min_doc_freq: 1,
-								},
-							},
-							regularQuery.query.bool.should[1],
-						],
-						minimum_should_match: 2,
-					},
+									},
+							  ]
+							: []),
+						regularQuery.query.bool.should[1],
+					],
+					minimum_should_match: searchInsideVisitorSpace ? 3 : 2,
 				},
-			};
-		}
+			},
+		};
 
+		// if esIndex is passed, we only want to return objects that are inside a visitor space
 		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
 		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer, ip);
 
@@ -359,29 +357,29 @@ export class IeObjectsService {
 	 * Find by id returns all details as stored in DB
 	 * (not all details are in ES)
 	 */
-	public async findBySchemaIdentifier(
-		schemaIdentifier: string,
+	public async findBySchemaIdentifiers(
+		schemaIdentifiers: string[],
 		referer: string,
 		ip: string
-	): Promise<IeObject> {
-		const { object_ie: objectIe } = await this.dataService.execute<
-			GetObjectDetailBySchemaIdentifierQuery,
-			GetObjectDetailBySchemaIdentifierQueryVariables
-		>(GetObjectDetailBySchemaIdentifierDocument, {
-			schemaIdentifier,
+	): Promise<IeObject[]> {
+		const response = await this.dataService.execute<
+			GetObjectDetailBySchemaIdentifiersQuery,
+			GetObjectDetailBySchemaIdentifiersQueryVariables
+		>(GetObjectDetailBySchemaIdentifiersDocument, {
+			schemaIdentifiers,
 		});
 
-		if (!objectIe[0]) {
-			throw new NotFoundException(`Object IE with id '${schemaIdentifier}' not found`);
-		}
-
-		const adapted = this.adaptFromDB(objectIe[0]);
-		adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-			adapted.thumbnailUrl,
-			referer,
-			ip
+		return await Promise.all(
+			response.object_ie.map(async (object) => {
+				const adapted = this.adaptFromDB(object);
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer,
+					ip
+				);
+				return adapted;
+			})
 		);
-		return adapted;
 	}
 
 	/**
@@ -391,8 +389,8 @@ export class IeObjectsService {
 		schemaIdentifier: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findBySchemaIdentifier(schemaIdentifier, null, ip);
-		return this.adaptMetadata(object);
+		const object = await this.findBySchemaIdentifiers([schemaIdentifier], null, ip);
+		return this.adaptMetadata(object[0]);
 	}
 
 	/**
@@ -469,7 +467,7 @@ export class IeObjectsService {
 			inLanguage: gqlIeObject?.schema_in_language,
 			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
-			maintainerId: gqlIeObject?.organisation.schema_identifier,
+			maintainerId: gqlIeObject?.organisation?.schema_identifier,
 			maintainerName: gqlIeObject?.organisation?.schema_name,
 			maintainerSlug:
 				gqlIeObject?.haorg_alt_label ??
@@ -588,7 +586,7 @@ export class IeObjectsService {
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
-			temporal: esObject?.schema_temporal_coverage,
+			temporal: [esObject?.schema_temporal_coverage],
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
@@ -807,13 +805,13 @@ export class IeObjectsService {
 	public getSimpleSearchTermsFromBooleanExpression(
 		filters: IeObjectsQueryDto['filters']
 	): string[] {
-		const searchTerm = filters.find(
-			(searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY
-		)?.value;
-		if (!searchTerm) {
+		const searchTerms = filters
+			.filter((searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY)
+			.map((filter) => filter.value);
+		if (!searchTerms || searchTerms.length === 0) {
 			return [];
 		}
-		return convertStringToSearchTerms(searchTerm);
+		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
 	}
 
 	private sortAndUnique(values: string[]): string[] {

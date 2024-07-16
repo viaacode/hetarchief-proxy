@@ -72,7 +72,7 @@ This project uses environment variables. For local development, these can be fou
 folder in the root of the project.  
 There you can find a `.env.template` file which contains all the environment variables used in this
 project.  
-Create your own `.env.local` file here with the correct values to get started. Check 1password (`hetarchief bezoekerstool - proxy backend - .env.local (bzt)`)
+Create your own `.env.local` file here with the correct values to get started. Check 1password (`hetarchief - proxy - .env (TST, QAS)`)
 to find the end var values for local development or contact
 a developer of the project (see package.json for a list of contributors).
 

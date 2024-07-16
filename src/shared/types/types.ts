@@ -1,3 +1,5 @@
+import { type Locale } from '~shared/types/types';
+
 export interface DeleteResponse {
 	affectedRows: number;
 }
@@ -23,8 +25,15 @@ export interface ContactInfo {
 export interface Recipient {
 	id: string;
 	email: string;
+	language: Locale;
 }
 
 export interface UpdateResponse {
 	affectedRows: number;
 }
+
+export {
+	Lookup_Languages_Enum as Locale,
+	Lookup_Schema_Audience_Type_Enum as AudienceType,
+	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
+} from '~generated/graphql-db-types-hetarchief';

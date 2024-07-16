@@ -19,23 +19,28 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Pagination } from '@studiohyperdrive/pagination';
-import { IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
+import { type IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
 import { addYears, isFuture } from 'date-fns';
 import { Request } from 'express';
 import { uniqBy } from 'lodash';
 
 import { CreateVisitDto, UpdateVisitDto, VisitsQueryDto } from '../dto/visits.dto';
 import { VisitsService } from '../services/visits.service';
-import { AccessStatus, Visit, VisitAccessType, VisitSpaceCount, VisitStatus } from '../types';
+import {
+	type AccessStatus,
+	VisitAccessType,
+	type VisitRequest,
+	type VisitSpaceCount,
+	VisitStatus,
+} from '../types';
 
-import { VisitorSpaceStatus } from '~generated/database-aliases';
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
 import { NotificationType } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { Space } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
@@ -43,6 +48,7 @@ import { RequireAllPermissions } from '~shared/decorators/require-permissions.de
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
+import { VisitorSpaceStatus } from '~shared/types/types';
 
 @UseGuards(LoggedInGuard)
 @ApiTags('Visits')
@@ -68,15 +74,14 @@ export class VisitsController {
 	public async getVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Visit>> {
+	): Promise<IPagination<VisitRequest>> {
 		if (user.has(Permission.MANAGE_ALL_VISIT_REQUESTS)) {
-			const visits = await this.visitsService.findAll(queryDto, {
+			return await this.visitsService.findAll(queryDto, {
 				...(queryDto?.visitorSpaceSlug
 					? { visitorSpaceSlug: queryDto.visitorSpaceSlug }
 					: {}),
 				...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
 			});
-			return visits;
 		}
 		// CP_VISIT_REQUESTS (user has any of these permissions as enforced by guard)
 		const cpSpace = await this.spacesService.findSpaceByOrganisationId(
@@ -84,18 +89,20 @@ export class VisitsController {
 		);
 
 		if (!cpSpace) {
+			const userLanguage = user.getLanguage();
 			throw new NotFoundException(
-				this.translationsService.t(
-					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space'
+				this.translationsService.tText(
+					'modules/visits/controllers/visits___the-current-user-does-not-seem-to-be-linked-to-a-cp-space',
+					null,
+					userLanguage
 				)
 			);
 		}
 
-		const visits = await this.visitsService.findAll(queryDto, {
+		return await this.visitsService.findAll(queryDto, {
 			visitorSpaceSlug: cpSpace.slug,
 			...(queryDto?.requesterId ? { userProfileId: queryDto.requesterId } : {}),
 		});
-		return visits;
 	}
 
 	@Get('personal')
@@ -109,7 +116,7 @@ export class VisitsController {
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Visit>> {
+	): Promise<IPagination<VisitRequest>> {
 		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const spaces = await this.spacesService.findAll(
 				{
@@ -124,7 +131,7 @@ export class VisitsController {
 				user.getId()
 			);
 
-			const visits = spaces.items.map((space: Space) => {
+			const visits = spaces.items.map((space: VisitorSpace) => {
 				return {
 					id: `permanent-id--${randomUUID()}`,
 					status: VisitStatus.APPROVED,
@@ -133,6 +140,7 @@ export class VisitsController {
 					visitorFirstName: user.getFirstName(),
 					visitorLastName: user.getLastName(),
 					visitorName: user.getFullName(),
+					visitorLanguage: user.getLanguage(),
 					updatedByName: null,
 					createdAt: new Date().toISOString(),
 					spaceName: space.name,
@@ -155,7 +163,7 @@ export class VisitsController {
 				};
 			});
 
-			return Pagination<Visit>({
+			return Pagination<VisitRequest>({
 				items: visits,
 				page: spaces.page,
 				size: spaces.size,
@@ -182,6 +190,7 @@ export class VisitsController {
 						visitorFirstName: user.getFirstName(),
 						visitorLastName: user.getLastName(),
 						visitorName: user.getFullName(),
+						visitorLanguage: user.getLanguage(),
 						updatedByName: null,
 						createdAt: new Date().toISOString(),
 						spaceName: user.getOrganisationName(),
@@ -229,9 +238,8 @@ export class VisitsController {
 		Permission.MANAGE_CP_VISIT_REQUESTS,
 		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS
 	)
-	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<Visit> {
-		const visit = await this.visitsService.findById(id);
-		return visit;
+	public async getVisitById(@Param('id', ParseUUIDPipe) id: string): Promise<VisitRequest> {
+		return await this.visitsService.findById(id);
 	}
 
 	@Get('active-for-space/:visitorSpaceSlug')
@@ -239,7 +247,7 @@ export class VisitsController {
 	public async getActiveVisitForUserAndSpace(
 		@Param('visitorSpaceSlug') visitorSpaceSlug: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Visit | null> {
+	): Promise<VisitRequest | null> {
 		// Check if the user is a CP admin or a Kiosk user for the requested space
 		// MEEMOO_ADMIN has access to all the visitor spaces
 		if (
@@ -249,10 +257,12 @@ export class VisitsController {
 			const spaceInfo = await this.spacesService.findBySlug(visitorSpaceSlug);
 
 			if (!spaceInfo) {
+				const userLanguage = user.getLanguage();
 				throw new NotFoundException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
-						{ name: visitorSpaceSlug }
+						{ name: visitorSpaceSlug },
+						userLanguage
 					)
 				);
 			}
@@ -262,7 +272,7 @@ export class VisitsController {
 				spaceId: spaceInfo.id,
 				id: randomUUID(),
 				startAt: new Date(2000, 0, 2).toISOString(),
-				endAt: new Date(2100, 0, 2).toISOString(), // Second of januari to avoid issues with GMT => 31 dec 2099
+				endAt: new Date(2100, 0, 2).toISOString(), // Second of january to avoid issues with GMT => 31 dec 2099
 				visitorName: user.getFullName(),
 				spaceName: spaceInfo.name,
 				spaceMaintainerId: spaceInfo.maintainerId,
@@ -273,6 +283,7 @@ export class VisitsController {
 				visitorLastName: user.getLastName(),
 				visitorId: user.getId(),
 				visitorMail: user.getMail(),
+				visitorLanguage: user.getLanguage(),
 				spaceMail: spaceInfo.contactInfo.email,
 				spaceTelephone: spaceInfo.contactInfo.telephone,
 				updatedById: '',
@@ -297,31 +308,35 @@ export class VisitsController {
 			// Check if space exists
 			const space = await this.spacesService.findBySlug(visitorSpaceSlug);
 
+			const userLanguage = user.getLanguage();
 			if (space) {
 				if (space.status === VisitorSpaceStatus.Inactive) {
 					throw new GoneException(
-						this.translationsService.t(
+						this.translationsService.tText(
 							'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests',
-							{ name: visitorSpaceSlug }
+							{ name: visitorSpaceSlug },
+							userLanguage
 						)
 					);
 				}
 
 				// User does not have access to existing space
 				throw new ForbiddenException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name',
 						{
 							name: visitorSpaceSlug,
-						}
+						},
+						userLanguage
 					)
 				);
 			} else {
 				// Space does not exist
 				throw new NotFoundException(
-					this.translationsService.t(
+					this.translationsService.tText(
 						'modules/visits/controllers/visits___space-with-slug-name-was-not-found',
-						{ name: visitorSpaceSlug }
+						{ name: visitorSpaceSlug },
+						userLanguage
 					)
 				);
 			}
@@ -348,15 +363,18 @@ export class VisitsController {
 		description: 'Create a Visit request. Requires the CREATE_VISIT_REQUEST permission.',
 	})
 	@RequireAllPermissions(Permission.CREATE_VISIT_REQUEST)
-	public async createVisit(
+	public async createVisitRequest(
 		@Req() request: Request,
 		@Body() createVisitDto: CreateVisitDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
+		const userLanguage = user.getLanguage();
 		if (!createVisitDto.acceptedTos) {
 			throw new BadRequestException(
-				this.translationsService.t(
-					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
+				this.translationsService.tText(
+					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit',
+					null,
+					userLanguage
 				)
 			);
 		}
@@ -366,11 +384,12 @@ export class VisitsController {
 
 		if (!visitorSpace) {
 			throw new BadRequestException(
-				this.translationsService.t(
+				this.translationsService.tText(
 					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found',
 					{
 						name: createVisitDto.visitorSpaceSlug,
-					}
+					},
+					userLanguage
 				)
 			);
 		}
@@ -422,7 +441,7 @@ export class VisitsController {
 		@Param('id', ParseUUIDPipe) id: string,
 		@Body() updateVisitDto: UpdateVisitDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Visit> {
+	): Promise<VisitRequest> {
 		const originalVisit = await this.visitsService.findById(id);
 
 		if (
@@ -434,9 +453,12 @@ export class VisitsController {
 				originalVisit.userProfileId !== user.getId() ||
 				updateVisitDto.status !== VisitStatus.CANCELLED_BY_VISITOR
 			) {
+				const userLanguage = user.getLanguage();
 				throw new ForbiddenException(
-					this.translationsService.t(
-						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
+					this.translationsService.tText(
+						'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route',
+						undefined,
+						userLanguage
 					)
 				);
 			}
@@ -472,7 +494,7 @@ export class VisitsController {
 	 */
 	protected async postProcessVisitStatusChange(
 		request: Request,
-		visit: Visit,
+		visit: VisitRequest,
 		updateVisitDto: UpdateVisitDto,
 		formerStatus: VisitStatus,
 		user: SessionUserEntity
@@ -549,7 +571,7 @@ export class VisitsController {
 	/**
 	 * When a visit status changed, check if notifications should be sent
 	 */
-	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: Visit) {
+	protected async postProcessVisitTimes(updateVisitDto: UpdateVisitDto, visit: VisitRequest) {
 		const typesToDelete = [];
 		if (updateVisitDto.startAt && isFuture(new Date(updateVisitDto.startAt))) {
 			typesToDelete.push(NotificationType.ACCESS_PERIOD_VISITOR_SPACE_STARTED);

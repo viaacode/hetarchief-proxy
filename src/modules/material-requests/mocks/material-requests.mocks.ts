@@ -1,15 +1,16 @@
-import { MaterialRequest, MaterialRequestType } from '../material-requests.types';
+import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 import {
-	FindMaintainersWithMaterialRequestsQuery,
-	FindMaterialRequestsByIdQuery,
-	FindMaterialRequestsQuery,
+	type FindMaintainersWithMaterialRequestsQuery,
+	type FindMaterialRequestsByIdQuery,
+	type FindMaterialRequestsQuery,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
 import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
@@ -29,6 +30,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
 		mail: 'ilya.korsakov@example.com',
+		language: Locale.Nl,
 	},
 	object: {
 		maintainer: {
@@ -62,6 +64,7 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		id: 'b6c5419f-6a19-4a41-a400-e0bbc0429c4f',
 		full_name: 'Ilya Korsakov',
 		mail: 'ilya.korsakov@example.com',
+		language: Locale.Nl,
 		group: {
 			name: 'VISITOR',
 			label: 'Gebruiker',
@@ -153,6 +156,7 @@ export const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,

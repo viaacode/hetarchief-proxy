@@ -1,43 +1,47 @@
-import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
+import {
+	DataService,
+	Locale,
+	MaintenanceAlertsService,
+	TranslationsService,
+} from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
-import { DeleteNotificationDto } from '../dto/notifications.dto';
+import { type DeleteNotificationDto } from '../dto/notifications.dto';
 import {
-	GqlCreateNotificationsForVisitorSpace,
-	GqlCreateOrUpdateNotification,
-	GqlNotification,
-	Notification,
+	type GqlCreateOrUpdateNotification,
+	type GqlNotification,
+	type Notification,
 	NotificationStatus,
 	NotificationType,
 } from '../types';
 
 import {
 	DeleteNotificationsDocument,
-	DeleteNotificationsMutation,
-	DeleteNotificationsMutationVariables,
+	type DeleteNotificationsMutation,
+	type DeleteNotificationsMutationVariables,
 	FindNotificationsByUserDocument,
-	FindNotificationsByUserQuery,
-	FindNotificationsByUserQueryVariables,
+	type FindNotificationsByUserQuery,
+	type FindNotificationsByUserQueryVariables,
 	InsertNotificationsDocument,
-	InsertNotificationsMutation,
-	InsertNotificationsMutationVariables,
+	type InsertNotificationsMutation,
+	type InsertNotificationsMutationVariables,
 	UpdateAllNotificationsForUserDocument,
-	UpdateAllNotificationsForUserMutation,
-	UpdateAllNotificationsForUserMutationVariables,
+	type UpdateAllNotificationsForUserMutation,
+	type UpdateAllNotificationsForUserMutationVariables,
 	UpdateNotificationDocument,
-	UpdateNotificationMutation,
-	UpdateNotificationMutationVariables,
+	type UpdateNotificationMutation,
+	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { Space } from '~modules/spaces/types';
-import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Visit } from '~modules/visits/types';
+import { type VisitorSpace } from '~modules/spaces/types';
+import { type SessionUserEntity } from '~modules/users/classes/session-user';
+import { type VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
-import { Recipient } from '~shared/types/types';
+import { type Recipient } from '~shared/types/types';
 
 @Injectable()
 export class NotificationsService {
@@ -115,23 +119,6 @@ export class NotificationsService {
 		return createdNotifications.map(this.adaptNotification);
 	}
 
-	/**
-	 * Create a notification for each recipient
-	 * @param notification the notification that should be sent
-	 * @param recipients user profile ids to whom the notification should be sent
-	 */
-	public async createForMultipleRecipients(
-		notification: Partial<GqlCreateNotificationsForVisitorSpace>,
-		recipients: string[]
-	): Promise<Notification[]> {
-		return this.create(
-			recipients.map((recipient) => ({
-				...notification,
-				recipient,
-			}))
-		);
-	}
-
 	public async update(
 		notificationId: string,
 		userProfileId: string,
@@ -198,42 +185,47 @@ export class NotificationsService {
 	 * Send notifications and email on new visit request
 	 */
 	public async onCreateVisit(
-		visit: Visit,
+		visitRequest: VisitRequest,
 		recipients: Recipient[],
 		user: SessionUserEntity
 	): Promise<Notification[]> {
-		const newVisitRequestEmail = visit.spaceMail || recipients[0]?.email;
+		const newVisitRequestEmail = visitRequest.spaceMail || recipients[0]?.email;
 
 		const name = user.getFullName();
+		const userLanguage = user.getLanguage();
 		const [notifications] = await Promise.all([
-			this.createForMultipleRecipients(
-				{
-					title: this.translationsService.t(
-						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken'
+			this.create(
+				recipients.map((recipient) => ({
+					title: this.translationsService.tText(
+						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken',
+						null,
+						userLanguage
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
 						{
 							name,
-						}
+						},
+						userLanguage
 					),
-					visit_id: visit.id,
+					visit_id: visitRequest.id,
 					type: NotificationType.NEW_VISIT_REQUEST,
 					status: NotificationStatus.UNREAD,
-				},
-				recipients.map((recipient) => recipient.id)
+					recipient: recipient.id,
+				}))
 			),
-			// important: the mail on new visit request is sent to the general email adres, not to all maintainers
+			// important: the mail on new visit request is sent to the general email address, not to all maintainers
 			// See ARC-305
 			this.campaignMonitorService.sendForVisit({
 				to: [
 					{
-						id: `space-${visit.spaceId}`,
+						id: `space-${visitRequest.spaceId}`,
 						email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
+						language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
 					},
 				],
 				template: Template.VISIT_REQUEST_CP,
-				visit,
+				visitRequest: visitRequest,
 			}),
 		]);
 		return notifications;
@@ -242,38 +234,49 @@ export class NotificationsService {
 	/**
 	 * Send notifications and email on approve visit request
 	 */
-	public async onApproveVisitRequest(visit: Visit, space: Space): Promise<Notification> {
-		const startDate = formatAsBelgianDate(visit.startAt);
-		const endDate = formatAsBelgianDate(visit.endAt);
+	public async onApproveVisitRequest(
+		visitRequest: VisitRequest,
+		space: VisitorSpace
+	): Promise<Notification> {
+		const startDate = formatAsBelgianDate(visitRequest.startAt);
+		const endDate = formatAsBelgianDate(visitRequest.endAt);
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd',
 						{
 							name: space.name,
-						}
+						},
+						visitRequest.visitorLanguage
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-goedgekeurd-je-zal-toegang-hebben-van-start-date-tot-end-date',
 						{
 							name: space.name,
 							startDate,
 							endDate,
-						}
+						},
+						visitRequest.visitorLanguage
 					),
-					visit_id: visit.id,
+					visit_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_APPROVED,
-					status: isPast(convertToDate(visit.startAt))
+					status: isPast(convertToDate(visitRequest.startAt))
 						? NotificationStatus.READ
 						: NotificationStatus.UNREAD,
-					recipient: visit.visitorId,
+					recipient: visitRequest.visitorId,
 				},
 			]),
 			this.campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+				to: [
+					{
+						id: visitRequest.visitorId,
+						email: visitRequest.visitorMail,
+						language: visitRequest.visitorLanguage,
+					},
+				],
 				template: Template.VISIT_APPROVED,
-				visit,
+				visitRequest: visitRequest,
 			}),
 		]);
 		return notifications[0];
@@ -283,40 +286,50 @@ export class NotificationsService {
 	 * Send notifications and email on deny visit request
 	 */
 	public async onDenyVisitRequest(
-		visit: Visit,
-		space: Space,
+		visitRequest: VisitRequest,
+		space: VisitorSpace,
 		reason?: string
 	): Promise<Notification> {
 		const reasonWithFallback =
 			reason ||
-			this.translationsService.t(
-				'modules/notifications/services/notifications___er-werd-geen-reden-opgegeven'
+			this.translationsService.tText(
+				'modules/notifications/services/notifications___er-werd-geen-reden-opgegeven',
+				null,
+				visitRequest.visitorLanguage
 			);
 		const [notifications] = await Promise.all([
 			this.create([
 				{
-					title: this.translationsService.t(
+					title: this.translationsService.tText(
 						'modules/notifications/services/notifications___je-aanvraag-voor-bezoekersruimte-name-is-afgekeurd',
 						{
 							name: space.name,
-						}
+						},
+						visitRequest.visitorLanguage
 					),
-					description: this.translationsService.t(
+					description: this.translationsService.tText(
 						'modules/notifications/services/notifications___reden-reason',
 						{
 							reason: reasonWithFallback,
-						}
+						},
+						visitRequest.visitorLanguage
 					),
-					visit_id: visit.id,
+					visit_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_DENIED,
 					status: NotificationStatus.UNREAD,
-					recipient: visit.visitorId,
+					recipient: visitRequest.visitorId,
 				},
 			]),
 			this.campaignMonitorService.sendForVisit({
-				to: [{ id: visit.visitorId, email: visit.visitorMail }],
+				to: [
+					{
+						id: visitRequest.visitorId,
+						email: visitRequest.visitorMail,
+						language: visitRequest.visitorLanguage,
+					},
+				],
 				template: Template.VISIT_DENIED,
-				visit,
+				visitRequest: visitRequest,
 			}),
 		]);
 		return notifications[0];
@@ -326,27 +339,35 @@ export class NotificationsService {
 	 * Send a notification to multiple recipients when a user cancels their own request
 	 */
 	public async onCancelVisitRequest(
-		visit: Visit,
+		visitRequest: VisitRequest,
 		recipients: Recipient[],
 		user: SessionUserEntity
 	): Promise<Notification[]> {
 		const name = user.getFullName();
-		return this.createForMultipleRecipients(
-			{
-				title: this.translationsService.t(
-					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd'
-				),
-				description: this.translationsService.t(
+		return this.create(
+			recipients.map((recipient) => {
+				const title = this.translationsService.tText(
+					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd',
+					null,
+					recipient.language
+				);
+				const description = this.translationsService.tText(
 					'modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd',
 					{
 						name,
-					}
-				),
-				visit_id: visit.id,
-				type: NotificationType.VISIT_REQUEST_CANCELLED,
-				status: NotificationStatus.UNREAD,
-			},
-			recipients.map((recipient) => recipient.id)
+					},
+					recipient.language
+				);
+
+				return {
+					title,
+					description,
+					visit_id: visitRequest.id,
+					type: NotificationType.VISIT_REQUEST_CANCELLED,
+					status: NotificationStatus.UNREAD,
+					recipientId: recipient.id,
+				};
+			})
 		);
 	}
 

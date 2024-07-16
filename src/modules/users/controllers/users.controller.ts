@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	InternalServerErrorException,
 	Logger,
 	Param,
 	ParseUUIDPipe,
@@ -10,10 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { UpdateAcceptedTosDto } from '../dto/users.dto';
+import { UpdateAcceptedTosDto, UpdateUserLangDto } from '../dto/users.dto';
 import { UsersService } from '../services/users.service';
-import { User } from '../types';
+import { type User } from '../types';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 
@@ -23,7 +25,35 @@ import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 export class UsersController {
 	private logger: Logger = new Logger(UsersController.name, { timestamp: true });
 
-	constructor(private usersService: UsersService) {}
+	constructor(
+		private usersService: UsersService,
+		private campaignMonitorService: CampaignMonitorService
+	) {}
+
+	@Patch('/update-language')
+	public async updateUser(
+		@Body() updateUserLangDto: UpdateUserLangDto,
+		@Session() session: Record<string, any>
+	): Promise<Record<string, string>> {
+		try {
+			const sessionUser = SessionHelper.getArchiefUserInfo(session);
+			await this.usersService.updateUserLanguage(sessionUser.id, updateUserLangDto);
+			sessionUser.language = updateUserLangDto.language;
+			SessionHelper.setArchiefUserInfo(session, sessionUser);
+			await this.campaignMonitorService.updateNewsletterPreferences({
+				email: sessionUser.email,
+				firstName: sessionUser.firstName,
+				lastName: sessionUser.lastName,
+				language: updateUserLangDto.language,
+			});
+			return { message: 'Language updated' };
+		} catch (err) {
+			throw new InternalServerErrorException({
+				message: 'Failed to update the user language',
+				error: err,
+			});
+		}
+	}
 
 	@Patch(':id/accepted-tos')
 	public async updateTos(

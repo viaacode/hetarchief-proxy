@@ -1,35 +1,41 @@
 import { DataService } from '@meemoo/admin-core-api';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	Logger,
-	OnApplicationBootstrap,
+	type OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cache } from 'cache-manager';
 import got from 'got';
-import { uniqBy } from 'lodash';
+import { shuffle, uniqBy } from 'lodash';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
-	GqlOrganisation,
-	Organisation,
-	OrganisationInfoV2,
-	OrganisationResponse,
-	ParsedOrganisation,
+	type GqlOrganisation,
+	type MaintainerGridOrganisation,
+	type Organisation,
+	type OrganisationInfoV2,
+	type OrganisationResponse,
+	type ParsedOrganisation,
 } from '../organisations.types';
 
 import {
 	DeleteOrganisationsDocument,
 	FindOrganisationsBySchemaIdsDocument,
-	FindOrganisationsBySchemaIdsQuery,
-	FindOrganisationsBySchemaIdsQueryVariables,
+	type FindOrganisationsBySchemaIdsQuery,
+	type FindOrganisationsBySchemaIdsQueryVariables,
 	GetOrganisationBySlugDocument,
-	GetOrganisationBySlugQuery,
-	GetOrganisationBySlugQueryVariables,
+	type GetOrganisationBySlugQuery,
+	type GetOrganisationBySlugQueryVariables,
+	GetOrganisationsThatHaveObjectsDocument,
+	type GetOrganisationsThatHaveObjectsQuery,
 	InsertOrganisationsDocument,
 } from '~generated/graphql-db-types-hetarchief';
-import { IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
 
 @Injectable()
 export class OrganisationsService implements OnApplicationBootstrap {
@@ -37,7 +43,8 @@ export class OrganisationsService implements OnApplicationBootstrap {
 
 	constructor(
 		private dataService: DataService,
-		private configService: ConfigService<Configuration>
+		private configService: ConfigService<Configuration>,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) {}
 
 	public async onApplicationBootstrap() {
@@ -93,6 +100,18 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			sector: gqlOrganisation?.haorg_organization_type as IeObjectSector,
 			formUrl: gqlOrganisation?.form_url,
 			slug: gqlOrganisation?.slug,
+		};
+	}
+
+	public adaptContentPartner(
+		gqlContentPartner: GetOrganisationsThatHaveObjectsQuery['maintainer_organisations_with_objects'][0]
+	): MaintainerGridOrganisation {
+		return {
+			id: gqlContentPartner.schema_identifier,
+			name: gqlContentPartner.schema_name,
+			logoUrl: gqlContentPartner.logo?.iri,
+			homepageUrl: gqlContentPartner.homepage_url,
+			slug: gqlContentPartner.slug,
 		};
 	}
 
@@ -223,5 +242,55 @@ export class OrganisationsService implements OnApplicationBootstrap {
 		}
 
 		return this.adapt(organisationsResponse?.maintainer_organisation[0]);
+	}
+
+	public async fetchAllContentPartnersThatHaveObjects(): Promise<MaintainerGridOrganisation[]> {
+		try {
+			const organisationsResponse =
+				await this.dataService.execute<GetOrganisationsThatHaveObjectsQuery>(
+					GetOrganisationsThatHaveObjectsDocument
+				);
+
+			return organisationsResponse.maintainer_organisations_with_objects.map(
+				this.adaptContentPartner
+			);
+		} catch (err: any) {
+			throw new InternalServerErrorException(
+				JSON.stringify({
+					message: 'Failed to get all content partners from the org api',
+					innerException: err,
+					additionalInfo: {
+						query: 'contentpartners',
+					},
+				})
+			);
+		}
+	}
+
+	public async fetchRandomContentPartnersForMaintainerGrid(
+		limit: number
+	): Promise<MaintainerGridOrganisation[]> {
+		try {
+			const allContentPartners = await this.cacheManager.wrap(
+				'CONTENT_PARTNERS_MAINTAINER_GRID',
+				() => this.fetchAllContentPartnersThatHaveObjects(),
+				// cache for 60 minutes
+				3_600_000
+			);
+
+			return shuffle(
+				allContentPartners.filter((contentPartner) => !!contentPartner.logoUrl)
+			).slice(0, limit);
+		} catch (err: any) {
+			throw new InternalServerErrorException(
+				JSON.stringify({
+					message: 'Failed to get organisations from the org api',
+					innerException: err,
+					additionalInfo: {
+						query: 'contentpartners',
+					},
+				})
+			);
+		}
 	}
 }

@@ -1,8 +1,8 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import zendesk, { Client } from 'node-zendesk';
+import zendesk, { type Client } from 'node-zendesk';
 
-import { CreateTicketRequestDto } from '../dto/zendesk.dto';
-import { CreateTicketResponse } from '../zendesk.types';
+import { type CreateTicketRequestDto } from '../dto/zendesk.dto';
+import { type CreateTicketResponse } from '../zendesk.types';
 
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 

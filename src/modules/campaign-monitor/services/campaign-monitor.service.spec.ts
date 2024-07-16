@@ -1,10 +1,10 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import * as queryString from 'query-string';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
 import { CampaignMonitorCustomFieldName, Template } from '../campaign-monitor.types';
@@ -23,14 +23,15 @@ import {
 import { CampaignMonitorService } from './campaign-monitor.service';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockConfigService = {
 	get: jest.fn((key: keyof Configuration): string | boolean => {
 		if (key === 'CLIENT_HOST') {
-			return 'http://bezoekerstool';
+			return 'http://hetarchief.be';
 		}
 		if (key === 'HOST') {
 			return 'http://fakeclienthost';
@@ -56,7 +57,7 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER') {
 			return 'newsletter';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER') {
+		if (key.startsWith('CAMPAIGN_MONITOR_TEMPLATE_')) {
 			return 'fakeTemplateId';
 		}
 		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER') {
@@ -83,7 +84,7 @@ const mockConfigService = {
 	}),
 };
 
-const getMockVisit = (): Visit => ({
+const getMockVisitRequest = (): VisitRequest => ({
 	id: '1',
 	spaceId: 'space-1',
 	spaceSlug: 'vrt',
@@ -110,6 +111,7 @@ const getMockVisit = (): Visit => ({
 	visitorFirstName: 'Tom',
 	visitorLastName: 'Testerom',
 	visitorName: 'Tom Testerom',
+	visitorLanguage: Locale.Nl,
 	updatedById: 'ea3d92ab-0281-4ffe-9e2d-be0e687e7cd1',
 	updatedByName: 'CP Admin',
 	accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
@@ -127,6 +129,7 @@ describe('CampaignMonitorService', () => {
 		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_KEY = 'fakeSecretKey';
 		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_SECRET_IV = 'fakeSecretIV';
 		process.env.CAMPAIN_MONITOR_CONFIRM_EMAIL_TOKEN_ECNRYPTION_METHOD = 'aes-256-cbc';
+		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER__NL = 'fakeTemplateId';
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -171,7 +174,7 @@ describe('CampaignMonitorService', () => {
 
 	describe('convertVisitToEmailTemplateData', () => {
 		it('should parse visits with empty startAt / endAt', () => {
-			const visit = getMockVisit();
+			const visit = getMockVisitRequest();
 			visit.startAt = null;
 			visit.endAt = null;
 			const result = campaignMonitorService.convertVisitToEmailTemplateData(visit);
@@ -183,17 +186,44 @@ describe('CampaignMonitorService', () => {
 	});
 
 	describe('sendForVisit', () => {
-		it('should log and not send to an empty recipients email adres', async () => {
-			const visit = getMockVisit();
-			try {
-				await campaignMonitorService.sendForVisit({
-					to: [{ id: visit.visitorId, email: null }],
+		it('should use fallback email if email address is undefined for a maintainer', async () => {
+			const visit = getMockVisitRequest();
+			const sendTransactionalMailSpy = jest.spyOn(
+				campaignMonitorService,
+				'sendTransactionalMail'
+			);
+			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
+
+			await campaignMonitorService.sendForVisit({
+				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
+				template: Template.VISIT_APPROVED,
+				visitRequest: visit,
+			});
+			expect(sendTransactionalMailSpy).toBeCalledWith(
+				{
 					template: Template.VISIT_APPROVED,
-					visit: getMockVisit(),
-				});
-			} catch (err) {
-				expect(err.name).toEqual('BadRequestException');
-			}
+					data: {
+						to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
+						consentToTrack: 'unchanged',
+						data: {
+							client_firstname: 'Tom',
+							client_lastname: 'Testerom',
+							client_email: 'test@studiohyperdrive.be',
+							contentpartner_name: 'VRT',
+							contentpartner_email: 'cp-VRT@studiohyperdrive.be',
+							request_reason: 'fake news investigation',
+							request_time: 'july 2022',
+							request_url: 'http://hetarchief.be/beheer/aanvragen',
+							request_remark: 'Visit is limited to max. 2h',
+							start_date: '1 juli 2022',
+							start_time: '12:00',
+							end_date: '31 juli 2022',
+							end_time: '20:00',
+						},
+					},
+				},
+				'nl'
+			);
 		});
 		// ARC-1537 Re-enable this test ones the FE has switched to using enum templates name
 		// it('should NOT call the campaign monitor if the template was not found', async () => {
@@ -214,14 +244,20 @@ describe('CampaignMonitorService', () => {
 		// 	}
 		// });
 
-		it('should NOT call the campaign monitor api if email sendig is disabled', async () => {
+		it('should NOT call the campaign monitor api if email sending is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
-			const visit = getMockVisit();
+			const visitRequest = getMockVisitRequest();
 			try {
 				await campaignMonitorService.sendForVisit({
 					template: Template.VISIT_APPROVED,
-					visit,
-					to: [{ id: visit.visitorId, email: visit.visitorMail }],
+					visitRequest: visitRequest,
+					to: [
+						{
+							id: visitRequest.visitorId,
+							email: visitRequest.visitorMail,
+							language: visitRequest.visitorLanguage,
+						},
+					],
 				});
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
@@ -233,7 +269,7 @@ describe('CampaignMonitorService', () => {
 			try {
 				await campaignMonitorService.sendForVisit({
 					template: Template.VISIT_APPROVED,
-					visit: getMockVisit(),
+					visitRequest: getMockVisitRequest(),
 					to: [],
 				});
 				fail(
@@ -247,11 +283,9 @@ describe('CampaignMonitorService', () => {
 
 	describe('convertMaterialRequestsToEmailTemplateData', () => {
 		it('should parse materialRequestEmailInfo with Maintainer Template', () => {
-			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			const result =
-				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
-					materialRequestEmailInfo
-				);
+			const result = campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
+				mockMaterialRequestEmailInfo
+			);
 			expect(result).toEqual(mockCampaignMonitorMaterialRequestDataToMaintainer);
 		});
 
@@ -271,6 +305,11 @@ describe('CampaignMonitorService', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
+			const sendTransactionalMailSpy = jest.spyOn(
+				campaignMonitorService,
+				'sendTransactionalMail'
+			);
+			sendTransactionalMailSpy.mockResolvedValueOnce(undefined);
 			try {
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {
@@ -298,6 +337,7 @@ describe('CampaignMonitorService', () => {
 			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
 			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+
 			const result =
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			expect(result).toBeFalsy();
@@ -311,7 +351,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
@@ -338,7 +378,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER)}/send`
+					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.replyWithError('');
 			try {
@@ -395,7 +435,7 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-			expect(result.CustomFields[7]).toEqual(
+			expect(result.CustomFields[8]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
 			);
 		});
@@ -436,7 +476,12 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-			expect(result.CustomFields[7]).toBeUndefined();
+
+			expect(result.CustomFields[7]).toEqual(
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[8]
+			);
+
+			expect(result.CustomFields[8]).toBeUndefined();
 		});
 	});
 
@@ -624,7 +669,7 @@ describe('CampaignMonitorService', () => {
 			const preferences = mockNewsletterUpdatePreferencesQueryDto;
 			preferences.mail = null;
 			try {
-				await campaignMonitorService.sendConfirmationMail(preferences);
+				await campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -635,7 +680,7 @@ describe('CampaignMonitorService', () => {
 			const preferences = mockNewsletterUpdatePreferencesQueryDto;
 			preferences.firstName = null;
 			try {
-				await campaignMonitorService.sendConfirmationMail(preferences);
+				await campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} catch (err) {
 				expect(err.name).toEqual('BadRequestException');
 			}
@@ -649,7 +694,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.EMAIL_CONFIRMATION)}/send`
+					)}/${getTemplateId(Template.EMAIL_CONFIRMATION, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
@@ -661,7 +706,8 @@ describe('CampaignMonitorService', () => {
 
 			try {
 				await campaignMonitorService.sendConfirmationMail(
-					mockNewsletterUpdatePreferencesQueryDto
+					mockNewsletterUpdatePreferencesQueryDto,
+					Locale.Nl
 				);
 			} catch (err) {
 				expect(err).toBeUndefined;

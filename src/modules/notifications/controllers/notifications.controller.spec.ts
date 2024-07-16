@@ -1,25 +1,30 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { NotificationsService } from '../services/notifications.service';
 
 import { NotificationsController } from './notifications.controller';
 
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
-import { Notification, NotificationStatus, NotificationType } from '~modules/notifications/types';
+import {
+	type Notification,
+	NotificationStatus,
+	NotificationType,
+} from '~modules/notifications/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit, VisitStatus } from '~modules/visits/types';
+import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { Locale } from '~shared/types/types';
 
 const mockNotification1: Notification = {
 	description:
@@ -55,7 +60,7 @@ const mockNotificationsResponse: IPagination<Notification> = {
 	size: 20,
 };
 
-const mockVisit: Visit = {
+const mockVisit: VisitRequest = {
 	id: '93eedf1a-a508-4657-a942-9d66ed6934c2',
 	spaceId: '3076ad4b-b86a-49bc-b752-2e1bf34778dc',
 	spaceName: 'VRT',
@@ -75,6 +80,7 @@ const mockVisit: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	note: {
 		id: 'a40b8cd7-5973-41ee-8134-c0451ef7fb6a',
@@ -93,6 +99,7 @@ const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
@@ -110,7 +117,7 @@ const mockNotificationsService: Partial<Record<keyof NotificationsService, jest.
 
 const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.SpyInstance>> = {
 	getTranslations: jest.fn(),
-	t: jest.fn((translationKey: string) => nlJson[translationKey]),
+	tText: jest.fn((translationKey: string) => nlJson[translationKey]),
 	refreshBackendTranslations: jest.fn(),
 	onApplicationBootstrap: jest.fn(),
 };

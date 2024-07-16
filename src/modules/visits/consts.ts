@@ -1,6 +1,6 @@
-import { Visit } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 
-export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof Visit, string>> = {
+export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof VisitRequest, string>> = {
 	id: 'id',
 	spaceId: 'cp_space_id',
 	spaceName: 'visitor_space.content_partner.schema_name_lower',

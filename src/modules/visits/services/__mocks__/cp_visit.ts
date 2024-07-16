@@ -1,13 +1,13 @@
 import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
 
-import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
-	GqlVisit,
-	GqlVisitWithNotes,
-	Visit,
+	type GqlVisit,
+	type GqlVisitWithNotes,
 	VisitAccessType,
+	type VisitRequest,
 	VisitStatus,
 } from '~modules/visits/types';
+import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
 
 export const mockGqlVisitRequest: GqlVisit = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
@@ -19,6 +19,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 		first_name: 'Ineke',
 		last_name: 'van Dams',
 		mail: 'ineke.vandam@meemoo.be',
+		language: Locale.Nl,
 		collections: [
 			{
 				ies: [
@@ -45,9 +46,11 @@ export const mockGqlVisitRequest: GqlVisit = {
 		schema_image: null,
 		schema_color: null,
 		schema_audience_type: AudienceType.Private,
-		schema_description: null,
 		schema_public_access: false,
-		schema_service_description: null,
+		schema_description_nl: 'mijn-bezoekersruimte',
+		schema_service_description_nl: 'service beschrijving',
+		schema_description_en: 'my-space',
+		schema_service_description_en: 'service description',
 		status: VisitorSpaceStatus.Requested,
 		published_at: null,
 		created_at: '2022-01-19T10:25:51.320763',
@@ -81,7 +84,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 	accessible_folders: [],
 };
 
-export const mockVisitRequest: Visit = {
+export const mockVisitRequest: VisitRequest = {
 	accessType: VisitAccessType.Full,
 	accessibleFolderIds: [],
 	createdAt: '2022-03-18T08:32:57.256264',
@@ -91,7 +94,10 @@ export const mockVisitRequest: Visit = {
 	reason: 'voor mijn onderzoek en studie',
 	spaceAddress: 'Eugène Flageyplein 18, 1050 Elsene',
 	spaceColor: null,
-	spaceDescription: null,
+	spaceDescriptionNl: 'mijn-bezoekersruimte',
+	spaceServiceDescriptionNl: 'service beschrijving',
+	spaceDescriptionEn: 'my-space',
+	spaceServiceDescriptionEn: 'service description',
 	spaceId: 'c3857d2a-a818-4bec-b420-2fe0275604ff',
 	spaceImage: null,
 	spaceInfo:
@@ -100,7 +106,6 @@ export const mockVisitRequest: Visit = {
 	spaceMail: 'vrt@info.com',
 	spaceMaintainerId: 'OR-d79593p',
 	spaceName: 'vrt',
-	spaceServiceDescription: null,
 	spaceSlug: 'bruzz',
 	spaceTelephone: '054342312',
 	startAt: null,
@@ -114,10 +119,11 @@ export const mockVisitRequest: Visit = {
 	visitorId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	visitorLastName: 'van Dams',
 	visitorMail: 'ineke.vandam@meemoo.be',
+	visitorLanguage: Locale.Nl,
 	visitorName: 'Ineke van Dams',
 };
 
-export const mockVisitApproved: Visit = {
+export const mockVisitApproved: VisitRequest = {
 	id: mockGqlVisitRequest.id,
 	spaceId: mockGqlVisitRequest.cp_space_id,
 	spaceSlug: 'vrt',
@@ -137,6 +143,7 @@ export const mockVisitApproved: Visit = {
 	visitorLastName: 'Odhiambo',
 	visitorName: 'Marie Odhiambo',
 	visitorMail: 'marie.odhiambo@example.com',
+	visitorLanguage: Locale.Nl,
 	visitorId: 'df8024f9-ebdc-4f45-8390-72980a3f29f6',
 	updatedById: null,
 	updatedByName: null,

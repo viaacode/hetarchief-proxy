@@ -1,5 +1,6 @@
-import { GqlUser, Permission } from '~modules/users/types';
+import { type GqlUser, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export const mockUserResponse: { users_profile: GqlUser[] } = {
 	users_profile: [
@@ -9,6 +10,7 @@ export const mockUserResponse: { users_profile: GqlUser[] } = {
 			last_name: 'Odhiambo',
 			full_name: 'Marie Odhiambo',
 			mail: 'marie.odhiambo@example.com',
+			language: Locale.Nl,
 			accepted_tos_at: null,
 			group_id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
 			is_key_user: true,

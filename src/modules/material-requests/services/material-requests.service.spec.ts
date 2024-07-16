@@ -1,5 +1,5 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CampaignMonitorService } from '../../campaign-monitor/services/campaign-monitor.service';
 import { MaterialRequestType } from '../material-requests.types';
@@ -14,12 +14,12 @@ import {
 import { MaterialRequestsService } from './material-requests.service';
 
 import {
-	DeleteMaterialRequestMutation,
-	FindMaintainersWithMaterialRequestsQuery,
-	FindMaterialRequestsByIdQuery,
-	FindMaterialRequestsQuery,
-	InsertMaterialRequestMutation,
-	UpdateMaterialRequestMutation,
+	type DeleteMaterialRequestMutation,
+	type FindMaintainersWithMaterialRequestsQuery,
+	type FindMaterialRequestsByIdQuery,
+	type FindMaterialRequestsQuery,
+	type InsertMaterialRequestMutation,
+	type UpdateMaterialRequestMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';

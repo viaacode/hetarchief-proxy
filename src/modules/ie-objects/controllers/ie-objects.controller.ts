@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+// Disable consistent imports since they try to import IeObjectsQueryDto as a type
+// But that breaks the endpoint body validation
+
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Body,
@@ -6,6 +10,7 @@ import {
 	Get,
 	Header,
 	Headers,
+	NotFoundException,
 	Param,
 	Post,
 	Query,
@@ -13,7 +18,7 @@ import {
 	Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
@@ -30,12 +35,13 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	FilterOptions,
-	IeObject,
+	type FilterOptions,
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSeo,
-	IeObjectsWithAggregations,
+	type IeObjectSeo,
+	type IeObjectsWithAggregations,
+	type NewspaperTitle,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
@@ -90,6 +96,11 @@ export class IeObjectsController {
 		);
 	}
 
+	@Get('newspaper-titles')
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		return this.ieObjectsService.getNewspaperTitles();
+	}
+
 	@Get('filter-options')
 	public async getFilterOptions(): Promise<FilterOptions> {
 		return this.ieObjectsService.getFilterOptions();
@@ -101,20 +112,26 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const ieObject = await this.ieObjectsService.findBySchemaIdentifier(
-			id,
+		const ieObjects = await this.ieObjectsService.findBySchemaIdentifiers(
+			[id],
 			referer,
 			getIpFromRequest(request)
 		);
+		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
 				license
 			)
 		);
+
+		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
+			[IeObjectLicense.PUBLIEK_METADATA_ALL].includes(license)
+		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
 			description: hasPublicAccess ? ieObject?.description : null,
+			thumbnailUrl: hasPublicAccessThumbnail ? ieObject?.thumbnailUrl : null,
 		};
 	}
 
@@ -391,6 +408,53 @@ export class IeObjectsController {
 		return licensedSearchResult;
 	}
 
+	@Get()
+	public async getIeObjectByIds(
+		@Query('id') ids: string[],
+		@Headers('referer') referer: string,
+		@Req() request: Request,
+		@SessionUser() user: SessionUserEntity
+	): Promise<IeObject[] | Partial<IeObject>[]> {
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
+			ids,
+			referer,
+			getIpFromRequest(request)
+		);
+
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		return ieObjects.map((ieObject) => {
+			const limitedObject = limitAccessToObjectDetails(ieObject, {
+				userId: user.getId(),
+				isKeyUser: user.getIsKeyUser(),
+				sector: user.getSector(),
+				groupId: user.getGroupId(),
+				maintainerId: user.getOrganisationId(),
+				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			});
+
+			if (!limitedObject) {
+				throw new ForbiddenException('You do not have access to this object');
+			}
+
+			// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+			if (
+				user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+				visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+				intersection(limitedObject?.licenses, [
+					IeObjectLicense.BEZOEKERTOOL_CONTENT,
+					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+				]).length > 0
+			) {
+				limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+			}
+
+			return limitedObject;
+		});
+	}
+
 	@Get(':id')
 	public async getIeObjectById(
 		@Headers('referer') referer: string,
@@ -398,11 +462,16 @@ export class IeObjectsController {
 		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObject: IeObject = await this.ieObjectsService.findBySchemaIdentifier(
-			id,
+		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
+			[id],
 			referer,
 			getIpFromRequest(request)
 		);
+		const ieObject = ieObjects[0];
+
+		if (!ieObject) {
+			throw new NotFoundException(`Object IE with id '${id}' not found`);
+		}
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);

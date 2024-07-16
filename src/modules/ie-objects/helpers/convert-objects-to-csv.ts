@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Papa from 'papaparse';
 
 import { IE_OBJECT_PROPS_METADATA_EXPORT } from '../ie-objects.conts';
-import { IeObject } from '../ie-objects.types';
+import { type IeObject } from '../ie-objects.types';
 
 /**
  * converts isPartOf object to isPartOf.serie, isPartOfProgramma, ...

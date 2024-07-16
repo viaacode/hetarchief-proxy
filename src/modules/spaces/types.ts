@@ -1,25 +1,26 @@
-import { AudienceType, VisitorSpaceStatus } from '~generated/database-aliases';
 import {
-	FindSpaceByIdQuery,
-	FindSpaceByOrganisationIdQuery,
-	FindSpaceBySlugQuery,
-	FindSpacesQuery,
+	type FindSpaceByIdQuery,
+	type FindSpaceByOrganisationIdQuery,
+	type FindSpaceBySlugQuery,
+	type FindSpacesQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { ContactInfo } from '~shared/types/types';
+import { type AudienceType, type ContactInfo, type VisitorSpaceStatus } from '~shared/types/types';
 
 export enum AccessType {
 	ACTIVE = 'ACTIVE',
 	NO_ACCESS = 'NO_ACCESS',
 }
 
-export interface Space {
+export interface VisitorSpace {
 	id: string;
 	slug: string;
 	maintainerId: string;
 	name: string;
 	info: string;
-	description: string;
-	serviceDescription: string;
+	descriptionNl: string;
+	serviceDescriptionNl: string;
+	descriptionEn: string;
+	serviceDescriptionEn: string;
 	image: string;
 	color: string;
 	logo: string;

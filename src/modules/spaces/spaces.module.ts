@@ -1,14 +1,12 @@
-import { AssetsModule, DataModule } from '@meemoo/admin-core-api';
+import { AdminTranslationsModule, AssetsModule, DataModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { SpacesController } from './controllers/spaces.controller';
 import { SpacesService } from './services/spaces.service';
-
-import { TranslationsModule } from '~modules/translations';
 
 @Module({
 	controllers: [SpacesController],
@@ -21,7 +19,7 @@ import { TranslationsModule } from '~modules/translations';
 			inject: [ConfigService],
 		}),
 		AssetsModule,
-		TranslationsModule,
+		AdminTranslationsModule,
 	],
 	providers: [SpacesService],
 	exports: [SpacesService],

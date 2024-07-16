@@ -1,15 +1,21 @@
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { type Logger } from '@nestjs/common';
+import { type ConfigService } from '@nestjs/config';
 import got from 'got';
 import { get } from 'lodash';
-import saml2, { IdentityProvider, ServiceProvider } from 'saml2-js';
+import saml2, { type IdentityProvider, type ServiceProvider } from 'saml2-js';
 import convert from 'xml-js';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
-import { DecodedSamlResponse, IdpMetaData, SamlCallbackBody, SamlConfig } from '../types';
+import {
+	type DecodedSamlResponse,
+	type IdpMetaData,
+	type SamlCallbackBody,
+	type SamlConfig,
+} from '../types';
 
-import { LdapUser } from '~shared/auth/auth.types';
+import { type LdapUser } from '~shared/auth/auth.types';
+import { type Locale } from '~shared/types/types';
 
 export abstract class SamlService {
 	protected logger: Logger;
@@ -100,12 +106,12 @@ export abstract class SamlService {
 	/**
 	 * login url
 	 */
-	public createLoginRequestUrl(returnToUrl: string): Promise<string> {
+	public createLoginRequestUrl(returnToUrl: string, language: Locale): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			this.serviceProvider.create_login_request_url(
 				this.identityProvider,
 				{
-					relay_state: JSON.stringify({ returnToUrl }),
+					relay_state: JSON.stringify({ returnToUrl, language }),
 				},
 				(error: any, loginUrl: string) => {
 					if (error) {

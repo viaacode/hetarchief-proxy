@@ -14,7 +14,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IPagination } from '@studiohyperdrive/pagination';
+import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request } from 'express';
 import { isEmpty, isNil } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,14 +26,14 @@ import {
 	UpdateMaterialRequestDto,
 } from '../dto/material-requests.dto';
 import {
-	MaterialRequest,
-	MaterialRequestMaintainer,
+	type MaterialRequest,
+	type MaterialRequestMaintainer,
 	MaterialRequestMaintainerContactType,
 } from '../material-requests.types';
 import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { EventsService } from '~modules/events/services/events.service';
-import { LogEvent, LogEventType } from '~modules/events/types';
+import { type LogEvent, LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -196,6 +196,7 @@ export class MaterialRequestsController {
 				{
 					firstName: user.getFirstName(),
 					lastName: user.getLastName(),
+					language: user.getLanguage(),
 				}
 			);
 

@@ -4,13 +4,13 @@ import {
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { IPagination } from '@studiohyperdrive/pagination';
-import { Request, Response } from 'express';
+import { type ConfigService } from '@nestjs/config';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type IPagination } from '@studiohyperdrive/pagination';
+import { type Request, type Response } from 'express';
 import { cloneDeep } from 'lodash';
 
-import { IeObject, IeObjectLicense } from '../ie-objects.types';
+import { type IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
 	mockIeObject,
 	mockIeObjectWithMetadataSetALL,
@@ -29,7 +29,7 @@ import { OrganisationsService } from '~modules/organisations/services/organisati
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { mockVisitRequest } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Visit } from '~modules/visits/types';
+import { type VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -51,7 +51,7 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
-	findBySchemaIdentifier: jest.fn(),
+	findBySchemaIdentifiers: jest.fn(),
 	findMetadataBySchemaIdentifier: jest.fn(),
 	getRelated: jest.fn(),
 	countRelated: jest.fn(),
@@ -160,7 +160,7 @@ describe('IeObjectsController', () => {
 				size: 1,
 				total: 1,
 				pages: 1,
-			} as IPagination<Visit>);
+			} as IPagination<VisitRequest>);
 			mockIeObjectsService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			const ieObjects = await ieObjectsController.getIeObjects(
 				'referer',
@@ -200,7 +200,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -217,7 +217,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				licenses: [],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			try {
 				await ieObjectsController.getIeObjectById(
@@ -234,7 +234,7 @@ describe('IeObjectsController', () => {
 		});
 
 		it('should throw a not found exception if the object does not exist', async () => {
-			mockIeObjectsService.findBySchemaIdentifier.mockRejectedValueOnce(
+			mockIeObjectsService.findBySchemaIdentifiers.mockRejectedValueOnce(
 				new NotFoundException(
 					`Object IE with id '${mockIeObject.schemaIdentifier}' not found`
 				)
@@ -262,7 +262,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -282,7 +282,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -299,7 +299,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				license: [],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'referer',
@@ -320,7 +320,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -331,6 +331,7 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: mockIeObject.name,
 				description: mockIeObject.description,
+				thumbnailUrl: null,
 			});
 		});
 
@@ -339,7 +340,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -350,6 +351,7 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: mockIeObject.name,
 				description: mockIeObject.description,
+				thumbnailUrl: mockIeObject.thumbnailUrl,
 			});
 		});
 
@@ -358,7 +360,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject,
 				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findBySchemaIdentifier.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -369,6 +371,7 @@ describe('IeObjectsController', () => {
 			expect(result).toEqual({
 				name: null,
 				description: null,
+				thumbnailUrl: null,
 			});
 		});
 	});

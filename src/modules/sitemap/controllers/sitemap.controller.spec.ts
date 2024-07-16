@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { AssetType } from '@viaa/avo2-types';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { mockSitemapConfig } from '../mocks/sitemap.mocks';
 import { SitemapService } from '../services/sitemap.service';

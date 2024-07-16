@@ -7,7 +7,7 @@ import crawlerUserAgentsJson from '../data/crawler-user-agents.json';
 import { CreateEventsDto } from '../dto/events.dto';
 import { EventsService } from '../services/events.service';
 
-import { CrawlerInfo, LogEvent } from '~modules/events/types';
+import { type CrawlerInfo, type LogEvent } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';

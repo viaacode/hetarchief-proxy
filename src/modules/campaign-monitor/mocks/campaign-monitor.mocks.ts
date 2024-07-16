@@ -2,22 +2,23 @@ import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/adm
 
 import {
 	CampaignMonitorCustomFieldName,
-	CampaignMonitorUserInfo,
-	MaterialRequestEmailInfo,
+	type CampaignMonitorUserInfo,
+	type MaterialRequestEmailInfo,
 	Template,
 } from '../campaign-monitor.types';
 import {
-	CampaignMonitorConfirmationData,
-	CampaignMonitorConfirmMailQueryDto,
-	CampaignMonitorMaterialRequestData,
-	CampaignMonitorNewsletterUpdatePreferencesQueryDto,
-	RequestListItem,
+	type CampaignMonitorConfirmationData,
+	type CampaignMonitorConfirmMailQueryDto,
+	type CampaignMonitorMaterialRequestData,
+	type CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+	type RequestListItem,
 } from '../dto/campaign-monitor.dto';
 
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export const mockUser: User = {
 	id: 'e791ecf1-e121-4c54-9d2e-34524b6467c6',
@@ -25,6 +26,7 @@ export const mockUser: User = {
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,
@@ -36,6 +38,7 @@ export const mockUser: User = {
 export const mockUserInfo: CampaignMonitorUserInfo = {
 	firstName: mockUser.firstName,
 	lastName: mockUser.lastName,
+	language: Locale.Nl,
 	email: mockUser.email,
 	is_key_user: mockUser.isKeyUser,
 	usergroup: mockUser.groupName,
@@ -79,13 +82,14 @@ export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 	sendRequestListDto: mockSendRequestListDto,
 	firstName: 'mockFirstName',
 	lastName: 'mockLastName',
+	language: Locale.Nl,
 };
 
 export const mockRequestListItemToMaintainer: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
-	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };
@@ -95,7 +99,7 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	cp_name: mockMaterialRequest1.maintainerName,
 	pid: mockMaterialRequest1.objectMeemooIdentifier,
-	page_url: `http://bezoekerstool/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };
@@ -166,6 +170,11 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Clear: false,
 			Key: CampaignMonitorCustomFieldName.optin_mail_lists,
 			Value: 'newsletter',
+		},
+		{
+			Clear: false,
+			Key: CampaignMonitorCustomFieldName.language,
+			Value: mockUserInfo.language,
 		},
 	],
 };

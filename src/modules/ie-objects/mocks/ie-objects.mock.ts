@@ -1,15 +1,16 @@
 import {
-	GqlIeObject,
-	IeObject,
+	type GqlIeObject,
+	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
-	IeObjectSector,
-	IeObjectsSitemap,
+	type IeObjectSector,
+	type IeObjectsSitemap,
 } from '../ie-objects.types';
 
-import { GetObjectDetailBySchemaIdentifierQuery } from '~generated/graphql-db-types-hetarchief';
+import { type GetObjectDetailBySchemaIdentifiersQuery } from '~generated/graphql-db-types-hetarchief';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
+import { Locale } from '~shared/types/types';
 
 export const mockIeObject: Readonly<IeObject> = {
 	schemaIdentifier:
@@ -320,6 +321,7 @@ export const mockUser = Object.freeze({
 	lastName: 'Testers',
 	fullName: 'Test Testers',
 	email: 'test.testers@meemoo.be',
+	language: Locale.Nl,
 	idp: Idp.HETARCHIEF,
 	acceptedTosAt: '1997-01-01T00:00:00.000Z',
 	groupId: GroupId.CP_ADMIN,
@@ -346,7 +348,7 @@ export const mockUserInfo: Readonly<{
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
+export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
 	object_ie: [
 		{
 			schema_identifier:
@@ -409,7 +411,7 @@ export const mockObjectIe: Readonly<GetObjectDetailBySchemaIdentifierQuery> = {
 				'AGRESSIE',
 				'KARAKTERVORMING',
 			],
-			schema_genre: 'program',
+			schema_genre: ['program'],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
 			schema_in_language: null,

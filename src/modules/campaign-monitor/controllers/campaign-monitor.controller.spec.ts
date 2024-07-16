@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Request } from 'express';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type Request } from 'express';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import {
 	mockNewsletterUpdatePreferencesQueryDto,
@@ -124,7 +124,10 @@ describe('CampaignMonitorController', () => {
 
 			const sent = await campaignMonitorController.updatePreferences(
 				mockRequest,
-				mockNewsletterUpdatePreferencesQueryDto
+				mockNewsletterUpdatePreferencesQueryDto,
+				new SessionUserEntity({
+					...mockUser,
+				})
 			);
 
 			expect(sent).toEqual({ message: 'success' });

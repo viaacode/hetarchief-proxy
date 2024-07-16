@@ -1,16 +1,17 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { Configuration } from '~config';
+import { type Configuration } from '~config';
 
 import { IdpService } from './idp.service';
 
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { LdapApp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
+import { Locale } from '~shared/types/types';
 
 const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
 	findByMaintainerId: jest.fn(),
@@ -103,7 +104,7 @@ describe('IdpService', () => {
 			const ldapUser = getLdapUser();
 			ldapUser.attributes.apps = [];
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			expect(group).toEqual(GroupId.VISITOR);
 		});
 
@@ -112,7 +113,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.apps = [];
 			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			expect(group).toEqual(GroupId.VISITOR);
 		});
 
@@ -122,7 +123,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.apps = [];
 			ldapUser.attributes.organizationalStatus = ['kiosk'];
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			expect(group).toEqual(GroupId.KIOSK_VISITOR);
 		});
 
@@ -134,7 +135,7 @@ describe('IdpService', () => {
 			let err;
 
 			try {
-				await idpService.determineUserGroup(ldapUser);
+				await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			} catch (error) {
 				err = error;
 			}
@@ -147,7 +148,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.o = ['unknown'];
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			expect(group).toEqual(GroupId.VISITOR);
 		});
 
@@ -156,7 +157,7 @@ describe('IdpService', () => {
 			ldapUser.attributes.o = meemooAdminOrganizationIds.split(',');
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce(null);
 
-			const group = await idpService.determineUserGroup(ldapUser);
+			const group = await idpService.determineUserGroup(ldapUser, null, Locale.Nl);
 			expect(group).toEqual(GroupId.MEEMOO_ADMIN);
 		});
 
@@ -165,7 +166,11 @@ describe('IdpService', () => {
 			ldapUser.attributes.o = ['OR-rf5kf25'];
 			mockSpacesService.findByMaintainerId.mockResolvedValueOnce({ id: 'space-1' });
 
-			const group = await idpService.determineUserGroup(ldapUser, mockOrganisation);
+			const group = await idpService.determineUserGroup(
+				ldapUser,
+				mockOrganisation,
+				Locale.Nl
+			);
 			expect(group).toEqual(GroupId.CP_ADMIN);
 		});
 	});

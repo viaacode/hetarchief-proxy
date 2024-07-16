@@ -3,10 +3,10 @@ import flow from 'lodash/fp/flow';
 
 import { Idp, LdapApp } from './auth.types';
 
-import { GroupId, GroupName, Permission, User } from '~modules/users/types';
+import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { TestingLogger } from '~shared/logging/test-logger';
-import { SpecialPermissionGroups } from '~shared/types/types';
+import { Locale, SpecialPermissionGroups } from '~shared/types/types';
 
 const mockLdapUser = {
 	name_id: 'test-name-id',
@@ -34,6 +34,7 @@ const mockArchiefUser: User = {
 	lastName: 'Testerom',
 	fullName: 'Test Testers',
 	email: 'test@studiohyperdrive.be',
+	language: Locale.Nl,
 	acceptedTosAt: '2022-02-21T14:00:00',
 	groupId: GroupId.CP_ADMIN,
 	groupName: GroupName.CP_ADMIN,

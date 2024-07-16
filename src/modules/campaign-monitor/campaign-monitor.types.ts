@@ -1,9 +1,9 @@
-import { CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
+import { type CampaignMonitorVisitData } from './dto/campaign-monitor.dto';
 
-import { SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
-import { MaterialRequest } from '~modules/material-requests/material-requests.types';
-import { Visit } from '~modules/visits/types';
-import { Recipient } from '~shared/types/types';
+import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
+import { type MaterialRequest } from '~modules/material-requests/material-requests.types';
+import { type VisitRequest } from '~modules/visits/types';
+import { type Locale, type Recipient } from '~shared/types/types';
 
 export enum Template {
 	VISIT_REQUEST_CP = 'visitRequestCp',
@@ -18,7 +18,7 @@ export enum Template {
 export interface VisitEmailInfo {
 	to: Recipient[];
 	template: Template;
-	visit: Visit;
+	visitRequest: VisitRequest;
 }
 
 export interface MaterialRequestEmailInfo {
@@ -28,6 +28,7 @@ export interface MaterialRequestEmailInfo {
 	sendRequestListDto: SendRequestListDto;
 	firstName: string;
 	lastName: string;
+	language: Locale;
 }
 
 export interface CampaignMonitorEmailInfo {
@@ -58,6 +59,7 @@ export interface CampaignMonitorUserInfo {
 	created_date?: string;
 	last_access_date?: string;
 	organisation?: string; //organisationName
+	language?: string;
 }
 
 export enum CampaignMonitorCustomFieldName {
@@ -69,4 +71,5 @@ export enum CampaignMonitorCustomFieldName {
 	created_date = 'created_date',
 	last_access_date = 'last_access_date',
 	organisation = 'organisation',
+	language = 'language',
 }

@@ -7,6 +7,7 @@ import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
 import { SortDirection } from '~shared/types';
+import { Locale } from '~shared/types/types';
 
 const mockInputInfo = {
 	user: new SessionUserEntity({
@@ -15,6 +16,7 @@ const mockInputInfo = {
 		firstName: 'John',
 		lastName: 'Doe',
 		email: 'johndoe@gmail.com',
+		language: Locale.Nl,
 		acceptedTosAt: '',
 		groupId: GroupId.MEEMOO_ADMIN,
 		groupName: GroupName.MEEMOO_ADMIN,
@@ -591,7 +593,10 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
+			// Disabled matchbox filters for lemma split words
+			// https://meemoo.atlassian.net/browse/ARC-2405
+			// expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
 		});
 
 		it('Should return an exact filter object for free text search with quotes', () => {

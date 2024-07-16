@@ -1,5 +1,5 @@
 import { nlBE } from 'date-fns/locale';
-import { formatInTimeZone, OptionsWithTZ } from 'date-fns-tz';
+import { formatInTimeZone, type OptionsWithTZ } from 'date-fns-tz';
 
 export function convertToDate(date: string): Date {
 	return new Date(date + (date.toLocaleLowerCase().endsWith('z') ? '' : 'Z'));

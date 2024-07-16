@@ -1,4 +1,4 @@
-import { TranslationsService } from '@meemoo/admin-core-api';
+import { type TranslationsService } from '@meemoo/admin-core-api';
 
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 
@@ -6,5 +6,5 @@ export const mockTranslationsService: Partial<Record<keyof TranslationsService, 
 	{
 		onApplicationBootstrap: jest.fn(),
 		refreshBackendTranslations: jest.fn(),
-		t: jest.fn().mockImplementation(getTranslationFallback),
+		tText: jest.fn().mockImplementation(getTranslationFallback),
 	};

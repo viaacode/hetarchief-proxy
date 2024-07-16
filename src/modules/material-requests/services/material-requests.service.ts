@@ -6,53 +6,53 @@ import {
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
-import { IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { compact, groupBy, isArray, isEmpty, isNil, kebabCase, set } from 'lodash';
 
 import {
-	CreateMaterialRequestDto,
-	MaterialRequestsQueryDto,
-	SendRequestListDto,
+	type CreateMaterialRequestDto,
+	type MaterialRequestsQueryDto,
+	type SendRequestListDto,
 } from '../dto/material-requests.dto';
 import { ORDER_PROP_TO_DB_PROP } from '../material-requests.consts';
 import {
-	GqlMaterialRequest,
-	GqlMaterialRequestMaintainer,
-	MaterialRequest,
-	MaterialRequestFindAllExtraParameters,
-	MaterialRequestMaintainer,
-	MaterialRequestSendRequestListUserInfo,
+	type GqlMaterialRequest,
+	type GqlMaterialRequestMaintainer,
+	type MaterialRequest,
+	type MaterialRequestFindAllExtraParameters,
+	type MaterialRequestMaintainer,
+	type MaterialRequestSendRequestListUserInfo,
 } from '../material-requests.types';
 
 import {
-	App_Material_Requests_Set_Input,
+	type App_Material_Requests_Set_Input,
 	DeleteMaterialRequestDocument,
-	DeleteMaterialRequestMutation,
-	DeleteMaterialRequestMutationVariables,
+	type DeleteMaterialRequestMutation,
+	type DeleteMaterialRequestMutationVariables,
 	FindMaintainersWithMaterialRequestsDocument,
-	FindMaintainersWithMaterialRequestsQuery,
-	FindMaintainersWithMaterialRequestsQueryVariables,
+	type FindMaintainersWithMaterialRequestsQuery,
+	type FindMaintainersWithMaterialRequestsQueryVariables,
 	FindMaterialRequestsByIdDocument,
-	FindMaterialRequestsByIdQuery,
-	FindMaterialRequestsByIdQueryVariables,
+	type FindMaterialRequestsByIdQuery,
+	type FindMaterialRequestsByIdQueryVariables,
 	FindMaterialRequestsDocument,
-	FindMaterialRequestsQuery,
-	FindMaterialRequestsQueryVariables,
+	type FindMaterialRequestsQuery,
+	type FindMaterialRequestsQueryVariables,
 	InsertMaterialRequestDocument,
-	InsertMaterialRequestMutation,
-	InsertMaterialRequestMutationVariables,
+	type InsertMaterialRequestMutation,
+	type InsertMaterialRequestMutationVariables,
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	UpdateMaterialRequestDocument,
-	UpdateMaterialRequestMutation,
-	UpdateMaterialRequestMutationVariables,
+	type UpdateMaterialRequestMutation,
+	type UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
-	MaterialRequestEmailInfo,
+	type MaterialRequestEmailInfo,
 	Template,
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
-import { Organisation } from '~modules/organisations/organisations.types';
+import { type MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -315,6 +315,7 @@ export class MaterialRequestsService {
 						sendRequestListDto,
 						firstName: userInfo.firstName,
 						lastName: userInfo.lastName,
+						language: userInfo.language,
 					};
 					await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 				})
@@ -328,6 +329,7 @@ export class MaterialRequestsService {
 				sendRequestListDto,
 				firstName: userInfo.firstName,
 				lastName: userInfo.lastName,
+				language: userInfo.language,
 			};
 			await this.campaignMonitorService.sendForMaterialRequest(emailInfo);
 		} catch (err) {
