@@ -59,7 +59,8 @@ export class HetArchiefController {
 	@Redirect()
 	public async loginRoute(
 		@Session() session: Record<string, any>,
-		@Query('returnToUrl') returnToUrl: string
+		@Query('returnToUrl') returnToUrl: string,
+		@Query('language') language: Locale = Locale.Nl
 	) {
 		try {
 			if (SessionHelper.isLoggedIn(session)) {
@@ -69,7 +70,7 @@ export class HetArchiefController {
 				};
 			}
 
-			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl);
+			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl, language);
 			return {
 				url,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,

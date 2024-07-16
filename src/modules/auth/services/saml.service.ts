@@ -15,6 +15,7 @@ import {
 } from '../types';
 
 import { type LdapUser } from '~shared/auth/auth.types';
+import { type Locale } from '~shared/types/types';
 
 export abstract class SamlService {
 	protected logger: Logger;
@@ -105,12 +106,12 @@ export abstract class SamlService {
 	/**
 	 * login url
 	 */
-	public createLoginRequestUrl(returnToUrl: string): Promise<string> {
+	public createLoginRequestUrl(returnToUrl: string, language: Locale): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			this.serviceProvider.create_login_request_url(
 				this.identityProvider,
 				{
-					relay_state: JSON.stringify({ returnToUrl }),
+					relay_state: JSON.stringify({ returnToUrl, language }),
 				},
 				(error: any, loginUrl: string) => {
 					if (error) {
