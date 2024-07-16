@@ -1,9 +1,4 @@
 query getNewspaperTitles {
-	users_permission_aggregate {
-		aggregate {
-			count
-		}
-	}
 	graph__newspapers_public {
 		id
 		schema_name
