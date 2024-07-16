@@ -82,6 +82,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
+		if (emailInfo.to.length === 0) {
+			return;
+		}
+
 		const groupedRecipientsByLanguage = Object.entries(
 			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
 		);
@@ -464,7 +468,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					return {
 						title: materialRequest.objectSchemaName,
 						local_cp_id: materialRequest.objectMeemooLocalId,
-						pid: materialRequest.objectMeemooIdentifier,
+						pid: materialRequest.objectSchemaIdentifier,
 						page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 							materialRequest.maintainerSlug
 						}/${materialRequest.objectSchemaIdentifier}`,
@@ -489,7 +493,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				title: materialRequest.objectSchemaName,
 				cp_name: materialRequest.maintainerName,
 				local_cp_id: materialRequest.objectMeemooLocalId,
-				pid: materialRequest.objectMeemooIdentifier,
+				pid: materialRequest.objectSchemaIdentifier,
 				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 					materialRequest.maintainerSlug
 				}/${materialRequest.objectSchemaIdentifier}`,

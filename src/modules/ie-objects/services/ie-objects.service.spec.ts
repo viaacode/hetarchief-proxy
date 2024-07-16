@@ -331,7 +331,6 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
 			const response = await ieObjectsService.getRelated(
 				mockObjectSchemaIdentifier,
-				'8911p09j1g',
 				'referer',
 				'',
 				{ maintainerId: 'my-index' }

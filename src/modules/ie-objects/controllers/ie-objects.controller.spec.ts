@@ -436,10 +436,9 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getRelated(
+				'8911p09j1g',
 				'referer',
 				mockRequest,
-				'1',
-				'8911p09j1g',
 				{ maintainerId: '' },
 				mockSessionUser
 			);

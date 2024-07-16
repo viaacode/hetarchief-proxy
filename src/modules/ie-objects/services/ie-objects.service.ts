@@ -64,7 +64,6 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
@@ -200,12 +199,15 @@ export class IeObjectsService {
 	}
 
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		return mockNewspapers;
+		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
+
+		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
 	public async getRelated(
 		schemaIdentifier: string,
-		meemooIdentifier: string,
 		referer: string,
 		ip: string,
 		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
@@ -429,7 +431,6 @@ export class IeObjectsService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
 			creator: gqlIeObject?.schema_creator,
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
@@ -531,7 +532,6 @@ export class IeObjectsService {
 			dctermsFormat: esObject?.dcterms_format,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemooIdentifier: esObject?.meemoo_identifier,
 			meemoofilmBase: esObject?.meemoofilm_base,
 			meemoofilmColor: esObject?.meemoofilm_color,
 			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
@@ -592,7 +592,6 @@ export class IeObjectsService {
 			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published,
-			meemooIdentifier: graphQlObject.intellectualEntity?.meemoo_identifier,
 			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id,
 			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
@@ -761,7 +760,6 @@ export class IeObjectsService {
 			isPartOf: ieObject?.isPartOf || {},
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
-			meemooIdentifier: ieObject?.meemooIdentifier,
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,

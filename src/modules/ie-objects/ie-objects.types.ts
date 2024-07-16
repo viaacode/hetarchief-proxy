@@ -105,7 +105,6 @@ export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: string;
 	dctermsMedium: string;
-	meemooIdentifier: string; // PID (not unique per object)
 	meemoofilmBase: string;
 	meemoofilmColor: boolean;
 	meemoofilmImageOrSound: string;
@@ -218,7 +217,6 @@ export interface ElasticsearchObject {
 	dcterms_format: string;
 	dcterms_medium: string | null;
 	ebucore_object_type: EbucoreObjectType | null;
-	meemoo_identifier: string;
 	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
@@ -277,7 +275,7 @@ export interface ElasticsearchObject {
 	schema_publisher: {
 		Distributeur?: string[];
 	} | null;
-	schema_spatial_coverage: string;
+	schema_spatial_coverage: string[];
 	schema_temporal_coverage: string;
 	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT

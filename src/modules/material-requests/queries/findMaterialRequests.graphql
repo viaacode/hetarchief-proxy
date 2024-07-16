@@ -36,9 +36,8 @@ query findMaterialRequests(
 					slug
 				}
 			}
-			meemoo_identifier
+			schema_identifier
 			meemoo_local_id
-			meemoo_identifier
 			schema_name
 			dcterms_format
 			schema_thumbnail_url

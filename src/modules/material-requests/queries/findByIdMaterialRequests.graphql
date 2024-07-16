@@ -31,7 +31,7 @@ query findMaterialRequestsById($id: uuid!) {
 					slug
 				}
 			}
-			meemoo_identifier
+			schema_identifier
 			schema_name
 			dcterms_format
 			schema_thumbnail_url

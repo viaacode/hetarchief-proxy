@@ -372,7 +372,6 @@ export class MaterialRequestsService {
 			id: graphQlMaterialRequest.id,
 			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity.schema_name,
-			objectMeemooIdentifier: graphQlMaterialRequest.intellectualEntity.meemoo_identifier,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
 				.dcterms_format as MediaFormat,
 			objectThumbnailUrl: graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url,

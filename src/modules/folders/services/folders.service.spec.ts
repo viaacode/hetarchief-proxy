@@ -61,9 +61,7 @@ const mockGqlFolderObject: GqlObject = {
 	dcterms_available: '2015-09-19T12:08:24',
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
-	meemoo_identifier: '8s4jm2514q',
-	schema_identifier:
-		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+	schema_identifier: '8s4jm2514q',
 };
 
 const mockGqlFolderObjectLink: FolderObjectLink = {
@@ -110,9 +108,7 @@ const mockGqlFolderObjectsResult = {
 					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 				dcterms_format: 'video',
 				schema_number_of_pages: null,
-				meemoo_identifier: '8s4jm2514q',
-				schema_identifier:
-					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
@@ -135,18 +131,14 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 				dcterms_format: 'video',
 				schema_number_of_pages: null,
-				meemoo_identifier: '8s4jm2514q',
-				schema_identifier:
-					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
 };
 
 const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
-	schemaIdentifier:
-		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	meemooIdentifier: '8s4jm2514q',
+	schemaIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -265,10 +257,7 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.meemooIdentifier).toEqual(
-				mockGqlFolderObjectLink.intellectualEntity.meemoo_identifier
-			);
-			expect(adapted.name).toEqual(mockGqlFolderObjectLink.intellectualEntity.schema_name);
+			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);

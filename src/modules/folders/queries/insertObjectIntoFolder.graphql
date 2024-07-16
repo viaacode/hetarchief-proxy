@@ -6,7 +6,6 @@ mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectSchemaIdentifier: St
 			created_at
 			intellectualEntity {
 				schema_identifier
-				meemoo_identifier
 				dcterms_format
 				dcterms_available
 				schema_creator
