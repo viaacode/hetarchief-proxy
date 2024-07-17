@@ -5,7 +5,7 @@ import { type MaterialRequest } from '~modules/material-requests/material-reques
 import { type VisitRequest } from '~modules/visits/types';
 import { type Locale, type Recipient } from '~shared/types/types';
 
-export enum Template {
+export enum EmailTemplate {
 	VISIT_REQUEST_CP = 'visitRequestCp',
 	VISIT_APPROVED = 'visitApproved',
 	VISIT_DENIED = 'visitDenied',
@@ -17,13 +17,13 @@ export enum Template {
 
 export interface VisitEmailInfo {
 	to: Recipient[];
-	template: Template;
+	template: EmailTemplate;
 	visitRequest: VisitRequest;
 }
 
 export interface MaterialRequestEmailInfo {
 	to?: string;
-	template: Template;
+	template: EmailTemplate;
 	materialRequests: MaterialRequest[];
 	sendRequestListDto: SendRequestListDto;
 	firstName: string;

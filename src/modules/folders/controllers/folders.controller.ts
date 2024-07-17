@@ -37,7 +37,7 @@ import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
 @ApiTags('Folders')
-@Controller('collections') // TODO rename this to folders, and also change this in the client
+@Controller('folders') // TODO rename this to folders, and also change this in the client
 export class FoldersController {
 	constructor(
 		private foldersService: FoldersService,
@@ -330,23 +330,23 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<FolderShared> {
-		const collection = await this.foldersService.findFolderById(
+		const folder = await this.foldersService.findFolderById(
 			folderId,
 			referer,
 			getIpFromRequest(request)
 		);
 
-		if (collection?.userProfileId === user.getId()) {
+		if (folder?.userProfileId === user.getId()) {
 			return {
 				status: FolderStatus.ALREADY_OWNER,
-				folderId: collection.id,
-				folderName: collection?.name,
+				folderId: folder.id,
+				folderName: folder?.name,
 			};
 		}
 
 		const createdFolder = await this.foldersService.create(
 			{
-				name: collection?.name,
+				name: folder?.name,
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
@@ -359,7 +359,7 @@ export class FoldersController {
 		try {
 			folderObjects = await this.foldersService.findObjectsByFolderId(
 				folderId,
-				collection?.userProfileId,
+				folder?.userProfileId,
 				{ size: 1000 },
 				referer,
 				getIpFromRequest(request)

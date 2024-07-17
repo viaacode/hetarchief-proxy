@@ -78,7 +78,7 @@ export class FoldersService {
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0] || null,
 			isPartOf: gqlIeObject?.schema_is_part_of || null,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			dateCreated: gqlIeObject?.schema_date_created || null,
@@ -152,15 +152,15 @@ export class FoldersService {
 		/* istanbul ignore next */
 		// TODO: add union type
 		const objectIe = this.adaptIeObject(gqlFolderObjectLink?.intellectualEntity as GqlObject);
-		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-			objectIe.thumbnailUrl?.[0],
+		const resolvedThumbnailUrl: string = await this.playerTicketService.resolveThumbnailUrl(
+			objectIe.thumbnailUrl,
 			referer,
 			ip
 		);
 		return {
 			folderEntryCreatedAt: gqlFolderObjectLink?.created_at,
 			...objectIe,
-			thumbnailUrl: [resolvedThumbnailUrl],
+			thumbnailUrl: resolvedThumbnailUrl,
 		};
 	}
 

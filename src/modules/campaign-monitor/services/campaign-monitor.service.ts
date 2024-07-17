@@ -19,8 +19,8 @@ import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
 	type CampaignMonitorUserInfo,
+	EmailTemplate,
 	type MaterialRequestEmailInfo,
-	Template,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -167,7 +167,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		await this.sendTransactionalMail(
 			{
-				template: Template.EMAIL_CONFIRMATION,
+				template: EmailTemplate.EMAIL_CONFIRMATION,
 				data,
 			},
 			language
@@ -305,7 +305,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 
 			let cmTemplateId: string;
-			if (Object.values(Template).includes(emailInfo.template as any)) {
+			if (Object.values(EmailTemplate).includes(emailInfo.template as any)) {
 				cmTemplateId = getTemplateId(emailInfo.template, lang);
 			} else {
 				cmTemplateId = emailInfo.template;
@@ -459,7 +459,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		};
 
 		// Maintainer Template
-		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
+		if (emailInfo.template === EmailTemplate.MATERIAL_REQUEST_MAINTAINER) {
 			return {
 				user_firstname: emailInfo.firstName,
 				user_lastname: emailInfo.lastName,

@@ -3,8 +3,8 @@ import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/adm
 import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorUserInfo,
+	EmailTemplate,
 	type MaterialRequestEmailInfo,
-	Template,
 } from '../campaign-monitor.types';
 import {
 	type CampaignMonitorConfirmationData,
@@ -77,7 +77,7 @@ export const mockSendRequestListDto: SendRequestListDto = {
 
 export const mockMaterialRequestEmailInfo: MaterialRequestEmailInfo = {
 	to: 'test@example.com',
-	template: Template.MATERIAL_REQUEST_MAINTAINER,
+	template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
 	materialRequests: [mockMaterialRequest1],
 	sendRequestListDto: mockSendRequestListDto,
 	firstName: 'mockFirstName',

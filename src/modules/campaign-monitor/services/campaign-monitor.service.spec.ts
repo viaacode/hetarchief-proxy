@@ -7,7 +7,7 @@ import * as queryString from 'query-string';
 import { type Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
-import { CampaignMonitorCustomFieldName, Template } from '../campaign-monitor.types';
+import { CampaignMonitorCustomFieldName, EmailTemplate } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
@@ -196,12 +196,12 @@ describe('CampaignMonitorService', () => {
 
 			await campaignMonitorService.sendForVisit({
 				to: [{ id: visit.visitorId, email: null, language: Locale.Nl }],
-				template: Template.VISIT_APPROVED,
+				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: visit,
 			});
 			expect(sendTransactionalMailSpy).toBeCalledWith(
 				{
-					template: Template.VISIT_APPROVED,
+					template: EmailTemplate.VISIT_APPROVED,
 					data: {
 						to: ['MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'],
 						consentToTrack: 'unchanged',
@@ -249,7 +249,7 @@ describe('CampaignMonitorService', () => {
 			const visitRequest = getMockVisitRequest();
 			try {
 				await campaignMonitorService.sendForVisit({
-					template: Template.VISIT_APPROVED,
+					template: EmailTemplate.VISIT_APPROVED,
 					visitRequest: visitRequest,
 					to: [
 						{
@@ -267,7 +267,7 @@ describe('CampaignMonitorService', () => {
 
 		it('should early return when no recipients are provided', async () => {
 			const response = await campaignMonitorService.sendForVisit({
-				template: Template.VISIT_APPROVED,
+				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: getMockVisitRequest(),
 				to: [],
 			});
@@ -286,7 +286,7 @@ describe('CampaignMonitorService', () => {
 
 		it('should parse materialRequestEmailInfo with Requester Template', () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 			const result =
 				campaignMonitorService.convertMaterialRequestsToEmailTemplateData(
 					materialRequestEmailInfo
@@ -298,7 +298,7 @@ describe('CampaignMonitorService', () => {
 	describe('sendForMaterialRequest', () => {
 		it('should throw an error and not send to an empty recipients email address', async () => {
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 			materialRequestEmailInfo.to = null;
 			const sendTransactionalMailSpy = jest.spyOn(
 				campaignMonitorService,
@@ -331,7 +331,7 @@ describe('CampaignMonitorService', () => {
 		it('should NOT call the campaign monitor api if email sending is disabled', async () => {
 			campaignMonitorService.setIsEnabled(false);
 			const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-			materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+			materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 
 			const result =
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
@@ -346,7 +346,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
+					)}/${getTemplateId(EmailTemplate.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
@@ -358,7 +358,7 @@ describe('CampaignMonitorService', () => {
 
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 			} catch (err) {
@@ -373,12 +373,12 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
+					)}/${getTemplateId(EmailTemplate.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
 				.replyWithError('');
 			try {
 				const materialRequestEmailInfo = mockMaterialRequestEmailInfo;
-				materialRequestEmailInfo.template = Template.MATERIAL_REQUEST_REQUESTER;
+				materialRequestEmailInfo.template = EmailTemplate.MATERIAL_REQUEST_REQUESTER;
 				materialRequestEmailInfo.to = 'test@example.com';
 				await campaignMonitorService.sendForMaterialRequest(materialRequestEmailInfo);
 				fail(
@@ -689,7 +689,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(Template.EMAIL_CONFIRMATION, Locale.Nl)}/send`
+					)}/${getTemplateId(EmailTemplate.EMAIL_CONFIRMATION, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{

@@ -129,7 +129,7 @@ export interface IeObject {
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
-	thumbnailUrl: string[];
+	thumbnailUrl: string;
 	// EXTRA
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];

@@ -71,6 +71,7 @@ import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { customError } from '~shared/helpers/custom-error';
 
 @Injectable()
 export class IeObjectsService {
@@ -224,13 +225,11 @@ export class IeObjectsService {
 		const adaptedItems = await Promise.all(
 			mediaObjects.graph__intellectual_entity.map(async (object: any) => {
 				const adapted = this.adaptFromDB(object);
-				adapted.thumbnailUrl = [
-					await this.playerTicketService.resolveThumbnailUrl(
-						adapted.thumbnailUrl[0],
-						referer,
-						ip
-					),
-				];
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer,
+					ip
+				);
 				return adapted;
 			})
 		);
@@ -354,12 +353,11 @@ export class IeObjectsService {
 		return await Promise.all(
 			response.graph__intellectual_entity.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
-				// TODO ARC-2403 add thumbnail url to objects
-				// adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-				// 	adapted.thumbnailUrl,
-				// 	referer,
-				// 	ip
-				// );
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer,
+					ip
+				);
 				return adapted;
 			})
 		);
@@ -476,7 +474,7 @@ export class IeObjectsService {
 			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
@@ -568,7 +566,7 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: [esObject?.schema_thumbnail_url],
+			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
@@ -704,7 +702,14 @@ export class IeObjectsService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e?.response?.body);
+			this.logger.error(
+				customError('Failed to execute ie-objects query', e, {
+					name: e?.name,
+					code: e?.code,
+					stack: e?.stack,
+					body: e?.response?.body,
+				})
+			);
 			throw e;
 		}
 	}

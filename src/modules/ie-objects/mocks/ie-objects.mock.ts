@@ -60,9 +60,8 @@ export const mockIeObject1: Readonly<IeObject> = {
 	dctermsFormat: 'video',
 	dctermsMedium: '16mm',
 	inLanguage: null,
-	thumbnailUrl: [
+	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	],
 	duration: '00:39:52',
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
@@ -182,9 +181,8 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 };
 
 export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
-	thumbnailUrl: [
+	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	],
 	pageRepresentations: [],
 	meemooOriginalCp: null,
 	premisIsPartOf: null,

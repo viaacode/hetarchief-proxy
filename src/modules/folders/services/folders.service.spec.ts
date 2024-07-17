@@ -144,9 +144,8 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	creator: null,
 	dctermsFormat: 'video',
 	numberOfPages: null,
-	thumbnailUrl: [
+	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	],
 	folderEntryCreatedAt: '2022-02-02T10:55:16.542503',
 	description: 'A description for this folder',
 	maintainerId: 'OR-1v5bc86',

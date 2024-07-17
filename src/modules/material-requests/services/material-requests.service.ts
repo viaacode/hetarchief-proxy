@@ -47,8 +47,8 @@ import {
 	type UpdateMaterialRequestMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import {
+	EmailTemplate,
 	type MaterialRequestEmailInfo,
-	Template,
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { type MediaFormat } from '~modules/ie-objects/ie-objects.types';
@@ -320,7 +320,7 @@ export class MaterialRequestsService {
 					const emailInfo: MaterialRequestEmailInfo = {
 						// Each materialRequest in this group has the same maintainer, otherwise, the maintainer will receive multiple mails
 						to: materialRequests[0].contactMail,
-						template: Template.MATERIAL_REQUEST_MAINTAINER,
+						template: EmailTemplate.MATERIAL_REQUEST_MAINTAINER,
 						materialRequests: materialRequests,
 						sendRequestListDto,
 						firstName: userInfo.firstName,
@@ -334,7 +334,7 @@ export class MaterialRequestsService {
 			// Send mail to the requester containing all of their material requests for all the objects they requested
 			const emailInfo: MaterialRequestEmailInfo = {
 				to: materialRequests[0]?.requesterMail,
-				template: Template.MATERIAL_REQUEST_REQUESTER,
+				template: EmailTemplate.MATERIAL_REQUEST_REQUESTER,
 				materialRequests: materialRequests,
 				sendRequestListDto,
 				firstName: userInfo.firstName,
@@ -374,7 +374,8 @@ export class MaterialRequestsService {
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity.schema_name,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
 				.dcterms_format as MediaFormat,
-			objectThumbnailUrl: graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url,
+			objectThumbnailUrl:
+				graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url?.[0] || null,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
