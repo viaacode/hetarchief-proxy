@@ -242,7 +242,7 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0].id,
 				new SessionUserEntity(mockUser)
 			);
-			expect(response).toEqual({ status: 'folder has been deleted' });
+			expect(response).toEqual({ status: 'the folder has been deleted' });
 		});
 
 		it('should delete a folder by id', async () => {
@@ -316,7 +316,7 @@ describe('FoldersController', () => {
 				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
-			expect(folderObject).toEqual({ status: 'object has been deleted' });
+			expect(folderObject).toEqual({ status: 'the object has been deleted' });
 		});
 
 		it('should not complain about removing non existing objects from a folder', async () => {

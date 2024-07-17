@@ -593,11 +593,12 @@ export class IeObjectsService {
 		/* istanbul ignore next */
 		return {
 			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
-			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.org_identifier,
+			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
+			premisIdentifier: undefined, // graphQlObject.intellectualEntity?.premis_identifier, // TODO see if this needs to be re-enabled
 			name: graphQlObject.intellectualEntity?.schema_name,
 			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
-			dateCreated: graphQlObject.intellectualEntity?.schema_date_created,
-			datePublished: graphQlObject.intellectualEntity?.schema_date_published,
+			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
+			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
 			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id,
 			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};

@@ -193,7 +193,7 @@ export class FoldersController {
 	): Promise<{ status: string }> {
 		const affectedRows = await this.foldersService.delete(folderId, user.getId());
 		if (affectedRows > 0) {
-			return { status: 'thr folder has been deleted' };
+			return { status: 'the folder has been deleted' };
 		} else {
 			return { status: 'no folders found with that id' };
 		}

@@ -7,6 +7,7 @@ import {
 } from '../ie-objects.types';
 
 import {
+	type FindAllIeObjectsByFolderIdQuery,
 	type FindIeObjectsForSitemapQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -398,55 +399,50 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 	],
 };
 
-export const mockGqlIeObjectFindByFolderId = Object.freeze({
-	ie: {
-		schema_identifier: '4f1mg9x363',
-		premis_identifier: {
-			batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0] =
+	Object.freeze({
+		intellectualEntity: {
+			schema_identifier: '4f1mg9x363',
+			premis_identifier: {
+				batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+			},
+			schemaMaintainer: {
+				org_identifier: 'OR-rf5kf25',
+				skos_pref_label: 'Huis van Alijn',
+			},
+			schema_name: 'Op de boerderij',
+			dcterms_format: 'video',
+			schema_date_created_lower_bound: '2018-01-01',
+			schema_date_published: null,
+			schema_is_part_of: {
+				reeks: ['WEB'],
+				archief: ['digitaal archief/videoproducties'],
+				alternatief: ['videoproductie'],
+			},
+			meemoo_local_id: 'VI-0011-0004',
+			schema_license: [
+				'CP-WEBSITE',
+				'VIAA-INTRA_CP-CONTENT',
+				'VIAA-INTRA_CP-METADATA-ALL',
+				'VIAA-ONDERWIJS',
+				'VIAA-ONDERZOEK',
+				'VIAA-PUBLIEK-METADATA-LTD',
+				'BEZOEKERTOOL-CONTENT',
+				'BEZOEKERTOOL-METADATA-ALL',
+			],
 		},
-		maintainer: {
-			schema_name: 'Huis van Alijn',
-		},
-		schema_name: 'Op de boerderij',
-		dcterms_format: 'video',
-		schema_date_created_lower_bound: '2018-01-01',
-		schema_date_published: null,
-		schema_is_part_of: {
-			reeks: ['WEB'],
-			archief: ['digitaal archief/videoproducties'],
-			alternatief: ['videoproductie'],
-		},
-		meemoo_local_id: 'VI-0011-0004',
-		dateCreated: undefined,
-		datePublished: undefined,
-		dctermsFormat: undefined,
-		isPartOf: {},
-		maintainerName: undefined,
-		meemooLocalId: undefined,
-		name: undefined,
-		schemaIdentifier: undefined,
-		schema_license: [
-			'CP-WEBSITE',
-			'VIAA-INTRA_CP-CONTENT',
-			'VIAA-INTRA_CP-METADATA-ALL',
-			'VIAA-ONDERWIJS',
-			'VIAA-ONDERZOEK',
-			'VIAA-PUBLIEK-METADATA-LTD',
-			'BEZOEKERTOOL-CONTENT',
-			'BEZOEKERTOOL-METADATA-ALL',
-		],
-	},
-});
+	});
 
 export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
 	schemaIdentifier: '4f1mg9x363',
-	premisIdentifier: {
-		batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
-	},
+	premisIdentifier: undefined, //{  // TODO see if this needs to be re-enabled
+	// batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+	// },
 	maintainerName: 'Huis van Alijn',
 	name: 'Op de boerderij',
 	dctermsFormat: 'video',
 	datePublished: null,
+	dateCreated: null,
 	meemooLocalId: 'VI-0011-0004',
 	isPartOf: {
 		alternatief: ['videoproductie'],
