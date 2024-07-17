@@ -153,14 +153,14 @@ export class FoldersService {
 		// TODO: add union type
 		const objectIe = this.adaptIeObject(gqlFolderObjectLink?.intellectualEntity as GqlObject);
 		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-			objectIe.thumbnailUrl,
+			objectIe.thumbnailUrl?.[0],
 			referer,
 			ip
 		);
 		return {
 			folderEntryCreatedAt: gqlFolderObjectLink?.created_at,
 			...objectIe,
-			thumbnailUrl: resolvedThumbnailUrl,
+			thumbnailUrl: [resolvedThumbnailUrl],
 		};
 	}
 

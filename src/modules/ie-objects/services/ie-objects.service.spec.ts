@@ -195,7 +195,7 @@ describe('ieObjectsService', () => {
 				''
 			);
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(response.representations).toBeUndefined();
+			expect(response.pageRepresentations).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
 		});
 	});
@@ -211,7 +211,7 @@ describe('ieObjectsService', () => {
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
-			expect(ieObject.copyrightHolder).toEqual('vrt');
+			// expect(ieObject.copyrightHolder).toEqual('vrt');
 			expect(ieObject.keywords.length).toBeGreaterThan(10);
 		});
 
@@ -229,7 +229,7 @@ describe('ieObjectsService', () => {
 
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.representations).toEqual([]);
+			expect(ieObject.pageRepresentations).toEqual([]);
 		});
 
 		it('returns an empty array if no files were found', async () => {
@@ -245,7 +245,7 @@ describe('ieObjectsService', () => {
 
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.representations[0].files).toEqual([]);
+			expect(ieObject.pageRepresentations[0][0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {

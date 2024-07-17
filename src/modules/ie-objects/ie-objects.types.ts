@@ -79,7 +79,7 @@ export interface IeObjectRepresentation {
 	schemaStartTime: string;
 	schemaTranscript: string;
 	edmIsNextInSequence: string;
-	updatedAt: IeObjectFile[];
+	updatedAt: string;
 	files: IeObjectFile[];
 }
 
@@ -129,7 +129,7 @@ export interface IeObject {
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
-	thumbnailUrl: string;
+	thumbnailUrl: string[];
 	// EXTRA
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
@@ -142,7 +142,6 @@ export interface IeObject {
 	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
-	representations?: IeObjectRepresentation[];
 	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
@@ -166,6 +165,8 @@ export interface IeObject {
 	meemooDescriptionCategory?: string[];
 	meemoofilmEmbeddedCaption?: string;
 	meemoofilmEmbeddedCaptionLanguage?: string;
+
+	pageRepresentations?: IeObjectRepresentation[][];
 }
 
 export interface MediaSearchAggregation<T> {

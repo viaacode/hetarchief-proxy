@@ -395,7 +395,10 @@ export class MaterialRequestsService {
 			maintainerSlug:
 				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.visitorSpace?.slug ||
 				kebabCase(organisation?.schemaName),
-			maintainerLogo: organisation?.logo?.iri,
+			maintainerLogo: organisation?.logo?.iri
+				// TODO remove this workaround once the INT organisations assets are available
+				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
+				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
 			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
 			// TODO add contact point when https://meemoo.atlassian.net/browse/ARC-2420 is done
 			// contactMail:

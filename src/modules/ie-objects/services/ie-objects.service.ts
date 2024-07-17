@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase } from 'lodash';
+import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -224,11 +224,13 @@ export class IeObjectsService {
 		const adaptedItems = await Promise.all(
 			mediaObjects.graph__intellectual_entity.map(async (object: any) => {
 				const adapted = this.adaptFromDB(object);
-				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-					adapted.thumbnailUrl,
-					referer,
-					ip
-				);
+				adapted.thumbnailUrl = [
+					await this.playerTicketService.resolveThumbnailUrl(
+						adapted.thumbnailUrl[0],
+						referer,
+						ip
+					),
+				];
 				return adapted;
 			})
 		);
@@ -464,7 +466,10 @@ export class IeObjectsService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
-			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo,
+			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo
+				// TODO remove this workaround once the INT organisations assets are available
+				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
+				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
 			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
@@ -475,7 +480,7 @@ export class IeObjectsService {
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooLocalId: gqlIeObject?.meemoo_local_id,
-			representations: this.adaptRepresentations(gqlIeObject),
+			pageRepresentations: this.adaptRepresentations(gqlIeObject),
 		};
 	}
 
@@ -563,14 +568,14 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: esObject?.schema_thumbnail_url,
+			thumbnailUrl: [esObject?.schema_thumbnail_url],
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
 			meemooLocalId: esObject?.meemoo_local_id,
 			meemooOriginalCp: esObject?.meemoo_original_cp,
 			durationInSeconds: esObject?.duration_seconds,
-			representations: [],
+			pageRepresentations: [],
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_type,
 			// Other
@@ -600,38 +605,56 @@ export class IeObjectsService {
 
 	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete ieObject.representations;
+		delete ieObject.pageRepresentations;
 		delete ieObject.thumbnailUrl;
 		return ieObject;
 	}
 
-	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[] {
-		if (isEmpty(gqlIeObject.isRepresentedBy)) {
+	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[][] {
+		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return compact(
-			[
-				...gqlIeObject.isRepresentedBy,
-				...(gqlIeObject.hasPart?.flatMap((part) => part?.isRepresentedBy) || []),
-			].map((representation) => {
-				if (!representation) {
-					return null;
-				}
-				return {
-					id: representation.id,
-					schemaName: representation.schema_name,
-					isMediaFragmentOf: representation.is_media_fragment_of,
-					schemaInLanguage: representation.schema_in_language,
-					schemaStartTime: representation.schema_start_time,
-					schemaTranscript: representation.schema_transcript,
-					edmIsNextInSequence: representation.edm_is_next_in_sequence,
-					updatedAt: representation.updated_at,
-					files: this.adaptFiles(representation.includes),
-				};
-			})
-		);
+		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
+		const representationsByPage: IeObjectRepresentation[][] = [
+			gqlIeObject,
+			...gqlIeObject.hasPart,
+		]?.map((part) => {
+			return compact(
+				(part?.isRepresentedBy || []).flatMap(
+					(representation: GqlIeObject['isRepresentedBy'][0]) => {
+						if (!representation) {
+							return null;
+						}
+						return {
+							id: representation.id,
+							schemaName: representation.schema_name,
+							isMediaFragmentOf: representation.is_media_fragment_of,
+							schemaInLanguage: representation.schema_in_language,
+							schemaStartTime: representation.schema_start_time,
+							schemaTranscript: representation.schema_transcript,
+							edmIsNextInSequence: representation.edm_is_next_in_sequence,
+							updatedAt: representation.updated_at,
+							files: this.adaptFiles(representation.includes),
+						};
+					}
+				)
+			);
+		});
+
+		// Sort by image filename to have pages in order
+		return sortBy(representationsByPage, (representations) => {
+			let fileName: string | null = null;
+			representations.find((representation) => {
+				const imageFile = representation.files.find(
+					(file) => file.mimeType === 'image/jpeg'
+				);
+				fileName = imageFile?.name;
+				return imageFile;
+			});
+			return fileName;
+		});
 	}
 
 	public adaptFiles(graphQlFiles: GqlIeObject['isRepresentedBy'][0]['includes']): IeObjectFile[] {

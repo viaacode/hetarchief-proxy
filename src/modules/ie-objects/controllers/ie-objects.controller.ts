@@ -113,13 +113,17 @@ export class IeObjectsController {
 		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
-				license
-			)
+			[
+				IeObjectLicense.PUBLIEK_METADATA_LTD,
+				IeObjectLicense.PUBLIEK_METADATA_ALL,
+				IeObjectLicense.PUBLIEK_CONTENT,
+			].includes(license)
 		);
 
 		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_ALL].includes(license)
+			[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.PUBLIEK_CONTENT].includes(
+				license
+			)
 		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
@@ -244,37 +248,48 @@ export class IeObjectsController {
 		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		try {
+			const visitorSpaceAccessInfo =
+				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		// We use the esIndex as the maintainerId -- no need to lowercase
-		const relatedIeObjects = await this.ieObjectsService.getRelated(
-			// TODO change this query to fetch related ie objects by using the schema identifier and the is_part_of relationship
-			schemaIdentifier,
-			referer,
-			getIpFromRequest(request),
-			ieObjectRelatedQueryDto
-		);
+			// We use the esIndex as the maintainerId -- no need to lowercase
+			const relatedIeObjects = await this.ieObjectsService.getRelated(
+				// TODO change this query to fetch related ie objects by using the schema identifier and the is_part_of relationship
+				schemaIdentifier,
+				referer,
+				getIpFromRequest(request),
+				ieObjectRelatedQueryDto
+			);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		return {
-			...relatedIeObjects,
+			// Limit the amount of props returned for an ie object based on licenses and sector
+			return {
+				...relatedIeObjects,
 
-			// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
-			items: compact(
-				relatedIeObjects.items.map((item) =>
-					limitAccessToObjectDetails(item, {
-						userId: user.getId(),
-						isKeyUser: user.getIsKeyUser(),
-						sector: user.getSector(),
-						groupId: user.getGroupId(),
-						maintainerId: user.getOrganisationId(),
-						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					})
-				)
-			),
-		};
+				// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
+				items: compact(
+					relatedIeObjects.items.map((item) =>
+						limitAccessToObjectDetails(item, {
+							userId: user.getId(),
+							isKeyUser: user.getIsKeyUser(),
+							sector: user.getSector(),
+							groupId: user.getGroupId(),
+							maintainerId: user.getOrganisationId(),
+							accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+						})
+					)
+				),
+			};
+		} catch (err) {
+			// TODO remove this try catch once this endpoint is stable again
+			return {
+				items: [],
+				total: 0,
+				pages: 1,
+				page: 1,
+				size: 0,
+			};
+		}
 	}
 
 	@Get(':id/similar')
@@ -288,40 +303,51 @@ export class IeObjectsController {
 		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		try {
+			const visitorSpaceAccessInfo =
+				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
-			id,
-			referer,
-			getIpFromRequest(request),
-			ieObjectSimilarQueryDto,
-			4,
-			user
-		);
+			const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
+				id,
+				referer,
+				getIpFromRequest(request),
+				ieObjectSimilarQueryDto,
+				4,
+				user
+			);
 
-		const similarIeObjects = compact(
-			(similarIeObjectsResponse.items || []).map((item) =>
-				limitAccessToObjectDetails(item, {
-					userId: user.getId(),
-					isKeyUser: user.getIsKeyUser(),
-					sector: user.getSector(),
-					groupId: user.getGroupId(),
-					maintainerId: user.getOrganisationId(),
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				})
-			)
-		);
+			const similarIeObjects = compact(
+				(similarIeObjectsResponse.items || []).map((item) =>
+					limitAccessToObjectDetails(item, {
+						userId: user.getId(),
+						isKeyUser: user.getIsKeyUser(),
+						sector: user.getSector(),
+						groupId: user.getGroupId(),
+						maintainerId: user.getOrganisationId(),
+						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					})
+				)
+			);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		return {
-			items: similarIeObjects,
-			total: similarIeObjects.length,
-			pages: 1,
-			page: 1,
-			size: similarIeObjects.length,
-		};
+			// Limit the amount of props returned for an ie object based on licenses and sector
+			return {
+				items: similarIeObjects,
+				total: similarIeObjects.length,
+				pages: 1,
+				page: 1,
+				size: similarIeObjects.length,
+			};
+		} catch (err) {
+			// TODO remove this try catch once this endpoint is stable again
+			return {
+				items: [],
+				total: 0,
+				pages: 1,
+				page: 1,
+				size: 0,
+			};
+		}
 	}
 
 	@Post()
