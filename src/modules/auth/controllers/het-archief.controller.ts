@@ -190,7 +190,7 @@ export class HetArchiefController {
 						is_default: true,
 						user_profile_id: archiefUser.id,
 						name: this.translationsService.tText(
-							'modules/collections/controllers___default-collection-name',
+							'modules/folders/controllers___default-collection-name',
 							null,
 							locale
 						),

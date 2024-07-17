@@ -193,7 +193,7 @@ export class FoldersController {
 	): Promise<{ status: string }> {
 		const affectedRows = await this.foldersService.delete(folderId, user.getId());
 		if (affectedRows > 0) {
-			return { status: 'collection has been deleted' };
+			return { status: 'thr folder has been deleted' };
 		} else {
 			return { status: 'no folders found with that id' };
 		}
@@ -278,9 +278,9 @@ export class FoldersController {
 			user.getId()
 		);
 		if (affectedRows > 0) {
-			return { status: 'object has been deleted' };
+			return { status: 'the object has been deleted' };
 		} else {
-			return { status: 'no object found with that id in that collection' };
+			return { status: 'no object found with that id in that folder' };
 		}
 	}
 
@@ -376,7 +376,7 @@ export class FoldersController {
 		} catch (err) {
 			if (err?.name !== 'NotFoundException') {
 				throw new InternalServerErrorException({
-					message: 'Failed to add object from original collection to shared collection',
+					message: 'Failed to add object from original folder to shared folder',
 					error: err,
 				});
 			}

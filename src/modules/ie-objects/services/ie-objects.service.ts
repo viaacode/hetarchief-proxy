@@ -682,12 +682,12 @@ export class IeObjectsService {
 		);
 	}
 
-	private adaptForSitemap(gqlIeObject: any): IeObjectsSitemap {
+	private adaptForSitemap(
+		gqlIeObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0]
+	): IeObjectsSitemap {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
-			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
+			maintainerSlug: kebabCase(gqlIeObject?.schemaMaintainer?.skos_pref_label || ''),
 			name: gqlIeObject?.schema_name,
 			updatedAt: gqlIeObject?.updated_at,
 		};
