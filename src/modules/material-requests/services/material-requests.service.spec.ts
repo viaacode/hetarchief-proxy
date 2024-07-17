@@ -130,13 +130,13 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.requesterMail).toEqual(mockGqlMaterialRequest1.requested_by.mail);
 			// maintainer
 			expect(adapted.maintainerId).toEqual(
-				mockGqlMaterialRequest1.object.maintainer.schema_identifier
+				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.org_identifier
 			);
 			expect(adapted.maintainerName).toEqual(
-				mockGqlMaterialRequest1.object.maintainer.schema_name
+				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.skos_pref_label
 			);
 			expect(adapted.maintainerSlug).toEqual(
-				mockGqlMaterialRequest1.object.maintainer.visitor_space.slug
+				mockGqlMaterialRequest1.intellectualEntity.schemaMaintainer.visitorSpace.slug
 			);
 		});
 
@@ -173,24 +173,26 @@ describe('MaterialRequestsService', () => {
 			);
 			// maintainer
 			expect(adapted.maintainerId).toEqual(
-				mockGqlMaterialRequest2.object.maintainer.schema_identifier
+				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.org_identifier
 			);
 			expect(adapted.maintainerName).toEqual(
-				mockGqlMaterialRequest2.object.maintainer.schema_name
+				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.skos_pref_label
 			);
 			expect(adapted.maintainerSlug).toEqual(
-				mockGqlMaterialRequest2.object.maintainer.visitor_space.slug
+				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.visitorSpace.slug
 			);
 			expect(adapted.maintainerLogo).toEqual(
-				mockGqlMaterialRequest2.object.maintainer.information.logo.iri
+				mockGqlMaterialRequest2.intellectualEntity.schemaMaintainer.ha_org_has_logo
 			);
 			// object
-			expect(adapted.objectSchemaName).toEqual(mockGqlMaterialRequest2.object.schema_name);
+			expect(adapted.objectSchemaName).toEqual(
+				mockGqlMaterialRequest2.intellectualEntity.schema_name
+			);
 			expect(adapted.objectDctermsFormat).toEqual(
-				mockGqlMaterialRequest2.object.dcterms_format
+				mockGqlMaterialRequest2.intellectualEntity.dcterms_format
 			);
 			expect(adapted.objectThumbnailUrl).toEqual(
-				mockGqlMaterialRequest2.object.schema_thumbnail_url
+				mockGqlMaterialRequest2.intellectualEntity.schema_thumbnail_url
 			);
 		});
 

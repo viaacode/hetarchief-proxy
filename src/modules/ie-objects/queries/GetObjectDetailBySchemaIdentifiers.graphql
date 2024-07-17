@@ -1,21 +1,8 @@
-query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
-	graph__intellectual_entity(
-		where: {
-			schema_identifier: { _neq: $schemaIdentifier }
-			isPartOf: { intellectual_entity_id: { _eq: $schemaIdentifier } }
-			schemaMaintainer: { org_identifier: { _eq: $maintainerId } }
-		}
-	) {
+query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
+	graph__intellectual_entity(where: { schema_identifier: { _in: $schemaIdentifiers } }) {
 		schema_identifier
+		meemoo_identifier
 		schema_is_part_of
-		schemaMaintainer {
-			org_identifier
-			skos_pref_label
-			ha_org_has_logo
-			ha_org_request_form
-			dcterms_description
-			ha_org_allows_overlay
-		}
 		schema_duration
 		schema_number_of_pages
 		schema_date_published
@@ -24,11 +11,31 @@ query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 		schema_description
 		schema_creator
 		dcterms_format
+		dcterms_medium
 		schema_thumbnail_url
 		schema_duration
 		schema_license
 		schema_date_created
+		meemoo_local_id
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+			ha_org_has_logo
+			ha_org_request_form
+			dcterms_description
+			ha_org_sector
+			ha_org_allows_overlay
+			foaf_homepage
+		}
 		isRepresentedBy {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_transcript
+			edm_is_next_in_sequence
+			updated_at
 			includes {
 				file {
 					id
@@ -43,6 +50,14 @@ query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 		}
 		hasPart {
 			isRepresentedBy {
+				id
+				schema_name
+				is_media_fragment_of
+				schema_in_language
+				schema_start_time
+				schema_transcript
+				edm_is_next_in_sequence
+				updated_at
 				includes {
 					file {
 						id

@@ -20,9 +20,9 @@ export const mockGqlVisitRequest: GqlVisit = {
 		last_name: 'van Dams',
 		mail: 'ineke.vandam@meemoo.be',
 		language: Locale.Nl,
-		collections: [
+		folders: [
 			{
-				ies: [
+				intellectualEntities: [
 					{
 						ie_schema_identifier: '',
 					},

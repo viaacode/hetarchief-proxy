@@ -27,9 +27,9 @@ import { IdpService } from '../services/idp.service';
 import { type RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { FoldersService } from '~modules/folders/services/folders.service';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
@@ -48,7 +48,7 @@ export class HetArchiefController {
 		private hetArchiefService: HetArchiefService,
 		private idpService: IdpService,
 		private usersService: UsersService,
-		private collectionsService: CollectionsService,
+		private foldersService: FoldersService,
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private translationsService: TranslationsService,
@@ -185,7 +185,7 @@ export class HetArchiefController {
 					ldapUser.attributes.entryUUID[0]
 				);
 				const locale = (archiefUser?.language || Locale.Nl) as Locale;
-				await this.collectionsService.create(
+				await this.foldersService.create(
 					{
 						is_default: true,
 						user_profile_id: archiefUser.id,

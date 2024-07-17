@@ -9,9 +9,9 @@ import config, { configValidationSchema } from '~config';
 import { AuthModule } from '~modules/auth';
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { ClientCacheModule } from '~modules/client-cache/client-cache.module';
-import { CollectionsModule } from '~modules/collections';
 import { ContentPartnersModule } from '~modules/content-partners';
 import { EventsModule } from '~modules/events';
+import { FoldersModule } from '~modules/folders';
 import { IeObjectsModule } from '~modules/ie-objects';
 import { MaterialRequestsModule } from '~modules/material-requests';
 import { NotFoundModule } from '~modules/not-found/not-found.module';
@@ -43,7 +43,7 @@ checkRequiredEnvs(['ADMIN_CORE_ROUTES_PREFIX']);
 
 		AuthModule,
 		CampaignMonitorModule,
-		CollectionsModule,
+		FoldersModule,
 		ContentPartnersModule,
 		DataModule,
 		EventsModule,

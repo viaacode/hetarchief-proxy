@@ -1,7 +1,7 @@
 import { type IPagination } from '@studiohyperdrive/pagination';
 
 import {
-	type FindAllObjectsByCollectionIdQuery,
+	type FindAllIeObjectsByFolderIdQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -13,10 +13,10 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 
 export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
-export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
-	GetRelatedObjectsQuery['object_ie'][0];
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0] &
+	GetRelatedObjectsQuery['graph__intellectual_entity'][0];
 
-export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];
+export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
 export enum MediaFormat {
 	VIDEO = 'video',
@@ -62,24 +62,24 @@ export enum IeObjectExtraUserGroupType {
 export type EbucoreObjectType = 'footage' | 'program';
 
 export interface IeObjectFile {
+	id: string;
 	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	representationSchemaIdentifier: string;
-	ebucoreMediaType: string;
-	ebucoreIsMediaFragmentOf: string;
-	embedUrl: string;
+	mimeType: string;
+	storedAt: string;
+	thumbnailUrl: string;
+	duration: string;
+	edmIsNextInSequence: string;
 }
 
 export interface IeObjectRepresentation {
-	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	dctermsFormat: string;
-	transcript: string;
-	dateCreated: string;
+	id: string;
+	schemaName: string;
+	isMediaFragmentOf: string;
+	schemaInLanguage: string;
+	schemaStartTime: string;
+	schemaTranscript: string;
+	edmIsNextInSequence: string;
+	updatedAt: string;
 	files: IeObjectFile[];
 }
 
@@ -111,7 +111,7 @@ export interface IeObject {
 	premisIdentifier: any;
 	abstract: string;
 	creator: any;
-	dateCreated: string;
+	dateCreated: string | null;
 	datePublished: string;
 	description: string;
 	duration: string;
@@ -129,7 +129,7 @@ export interface IeObject {
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
-	thumbnailUrl: string;
+	thumbnailUrl: string[];
 	// EXTRA
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
@@ -142,7 +142,6 @@ export interface IeObject {
 	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
-	representations?: IeObjectRepresentation[];
 	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
@@ -157,7 +156,6 @@ export interface IeObject {
 	meemooMediaObjectId?: string;
 	ebucoreIsMediaFragmentOf?: string;
 	ebucoreHasMediaFragmentOf?: boolean;
-	dateCreatedLowerBound?: string;
 	actor?: string | null;
 	// Not yet available
 	transcript?: string;
@@ -167,6 +165,8 @@ export interface IeObject {
 	meemooDescriptionCategory?: string[];
 	meemoofilmEmbeddedCaption?: string;
 	meemoofilmEmbeddedCaptionLanguage?: string;
+
+	pageRepresentations?: IeObjectRepresentation[][];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -277,7 +277,7 @@ export interface ElasticsearchObject {
 		Distributeur?: string[];
 	} | null;
 	schema_spatial_coverage: string[];
-	schema_temporal_coverage: string;
+	schema_temporal_coverage: string[];
 	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT
 	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)

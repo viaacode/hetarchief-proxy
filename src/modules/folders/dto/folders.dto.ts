@@ -3,12 +3,12 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { string } from 'joi';
 
-export class CreateOrUpdateCollectionDto {
+export class CreateOrUpdateFolderDto {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
 		type: string,
-		description: 'The name of the collection',
+		description: 'The name of the folder',
 		example: 'Favorites',
 	})
 	name: string;
@@ -23,7 +23,7 @@ export class CreateOrUpdateCollectionDto {
 	description?: string;
 }
 
-export class CollectionObjectsQueryDto {
+export class FolderObjectsQueryDto {
 	@IsString()
 	@IsOptional()
 	@ApiPropertyOptional({

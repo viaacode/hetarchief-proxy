@@ -32,11 +32,11 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		mail: 'ilya.korsakov@example.com',
 		language: Locale.Nl,
 	},
-	object: {
-		maintainer: {
-			schema_identifier: 'OR-rf5kf25',
-			schema_name: 'VRT',
-			visitor_space: {
+	intellectualEntity: {
+		schemaMaintainer: {
+			org_identifier: 'OR-rf5kf25',
+			skos_pref_label: 'VRT',
+			visitorSpace: {
 				slug: 'vrt',
 			},
 		},
@@ -72,16 +72,12 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 			id: '0213c8d4-f459-45ef-8bbc-96268ab56d01',
 		},
 	},
-	object: {
-		maintainer: {
-			schema_identifier: 'OR-rf5kf25',
-			schema_name: 'VRT',
-			information: {
-				logo: {
-					iri: 'https://assets.viaa.be/images/OR-rf5kf25',
-				},
-			},
-			visitor_space: {
+	intellectualEntity: {
+		schemaMaintainer: {
+			org_identifier: 'OR-rf5kf25',
+			skos_pref_label: 'VRT',
+			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+			visitorSpace: {
 				slug: 'vrt',
 			},
 		},

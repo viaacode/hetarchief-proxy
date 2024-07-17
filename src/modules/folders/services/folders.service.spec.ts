@@ -2,21 +2,21 @@ import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
 
-import { CollectionsService } from './collections.service';
+import { FoldersService } from './folders.service';
 
 import {
-	type FindCollectionObjectsByCollectionIdQuery,
-	type FindCollectionsByUserQuery,
-	type FindObjectBySchemaIdentifierQuery,
-	type FindObjectInCollectionQuery,
-	type InsertCollectionsMutation,
-	type InsertObjectIntoCollectionMutation,
-	type RemoveObjectFromCollectionMutation,
-	type SoftDeleteCollectionMutation,
-	type UpdateCollectionMutation,
+	type FindFolderIeObjectsByFolderIdQuery,
+	type FindFoldersByUserQuery,
+	type FindIeObjectBySchemaIdentifierQuery,
+	type FindIeObjectInFolderQuery,
+	type InsertFolderMutation,
+	type InsertIeObjectIntoFolderMutation,
+	type RemoveObjectFromFolderMutation,
+	type SoftDeleteFolderMutation,
+	type UpdateFolderMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { mockGqlCollection } from '~modules/collections/services/__mocks__/users_collection';
-import { type CollectionObjectLink, type GqlObject } from '~modules/collections/types';
+import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
+import { type FolderObjectLink, type GqlObject } from '~modules/folders/types';
 import { type IeObject, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -33,7 +33,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 	findEndDatesByFolderId: jest.fn(),
 };
 
-const mockGqlCollection1: FindCollectionsByUserQuery['users_folder'][0] = {
+const mockGqlFolder1: FindFoldersByUserQuery['users_folder'][0] = {
 	id: '0018c1b6-97ae-435f-abef-31a2cde011fd',
 	name: 'Favorieten',
 	description: 'Favorieten',
@@ -41,10 +41,10 @@ const mockGqlCollection1: FindCollectionsByUserQuery['users_folder'][0] = {
 	is_default: true,
 	created_at: '2022-02-18T09:19:09.487977',
 	updated_at: '2022-02-18T09:19:09.487977',
-	ies: [],
+	intellectualEntities: [],
 };
 
-const mockGqlCollection2: FindCollectionsByUserQuery['users_folder'][0] = {
+const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
 	id: 'be84632b-1f80-4c4f-b61c-e7f3b437a56b',
 	name: 'mijn favorite films',
 	description: 'mijn favorite films',
@@ -52,10 +52,10 @@ const mockGqlCollection2: FindCollectionsByUserQuery['users_folder'][0] = {
 	is_default: false,
 	created_at: '2022-02-22T13:51:01.995293',
 	updated_at: '2022-02-22T13:51:01.995293',
-	ies: [],
+	intellectualEntities: [],
 };
 
-const mockGqlCollectionObject: GqlObject = {
+const mockGqlFolderObject: GqlObject = {
 	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	schema_creator: null,
 	dcterms_available: '2015-09-19T12:08:24',
@@ -64,13 +64,13 @@ const mockGqlCollectionObject: GqlObject = {
 	schema_identifier: '8s4jm2514q',
 };
 
-const mockGqlCollectionObjectLink: CollectionObjectLink = {
+const mockGqlFolderObjectLink: FolderObjectLink = {
 	created_at: '2022-02-02T10:55:16.542503',
-	ie: mockGqlCollectionObject,
+	intellectualEntity: mockGqlFolderObject,
 };
 
-const mockGqlCollectionsResult: FindCollectionsByUserQuery = {
-	users_folder: [mockGqlCollection1, mockGqlCollection2],
+const mockGqlFoldersResult: FindFoldersByUserQuery = {
+	users_folder: [mockGqlFolder1, mockGqlFolder2],
 	users_folder_aggregate: {
 		aggregate: {
 			count: 2,
@@ -78,8 +78,8 @@ const mockGqlCollectionsResult: FindCollectionsByUserQuery = {
 	},
 };
 
-const mockGqlCollectionResult: FindCollectionsByUserQuery = {
-	users_folder: [mockGqlCollection1],
+const mockGqlFolderResult: FindFoldersByUserQuery = {
+	users_folder: [mockGqlFolder1],
 	users_folder_aggregate: {
 		aggregate: {
 			count: 0,
@@ -87,7 +87,7 @@ const mockGqlCollectionResult: FindCollectionsByUserQuery = {
 	},
 };
 
-const mockGqlCollectionResultEmpty: FindCollectionsByUserQuery = {
+const mockGqlFolderResultEmpty: FindFoldersByUserQuery = {
 	users_folder: [],
 	users_folder_aggregate: {
 		aggregate: {
@@ -96,7 +96,7 @@ const mockGqlCollectionResultEmpty: FindCollectionsByUserQuery = {
 	},
 };
 
-const mockGqlCollectionObjectsResult = {
+const mockGqlFolderObjectsResult = {
 	users_folder_ie: [
 		{
 			created_at: '2022-02-02T10:55:16.542503',
@@ -119,11 +119,11 @@ const mockGqlCollectionObjectsResult = {
 	},
 };
 
-const mockGqlCollectionObjectResult: FindObjectInCollectionQuery = {
+const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 	users_folder_ie: [
 		{
 			created_at: '2022-02-02T10:55:16.542503',
-			ie: {
+			intellectualEntity: {
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 				schema_creator: null,
 				dcterms_available: '2015-09-19T12:08:24',
@@ -137,7 +137,7 @@ const mockGqlCollectionObjectResult: FindObjectInCollectionQuery = {
 	],
 };
 
-const mockCollectionObject: Partial<IeObject> & { collectionEntryCreatedAt: string } = {
+const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	schemaIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
@@ -146,7 +146,7 @@ const mockCollectionObject: Partial<IeObject> & { collectionEntryCreatedAt: stri
 	numberOfPages: null,
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	collectionEntryCreatedAt: '2022-02-02T10:55:16.542503',
+	folderEntryCreatedAt: '2022-02-02T10:55:16.542503',
 	description: 'A description for this collection',
 	maintainerId: 'OR-1v5bc86',
 	maintainerName: 'Huis van Alijn',
@@ -166,13 +166,13 @@ const mockUser = {
 	email: 'test.testers@meemoo.be',
 };
 
-describe('CollectionsService', () => {
-	let collectionsService: CollectionsService;
+describe('FoldersService', () => {
+	let foldersService: FoldersService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				CollectionsService,
+				FoldersService,
 				{
 					provide: DataService,
 					useValue: mockDataService,
@@ -190,7 +190,7 @@ describe('CollectionsService', () => {
 			.setLogger(new TestingLogger())
 			.compile();
 
-		collectionsService = module.get<CollectionsService>(CollectionsService);
+		foldersService = module.get<FoldersService>(FoldersService);
 	});
 
 	afterEach(async () => {
@@ -198,12 +198,12 @@ describe('CollectionsService', () => {
 	});
 
 	it('services should be defined', () => {
-		expect(collectionsService).toBeDefined();
+		expect(foldersService).toBeDefined();
 	});
 
 	describe('adapt', () => {
 		it('returns undefined if no graphQl object was given', () => {
-			const adapted = collectionsService.adaptIeObject(undefined);
+			const adapted = foldersService.adaptIeObject(undefined);
 			expect(adapted).toBeUndefined();
 		});
 
@@ -213,78 +213,68 @@ describe('CollectionsService', () => {
 				new Date('2022-02-19T09:19:09.487977'),
 			];
 			mockVisitsService.findEndDatesByFolderId.mockResolvedValue(mockVisitEndDates);
-			const adapted = await collectionsService.adaptCollection(
-				mockGqlCollection,
-				'referer',
-				''
-			);
+			const adapted = await foldersService.adaptFolder(mockGqlFolder, 'referer', '');
 			// test some sample keys
-			expect(adapted.id).toEqual(mockGqlCollection.id);
-			expect(adapted.name).toEqual(mockGqlCollection.name);
+			expect(adapted.id).toEqual(mockGqlFolder.id);
+			expect(adapted.name).toEqual(mockGqlFolder.name);
 			expect(adapted.usedForLimitedAccessUntil).toEqual(
 				format(mockVisitEndDates[1], 'yyyy-MM-dd')
 			);
-			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
+			expect(adapted.userProfileId).toEqual(mockGqlFolder.user_profile_id);
 			expect(adapted.objects[0].schemaIdentifier).toEqual(
-				mockGqlCollection.ies[0].ie.schema_identifier
+				mockGqlFolder.intellectualEntities[0].intellectualEntity.schema_identifier
 			);
 		});
 
 		it('can adapt a graphql collection response without objects to our collection interface', async () => {
-			const adapted = await collectionsService.adaptCollection(
+			const adapted = await foldersService.adaptFolder(
 				{
-					...mockGqlCollection,
-					ies: [],
+					...mockGqlFolder,
+					intellectualEntities: [],
 				},
 				'referer',
 				''
 			);
 			// test some sample keys
-			expect(adapted.id).toEqual(mockGqlCollection.id);
-			expect(adapted.name).toEqual(mockGqlCollection.name);
-			expect(adapted.userProfileId).toEqual(mockGqlCollection.user_profile_id);
+			expect(adapted.id).toEqual(mockGqlFolder.id);
+			expect(adapted.name).toEqual(mockGqlFolder.name);
+			expect(adapted.userProfileId).toEqual(mockGqlFolder.user_profile_id);
 			expect(adapted.objects).toHaveLength(0);
 		});
 
 		it('can adapt an undefined collection object', async () => {
-			const adapted = await collectionsService.adaptCollection(undefined, 'referer', '');
+			const adapted = await foldersService.adaptFolder(undefined, 'referer', '');
 			expect(adapted).toBeUndefined();
 		});
 
 		it('can adapt a graphql collection object response to our object interface', async () => {
-			const adapted = await collectionsService.adaptCollectionObjectLink(
-				mockGqlCollectionObjectLink,
+			const adapted = await foldersService.adaptFolderObjectLink(
+				mockGqlFolderObjectLink,
 				'referer',
 				''
 			);
 			// test some sample keys
 			expect(adapted.schemaIdentifier).toEqual(
-				mockGqlCollectionObjectLink.ie.schema_identifier
+				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.name).toEqual(mockGqlCollectionObjectLink.ie.schema_name);
+			expect(adapted.name).toEqual(mockGqlFolderObjectLink.intellectualEntity.schema_name);
 			expect(adapted.dctermsAvailable).toEqual(
-				mockGqlCollectionObjectLink.ie.dcterms_available
+				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
 			);
-			expect(adapted.collectionEntryCreatedAt).toEqual(
-				mockGqlCollectionObjectLink.created_at
-			);
+			expect(adapted.folderEntryCreatedAt).toEqual(mockGqlFolderObjectLink.created_at);
 		});
 
 		it('can adapt an undefined collection object link', async () => {
-			const adapted = await collectionsService.adaptCollectionObjectLink(
-				undefined,
-				'referer',
-				''
-			);
+			const adapted = await foldersService.adaptFolderObjectLink(undefined, 'referer', '');
 			expect(adapted).toBeUndefined();
 		});
 	});
 
-	describe('findCollectionsByUser', () => {
-		it('returns a paginated response with all collections for a user', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionsResult);
-			const response = await collectionsService.findCollectionsByUser(
-				mockGqlCollectionsResult.users_folder[0].user_profile_id,
+	describe('findFoldersByUser', () => {
+		it('returns a paginated response with all folders for a user', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockGqlFoldersResult);
+			const response = await foldersService.findFoldersByUser(
+				mockGqlFoldersResult.users_folder[0].user_profile_id,
 				'referer',
 				''
 			);
@@ -295,21 +285,21 @@ describe('CollectionsService', () => {
 		});
 	});
 
-	describe('findCollectionById', () => {
+	describe('findFolderById', () => {
 		it('should return once collection', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResult);
-			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.users_folder[0].id,
+			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderResult);
+			const response = await foldersService.findFolderById(
+				mockGqlFolderResult.users_folder[0].id,
 				'referer',
 				''
 			);
-			expect(response.id).toBe(mockGqlCollectionResult.users_folder[0].id);
+			expect(response.id).toBe(mockGqlFolderResult.users_folder[0].id);
 		});
 
 		it('should return undefined if collection does not exist', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionResultEmpty);
-			const response = await collectionsService.findCollectionById(
-				mockGqlCollectionResult.users_folder[0].id,
+			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderResultEmpty);
+			const response = await foldersService.findFolderById(
+				mockGqlFolderResult.users_folder[0].id,
 				'referer',
 				''
 			);
@@ -317,23 +307,23 @@ describe('CollectionsService', () => {
 		});
 	});
 
-	describe('findObjectsByCollectionId', () => {
+	describe('findObjectsByFolderId', () => {
 		it('returns all objects in a collection', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectsResult);
-			const response = await collectionsService.findObjectsByCollectionId(
-				mockGqlCollection1.id,
+			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectsResult);
+			const response = await foldersService.findObjectsByFolderId(
+				mockGqlFolder1.id,
 				mockUser.id,
 				{},
 				'referer',
 				''
 			);
 			expect(response.items[0].schemaIdentifier).toBe(
-				mockGqlCollectionObjectsResult.users_folder_ie[0].ie.schema_identifier
+				mockGqlFolderObjectsResult.users_folder_ie[0].ie.schema_identifier
 			);
 		});
 
 		it('throws a NotFoundException if the collection was not found', async () => {
-			const mockData: FindCollectionObjectsByCollectionIdQuery = {
+			const mockData: FindFolderIeObjectsByFolderIdQuery = {
 				users_folder_ie: [],
 				users_folder_ie_aggregate: {
 					aggregate: {
@@ -344,7 +334,7 @@ describe('CollectionsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			let error;
 			try {
-				await collectionsService.findObjectsByCollectionId(
+				await foldersService.findObjectsByFolderId(
 					'unknown-id',
 					mockUser.id,
 					{},
@@ -361,135 +351,135 @@ describe('CollectionsService', () => {
 		});
 	});
 
-	describe('findObjectInCollection', () => {
+	describe('findObjectInFolder', () => {
 		it('returns one objects in a collection', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockGqlCollectionObjectResult);
-			const response = await collectionsService.findObjectInCollectionBySchemaIdentifier(
-				mockGqlCollection1.id,
-				mockCollectionObject.schemaIdentifier,
+			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectResult);
+			const response = await foldersService.findObjectInFolderBySchemaIdentifier(
+				mockGqlFolder1.id,
+				mockFolderObject.schemaIdentifier,
 				'referer',
 				''
 			);
-			expect(response.schemaIdentifier).toBe(mockCollectionObject.schemaIdentifier);
+			expect(response.schemaIdentifier).toBe(mockFolderObject.schemaIdentifier);
 		});
 	});
 
 	describe('create', () => {
 		it('can create a new collection', async () => {
-			const mockData: InsertCollectionsMutation = {
+			const mockData: InsertFolderMutation = {
 				insert_users_folder: {
-					returning: [mockGqlCollection1],
+					returning: [mockGqlFolder1],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, ies, ...mockCollection } = mockGqlCollection1;
-			const response = await collectionsService.create(mockCollection, 'referer', '');
-			expect(response.id).toBe(mockGqlCollection1.id);
+			const { id, created_at, updated_at, intellectualEntities, ...mockFolder } =
+				mockGqlFolder1;
+			const response = await foldersService.create(mockFolder, 'referer', '');
+			expect(response.id).toBe(mockGqlFolder1.id);
 		});
 	});
 
 	describe('update', () => {
 		it('can update a collection', async () => {
-			const mockData: UpdateCollectionMutation = {
+			const mockData: UpdateFolderMutation = {
 				update_users_folder: {
-					returning: [mockGqlCollection1],
+					returning: [mockGqlFolder1],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, user_profile_id, ...mockCollection } =
-				mockGqlCollection1;
-			const response = await collectionsService.update(
+			const { id, created_at, updated_at, user_profile_id, ...mockFolder } = mockGqlFolder1;
+			const response = await foldersService.update(
 				id,
 				user_profile_id,
-				mockCollection,
+				mockFolder,
 				'referer',
 				''
 			);
-			expect(response.id).toBe(mockGqlCollection1.id);
+			expect(response.id).toBe(mockGqlFolder1.id);
 		});
 	});
 
 	describe('delete', () => {
 		it('can delete a collection', async () => {
-			const mockData: SoftDeleteCollectionMutation = {
+			const mockData: SoftDeleteFolderMutation = {
 				update_users_folder: {
 					affected_rows: 1,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { id, user_profile_id } = mockGqlCollection1;
-			const affectedRows = await collectionsService.delete(id, user_profile_id);
+			const { id, user_profile_id } = mockGqlFolder1;
+			const affectedRows = await foldersService.delete(id, user_profile_id);
 			expect(affectedRows).toBe(1);
 		});
 
 		it('can delete a non existing collection', async () => {
-			const mockData: SoftDeleteCollectionMutation = {
+			const mockData: SoftDeleteFolderMutation = {
 				update_users_folder: {
 					affected_rows: 0,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const { user_profile_id } = mockGqlCollection1;
-			const affectedRows = await collectionsService.delete('unknown-id', user_profile_id);
+			const { user_profile_id } = mockGqlFolder1;
+			const affectedRows = await foldersService.delete('unknown-id', user_profile_id);
 			expect(affectedRows).toBe(0);
 		});
 	});
 
 	describe('findObjectBySchemaIdentifier', () => {
 		it('can find an object by schema identifier', async () => {
-			const mockData: FindObjectBySchemaIdentifierQuery = {
-				object_ie: [mockGqlCollectionObject],
+			const mockData: FindIeObjectBySchemaIdentifierQuery = {
+				graph__intellectual_entity: [mockGqlFolderObject],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const object = await collectionsService.findObjectBySchemaIdentifier(
-				mockCollectionObject.schemaIdentifier
+			const object = await foldersService.findObjectBySchemaIdentifier(
+				mockFolderObject.schemaIdentifier
 			);
-			expect(object.schemaIdentifier).toEqual(mockCollectionObject.schemaIdentifier);
+			expect(object.schemaIdentifier).toEqual(mockFolderObject.schemaIdentifier);
 		});
 	});
 
-	describe('addObjectToCollection', () => {
+	describe('addObjectToFolder', () => {
 		it('can add object to a collection', async () => {
-			const findObjectInCollectionSpy = jest
-				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
+			const findObjectInFolderSpy = jest
+				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
-				.mockResolvedValueOnce(mockCollectionObject);
-			const mockData: InsertObjectIntoCollectionMutation = {
+				.spyOn(foldersService, 'findObjectBySchemaIdentifier')
+				.mockResolvedValueOnce(mockFolderObject);
+			const mockData: InsertIeObjectIntoFolderMutation = {
 				insert_users_folder_ie: {
 					returning: [
-						mockGqlCollectionObjectLink as InsertObjectIntoCollectionMutation['insert_users_folder_ie']['returning'][0],
+						mockGqlFolderObjectLink as InsertIeObjectIntoFolderMutation['insert_users_folder_ie']['returning'][0],
 					],
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const response = await collectionsService.addObjectToCollection(
-				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.ie.schema_identifier,
+			const response = await foldersService.addObjectToFolder(
+				mockGqlFolder1.id,
+				mockGqlFolderObjectLink.intellectualEntity.schema_identifier,
 				'referer',
 				''
 			);
 			expect(response.schemaIdentifier).toBe(
-				mockGqlCollectionObjectLink.ie.schema_identifier
+				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			findObjectInCollectionSpy.mockRestore();
+			findObjectInFolderSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
 
 		it('can not add object to a collection if it already exists', async () => {
-			const findObjectInCollectionSpy = jest
-				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
-				.mockResolvedValueOnce(mockCollectionObject);
+			const findObjectInFolderSpy = jest
+				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
+				.mockResolvedValueOnce(mockFolderObject);
 
 			let error;
 			try {
-				await collectionsService.addObjectToCollection(
-					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier,
+				await foldersService.addObjectToFolder(
+					mockGqlFolder1.id,
+					mockGqlFolderObjectLink.intellectualEntity.schema_identifier,
 					'referer',
 					''
 				);
@@ -501,22 +491,22 @@ describe('CollectionsService', () => {
 				message: 'Object already exists in collection',
 			});
 
-			findObjectInCollectionSpy.mockRestore();
+			findObjectInFolderSpy.mockRestore();
 		});
 
 		it('throws a NotFoundException when the objectInfo was not found', async () => {
-			const findObjectInCollectionSpy = jest
-				.spyOn(collectionsService, 'findObjectInCollectionBySchemaIdentifier')
+			const findObjectInFolderSpy = jest
+				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(collectionsService, 'findObjectBySchemaIdentifier')
+				.spyOn(foldersService, 'findObjectBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 
 			let error;
 			try {
-				await collectionsService.addObjectToCollection(
-					mockGqlCollection1.id,
-					mockGqlCollectionObjectLink.ie.schema_identifier,
+				await foldersService.addObjectToFolder(
+					mockGqlFolder1.id,
+					mockGqlFolderObjectLink.intellectualEntity.schema_identifier,
 					'referer',
 					''
 				);
@@ -526,38 +516,38 @@ describe('CollectionsService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				statusCode: 404,
-				message: `Object with schema identifier ${mockGqlCollectionObjectLink.ie.schema_identifier} was not found`,
+				message: `Object with schema identifier ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
 			});
-			findObjectInCollectionSpy.mockRestore();
+			findObjectInFolderSpy.mockRestore();
 			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
 	});
 
 	describe('remove object from collection', () => {
 		it('can remove an object from a collection', async () => {
-			const mockData: RemoveObjectFromCollectionMutation = {
+			const mockData: RemoveObjectFromFolderMutation = {
 				delete_users_folder_ie: {
 					affected_rows: 1,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const affectedRows = await collectionsService.removeObjectFromCollection(
-				mockGqlCollection1.id,
-				mockGqlCollectionObjectLink.ie.schema_identifier,
+			const affectedRows = await foldersService.removeObjectFromFolder(
+				mockGqlFolder1.id,
+				mockGqlFolderObjectLink.intellectualEntity.schema_identifier,
 				mockUser.id
 			);
 			expect(affectedRows).toBe(1);
 		});
 
 		it('can remove a non existing object from a collection', async () => {
-			const mockData: RemoveObjectFromCollectionMutation = {
+			const mockData: RemoveObjectFromFolderMutation = {
 				delete_users_folder_ie: {
 					affected_rows: 0,
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const affectedRows = await collectionsService.removeObjectFromCollection(
-				mockGqlCollection1.id,
+			const affectedRows = await foldersService.removeObjectFromFolder(
+				mockGqlFolder1.id,
 				'unknown-id',
 				mockUser.id
 			);

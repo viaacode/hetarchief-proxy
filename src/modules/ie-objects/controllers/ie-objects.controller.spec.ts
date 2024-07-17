@@ -12,7 +12,7 @@ import { cloneDeep } from 'lodash';
 
 import { type IeObject, IeObjectLicense } from '../ie-objects.types';
 import {
-	mockIeObject,
+	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
 	mockIeObjectWithMetadataSetLTD,
@@ -36,7 +36,7 @@ import { TestingLogger } from '~shared/logging/test-logger';
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
 const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
 	cloneDeep({
-		items: [mockIeObject, mockIeObjectWithMetadataSetLTD, mockIeObjectWithMetadataSetALL],
+		items: [mockIeObject1, mockIeObjectWithMetadataSetLTD, mockIeObjectWithMetadataSetALL],
 		page: 1,
 		size: 3,
 		total: 3,
@@ -195,15 +195,15 @@ describe('IeObjectsController', () => {
 	describe('getIeObjectById', () => {
 		it('should return a ie object item by id', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
+				'1',
 				'referer',
 				mockRequest,
-				'1',
 				mockSessionUser
 			);
 
@@ -212,16 +212,16 @@ describe('IeObjectsController', () => {
 
 		it('should throw a no access exception if the object has no valid license', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			try {
 				await ieObjectsController.getIeObjectById(
+					'1',
 					'referer',
 					mockRequest,
-					'1',
 					mockSessionUser
 				);
 				fail('Expected an error to be thrown if the object does not exist');
@@ -234,21 +234,21 @@ describe('IeObjectsController', () => {
 		it('should throw a not found exception if the object does not exist', async () => {
 			mockIeObjectsService.findBySchemaIdentifiers.mockRejectedValueOnce(
 				new NotFoundException(
-					`Object IE with id '${mockIeObject.schemaIdentifier}' not found`
+					`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`
 				)
 			);
 
 			try {
 				await ieObjectsController.getIeObjectById(
+					'1',
 					'referer',
 					mockRequest,
-					'1',
 					mockSessionUser
 				);
 				fail('Expected an error to be thrown if the object does not exist');
 			} catch (err) {
 				expect(err.message).toEqual(
-					`Object IE with id '${mockIeObject.schemaIdentifier}' not found`
+					`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`
 				);
 				expect(err.status).toEqual(404);
 			}
@@ -256,66 +256,66 @@ describe('IeObjectsController', () => {
 
 		it('should return limited metadata if the user no longer has access', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
+				'1',
 				'referer',
 				mockRequest,
-				'1',
 				mockSessionUser
 			);
 
-			expect(ieObject.schemaIdentifier).toEqual(mockIeObject.schemaIdentifier);
+			expect(ieObject.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 
 		it('should return full metadata without essence if the object has no content license', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
+				'1',
 				'referer',
 				mockRequest,
-				'1',
 				mockSessionUser
 			);
 
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 
 		it('should return limited metadata if licenses are ignored but the user does not have access', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				license: [],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
+				'1',
 				'referer',
 				mockRequest,
-				'1',
 				mockSessionUser
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 	});
 
 	describe('getIeObjectSeoById', () => {
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_LTD', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
@@ -327,15 +327,15 @@ describe('IeObjectsController', () => {
 			);
 
 			expect(result).toEqual({
-				name: mockIeObject.name,
-				description: mockIeObject.description,
+				name: mockIeObject1.name,
+				description: mockIeObject1.description,
 				thumbnailUrl: null,
 			});
 		});
 
 		it('should return the ieObjectSeo when object has license: PUBLIEK_METADATA_ALL', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
@@ -347,15 +347,15 @@ describe('IeObjectsController', () => {
 			);
 
 			expect(result).toEqual({
-				name: mockIeObject.name,
-				description: mockIeObject.description,
-				thumbnailUrl: mockIeObject.thumbnailUrl,
+				name: mockIeObject1.name,
+				description: mockIeObject1.description,
+				thumbnailUrl: mockIeObject1.thumbnailUrl,
 			});
 		});
 
 		it('should return name = null when object has no valid licence', async () => {
 			const mockResponse = {
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
@@ -376,7 +376,9 @@ describe('IeObjectsController', () => {
 
 	describe('exportXml', () => {
 		it('should export an ieObject item as xml', async () => {
-			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
+			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(
+				mockIeObject1
+			);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
@@ -392,7 +394,9 @@ describe('IeObjectsController', () => {
 
 	describe('exportCsv', () => {
 		it('should export an ieObject item as csv', async () => {
-			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(mockIeObject);
+			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(
+				mockIeObject1
+			);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 

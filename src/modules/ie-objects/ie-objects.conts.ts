@@ -18,6 +18,7 @@ export const IE_OBJECT_INTRA_CP_LICENSES: Readonly<IeObjectLicense[]> = [
 export const IE_OBJECT_PUBLIC_LICENSES: Readonly<IeObjectLicense[]> = [
 	IeObjectLicense.PUBLIEK_METADATA_LTD,
 	IeObjectLicense.PUBLIEK_METADATA_ALL,
+	IeObjectLicense.PUBLIEK_CONTENT,
 ];
 
 export const IE_OBJECT_VISITOR_LICENSES: Readonly<IeObjectLicense[]> = [
@@ -111,7 +112,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'dctermsMedium',
 	'duration',
 	'dateCreated',
-	'dateCreatedLowerBound',
 	'datePublished',
 	'creator',
 	'description',
@@ -141,7 +141,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',
-	'representations',
+	'pageRepresentations',
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {

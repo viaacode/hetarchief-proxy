@@ -1,4 +1,4 @@
-mutation insertCollections($object: users_folder_insert_input!) {
+mutation insertFolder($object: users_folder_insert_input!) {
 	insert_users_folder(objects: [$object]) {
 		returning {
 			id
