@@ -43,8 +43,9 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		schema_identifier: '0000003g0k',
 		schema_name: '',
 		dcterms_format: '',
-		schema_thumbnail_url:
+		schema_thumbnail_url: [
 			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+		],
 	},
 };
 
@@ -84,8 +85,9 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 		schema_identifier: '0000003g0k',
 		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
 		dcterms_format: 'audio',
-		schema_thumbnail_url:
+		schema_thumbnail_url: [
 			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+		],
 	},
 };
 
