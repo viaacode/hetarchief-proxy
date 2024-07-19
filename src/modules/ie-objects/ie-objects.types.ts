@@ -247,10 +247,12 @@ export interface ElasticsearchObject {
 		Voorzitter?: string[];
 	} | null;
 	schema_copyrightholder: string; // exists in _mapping but does not exist in values (QAS & INT)
-	schema_creator: {
-		Maker?: string[];
-		Archiefvormer?: string[];
-	} | null;
+	schema_creator:
+		| {
+				Maker?: string[];
+				Archiefvormer?: string[];
+		  }[]
+		| null;
 	schema_date_created: string | null;
 	schema_date_published: string | null;
 	schema_description: string | null;

@@ -70,12 +70,13 @@ export class FoldersService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.visitorSpace?.slug,
-			creator: gqlIeObject?.schema_creator,
+			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
+			creator: gqlIeObject?.schema_creator?.[0],
 			description: gqlIeObject?.schema_description,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
 			name: gqlIeObject?.schema_name,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0] || null,
@@ -84,7 +85,6 @@ export class FoldersService {
 			dateCreated: gqlIeObject?.schema_date_created || null,
 			duration: gqlIeObject?.schema_duration || null,
 			licenses: gqlIeObject?.schema_license || null,
-			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
 		};
 	}
 

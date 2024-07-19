@@ -407,7 +407,7 @@ export class MaterialRequestsService {
 			// 		?.intellectualEntity?.schemaMaintainer?.contact_point || null,
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					?.intellectualEntity?.meemoo_local_id || null,
+					?.intellectualEntity?.meemoo_local_id?.[0] || null,
 		};
 
 		return transformedMaterialRequest;

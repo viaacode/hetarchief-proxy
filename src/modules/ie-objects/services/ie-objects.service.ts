@@ -432,7 +432,7 @@ export class IeObjectsService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
-			creator: gqlIeObject?.schema_creator,
+			creator: gqlIeObject?.schema_creator?.[0],
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
@@ -477,7 +477,7 @@ export class IeObjectsService {
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
 			pageRepresentations: this.adaptRepresentations(gqlIeObject),
 		};
 	}
@@ -570,7 +570,7 @@ export class IeObjectsService {
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
-			meemooLocalId: esObject?.meemoo_local_id,
+			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			meemooOriginalCp: esObject?.meemoo_original_cp,
 			durationInSeconds: esObject?.duration_seconds,
 			pageRepresentations: [],
@@ -597,7 +597,7 @@ export class IeObjectsService {
 			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
-			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id,
+			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id?.[0],
 			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
 	}
@@ -704,6 +704,8 @@ export class IeObjectsService {
 		} catch (e) {
 			this.logger.error(
 				customError('Failed to execute ie-objects query', e, {
+					url: this.configService.get('ELASTIC_SEARCH_URL'),
+					index: esIndex,
 					name: e?.name,
 					code: e?.code,
 					stack: e?.stack,

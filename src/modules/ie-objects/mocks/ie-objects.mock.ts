@@ -355,9 +355,11 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 			schema_name: 'Durf te vragen R002 A0001',
 			schema_description:
 				"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-			schema_creator: {
-				productionCompany: ['Roses Are Blue'],
-			},
+			schema_creator: [
+				{
+					productionCompany: ['Roses Are Blue'],
+				},
+			],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
 			schema_thumbnail_url:
@@ -417,7 +419,7 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 				archief: ['digitaal archief/videoproducties'],
 				alternatief: ['videoproductie'],
 			},
-			meemoo_local_id: 'VI-0011-0004',
+			meemoo_local_id: ['VI-0011-0004'],
 			schema_license: [
 				'CP-WEBSITE',
 				'VIAA-INTRA_CP-CONTENT',
