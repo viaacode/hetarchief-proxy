@@ -545,7 +545,7 @@ export class IeObjectsService {
 			abstract: esObject?.schema_abstract,
 			contributor: esObject?.schema_contributor,
 			copyrightHolder: esObject?.schema_copyrightholder,
-			creator: esObject?.schema_creator,
+			creator: esObject?.schema_creator?.[0],
 			dateCreated: esObject?.schema_date_created,
 			datePublished: esObject?.schema_date_published,
 			description: esObject?.schema_description,
