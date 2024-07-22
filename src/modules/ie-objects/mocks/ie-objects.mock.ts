@@ -7,6 +7,7 @@ import {
 } from '../ie-objects.types';
 
 import {
+	type FindAllIeObjectsByFolderIdQuery,
 	type FindIeObjectsForSitemapQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -15,9 +16,7 @@ import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
 export const mockIeObject1: Readonly<IeObject> = {
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-	meemooIdentifier: '8911p09j1g',
+	schemaIdentifier: '8911p09j1g',
 	premisIdentifier: 'WP00178829',
 	premisIsPartOf: null,
 	copyrightHolder: 'vrt',
@@ -76,7 +75,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	meemoofilmImageOrSound: null,
 	meemooDescriptionProgramme: null,
 	meemooDescriptionCast: null,
-	representations: [],
+	pageRepresentations: [],
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	isPartOf: {},
 };
@@ -84,9 +83,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
-	meemooIdentifier: '8911p09j1g',
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
@@ -131,9 +128,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
-	meemooIdentifier: '8911p09j1g',
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	premisIdentifier: 'WP00178829',
@@ -188,12 +183,10 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
 	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	representations: [],
+	pageRepresentations: [],
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
-	meemooIdentifier: '8911p09j1g',
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	premisIdentifier: 'WP00178829',
@@ -249,9 +242,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	meemooOriginalCp: null,
 	premisIsPartOf: null,
-	meemooIdentifier: '8911p09j1g',
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
@@ -302,11 +293,9 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	maintainerId: 'OR-rf5kf25',
 	dctermsFormat: 'video',
 	datePublished: '2020-09-01',
-	meemooIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	premisIdentifier: null,
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '8911p09j1g',
 	isPartOf: {},
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 };
@@ -347,9 +336,7 @@ export const mockUserInfo: Readonly<{
 export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
 	graph__intellectual_entity: [
 		{
-			schema_identifier:
-				'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-			meemoo_identifier: '8911p09j1g',
+			schema_identifier: '8911p09j1g',
 			schema_is_part_of: null,
 			schemaMaintainer: {
 				org_identifier: 'OR-rf5kf25',
@@ -368,9 +355,11 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 			schema_name: 'Durf te vragen R002 A0001',
 			schema_description:
 				"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-			schema_creator: {
-				productionCompany: ['Roses Are Blue'],
-			},
+			schema_creator: [
+				{
+					productionCompany: ['Roses Are Blue'],
+				},
+			],
 			dcterms_format: 'video',
 			dcterms_medium: '16mm',
 			schema_thumbnail_url:
@@ -410,51 +399,50 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 	],
 };
 
-export const mockGqlIeObjectFindByFolderId = Object.freeze({
-	ie: {
-		schema_identifier:
-			'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
-		premis_identifier: {
-			batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0] =
+	Object.freeze({
+		intellectualEntity: {
+			schema_identifier: '4f1mg9x363',
+			premis_identifier: {
+				batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+			},
+			schemaMaintainer: {
+				org_identifier: 'OR-rf5kf25',
+				skos_pref_label: 'Huis van Alijn',
+			},
+			schema_name: 'Op de boerderij',
+			dcterms_format: 'video',
+			schema_date_created_lower_bound: '2018-01-01',
+			schema_date_published: null,
+			schema_is_part_of: {
+				reeks: ['WEB'],
+				archief: ['digitaal archief/videoproducties'],
+				alternatief: ['videoproductie'],
+			},
+			meemoo_local_id: ['VI-0011-0004'],
+			schema_license: [
+				'CP-WEBSITE',
+				'VIAA-INTRA_CP-CONTENT',
+				'VIAA-INTRA_CP-METADATA-ALL',
+				'VIAA-ONDERWIJS',
+				'VIAA-ONDERZOEK',
+				'VIAA-PUBLIEK-METADATA-LTD',
+				'BEZOEKERTOOL-CONTENT',
+				'BEZOEKERTOOL-METADATA-ALL',
+			],
 		},
-		maintainer: {
-			schema_name: 'Huis van Alijn',
-		},
-		schema_name: 'Op de boerderij',
-		dcterms_format: 'video',
-		schema_date_created_lower_bound: '2018-01-01',
-		schema_date_published: null,
-		schema_is_part_of: {
-			reeks: ['WEB'],
-			archief: ['digitaal archief/videoproducties'],
-			alternatief: ['videoproductie'],
-		},
-		meemoo_identifier: '4f1mg9x363',
-		meemoo_local_id: 'VI-0011-0004',
-		schema_license: [
-			'CP-WEBSITE',
-			'VIAA-INTRA_CP-CONTENT',
-			'VIAA-INTRA_CP-METADATA-ALL',
-			'VIAA-ONDERWIJS',
-			'VIAA-ONDERZOEK',
-			'VIAA-PUBLIEK-METADATA-LTD',
-			'BEZOEKERTOOL-CONTENT',
-			'BEZOEKERTOOL-METADATA-ALL',
-		],
-	},
-});
+	});
 
 export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
-	schemaIdentifier:
-		'b746a7ef705a4f9c84669d4b29e3452635039793b1614c39b7971ac33cd537136c1a6802bf3d44d3afa24d8aded90107',
-	premisIdentifier: {
-		batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
-	},
+	schemaIdentifier: '4f1mg9x363',
+	premisIdentifier: undefined, //{  // TODO see if this needs to be re-enabled
+	// batch: ['PRD-BD-OR-1v5bc86-2020-10-19-16-20-07-874'],
+	// },
 	maintainerName: 'Huis van Alijn',
 	name: 'Op de boerderij',
 	dctermsFormat: 'video',
 	datePublished: null,
-	meemooIdentifier: '4f1mg9x363',
+	dateCreated: null,
 	meemooLocalId: 'VI-0011-0004',
 	isPartOf: {
 		alternatief: ['videoproductie'],
@@ -465,7 +453,7 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 
 export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0] =
 	Object.freeze({
-		schema_identifier: '0000003g0k',
+		schema_identifier: '4f1mg9x363',
 		schema_name: 'Durf te vragen R002 A0001',
 		updated_at: '2023-04-13',
 		schemaMaintainer: {
@@ -475,27 +463,25 @@ export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph__intellec
 	});
 
 export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
-	schemaIdentifier:
-		'49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
+	schemaIdentifier: '4f1mg9x363',
 	name: 'Durf te vragen R002 A0001',
 	updatedAt: '2023-04-13',
 	maintainerSlug: 'vrt',
 };
 
 export const mockIeObjectWithMetadataSetLtdCsv =
-	"meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;maintainerId;maintainerName;name;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793;8911p09j1g;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;";
+	"meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooLocalId;maintainerId;maintainerName;name;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;8911p09j1g;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;";
 
 export const mockIeObjectWithMetadataSetAllWithEssenceCsv =
-	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema\'s bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.\nDementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".\nMarleen noemt het een \'klotenziekte\' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.\n\nRoger Vanparijs  (66) Marleen Snauwaert (65)\nRoger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.\nRoger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.\n\nPaul Goossens  (67) en Katelijne Lefevre (60)\nPaul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.\nPaul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""\n\nMarleen Peperstraete (62) en Dirk Cecabooter (64)\nMarleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.\nNaast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.\n\nChristine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)\nChristine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.\nAlleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.\n\nJohn  Buck (44) & Cindy De Buck (46)\nJohn heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.\nCindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;';
+	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema\'s bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.\nDementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".\nMarleen noemt het een \'klotenziekte\' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.\n\nRoger Vanparijs  (66) Marleen Snauwaert (65)\nRoger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.\nRoger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.\n\nPaul Goossens  (67) en Katelijne Lefevre (60)\nPaul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.\nPaul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""\n\nMarleen Peperstraete (62) en Dirk Cecabooter (64)\nMarleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.\nNaast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.\n\nChristine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)\nChristine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.\nAlleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.\n\nJohn  Buck (44) & Cindy De Buck (46)\nJohn heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.\nCindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;';
 
 export const mockIeObjectWithMetadataSetAllCsv =
-	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema\'s bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.\nDementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".\nMarleen noemt het een \'klotenziekte\' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.\n\nRoger Vanparijs  (66) Marleen Snauwaert (65)\nRoger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.\nRoger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.\n\nPaul Goossens  (67) en Katelijne Lefevre (60)\nPaul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.\nPaul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""\n\nMarleen Peperstraete (62) en Dirk Cecabooter (64)\nMarleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.\nNaast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.\n\nChristine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)\nChristine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.\nAlleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.\n\nJohn  Buck (44) & Cindy De Buck (46)\nJohn heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.\nCindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;';
+	'meemooOriginalCp;premisIsPartOf;schemaIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;meemooDescriptionProgramme;meemooDescriptionCast;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium;dctermsFormat;meemoofilmColor;meemoofilmBase;meemoofilmImageOrSound;ebucoreIsMediaFragmentOf\n;;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema\'s bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.\nDementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".\nMarleen noemt het een \'klotenziekte\' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.\n\nRoger Vanparijs  (66) Marleen Snauwaert (65)\nRoger kreeg in 2007 de diagnose van frontotemporale jongdementie. Op de hersenscan zagen de artsen dat het rechterdeel vooraan in de hersenen helemaal zwart geworden was en eigenlijk afgestorven was. Volgens zijn vrouw, Marleen is zijn karakter ook heel erg veranderd. Ook dat is een typisch verschijnsel van frontotemporale jongdementie. Roger is verbaal ook heel agressief en kan snel uitvliegen.\nRoger was werfleider bij ruwbouwprojecten. Maar op een bepaald moment begon hij fouten te maken in de job. Ook leren werken met Excel lukte niet. Omdat hij niet begreep wat er aan de hand was, zakte hij weg in een depressie. Na vijf lange jaren zoeken wat er aan de hand was, ontdekte een neuroloog dat het een vorm van jongdementie was.\n\nPaul Goossens  (67) en Katelijne Lefevre (60)\nPaul kreeg vier jaar geleden een diagnose van parkinson. Niet veel later zei de neuroloog dat hij ook alzheimer had. Paul vindt het heel belangrijk om te praten over alzheimer. Volgens hem denken de meeste mensen dat je, eens je de diagnose gekregen hebt, niks meer kan en je een oud persoon bent die gewoon in een zetel zit en een plantje is. Het is voor Paul heel belangrijk om te ontkrachten.\nPaul moest kiezen tussen medicatie voor parkinson of voor alzheimer, omdat die elkaar kunnen beïnvloeden. Hij heeft gekozen voor de remmers voor alzheimer. “Ik wil liever mijn hersenen langer houden. Met fysische beperkingen kan ik beter om.""\n\nMarleen Peperstraete (62) en Dirk Cecabooter (64)\nMarleen heeft de diagnose van alzheimer gekregen toen ze 57 jaar was. Eerst dachten de artsen dat ze een depressie had. Ze maakte fouten op haar werk, en niet veel later is ze volledig gestopt met werken. Na vele onderzoeken kreeg ze de diagnose Alzheimer.\nNaast het feit dat Marleen veel zaken vergeet, is het meest uitgesproken symptoom van de ziekte bij haar dat ze geen dieptezicht meer heeft. Ze kan dus maar heel moeilijk schrijven, haar schoenen aandoen, wandelen... Het is heel duidelijk dat Marleen en Dirk elkaar graag zien. Dirk is gestopt met werken om zijn vrouw te kunnen verzorgen. Marleen vergeet heel veel, maar het gsm-nummer van Dirk kan ze nog zo uit het hoofd opzeggen.\n\nChristine Pluymers  (70) en Jean-Pierre Vanden Waeyenberg (65)\nChristine kreeg 3 jaar geleden de diagnose van alzheimer. Maar de ziekte sluimerde al langer, daarom kreeg ze nog de diagnose van jongdementie. Voor Christine is het moeilijk om te weten welke dag het is. Ook het uur lezen is heel moeilijk geworden. Het moeilijkste voor Christine is ontdekken dat ze niet meer kan schrijven omdat ze haar hele leven leerkracht Nederlands (en dodsdienst) is geweest. Haar spelling ging al een tijdje achteruit, maar om nu echt niet meer de coördinatie te hebben om te kunnen schrijven, dat was een zware klap.\nAlleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrijft wel altijd op een briefje waar hij naartoe gaat, maar soms vergeet ze dat te lezen of leest ze het en vergeet ze het snel weer. Hierdoor raakt ze in paniek als hij er niet is.\n\nJohn  Buck (44) & Cindy De Buck (46)\nJohn heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.\nCindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;;;;';
 
 export const mockIeObjectWithMetadataSetLtdXml = `<object>
   <meemooOriginalCp/>
   <premisIsPartOf/>
-  <schemaIdentifier>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793</schemaIdentifier>
-  <meemooIdentifier>8911p09j1g</meemooIdentifier>
+  <schemaIdentifier>8911p09j1g</schemaIdentifier>
   <meemooLocalId/>
   <maintainerId>OR-rf5kf25</maintainerId>
   <maintainerName>vrt</maintainerName>
@@ -532,8 +518,7 @@ export const mockIeObjectWithMetadataSetLtdXml = `<object>
 export const mockIeObjectWithMetadataSetAllXml = `<object>
   <meemooOriginalCp/>
   <premisIsPartOf/>
-  <schemaIdentifier>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793</schemaIdentifier>
-  <meemooIdentifier>8911p09j1g</meemooIdentifier>
+  <schemaIdentifier>8911p09j1g</schemaIdentifier>
   <meemooLocalId/>
   <meemooMediaObjectId>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c</meemooMediaObjectId>
   <maintainerId>OR-rf5kf25</maintainerId>
@@ -600,8 +585,7 @@ Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor 
 export const mockIeObjectWithMetadataSetAllWithEssenceXml = `<object>
   <meemooOriginalCp/>
   <premisIsPartOf/>
-  <schemaIdentifier>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793</schemaIdentifier>
-  <meemooIdentifier>8911p09j1g</meemooIdentifier>
+  <schemaIdentifier>8911p09j1g</schemaIdentifier>
   <meemooLocalId/>
   <meemooMediaObjectId>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c</meemooMediaObjectId>
   <maintainerId>OR-rf5kf25</maintainerId>

@@ -79,7 +79,7 @@ export interface IeObjectRepresentation {
 	schemaStartTime: string;
 	schemaTranscript: string;
 	edmIsNextInSequence: string;
-	updatedAt: IeObjectFile[];
+	updatedAt: string;
 	files: IeObjectFile[];
 }
 
@@ -105,7 +105,6 @@ export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: string;
 	dctermsMedium: string;
-	meemooIdentifier: string; // PID (not unique per object)
 	meemoofilmBase: string;
 	meemoofilmColor: boolean;
 	meemoofilmImageOrSound: string;
@@ -143,7 +142,6 @@ export interface IeObject {
 	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
-	representations?: IeObjectRepresentation[];
 	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
@@ -167,6 +165,8 @@ export interface IeObject {
 	meemooDescriptionCategory?: string[];
 	meemoofilmEmbeddedCaption?: string;
 	meemoofilmEmbeddedCaptionLanguage?: string;
+
+	pageRepresentations?: IeObjectRepresentation[][];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -218,7 +218,6 @@ export interface ElasticsearchObject {
 	dcterms_format: string;
 	dcterms_medium: string | null;
 	ebucore_object_type: EbucoreObjectType | null;
-	meemoo_identifier: string;
 	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
@@ -248,10 +247,12 @@ export interface ElasticsearchObject {
 		Voorzitter?: string[];
 	} | null;
 	schema_copyrightholder: string; // exists in _mapping but does not exist in values (QAS & INT)
-	schema_creator: {
-		Maker?: string[];
-		Archiefvormer?: string[];
-	} | null;
+	schema_creator:
+		| {
+				Maker?: string[];
+				Archiefvormer?: string[];
+		  }[]
+		| null;
 	schema_date_created: string | null;
 	schema_date_published: string | null;
 	schema_description: string | null;
@@ -277,8 +278,8 @@ export interface ElasticsearchObject {
 	schema_publisher: {
 		Distributeur?: string[];
 	} | null;
-	schema_spatial_coverage: string;
-	schema_temporal_coverage: string;
+	schema_spatial_coverage: string[];
+	schema_temporal_coverage: string[];
 	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT
 	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)

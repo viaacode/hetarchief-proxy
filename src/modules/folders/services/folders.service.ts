@@ -70,22 +70,21 @@ export class FoldersService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.visitorSpace?.slug,
-			creator: gqlIeObject?.schema_creator,
+			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
+			creator: gqlIeObject?.schema_creator?.[0],
 			description: gqlIeObject?.schema_description,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
+			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
 			name: gqlIeObject?.schema_name,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0] || null,
 			isPartOf: gqlIeObject?.schema_is_part_of || null,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			dateCreated: gqlIeObject?.schema_date_created || null,
 			duration: gqlIeObject?.schema_duration || null,
 			licenses: gqlIeObject?.schema_license || null,
-			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
 		};
 	}
 
@@ -153,7 +152,7 @@ export class FoldersService {
 		/* istanbul ignore next */
 		// TODO: add union type
 		const objectIe = this.adaptIeObject(gqlFolderObjectLink?.intellectualEntity as GqlObject);
-		const resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+		const resolvedThumbnailUrl: string = await this.playerTicketService.resolveThumbnailUrl(
 			objectIe.thumbnailUrl,
 			referer,
 			ip

@@ -16,7 +16,6 @@ query findFolderIeObjectsByFolderId(
 		created_at
 		intellectualEntity {
 			schema_identifier
-			meemoo_identifier
 			meemoo_local_id
 			schema_name
 			schema_creator

@@ -16,7 +16,6 @@ query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
 			created_at
 			intellectualEntity {
 				schema_identifier
-				meemoo_identifier
 				schema_name
 				dcterms_available
 			}

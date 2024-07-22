@@ -8,7 +8,6 @@ query findIeObjectInFolder($folderId: uuid, $objectSchemaIdentifier: String) {
 	) {
 		intellectualEntity {
 			schema_identifier
-			meemoo_identifier
 			schema_name
 			schema_creator
 			schema_description

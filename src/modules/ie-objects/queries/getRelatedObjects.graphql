@@ -7,7 +7,6 @@ query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
 		}
 	) {
 		schema_identifier
-		meemoo_identifier
 		schema_is_part_of
 		schemaMaintainer {
 			org_identifier

@@ -37,7 +37,7 @@ import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
 @ApiTags('Folders')
-@Controller('collections') // TODO rename this to folders, and also change this in the client
+@Controller('folders') // TODO rename this to folders, and also change this in the client
 export class FoldersController {
 	constructor(
 		private foldersService: FoldersService,
@@ -193,7 +193,7 @@ export class FoldersController {
 	): Promise<{ status: string }> {
 		const affectedRows = await this.foldersService.delete(folderId, user.getId());
 		if (affectedRows > 0) {
-			return { status: 'collection has been deleted' };
+			return { status: 'the folder has been deleted' };
 		} else {
 			return { status: 'no folders found with that id' };
 		}
@@ -241,7 +241,7 @@ export class FoldersController {
 				time: new Date().toISOString(),
 				data: {
 					type: ieObject.dctermsFormat,
-					pid: ieObject.meemooIdentifier,
+					pid: ieObject.schemaIdentifier,
 					fragment_id: objectSchemaIdentifier,
 					folder_id: folderId,
 					user_group_name: user.getGroupName(),
@@ -278,9 +278,9 @@ export class FoldersController {
 			user.getId()
 		);
 		if (affectedRows > 0) {
-			return { status: 'object has been deleted' };
+			return { status: 'the object has been deleted' };
 		} else {
-			return { status: 'no object found with that id in that collection' };
+			return { status: 'no object found with that id in that folder' };
 		}
 	}
 
@@ -330,23 +330,23 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<FolderShared> {
-		const collection = await this.foldersService.findFolderById(
+		const folder = await this.foldersService.findFolderById(
 			folderId,
 			referer,
 			getIpFromRequest(request)
 		);
 
-		if (collection?.userProfileId === user.getId()) {
+		if (folder?.userProfileId === user.getId()) {
 			return {
 				status: FolderStatus.ALREADY_OWNER,
-				folderId: collection.id,
-				folderName: collection?.name,
+				folderId: folder.id,
+				folderName: folder?.name,
 			};
 		}
 
 		const createdFolder = await this.foldersService.create(
 			{
-				name: collection?.name,
+				name: folder?.name,
 				user_profile_id: user.getId(),
 				is_default: false,
 			},
@@ -359,7 +359,7 @@ export class FoldersController {
 		try {
 			folderObjects = await this.foldersService.findObjectsByFolderId(
 				folderId,
-				collection?.userProfileId,
+				folder?.userProfileId,
 				{ size: 1000 },
 				referer,
 				getIpFromRequest(request)
@@ -376,7 +376,7 @@ export class FoldersController {
 		} catch (err) {
 			if (err?.name !== 'NotFoundException') {
 				throw new InternalServerErrorException({
-					message: 'Failed to add object from original collection to shared collection',
+					message: 'Failed to add object from original folder to shared folder',
 					error: err,
 				});
 			}

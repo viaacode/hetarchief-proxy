@@ -188,14 +188,11 @@ describe('MaterialRequestsService', () => {
 			expect(adapted.objectSchemaName).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.schema_name
 			);
-			expect(adapted.objectMeemooIdentifier).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.meemoo_identifier
-			);
 			expect(adapted.objectDctermsFormat).toEqual(
 				mockGqlMaterialRequest2.intellectualEntity.dcterms_format
 			);
 			expect(adapted.objectThumbnailUrl).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schema_thumbnail_url
+				mockGqlMaterialRequest2.intellectualEntity.schema_thumbnail_url[0]
 			);
 		});
 

@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase } from 'lodash';
+import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -50,6 +50,7 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
+	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
@@ -64,13 +65,13 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { customError } from '~shared/helpers/custom-error';
 
 @Injectable()
 export class IeObjectsService {
@@ -200,12 +201,15 @@ export class IeObjectsService {
 	}
 
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		return mockNewspapers;
+		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
+
+		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
 	public async getRelated(
 		schemaIdentifier: string,
-		meemooIdentifier: string,
 		referer: string,
 		ip: string,
 		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
@@ -349,12 +353,11 @@ export class IeObjectsService {
 		return await Promise.all(
 			response.graph__intellectual_entity.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
-				// TODO ARC-2403 add thumbnail url to objects
-				// adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-				// 	adapted.thumbnailUrl,
-				// 	referer,
-				// 	ip
-				// );
+				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					adapted.thumbnailUrl,
+					referer,
+					ip
+				);
 				return adapted;
 			})
 		);
@@ -429,8 +432,7 @@ export class IeObjectsService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
-			creator: gqlIeObject?.schema_creator,
+			creator: gqlIeObject?.schema_creator?.[0],
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
@@ -462,18 +464,21 @@ export class IeObjectsService {
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
-			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo,
+			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo
+				// TODO remove this workaround once the INT organisations assets are available
+				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
+				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
 			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
 			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			isPartOf: gqlIeObject?.schema_is_part_of,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
-			representations: this.adaptRepresentations(gqlIeObject),
+			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
+			pageRepresentations: this.adaptRepresentations(gqlIeObject),
 		};
 	}
 
@@ -531,7 +536,6 @@ export class IeObjectsService {
 			dctermsFormat: esObject?.dcterms_format,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemooIdentifier: esObject?.meemoo_identifier,
 			meemoofilmBase: esObject?.meemoofilm_base,
 			meemoofilmColor: esObject?.meemoofilm_color,
 			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
@@ -541,7 +545,7 @@ export class IeObjectsService {
 			abstract: esObject?.schema_abstract,
 			contributor: esObject?.schema_contributor,
 			copyrightHolder: esObject?.schema_copyrightholder,
-			creator: esObject?.schema_creator,
+			creator: esObject?.schema_creator?.[0],
 			dateCreated: esObject?.schema_date_created,
 			datePublished: esObject?.schema_date_published,
 			description: esObject?.schema_description,
@@ -560,16 +564,16 @@ export class IeObjectsService {
 			maintainerOverlay: null,
 			name: esObject?.schema_name,
 			publisher: esObject?.schema_publisher,
-			spatial: [esObject?.schema_spatial_coverage],
-			temporal: [esObject?.schema_temporal_coverage],
+			spatial: esObject?.schema_spatial_coverage,
+			temporal: esObject?.schema_temporal_coverage,
 			thumbnailUrl: esObject?.schema_thumbnail_url,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooDescriptionCast: esObject?.meemoo_description_cast,
 			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
-			meemooLocalId: esObject?.meemoo_local_id,
+			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			meemooOriginalCp: esObject?.meemoo_original_cp,
 			durationInSeconds: esObject?.duration_seconds,
-			representations: this?.adaptRepresentations(esObject?.premis_is_represented_by),
+			pageRepresentations: [],
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_type,
 			// Other
@@ -587,51 +591,69 @@ export class IeObjectsService {
 		/* istanbul ignore next */
 		return {
 			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
-			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.org_identifier,
+			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
+			premisIdentifier: undefined, // graphQlObject.intellectualEntity?.premis_identifier, // TODO see if this needs to be re-enabled
 			name: graphQlObject.intellectualEntity?.schema_name,
 			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
-			dateCreated: graphQlObject.intellectualEntity?.schema_date_created,
-			datePublished: graphQlObject.intellectualEntity?.schema_date_published,
-			meemooIdentifier: graphQlObject.intellectualEntity?.meemoo_identifier,
-			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id,
+			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
+			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
+			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id?.[0],
 			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
 	}
 
 	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete ieObject.representations;
+		delete ieObject.pageRepresentations;
 		delete ieObject.thumbnailUrl;
 		return ieObject;
 	}
 
-	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[] {
-		if (isEmpty(gqlIeObject.isRepresentedBy)) {
+	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[][] {
+		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return compact(
-			[
-				...gqlIeObject.isRepresentedBy,
-				...(gqlIeObject.hasPart?.flatMap((part) => part?.isRepresentedBy) || []),
-			].map((representation) => {
-				if (!representation) {
-					return null;
-				}
-				return {
-					id: representation.id,
-					schemaName: representation.schema_name,
-					isMediaFragmentOf: representation.is_media_fragment_of,
-					schemaInLanguage: representation.schema_in_language,
-					schemaStartTime: representation.schema_start_time,
-					schemaTranscript: representation.schema_transcript,
-					edmIsNextInSequence: representation.edm_is_next_in_sequence,
-					updatedAt: representation.updated_at,
-					files: this.adaptFiles(representation.includes),
-				};
-			})
-		);
+		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
+		const representationsByPage: IeObjectRepresentation[][] = [
+			gqlIeObject,
+			...gqlIeObject.hasPart,
+		]?.map((part) => {
+			return compact(
+				(part?.isRepresentedBy || []).flatMap(
+					(representation: GqlIeObject['isRepresentedBy'][0]) => {
+						if (!representation) {
+							return null;
+						}
+						return {
+							id: representation.id,
+							schemaName: representation.schema_name,
+							isMediaFragmentOf: representation.is_media_fragment_of,
+							schemaInLanguage: representation.schema_in_language,
+							schemaStartTime: representation.schema_start_time,
+							schemaTranscript: representation.schema_transcript,
+							edmIsNextInSequence: representation.edm_is_next_in_sequence,
+							updatedAt: representation.updated_at,
+							files: this.adaptFiles(representation.includes),
+						};
+					}
+				)
+			);
+		});
+
+		// Sort by image filename to have pages in order
+		return sortBy(representationsByPage, (representations) => {
+			let fileName: string | null = null;
+			representations.find((representation) => {
+				const imageFile = representation.files.find(
+					(file) => file.mimeType === 'image/jpeg'
+				);
+				fileName = imageFile?.name;
+				return imageFile;
+			});
+			return fileName;
+		});
 	}
 
 	public adaptFiles(graphQlFiles: GqlIeObject['isRepresentedBy'][0]['includes']): IeObjectFile[] {
@@ -659,12 +681,12 @@ export class IeObjectsService {
 		);
 	}
 
-	private adaptForSitemap(gqlIeObject: any): IeObjectsSitemap {
+	private adaptForSitemap(
+		gqlIeObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0]
+	): IeObjectsSitemap {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
-			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
+			maintainerSlug: kebabCase(gqlIeObject?.schemaMaintainer?.skos_pref_label || ''),
 			name: gqlIeObject?.schema_name,
 			updatedAt: gqlIeObject?.updated_at,
 		};
@@ -680,7 +702,16 @@ export class IeObjectsService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e?.response?.body);
+			this.logger.error(
+				customError('Failed to execute ie-objects query', e, {
+					url: this.configService.get('ELASTIC_SEARCH_URL'),
+					index: esIndex,
+					name: e?.name,
+					code: e?.code,
+					stack: e?.stack,
+					body: e?.response?.body,
+				})
+			);
 			throw e;
 		}
 	}
@@ -761,7 +792,6 @@ export class IeObjectsService {
 			isPartOf: ieObject?.isPartOf || {},
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
-			meemooIdentifier: ieObject?.meemooIdentifier,
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIsPartOf,
 			schemaIdentifier: ieObject?.schemaIdentifier,

@@ -61,9 +61,7 @@ const mockGqlFolderObject: GqlObject = {
 	dcterms_available: '2015-09-19T12:08:24',
 	dcterms_format: 'video',
 	schema_number_of_pages: null,
-	meemoo_identifier: '8s4jm2514q',
-	schema_identifier:
-		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+	schema_identifier: '8s4jm2514q',
 };
 
 const mockGqlFolderObjectLink: FolderObjectLink = {
@@ -98,11 +96,11 @@ const mockGqlFolderResultEmpty: FindFoldersByUserQuery = {
 	},
 };
 
-const mockGqlFolderObjectsResult = {
+const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 	users_folder_ie: [
 		{
 			created_at: '2022-02-02T10:55:16.542503',
-			ie: {
+			intellectualEntity: {
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 				schema_creator: null,
 				dcterms_available: '2015-09-19T12:08:24',
@@ -110,9 +108,7 @@ const mockGqlFolderObjectsResult = {
 					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 				dcterms_format: 'video',
 				schema_number_of_pages: null,
-				meemoo_identifier: '8s4jm2514q',
-				schema_identifier:
-					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
@@ -135,18 +131,14 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 				dcterms_format: 'video',
 				schema_number_of_pages: null,
-				meemoo_identifier: '8s4jm2514q',
-				schema_identifier:
-					'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
+				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
 };
 
 const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
-	schemaIdentifier:
-		'ec124bb2bd7b43a8b3dec94bd6567fec3f723d4c91cb418ba6eb26ded1ca1ef04b9ddbc8e98149858cc58dfebad3e6f5',
-	meemooIdentifier: '8s4jm2514q',
+	schemaIdentifier: '8s4jm2514q',
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
@@ -155,7 +147,7 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	folderEntryCreatedAt: '2022-02-02T10:55:16.542503',
-	description: 'A description for this collection',
+	description: 'A description for this folder',
 	maintainerId: 'OR-1v5bc86',
 	maintainerName: 'Huis van Alijn',
 	maintainerSlug: 'amsab',
@@ -215,7 +207,7 @@ describe('FoldersService', () => {
 			expect(adapted).toBeUndefined();
 		});
 
-		it('can adapt a graphql collection response to our collection interface', async () => {
+		it('can adapt a graphql folder response to our folder interface', async () => {
 			const mockVisitEndDates = [
 				new Date('2022-02-18T09:19:09.487977'),
 				new Date('2022-02-19T09:19:09.487977'),
@@ -234,7 +226,7 @@ describe('FoldersService', () => {
 			);
 		});
 
-		it('can adapt a graphql collection response without objects to our collection interface', async () => {
+		it('can adapt a graphql folder response without objects to our folder interface', async () => {
 			const adapted = await foldersService.adaptFolder(
 				{
 					...mockGqlFolder,
@@ -250,12 +242,12 @@ describe('FoldersService', () => {
 			expect(adapted.objects).toHaveLength(0);
 		});
 
-		it('can adapt an undefined collection object', async () => {
+		it('can adapt an undefined folder object', async () => {
 			const adapted = await foldersService.adaptFolder(undefined, 'referer', '');
 			expect(adapted).toBeUndefined();
 		});
 
-		it('can adapt a graphql collection object response to our object interface', async () => {
+		it('can adapt a graphql folder object response to our object interface', async () => {
 			const adapted = await foldersService.adaptFolderObjectLink(
 				mockGqlFolderObjectLink,
 				'referer',
@@ -265,9 +257,6 @@ describe('FoldersService', () => {
 			expect(adapted.schemaIdentifier).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
-			expect(adapted.meemooIdentifier).toEqual(
-				mockGqlFolderObjectLink.intellectualEntity.meemoo_identifier
-			);
 			expect(adapted.name).toEqual(mockGqlFolderObjectLink.intellectualEntity.schema_name);
 			expect(adapted.dctermsAvailable).toEqual(
 				mockGqlFolderObjectLink.intellectualEntity.dcterms_available
@@ -275,7 +264,7 @@ describe('FoldersService', () => {
 			expect(adapted.folderEntryCreatedAt).toEqual(mockGqlFolderObjectLink.created_at);
 		});
 
-		it('can adapt an undefined collection object link', async () => {
+		it('can adapt an undefined folder object link', async () => {
 			const adapted = await foldersService.adaptFolderObjectLink(undefined, 'referer', '');
 			expect(adapted).toBeUndefined();
 		});
@@ -297,7 +286,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('findFolderById', () => {
-		it('should return once collection', async () => {
+		it('should return once folder', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderResult);
 			const response = await foldersService.findFolderById(
 				mockGqlFolderResult.users_folder[0].id,
@@ -307,7 +296,7 @@ describe('FoldersService', () => {
 			expect(response.id).toBe(mockGqlFolderResult.users_folder[0].id);
 		});
 
-		it('should return undefined if collection does not exist', async () => {
+		it('should return undefined if folder does not exist', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderResultEmpty);
 			const response = await foldersService.findFolderById(
 				mockGqlFolderResult.users_folder[0].id,
@@ -319,7 +308,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('findObjectsByFolderId', () => {
-		it('returns all objects in a collection', async () => {
+		it('returns all objects in a folder', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectsResult);
 			const response = await foldersService.findObjectsByFolderId(
 				mockGqlFolder1.id,
@@ -329,11 +318,11 @@ describe('FoldersService', () => {
 				''
 			);
 			expect(response.items[0].schemaIdentifier).toBe(
-				mockGqlFolderObjectsResult.users_folder_ie[0].ie.schema_identifier
+				mockGqlFolderObjectsResult.users_folder_ie[0].intellectualEntity.schema_identifier
 			);
 		});
 
-		it('throws a NotFoundException if the collection was not found', async () => {
+		it('throws a NotFoundException if the folder was not found', async () => {
 			const mockData: FindFolderIeObjectsByFolderIdQuery = {
 				users_folder_ie: [],
 				users_folder_ie_aggregate: {
@@ -363,7 +352,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('findObjectInFolder', () => {
-		it('returns one objects in a collection', async () => {
+		it('returns one objects in a folder', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectResult);
 			const response = await foldersService.findObjectInFolderBySchemaIdentifier(
 				mockGqlFolder1.id,
@@ -376,7 +365,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('create', () => {
-		it('can create a new collection', async () => {
+		it('can create a new folder', async () => {
 			const mockData: InsertFolderMutation = {
 				insert_users_folder: {
 					returning: [mockGqlFolder1],
@@ -392,7 +381,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('update', () => {
-		it('can update a collection', async () => {
+		it('can update a folder', async () => {
 			const mockData: UpdateFolderMutation = {
 				update_users_folder: {
 					returning: [mockGqlFolder1],
@@ -413,7 +402,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('delete', () => {
-		it('can delete a collection', async () => {
+		it('can delete a folder', async () => {
 			const mockData: SoftDeleteFolderMutation = {
 				update_users_folder: {
 					affected_rows: 1,
@@ -425,7 +414,7 @@ describe('FoldersService', () => {
 			expect(affectedRows).toBe(1);
 		});
 
-		it('can delete a non existing collection', async () => {
+		it('can delete a non existing folder', async () => {
 			const mockData: SoftDeleteFolderMutation = {
 				update_users_folder: {
 					affected_rows: 0,
@@ -452,7 +441,7 @@ describe('FoldersService', () => {
 	});
 
 	describe('addObjectToFolder', () => {
-		it('can add object to a collection', async () => {
+		it('can add object to a folder', async () => {
 			const findObjectInFolderSpy = jest
 				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
@@ -481,7 +470,7 @@ describe('FoldersService', () => {
 			findObjectBySchemaIdentifierSpy.mockRestore();
 		});
 
-		it('can not add object to a collection if it already exists', async () => {
+		it('can not add object to a folder if it already exists', async () => {
 			const findObjectInFolderSpy = jest
 				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
 				.mockResolvedValueOnce(mockFolderObject);
@@ -499,7 +488,7 @@ describe('FoldersService', () => {
 			}
 			expect(error.response).toEqual({
 				code: 'OBJECT_ALREADY_EXISTS',
-				message: 'Object already exists in collection',
+				message: 'Object already exists in folder',
 			});
 
 			findObjectInFolderSpy.mockRestore();
@@ -534,8 +523,8 @@ describe('FoldersService', () => {
 		});
 	});
 
-	describe('remove object from collection', () => {
-		it('can remove an object from a collection', async () => {
+	describe('remove object from folder', () => {
+		it('can remove an object from a folder', async () => {
 			const mockData: RemoveObjectFromFolderMutation = {
 				delete_users_folder_ie: {
 					affected_rows: 1,
@@ -550,7 +539,7 @@ describe('FoldersService', () => {
 			expect(affectedRows).toBe(1);
 		});
 
-		it('can remove a non existing object from a collection', async () => {
+		it('can remove a non existing object from a folder', async () => {
 			const mockData: RemoveObjectFromFolderMutation = {
 				delete_users_folder_ie: {
 					affected_rows: 0,

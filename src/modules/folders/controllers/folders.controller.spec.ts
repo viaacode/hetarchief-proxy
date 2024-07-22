@@ -100,7 +100,7 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
-const mockRequest = { path: '/collections', headers: {} } as unknown as Request;
+const mockRequest = { path: '/folders', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllIeObjectMetadataByFolderId: jest.fn(),
@@ -114,7 +114,7 @@ const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> 
 };
 
 describe('FoldersController', () => {
-	let collectionsController: FoldersController;
+	let foldersController: FoldersController;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -142,7 +142,7 @@ describe('FoldersController', () => {
 			.setLogger(new TestingLogger())
 			.compile();
 
-		collectionsController = module.get<FoldersController>(FoldersController);
+		foldersController = module.get<FoldersController>(FoldersController);
 	});
 
 	afterEach(() => {
@@ -150,23 +150,23 @@ describe('FoldersController', () => {
 	});
 
 	it('should be defined', () => {
-		expect(collectionsController).toBeDefined();
+		expect(foldersController).toBeDefined();
 	});
 
 	describe('getFolders', () => {
-		it('should return all collections of a specific user', async () => {
+		it('should return all folders of a specific user', async () => {
 			mockFoldersService.findFoldersByUser.mockResolvedValueOnce(mockFoldersResponse);
-			const collections = await collectionsController.getFolders(
+			const folders = await foldersController.getFolders(
 				'referer',
 				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collections.items.length).toEqual(2);
+			expect(folders.items.length).toEqual(2);
 		});
 	});
 
 	describe('getFolderObjectsById', () => {
-		it('should return the objects in the collection', async () => {
+		it('should return the objects in the folder', async () => {
 			mockFoldersService.findObjectsByFolderId.mockResolvedValueOnce(
 				mockFolderObjectsResponse
 			);
@@ -174,27 +174,25 @@ describe('FoldersController', () => {
 				objectIds: [mockFolderObjectsResponse.items[0].schemaIdentifier],
 				visitorSpaceIds: [],
 			});
-			const collectionObjects = await collectionsController.getFolderObjects(
+			const folderObjects = await foldersController.getFolderObjects(
 				'referer',
 				mockFoldersResponse.items[0].id,
 				{},
 				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObjects.items[0]?.name).toEqual(
-				mockFolderObjectsResponse.items[0]?.name
-			);
+			expect(folderObjects.items[0]?.name).toEqual(mockFolderObjectsResponse.items[0]?.name);
 		});
 	});
 
 	// Export of folders will be disabled in fase2
 	// describe('exportFolder', () => {
-	// 	it('should export a collection as xml', async () => {
+	// 	it('should export a folder as xml', async () => {
 	// 		mockIeObjectsService.findAllObjectMetadataByFolderId.mockResolvedValueOnce([]);
 	// 		mockIeObjectsService.convertObjectsToXml.mockReturnValueOnce('</objects>');
-	// 		const result = await collectionsController.exportFolder(
+	// 		const result = await foldersController.exportFolder(
 	// 			'referer', '',
-	// 			'collection-id',
+	// 			'folder-id',
 	// 			new SessionUserEntity(mockUser),
 	// 			mockRequest
 	// 		);
@@ -203,62 +201,62 @@ describe('FoldersController', () => {
 	// });
 
 	describe('createFolder', () => {
-		it('should create a collection by id', async () => {
+		it('should create a folder by id', async () => {
 			mockFoldersService.create.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			const collection = await collectionsController.createFolder(
+			const folder = await foldersController.createFolder(
 				'referer',
 
 				mockRequest,
 				{
-					name: 'test collection',
+					name: 'test folder',
 				},
 				new SessionUserEntity(mockUser)
 			);
-			expect(collection).toEqual(mockFoldersResponse.items[0]);
+			expect(folder).toEqual(mockFoldersResponse.items[0]);
 		});
 	});
 
 	describe('updateFolder', () => {
-		it('should update a collection by id', async () => {
+		it('should update a folder by id', async () => {
 			mockFoldersService.update.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			const collection = await collectionsController.updateFolder(
+			const folder = await foldersController.updateFolder(
 				'referer',
 
 				mockRequest,
 				mockFoldersResponse.items[0].id,
 				{
-					name: 'test collection',
+					name: 'test folder',
 				},
 				new SessionUserEntity(mockUser)
 			);
-			expect(collection).toEqual(mockFoldersResponse.items[0]);
+			expect(folder).toEqual(mockFoldersResponse.items[0]);
 		});
 	});
 
 	describe('deleteFolder', () => {
-		it('should delete a collection by id', async () => {
+		it('should delete a folder by id', async () => {
 			mockFoldersService.delete.mockResolvedValueOnce(1);
 
-			const response = await collectionsController.deleteFolder(
+			const response = await foldersController.deleteFolder(
 				mockFoldersResponse.items[0].id,
 				new SessionUserEntity(mockUser)
 			);
-			expect(response).toEqual({ status: 'collection has been deleted' });
+			expect(response).toEqual({ status: 'the folder has been deleted' });
 		});
 
-		it('should delete a collection by id', async () => {
+		it('should delete a folder by id', async () => {
 			mockFoldersService.delete.mockResolvedValueOnce(0);
 
-			const response = await collectionsController.deleteFolder(
+			const response = await foldersController.deleteFolder(
 				mockFoldersResponse.items[0].id,
 				new SessionUserEntity(mockUser)
 			);
-			expect(response).toEqual({ status: 'no collections found with that id' });
+			expect(response).toEqual({ status: 'no folders found with that id' });
 		});
 	});
 
 	describe('createFolderObject', () => {
-		it('should add an object to a collection', async () => {
+		it('should add an object to a folder', async () => {
 			mockFoldersService.addObjectToFolder.mockResolvedValueOnce(
 				mockFolderObjectsResponse.items[0]
 			);
@@ -268,17 +266,17 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0]
 			);
 			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject1]);
-			const collectionObject = await collectionsController.addObjectToFolder(
+			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,
 				'referer',
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObject).toEqual(mockFolderObjectsResponse.items[0]);
+			expect(folderObject).toEqual(mockFolderObjectsResponse.items[0]);
 		});
 
-		it('should not add an object to a collection that is not owned', async () => {
+		it('should not add an object to a folder that is not owned', async () => {
 			mockFoldersService.addObjectToFolder.mockResolvedValueOnce(
 				mockFolderObjectsResponse.items[0]
 			);
@@ -292,7 +290,7 @@ describe('FoldersController', () => {
 
 			let error;
 			try {
-				await collectionsController.addObjectToFolder(
+				await foldersController.addObjectToFolder(
 					mockRequest,
 					'referer',
 					mockFoldersResponse.items[0].id,
@@ -302,40 +300,40 @@ describe('FoldersController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('You can only add objects to your own collections');
+			expect(error.message).toEqual('You can only add objects to your own folders');
 		});
 	});
 
 	describe('deleteFolderObject', () => {
-		it('should remove an object from a collection', async () => {
+		it('should remove an object from a folder', async () => {
 			mockFoldersService.removeObjectFromFolder.mockResolvedValueOnce(1);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			const collectionObject = await collectionsController.removeObjectFromFolder(
+			const folderObject = await foldersController.removeObjectFromFolder(
 				'referer',
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObject).toEqual({ status: 'object has been deleted' });
+			expect(folderObject).toEqual({ status: 'the object has been deleted' });
 		});
 
-		it('should not complain about removing non existing objects from a collection', async () => {
+		it('should not complain about removing non existing objects from a folder', async () => {
 			mockFoldersService.removeObjectFromFolder.mockResolvedValueOnce(0);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			const collectionObject = await collectionsController.removeObjectFromFolder(
+			const folderObject = await foldersController.removeObjectFromFolder(
 				'referer',
 				mockFoldersResponse.items[0].id,
 				'non-existing-object-id',
 				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObject).toEqual({
-				status: 'no object found with that id in that collection',
+			expect(folderObject).toEqual({
+				status: 'no object found with that id in that folder',
 			});
 		});
 
-		it('should not remove an object from a collection that are not owned', async () => {
+		it('should not remove an object from a folder that are not owned', async () => {
 			mockFoldersService.removeObjectFromFolder.mockResolvedValueOnce(1);
 			mockFoldersService.findFolderById.mockResolvedValueOnce({
 				...mockFoldersResponse.items[0],
@@ -344,7 +342,7 @@ describe('FoldersController', () => {
 
 			let error;
 			try {
-				await collectionsController.removeObjectFromFolder(
+				await foldersController.removeObjectFromFolder(
 					'referer',
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
@@ -354,12 +352,12 @@ describe('FoldersController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('You can only delete objects from your own collections');
+			expect(error.message).toEqual('You can only delete objects from your own folders');
 		});
 	});
 
 	describe('moveObjectToAnotherFolder', () => {
-		it('should move object to another collection', async () => {
+		it('should move object to another folder', async () => {
 			mockFoldersService.addObjectToFolder.mockResolvedValueOnce(
 				mockFolderObjectsResponse.items[0]
 			);
@@ -367,7 +365,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
 			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
 
-			const collectionObject = await collectionsController.moveObjectToAnotherFolder(
+			const folderObject = await foldersController.moveObjectToAnotherFolder(
 				'referer',
 				mockRequest,
 				mockFoldersResponse.items[0].id,
@@ -375,10 +373,10 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[1].id,
 				new SessionUserEntity(mockUser)
 			);
-			expect(collectionObject).toEqual(mockFolderObjectsResponse.items[0]);
+			expect(folderObject).toEqual(mockFolderObjectsResponse.items[0]);
 		});
 
-		it('should not move object if requester does not own "from" collection', async () => {
+		it('should not move object if requester does not own "from" folder', async () => {
 			mockFoldersService.addObjectToFolder.mockResolvedValueOnce(
 				mockFolderObjectsResponse.items[0]
 			);
@@ -393,7 +391,7 @@ describe('FoldersController', () => {
 
 			let error;
 			try {
-				await collectionsController.moveObjectToAnotherFolder(
+				await foldersController.moveObjectToAnotherFolder(
 					'referer',
 					mockRequest,
 					mockFoldersResponse.items[0].id,
@@ -404,10 +402,10 @@ describe('FoldersController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('You can only move objects from your own collections');
+			expect(error.message).toEqual('You can only move objects from your own folders');
 		});
 
-		it('should not move object if requester does not own "to" collection', async () => {
+		it('should not move object if requester does not own "to" folder', async () => {
 			mockFoldersService.addObjectToFolder.mockResolvedValueOnce(
 				mockFolderObjectsResponse.items[0]
 			);
@@ -422,7 +420,7 @@ describe('FoldersController', () => {
 
 			let error;
 			try {
-				await collectionsController.moveObjectToAnotherFolder(
+				await foldersController.moveObjectToAnotherFolder(
 					'referer',
 					mockRequest,
 					mockFoldersResponse.items[0].id,
@@ -433,15 +431,15 @@ describe('FoldersController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('You can only move objects to your own collections');
+			expect(error.message).toEqual('You can only move objects to your own folders');
 		});
 	});
 
-	describe('Share collection', () => {
+	describe('Share folder', () => {
 		it('Should return status ALREADY OWNED', async () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 
-			const sharedFolder = await collectionsController.shareFolder(
+			const sharedFolder = await foldersController.shareFolder(
 				'referer',
 				mockRequest,
 				mockFoldersResponse.items[0].id,
@@ -466,7 +464,7 @@ describe('FoldersController', () => {
 				mockFolderObjectsResponse.items[0]
 			);
 
-			const sharedFolder = await collectionsController.shareFolder(
+			const sharedFolder = await foldersController.shareFolder(
 				'referer',
 				mockRequest,
 				mockFoldersResponse.items[0].id,

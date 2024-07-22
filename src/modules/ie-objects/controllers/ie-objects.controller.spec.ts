@@ -271,7 +271,7 @@ describe('IeObjectsController', () => {
 
 			expect(ieObject.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 
 		it('should return full metadata without essence if the object has no content license', async () => {
@@ -289,7 +289,7 @@ describe('IeObjectsController', () => {
 				mockSessionUser
 			);
 
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 
 		it('should return limited metadata if licenses are ignored but the user does not have access', async () => {
@@ -308,7 +308,7 @@ describe('IeObjectsController', () => {
 
 			expect(ieObject.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
 			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.representations).toBeUndefined();
+			expect(ieObject.pageRepresentations).toBeUndefined();
 		});
 	});
 
@@ -436,10 +436,9 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
 			const ieObject = await ieObjectsController.getRelated(
+				'8911p09j1g',
 				'referer',
 				mockRequest,
-				'1',
-				'8911p09j1g',
 				{ maintainerId: '' },
 				mockSessionUser
 			);
