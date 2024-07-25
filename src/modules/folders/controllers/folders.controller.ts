@@ -31,6 +31,7 @@ import { FoldersService } from '~modules/folders/services/folders.service';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -46,7 +47,8 @@ export class FoldersController {
 		private foldersService: FoldersService,
 		private eventsService: EventsService,
 		private ieObjectsService: IeObjectsService,
-		private campaignMonitorService: CampaignMonitorService
+		private campaignMonitorService: CampaignMonitorService,
+		private userService: UsersService
 	) {}
 
 	@Get()
@@ -331,24 +333,24 @@ export class FoldersController {
 	public async createSharedCollection(
 		@Req() request: Request,
 		@Body() emailInfo: { data: { to: string } },
-		@Param('collectionId') collectionId: string,
+		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
 		const shareUrl = {
-			nl: `${process.env.FRONTEND_URL}/account/map-delen/${collectionId}`,
-			en: `${process.env.FRONTEND_URL}/account/map-share/${collectionId}`,
+			nl: `${process.env.FRONTEND_URL}/account/map-delen/${folderId}`,
+			en: `${process.env.FRONTEND_URL}/account/map-share/${folderId}`,
 		};
 
 		const collection = await this.foldersService.findFolderById(
-			collectionId,
+			folderId,
 			request.headers.referer,
 			getIpFromRequest(request)
 		);
 
-		//if the to user already exists tka his prefered language other wise take the language of the person wo is sending the email
-		const toUser = await this.campaignMonitorService.getPreferences(emailInfo.data.to);
+		//if the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
+		const toUser = await this.userService.getUserByEmail(emailInfo.data.to);
 
-
+		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
 
 		await this.campaignMonitorService.sendTransactionalMail(
 			{
@@ -360,15 +362,13 @@ export class FoldersController {
 						sharer_email: user.getMail(),
 						sharer_name: user.getFullName(),
 						folder_name: collection.name,
-						folder_sharelink: `${process.env.CLIENT_HOST}/${
-							shareUrl[user.getLanguage()]
-						}/${collectionId}`,
-						user_hasaccount: false,
+						folder_sharelink: `${process.env.CLIENT_HOST}/${shareUrl[preferredLang]}/${folderId}`,
+						user_hasaccount: !!toUser,
 						user_firstname: '',
 					},
 				},
 			},
-			user?.getLanguage() || Locale.Nl
+			preferredLang
 		);
 
 		return { message: 'success' };

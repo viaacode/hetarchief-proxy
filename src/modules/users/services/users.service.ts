@@ -17,6 +17,9 @@ import {
 } from '../types';
 
 import {
+	GetUserByEmailDocument,
+	type GetUserByEmailQuery,
+	type GetUserByEmailQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
@@ -97,7 +100,7 @@ export class UsersService {
 		return (GroupIdToName[groupId] || null) as GroupName | null;
 	}
 
-	public async getUserLanguageByEmail (email: string): Promise<Locale | null> {
+	public async getUserByEmail(email: string): Promise<User | null> {
 		const userResponse = await this.dataService.execute<
 			GetUserByEmailQuery,
 			GetUserByEmailQueryVariables
@@ -108,7 +111,7 @@ export class UsersService {
 			return null;
 		}
 
-		return userResponse.users_profile[0].language;
+		return this.adapt(userResponse.users_profile[0]);
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
