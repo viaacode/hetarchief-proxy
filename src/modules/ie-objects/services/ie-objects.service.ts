@@ -616,31 +616,37 @@ export class IeObjectsService {
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
-		const representationsByPage: IeObjectRepresentation[][] = [
-			gqlIeObject,
-			...gqlIeObject.hasPart,
-		]?.map((part) => {
-			return compact(
-				(part?.isRepresentedBy || []).flatMap(
-					(representation: GqlIeObject['isRepresentedBy'][0]) => {
-						if (!representation) {
-							return null;
+		const representationsByPage: IeObjectRepresentation[][] = compact(
+			[gqlIeObject, ...gqlIeObject.hasPart]?.map((part) => {
+				const represenations = compact(
+					(part?.isRepresentedBy || []).flatMap(
+						(
+							representation: GqlIeObject['isRepresentedBy'][0]
+						): IeObjectRepresentation => {
+							if (!representation) {
+								return null;
+							}
+							return {
+								id: representation.id,
+								schemaName: representation.schema_name,
+								isMediaFragmentOf: representation.is_media_fragment_of,
+								schemaInLanguage: representation.schema_in_language,
+								schemaStartTime: representation.schema_start_time,
+								schemaTranscript: representation.schema_transcript,
+								edmIsNextInSequence: representation.edm_is_next_in_sequence,
+								updatedAt: representation.updated_at,
+								files: this.adaptFiles(representation.includes),
+							};
 						}
-						return {
-							id: representation.id,
-							schemaName: representation.schema_name,
-							isMediaFragmentOf: representation.is_media_fragment_of,
-							schemaInLanguage: representation.schema_in_language,
-							schemaStartTime: representation.schema_start_time,
-							schemaTranscript: representation.schema_transcript,
-							edmIsNextInSequence: representation.edm_is_next_in_sequence,
-							updatedAt: representation.updated_at,
-							files: this.adaptFiles(representation.includes),
-						};
-					}
-				)
-			);
-		});
+					)
+				);
+				// Avoid returning empty array representations
+				if (represenations.length) {
+					return represenations;
+				}
+				return null;
+			})
+		);
 
 		// Sort by image filename to have pages in order
 		return sortBy(representationsByPage, (representations) => {
