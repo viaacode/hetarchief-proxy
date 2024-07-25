@@ -12,7 +12,10 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { type CampaignMonitorNewsletterPreferences, Template } from '../campaign-monitor.types';
+import {
+	type CampaignMonitorNewsletterPreferences,
+	EmailTemplate,
+} from '../campaign-monitor.types';
 import {
 	CampaignMonitorConfirmMailQueryDto,
 	CampaignMonitorNewsletterPreferencesQueryDto,
@@ -45,7 +48,7 @@ export class CampaignMonitorController {
 	@Post('send')
 	@ApiOperation({
 		description: `Send transactional mails through Campaign Monitor. Template value is one of following values (${Object.values(
-			Template
+			EmailTemplate
 		).join(', ')}). Data custom fields are dependent on provided template type.`,
 	})
 	async sendTransactionalMail(

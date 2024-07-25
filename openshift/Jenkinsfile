@@ -31,7 +31,7 @@ pipeline {
 		disableConcurrentBuilds()
 	}
 	environment {
-		OC_PROJECT = 'hetarchief'
+		OC_PROJECT = 'hetarchief-v3'
 		BASE_IMG = "${getImageFromDockerfile()}"
 		BASE_IMG_NAME = "${getBaseImageName()}"
 		OC_URL = 'https://c113-e.private.eu-de.containers.cloud.ibm.com:30227'

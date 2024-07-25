@@ -443,7 +443,7 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo as any
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
 		});
 
 		it('throws an internal server exception when an unknown filter value is passed', () => {
@@ -593,7 +593,10 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
+			// Disabled matchbox filters for lemma split words
+			// https://meemoo.atlassian.net/browse/ARC-2405
+			// expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
 		});
 
 		it('Should return an exact filter object for free text search with quotes', () => {
@@ -627,7 +630,7 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(8);
+			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
 		});
 
 		it('Should not set a filter when consultable remote is set to true (since the value is inverted from the filter in the UI)', () => {

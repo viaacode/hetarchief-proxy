@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { find, isArray, isEmpty, set, uniq } from 'lodash';
+import { compact, find, isArray, isEmpty, set, uniq } from 'lodash';
 
 import { type CreateVisitDto, type UpdateVisitDto, type VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -193,18 +193,22 @@ export class VisitsService {
 				)
 			),
 			accessibleObjectIds: uniq(
-				graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
-					accessibleFolderLink.folder.ies
-						.filter(
-							(accessibleFolderIeLink) =>
-								graphQlVisit?.access_type === VisitAccessType.Full ||
-								(graphQlVisit?.access_type === VisitAccessType.Folders &&
-									graphQlVisit?.visitor_space?.schema_maintainer_id ===
-										accessibleFolderIeLink?.ie?.maintainer?.schema_identifier)
-						)
-						.map(
-							(accessibleFolderIeLink) => accessibleFolderIeLink.ie.schema_identifier
-						)
+				compact(
+					graphQlVisit.accessible_folders.flatMap((accessibleFolderLink) =>
+						accessibleFolderLink.folder.intellectualEntities
+							.filter(
+								(accessibleFolderIeLink) =>
+									graphQlVisit?.access_type === VisitAccessType.Full ||
+									(graphQlVisit?.access_type === VisitAccessType.Folders &&
+										graphQlVisit?.visitor_space?.schema_maintainer_id ===
+											accessibleFolderIeLink?.intellectualEntity
+												?.schemaMaintainer?.org_identifier)
+							)
+							.map(
+								(accessibleFolderIeLink) =>
+									accessibleFolderIeLink.intellectualEntity?.schema_identifier
+							)
+					)
 				)
 			),
 		};

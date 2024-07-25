@@ -1,6 +1,0 @@
-query getObjectIdentifierTuple($meemooIdentifiers: [String!]) {
-	object_ie(where: { meemoo_identifier: { _in: $meemooIdentifiers } }) {
-		schema_identifier
-		meemoo_identifier
-	}
-}

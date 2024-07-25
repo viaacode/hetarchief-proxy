@@ -27,21 +27,17 @@ query findMaterialRequests(
 				id
 			}
 		}
-		object {
-			maintainer {
-				schema_identifier
-				schema_name
-				information {
-					logo
-					contact_point
-				}
-				visitor_space {
+		intellectualEntity {
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_has_logo
+				visitorSpace {
 					slug
 				}
 			}
-			meemoo_identifier
+			schema_identifier
 			meemoo_local_id
-			meemoo_identifier
 			schema_name
 			dcterms_format
 			schema_thumbnail_url

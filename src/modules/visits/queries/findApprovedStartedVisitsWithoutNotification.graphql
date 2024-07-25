@@ -17,8 +17,8 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			last_name
 			mail
 			language
-			collections {
-				ies {
+			folders {
+				intellectualEntities {
 					ie_schema_identifier
 				}
 			}
@@ -65,11 +65,11 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 		accessible_folders {
 			folder {
 				id
-				ies {
-					ie {
+				intellectualEntities {
+					intellectualEntity {
 						schema_identifier
-						maintainer {
-							schema_identifier
+						schemaMaintainer {
+							org_identifier
 						}
 					}
 				}

@@ -12,8 +12,8 @@ import { IdpService } from '../services/idp.service';
 import { HetArchiefController } from './het-archief.controller';
 
 import { type CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
+import { FoldersService } from '~modules/folders/services/folders.service';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
@@ -79,7 +79,7 @@ const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = 
 	updateUser: jest.fn(),
 };
 
-const mockCollectionsService: Partial<Record<keyof CollectionsService, jest.SpyInstance>> = {
+const mockFoldersService: Partial<Record<keyof FoldersService, jest.SpyInstance>> = {
 	create: jest.fn(),
 };
 
@@ -144,8 +144,8 @@ describe('HetArchiefController', () => {
 					useValue: mockUsersService,
 				},
 				{
-					provide: CollectionsService,
-					useValue: mockCollectionsService,
+					provide: FoldersService,
+					useValue: mockFoldersService,
 				},
 				{
 					provide: ConfigService,

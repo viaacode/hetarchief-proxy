@@ -1,0 +1,20 @@
+query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) {
+	graph__intellectual_entity(
+		where: { schema_license: { _has_keys_any: $licenses } }
+		offset: $offset
+		limit: $limit
+	) {
+		schema_identifier
+		schema_name
+		updated_at
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+		}
+	}
+	graph__intellectual_entity_aggregate(where: { schema_license: { _has_keys_any: $licenses } }) {
+		aggregate {
+			count
+		}
+	}
+}

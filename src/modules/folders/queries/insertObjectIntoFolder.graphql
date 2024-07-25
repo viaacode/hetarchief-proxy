@@ -1,0 +1,20 @@
+mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectSchemaIdentifier: String) {
+	insert_users_folder_ie(
+		objects: { user_collection_id: $folderId, ie_schema_identifier: $ieObjectSchemaIdentifier }
+	) {
+		returning {
+			created_at
+			intellectualEntity {
+				schema_identifier
+				dcterms_format
+				dcterms_available
+				schema_creator
+				schema_description
+				schema_name
+				schema_maintainer
+				schema_number_of_pages
+				schema_duration
+			}
+		}
+	}
+}

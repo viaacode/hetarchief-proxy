@@ -9,11 +9,6 @@
         },
         {
           "term": {
-            "meemoo_identifier": "{{query}}"
-          }
-        },
-        {
-          "term": {
             "meemoo_local_id": "{{query}}"
           }
         },

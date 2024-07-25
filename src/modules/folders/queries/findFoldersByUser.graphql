@@ -1,0 +1,31 @@
+query findFoldersByUser($userProfileId: uuid, $offset: Int, $limit: Int) {
+	users_folder(
+		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+		order_by: { created_at: asc }
+		offset: $offset
+		limit: $limit
+	) {
+		id
+		name
+		description
+		user_profile_id
+		is_default
+		created_at
+		updated_at
+		intellectualEntities {
+			created_at
+			intellectualEntity {
+				schema_identifier
+				schema_name
+				dcterms_available
+			}
+		}
+	}
+	users_folder_aggregate(
+		where: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+	) {
+		aggregate {
+			count
+		}
+	}
+}

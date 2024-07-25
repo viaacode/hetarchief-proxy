@@ -1,8 +1,0 @@
-mutation softDeleteCollection($collectionId: uuid, $userProfileId: uuid) {
-	update_users_folder(
-		where: { id: { _eq: $collectionId }, user_profile_id: { _eq: $userProfileId } }
-		_set: { is_deleted: true }
-	) {
-		affected_rows
-	}
-}

@@ -19,8 +19,8 @@ import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
 	type CampaignMonitorUserInfo,
+	EmailTemplate,
 	type MaterialRequestEmailInfo,
-	Template,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -82,6 +82,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
+		if (emailInfo.to.length === 0) {
+			return;
+		}
+
 		const groupedRecipientsByLanguage = Object.entries(
 			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
 		);
@@ -163,7 +167,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		await this.sendTransactionalMail(
 			{
-				template: Template.EMAIL_CONFIRMATION,
+				template: EmailTemplate.EMAIL_CONFIRMATION,
 				data,
 			},
 			language
@@ -301,7 +305,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 
 			let cmTemplateId: string;
-			if (Object.values(Template).includes(emailInfo.template as any)) {
+			if (Object.values(EmailTemplate).includes(emailInfo.template as any)) {
 				cmTemplateId = getTemplateId(emailInfo.template, lang);
 			} else {
 				cmTemplateId = emailInfo.template;
@@ -455,7 +459,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		};
 
 		// Maintainer Template
-		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
+		if (emailInfo.template === EmailTemplate.MATERIAL_REQUEST_MAINTAINER) {
 			return {
 				user_firstname: emailInfo.firstName,
 				user_lastname: emailInfo.lastName,
@@ -464,7 +468,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					return {
 						title: materialRequest.objectSchemaName,
 						local_cp_id: materialRequest.objectMeemooLocalId,
-						pid: materialRequest.objectMeemooIdentifier,
+						pid: materialRequest.objectSchemaIdentifier,
 						page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 							materialRequest.maintainerSlug
 						}/${materialRequest.objectSchemaIdentifier}`,
@@ -489,7 +493,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				title: materialRequest.objectSchemaName,
 				cp_name: materialRequest.maintainerName,
 				local_cp_id: materialRequest.objectMeemooLocalId,
-				pid: materialRequest.objectMeemooIdentifier,
+				pid: materialRequest.objectSchemaIdentifier,
 				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 					materialRequest.maintainerSlug
 				}/${materialRequest.objectSchemaIdentifier}`,

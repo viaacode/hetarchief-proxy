@@ -11,8 +11,8 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 				last_name
 				mail
 				language
-				collections {
-					ies {
+				folders {
+					intellectualEntities {
 						ie_schema_identifier
 					}
 				}
@@ -66,11 +66,11 @@ mutation updateVisit($id: uuid!, $updateVisit: maintainer_visitor_space_request_
 			}
 			accessible_folders {
 				folder {
-					ies {
-						ie {
+					intellectualEntities {
+						intellectualEntity {
 							schema_identifier
-							maintainer {
-								schema_identifier
+							schemaMaintainer {
+								org_identifier
 							}
 						}
 					}
