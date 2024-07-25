@@ -97,6 +97,20 @@ export class UsersService {
 		return (GroupIdToName[groupId] || null) as GroupName | null;
 	}
 
+	public async getUserLanguageByEmail (email: string): Promise<Locale | null> {
+		const userResponse = await this.dataService.execute<
+			GetUserByEmailQuery,
+			GetUserByEmailQueryVariables
+		>(GetUserByEmailDocument, {
+			email,
+		});
+		if (!userResponse.users_profile[0]) {
+			return null;
+		}
+
+		return userResponse.users_profile[0].language;
+	}
+
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
 		const userResponse = await this.dataService.execute<
 			GetUserByIdentityIdQuery,

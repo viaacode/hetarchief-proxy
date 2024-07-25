@@ -325,12 +325,12 @@ export class FoldersController {
 		return folderObject;
 	}
 
-	@Post('/share/:collectionId/create')
+	@Post('/share/:folderId/create')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async createSharedCollection(
 		@Req() request: Request,
-		@Body() emailInfo: { data: { mail: string } },
+		@Body() emailInfo: { data: { to: string } },
 		@Param('collectionId') collectionId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<any> {
@@ -338,17 +338,23 @@ export class FoldersController {
 			nl: `${process.env.FRONTEND_URL}/account/map-delen/${collectionId}`,
 			en: `${process.env.FRONTEND_URL}/account/map-share/${collectionId}`,
 		};
-		const collection = await this.foldersService.findCollectionById(
+
+		const collection = await this.foldersService.findFolderById(
 			collectionId,
 			request.headers.referer,
 			getIpFromRequest(request)
 		);
 
+		//if the to user already exists tka his prefered language other wise take the language of the person wo is sending the email
+		const toUser = await this.campaignMonitorService.getPreferences(emailInfo.data.to);
+
+
+
 		await this.campaignMonitorService.sendTransactionalMail(
 			{
 				template: EmailTemplate.SHARE_FOLDER,
 				data: {
-					to: emailInfo.data.mail,
+					to: emailInfo.data.to,
 					consentToTrack: 'unchanged',
 					data: {
 						sharer_email: user.getMail(),
