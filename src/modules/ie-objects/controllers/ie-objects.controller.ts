@@ -238,6 +238,16 @@ export class IeObjectsController {
 		res.send(csvContent);
 	}
 
+	@Get('schemaIdentifierLookup/:schemaIdentifier')
+	@ApiOperation({
+		description: 'Get new schemaIdentifier when given the old one as param.',
+	})
+	public async identifierLookup(
+		@Param('schemaIdentifier') schemaIdentifier: string
+	): Promise<string> {
+		return this.ieObjectsService.getRelatedIdentifier(schemaIdentifier);
+	}
+
 	@Get(':schemaIdentifier/related')
 	@ApiOperation({
 		description:
