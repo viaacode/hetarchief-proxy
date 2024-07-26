@@ -10,6 +10,7 @@ export enum LogEventType {
 
 	// Triggered in the backend
 	USER_AUTHENTICATE = 'be.hetarchief.user.authenticate',
+	USER_CREATE = 'be.hetarchief.user.create',
 	ITEM_BOOKMARK = 'be.hetarchief.item.bookmark',
 	METADATA_EXPORT = 'be.hetarchief.bezoek.metadata.export',
 	VISIT_REQUEST = 'be.hetarchief.bezoek.visit.request',

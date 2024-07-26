@@ -198,6 +198,21 @@ export class HetArchiefController {
 					null, // referer not important here
 					''
 				);
+
+				this.eventsService.insertEvents([
+					{
+						source: '/',
+						data: {
+							idp: Idp.HETARCHIEF,
+							user_group_id: archiefUser.groupId,
+							user_group_name: archiefUser.groupName,
+						},
+						subject: archiefUser.id,
+						type: LogEventType.USER_CREATE,
+						time: new Date().toISOString(),
+						id: EventsHelper.getEventId(request),
+					},
+				]);
 			} else {
 				if (
 					!isEqual(
