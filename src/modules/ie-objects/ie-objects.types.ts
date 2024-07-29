@@ -69,6 +69,7 @@ export interface IeObjectFile {
 	thumbnailUrl: string;
 	duration: string;
 	edmIsNextInSequence: string;
+	createdAt: string;
 }
 
 export interface IeObjectRepresentation {
@@ -101,14 +102,29 @@ export enum IsPartOfKey {
 	seizoennummer = 'seizoennummer',
 }
 
+export interface IsPartOfCollection {
+	name: string;
+	collectionType: IsPartOfKey;
+	isPreceededBy?: any[];
+	isSucceededBy?: any[];
+	locationCreated?: any;
+	startDate?: any;
+	endDate?: any;
+	publisher?: any;
+}
+
+export enum IeObjectType {
+	Video = 'video',
+	Audio = 'audio',
+	Film = 'film',
+	Newspaper = 'newspaper',
+}
+
 export interface IeObject {
 	dctermsAvailable: string;
-	dctermsFormat: string;
+	dctermsFormat: IeObjectType;
 	dctermsMedium: string;
-	meemoofilmBase: string;
-	meemoofilmColor: boolean;
-	meemoofilmImageOrSound: string;
-	premisIdentifier: any;
+	premisIdentifier: Record<string, string>[];
 	abstract: string;
 	creator: any;
 	dateCreated: string | null;
@@ -130,41 +146,44 @@ export interface IeObject {
 	spatial: string[];
 	temporal: string[];
 	thumbnailUrl: string;
-	// EXTRA
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
-	// OPTIONAL
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
 	premisIsPartOf?: string;
 	contributor?: any;
 	copyrightHolder?: string;
-	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
+	isPartOf?: IsPartOfCollection[];
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
 	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
-	// FROM DB
-	meemoofilmCaption?: string;
-	meemoofilmCaptionLanguage?: string;
-	meemooDescriptionProgramme?: string;
 	meemooLocalId?: string;
 	meemooOriginalCp?: string;
 	durationInSeconds?: number;
 	copyrightNotice?: string;
 	meemooMediaObjectId?: string;
-	ebucoreIsMediaFragmentOf?: string;
-	ebucoreHasMediaFragmentOf?: boolean;
-	actor?: string | null;
-	// Not yet available
 	transcript?: string;
-	caption?: string;
-	categorie?: string[];
-	languageSubtitles?: string;
-	meemooDescriptionCategory?: string[];
-	meemoofilmEmbeddedCaption?: string;
-	meemoofilmEmbeddedCaptionLanguage?: string;
+	abrahamInfo?: {
+		id: string;
+		uri: string;
+		code: string;
+	};
+	synopsis: string;
+	collectionName?: string;
+	issueNumber?: string;
+	fragmentId?: string;
+	creditText?: string;
+	preceededBy?: string[];
+	succeededBy?: string[];
+	width?: string;
+	height?: string;
+	locationCreated?: string;
+	startDate?: string;
+	endDate?: string;
+	newspaperPublisher?: string;
+	alternativeTitle?: string[];
 
 	pageRepresentations?: IeObjectRepresentation[][];
 }
@@ -260,19 +279,15 @@ export interface ElasticsearchObject {
 	schema_genre: string[];
 	schema_identifier: string;
 	schema_in_language: string[];
-	schema_is_part_of: {
-		archief?: string[];
-		reeks?: string[];
-		alternatief?: string[];
-		serie?: string[];
-	} | null;
+	schema_is_part_of: IsPartOfCollection[] | null;
 	schema_keywords: string[];
 	schema_license: string[] | null;
 	schema_maintainer: {
 		schema_identifier?: string;
 		schema_name?: string;
 		alt_label?: string | null; // not always available
-		organization_type?: IeObjectSector | null; // not always available
+		organization_sector?: IeObjectSector | null; // not always available
+		organization_type?: string | null; // not always available
 	};
 	schema_name: string;
 	schema_publisher: {
@@ -280,7 +295,7 @@ export interface ElasticsearchObject {
 	} | null;
 	schema_spatial_coverage: string[];
 	schema_temporal_coverage: string[];
-	schema_thumbnail_url: string;
+	schema_thumbnail_url: string[];
 	// Discrepancy props in QAS & INT
 	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)
 	meemoo_description_cast?: string; // only exists in QAS (not INT)

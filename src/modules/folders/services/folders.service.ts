@@ -46,7 +46,11 @@ import {
 	type UpdateFolderMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-import { type IeObject, type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import {
+	type IeObject,
+	type IeObjectSector,
+	type IeObjectType,
+} from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -73,7 +77,7 @@ export class FoldersService {
 			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
 			creator: gqlIeObject?.schema_creator?.[0],
 			description: gqlIeObject?.schema_description,
-			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],

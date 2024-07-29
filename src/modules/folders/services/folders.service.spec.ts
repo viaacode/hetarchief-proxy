@@ -17,7 +17,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
 import { type FolderObjectLink, type GqlObject } from '~modules/folders/types';
-import { type IeObject, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
+import { type IeObject, IeObjectType, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -142,7 +142,7 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
-	dctermsFormat: 'video',
+	dctermsFormat: IeObjectType.Video,
 	numberOfPages: null,
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -152,10 +152,16 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	maintainerName: 'Huis van Alijn',
 	maintainerSlug: 'amsab',
 	meemooLocalId: 'WP00032225',
-	isPartOf: {
-		[IsPartOfKey.serie]: ['Serie'],
-		[IsPartOfKey.programma]: ['Programma'],
-	},
+	isPartOf: [
+		{
+			collectionType: IsPartOfKey.serie,
+			name: 'Serie1',
+		},
+		{
+			collectionType: IsPartOfKey.programma,
+			name: 'Programma1',
+		},
+	],
 	duration: '01:01:59',
 };
 
