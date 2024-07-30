@@ -24,6 +24,7 @@ export enum MediaFormat {
 }
 
 export enum IeObjectLicense {
+	// Object Licenses
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
 	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
 	PUBLIEK_CONTENT = 'VIAA-PUBLIEK-CONTENT',
@@ -32,12 +33,17 @@ export enum IeObjectLicense {
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
 	INTRA_CP_METADATA_LTD = 'VIAA-INTRA_CP-METADATA-LTD',
 	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
+
+	// Rights statuses
+	PUBLIC_DOMAIN = 'Publiek-Domein',
+	COPYRIGHT_UNDETERMINED = 'COPYRIGHT-UNDETERMINED',
 }
 
 export enum IeObjectMetadataSet {
 	METADATA_LTD = 'METADATA_LTD',
 	METADATA_ALL = 'METADATA_ALL',
 	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
+	EMPTY = 'EMPTY',
 }
 
 export enum IeObjectSector {
@@ -181,6 +187,7 @@ export interface IeObject {
 	locationCreated?: string;
 	startDate?: string;
 	endDate?: string;
+	carrierDate?: string;
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
 

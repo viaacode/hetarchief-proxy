@@ -62,6 +62,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				premis_medium
 				schema_width
 				schema_height
+				created_at
 			}
 			schema_abstract
 			schemaAlternateName {

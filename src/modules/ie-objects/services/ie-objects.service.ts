@@ -518,6 +518,7 @@ export class IeObjectsService {
 			endDate: compact(
 				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
+			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
 			newspaperPublisher: compact(
 				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
