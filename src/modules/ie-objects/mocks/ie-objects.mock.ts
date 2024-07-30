@@ -19,8 +19,7 @@ import { Locale } from '~shared/types/types';
 
 export const mockIeObject1: Readonly<IeObject> = {
 	schemaIdentifier: '8911p09j1g',
-	premisIdentifier: 'WP00178829',
-	premisIsPartOf: null,
+	premisIdentifier: [{ premisid: 'WP00178829' }],
 	copyrightHolder: 'vrt',
 	copyrightNotice:
 		'embargo|Geen hergebruik geïsoleerde quotes zonder toestemming productiehuis Roses Are Blue!',
@@ -59,7 +58,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	],
 	genre: ['program'],
 	dctermsFormat: IeObjectType.Video,
-	dctermsMedium: '16mm',
+	dctermsMedium: ['16mm'],
 	inLanguage: null,
 	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
@@ -93,7 +92,6 @@ export const mockIeObject1: Readonly<IeObject> = {
 
 export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
-	premisIsPartOf: null,
 	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
@@ -105,7 +103,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	dctermsFormat: IeObjectType.Video,
-	dctermsMedium: '16mm',
+	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
@@ -143,11 +141,10 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 
 export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
-	premisIsPartOf: null,
 	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
-	premisIdentifier: 'WP00178829',
+	premisIdentifier: [{ premisid: 'WP00178829' }],
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
@@ -157,7 +154,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	dctermsFormat: IeObjectType.Video,
-	dctermsMedium: '16mm',
+	dctermsMedium: ['16mm'],
 	ebucoreObjectType: null,
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -205,11 +202,10 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 	pageRepresentations: [],
 	meemooOriginalCp: null,
-	premisIsPartOf: null,
 	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
-	premisIdentifier: 'WP00178829',
+	premisIdentifier: [{ premisid: 'WP00178829' }],
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
 	maintainerSlug: 'vrt',
@@ -219,7 +215,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	dctermsFormat: IeObjectType.Video,
-	dctermsMedium: '16mm',
+	dctermsMedium: ['16mm'],
 	ebucoreObjectType: null,
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -265,7 +261,6 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	meemooOriginalCp: null,
-	premisIsPartOf: null,
 	schemaIdentifier: '8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
@@ -277,7 +272,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
 	dctermsFormat: IeObjectType.Video,
-	dctermsMedium: '16mm',
+	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
 	datePublished: '2020-09-01',
@@ -436,7 +431,7 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				},
 			],
 			dcterms_format: 'video',
-			dcterms_medium: '16mm',
+			dcterms_medium: ['16mm'],
 			schema_thumbnail_url:
 				'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 			schema_duration: '00:39:52',

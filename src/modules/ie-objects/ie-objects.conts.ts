@@ -95,7 +95,6 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 
 const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'meemooOriginalCp',
-	'premisIsPartOf',
 	'schemaIdentifier',
 	'meemooLocalId',
 	'maintainerId',
@@ -151,7 +150,6 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>>
 
 export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooOriginalCp',
-	'premisIsPartOf',
 	'schemaIdentifier',
 	'meemooLocalId',
 	'meemooMediaObjectId',

@@ -582,7 +582,6 @@ export class IeObjectsService {
 			dctermsFormat: esObject?.dcterms_format as IeObjectType,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			premisIsPartOf: esObject?.premis_is_part_of,
 			premisIdentifier: esObject?.premis_identifier,
 			abstract: esObject?.schema_abstract,
 			contributor: esObject?.schema_contributor,
@@ -836,7 +835,7 @@ export class IeObjectsService {
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
 			meemooLocalId: ieObject?.meemooLocalId,
-			premisIdentifier: ieObject?.premisIsPartOf,
+			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			licenses: ieObject.licenses,
 		};

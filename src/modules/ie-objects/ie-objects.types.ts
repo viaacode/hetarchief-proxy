@@ -123,7 +123,7 @@ export enum IeObjectType {
 export interface IeObject {
 	dctermsAvailable: string;
 	dctermsFormat: IeObjectType;
-	dctermsMedium: string;
+	dctermsMedium: string[];
 	premisIdentifier: Record<string, string>[];
 	abstract: string;
 	creator: any;
@@ -150,7 +150,6 @@ export interface IeObject {
 	accessThrough?: IeObjectAccessThrough[];
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
-	premisIsPartOf?: string;
 	contributor?: any;
 	copyrightHolder?: string;
 	isPartOf?: IsPartOfCollection[];
@@ -235,27 +234,14 @@ export interface ElasticsearchObject {
 	// According to _mapping
 	dcterms_available: string;
 	dcterms_format: string;
-	dcterms_medium: string | null;
+	dcterms_medium: string[] | null;
 	ebucore_object_type: EbucoreObjectType | null;
 	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_image_or_sound: string; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	premis_is_part_of: string;
-	premis_identifier: {
-		Afbeelding?: string[];
-		Objectnaam?: string[];
-		object_nummer?: string[];
-		kp_productie_id?: string[];
-		kp_show_id?: string[];
-		Inventarisnummer?: string[];
-		batch?: string[];
-		Acquisition_number?: string[];
-		Bestandsnaam?: string[];
-		Api?: string[];
-		Object_number?: string[];
-		MEDIA_ID?: string[];
-	} | null;
+	premis_identifier: Record<string, string>[] | null;
 	schema_abstract: string | null; // always null in values (QAS & INT)
 	schema_alternate_name: string | null; // only exists as value in INT (not QAS)
 	schema_contributor: {
