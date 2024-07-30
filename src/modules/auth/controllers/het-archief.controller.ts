@@ -118,18 +118,17 @@ export class HetArchiefController {
 	 * This function has to redirect the browser back to the app once the information is stored in the user's session
 	 */
 	@Post('login-callback')
-	@Redirect()
 	async loginCallback(
 		@Req() request: Request,
 		@Session() session: Record<string, any>,
-		@Body() response: SamlCallbackBody,
-		@Res() res
+		@Body() body: SamlCallbackBody,
+		@Res() response: Response
 	): Promise<any> {
 		let info: RelayState;
 		try {
-			info = response.RelayState ? JSON.parse(response.RelayState) : {};
+			info = body.RelayState ? JSON.parse(body.RelayState) : {};
 			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
-			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
+			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(body);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
@@ -250,10 +249,7 @@ export class HetArchiefController {
 				},
 			]);
 
-			return {
-				url: info.returnToUrl, // TODO add fallback if undefined
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-			};
+			response.redirect(info.returnToUrl);
 		} catch (err) {
 			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {
@@ -266,7 +262,7 @@ export class HetArchiefController {
 				this.logger.debug('orgNotLinkedLogoutAndRedirectToErrorPage');
 
 				return orgNotLinkedLogoutAndRedirectToErrorPage(
-					res,
+					response,
 					proxyHost,
 					Idp.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
