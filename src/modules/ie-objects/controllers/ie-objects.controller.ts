@@ -245,7 +245,7 @@ export class IeObjectsController {
 	public async identifierLookup(
 		@Param('schemaIdentifier') schemaIdentifier: string
 	): Promise<string> {
-		return this.ieObjectsService.getRelatedIdentifier(schemaIdentifier);
+		return this.ieObjectsService.getRelatedIdentifierV3(schemaIdentifier);
 	}
 
 	@Get(':schemaIdentifier/related')

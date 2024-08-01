@@ -211,12 +211,12 @@ export class IeObjectsService {
 		}));
 	}
 
-	public async getRelatedIdentifier(schemaIdentifier: string) {
+	public async getRelatedIdentifierV3(schemaIdentifierV2: string) {
 		const relatedIdentifier = await this.dataService.execute<
 			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
 		>(GetSchemaIdentifierV3BySchemaIdentifierV2Document, {
-			schemaIdentifierV2: schemaIdentifier,
+			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
 		return relatedIdentifier.graph__intellectual_entity[0].schema_identifier;
