@@ -216,7 +216,6 @@ export class NewspapersController {
 		});
 		res.attachment(filename);
 
-		console.log({ startX, startY, width, height });
 		https.get(
 			`${pageImageApi}/${Math.floor(startX)},${Math.floor(startY)},${Math.ceil(
 				width
