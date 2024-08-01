@@ -72,8 +72,12 @@ export class NewspapersController {
 		const pagesToExport = exportSinglePage
 			? limitedObjectMetadata.pageRepresentations.slice(pageIndex, pageIndex + 1)
 			: limitedObjectMetadata.pageRepresentations;
+
+		// Pages correspond to pages of the newspaper
 		pagesToExport.forEach((representations, pageRepresentationIndex) => {
+			// Each page has multiple representations, e.g. browse copy image, alto xml, image api url, etc.
 			return representations.forEach((representation) => {
+				// Each representation can have multiple files, but usually it's just one
 				return representation.files.forEach((file) => {
 					const currentPageIndex = exportSinglePage ? pageIndex : pageRepresentationIndex;
 					const pageNumber = String(currentPageIndex + 1).padStart(3, '0');
