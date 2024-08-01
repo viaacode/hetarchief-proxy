@@ -13,6 +13,7 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 
 import { CampaignMonitorController } from './campaign-monitor.controller';
 
+import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -81,7 +82,7 @@ describe('CampaignMonitorController', () => {
 			mockCampaignMonitorService.sendTransactionalMail.mockResolvedValueOnce(true);
 
 			const sent = await campaignMonitorController.sendTransactionalMail({
-				template: 'template-id-1',
+				template: EmailTemplate.VISIT_REQUEST_CP,
 				data: {
 					to: 'test@studiohyperdrive.be',
 					consentToTrack: 'unchanged',

@@ -37,7 +37,7 @@ export const IE_OBJECT_LICENSES_BY_USER_GROUP: Readonly<
 };
 
 export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
-	Record<IeObjectLicense, Readonly<IeObjectMetadataSet>>
+	Record<IeObjectLicense, Readonly<IeObjectMetadataSet> | null>
 > = {
 	[IeObjectLicense.PUBLIEK_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
 	[IeObjectLicense.PUBLIEK_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
@@ -47,6 +47,9 @@ export const IE_OBJECT_METADATA_SET_BY_LICENSE: Readonly<
 	[IeObjectLicense.INTRA_CP_METADATA_ALL]: IeObjectMetadataSet.METADATA_ALL,
 	[IeObjectLicense.INTRA_CP_CONTENT]: IeObjectMetadataSet.METADATA_ALL_WITH_ESSENCE,
 	[IeObjectLicense.INTRA_CP_METADATA_LTD]: IeObjectMetadataSet.METADATA_LTD,
+
+	[IeObjectLicense.COPYRIGHT_UNDETERMINED]: IeObjectMetadataSet.EMPTY,
+	[IeObjectLicense.PUBLIC_DOMAIN]: IeObjectMetadataSet.EMPTY,
 };
 
 export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
@@ -94,9 +97,12 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 };
 
 const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
+	'name',
+	'collectionName',
+	'issueNumber',
 	'meemooOriginalCp',
-	'premisIsPartOf',
 	'schemaIdentifier',
+	'fragmentId',
 	'meemooLocalId',
 	'maintainerId',
 	'maintainerName', // Will be replaced by the slug in the future: https://meemoo.atlassian.net/browse/ARC-1372
@@ -106,7 +112,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'maintainerSiteUrl',
 	'maintainerFormUrl',
 	'maintainerOverlay',
-	'name',
 	'isPartOf',
 	'dctermsFormat',
 	'dctermsMedium',
@@ -118,26 +123,32 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'genre',
 	'keywords',
 	'inLanguage',
-	'meemoofilmBase',
-	'meemoofilmColor',
-	'ebucoreIsMediaFragmentOf',
-	'ebucoreHasMediaFragmentOf', // BESTAAT NOG NIET,
 	'licenses',
-	'meemoofilmImageOrSound',
-	'languageSubtitles',
+	'accessThrough',
+	'carrierDate',
+	'numberOfPages',
+	'abrahamInfo',
+	'spatial',
+	'temporal',
+	'newspaperPublisher',
+	'copyrightHolder',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'premisIdentifier',
 	'ebucoreObjectType',
 	'abstract',
-	'transcript', // BESTAAT NOG NIET
-	'caption', // BESTAAT NOG NIET
-	'meemooDescriptionProgramme',
+	'transcript',
 	'meemooDescriptionCast',
-	'spatial',
-	'temporal',
 	'meemooMediaObjectId',
 	'publisher',
+	'abstract',
+	'transcript',
+	'alternativeTitle',
+	'preceededBy',
+	'succeededBy',
+	'width',
+	'height',
+	'synopsis',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',
@@ -145,6 +156,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {
+	[IeObjectMetadataSet.EMPTY]: [],
 	[IeObjectMetadataSet.METADATA_LTD]: [...IE_OBJECT_PROPS_METADATA_SET_LTD],
 	[IeObjectMetadataSet.METADATA_ALL]: [
 		...IE_OBJECT_PROPS_METADATA_SET_LTD,
@@ -159,7 +171,6 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>>
 
 export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooOriginalCp',
-	'premisIsPartOf',
 	'schemaIdentifier',
 	'meemooLocalId',
 	'meemooMediaObjectId',
@@ -176,21 +187,11 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'description',
 	'abstract',
 	'transcript',
-	'caption',
-	'meemooDescriptionProgramme',
-	'meemooDescriptionCast',
 	'genre',
 	'spatial',
 	'temporal',
 	'keywords',
 	'inLanguage',
-	// 'meemooDescriptionCategory', // Still has to be added to the graphQl db, might have to change to meemooDescriptionCategorie
 	'dctermsMedium',
 	'dctermsFormat',
-	'meemoofilmColor',
-	'meemoofilmBase',
-	'meemoofilmImageOrSound',
-	'meemoofilmContainsEmbeddedCaption',
-	'languageSubtitles',
-	'ebucoreIsMediaFragmentOf',
 ];

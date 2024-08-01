@@ -23,6 +23,7 @@ import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
+	NEWSPAPER_MIME_TYPE_IMAGE_API,
 } from '~modules/newspapers/newspapers.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
@@ -71,8 +72,12 @@ export class NewspapersController {
 		const pagesToExport = exportSinglePage
 			? limitedObjectMetadata.pageRepresentations.slice(pageIndex, pageIndex + 1)
 			: limitedObjectMetadata.pageRepresentations;
+
+		// Pages correspond to pages of the newspaper
 		pagesToExport.forEach((representations, pageRepresentationIndex) => {
+			// Each page has multiple representations, e.g. browse copy image, alto xml, image api url, etc.
 			return representations.forEach((representation) => {
+				// Each representation can have multiple files, but usually it's just one
 				return representation.files.forEach((file) => {
 					const currentPageIndex = exportSinglePage ? pageIndex : pageRepresentationIndex;
 					const pageNumber = String(currentPageIndex + 1).padStart(3, '0');
@@ -132,10 +137,12 @@ export class NewspapersController {
 			}
 		});
 
+		const filename = `${'newspaper-' + id}.zip`;
 		res.set({
-			'Content-Disposition': `attachment; filename=${'newspaper-' + id}.zip`,
+			'Content-Disposition': `attachment; filename=${filename}`,
 		});
-		res.attachment(`${'newspaper-' + id}.zip`);
+		res.attachment(filename);
+
 		archive.pipe(res);
 
 		// Append all zipEntries to the zip archive
@@ -154,5 +161,72 @@ export class NewspapersController {
 		});
 
 		await archive.finalize();
+	}
+
+	@Get(':id/export/jpg/selection')
+	@Header('Content-Type', 'application/zip')
+	@RequireAllPermissions(Permission.DOWNLOAD_OBJECT)
+	public async downloadSelectionInPage(
+		@Param('id') id: string,
+		@Query('page') pageIndex: number,
+		@Query('startX') startX: number,
+		@Query('startY') startY: number,
+		@Query('width') width: number,
+		@Query('height') height: number,
+		@Headers('referer') referer: string,
+		@Req() request: Request,
+		@Res() res: Response,
+		@SessionUser() user: SessionUserEntity
+	): Promise<void> {
+		const limitedObjectMetadata = await this.ieObjectsController.getIeObjectById(
+			id,
+			referer,
+			request,
+			user
+		);
+
+		if (!limitedObjectMetadata) {
+			throw new ForbiddenException(
+				'Object not found or you do not have permission to see it'
+			);
+		}
+
+		if (limitedObjectMetadata.dctermsFormat !== 'newspaper') {
+			throw new ForbiddenException(
+				'This object does not appear to be a newspaper. Only public newspapers can be downloaded'
+			);
+		}
+
+		const pageRepresentation = limitedObjectMetadata.pageRepresentations[pageIndex];
+		let pageImageApi: string | null = null;
+		pageRepresentation.find((representation) => {
+			return representation.files.find((file) => {
+				if (file.mimeType === NEWSPAPER_MIME_TYPE_IMAGE_API) {
+					pageImageApi = file.storedAt;
+				}
+				return false;
+			});
+		});
+
+		if (!pageImageApi) {
+			throw new ForbiddenException(
+				'This newspaper page does not have an image API representation url'
+			);
+		}
+
+		const filename = `${'newspaper-' + id}-selectie.jpg`;
+		res.set({
+			'Content-Disposition': `attachment; filename=${filename}`,
+		});
+		res.attachment(filename);
+
+		https.get(
+			`${pageImageApi}/${Math.floor(startX)},${Math.floor(startY)},${Math.ceil(
+				width
+			)},${Math.ceil(height)}/full/0/default.jpg`,
+			(urlStream) => {
+				urlStream.pipe(res);
+			}
+		);
 	}
 }

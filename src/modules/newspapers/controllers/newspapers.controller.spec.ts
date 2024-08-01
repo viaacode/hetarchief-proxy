@@ -9,6 +9,7 @@ import { NewspapersService } from '../services/newspapers.service';
 
 import { NewspapersController } from './newspapers.controller';
 
+import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
@@ -28,6 +29,10 @@ describe('NewspapersController', () => {
 				{
 					provide: NewspapersService,
 					useValue: mockNewspapersService,
+				},
+				{
+					provide: IeObjectsController,
+					useValue: {},
 				},
 			],
 		})
