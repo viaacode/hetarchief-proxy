@@ -22,6 +22,8 @@ import { isNil } from 'lodash';
 
 import { type Folder, type FolderShared, FolderStatus } from '../types';
 
+import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
@@ -29,12 +31,14 @@ import { FoldersService } from '~modules/folders/services/folders.service';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
+import { Locale } from '~shared/types/types';
 
 @ApiTags('Folders')
 @Controller('folders') // TODO rename this to folders, and also change this in the client
@@ -42,7 +46,9 @@ export class FoldersController {
 	constructor(
 		private foldersService: FoldersService,
 		private eventsService: EventsService,
-		private ieObjectsService: IeObjectsService
+		private ieObjectsService: IeObjectsService,
+		private campaignMonitorService: CampaignMonitorService,
+		private userService: UsersService
 	) {}
 
 	@Get()
@@ -319,6 +325,53 @@ export class FoldersController {
 			user.getId()
 		);
 		return folderObject;
+	}
+
+	@Post('/share/:folderId/create')
+	@UseGuards(LoggedInGuard)
+	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
+	public async createSharedFolder(
+		@Req() request: Request,
+		@Body() emailInfo: { to: string },
+		@Param('folderId') folderId: string,
+		@SessionUser() user: SessionUserEntity
+	): Promise<{ message: 'success' }> {
+		const shareUrl = {
+			nl: `${process.env.FRONTEND_URL}/account/map-delen/${folderId}`,
+			en: `${process.env.FRONTEND_URL}/account/map-share/${folderId}`,
+		};
+
+		const folder = await this.foldersService.findFolderById(
+			folderId,
+			request.headers.referer,
+			getIpFromRequest(request)
+		);
+
+		//if the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
+		const toUser = await this.userService.getUserByEmail(emailInfo.to);
+
+		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
+
+		await this.campaignMonitorService.sendTransactionalMail(
+			{
+				template: EmailTemplate.SHARE_FOLDER,
+				data: {
+					to: emailInfo.to,
+					consentToTrack: 'unchanged',
+					data: {
+						sharer_email: user.getMail(),
+						sharer_name: user.getFullName(),
+						folder_name: folder.name,
+						folder_sharelink: `${process.env.CLIENT_HOST}/${shareUrl[preferredLang]}/${folderId}`,
+						user_hasaccount: !!toUser,
+						user_firstname: '',
+					},
+				},
+			},
+			preferredLang
+		);
+
+		return { message: 'success' };
 	}
 
 	@Post('/share/:folderId')

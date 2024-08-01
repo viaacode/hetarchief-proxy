@@ -1,0 +1,36 @@
+query getUserByEmail($email: String!) {
+	users_profile(where: { mail: { _eq: $email } }) {
+		id
+		first_name
+		last_name
+		full_name
+		mail
+		language
+		is_key_user
+		accepted_tos_at
+		group_id
+		last_access_at
+		created_at
+		language
+		group {
+			permissions(order_by: { permission: { name: asc } }) {
+				permission {
+					name
+				}
+			}
+		}
+		identities {
+			identity_provider_name
+		}
+		organisation {
+			schema_identifier
+			schema_name
+			sector: haorg_organization_type
+		}
+		visitor_space {
+			id
+			slug
+			schema_maintainer_id
+		}
+	}
+}
