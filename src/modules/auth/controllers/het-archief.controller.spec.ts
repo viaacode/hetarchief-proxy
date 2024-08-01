@@ -3,6 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type Request, type Response } from 'express';
+import { noop } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -259,12 +260,9 @@ describe('HetArchiefController', () => {
 				Promise.resolve()
 			);
 
-			const result = await hetArchiefController.loginCallback(
-				mockRequest,
-				{},
-				samlResponse,
-				{}
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect: noop,
+			} as Response);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -294,7 +292,7 @@ describe('HetArchiefController', () => {
 				mockRequest,
 				{},
 				samlResponseWithNullRelayState,
-				{}
+				{ redirect: noop } as Response
 			);
 			expect(result.url).toBeUndefined();
 		});
@@ -308,12 +306,9 @@ describe('HetArchiefController', () => {
 			mockIdpService.determineUserGroup.mockReturnValue(GroupId.CP_ADMIN);
 			mockUsersService.createUserWithIdp.mockResolvedValue(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(
-				mockRequest,
-				{},
-				samlResponse,
-				{}
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect: noop,
+			} as Response);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -336,12 +331,9 @@ describe('HetArchiefController', () => {
 			});
 			mockUsersService.updateUser.mockResolvedValue(archiefUser);
 
-			const result = await hetArchiefController.loginCallback(
-				mockRequest,
-				{},
-				samlResponse,
-				{}
-			);
+			const result = await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+				redirect: noop,
+			} as Response);
 
 			expect(result).toEqual({
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -360,7 +352,9 @@ describe('HetArchiefController', () => {
 			});
 			let error;
 			try {
-				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {});
+				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
+					redirect: noop,
+				} as Response);
 			} catch (e) {
 				error = e;
 			}
@@ -384,7 +378,7 @@ describe('HetArchiefController', () => {
 				mockRequest,
 				{},
 				samlResponse,
-				{}
+				{ redirect: noop } as Response
 			);
 			expect(response).toEqual({
 				url: `http://localhost:3100/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
