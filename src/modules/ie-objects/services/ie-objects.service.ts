@@ -40,6 +40,8 @@ import {
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	type IeObjectType,
+	type IsPartOfKey,
 	type NewspaperTitle,
 } from '../ie-objects.types';
 
@@ -344,12 +346,6 @@ export class IeObjectsService {
 			schemaIdentifiers,
 		});
 
-		// TODO ARC-2403 add thumbnail url to objects
-		console.log({
-			referer,
-			ip,
-		});
-
 		return await Promise.all(
 			response.graph__intellectual_entity.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
@@ -427,10 +423,11 @@ export class IeObjectsService {
 	// ------------------------------------------------------------------------
 
 	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
+		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
-			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
 			creator: gqlIeObject?.schema_creator?.[0],
 			dateCreated: gqlIeObject?.schema_date_created,
@@ -438,29 +435,35 @@ export class IeObjectsService {
 			description: gqlIeObject?.schema_description,
 			duration: gqlIeObject?.schema_duration,
 			licenses: gqlIeObject?.schema_license,
-			// TODO ARC-2403 add missing fields
-			ebucoreObjectType: '', // gqlIeObject?.ebucore_object_type,
-			meemoofilmBase: '', // gqlIeObject?.meemoofilm_base,
-			meemoofilmColor: true, // gqlIeObject?.meemoofilm_color,
-			meemoofilmContainsEmbeddedCaption: false, // gqlIeObject?.meemoofilm_contains_embedded_caption,
-			meemoofilmImageOrSound: '', // gqlIeObject?.meemoofilm_image_or_sound,
-			premisIdentifier: '', // gqlIeObject?.premis_identifier,
-			abstract: '', // gqlIeObject?.schema_abstract,
-			genre: [''], // gqlIeObject?.schema_genre,
-			inLanguage: [''], // gqlIeObject?.schema_in_language,
-			keywords: null, // gqlIeObject?.schema_keywords,
-			publisher: '', // gqlIeObject?.schema_publisher,
-			spatial: [''], // gqlIeObject?.schema_spatial_coverage,
-			temporal: [''], // gqlIeObject?.schema_temporal_coverage,
-			premisIsPartOf: '', // gqlIeObject?.premis_is_part_of,
-			copyrightHolder: '', // gqlIeObject?.schema_copyright_holder,
-			meemooDescriptionCast: '', // gqlIeObject?.meemoo_description_cast,
-			meemooDescriptionProgramme: '', // gqlIeObject?.meemoo_description_programme,
-			meemooOriginalCp: '', // gqlIeObject?.meemoo_original_cp,
-			durationInSeconds: 10, // gqlIeObject?.schema_duration_in_seconds,
-			copyrightNotice: '', // gqlIeObject?.schema_copyright_notice,
-			meemooMediaObjectId: '', // gqlIeObject?.meemoo_media_object_id,
-			actor: '', // gqlIeObject?.schema_actor,
+			premisIdentifier: gqlIeObject?.premisIdentifier?.premis_identifier as [
+				{
+					abraham_id: string;
+					abraham_uri: string;
+					code_number: string;
+				},
+			],
+			abrahamInfo: {
+				id: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_id'
+				)?.abraham_id,
+				uri: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_uri'
+				)?.abraham_uri,
+				code: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'code_number'
+				)?.code_number,
+			},
+			abstract: gqlIeObject?.intellectualEntity?.schema_abstract,
+			genre: gqlIeObject?.schemaGenre?.schema_genre,
+			inLanguage: gqlIeObject?.schemaInLanguage?.schema_in_language,
+			keywords: gqlIeObject?.schemaKeywords?.schema_keywords,
+			publisher: gqlIeObject?.schemaPublisher?.schema_publisher_array,
+			spatial: gqlIeObject?.schemaSpatial?.schema_spatial,
+			temporal: gqlIeObject?.schemaTemporal?.schema_temporal,
+			synopsis: gqlIeObject?.intellectualEntity?.ebucore_synopsis,
+			copyrightHolder: gqlIeObject?.schemaCopyrightHolder
+				?.map((copyrightHolder) => copyrightHolder?.schema_copyright_holder)
+				?.join(', '),
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
@@ -475,10 +478,51 @@ export class IeObjectsService {
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
-			isPartOf: gqlIeObject?.schema_is_part_of,
+			isPartOf: gqlIeObject?.isPartOf?.map((part) => {
+				return {
+					name: part.collection?.schema_name,
+					collectionType: part.collection?.collection_type as IsPartOfKey,
+					isPreceededBy: part.collection?.isPreceededBy,
+					isSucceededBy: part.collection?.isSucceededBy,
+					locationCreated: part.collection?.schema_location_created,
+					startDate: part.collection?.schema_start_date,
+					endDate: part.collection?.schema_end_date,
+					publisher: part.collection?.schema_publisher,
+				};
+			}),
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
-			pageRepresentations: this.adaptRepresentations(gqlIeObject),
+			collectionName: gqlIeObject?.isPartOf?.[0]?.collection?.schema_name,
+			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
+			fragmentId:
+				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
+			creditText: gqlIeObject?.intellectualEntity?.schema_credit_text,
+			copyrightNotice: gqlIeObject?.intellectualEntity?.schema_copyright_notice,
+			alternativeTitle: gqlIeObject?.intellectualEntity?.schemaAlternateName?.map(
+				(name) => name.schema_alternate_name
+			),
+			preceededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isPreceededBy?.map(
+				(ie) => ie.schema_name
+			),
+			succeededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isSucceededBy?.map(
+				(ie) => ie.schema_name
+			),
+			width: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_width,
+			height: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_height,
+			locationCreated: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_location_created)
+			)?.join(', '),
+			startDate: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+			)?.join(', '),
+			endDate: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+			)?.join(', '),
+			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
+			newspaperPublisher: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_publisher)
+			)?.join(', '),
+			pageRepresentations,
 		};
 	}
 
@@ -517,12 +561,15 @@ export class IeObjectsService {
 		// there are hits - resolve thumbnail urls
 		esResponse.hits.hits = await Promise.all(
 			esResponse.hits.hits.map(async (hit) => {
-				hit._source.schema_thumbnail_url =
-					await this.playerTicketService.resolveThumbnailUrl(
-						hit._source.schema_thumbnail_url,
-						referer,
-						ip
-					);
+				if (hit._source.schema_thumbnail_url) {
+					hit._source.schema_thumbnail_url = [
+						await this.playerTicketService.resolveThumbnailUrl(
+							hit._source.schema_thumbnail_url[0],
+							referer,
+							ip
+						),
+					];
+				}
 				return hit;
 			})
 		);
@@ -533,14 +580,9 @@ export class IeObjectsService {
 	public adaptESObjectToObject(esObject: ElasticsearchObject): IeObject {
 		return {
 			dctermsAvailable: esObject?.dcterms_available,
-			dctermsFormat: esObject?.dcterms_format,
+			dctermsFormat: esObject?.dcterms_format as IeObjectType,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemoofilmBase: esObject?.meemoofilm_base,
-			meemoofilmColor: esObject?.meemoofilm_color,
-			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
-			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
-			premisIsPartOf: esObject?.premis_is_part_of,
 			premisIdentifier: esObject?.premis_identifier,
 			abstract: esObject?.schema_abstract,
 			contributor: esObject?.schema_contributor,
@@ -566,24 +608,18 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: esObject?.schema_thumbnail_url,
+			thumbnailUrl: esObject?.schema_thumbnail_url?.[0],
 			numberOfPages: esObject?.schema_number_of_pages,
-			meemooDescriptionCast: esObject?.meemoo_description_cast,
-			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
 			meemooLocalId: esObject?.meemoo_local_id?.[0],
-			meemooOriginalCp: esObject?.meemoo_original_cp,
 			durationInSeconds: esObject?.duration_seconds,
 			pageRepresentations: [],
 			// Extra
-			sector: esObject?.schema_maintainer?.organization_type,
+			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
 			isPartOf: esObject?.schema_is_part_of,
 			// Not yet available
 			transcript: esObject?.schema_transcript,
-			caption: esObject?.schema_caption,
-			meemooDescriptionCategory: esObject?.meemoo_description_category,
-			meemoofilmEmbeddedCaption: esObject?.meemoofilm_embedded_caption,
-			meemoofilmEmbeddedCaptionLanguage: esObject?.meemoofilm_embedded_caption_language,
+			synopsis: null,
 		};
 	}
 
@@ -594,7 +630,7 @@ export class IeObjectsService {
 			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
 			premisIdentifier: undefined, // graphQlObject.intellectualEntity?.premis_identifier, // TODO see if this needs to be re-enabled
 			name: graphQlObject.intellectualEntity?.schema_name,
-			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format,
+			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format as IeObjectType,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
 			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id?.[0],
@@ -682,6 +718,7 @@ export class IeObjectsService {
 					thumbnailUrl: file.schema_thumbnail_url,
 					duration: file.schema_duration,
 					edmIsNextInSequence: file.edm_is_next_in_sequence,
+					createdAt: file.created_at,
 				};
 			})
 		);
@@ -795,11 +832,11 @@ export class IeObjectsService {
 			maintainerName: ieObject?.maintainerName,
 			maintainerId: ieObject?.maintainerId,
 			maintainerSlug: ieObject?.maintainerSlug,
-			isPartOf: ieObject?.isPartOf || {},
+			isPartOf: ieObject?.isPartOf || [],
 			dctermsFormat: ieObject?.dctermsFormat,
 			datePublished: ieObject?.datePublished,
 			meemooLocalId: ieObject?.meemooLocalId,
-			premisIdentifier: ieObject?.premisIsPartOf,
+			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			licenses: ieObject.licenses,
 		};

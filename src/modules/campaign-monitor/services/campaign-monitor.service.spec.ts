@@ -60,18 +60,6 @@ const mockConfigService = {
 		if (key.startsWith('CAMPAIGN_MONITOR_TEMPLATE_')) {
 			return 'fakeTemplateId';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_MAINTAINER') {
-			return 'fakeTemplateId';
-		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_APPROVED') {
-			return 'fakeTemplateId';
-		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_CONFIRMATION') {
-			return 'fakeTemplateId';
-		}
-		if (key === 'CAMPAIGN_MONITOR_TEMPLATE_VISIT_DENIED') {
-			return null;
-		}
 		if (key === 'REROUTE_EMAILS_TO') {
 			return '';
 		}
