@@ -6,12 +6,14 @@ import { FoldersService } from '../services/folders.service';
 
 import { FoldersController } from './folders.controller';
 
+import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { type Folder, FolderStatus } from '~modules/folders/types';
 import { type IeObject, IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { mockIeObject1 } from '~modules/ie-objects/mocks/ie-objects.mock';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { Idp } from '~shared/auth/auth.types';
@@ -100,6 +102,15 @@ const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> 
 	insertEvents: jest.fn(),
 };
 
+const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
+	{
+		sendTransactionalMail: jest.fn(),
+	};
+
+const mockUserService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
+	getUserByEmail: jest.fn(),
+};
+
 const mockRequest = { path: '/folders', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
@@ -132,6 +143,14 @@ describe('FoldersController', () => {
 				{
 					provide: IeObjectsService,
 					useValue: mockIeObjectsService,
+				},
+				{
+					provide: CampaignMonitorService,
+					useValue: mockCampaignMonitorService,
+				},
+				{
+					provide: UsersService,
+					useValue: mockUserService,
 				},
 				{
 					provide: VisitsService,
