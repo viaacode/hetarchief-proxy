@@ -59,6 +59,9 @@ import {
 	GetRelatedObjectsDocument,
 	type GetRelatedObjectsQuery,
 	type GetRelatedObjectsQueryVariables,
+	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
+	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
+	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -208,6 +211,17 @@ export class IeObjectsService {
 		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
 			title: newspaperTitle.schema_name,
 		}));
+	}
+
+	public async getRelatedIdentifierV3(schemaIdentifierV2: string) {
+		const relatedIdentifier = await this.dataService.execute<
+			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
+			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
+		>(GetSchemaIdentifierV3BySchemaIdentifierV2Document, {
+			schemaIdentifierV2: schemaIdentifierV2,
+		});
+
+		return relatedIdentifier.graph__intellectual_entity[0].schema_identifier;
 	}
 
 	public async getRelated(
