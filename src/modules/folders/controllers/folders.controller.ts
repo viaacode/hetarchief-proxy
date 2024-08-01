@@ -330,25 +330,25 @@ export class FoldersController {
 	@Post('/share/:folderId/create')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async createSharedCollection(
+	public async createSharedFolder(
 		@Req() request: Request,
-		@Body() emailInfo: { data: { to: string } },
+		@Body() emailInfo: { to: string },
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<any> {
+	): Promise<{ message: 'success' }> {
 		const shareUrl = {
 			nl: `${process.env.FRONTEND_URL}/account/map-delen/${folderId}`,
 			en: `${process.env.FRONTEND_URL}/account/map-share/${folderId}`,
 		};
 
-		const collection = await this.foldersService.findFolderById(
+		const folder = await this.foldersService.findFolderById(
 			folderId,
 			request.headers.referer,
 			getIpFromRequest(request)
 		);
 
 		//if the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
-		const toUser = await this.userService.getUserByEmail(emailInfo.data.to);
+		const toUser = await this.userService.getUserByEmail(emailInfo.to);
 
 		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
 
@@ -356,12 +356,12 @@ export class FoldersController {
 			{
 				template: EmailTemplate.SHARE_FOLDER,
 				data: {
-					to: emailInfo.data.to,
+					to: emailInfo.to,
 					consentToTrack: 'unchanged',
 					data: {
 						sharer_email: user.getMail(),
 						sharer_name: user.getFullName(),
-						folder_name: collection.name,
+						folder_name: folder.name,
 						folder_sharelink: `${process.env.CLIENT_HOST}/${shareUrl[preferredLang]}/${folderId}`,
 						user_hasaccount: !!toUser,
 						user_firstname: '',
