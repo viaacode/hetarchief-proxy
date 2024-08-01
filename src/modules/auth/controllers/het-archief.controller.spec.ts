@@ -264,10 +264,7 @@ describe('HetArchiefController', () => {
 				redirect: noop,
 			} as Response);
 
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: hetArchiefLoginUrl,
-			});
+			expect(result).toBeUndefined();
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).not.toBeCalled();
 		});
@@ -294,7 +291,7 @@ describe('HetArchiefController', () => {
 				samlResponseWithNullRelayState,
 				{ redirect: noop } as Response
 			);
-			expect(result.url).toBeUndefined();
+			expect(result).toBeUndefined();
 		});
 
 		it('should create an authorized user that is not yet in the database', async () => {
@@ -310,10 +307,7 @@ describe('HetArchiefController', () => {
 				redirect: noop,
 			} as Response);
 
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: hetArchiefLoginUrl,
-			});
+			expect(result).toBeUndefined();
 			expect(mockUsersService.createUserWithIdp).toBeCalled();
 			expect(mockUsersService.updateUser).not.toBeCalled();
 		});
@@ -335,10 +329,7 @@ describe('HetArchiefController', () => {
 				redirect: noop,
 			} as Response);
 
-			expect(result).toEqual({
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-				url: hetArchiefLoginUrl,
-			});
+			expect(result).toBeUndefined();
 			expect(mockUsersService.createUserWithIdp).not.toBeCalled();
 			expect(mockUsersService.updateUser).toBeCalled();
 		});

@@ -420,6 +420,7 @@ describe('Limit access to object details', () => {
 		);
 		expect(limitedAccessIeObject2a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-rf5kf25',
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 		});
@@ -479,6 +480,7 @@ describe('Limit access to object details', () => {
 		);
 		expect(limitedAccessIeObject2d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-rf5kf25',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.INTRA_CP_CONTENT,
