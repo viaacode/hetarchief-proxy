@@ -238,14 +238,15 @@ export class IeObjectsController {
 		res.send(csvContent);
 	}
 
-	@Get('schemaIdentifierLookup/:schemaIdentifier')
+	@Get('schemaIdentifierLookup/:schemaIdentifierV2')
 	@ApiOperation({
-		description: 'Get new schemaIdentifier when given the old one as param.',
+		description:
+			'Returns the new schema identifier for hetarchief v3 when given the old schema identifier from hetarchief v2.',
 	})
 	public async identifierLookup(
-		@Param('schemaIdentifier') schemaIdentifier: string
+		@Param('schemaIdentifierV2') schemaIdentifierV2: string
 	): Promise<string> {
-		return this.ieObjectsService.getRelatedIdentifierV3(schemaIdentifier);
+		return this.ieObjectsService.getRelatedIdentifierV3(schemaIdentifierV2);
 	}
 
 	@Get(':schemaIdentifier/related')
