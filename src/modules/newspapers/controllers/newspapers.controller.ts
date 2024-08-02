@@ -93,11 +93,6 @@ export class NewspapersController {
 							type: 'url',
 							value: file.storedAt,
 						});
-						zipEntries.push({
-							filename: `page-${pageNumber}--ocr-text.txt`,
-							type: 'string',
-							value: representation.schemaTranscript,
-						});
 					}
 
 					return null;
