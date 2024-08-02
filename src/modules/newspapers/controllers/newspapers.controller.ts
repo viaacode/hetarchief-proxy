@@ -15,7 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
-import { isNil } from 'lodash';
+import { cloneDeep, isNil } from 'lodash';
 
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
@@ -101,20 +101,23 @@ export class NewspapersController {
 		});
 
 		// Add metadata in different formats to zipEntries array
+		const metadataInfo = cloneDeep(limitedObjectMetadata);
+		delete metadataInfo.pageRepresentations;
+		delete metadataInfo.accessThrough;
 		zipEntries.push({
 			filename: 'metadata.xml',
 			type: 'string',
-			value: convertObjectToXml(limitedObjectMetadata),
+			value: convertObjectToXml(metadataInfo),
 		});
 		zipEntries.push({
 			filename: 'metadata.csv',
 			type: 'string',
-			value: convertObjectToCsv(limitedObjectMetadata),
+			value: convertObjectToCsv(metadataInfo),
 		});
 		zipEntries.push({
 			filename: 'metadata.json',
 			type: 'string',
-			value: JSON.stringify(limitedObjectMetadata, null, 2),
+			value: JSON.stringify(metadataInfo, null, 2),
 		});
 
 		// const outputStream = fs.createWriteStream(__dirname + '/example.zip');
