@@ -1,0 +1,53 @@
+query findFolderIeObjectsByFolderId(
+	$folderId: uuid
+	$userProfileId: uuid
+	$where: users_folder_ie_bool_exp!
+	$offset: Int
+	$limit: Int
+) {
+	users_folder_ie(
+		where: {
+			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
+			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+		}
+		offset: $offset
+		limit: $limit
+	) {
+		created_at
+		intellectualEntity {
+			schema_identifier
+			meemoo_local_id
+			schema_name
+			schema_creator
+			schema_description
+			dcterms_available
+			schema_thumbnail_url
+			dcterms_format
+			schema_number_of_pages
+			schema_is_part_of
+			schema_date_published
+			schema_duration
+			schema_license
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_sector
+				visitorSpace {
+					id
+					slug
+					schema_maintainer_id
+				}
+			}
+		}
+	}
+	users_folder_ie_aggregate(
+		where: {
+			_and: [{ user_collection_id: { _eq: $folderId } }, $where]
+			collection: { user_profile_id: { _eq: $userProfileId }, is_deleted: { _eq: false } }
+		}
+	) {
+		aggregate {
+			count
+		}
+	}
+}

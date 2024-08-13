@@ -24,15 +24,15 @@ mutation updateMaterialRequest(
 				mail
 				language
 			}
-			object {
-				maintainer {
-					schema_identifier
-					schema_name
-					visitor_space {
+			intellectualEntity {
+				schemaMaintainer {
+					org_identifier
+					skos_pref_label
+					visitorSpace {
 						slug
 					}
 				}
-				meemoo_identifier
+				schema_identifier
 				schema_name
 				dcterms_format
 				schema_thumbnail_url

@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase, sortBy, uniq } from 'lodash';
+import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -30,7 +30,6 @@ import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-de
 import {
 	type ElasticsearchObject,
 	type ElasticsearchResponse,
-	type FilterOptions,
 	type GqlIeObject,
 	type GqlLimitedIeObject,
 	type IeObject,
@@ -41,28 +40,28 @@ import {
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
+	type IeObjectType,
+	type IsPartOfKey,
 	type NewspaperTitle,
 } from '../ie-objects.types';
 
 import {
-	FindAllObjectsByCollectionIdDocument,
-	type FindAllObjectsByCollectionIdQuery,
-	type FindAllObjectsByCollectionIdQueryVariables,
+	FindAllIeObjectsByFolderIdDocument,
+	type FindAllIeObjectsByFolderIdQuery,
+	type FindAllIeObjectsByFolderIdQueryVariables,
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
-	GetFilterOptionsDocument,
-	type GetFilterOptionsQuery,
-	type GetFilterOptionsQueryVariables,
+	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
-	GetObjectIdentifierTupleDocument,
-	type GetObjectIdentifierTupleQuery,
-	type GetObjectIdentifierTupleQueryVariables,
 	GetRelatedObjectsDocument,
 	type GetRelatedObjectsQuery,
 	type GetRelatedObjectsQueryVariables,
+	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
+	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
+	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
 	Lookup_Maintainer_Visitor_Space_Status_Enum as VisitorSpaceStatus,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -71,13 +70,13 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
-import { mockNewspapers } from '~modules/ie-objects/ie-objects-newspaper-mocks.consts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
+import { customError } from '~shared/helpers/custom-error';
 
 @Injectable()
 export class IeObjectsService {
@@ -206,30 +205,27 @@ export class IeObjectsService {
 		};
 	}
 
-	public async countRelated(meemooIdentifiers: string[] = []): Promise<Record<string, number>> {
-		const items = await this.dataService.execute<
-			GetObjectIdentifierTupleQuery,
-			GetObjectIdentifierTupleQueryVariables
-		>(GetObjectIdentifierTupleDocument, {
-			meemooIdentifiers,
-		});
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
 
-		const count: Record<string, number> = {};
-
-		items?.object_ie?.forEach((item) => {
-			count[item.meemoo_identifier] = (count[item.meemoo_identifier] || 0) + 1;
-		});
-
-		return count;
+		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
 	}
 
-	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		return mockNewspapers;
+	public async getRelatedIdentifierV3(schemaIdentifierV2: string) {
+		const relatedIdentifier = await this.dataService.execute<
+			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
+			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
+		>(GetSchemaIdentifierV3BySchemaIdentifierV2Document, {
+			schemaIdentifierV2: schemaIdentifierV2,
+		});
+
+		return relatedIdentifier.graph__intellectual_entity[0].schema_identifier;
 	}
 
 	public async getRelated(
 		schemaIdentifier: string,
-		meemooIdentifier: string,
 		referer: string,
 		ip: string,
 		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
@@ -239,12 +235,11 @@ export class IeObjectsService {
 			GetRelatedObjectsQueryVariables
 		>(GetRelatedObjectsDocument, {
 			schemaIdentifier,
-			meemooIdentifier,
 			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
 		});
 
 		const adaptedItems = await Promise.all(
-			mediaObjects.object_ie.map(async (object: any) => {
+			mediaObjects.graph__intellectual_entity.map(async (object: any) => {
 				const adapted = this.adaptFromDB(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
@@ -258,8 +253,8 @@ export class IeObjectsService {
 		return Pagination<IeObject>({
 			items: adaptedItems,
 			page: 1,
-			size: mediaObjects.object_ie.length,
-			total: mediaObjects.object_ie.length,
+			size: mediaObjects.graph__intellectual_entity.length,
+			total: mediaObjects.graph__intellectual_entity.length,
 		});
 	}
 
@@ -366,7 +361,7 @@ export class IeObjectsService {
 		});
 
 		return await Promise.all(
-			response.object_ie.map(async (object) => {
+			response.graph__intellectual_entity.map(async (object) => {
 				const adapted = this.adaptFromDB(object);
 				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 					adapted.thumbnailUrl,
@@ -392,15 +387,15 @@ export class IeObjectsService {
 	/**
 	 * Returns a limited set of metadata fields for export
 	 */
-	public async findAllObjectMetadataByCollectionId(
-		collectionId: string,
+	public async findAllIeObjectMetadataByFolderId(
+		folderId: string,
 		userProfileId: string
 	): Promise<Partial<IeObject>[]> {
 		const { users_folder_ie: allObjects } = await this.dataService.execute<
-			FindAllObjectsByCollectionIdQuery,
-			FindAllObjectsByCollectionIdQueryVariables
-		>(FindAllObjectsByCollectionIdDocument, {
-			collectionId,
+			FindAllIeObjectsByFolderIdQuery,
+			FindAllIeObjectsByFolderIdQueryVariables
+		>(FindAllIeObjectsByFolderIdDocument, {
+			folderId,
 			userProfileId,
 		});
 
@@ -419,11 +414,13 @@ export class IeObjectsService {
 		limit: number
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
-			const { object_ie: ieObjects, object_ie_aggregate: ieObjectAggregate } =
-				await this.dataService.execute<
-					FindIeObjectsForSitemapQuery,
-					FindIeObjectsForSitemapQueryVariables
-				>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
+			const {
+				graph__intellectual_entity: ieObjects,
+				graph__intellectual_entity_aggregate: ieObjectAggregate,
+			} = await this.dataService.execute<
+				FindIeObjectsForSitemapQuery,
+				FindIeObjectsForSitemapQueryVariables
+			>(FindIeObjectsForSitemapDocument, { licenses, limit, offset });
 
 			return Pagination<IeObjectsSitemap>({
 				items: ieObjects.map((ieObject) => this.adaptForSitemap(ieObject)),
@@ -440,60 +437,106 @@ export class IeObjectsService {
 	// ------------------------------------------------------------------------
 
 	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
+		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
 		return {
+			schemaIdentifier: gqlIeObject?.schema_identifier,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
-			dctermsFormat: gqlIeObject?.dcterms_format,
+			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
-			ebucoreObjectType: gqlIeObject?.ebucore_object_type,
-			meemooIdentifier: gqlIeObject?.meemoo_identifier,
-			meemoofilmBase: gqlIeObject?.meemoofilm_base,
-			meemoofilmColor: gqlIeObject?.meemoofilm_color,
-			meemoofilmContainsEmbeddedCaption: gqlIeObject?.meemoofilm_contains_embedded_caption,
-			meemoofilmImageOrSound: gqlIeObject?.meemoofilm_image_or_sound,
-			premisIdentifier: gqlIeObject?.premis_identifier,
-			abstract: gqlIeObject?.schema_abstract,
-			creator: gqlIeObject?.schema_creator,
+			creator: gqlIeObject?.schema_creator?.[0],
 			dateCreated: gqlIeObject?.schema_date_created,
-			dateCreatedLowerBound: gqlIeObject?.schema_date_created_lower_bound,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
 			duration: gqlIeObject?.schema_duration,
-			genre: gqlIeObject?.schema_genre,
-			schemaIdentifier: gqlIeObject?.schema_identifier,
-			inLanguage: gqlIeObject?.schema_in_language,
-			keywords: gqlIeObject?.schema_keywords,
 			licenses: gqlIeObject?.schema_license,
-			maintainerId: gqlIeObject?.organisation?.schema_identifier,
-			maintainerName: gqlIeObject?.organisation?.schema_name,
-			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.organisation?.schema_name || ''),
-			maintainerLogo: gqlIeObject?.organisation?.logo?.iri,
-			maintainerDescription: gqlIeObject?.organisation?.description,
-			maintainerSiteUrl: gqlIeObject?.organisation?.homepage_url,
-			maintainerFormUrl: gqlIeObject?.organisation?.form_url,
-			maintainerOverlay: gqlIeObject?.organisation?.overlay,
-			sector:
-				(gqlIeObject?.haorg_organization_type as IeObjectSector) ??
-				(gqlIeObject?.organisation?.haorg_organization_type as IeObjectSector),
+			premisIdentifier: gqlIeObject?.premisIdentifier?.premis_identifier as [
+				{
+					abraham_id: string;
+					abraham_uri: string;
+					code_number: string;
+				},
+			],
+			abrahamInfo: {
+				id: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_id'
+				)?.abraham_id,
+				uri: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_uri'
+				)?.abraham_uri,
+				code: gqlIeObject?.premisIdentifier?.premis_identifier.find(
+					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'code_number'
+				)?.code_number,
+			},
+			abstract: gqlIeObject?.intellectualEntity?.schema_abstract,
+			genre: gqlIeObject?.schemaGenre?.schema_genre,
+			inLanguage: gqlIeObject?.schemaInLanguage?.schema_in_language,
+			keywords: gqlIeObject?.schemaKeywords?.schema_keywords,
+			publisher: gqlIeObject?.schemaPublisher?.schema_publisher_array,
+			spatial: gqlIeObject?.schemaSpatial?.schema_spatial,
+			temporal: gqlIeObject?.schemaTemporal?.schema_temporal,
+			synopsis: gqlIeObject?.intellectualEntity?.ebucore_synopsis,
+			copyrightHolder: gqlIeObject?.schemaCopyrightHolder
+				?.map((copyrightHolder) => copyrightHolder?.schema_copyright_holder)
+				?.join(', '),
+			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
+			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
+			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo
+				// TODO remove this workaround once the INT organisations assets are available
+				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
+				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
+			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
+			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
+			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
+			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
+			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			publisher: gqlIeObject?.schema_publisher,
-			spatial: gqlIeObject?.schema_spatial_coverage,
-			temporal: gqlIeObject?.schema_temporal_coverage,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url,
-			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			copyrightHolder: gqlIeObject?.schema_copyright_holder,
-			isPartOf: gqlIeObject?.schema_is_part_of,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
+			isPartOf: gqlIeObject?.isPartOf?.map((part) => {
+				return {
+					name: part.collection?.schema_name,
+					collectionType: part.collection?.collection_type as IsPartOfKey,
+					isPreceededBy: part.collection?.isPreceededBy,
+					isSucceededBy: part.collection?.isSucceededBy,
+					locationCreated: part.collection?.schema_location_created,
+					startDate: part.collection?.schema_start_date,
+					endDate: part.collection?.schema_end_date,
+					publisher: part.collection?.schema_publisher,
+				};
+			}),
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			meemooDescriptionCast: gqlIeObject?.meemoo_description_cast,
-			representations: this.adaptRepresentations(gqlIeObject?.premis_is_represented_by),
-			meemooDescriptionProgramme: gqlIeObject?.meemoo_description_programme,
-			meemooLocalId: gqlIeObject?.meemoo_local_id,
-			meemooOriginalCp: gqlIeObject?.meemoo_original_cp,
-			durationInSeconds: gqlIeObject?.schema_duration_in_seconds,
-			copyrightNotice: gqlIeObject?.schema_copyright_notice,
-			meemooMediaObjectId: gqlIeObject?.meemoo_media_object_id,
-			actor: gqlIeObject?.schema_actor,
+			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
+			collectionName: gqlIeObject?.isPartOf?.[0]?.collection?.schema_name,
+			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
+			fragmentId:
+				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
+			creditText: gqlIeObject?.intellectualEntity?.schema_credit_text,
+			copyrightNotice: gqlIeObject?.intellectualEntity?.schema_copyright_notice,
+			alternativeTitle: gqlIeObject?.intellectualEntity?.schemaAlternateName?.map(
+				(name) => name.schema_alternate_name
+			),
+			preceededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isPreceededBy?.map(
+				(ie) => ie.schema_name
+			),
+			succeededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isSucceededBy?.map(
+				(ie) => ie.schema_name
+			),
+			width: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_width,
+			height: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_height,
+			locationCreated: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_location_created)
+			)?.join(', '),
+			startDate: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+			)?.join(', '),
+			endDate: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+			)?.join(', '),
+			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
+			newspaperPublisher: compact(
+				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_publisher)
+			)?.join(', '),
+			pageRepresentations,
 		};
 	}
 
@@ -532,12 +575,15 @@ export class IeObjectsService {
 		// there are hits - resolve thumbnail urls
 		esResponse.hits.hits = await Promise.all(
 			esResponse.hits.hits.map(async (hit) => {
-				hit._source.schema_thumbnail_url =
-					await this.playerTicketService.resolveThumbnailUrl(
-						hit._source.schema_thumbnail_url,
-						referer,
-						ip
-					);
+				if (hit._source.schema_thumbnail_url) {
+					hit._source.schema_thumbnail_url = [
+						await this.playerTicketService.resolveThumbnailUrl(
+							hit._source.schema_thumbnail_url[0],
+							referer,
+							ip
+						),
+					];
+				}
 				return hit;
 			})
 		);
@@ -548,22 +594,15 @@ export class IeObjectsService {
 	public adaptESObjectToObject(esObject: ElasticsearchObject): IeObject {
 		return {
 			dctermsAvailable: esObject?.dcterms_available,
-			dctermsFormat: esObject?.dcterms_format,
+			dctermsFormat: esObject?.dcterms_format as IeObjectType,
 			dctermsMedium: esObject?.dcterms_medium,
 			ebucoreObjectType: esObject?.ebucore_object_type,
-			meemooIdentifier: esObject?.meemoo_identifier,
-			meemoofilmBase: esObject?.meemoofilm_base,
-			meemoofilmColor: esObject?.meemoofilm_color,
-			meemoofilmContainsEmbeddedCaption: esObject?.meemoofilm_contains_embedded_caption,
-			meemoofilmImageOrSound: esObject?.meemoofilm_image_or_sound,
-			premisIsPartOf: esObject?.premis_is_part_of,
 			premisIdentifier: esObject?.premis_identifier,
 			abstract: esObject?.schema_abstract,
 			contributor: esObject?.schema_contributor,
 			copyrightHolder: esObject?.schema_copyrightholder,
-			creator: esObject?.schema_creator,
+			creator: esObject?.schema_creator?.[0],
 			dateCreated: esObject?.schema_date_created,
-			dateCreatedLowerBound: esObject?.schema_date_created,
 			datePublished: esObject?.schema_date_published,
 			description: esObject?.schema_description,
 			duration: esObject?.schema_duration,
@@ -583,94 +622,128 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: esObject?.schema_thumbnail_url,
+			thumbnailUrl: esObject?.schema_thumbnail_url?.[0],
 			numberOfPages: esObject?.schema_number_of_pages,
-			meemooDescriptionCast: esObject?.meemoo_description_cast,
-			meemooDescriptionProgramme: esObject?.meemoo_description_programme,
-			meemooLocalId: esObject?.meemoo_local_id,
-			meemooOriginalCp: esObject?.meemoo_original_cp,
+			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			durationInSeconds: esObject?.duration_seconds,
-			representations: this?.adaptRepresentations(esObject?.premis_is_represented_by),
+			pageRepresentations: [],
 			// Extra
-			sector: esObject?.schema_maintainer?.organization_type,
+			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
 			isPartOf: esObject?.schema_is_part_of,
 			// Not yet available
 			transcript: esObject?.schema_transcript,
-			caption: esObject?.schema_caption,
-			meemooDescriptionCategory: esObject?.meemoo_description_category,
-			meemoofilmEmbeddedCaption: esObject?.meemoofilm_embedded_caption,
-			meemoofilmEmbeddedCaptionLanguage: esObject?.meemoofilm_embedded_caption_language,
+			synopsis: null,
 		};
 	}
 
 	public adaptLimitedMetadata(graphQlObject: GqlLimitedIeObject): Partial<IeObject> {
 		/* istanbul ignore next */
 		return {
-			schemaIdentifier: graphQlObject.ie?.schema_identifier,
-			premisIdentifier: graphQlObject.ie?.premis_identifier,
-			maintainerName: graphQlObject.ie?.maintainer?.schema_name,
-			name: graphQlObject.ie?.schema_name,
-			dctermsFormat: graphQlObject.ie?.dcterms_format,
-			dateCreatedLowerBound: graphQlObject.ie?.schema_date_created_lower_bound,
-			datePublished: graphQlObject.ie?.schema_date_published,
-			meemooIdentifier: graphQlObject.ie?.meemoo_identifier,
-			meemooLocalId: graphQlObject.ie?.meemoo_local_id,
-			isPartOf: graphQlObject.ie?.schema_is_part_of || {},
+			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
+			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
+			premisIdentifier: undefined, // graphQlObject.intellectualEntity?.premis_identifier, // TODO see if this needs to be re-enabled
+			name: graphQlObject.intellectualEntity?.schema_name,
+			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format as IeObjectType,
+			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
+			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
+			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id?.[0],
+			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
 	}
 
 	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete ieObject.representations;
+		delete ieObject.pageRepresentations;
 		delete ieObject.thumbnailUrl;
 		return ieObject;
 	}
 
-	public adaptRepresentations(graphQlRepresentations: any): IeObjectRepresentation[] {
-		if (isEmpty(graphQlRepresentations)) {
+	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[][] {
+		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return graphQlRepresentations.map((representation) => ({
-			name: representation?.schema_name,
-			alternateName: representation?.schema_alternate_name,
-			description: representation?.schema_description,
-			schemaIdentifier: representation?.ie_schema_identifier,
-			dctermsFormat: representation?.dcterms_format,
-			transcript: representation?.schema_transcript,
-			dateCreated: representation?.schema_date_created,
-			files: this.adaptFiles(representation?.premis_includes),
-		}));
+		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
+		const representationsByPage: IeObjectRepresentation[][] = compact(
+			[gqlIeObject, ...gqlIeObject.hasPart]?.map((part) => {
+				const represenations = compact(
+					(part?.isRepresentedBy || []).flatMap(
+						(
+							representation: GqlIeObject['isRepresentedBy'][0]
+						): IeObjectRepresentation => {
+							if (!representation) {
+								return null;
+							}
+							return {
+								id: representation.id,
+								schemaName: representation.schema_name,
+								isMediaFragmentOf: representation.is_media_fragment_of,
+								schemaInLanguage: representation.schema_in_language,
+								schemaStartTime: representation.schema_start_time,
+								schemaTranscript: representation.schema_transcript,
+								edmIsNextInSequence: representation.edm_is_next_in_sequence,
+								updatedAt: representation.updated_at,
+								files: this.adaptFiles(representation.includes),
+							};
+						}
+					)
+				);
+				// Avoid returning empty array representations
+				if (represenations.length) {
+					return represenations;
+				}
+				return null;
+			})
+		);
+
+		// Sort by image filename to have pages in order
+		return sortBy(representationsByPage, (representations) => {
+			let fileName: string | null = null;
+			representations.find((representation) => {
+				const imageFile = representation.files.find(
+					(file) => file.mimeType === 'image/jpeg'
+				);
+				fileName = imageFile?.name;
+				return imageFile;
+			});
+			return fileName;
+		});
 	}
 
-	public adaptFiles(graphQlFiles: any): IeObjectFile[] {
+	public adaptFiles(graphQlFiles: GqlIeObject['isRepresentedBy'][0]['includes']): IeObjectFile[] {
 		if (isEmpty(graphQlFiles)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
-		return graphQlFiles.map(
-			(file): IeObjectFile => ({
-				name: file?.schema_name,
-				alternateName: file?.schema_alternate_name,
-				description: file?.schema_description,
-				representationSchemaIdentifier: file?.representation_schema_identifier,
-				ebucoreMediaType: file?.ebucore_media_type,
-				ebucoreIsMediaFragmentOf: file?.ebucore_is_media_fragment_of,
-				embedUrl: file?.schema_embed_url,
-				schemaIdentifier: file?.schema_identifier,
+		return compact(
+			graphQlFiles.map((includeFile): IeObjectFile => {
+				const file = includeFile.file;
+				if (!file) {
+					return null;
+				}
+				return {
+					id: file.id,
+					name: file.schema_name,
+					mimeType: file.ebucore_has_mime_type,
+					storedAt: file.premis_stored_at,
+					thumbnailUrl: file.schema_thumbnail_url,
+					duration: file.schema_duration,
+					edmIsNextInSequence: file.edm_is_next_in_sequence,
+					createdAt: file.created_at,
+				};
 			})
 		);
 	}
 
-	private adaptForSitemap(gqlIeObject: any): IeObjectsSitemap {
+	private adaptForSitemap(
+		gqlIeObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0]
+	): IeObjectsSitemap {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
-			maintainerSlug:
-				gqlIeObject?.haorg_alt_label ??
-				kebabCase(gqlIeObject?.maintainer?.schema_name || ''),
+			maintainerSlug: kebabCase(gqlIeObject?.schemaMaintainer?.skos_pref_label || ''),
 			name: gqlIeObject?.schema_name,
 			updatedAt: gqlIeObject?.updated_at,
 		};
@@ -686,7 +759,16 @@ export class IeObjectsService {
 				resolveBodyOnly: true,
 			});
 		} catch (e) {
-			this.logger.error(e?.response?.body);
+			this.logger.error(
+				customError('Failed to execute ie-objects query', e, {
+					url: this.configService.get('ELASTIC_SEARCH_URL'),
+					index: esIndex,
+					name: e?.name,
+					code: e?.code,
+					stack: e?.stack,
+					body: e?.response?.body,
+				})
+			);
 			throw e;
 		}
 	}
@@ -764,13 +846,11 @@ export class IeObjectsService {
 			maintainerName: ieObject?.maintainerName,
 			maintainerId: ieObject?.maintainerId,
 			maintainerSlug: ieObject?.maintainerSlug,
-			isPartOf: ieObject?.isPartOf || {},
+			isPartOf: ieObject?.isPartOf || [],
 			dctermsFormat: ieObject?.dctermsFormat,
-			dateCreatedLowerBound: ieObject?.dateCreatedLowerBound,
 			datePublished: ieObject?.datePublished,
-			meemooIdentifier: ieObject?.meemooIdentifier,
 			meemooLocalId: ieObject?.meemooLocalId,
-			premisIdentifier: ieObject?.premisIsPartOf,
+			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			licenses: ieObject.licenses,
 		};
@@ -808,40 +888,5 @@ export class IeObjectsService {
 			return [];
 		}
 		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
-	}
-
-	private sortAndUnique(values: string[]): string[] {
-		return sortBy(uniq(compact(values)), (option) => option.toLowerCase());
-	}
-
-	public async getFilterOptions(): Promise<FilterOptions> {
-		const response = await this.dataService.execute<
-			GetFilterOptionsQuery,
-			GetFilterOptionsQueryVariables
-		>(GetFilterOptionsDocument, {});
-
-		return {
-			[IeObjectsSearchFilterField.OBJECT_TYPE]: this.sortAndUnique(
-				response.object_ie__ebucore_object_type.map((obj) => obj.ebucore_object_type)
-			),
-			[IeObjectsSearchFilterField.LANGUAGE]: this.sortAndUnique(
-				response.object_ie__schema_in_language.flatMap((obj) => obj.schema_in_language)
-			),
-			[IeObjectsSearchFilterField.MEDIUM]: this.sortAndUnique(
-				response.object_ie__dcterms_medium.flatMap((obj) => obj.dcterms_medium)
-			),
-			[IeObjectsSearchFilterField.GENRE]: this.sortAndUnique(
-				response.object_ie__schema_genre.flatMap((obj) => obj.schema_genre)
-			),
-			[IeObjectsSearchFilterField.MAINTAINER_ID]: sortBy(
-				uniq(
-					response.object_ie__schema_maintainer.flatMap((obj) => ({
-						id: obj.schema_maintainer_id,
-						name: obj.schema_maintainer_name,
-					}))
-				),
-				(obj) => obj.name?.toLowerCase()
-			),
-		};
 	}
 }

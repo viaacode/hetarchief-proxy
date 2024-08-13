@@ -25,7 +25,7 @@ import { VisitsModule } from '~modules/visits';
 			max: 1000,
 		}),
 	],
-	providers: [IeObjectsService],
-	exports: [IeObjectsService],
+	providers: [IeObjectsService, IeObjectsController],
+	exports: [IeObjectsService, IeObjectsController],
 })
 export class IeObjectsModule {}

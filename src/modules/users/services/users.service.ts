@@ -17,6 +17,9 @@ import {
 } from '../types';
 
 import {
+	GetUserByEmailDocument,
+	type GetUserByEmailQuery,
+	type GetUserByEmailQueryVariables,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
@@ -95,6 +98,20 @@ export class UsersService {
 
 	public groupIdToName(groupId: keyof typeof GroupIdToName): GroupName | null {
 		return (GroupIdToName[groupId] || null) as GroupName | null;
+	}
+
+	public async getUserByEmail(email: string): Promise<User | null> {
+		const userResponse = await this.dataService.execute<
+			GetUserByEmailQuery,
+			GetUserByEmailQueryVariables
+		>(GetUserByEmailDocument, {
+			email,
+		});
+		if (!userResponse.users_profile[0]) {
+			return null;
+		}
+
+		return this.adapt(userResponse.users_profile[0]);
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {

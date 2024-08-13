@@ -1,7 +1,7 @@
 import { IE_OBJECT_INTRA_CP_LICENSES } from '../ie-objects.conts';
 import { IeObjectAccessThrough, IeObjectLicense, IeObjectSector } from '../ie-objects.types';
 import {
-	mockIeObject,
+	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
 	mockIeObjectWithMetadataSetALLWithEssence,
 	mockIeObjectWithMetadataSetLTD,
@@ -20,7 +20,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1a = limitAccessToObjectDetails(
 			// Object: DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-zp3w03v',
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
@@ -46,7 +46,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1b = limitAccessToObjectDetails(
 			// Object: ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-xs5jg6w',
 				sector: IeObjectSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
@@ -77,7 +77,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1c = limitAccessToObjectDetails(
 			// Object: VRT - VIAA-PUBLIEK_METADATA_LTD + VIAA-INTRA_CP-METADATA-ALL + BEZOEKERTOOL-CONTENT
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-rf5kf25',
 				sector: IeObjectSector.CULTURE,
 				licenses: [
@@ -114,7 +114,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1d = limitAccessToObjectDetails(
 			// Object: Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-154dn75',
 				sector: IeObjectSector.CULTURE,
 				licenses: [
@@ -129,7 +129,7 @@ describe('Limit access to object details', () => {
 				isKeyUser: false,
 				sector: IeObjectSector.CULTURE,
 				accessibleVisitorSpaceIds: [],
-				accessibleObjectIdsThroughFolders: [mockIeObject.schemaIdentifier],
+				accessibleObjectIdsThroughFolders: [mockIeObject1.schemaIdentifier],
 			}
 		);
 		expect(limitedAccessIeObject1d).toEqual({
@@ -150,7 +150,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1da = limitAccessToObjectDetails(
 			// Object: Amsa-ISG - VIAA-PUBLIEK_METADATA_LTD + BEZOEKERTOOL_METADATA_ALL
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-154dn75',
 				sector: IeObjectSector.CULTURE,
 				licenses: [
@@ -185,7 +185,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1e = limitAccessToObjectDetails(
 			// Object: DPG Media (sector = landelijke private omroep)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-zp3w03v',
 				sector: IeObjectSector.RURAL,
 				licenses: [
@@ -224,7 +224,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1f = limitAccessToObjectDetails(
 			// Object: Letterenhuis (Culture sector)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-kw57h48', // Letterenhuis
 				sector: IeObjectSector.CULTURE,
 				licenses: [
@@ -250,7 +250,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1g = limitAccessToObjectDetails(
 			// Object: SBS Belgium (Rural)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-wh2dd79',
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
@@ -278,7 +278,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1h = limitAccessToObjectDetails(
 			// Object: SBS Belgium (Rural)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-wh2dd79',
 				sector: IeObjectSector.RURAL,
 				licenses: [
@@ -316,7 +316,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1h = limitAccessToObjectDetails(
 			// Object: SBS Belgium (Rural)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-wh2dd79',
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
@@ -344,7 +344,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject = limitAccessToObjectDetails(
 			// Object: DPG Media (RURAL)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-zp3w03v',
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.INTRA_CP_CONTENT],
@@ -372,7 +372,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject1h = limitAccessToObjectDetails(
 			// Object: SBS Belgium (Rural)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				maintainerId: 'OR-wh2dd79',
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_METADATA_ALL],
@@ -411,7 +411,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject2a = limitAccessToObjectDetails(
 			// DPG Media (sector = RURAL) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_ALL
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
@@ -420,6 +420,7 @@ describe('Limit access to object details', () => {
 		);
 		expect(limitedAccessIeObject2a).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-rf5kf25',
 			licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL, ...IE_OBJECT_INTRA_CP_LICENSES],
 			accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 		});
@@ -438,7 +439,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject2b = limitAccessToObjectDetails(
 			// ADVN (sector: culture) - INTRA LICENSES + VIAA-PUBLIEK_METADATA_LTD
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				sector: IeObjectSector.CULTURE,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD, ...IE_OBJECT_INTRA_CP_LICENSES],
 			},
@@ -465,7 +466,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject2d = limitAccessToObjectDetails(
 			// DPG Media (sector = landelijke private omroep)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				sector: IeObjectSector.CULTURE,
 				maintainerId: 'OR-rf5kf25',
 				licenses: [
@@ -479,6 +480,7 @@ describe('Limit access to object details', () => {
 		);
 		expect(limitedAccessIeObject2d).toEqual({
 			...mockIeObjectWithMetadataSetALL,
+			maintainerId: 'OR-rf5kf25',
 			licenses: [
 				IeObjectLicense.PUBLIEK_METADATA_LTD,
 				IeObjectLicense.INTRA_CP_CONTENT,
@@ -504,7 +506,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject2e = limitAccessToObjectDetails(
 			// Letterenhuis (Culture sector)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				sector: IeObjectSector.CULTURE,
 				licenses: [
 					IeObjectLicense.PUBLIEK_METADATA_LTD,
@@ -530,7 +532,7 @@ describe('Limit access to object details', () => {
 		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			// SBS Belgium (Rural)
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				sector: IeObjectSector.RURAL,
 				licenses: [IeObjectLicense.INTRA_CP_CONTENT],
 			},
@@ -552,7 +554,7 @@ describe('Limit access to object details', () => {
 		};
 		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			},
 			// CP admin
@@ -576,7 +578,7 @@ describe('Limit access to object details', () => {
 		};
 		const limitedAccessIeObject2f = limitAccessToObjectDetails(
 			{
-				...mockIeObject,
+				...mockIeObject1,
 				licenses: null,
 			},
 			// CP admin

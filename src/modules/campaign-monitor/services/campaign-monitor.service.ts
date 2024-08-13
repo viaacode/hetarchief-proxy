@@ -7,8 +7,9 @@ import {
 	type OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as promiseUtils from 'blend-promise-utils';
 import got, { type Got } from 'got';
-import { compact, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
+import { compact, groupBy, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
 import * as queryString from 'query-string';
 
 import { type Configuration } from '~config';
@@ -18,8 +19,8 @@ import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
 	type CampaignMonitorUserInfo,
+	EmailTemplate,
 	type MaterialRequestEmailInfo,
-	Template,
 	type VisitEmailInfo,
 } from '../campaign-monitor.types';
 import {
@@ -41,6 +42,7 @@ import {
 import { type VisitRequest } from '~modules/visits/types';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
+import { type Locale } from '~shared/types/types';
 
 @Injectable()
 export class CampaignMonitorService implements OnApplicationBootstrap {
@@ -80,26 +82,39 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
-		const recipients: string[] = [];
+		if (emailInfo.to.length === 0) {
+			return;
+		}
 
-		emailInfo.to.forEach((recipient) => {
-			if (recipient.email) {
-				recipients.push(recipient.email);
-			} else {
-				// If there are no recipients, the mails will be sent to a fallback email address
-				recipients.push(this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK'));
-			}
-		});
+		const groupedRecipientsByLanguage = Object.entries(
+			groupBy(emailInfo.to, (receiverInfo) => receiverInfo.language)
+		);
 
-		const data: CampaignMonitorData = {
-			to: recipients,
-			consentToTrack: 'unchanged',
-			data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
-		};
+		await promiseUtils.map(groupedRecipientsByLanguage, async ([language, recipients]) => {
+			const recipientsForLanguage: string[] = [];
+			recipients.forEach((recipient) => {
+				if (recipient.email) {
+					recipientsForLanguage.push(recipient.email);
+				} else {
+					// If there are no recipients, the mails will be sent to a fallback email address
+					recipientsForLanguage.push(
+						this.configService.get('MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK')
+					);
+				}
+			});
+			const data: CampaignMonitorData = {
+				to: recipientsForLanguage,
+				consentToTrack: 'unchanged',
+				data: this.convertVisitToEmailTemplateData(emailInfo.visitRequest),
+			};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
+			await this.sendTransactionalMail(
+				{
+					template: emailInfo.template,
+					data,
+				},
+				language as Locale
+			);
 		});
 	}
 
@@ -118,14 +133,18 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertMaterialRequestsToEmailTemplateData(emailInfo),
 		};
 
-		await this.sendTransactionalMail({
-			template: emailInfo.template,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: emailInfo.template,
+				data,
+			},
+			emailInfo.language
+		);
 	}
 
 	public async sendConfirmationMail(
-		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto
+		preferences: CampaignMonitorNewsletterUpdatePreferencesQueryDto,
+		language: Locale
 	): Promise<void> {
 		const recipients: string[] = [];
 		if (preferences?.mail) {
@@ -146,10 +165,13 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			data: this.convertToConfirmationEmailTemplateData(preferences),
 		};
 
-		await this.sendTransactionalMail({
-			template: Template.EMAIL_CONFIRMATION,
-			data,
-		});
+		await this.sendTransactionalMail(
+			{
+				template: EmailTemplate.EMAIL_CONFIRMATION,
+				data,
+			},
+			language
+		);
 	}
 
 	public async confirmEmail({
@@ -269,7 +291,10 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		}
 	}
 
-	public async sendTransactionalMail(emailInfo: CampaignMonitorSendMailDto): Promise<void> {
+	public async sendTransactionalMail(
+		emailInfo: CampaignMonitorSendMailDto,
+		lang: Locale
+	): Promise<void> {
 		try {
 			if (emailInfo.data.to.length === 0) {
 				const error = new BadRequestException(
@@ -280,8 +305,8 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 
 			let cmTemplateId: string;
-			if (Object.values(Template).includes(emailInfo.template as any)) {
-				cmTemplateId = getTemplateId(emailInfo.template);
+			if (Object.values(EmailTemplate).includes(emailInfo.template as any)) {
+				cmTemplateId = getTemplateId(emailInfo.template, lang);
 			} else {
 				cmTemplateId = emailInfo.template;
 			}
@@ -434,7 +459,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		};
 
 		// Maintainer Template
-		if (emailInfo.template === Template.MATERIAL_REQUEST_MAINTAINER) {
+		if (emailInfo.template === EmailTemplate.MATERIAL_REQUEST_MAINTAINER) {
 			return {
 				user_firstname: emailInfo.firstName,
 				user_lastname: emailInfo.lastName,
@@ -443,7 +468,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 					return {
 						title: materialRequest.objectSchemaName,
 						local_cp_id: materialRequest.objectMeemooLocalId,
-						pid: materialRequest.objectMeemooIdentifier,
+						pid: materialRequest.objectSchemaIdentifier,
 						page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 							materialRequest.maintainerSlug
 						}/${materialRequest.objectSchemaIdentifier}`,
@@ -468,7 +493,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				title: materialRequest.objectSchemaName,
 				cp_name: materialRequest.maintainerName,
 				local_cp_id: materialRequest.objectMeemooLocalId,
-				pid: materialRequest.objectMeemooIdentifier,
+				pid: materialRequest.objectSchemaIdentifier,
 				page_url: `${this.configService.get('CLIENT_HOST')}/zoeken/${
 					materialRequest.maintainerSlug
 				}/${materialRequest.objectSchemaIdentifier}`,

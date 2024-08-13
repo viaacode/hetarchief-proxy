@@ -10,7 +10,7 @@
   "modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-bekijken-beluisteren": "Ik wil dit object bekijken/beluisteren",
   "modules/campaign-monitor/services/campaign-monitor___ik-wil-dit-object-hergebruiken": "Ik wil dit object hergebruiken",
   "modules/campaign-monitor/services/campaign-monitor___ik-wil-meer-info-over-dit-object": "Ik wil meer info over dit object",
-  "modules/collections/controllers___default-collection-name": "Favorieten",
+  "modules/folders/controllers___default-collection-name": "Favorieten",
   "modules/not-found/controllers/not-found___404": "404",
   "modules/not-found/controllers/not-found___sorry-deze-pagina-konden-we-niet-terugvinden-de-link-die-je-volgde-kan-stuk-zijn-of-de-pagina-kan-niet-meer-bestaan": "Sorry deze pagina konden we niet terugvinden. De link die je volgde kan stuk zijn of de pagina kan niet meer bestaan",
   "modules/notifications/controllers/notifications___je-hebt-nu-toegang-tot-de-bezoekersruimte-name": "Je hebt nu toegang tot {{name}}",

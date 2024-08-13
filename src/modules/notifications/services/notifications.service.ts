@@ -34,7 +34,7 @@ import {
 	type UpdateNotificationMutation,
 	type UpdateNotificationMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { Template } from '~modules/campaign-monitor/campaign-monitor.types';
+import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { type VisitorSpace } from '~modules/spaces/types';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
@@ -224,7 +224,7 @@ export class NotificationsService {
 						language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
 					},
 				],
-				template: Template.VISIT_REQUEST_CP,
+				template: EmailTemplate.VISIT_REQUEST_CP,
 				visitRequest: visitRequest,
 			}),
 		]);
@@ -275,7 +275,7 @@ export class NotificationsService {
 						language: visitRequest.visitorLanguage,
 					},
 				],
-				template: Template.VISIT_APPROVED,
+				template: EmailTemplate.VISIT_APPROVED,
 				visitRequest: visitRequest,
 			}),
 		]);
@@ -328,7 +328,7 @@ export class NotificationsService {
 						language: visitRequest.visitorLanguage,
 					},
 				],
-				template: Template.VISIT_DENIED,
+				template: EmailTemplate.VISIT_DENIED,
 				visitRequest: visitRequest,
 			}),
 		]);

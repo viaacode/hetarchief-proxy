@@ -23,7 +23,6 @@ import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
-	IeObjectsMeemooIdentifiersQueryDto,
 	IeObjectsQueryDto,
 	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
@@ -35,7 +34,6 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
-	type FilterOptions,
 	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -101,11 +99,6 @@ export class IeObjectsController {
 		return this.ieObjectsService.getNewspaperTitles();
 	}
 
-	@Get('filter-options')
-	public async getFilterOptions(): Promise<FilterOptions> {
-		return this.ieObjectsService.getFilterOptions();
-	}
-
 	@Get('seo/:id')
 	public async getIeObjectSeoById(
 		@Headers('referer') referer: string,
@@ -120,13 +113,17 @@ export class IeObjectsController {
 		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_LTD, IeObjectLicense.PUBLIEK_METADATA_ALL].includes(
-				license
-			)
+			[
+				IeObjectLicense.PUBLIEK_METADATA_LTD,
+				IeObjectLicense.PUBLIEK_METADATA_ALL,
+				IeObjectLicense.PUBLIEK_CONTENT,
+			].includes(license)
 		);
 
 		const hasPublicAccessThumbnail = ieObject?.licenses.some((license: IeObjectLicense) =>
-			[IeObjectLicense.PUBLIEK_METADATA_ALL].includes(license)
+			[IeObjectLicense.PUBLIEK_METADATA_ALL, IeObjectLicense.PUBLIEK_CONTENT].includes(
+				license
+			)
 		);
 		return {
 			name: hasPublicAccess ? ieObject?.name : null,
@@ -161,6 +158,7 @@ export class IeObjectsController {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
+					type: objectMetadata?.dctermsFormat,
 				},
 			},
 		]);
@@ -213,6 +211,7 @@ export class IeObjectsController {
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					or_id: objectMetadata.maintainerId,
+					type: objectMetadata?.dctermsFormat,
 				},
 			},
 		]);
@@ -239,59 +238,71 @@ export class IeObjectsController {
 		res.send(csvContent);
 	}
 
-	@Get(':schemaIdentifier/related/:meemooIdentifier')
+	@Get('schemaIdentifierLookup/:schemaIdentifierV2')
+	@ApiOperation({
+		description:
+			'Returns the new schema identifier for hetarchief v3 when given the old schema identifier from hetarchief v2.',
+	})
+	public async identifierLookup(
+		@Param('schemaIdentifierV2') schemaIdentifierV2: string
+	): Promise<string> {
+		return this.ieObjectsService.getRelatedIdentifierV3(schemaIdentifierV2);
+	}
+
+	@Get(':schemaIdentifier/related')
 	@ApiOperation({
 		description:
 			'Get objects that cover the same subject as the passed object schema identifier.',
 	})
 	public async getRelated(
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('schemaIdentifier') schemaIdentifier: string,
-		@Param('meemooIdentifier') meemooIdentifier: string,
 		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		try {
+			const visitorSpaceAccessInfo =
+				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		// We use the esIndex as the maintainerId -- no need to lowercase
-		const relatedIeObjects = await this.ieObjectsService.getRelated(
-			schemaIdentifier,
-			meemooIdentifier,
-			referer,
-			getIpFromRequest(request),
-			ieObjectRelatedQueryDto
-		);
+			// We use the esIndex as the maintainerId -- no need to lowercase
+			const relatedIeObjects = await this.ieObjectsService.getRelated(
+				// TODO change this query to fetch related ie objects by using the schema identifier and the is_part_of relationship
+				schemaIdentifier,
+				referer,
+				getIpFromRequest(request),
+				ieObjectRelatedQueryDto
+			);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		const licensedRelatedIeObjects = {
-			...relatedIeObjects,
+			// Limit the amount of props returned for an ie object based on licenses and sector
+			return {
+				...relatedIeObjects,
 
-			// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
-			items: compact(
-				relatedIeObjects.items.map((item) =>
-					limitAccessToObjectDetails(item, {
-						userId: user.getId(),
-						isKeyUser: user.getIsKeyUser(),
-						sector: user.getSector(),
-						groupId: user.getGroupId(),
-						maintainerId: user.getOrganisationId(),
-						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-					})
-				)
-			),
-		};
-
-		return licensedRelatedIeObjects;
-	}
-
-	@Get('related/count')
-	public async countRelated(
-		@Query() countRelatedQuery: IeObjectsMeemooIdentifiersQueryDto
-	): Promise<Record<string, number>> {
-		return this.ieObjectsService.countRelated(countRelatedQuery.meemooIdentifiers);
+				// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
+				items: compact(
+					relatedIeObjects.items.map((item) =>
+						limitAccessToObjectDetails(item, {
+							userId: user.getId(),
+							isKeyUser: user.getIsKeyUser(),
+							sector: user.getSector(),
+							groupId: user.getGroupId(),
+							maintainerId: user.getOrganisationId(),
+							accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+						})
+					)
+				),
+			};
+		} catch (err) {
+			// TODO remove this try catch once this endpoint is stable again
+			return {
+				items: [],
+				total: 0,
+				pages: 1,
+				page: 1,
+				size: 0,
+			};
+		}
 	}
 
 	@Get(':id/similar')
@@ -305,40 +316,51 @@ export class IeObjectsController {
 		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+		try {
+			const visitorSpaceAccessInfo =
+				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
-			id,
-			referer,
-			getIpFromRequest(request),
-			ieObjectSimilarQueryDto,
-			4,
-			user
-		);
+			const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
+				id,
+				referer,
+				getIpFromRequest(request),
+				ieObjectSimilarQueryDto,
+				4,
+				user
+			);
 
-		const similarIeObjects = compact(
-			(similarIeObjectsResponse.items || []).map((item) =>
-				limitAccessToObjectDetails(item, {
-					userId: user.getId(),
-					isKeyUser: user.getIsKeyUser(),
-					sector: user.getSector(),
-					groupId: user.getGroupId(),
-					maintainerId: user.getOrganisationId(),
-					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-				})
-			)
-		);
+			const similarIeObjects = compact(
+				(similarIeObjectsResponse.items || []).map((item) =>
+					limitAccessToObjectDetails(item, {
+						userId: user.getId(),
+						isKeyUser: user.getIsKeyUser(),
+						sector: user.getSector(),
+						groupId: user.getGroupId(),
+						maintainerId: user.getOrganisationId(),
+						accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+						accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+					})
+				)
+			);
 
-		// Limit the amount of props returned for an ie object based on licenses and sector
-		return {
-			items: similarIeObjects,
-			total: similarIeObjects.length,
-			pages: 1,
-			page: 1,
-			size: similarIeObjects.length,
-		};
+			// Limit the amount of props returned for an ie object based on licenses and sector
+			return {
+				items: similarIeObjects,
+				total: similarIeObjects.length,
+				pages: 1,
+				page: 1,
+				size: similarIeObjects.length,
+			};
+		} catch (err) {
+			// TODO remove this try catch once this endpoint is stable again
+			return {
+				items: [],
+				total: 0,
+				pages: 1,
+				page: 1,
+				size: 0,
+			};
+		}
 	}
 
 	@Post()
@@ -457,9 +479,9 @@ export class IeObjectsController {
 
 	@Get(':id')
 	public async getIeObjectById(
+		@Param('id') id: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('id') id: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
 		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(

@@ -7,6 +7,6 @@ export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof MaterialRequest, string
 	type: 'type',
 	requesterFullName: 'requested_by.full_name',
 	requesterMail: 'requested_by.mail',
-	maintainerName: 'object.maintainer.schema_name',
-	objectSchemaName: 'object.schema_name',
+	maintainerName: 'intellectualEntity.schemaMaintainer.skos_pref_label',
+	objectSchemaName: 'intellectualEntity.schema_name',
 };

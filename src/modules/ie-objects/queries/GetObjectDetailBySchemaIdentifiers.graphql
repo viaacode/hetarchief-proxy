@@ -1,0 +1,137 @@
+query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
+	graph__intellectual_entity(where: { schema_identifier: { _in: $schemaIdentifiers } }) {
+		schema_identifier
+		schema_is_part_of
+		schema_duration
+		schema_number_of_pages
+		schema_date_published
+		dcterms_available
+		schema_name
+		schema_description
+		schema_creator
+		dcterms_format
+		dcterms_medium
+		schema_thumbnail_url
+		schema_duration
+		schema_license
+		schema_date_created
+		meemoo_local_id
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+			ha_org_has_logo
+			ha_org_request_form
+			dcterms_description
+			ha_org_sector
+			ha_org_allows_overlay
+			foaf_homepage
+		}
+		schemaInLanguage {
+			schema_in_language
+		}
+		schemaKeywords {
+			schema_keywords
+		}
+		premisIdentifier {
+			premis_identifier
+		}
+
+		schemaGenre {
+			schema_genre
+		}
+		schemaSpatial {
+			schema_spatial
+		}
+		schemaPublisher {
+			schema_publisher_array
+		}
+		schemaTemporal {
+			schema_temporal
+		}
+		schemaCopyrightHolder {
+			schema_copyright_holder
+		}
+		intellectualEntity {
+			schema_issue_number
+			mhFragmentIdentifier {
+				mh_fragment_identifier
+			}
+			schema_credit_text
+			schema_copyright_notice
+			hasCarrier {
+				premis_medium
+				schema_width
+				schema_height
+				created_at
+			}
+			schema_abstract
+			schemaAlternateName {
+				schema_alternate_name
+			}
+			bibframe_edition
+			ebucore_synopsis
+		}
+		isPartOf {
+			collection {
+				schema_name
+				collection_type
+				isPreceededBy {
+					schema_name
+				}
+				isSucceededBy {
+					schema_name
+				}
+				schema_location_created
+				schema_start_date
+				schema_end_date
+				schema_publisher
+			}
+		}
+		isRepresentedBy {
+			id
+			schema_name
+			is_media_fragment_of
+			schema_in_language
+			schema_start_time
+			schema_transcript
+			edm_is_next_in_sequence
+			updated_at
+			includes {
+				file {
+					id
+					schema_name
+					ebucore_has_mime_type
+					premis_stored_at
+					schema_thumbnail_url
+					schema_duration
+					edm_is_next_in_sequence
+					created_at
+				}
+			}
+		}
+		hasPart {
+			isRepresentedBy {
+				id
+				schema_name
+				is_media_fragment_of
+				schema_in_language
+				schema_start_time
+				schema_transcript
+				edm_is_next_in_sequence
+				updated_at
+				includes {
+					file {
+						id
+						schema_name
+						ebucore_has_mime_type
+						premis_stored_at
+						schema_thumbnail_url
+						schema_duration
+						edm_is_next_in_sequence
+						created_at
+					}
+				}
+			}
+		}
+	}
+}

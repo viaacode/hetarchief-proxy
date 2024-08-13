@@ -16,16 +16,16 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 			mail
 			language
 		}
-		object {
-			maintainer {
-				schema_identifier
-				schema_name
-				visitor_space {
+		intellectualEntity {
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				visitorSpace {
 					slug
 				}
 			}
 			schema_name
-			meemoo_identifier
+			schema_identifier
 			dcterms_format
 			schema_thumbnail_url
 		}

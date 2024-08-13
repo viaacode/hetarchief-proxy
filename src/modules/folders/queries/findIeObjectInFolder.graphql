@@ -1,0 +1,34 @@
+query findIeObjectInFolder($folderId: uuid, $objectSchemaIdentifier: String) {
+	users_folder_ie(
+		where: {
+			user_collection_id: { _eq: $folderId }
+			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
+			collection: { is_deleted: { _eq: false } }
+		}
+	) {
+		intellectualEntity {
+			schema_identifier
+			schema_name
+			schema_creator
+			schema_description
+			dcterms_available
+			schema_thumbnail_url
+			dcterms_format
+			schema_number_of_pages
+			schema_is_part_of
+			schema_date_published
+			schema_duration
+			schema_license
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_sector
+				visitorSpace {
+					id
+					slug
+				}
+			}
+		}
+		created_at
+	}
+}

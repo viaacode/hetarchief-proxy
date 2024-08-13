@@ -1,7 +1,7 @@
 import { type IPagination } from '@studiohyperdrive/pagination';
 
 import {
-	type FindAllObjectsByCollectionIdQuery,
+	type FindAllIeObjectsByFolderIdQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
@@ -13,10 +13,10 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 
 export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
 
-export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['object_ie'][0] &
-	GetRelatedObjectsQuery['object_ie'][0];
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0] &
+	GetRelatedObjectsQuery['graph__intellectual_entity'][0];
 
-export type GqlLimitedIeObject = FindAllObjectsByCollectionIdQuery['users_folder_ie'][0];
+export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
 export enum MediaFormat {
 	VIDEO = 'video',
@@ -24,6 +24,7 @@ export enum MediaFormat {
 }
 
 export enum IeObjectLicense {
+	// Object Licenses
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
 	PUBLIEK_METADATA_ALL = 'VIAA-PUBLIEK-METADATA-ALL',
 	PUBLIEK_CONTENT = 'VIAA-PUBLIEK-CONTENT',
@@ -32,12 +33,17 @@ export enum IeObjectLicense {
 	INTRA_CP_METADATA_ALL = 'VIAA-INTRA_CP-METADATA-ALL',
 	INTRA_CP_METADATA_LTD = 'VIAA-INTRA_CP-METADATA-LTD',
 	INTRA_CP_CONTENT = 'VIAA-INTRA_CP-CONTENT',
+
+	// Rights statuses
+	PUBLIC_DOMAIN = 'Publiek-Domein',
+	COPYRIGHT_UNDETERMINED = 'COPYRIGHT-UNDETERMINED',
 }
 
 export enum IeObjectMetadataSet {
 	METADATA_LTD = 'METADATA_LTD',
 	METADATA_ALL = 'METADATA_ALL',
 	METADATA_ALL_WITH_ESSENCE = 'METADATA_ALL_WITH_ESSENCE',
+	EMPTY = 'EMPTY',
 }
 
 export enum IeObjectSector {
@@ -62,24 +68,25 @@ export enum IeObjectExtraUserGroupType {
 export type EbucoreObjectType = 'footage' | 'program';
 
 export interface IeObjectFile {
+	id: string;
 	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	representationSchemaIdentifier: string;
-	ebucoreMediaType: string;
-	ebucoreIsMediaFragmentOf: string;
-	embedUrl: string;
+	mimeType: string;
+	storedAt: string;
+	thumbnailUrl: string;
+	duration: string;
+	edmIsNextInSequence: string;
+	createdAt: string;
 }
 
 export interface IeObjectRepresentation {
-	name: string;
-	alternateName: string;
-	description: string;
-	schemaIdentifier: string;
-	dctermsFormat: string;
-	transcript: string;
-	dateCreated: string;
+	id: string;
+	schemaName: string;
+	isMediaFragmentOf: string;
+	schemaInLanguage: string;
+	schemaStartTime: string;
+	schemaTranscript: string;
+	edmIsNextInSequence: string;
+	updatedAt: string;
 	files: IeObjectFile[];
 }
 
@@ -101,18 +108,32 @@ export enum IsPartOfKey {
 	seizoennummer = 'seizoennummer',
 }
 
+export interface IsPartOfCollection {
+	name: string;
+	collectionType: IsPartOfKey;
+	isPreceededBy?: any[];
+	isSucceededBy?: any[];
+	locationCreated?: any;
+	startDate?: any;
+	endDate?: any;
+	publisher?: any;
+}
+
+export enum IeObjectType {
+	Video = 'video',
+	Audio = 'audio',
+	Film = 'film',
+	Newspaper = 'newspaper',
+}
+
 export interface IeObject {
 	dctermsAvailable: string;
-	dctermsFormat: string;
-	dctermsMedium: string;
-	meemooIdentifier: string; // PID (not unique per object)
-	meemoofilmBase: string;
-	meemoofilmColor: boolean;
-	meemoofilmImageOrSound: string;
-	premisIdentifier: any;
+	dctermsFormat: IeObjectType;
+	dctermsMedium: string[];
+	premisIdentifier: Record<string, string>[];
 	abstract: string;
 	creator: any;
-	dateCreated: string;
+	dateCreated: string | null;
 	datePublished: string;
 	description: string;
 	duration: string;
@@ -128,46 +149,49 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	name: string;
 	publisher: any;
-	spatial: string;
-	temporal: string;
+	spatial: string[];
+	temporal: string[];
 	thumbnailUrl: string;
-	// EXTRA
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
-	// OPTIONAL
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
-	premisIsPartOf?: string;
 	contributor?: any;
 	copyrightHolder?: string;
-	isPartOf?: Partial<Record<IsPartOfKey, string[]>>;
+	isPartOf?: IsPartOfCollection[];
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
-	representations?: IeObjectRepresentation[];
 	maintainerFormUrl?: string | null;
 	maintainerDescription?: string;
 	maintainerSiteUrl?: string;
-	// FROM DB
-	meemoofilmCaption?: string;
-	meemoofilmCaptionLanguage?: string;
-	meemooDescriptionProgramme?: string;
 	meemooLocalId?: string;
 	meemooOriginalCp?: string;
 	durationInSeconds?: number;
 	copyrightNotice?: string;
 	meemooMediaObjectId?: string;
-	ebucoreIsMediaFragmentOf?: string;
-	ebucoreHasMediaFragmentOf?: boolean;
-	dateCreatedLowerBound?: string;
-	actor?: string | null;
-	// Not yet available
 	transcript?: string;
-	caption?: string;
-	categorie?: string[];
-	languageSubtitles?: string;
-	meemooDescriptionCategory?: string[];
-	meemoofilmEmbeddedCaption?: string;
-	meemoofilmEmbeddedCaptionLanguage?: string;
+	abrahamInfo?: {
+		id: string;
+		uri: string;
+		code: string;
+	};
+	synopsis: string;
+	collectionName?: string;
+	issueNumber?: string;
+	fragmentId?: string;
+	creditText?: string;
+	preceededBy?: string[];
+	succeededBy?: string[];
+	width?: string;
+	height?: string;
+	locationCreated?: string;
+	startDate?: string;
+	endDate?: string;
+	carrierDate?: string;
+	newspaperPublisher?: string;
+	alternativeTitle?: string[];
+
+	pageRepresentations?: IeObjectRepresentation[][];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -217,28 +241,14 @@ export interface ElasticsearchObject {
 	// According to _mapping
 	dcterms_available: string;
 	dcterms_format: string;
-	dcterms_medium: string | null;
+	dcterms_medium: string[] | null;
 	ebucore_object_type: EbucoreObjectType | null;
-	meemoo_identifier: string;
 	meemoofilm_base: string | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_color: boolean | null; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_contains_embedded_caption: boolean; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	meemoofilm_image_or_sound: string; // exists in _mapping but does not exist in values of INT (exists in QAS but always null)
 	premis_is_part_of: string;
-	premis_identifier: {
-		Afbeelding?: string[];
-		Objectnaam?: string[];
-		object_nummer?: string[];
-		kp_productie_id?: string[];
-		kp_show_id?: string[];
-		Inventarisnummer?: string[];
-		batch?: string[];
-		Acquisition_number?: string[];
-		Bestandsnaam?: string[];
-		Api?: string[];
-		Object_number?: string[];
-		MEDIA_ID?: string[];
-	} | null;
+	premis_identifier: Record<string, string>[] | null;
 	schema_abstract: string | null; // always null in values (QAS & INT)
 	schema_alternate_name: string | null; // only exists as value in INT (not QAS)
 	schema_contributor: {
@@ -249,10 +259,12 @@ export interface ElasticsearchObject {
 		Voorzitter?: string[];
 	} | null;
 	schema_copyrightholder: string; // exists in _mapping but does not exist in values (QAS & INT)
-	schema_creator: {
-		Maker?: string[];
-		Archiefvormer?: string[];
-	} | null;
+	schema_creator:
+		| {
+				Maker?: string[];
+				Archiefvormer?: string[];
+		  }[]
+		| null;
 	schema_date_created: string | null;
 	schema_date_published: string | null;
 	schema_description: string | null;
@@ -260,27 +272,23 @@ export interface ElasticsearchObject {
 	schema_genre: string[];
 	schema_identifier: string;
 	schema_in_language: string[];
-	schema_is_part_of: {
-		archief?: string[];
-		reeks?: string[];
-		alternatief?: string[];
-		serie?: string[];
-	} | null;
+	schema_is_part_of: IsPartOfCollection[] | null;
 	schema_keywords: string[];
 	schema_license: string[] | null;
 	schema_maintainer: {
 		schema_identifier?: string;
 		schema_name?: string;
 		alt_label?: string | null; // not always available
-		organization_type?: IeObjectSector | null; // not always available
+		organization_sector?: IeObjectSector | null; // not always available
+		organization_type?: string | null; // not always available
 	};
 	schema_name: string;
 	schema_publisher: {
 		Distributeur?: string[];
 	} | null;
-	schema_spatial_coverage: string;
-	schema_temporal_coverage: string;
-	schema_thumbnail_url: string;
+	schema_spatial_coverage: string[];
+	schema_temporal_coverage: string[];
+	schema_thumbnail_url: string[];
 	// Discrepancy props in QAS & INT
 	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)
 	meemoo_description_cast?: string; // only exists in QAS (not INT)

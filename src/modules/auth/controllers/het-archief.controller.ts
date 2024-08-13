@@ -27,9 +27,9 @@ import { IdpService } from '../services/idp.service';
 import { type RelayState, SamlCallbackBody } from '../types';
 
 import { orgNotLinkedLogoutAndRedirectToErrorPage } from '~modules/auth/org-not-linked-redirect';
-import { CollectionsService } from '~modules/collections/services/collections.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
+import { FoldersService } from '~modules/folders/services/folders.service';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
@@ -48,7 +48,7 @@ export class HetArchiefController {
 		private hetArchiefService: HetArchiefService,
 		private idpService: IdpService,
 		private usersService: UsersService,
-		private collectionsService: CollectionsService,
+		private foldersService: FoldersService,
 		private configService: ConfigService<Configuration>,
 		private eventsService: EventsService,
 		private translationsService: TranslationsService,
@@ -59,7 +59,8 @@ export class HetArchiefController {
 	@Redirect()
 	public async loginRoute(
 		@Session() session: Record<string, any>,
-		@Query('returnToUrl') returnToUrl: string
+		@Query('returnToUrl') returnToUrl: string,
+		@Query('language') language: Locale = Locale.Nl
 	) {
 		try {
 			if (SessionHelper.isLoggedIn(session)) {
@@ -69,7 +70,7 @@ export class HetArchiefController {
 				};
 			}
 
-			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl);
+			const url = await this.hetArchiefService.createLoginRequestUrl(returnToUrl, language);
 			return {
 				url,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
@@ -117,18 +118,17 @@ export class HetArchiefController {
 	 * This function has to redirect the browser back to the app once the information is stored in the user's session
 	 */
 	@Post('login-callback')
-	@Redirect()
 	async loginCallback(
 		@Req() request: Request,
 		@Session() session: Record<string, any>,
-		@Body() response: SamlCallbackBody,
-		@Res() res
+		@Body() body: SamlCallbackBody,
+		@Res() response: Response
 	): Promise<any> {
 		let info: RelayState;
 		try {
-			info = response.RelayState ? JSON.parse(response.RelayState) : {};
+			info = body.RelayState ? JSON.parse(body.RelayState) : {};
 			this.logger.debug(`login-callback relay state: ${JSON.stringify(info, null, 2)}`);
-			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(response);
+			const ldapUser: LdapUser = await this.hetArchiefService.assertSamlResponse(body);
 			this.logger.debug(`login-callback ldap info: ${JSON.stringify(ldapUser, null, 2)}`);
 
 			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, ldapUser);
@@ -184,12 +184,12 @@ export class HetArchiefController {
 					ldapUser.attributes.entryUUID[0]
 				);
 				const locale = (archiefUser?.language || Locale.Nl) as Locale;
-				await this.collectionsService.create(
+				await this.foldersService.create(
 					{
 						is_default: true,
 						user_profile_id: archiefUser.id,
 						name: this.translationsService.tText(
-							'modules/collections/controllers___default-collection-name',
+							'modules/folders/controllers___default-collection-name',
 							null,
 							locale
 						),
@@ -197,6 +197,21 @@ export class HetArchiefController {
 					null, // referer not important here
 					''
 				);
+
+				this.eventsService.insertEvents([
+					{
+						source: '/',
+						data: {
+							idp: Idp.HETARCHIEF,
+							user_group_id: archiefUser.groupId,
+							user_group_name: archiefUser.groupName,
+						},
+						subject: archiefUser.id,
+						type: LogEventType.USER_CREATE,
+						time: new Date().toISOString(),
+						id: EventsHelper.getEventId(request),
+					},
+				]);
 			} else {
 				if (
 					!isEqual(
@@ -249,10 +264,7 @@ export class HetArchiefController {
 				},
 			]);
 
-			return {
-				url: info.returnToUrl, // TODO add fallback if undefined
-				statusCode: HttpStatus.TEMPORARY_REDIRECT,
-			};
+			response.redirect(info.returnToUrl);
 		} catch (err) {
 			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {
@@ -265,7 +277,7 @@ export class HetArchiefController {
 				this.logger.debug('orgNotLinkedLogoutAndRedirectToErrorPage');
 
 				return orgNotLinkedLogoutAndRedirectToErrorPage(
-					res,
+					response,
 					proxyHost,
 					Idp.HETARCHIEF,
 					`${err.message}`.replace(NO_ORG_LINKED, ''),
