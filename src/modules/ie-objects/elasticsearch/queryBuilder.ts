@@ -175,6 +175,7 @@ export class QueryBuilder {
 					wildcard: {
 						[elasticKey]: {
 							value: `*${searchFilter.value}*`,
+							case_insensitive: true,
 						},
 					},
 				},
