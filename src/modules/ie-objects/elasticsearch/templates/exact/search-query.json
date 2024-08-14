@@ -63,7 +63,8 @@
         "schema_publisher_text",
         "schema_maintainer.schema_name",
         "schema_transcript",
-        "schema_copyrightholder"
+        "schema_copyrightholder",
+        "schema_mentions"
       ]
     }
   }

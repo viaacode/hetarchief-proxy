@@ -256,7 +256,10 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo as any
 			);
-			expect(JSON.stringify(esQuery.query)).not.toContain('schema_transcript');
+			expect(JSON.stringify(esQuery.query)).toContain('schema_name');
+			expect(JSON.stringify(esQuery.query)).toContain('schema_is_part_of.newspaper');
+			expect(JSON.stringify(esQuery.query)).toContain('schema_transcript');
+			expect(JSON.stringify(esQuery.query)).toContain('schema_mentions');
 		});
 
 		it('should filter on format', () => {
