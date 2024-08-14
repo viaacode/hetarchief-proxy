@@ -37,6 +37,7 @@
       "boost": 100,
       "fields": [
         "schema_name^20",
+        "schema_is_part_of.newspaper^20",
         "schema_description",
         "schema_abstract",
         "schema_is_part_of.alternatief^20",
@@ -63,7 +64,6 @@
         "schema_publisher_text",
         "schema_maintainer.schema_name",
         "schema_transcript",
-        "schema_is_part_of.newspaper",
         "schema_copyrightholder"
       ]
     }
