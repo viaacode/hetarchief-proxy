@@ -60,7 +60,10 @@
         "meemoofilm_base",
         "schema_creator_text",
         "schema_publisher_text",
-        "schema_maintainer.schema_name"
+        "schema_maintainer.schema_name",
+        "schema_transcript",
+        "schema_is_part_of.newspaper",
+        "schema_copyrightholder"
       ]
     }
   }
