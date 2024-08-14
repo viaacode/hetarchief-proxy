@@ -42,7 +42,8 @@
         "dcterms_medium",
         "schema_maintainer.schema_name",
         "schema_transcript",
-        "schema_copyrightholder"
+        "schema_copyrightholder",
+        "schema_mentions"
       ]
     }
   }
