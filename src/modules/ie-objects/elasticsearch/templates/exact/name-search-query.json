@@ -1,6 +1,7 @@
 [
   {
     "bool": {
+      "minimum_should_match": 1,
       "should": [
         {
           "term": {
@@ -27,8 +28,7 @@
             "schema_is_part_of.programma.keyword": "{{query}}"
           }
         }
-      ],
-      "minimum_should_match": 1
+      ]
     }
   }
 ]

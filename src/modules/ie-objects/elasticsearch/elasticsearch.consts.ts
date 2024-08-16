@@ -1,30 +1,22 @@
-import _ from 'lodash';
-
 import { type IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
-import searchQueryExact from './templates/exact/search-query.json';
+import searchQueryAllExact from './templates/exact/search-query--metadata-all.json';
+import searchQueryLimitedExact from './templates/exact/search-query--metadata-limited.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
-import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
-import searchQueryFuzzy from './templates/fuzzy/search-query.json';
+import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
+import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
+import searchQueryAdvancedAllFuzzy from './templates/fuzzy/search-query-advanced--metadata-all.json';
+import searchQueryAdvancedLimitedFuzzy from './templates/fuzzy/search-query-advanced--metadata-limited.json';
 
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 
 export const ALL_INDEXES = 'or-*';
 
-const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
-const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
-const searchQueryTemplateExact = _.values(searchQueryExact);
-const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
-const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
-
-const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
-const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryExact);
-
 export enum IeObjectsSearchFilterField {
-	ADVANCED_QUERY = 'advancedQuery',
+	// Searches in metadata LTD fields
 	CREATED = 'created',
 	CREATOR = 'creator',
 	DESCRIPTION = 'description',
@@ -38,20 +30,65 @@ export enum IeObjectsSearchFilterField {
 	MEDIUM = 'medium',
 	NAME = 'name',
 	PUBLISHED = 'published',
-	PUBLISHER = 'publisher',
-	QUERY = 'query',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
-	OBJECT_TYPE = 'objectType',
-	LICENSES = 'license', // Used to filter objects that are in a visitor space
-	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
-	TRANSCRIPT = 'transcript', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	LICENSES = 'license', // Used to filter objects that are in a visitor space
+
+	// Searches in metadata ALL fields
+	QUERY = 'query',
+	TRANSCRIPT = 'transcript',
+	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	OBJECT_TYPE = 'objectType',
+	PUBLISHER = 'publisher',
+	ADVANCED_QUERY = 'advancedQuery',
 }
+
+export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearchFilterField[] = [
+	// LTD
+	IeObjectsSearchFilterField.CREATED,
+	IeObjectsSearchFilterField.CREATOR,
+	IeObjectsSearchFilterField.DESCRIPTION,
+	IeObjectsSearchFilterField.DURATION,
+	IeObjectsSearchFilterField.SPACIAL_COVERAGE,
+	IeObjectsSearchFilterField.TEMPORAL_COVERAGE,
+	IeObjectsSearchFilterField.FORMAT,
+	IeObjectsSearchFilterField.GENRE,
+	IeObjectsSearchFilterField.KEYWORD,
+	IeObjectsSearchFilterField.LANGUAGE,
+	IeObjectsSearchFilterField.MEDIUM,
+	IeObjectsSearchFilterField.NAME,
+	IeObjectsSearchFilterField.PUBLISHED,
+	IeObjectsSearchFilterField.MAINTAINER_ID,
+	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
+	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+	IeObjectsSearchFilterField.CAST,
+	IeObjectsSearchFilterField.IDENTIFIER,
+	IeObjectsSearchFilterField.LICENSES,
+	IeObjectsSearchFilterField.CATEGORIE,
+	// ALL
+	IeObjectsSearchFilterField.QUERY,
+	IeObjectsSearchFilterField.TRANSCRIPT,
+	IeObjectsSearchFilterField.CAPTION,
+	IeObjectsSearchFilterField.PUBLISHER,
+	IeObjectsSearchFilterField.OBJECT_TYPE,
+	IeObjectsSearchFilterField.ADVANCED_QUERY,
+];
+
+export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilterField[] = [
+	...IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED,
+	// ALL
+	IeObjectsSearchFilterField.QUERY,
+	IeObjectsSearchFilterField.TRANSCRIPT,
+	IeObjectsSearchFilterField.CAPTION,
+	IeObjectsSearchFilterField.PUBLISHER,
+	IeObjectsSearchFilterField.OBJECT_TYPE,
+	IeObjectsSearchFilterField.ADVANCED_QUERY,
+];
 
 export enum Operator {
 	CONTAINS = 'contains',
@@ -83,17 +120,31 @@ export interface QueryBuilderInputInfo {
 	spacesIds?: string[];
 }
 
+export enum MetadataAccessType {
+	LIMITED = 'limited',
+	ALL = 'all',
+}
+
 export const MULTI_MATCH_QUERY_MAPPING = {
 	fuzzy: {
-		query: searchQueryTemplateFuzzy,
-		advancedQuery: searchQueryAdvancedTemplateFuzzy,
-		name: nameSearchQueryTemplateFuzzy,
-		description: descriptionSearchQueryTemplateFuzzy,
+		query: {
+			limited: searchQueryLimitedFuzzy,
+			all: searchQueryAllFuzzy,
+		},
+		advancedQuery: {
+			limited: searchQueryAdvancedLimitedFuzzy,
+			all: searchQueryAdvancedAllFuzzy,
+		},
+		name: nameSearchQueryFuzzy,
+		description: descriptionSearchQueryFuzzy,
 	},
 	exact: {
-		name: nameSearchQueryTemplateExact,
-		identifier: identifierSearchQueryTemplateExact,
-		query: searchQueryTemplateExact,
+		name: nameSearchQueryExact,
+		identifier: identifierSearchQueryExact,
+		query: {
+			limited: searchQueryLimitedExact,
+			all: searchQueryAllExact,
+		},
 	},
 };
 
@@ -246,3 +297,22 @@ export const FLATTENED_FIELDS: IeObjectsSearchFilterField[] = [
 	If the search term is a string starting with a digit, and we don't do this, jsep will throw an error saying a variable cannot start with a digit.
 */
 export const JSEP_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';
+
+/**
+ * Used to identify return types that are single or arrays of elasticsearch sub queries
+ * eg:
+ * {
+ *     bool: {
+ *         should: [
+ *     	       { term: { 'schema_name.keyword': 'test' } },
+ *     	   ],
+ *     }
+ * }
+ * or
+ * {
+ *     term: {
+ *         'schema_name.keyword': 'test'
+ *     }
+ * }
+ */
+export type ElasticsearchSubQuery = Record<string, any>;

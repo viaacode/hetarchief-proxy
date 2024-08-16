@@ -26,27 +26,30 @@ export const convertNodeToEsQueryFilterObjects = (
 			// Compound query with other nodes below it => follow the regular recursive building of the elasticsearch query
 			return {
 				bool: {
-					should: ((node.body || []) as Expression[]).map((bodyNode) =>
+					minimum_should_match: bodyNodes.length,
+					should: bodyNodes.map((bodyNode) =>
 						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
 					),
-					minimum_should_match: ((node.body || []) as Expression[]).length,
 				},
 			};
 		}
 
-		case 'SequenceExpression':
+		case 'SequenceExpression': {
+			const expressions = (node.expressions || []) as Expression[];
 			return {
 				bool: {
-					should: ((node.expressions || []) as Expression[]).map((bodyNode) =>
+					minimum_should_match: expressions.length,
+					should: expressions.map((bodyNode) =>
 						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
 					),
-					minimum_should_match: ((node.expressions || []) as Expression[]).length,
 				},
 			};
+		}
 
 		case 'BinaryExpression':
 			return {
 				bool: {
+					minimum_should_match: (node.operator as baseTypes) === 'AND' ? 2 : 1,
 					should: [
 						convertNodeToEsQueryFilterObjects(
 							node.left as Expression,
@@ -59,7 +62,6 @@ export const convertNodeToEsQueryFilterObjects = (
 							searchFilter
 						),
 					],
-					minimum_should_match: (node.operator as baseTypes) === 'AND' ? 2 : 1,
 				},
 			};
 
@@ -112,8 +114,8 @@ export const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchF
 
 	return {
 		bool: {
-			should: shouldArray,
 			minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
+			should: shouldArray,
 		},
 	};
 };

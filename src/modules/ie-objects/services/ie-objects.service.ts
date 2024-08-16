@@ -153,10 +153,10 @@ export class IeObjectsService {
 			});
 		} catch (err) {
 			/*
-        If the QueryBuilder throws an error, we try the query with a literal string.
-        If that also throws an error, we return http 500
-        We update the inputQuery because it is later used.
-      */
+				If the QueryBuilder throws an error, we try the query with a literal string.
+				If that also throws an error, we return http 500
+				We update the inputQuery because it is later used.
+			*/
 			inputQuery = convertQueryToLiteralString(inputQuery);
 			esQuery = QueryBuilder.build(inputQuery, {
 				user,
@@ -285,6 +285,7 @@ export class IeObjectsService {
 			from: 0,
 			query: {
 				bool: {
+					minimum_should_match: searchInsideVisitorSpace ? 3 : 2,
 					should: [
 						{
 							more_like_this: {
@@ -323,7 +324,6 @@ export class IeObjectsService {
 							: []),
 						regularQuery.query.bool.should[1],
 					],
-					minimum_should_match: searchInsideVisitorSpace ? 3 : 2,
 				},
 			},
 		};
