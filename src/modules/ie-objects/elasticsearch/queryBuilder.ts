@@ -14,6 +14,7 @@ import { IeObjectLicense } from '../ie-objects.types';
 import {
 	AGGS_PROPERTIES,
 	DEFAULT_QUERY_TYPE,
+	ElasticsearchField,
 	type ElasticsearchSubQuery,
 	FLATTENED_FIELDS,
 	IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL,
@@ -59,6 +60,15 @@ export class QueryBuilder {
 	 * @return elastic search query
 	 */
 	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
+		// Check if all filter fields are known
+		(searchRequest?.filters || []).find((searchFilter) => {
+			if (!Object.values(IeObjectsSearchFilterField).includes(searchFilter.field)) {
+				throw new BadRequestException(
+					`Field '${searchFilter.field}' is not a valid search filter field.`
+				);
+			}
+			return false;
+		});
 		try {
 			// Build the elasticsearch query object in 2 parts
 			// * search terms and filters in metadata limited fields
@@ -322,16 +332,16 @@ export class QueryBuilder {
 		// Add additional filters to the query object
 		const filterArray: ElasticsearchSubQuery[] = [];
 		const filterObject: ElasticsearchSubQuery = {
-			bool: {
-				filter: filterArray,
-			},
+			bool: {},
 		};
 
 		// Kiosk users are only allowed to view objects from their maintainer
 		if (inputInfo.user?.getGroupName() === GroupName.KIOSK_VISITOR) {
 			filterArray.push({
 				terms: {
-					'schema_maintainer.schema_identifier': [inputInfo.user?.getOrganisationId()],
+					[ElasticsearchField.schema_maintainer +
+					'.' +
+					ElasticsearchField.schema_identifier]: [inputInfo.user?.getOrganisationId()],
 				},
 			});
 		}
@@ -402,7 +412,8 @@ export class QueryBuilder {
 							MULTI_MATCH_QUERY_MAPPING.fuzzy.advancedQuery[metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					} else {
-						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+						const searchTemplate =
+							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
@@ -416,7 +427,8 @@ export class QueryBuilder {
 				} else {
 					// Exact match
 					// Use a multi field search template to exact search in elasticsearch across multiple fields
-					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
+					const searchTemplate =
+						MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
 
 					if (!searchTemplate) {
 						throw new BadRequestException(
@@ -461,7 +473,14 @@ export class QueryBuilder {
 			applyFilter(filterObject, advancedFilter);
 		});
 
-		if (filterArray.length === 0 && !filterObject.bool?.must) {
+		if (filterArray.length > 0) {
+			applyFilter(filterObject, {
+				occurrenceType: 'filter',
+				query: filterArray,
+			});
+		}
+
+		if (!filterObject.bool?.must && !filterObject.bool?.filter) {
 			return {};
 		}
 
@@ -493,19 +512,24 @@ export class QueryBuilder {
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
 		if (
 			consultableOnlyOnLocationFilter?.value?.toLowerCase() === 'true' &&
-			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR
+			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR &&
+			inputInfo?.spacesIds?.length
 		) {
 			toBeAppliedConsultableFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					{
 						terms: {
-							'schema_maintainer.schema_identifier': inputInfo?.spacesIds,
+							[ElasticsearchField.schema_maintainer +
+							'.' +
+							ElasticsearchField.schema_identifier]: inputInfo?.spacesIds,
 						},
 					},
 					{
 						terms: {
-							schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+							[ElasticsearchField.schema_license]: [
+								IeObjectLicense.BEZOEKERTOOL_CONTENT,
+							],
 						},
 					},
 				],
@@ -519,35 +543,31 @@ export class QueryBuilder {
 		if (
 			consultableMediaFilter?.value?.toLowerCase() === 'true' &&
 			inputInfo.user.getIsKeyUser() &&
-			!isNil(inputInfo.user.getSector())
+			!isNil(inputInfo.user.getSector()) &&
+			!isNil(inputInfo.user.getOrganisationId())
 		) {
 			toBeAppliedConsultableFilters.push({
 				occurrenceType: 'filter',
 				query: [
-					{
-						bool: {
-							minimum_should_match: 1,
-							should: [
-								{
-									terms: {
-										'schema_maintainer.organization_type':
-											getSectorsWithEssenceAccess(inputInfo.user.getSector()),
-									},
-								},
-								{
-									term: {
-										'schema_maintainer.schema_identifier':
-											inputInfo.user.getOrganisationId(),
-									},
-								},
-							],
+					OR([
+						{
+							terms: {
+								[ElasticsearchField.schema_maintainer +
+								'.' +
+								ElasticsearchField.organization_type]: getSectorsWithEssenceAccess(
+									inputInfo.user.getSector()
+								),
+							},
 						},
-					},
-					{
-						terms: {
-							schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
+						{
+							term: {
+								[ElasticsearchField.schema_maintainer +
+								'.' +
+								ElasticsearchField.schema_identifier]:
+									inputInfo.user.getOrganisationId(),
+							},
 						},
-					},
+					]),
 				],
 			});
 		}
@@ -564,7 +584,7 @@ export class QueryBuilder {
 		return [
 			{
 				terms: {
-					schema_license: [IeObjectLicense.PUBLIEK_METADATA_LTD],
+					[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 				},
 			},
 		];
@@ -578,7 +598,7 @@ export class QueryBuilder {
 		return [
 			{
 				terms: {
-					schema_license: [
+					[ElasticsearchField.schema_license]: [
 						IeObjectLicense.PUBLIEK_METADATA_ALL,
 						IeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
 					],
@@ -603,27 +623,23 @@ export class QueryBuilder {
 		}
 
 		return [
-			{
-				bool: {
-					minimum_should_match: 2,
-					should: [
-						{
-							terms: {
-								'schema_maintainer.schema_identifier':
-									visitorSpaceInfo.visitorSpaceIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
+			AND([
+				{
+					terms: {
+						[ElasticsearchField.schema_maintainer +
+						'.' +
+						ElasticsearchField.schema_identifier]: visitorSpaceInfo.visitorSpaceIds,
+					},
 				},
-			},
+				{
+					terms: {
+						[ElasticsearchField.schema_license]: [
+							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+							IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						],
+					},
+				},
+			]),
 		];
 	}
 
@@ -644,26 +660,21 @@ export class QueryBuilder {
 		}
 
 		return [
-			{
-				bool: {
-					minimum_should_match: 2,
-					should: [
-						{
-							ids: {
-								values: visitorSpaceInfo.objectIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
+			AND([
+				{
+					ids: {
+						values: visitorSpaceInfo.objectIds,
+					},
 				},
-			},
+				{
+					terms: {
+						[ElasticsearchField.schema_license]: [
+							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+							IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						],
+					},
+				},
+			]),
 		];
 	}
 
@@ -682,30 +693,25 @@ export class QueryBuilder {
 			user?.getOrganisationId()
 		) {
 			return [
-				{
-					bool: {
-						minimum_should_match: 2,
-						should: [
-							{
-								terms: {
-									'schema_maintainer.schema_identifier': isNil(
-										user?.getOrganisationId()
-									)
-										? []
-										: [user?.getOrganisationId()],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-										IeObjectLicense.BEZOEKERTOOL_CONTENT,
-									],
-								},
-							},
-						],
+				AND([
+					{
+						terms: {
+							[ElasticsearchField.schema_maintainer +
+							'.' +
+							ElasticsearchField.schema_identifier]: isNil(user?.getOrganisationId())
+								? []
+								: [user?.getOrganisationId()],
+						},
 					},
-				},
+					{
+						terms: {
+							[ElasticsearchField.schema_license]: [
+								IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+								IeObjectLicense.BEZOEKERTOOL_CONTENT,
+							],
+						},
+					},
+				]),
 			];
 		}
 		return [];
@@ -723,41 +729,47 @@ export class QueryBuilder {
 		const { user } = inputInfo;
 
 		if (user?.getIsKeyUser() && !isNil(user?.getSector())) {
-			return [
+			const subQueries: ElasticsearchSubQuery[] = [
 				// 6.1) Check if object is part of organisation with favorable sector
 				{
 					terms: {
-						schema_license: [
+						[ElasticsearchField.schema_license]: [
 							IeObjectLicense.INTRA_CP_METADATA_ALL,
 							IeObjectLicense.INTRA_CP_CONTENT,
 						],
 					},
 				},
-
-				// 6.2) Check if object is part of own organisation
-				{
-					bool: {
-						minimum_should_match: 2,
-						should: [
-							{
-								terms: {
-									'schema_maintainer.schema_identifier': [
-										user?.getOrganisationId(),
-									],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
-						],
-					},
-				},
 			];
+			if (user?.getOrganisationId()) {
+				subQueries.push(
+					// 6.2) Check if object is part of own organisation
+					{
+						bool: {
+							minimum_should_match: 2,
+							should: [
+								{
+									terms: {
+										[ElasticsearchField.schema_maintainer +
+										'.' +
+										ElasticsearchField.schema_identifier]: [
+											user?.getOrganisationId(),
+										],
+									},
+								},
+								{
+									terms: {
+										[ElasticsearchField.schema_license]: [
+											IeObjectLicense.INTRA_CP_METADATA_ALL,
+											IeObjectLicense.INTRA_CP_CONTENT,
+										],
+									},
+								},
+							],
+						},
+					}
+				);
+			}
+			return subQueries;
 		}
 		return [];
 	}
@@ -827,7 +839,7 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static aggSuffix(prop: IeObjectsSearchFilterField): string {
+	private static aggSuffix(prop: IeObjectsSearchFilterField): `.keyword` | '' {
 		return NEEDS_AGG_SUFFIX[prop] ? `.${NEEDS_AGG_SUFFIX[prop]}` : '';
 	}
 

@@ -5,6 +5,8 @@ import { type SearchFilter } from '../dto/ie-objects.dto';
 
 import { decodeSearchterm } from './encode-search-term';
 
+import { AND, NOT, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+
 export const convertNodeToEsQueryFilterObjects = (
 	node: Expression,
 	searchTemplates?: { fuzzy: any[]; exact: any[] },
@@ -24,57 +26,46 @@ export const convertNodeToEsQueryFilterObjects = (
 			}
 
 			// Compound query with other nodes below it => follow the regular recursive building of the elasticsearch query
-			return {
-				bool: {
-					minimum_should_match: bodyNodes.length,
-					should: bodyNodes.map((bodyNode) =>
-						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
-					),
-				},
-			};
+			return AND(
+				bodyNodes.map((bodyNode) =>
+					convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
+				)
+			);
 		}
 
 		case 'SequenceExpression': {
 			const expressions = (node.expressions || []) as Expression[];
-			return {
-				bool: {
-					minimum_should_match: expressions.length,
-					should: expressions.map((bodyNode) =>
-						convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
-					),
-				},
-			};
+			return AND(
+				expressions.map((bodyNode) =>
+					convertNodeToEsQueryFilterObjects(bodyNode, searchTemplates, searchFilter)
+				)
+			);
 		}
 
-		case 'BinaryExpression':
-			return {
-				bool: {
-					minimum_should_match: (node.operator as baseTypes) === 'AND' ? 2 : 1,
-					should: [
-						convertNodeToEsQueryFilterObjects(
-							node.left as Expression,
-							searchTemplates,
-							searchFilter
-						),
-						convertNodeToEsQueryFilterObjects(
-							node.right as Expression,
-							searchTemplates,
-							searchFilter
-						),
-					],
-				},
-			};
+		case 'BinaryExpression': {
+			const operator = (node.operator as baseTypes) === 'AND' ? AND : OR;
+			return operator([
+				convertNodeToEsQueryFilterObjects(
+					node.left as Expression,
+					searchTemplates,
+					searchFilter
+				),
+				convertNodeToEsQueryFilterObjects(
+					node.right as Expression,
+					searchTemplates,
+					searchFilter
+				),
+			]);
+		}
 
 		case 'UnaryExpression':
-			return {
-				bool: {
-					must_not: convertNodeToEsQueryFilterObjects(
-						node.argument as Expression,
-						searchTemplates,
-						searchFilter
-					),
-				},
-			};
+			return NOT(
+				convertNodeToEsQueryFilterObjects(
+					node.argument as Expression,
+					searchTemplates,
+					searchFilter
+				)
+			);
 
 		case 'Identifier':
 			return buildFreeTextFilter(searchTemplates.fuzzy, {
@@ -112,10 +103,6 @@ export const buildFreeTextFilter = (searchTemplate: any[], searchFilter: SearchF
 		return JSON.parse(stringifiedSearchTemplate.replace(/\{\{query}}/g, value));
 	});
 
-	return {
-		bool: {
-			minimum_should_match: 1, // At least one of the search patterns has to match, but not all of them
-			should: shouldArray,
-		},
-	};
+	// At least one of the search patterns has to match, but not all of them
+	return OR(shouldArray);
 };

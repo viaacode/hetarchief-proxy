@@ -66,9 +66,11 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import {
 	ALL_INDEXES,
+	ElasticsearchField,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -283,49 +285,44 @@ export class IeObjectsService {
 		const esQueryObject = {
 			size: limit,
 			from: 0,
-			query: {
-				bool: {
-					minimum_should_match: searchInsideVisitorSpace ? 3 : 2,
-					should: [
-						{
-							more_like_this: {
-								fields: [
-									'schema_name',
-									'schema_description',
-									'schema_keywords.keyword',
-									'schema_is_part_of.*.keyword',
-									'schema_creator_text',
-								],
-								like: [
-									{
-										_index: esIndex,
-										_id: schemaIdentifier,
-									},
-								],
-								min_term_freq: 2,
-								min_doc_freq: 2,
-								max_doc_freq: 6,
-								max_query_terms: 12,
-								min_word_length: 4,
+			query: AND([
+				{
+					more_like_this: {
+						fields: [
+							ElasticsearchField.schema_name,
+							ElasticsearchField.schema_description,
+							ElasticsearchField.schema_keywords + '.keyword',
+							ElasticsearchField.schema_is_part_of + '.*.keyword',
+							ElasticsearchField.schema_creator_text,
+						],
+						like: [
+							{
+								_index: esIndex,
+								_id: schemaIdentifier,
 							},
-						},
-						...(searchInsideVisitorSpace
-							? [
-									{
-										// if esIndex is passed, we only want to return objects that are inside a visitor space
-										terms: {
-											schema_license: [
-												IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-												IeObjectLicense.BEZOEKERTOOL_CONTENT,
-											],
-										},
-									},
-							  ]
-							: []),
-						regularQuery.query.bool.should[1],
-					],
+						],
+						min_term_freq: 2,
+						min_doc_freq: 2,
+						max_doc_freq: 6,
+						max_query_terms: 12,
+						min_word_length: 4,
+					},
 				},
-			},
+				...(searchInsideVisitorSpace
+					? [
+							{
+								// if esIndex is passed, we only want to return objects that are inside a visitor space
+								terms: {
+									[ElasticsearchField.schema_license]: [
+										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+										IeObjectLicense.BEZOEKERTOOL_CONTENT,
+									],
+								},
+							},
+					  ]
+					: []),
+				regularQuery.query.bool.should[1],
+			]),
 		};
 
 		// if esIndex is passed, we only want to return objects that are inside a visitor space

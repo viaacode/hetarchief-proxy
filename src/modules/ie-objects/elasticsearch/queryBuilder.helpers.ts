@@ -20,7 +20,9 @@ import { type ElasticsearchSubQuery } from '~modules/ie-objects/elasticsearch/el
  * @param subQueries
  * @constructor
  */
-export function AND(subQueries: ElasticsearchSubQuery[]): ElasticsearchSubQuery | null {
+export function AND(
+	subQueries: (ElasticsearchSubQuery | Record<string, never> | null)[]
+): ElasticsearchSubQuery | null {
 	if (subQueries.some(isNil)) {
 		// Null means the sub query cannot produce results. eg: if no visitor spaces are accessible
 		return null;
@@ -58,7 +60,9 @@ export function AND(subQueries: ElasticsearchSubQuery[]): ElasticsearchSubQuery 
  * @param subQueries
  * @constructor
  */
-export function OR(subQueries: ElasticsearchSubQuery[]): ElasticsearchSubQuery | null {
+export function OR(
+	subQueries: (ElasticsearchSubQuery | Record<string, never> | null)[]
+): ElasticsearchSubQuery | null {
 	const cleanedSubQueries = compact(subQueries).filter((subQuery) => !isEmpty(subQuery));
 	if (cleanedSubQueries.length === 0) {
 		return null;
@@ -74,13 +78,32 @@ export function OR(subQueries: ElasticsearchSubQuery[]): ElasticsearchSubQuery |
 	};
 }
 
-export function applyFilter(filterObject: ElasticsearchSubQuery, newFilter: any): void {
+export function NOT(
+	subQuery: ElasticsearchSubQuery | Record<string, never> | null
+): ElasticsearchSubQuery | null {
+	if (!subQuery || isEmpty(subQuery)) {
+		return null;
+	}
+	return {
+		bool: {
+			must_not: subQuery,
+		},
+	};
+}
+
+export function applyFilter(
+	filterObject: ElasticsearchSubQuery,
+	newFilter: {
+		occurrenceType: string;
+		query: ElasticsearchSubQuery | ElasticsearchSubQuery[];
+	}
+): void {
 	if (!filterObject.bool[newFilter.occurrenceType]) {
 		filterObject.bool[newFilter.occurrenceType] = [];
 	}
 
-	// isConsultable filters have array of items to be processed
-	if (isArray(newFilter.query)) {
+	// eg: isConsultable filters have array of items to be processed
+	if (isArray(newFilter.query) && newFilter.query.length > 0) {
 		return filterObject.bool[newFilter.occurrenceType].push(...newFilter.query);
 	}
 
