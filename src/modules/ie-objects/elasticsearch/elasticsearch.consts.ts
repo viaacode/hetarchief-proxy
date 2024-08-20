@@ -18,6 +18,7 @@ export const ALL_INDEXES = 'or-*';
 export enum IeObjectsSearchFilterField {
 	// Searches in metadata LTD fields
 	CREATED = 'created',
+	RELEASE_DATE = 'releaseDate', // Searches in both creation date and publish date
 	CREATOR = 'creator',
 	DESCRIPTION = 'description',
 	DURATION = 'duration',
@@ -66,6 +67,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.MEDIUM,
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.PUBLISHED,
+	IeObjectsSearchFilterField.RELEASE_DATE,
 	IeObjectsSearchFilterField.MAINTAINER_ID,
 	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
@@ -152,6 +154,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
+	[IeObjectsSearchFilterField.RELEASE_DATE]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.DESCRIPTION]: QueryType.TERM,
 	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: QueryType.MATCH,
@@ -223,6 +226,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 		| IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		| IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
+		| IeObjectsSearchFilterField.RELEASE_DATE // Custom filter: creation date OR publish date
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
 	[IeObjectsSearchFilterField.QUERY]: ElasticsearchField.query,

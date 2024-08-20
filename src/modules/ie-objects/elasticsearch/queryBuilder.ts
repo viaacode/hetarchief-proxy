@@ -348,27 +348,23 @@ export class QueryBuilder {
 		// Determine consultable filters are present and strip them from standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
 		// This because if we strip it before it will just return match_all
-		const consultableSearchFilterFields: IeObjectsSearchFilterField[] = [
+		const customSearchFilterFields: IeObjectsSearchFilterField[] = [
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
 			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
+			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
 		if (
-			filters &&
-			filters.some((filter: SearchFilter) =>
-				consultableSearchFilterFields.includes(filter.field)
-			)
+			filters?.some((filter: SearchFilter) => customSearchFilterFields.includes(filter.field))
 		) {
-			const consultableFilters = this.determineIsConsultableFilters(filters, inputInfo);
+			const customFilters = this.determineCustomFilters(filters, inputInfo);
 
 			// apply determined consultable filters if there are any
-			consultableFilters.forEach((consultableFilter) =>
-				applyFilter(filterObject, consultableFilter)
-			);
+			customFilters.forEach((customFilter) => applyFilter(filterObject, customFilter));
 			// Remove CONSULTABLE_ONLY_ON_LOCATION and CONSULTABLE_MEDIA filter entries from the filter list,
 			// since they have been handled above and should not be handled by the standard field filtering logic.
 			filters = filters.filter(
-				(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
+				(filter: SearchFilter) => !customSearchFilterFields.includes(filter.field)
 			);
 		}
 
@@ -495,11 +491,11 @@ export class QueryBuilder {
 	 * @param inputInfo
 	 * @returns
 	 */
-	public static determineIsConsultableFilters(
+	public static determineCustomFilters(
 		searchRequestFilters: SearchFilter[],
 		inputInfo: QueryBuilderInputInfo
 	): any {
-		const toBeAppliedConsultableFilters: any = [];
+		const toBeAppliedCustomFilters: any = [];
 
 		const consultableOnlyOnLocationFilter = searchRequestFilters.find(
 			(filter: SearchFilter) =>
@@ -512,6 +508,9 @@ export class QueryBuilder {
 			(filter: SearchFilter) =>
 				filter.field === IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 		);
+		const releaseDates = searchRequestFilters.filter(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RELEASE_DATE
+		);
 
 		// add consultable filters
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
@@ -520,7 +519,7 @@ export class QueryBuilder {
 			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR &&
 			inputInfo?.spacesIds?.length
 		) {
-			toBeAppliedConsultableFilters.push({
+			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					{
@@ -551,7 +550,7 @@ export class QueryBuilder {
 			!isNil(inputInfo.user.getSector()) &&
 			!isNil(inputInfo.user.getOrganisationId())
 		) {
-			toBeAppliedConsultableFilters.push({
+			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					OR([
@@ -579,7 +578,7 @@ export class QueryBuilder {
 
 		// User can access items with license "PUBLIC_DOMAIN"
 		if (consultablePublicDomain?.value?.toLowerCase() === 'true') {
-			toBeAppliedConsultableFilters.push({
+			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					{
@@ -591,8 +590,48 @@ export class QueryBuilder {
 			});
 		}
 
+		if (releaseDates.length) {
+			const dateFilters = releaseDates.map(QueryBuilder.buildValue);
+			/**
+			 * Convert array to single object
+			 * ```
+			 * [
+			 *   { gte: '2021-11-25T23:00:00.000Z' },
+			 *   { lte: '2021-11-27T23:00:00.000Z' }
+			 * ]
+			 * ```
+			 * to
+			 * ```
+			 * {
+			 *   gte: '2021-11-25T23:00:00.000Z',
+			 *   lte: '2021-11-27T23:00:00.000Z'
+			 * }
+			 * ```
+			 */
+			const singleObjectDateFilter = Object.fromEntries(
+				dateFilters.flatMap((dateFilter) => Object.entries(dateFilter))
+			);
+			toBeAppliedCustomFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					OR([
+						{
+							range: {
+								[ElasticsearchField.schema_date_created]: singleObjectDateFilter,
+							},
+						},
+						{
+							range: {
+								[ElasticsearchField.schema_date_published]: singleObjectDateFilter,
+							},
+						},
+					]),
+				],
+			});
+		}
+
 		// Return empty object if no consultable filter matches the requirements
-		return toBeAppliedConsultableFilters;
+		return toBeAppliedCustomFilters;
 	}
 
 	/**
