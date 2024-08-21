@@ -213,6 +213,7 @@ export enum ElasticsearchField {
 	schema_in_language = 'schema_in_language',
 	dcterms_medium = 'dcterms_medium',
 	ebucore_object_type = 'ebucore_object_type',
+	iri = 'iri',
 	schema_identifier = 'schema_identifier',
 	schema_license = 'schema_license',
 	schema_mentions = 'schema_mentions',

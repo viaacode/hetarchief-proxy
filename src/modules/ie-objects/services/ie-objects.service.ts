@@ -52,6 +52,12 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
+	GetIeObjectChildrenIrisDocument,
+	type GetIeObjectChildrenIrisQuery,
+	type GetIeObjectChildrenIrisQueryVariables,
+	GetIeObjectIdsDocument,
+	type GetIeObjectIdsQuery,
+	type GetIeObjectIdsQueryVariables,
 	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
@@ -281,6 +287,12 @@ export class IeObjectsService {
 				visitorSpaceInfo: visitorSpaceAccessInfo,
 			}
 		);
+		const ieObjectIds = await this.getIeObjectIds(schemaIdentifier);
+		if (!ieObjectIds?.iri) {
+			throw new NotFoundException("The object was not found or doesn't have an iri");
+		}
+
+		const childrenIris = await this.getIeObjectChildrenIris(ieObjectIds.iri);
 
 		const esQueryObject = {
 			size: limit,
@@ -306,6 +318,17 @@ export class IeObjectsService {
 						max_doc_freq: 6,
 						max_query_terms: 12,
 						min_word_length: 4,
+					},
+				},
+				{
+					// Elasticsearch query to filter ids not in the childrenIris array
+					// https://meemoo.atlassian.net/browse/ARC-2134
+					bool: {
+						must_not: {
+							terms: {
+								[ElasticsearchField.iri]: childrenIris,
+							},
+						},
 					},
 				},
 				...(searchInsideVisitorSpace
@@ -888,5 +911,30 @@ export class IeObjectsService {
 			return [];
 		}
 		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
+	}
+
+	public async getIeObjectIds(
+		schemaIdentifier: string
+	): Promise<{ schemaIdentifier: string; iri: string }> {
+		const response = await this.dataService.execute<
+			GetIeObjectIdsQuery,
+			GetIeObjectIdsQueryVariables
+		>(GetIeObjectIdsDocument, {
+			schemaIdentifier,
+		});
+		return {
+			schemaIdentifier: response.graph_intellectual_entity[0].schema_identifier,
+			iri: response.graph_intellectual_entity[0].id,
+		};
+	}
+
+	public async getIeObjectChildrenIris(ieObjectIri: string): Promise<string[]> {
+		const response = await this.dataService.execute<
+			GetIeObjectChildrenIrisQuery,
+			GetIeObjectChildrenIrisQueryVariables
+		>(GetIeObjectChildrenIrisDocument, {
+			ieObjectIri,
+		});
+		return response.graph_intellectual_entity.map((ieObject) => ieObject.id);
 	}
 }
