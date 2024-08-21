@@ -1,60 +1,35 @@
-query getRelatedObjects($schemaIdentifier: String!, $maintainerId: String) {
+query getRelatedParentsSiblingsAndChildren($currentObjectIri: String!, $parentObjectIri: String!) {
 	graph__intellectual_entity(
 		where: {
-			schema_identifier: { _neq: $schemaIdentifier }
-			isPartOf: { intellectual_entity_id: { _eq: $schemaIdentifier } }
-			schemaMaintainer: { org_identifier: { _eq: $maintainerId } }
+			_or: [
+				{ premis_is_part_of: { _eq: $currentObjectIri } }
+				{ premis_is_part_of: { _eq: $parentObjectIri } }
+				{ id: { _eq: $parentObjectIri } }
+			]
+			id: { _neq: $currentObjectIri }
 		}
 	) {
+		id
 		schema_identifier
-		schema_is_part_of
-		schemaMaintainer {
-			org_identifier
-			skos_pref_label
-			ha_org_has_logo
-			ha_org_request_form
-			dcterms_description
-			ha_org_allows_overlay
-		}
-		schema_duration
-		schema_number_of_pages
-		schema_date_published
 		dcterms_available
-		schema_name
-		schema_description
-		schema_creator
 		dcterms_format
-		schema_thumbnail_url
+		schema_date_created
+		schema_date_published
+		schema_description
 		schema_duration
 		schema_license
-		schema_date_created
-		isRepresentedBy {
-			includes {
-				file {
-					id
-					schema_name
-					ebucore_has_mime_type
-					premis_stored_at
-					schema_thumbnail_url
-					schema_duration
-					edm_is_next_in_sequence
-				}
-			}
+		schema_name
+		schema_thumbnail_url
+		premis_is_part_of
+		schemaMaintainer {
+			id
+			org_identifier
+			ha_org_sector
+			skos_pref_label
+			skos_alt_label
 		}
-		hasPart {
-			isRepresentedBy {
-				includes {
-					file {
-						id
-						schema_name
-						ebucore_has_mime_type
-						premis_stored_at
-						schema_thumbnail_url
-						schema_duration
-						edm_is_next_in_sequence
-					}
-				}
-			}
+		schemaTranscript {
+			schema_transcript
 		}
 	}
 }

@@ -17,11 +17,7 @@ import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
-import {
-	type IeObjectsQueryDto,
-	type IeObjectsRelatedQueryDto,
-	type IeObjectsSimilarQueryDto,
-} from '../dto/ie-objects.dto';
+import { type IeObjectsQueryDto, type IeObjectsSimilarQueryDto } from '../dto/ie-objects.dto';
 import { QueryBuilder } from '../elasticsearch/queryBuilder';
 import { convertQueryToLiteralString } from '../helpers/convert-query-to-literal-string';
 import { getSearchEndpoint } from '../helpers/get-search-endpoint';
@@ -40,9 +36,10 @@ import {
 	type IeObjectsSitemap,
 	type IeObjectsVisitorSpaceInfo,
 	type IeObjectsWithAggregations,
-	type IeObjectType,
+	IeObjectType,
 	type IsPartOfKey,
 	type NewspaperTitle,
+	type RelatedIeObject,
 } from '../ie-objects.types';
 
 import {
@@ -62,9 +59,9 @@ import {
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
-	GetRelatedObjectsDocument,
-	type GetRelatedObjectsQuery,
-	type GetRelatedObjectsQueryVariables,
+	GetRelatedParentsSiblingsAndChildrenDocument,
+	type GetRelatedParentsSiblingsAndChildrenQuery,
+	type GetRelatedParentsSiblingsAndChildrenQueryVariables,
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
@@ -221,49 +218,49 @@ export class IeObjectsService {
 		}));
 	}
 
-	public async getRelatedIdentifierV3(schemaIdentifierV2: string) {
-		const relatedIdentifier = await this.dataService.execute<
+	public async convertSchemaIdentifierV2ToV3(schemaIdentifierV2: string): Promise<string | null> {
+		const response = await this.dataService.execute<
 			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
 		>(GetSchemaIdentifierV3BySchemaIdentifierV2Document, {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
-		return relatedIdentifier.graph__intellectual_entity[0].schema_identifier;
+		return response.graph__intellectual_entity[0]?.schema_identifier || null;
 	}
 
-	public async getRelated(
-		schemaIdentifier: string,
+	public async getRelatedIeObjects(
+		ieObjectIri: string,
+		parentIeObjectIri: string,
 		referer: string,
-		ip: string,
-		ieObjectRelatedQueryDto?: IeObjectsRelatedQueryDto
-	): Promise<IPagination<IeObject>> {
+		ip: string
+	): Promise<RelatedIeObject[]> {
 		const mediaObjects = await this.dataService.execute<
-			GetRelatedObjectsQuery,
-			GetRelatedObjectsQueryVariables
-		>(GetRelatedObjectsDocument, {
-			schemaIdentifier,
-			maintainerId: ieObjectRelatedQueryDto?.maintainerId || null,
+			GetRelatedParentsSiblingsAndChildrenQuery,
+			GetRelatedParentsSiblingsAndChildrenQueryVariables
+		>(GetRelatedParentsSiblingsAndChildrenDocument, {
+			currentObjectIri: ieObjectIri,
+			parentObjectIri: parentIeObjectIri,
 		});
 
-		const adaptedItems = await Promise.all(
-			mediaObjects.graph__intellectual_entity.map(async (object: any) => {
-				const adapted = this.adaptFromDB(object);
-				adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-					adapted.thumbnailUrl,
-					referer,
-					ip
-				);
-				return adapted;
-			})
+		return Promise.all(
+			mediaObjects.graph__intellectual_entity.map(
+				async (
+					object: GetRelatedParentsSiblingsAndChildrenQuery['graph__intellectual_entity'][0]
+				): Promise<RelatedIeObject> => {
+					const adapted = this.adaptRelatedFromDB(object);
+					// Newspaper thumbnails can be viewed without requireing a player ticket
+					if (adapted.dctermsFormat !== IeObjectType.Newspaper) {
+						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+							adapted.thumbnailUrl,
+							referer,
+							ip
+						);
+					}
+					return adapted;
+				}
+			)
 		);
-
-		return Pagination<IeObject>({
-			items: adaptedItems,
-			page: 1,
-			size: mediaObjects.graph__intellectual_entity.length,
-			total: mediaObjects.graph__intellectual_entity.length,
-		});
 	}
 
 	public async getSimilar(
@@ -456,10 +453,14 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
-	public adaptFromDB(gqlIeObject: GqlIeObject): IeObject {
+	public adaptFromDB(
+		gqlIeObject: GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0]
+	): IeObject {
 		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
+
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
+			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
@@ -512,6 +513,7 @@ export class IeObjectsService {
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
+			premisIsPartOf: gqlIeObject?.premis_is_part_of,
 			isPartOf: gqlIeObject?.isPartOf?.map((part) => {
 				return {
 					name: part.collection?.schema_name,
@@ -557,6 +559,29 @@ export class IeObjectsService {
 				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pageRepresentations,
+		};
+	}
+
+	public adaptRelatedFromDB(
+		gqlIeObject: GetRelatedParentsSiblingsAndChildrenQuery['graph__intellectual_entity'][0]
+	): RelatedIeObject {
+		return {
+			schemaIdentifier: gqlIeObject?.schema_identifier,
+			iri: gqlIeObject?.id,
+			dctermsAvailable: gqlIeObject?.dcterms_available,
+			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
+			dateCreated: gqlIeObject?.schema_date_created,
+			datePublished: gqlIeObject?.schema_date_published,
+			description: gqlIeObject?.schema_description,
+			duration: gqlIeObject?.schema_duration,
+			licenses: gqlIeObject?.schema_license,
+			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
+			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
+			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
+			name: gqlIeObject?.schema_name,
+			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
+			premisIsPartOf: gqlIeObject?.premis_is_part_of,
 		};
 	}
 
@@ -627,6 +652,7 @@ export class IeObjectsService {
 			description: esObject?.schema_description,
 			duration: esObject?.schema_duration,
 			genre: esObject?.schema_genre,
+			iri: esObject?.iri,
 			schemaIdentifier: esObject?.schema_identifier,
 			inLanguage: esObject?.schema_in_language,
 			keywords: esObject?.schema_keywords,
@@ -687,8 +713,8 @@ export class IeObjectsService {
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
 		const representationsByPage: IeObjectRepresentation[][] = compact(
-			[gqlIeObject, ...gqlIeObject.hasPart]?.map((part) => {
-				const represenations = compact(
+			[gqlIeObject, ...gqlIeObject.hasPart]?.map((part): IeObjectRepresentation[] | null => {
+				const representations: IeObjectRepresentation[] = compact(
 					(part?.isRepresentedBy || []).flatMap(
 						(
 							representation: GqlIeObject['isRepresentedBy'][0]
@@ -714,8 +740,8 @@ export class IeObjectsService {
 					)
 				);
 				// Avoid returning empty array representations
-				if (represenations.length) {
-					return represenations;
+				if (representations.length) {
+					return representations;
 				}
 				return null;
 			})
@@ -875,6 +901,7 @@ export class IeObjectsService {
 			meemooLocalId: ieObject?.meemooLocalId,
 			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
+			iri: ieObject?.iri,
 			licenses: ieObject.licenses,
 		};
 	}

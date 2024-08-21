@@ -19,6 +19,7 @@ import { Locale } from '~shared/types/types';
 
 export const mockIeObject1: Readonly<IeObject> = {
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	premisIdentifier: [{ premisid: 'WP00178829' }],
 	copyrightHolder: 'vrt',
 	copyrightNotice:
@@ -93,6 +94,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
@@ -149,6 +151,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-zp3w03v',
 	maintainerName: 'vrt',
@@ -227,6 +230,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	pageRepresentations: [],
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
 	meemooMediaObjectId: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c',
 	premisIdentifier: [{ premisid: 'WP00178829' }],
@@ -294,6 +298,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	name: 'Durf te vragen R002 A0001',
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	meemooLocalId: null,
 	maintainerId: 'OR-rf5kf25',
 	maintainerName: 'vrt',
@@ -374,6 +379,7 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 		},
 	],
 	schemaIdentifier: '8911p09j1g',
+	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 	licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 };
 
@@ -414,6 +420,8 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 	graph__intellectual_entity: [
 		{
 			schema_identifier: '8911p09j1g',
+			id: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
+			premis_is_part_of: 'https://data-int.hetarchief.be/id/entity/9999999999',
 			schema_is_part_of: {
 				newspaper: 'Het annoncenblad van Moll en omliggende dorpen',
 			},

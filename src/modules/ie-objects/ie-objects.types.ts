@@ -3,7 +3,6 @@ import { type IPagination } from '@studiohyperdrive/pagination';
 import {
 	type FindAllIeObjectsByFolderIdQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
-	type GetRelatedObjectsQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 
@@ -12,9 +11,6 @@ export type IeObjectSectorLicenseMatrix = Readonly<
 >;
 
 export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'>;
-
-export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0] &
-	GetRelatedObjectsQuery['graph__intellectual_entity'][0];
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
@@ -139,6 +135,7 @@ export interface IeObject {
 	description: string;
 	duration: string;
 	genre: string[];
+	iri: string;
 	schemaIdentifier: string; // Unique id per object
 	inLanguage: string[];
 	keywords: string[];
@@ -159,6 +156,7 @@ export interface IeObject {
 	meemoofilmContainsEmbeddedCaption?: boolean;
 	contributor?: any;
 	copyrightHolder?: string;
+	premisIsPartOf?: string | null;
 	isPartOf?: IsPartOfCollection[];
 	numberOfPages?: number;
 	meemooDescriptionCast?: string;
@@ -271,6 +269,7 @@ export interface ElasticsearchObject {
 	schema_description: string | null;
 	schema_duration: string;
 	schema_genre: string[];
+	iri: string;
 	schema_identifier: string;
 	schema_in_language: string[];
 	schema_is_part_of: IsPartOfCollection[] | null;
@@ -337,3 +336,32 @@ export type FilterOptions = {
 		name: string;
 	}[];
 };
+
+export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0];
+
+export type RelatedIeObject = Pick<
+	IeObject,
+	| 'dctermsAvailable'
+	| 'dctermsFormat'
+	| 'dateCreated'
+	| 'datePublished'
+	| 'description'
+	| 'duration'
+	| 'schemaIdentifier'
+	| 'licenses'
+	| 'maintainerId'
+	| 'maintainerName'
+	| 'maintainerSlug'
+	| 'name'
+	| 'thumbnailUrl'
+	| 'sector'
+	| 'accessThrough'
+	| 'transcript'
+	| 'iri'
+	| 'premisIsPartOf'
+>;
+
+export interface RelatedIeObjects {
+	parent: Partial<RelatedIeObject> | null;
+	children: Partial<RelatedIeObject>[];
+}

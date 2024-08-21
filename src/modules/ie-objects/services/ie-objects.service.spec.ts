@@ -80,28 +80,6 @@ const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 
 const mockObjectSchemaIdentifier = mockIeObject2.graph__intellectual_entity[0].schema_identifier;
 
-const getMockMediaResponse = () => ({
-	hits: {
-		total: {
-			value: 2,
-		},
-		hits: [
-			{
-				_source: {
-					_id: '4f1mg9x363',
-					schema_name: 'Op de boerderij',
-				},
-			},
-			{
-				_source: {
-					_id: '8911p09j1g',
-					schema_name: 'Durf te vragen R002 A0001',
-				},
-			},
-		],
-	},
-});
-
 describe('ieObjectsService', () => {
 	let ieObjectsService: IeObjectsService;
 
@@ -327,34 +305,27 @@ describe('ieObjectsService', () => {
 		});
 	});
 
-	describe('getRelated', () => {
-		it('returns the related objects for a given id and meemooIdentifier', async () => {
+	describe('getRelatedIeObjects', () => {
+		it('should return the sibling for a given ieObject', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const response = await ieObjectsService.getRelated(
-				mockObjectSchemaIdentifier,
+			const response = await ieObjectsService.getRelatedIeObjects(
+				'https://data-int.hetarchief.be/id/entity/2222222222',
+				'https://data-int.hetarchief.be/id/entity/9999999999',
 				'referer',
-				'',
-				{ maintainerId: 'my-index' }
+				''
 			);
-			expect(response.items.length).toEqual(1);
+			expect(response.length).toEqual(1);
 		});
-	});
 
-	describe('getSimilar', () => {
-		it('returns similar objects for a given id', async () => {
-			nock('http://elasticsearch/')
-				.post('/my-index/_search')
-				.reply(201, getMockMediaResponse());
-			const response = await ieObjectsService.getSimilar(
-				mockObjectSchemaIdentifier,
+		it('should return the parent for a given ieObject', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			const response = await ieObjectsService.getRelatedIeObjects(
+				'https://data-int.hetarchief.be/id/entity/2222222222',
+				'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 				'referer',
-				'',
-				{ maintainerId: 'my-index' },
-				4,
-				undefined
+				''
 			);
-			expect(response.items.length).toBe(2);
-			expect(response.items.length).toBe(2);
+			expect(response.length).toEqual(1);
 		});
 	});
 
