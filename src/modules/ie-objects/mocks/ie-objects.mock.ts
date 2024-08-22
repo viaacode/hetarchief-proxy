@@ -489,6 +489,7 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 					schema_in_language: '',
 					schema_start_time: '',
 					schema_transcript: '',
+					schemaTranscriptUrls: [],
 					edm_is_next_in_sequence: '',
 					updated_at: '',
 					includes: [

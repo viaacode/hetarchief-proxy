@@ -94,6 +94,9 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			schema_in_language
 			schema_start_time
 			schema_transcript
+			schemaTranscriptUrls {
+				schema_transcript_url
+			}
 			edm_is_next_in_sequence
 			updated_at
 			includes {
