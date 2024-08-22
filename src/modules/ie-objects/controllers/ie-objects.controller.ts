@@ -24,7 +24,6 @@ import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
 	IeObjectsQueryDto,
-	IeObjectsRelatedQueryDto,
 	IeObjectsSimilarQueryDto,
 	PlayerTicketsQueryDto,
 	ThumbnailQueryDto,
@@ -40,6 +39,8 @@ import {
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
 	type NewspaperTitle,
+	RelatedIeObject,
+	RelatedIeObjects,
 } from '../ie-objects.types';
 import { IeObjectsService } from '../services/ie-objects.service';
 
@@ -246,63 +247,51 @@ export class IeObjectsController {
 	public async identifierLookup(
 		@Param('schemaIdentifierV2') schemaIdentifierV2: string
 	): Promise<string> {
-		return this.ieObjectsService.getRelatedIdentifierV3(schemaIdentifierV2);
+		return this.ieObjectsService.convertSchemaIdentifierV2ToV3(schemaIdentifierV2);
 	}
 
-	@Get(':schemaIdentifier/related')
+	@Get('/related')
 	@ApiOperation({
 		description:
 			'Get objects that cover the same subject as the passed object schema identifier.',
 	})
-	public async getRelated(
-		@Param('schemaIdentifier') schemaIdentifier: string,
+	public async getRelatedIeObjects(
+		@Query('ieObjectIri') ieObjectIri: string,
+		@Query('parentIeObjectIri') parentIeObjectIri: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Query() ieObjectRelatedQueryDto: IeObjectsRelatedQueryDto,
 		@SessionUser() user: SessionUserEntity
-	): Promise<IPagination<Partial<IeObject>>> {
-		try {
-			const visitorSpaceAccessInfo =
-				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+	): Promise<RelatedIeObjects> {
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-			// We use the esIndex as the maintainerId -- no need to lowercase
-			const relatedIeObjects = await this.ieObjectsService.getRelated(
-				// TODO change this query to fetch related ie objects by using the schema identifier and the is_part_of relationship
-				schemaIdentifier,
-				referer,
-				getIpFromRequest(request),
-				ieObjectRelatedQueryDto
-			);
+		// We use the esIndex as the maintainerId -- no need to lowercase
+		const relatedIeObjects: RelatedIeObject[] = await this.ieObjectsService.getRelatedIeObjects(
+			ieObjectIri,
+			parentIeObjectIri,
+			referer,
+			getIpFromRequest(request)
+		);
 
-			// Limit the amount of props returned for an ie object based on licenses and sector
-			return {
-				...relatedIeObjects,
+		// Limit the amount of props returned for an ie object based on licenses and sector
+		const censoredRelatedIeObjects = compact(
+			relatedIeObjects.map((item) =>
+				limitAccessToObjectDetails(item, {
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getOrganisationId(),
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+				})
+			)
+		);
 
-				// TODO: avoid compact in this location, since we want the getRelated function to only return objects that will not be completely censored to null by the limitAccessToObjectDetails function
-				items: compact(
-					relatedIeObjects.items.map((item) =>
-						limitAccessToObjectDetails(item, {
-							userId: user.getId(),
-							isKeyUser: user.getIsKeyUser(),
-							sector: user.getSector(),
-							groupId: user.getGroupId(),
-							maintainerId: user.getOrganisationId(),
-							accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-							accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-						})
-					)
-				),
-			};
-		} catch (err) {
-			// TODO remove this try catch once this endpoint is stable again
-			return {
-				items: [],
-				total: 0,
-				pages: 1,
-				page: 1,
-				size: 0,
-			};
-		}
+		return {
+			parent: censoredRelatedIeObjects.find((obj) => !obj.premisIsPartOf) || null,
+			children: censoredRelatedIeObjects.filter((obj) => !!obj.premisIsPartOf),
+		};
 	}
 
 	@Get(':id/similar')
