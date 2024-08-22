@@ -1,30 +1,22 @@
-import _ from 'lodash';
-
 import { type IeObjectsVisitorSpaceInfo } from '../ie-objects.types';
 
 import identifierSearchQueryExact from './templates/exact/identifier-search-query.json';
 import nameSearchQueryExact from './templates/exact/name-search-query.json';
-import searchQueryExact from './templates/exact/search-query.json';
+import searchQueryAllExact from './templates/exact/search-query--metadata-all.json';
+import searchQueryLimitedExact from './templates/exact/search-query--metadata-limited.json';
 import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-query.json';
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
-import searchQueryAdvancedFuzzy from './templates/fuzzy/search-query-advanced.json';
-import searchQueryFuzzy from './templates/fuzzy/search-query.json';
+import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
+import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
+import searchQueryAdvancedAllFuzzy from './templates/fuzzy/search-query-advanced--metadata-all.json';
+import searchQueryAdvancedLimitedFuzzy from './templates/fuzzy/search-query-advanced--metadata-limited.json';
 
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 
 export const ALL_INDEXES = 'or-*';
 
-const searchQueryAdvancedTemplateFuzzy = _.values(searchQueryAdvancedFuzzy);
-const searchQueryTemplateFuzzy = _.values(searchQueryFuzzy);
-const searchQueryTemplateExact = _.values(searchQueryExact);
-const nameSearchQueryTemplateFuzzy = _.values(nameSearchQueryFuzzy);
-const descriptionSearchQueryTemplateFuzzy = _.values(descriptionSearchQueryFuzzy);
-
-const nameSearchQueryTemplateExact = _.values(nameSearchQueryExact);
-const identifierSearchQueryTemplateExact = _.values(identifierSearchQueryExact);
-
 export enum IeObjectsSearchFilterField {
-	ADVANCED_QUERY = 'advancedQuery',
+	// Searches in metadata LTD fields
 	CREATED = 'created',
 	CREATOR = 'creator',
 	DESCRIPTION = 'description',
@@ -38,20 +30,58 @@ export enum IeObjectsSearchFilterField {
 	MEDIUM = 'medium',
 	NAME = 'name',
 	PUBLISHED = 'published',
-	PUBLISHER = 'publisher',
-	QUERY = 'query',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
-	OBJECT_TYPE = 'objectType',
-	LICENSES = 'license', // Used to filter objects that are in a visitor space
-	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
-	TRANSCRIPT = 'transcript', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	LICENSES = 'license', // Used to filter objects that are in a visitor space
+
+	// Searches in metadata ALL fields
+	QUERY = 'query',
+	TRANSCRIPT = 'transcript',
+	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
+	OBJECT_TYPE = 'objectType',
+	PUBLISHER = 'publisher',
+	ADVANCED_QUERY = 'advancedQuery',
 }
+
+export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearchFilterField[] = [
+	// LTD
+	IeObjectsSearchFilterField.QUERY,
+	IeObjectsSearchFilterField.ADVANCED_QUERY,
+	IeObjectsSearchFilterField.CREATED,
+	IeObjectsSearchFilterField.CREATOR,
+	IeObjectsSearchFilterField.DESCRIPTION,
+	IeObjectsSearchFilterField.DURATION,
+	IeObjectsSearchFilterField.SPACIAL_COVERAGE,
+	IeObjectsSearchFilterField.TEMPORAL_COVERAGE,
+	IeObjectsSearchFilterField.FORMAT,
+	IeObjectsSearchFilterField.GENRE,
+	IeObjectsSearchFilterField.KEYWORD,
+	IeObjectsSearchFilterField.LANGUAGE,
+	IeObjectsSearchFilterField.MEDIUM,
+	IeObjectsSearchFilterField.NAME,
+	IeObjectsSearchFilterField.PUBLISHED,
+	IeObjectsSearchFilterField.MAINTAINER_ID,
+	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
+	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+	IeObjectsSearchFilterField.CAST,
+	IeObjectsSearchFilterField.IDENTIFIER,
+	IeObjectsSearchFilterField.LICENSES,
+	IeObjectsSearchFilterField.CATEGORIE,
+];
+
+export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilterField[] = [
+	...IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED,
+	// ALL
+	IeObjectsSearchFilterField.TRANSCRIPT,
+	IeObjectsSearchFilterField.CAPTION,
+	IeObjectsSearchFilterField.PUBLISHER,
+	IeObjectsSearchFilterField.OBJECT_TYPE,
+];
 
 export enum Operator {
 	CONTAINS = 'contains',
@@ -83,17 +113,31 @@ export interface QueryBuilderInputInfo {
 	spacesIds?: string[];
 }
 
+export enum MetadataAccessType {
+	LIMITED = 'limited',
+	ALL = 'all',
+}
+
 export const MULTI_MATCH_QUERY_MAPPING = {
 	fuzzy: {
-		query: searchQueryTemplateFuzzy,
-		advancedQuery: searchQueryAdvancedTemplateFuzzy,
-		name: nameSearchQueryTemplateFuzzy,
-		description: descriptionSearchQueryTemplateFuzzy,
+		query: {
+			limited: searchQueryLimitedFuzzy,
+			all: searchQueryAllFuzzy,
+		},
+		advancedQuery: {
+			limited: searchQueryAdvancedLimitedFuzzy,
+			all: searchQueryAdvancedAllFuzzy,
+		},
+		name: nameSearchQueryFuzzy,
+		description: descriptionSearchQueryFuzzy,
 	},
 	exact: {
-		name: nameSearchQueryTemplateExact,
-		identifier: identifierSearchQueryTemplateExact,
-		query: searchQueryTemplateExact,
+		name: nameSearchQueryExact,
+		identifier: identifierSearchQueryExact,
+		query: {
+			limited: searchQueryLimitedExact,
+			all: searchQueryAllExact,
+		},
 	},
 };
 
@@ -140,37 +184,70 @@ export const MAX_NUMBER_SEARCH_RESULTS = 2000;
 // -  This limit can be set by changing the [index.max_result_window] index level setting.
 export const MAX_COUNT_SEARCH_RESULTS = 10000;
 
+export enum ElasticsearchField {
+	query = 'query',
+	schema_genre = 'schema_genre',
+	schema_keywords = 'schema_keywords',
+	schema_name = 'schema_name',
+	dcterms_format = 'dcterms_format',
+	schema_publisher = 'schema_publisher',
+	schema_creator = 'schema_creator',
+	schema_creator_text = 'schema_creator_text',
+	schema_date_created = 'schema_date_created',
+	schema_date_published = 'schema_date_published',
+	schema_description = 'schema_description',
+	schema_temporal_coverage = 'schema_temporal_coverage',
+	schema_spatial_coverage = 'schema_spatial_coverage',
+	schema_maintainer = 'schema_maintainer',
+	organization_type = 'organization_type',
+	meemoo_description_cast = 'meemoo_description_cast',
+	schema_caption = 'schema_caption',
+	schema_transcript = 'schema_transcript',
+	meemoo_description_categorie = 'meemoo_description_categorie',
+	schema_duration = 'schema_duration',
+	schema_in_language = 'schema_in_language',
+	dcterms_medium = 'dcterms_medium',
+	ebucore_object_type = 'ebucore_object_type',
+	schema_identifier = 'schema_identifier',
+	schema_license = 'schema_license',
+	schema_mentions = 'schema_mentions',
+	schema_is_part_of = 'schema_is_part_of',
+	newspaper = 'newspaper',
+}
+
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[prop in Exclude<
 		IeObjectsSearchFilterField,
 		| IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
-	>]: string;
+	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
-	[IeObjectsSearchFilterField.QUERY]: 'query',
-	[IeObjectsSearchFilterField.ADVANCED_QUERY]: 'query',
-	[IeObjectsSearchFilterField.GENRE]: 'schema_genre',
-	[IeObjectsSearchFilterField.KEYWORD]: 'schema_keywords',
-	[IeObjectsSearchFilterField.NAME]: 'schema_name',
-	[IeObjectsSearchFilterField.FORMAT]: 'dcterms_format',
-	[IeObjectsSearchFilterField.PUBLISHER]: 'schema_publisher',
-	[IeObjectsSearchFilterField.CREATOR]: 'schema_creator',
-	[IeObjectsSearchFilterField.CREATED]: 'schema_date_created',
-	[IeObjectsSearchFilterField.PUBLISHED]: 'schema_date_published',
-	[IeObjectsSearchFilterField.DESCRIPTION]: 'schema_description',
-	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'schema_temporal_coverage',
-	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'schema_spatial_coverage',
-	[IeObjectsSearchFilterField.MAINTAINER_ID]: 'schema_maintainer.schema_identifier',
-	[IeObjectsSearchFilterField.CAST]: 'meemoo_description_cast',
-	[IeObjectsSearchFilterField.CAPTION]: 'schema_caption',
-	[IeObjectsSearchFilterField.TRANSCRIPT]: 'schema_transcript',
-	[IeObjectsSearchFilterField.CATEGORIE]: 'meemoo_description_categorie',
-	[IeObjectsSearchFilterField.DURATION]: 'schema_duration',
-	[IeObjectsSearchFilterField.LANGUAGE]: 'schema_in_language',
-	[IeObjectsSearchFilterField.MEDIUM]: 'dcterms_medium',
-	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'ebucore_object_type',
-	[IeObjectsSearchFilterField.IDENTIFIER]: 'schema_identifier',
-	[IeObjectsSearchFilterField.LICENSES]: 'schema_license',
+	[IeObjectsSearchFilterField.QUERY]: ElasticsearchField.query,
+	[IeObjectsSearchFilterField.ADVANCED_QUERY]: ElasticsearchField.query,
+	[IeObjectsSearchFilterField.GENRE]: ElasticsearchField.schema_genre,
+	[IeObjectsSearchFilterField.KEYWORD]: ElasticsearchField.schema_keywords,
+	[IeObjectsSearchFilterField.NAME]: ElasticsearchField.schema_name,
+	[IeObjectsSearchFilterField.FORMAT]: ElasticsearchField.dcterms_format,
+	[IeObjectsSearchFilterField.PUBLISHER]: ElasticsearchField.schema_publisher,
+	[IeObjectsSearchFilterField.CREATOR]: ElasticsearchField.schema_creator,
+	[IeObjectsSearchFilterField.CREATED]: ElasticsearchField.schema_date_created,
+	[IeObjectsSearchFilterField.PUBLISHED]: ElasticsearchField.schema_date_published,
+	[IeObjectsSearchFilterField.DESCRIPTION]: ElasticsearchField.schema_description,
+	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: ElasticsearchField.schema_temporal_coverage,
+	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: ElasticsearchField.schema_spatial_coverage,
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: (ElasticsearchField.schema_maintainer +
+		'.' +
+		ElasticsearchField.schema_identifier) as `${ElasticsearchField}.${ElasticsearchField}`,
+	[IeObjectsSearchFilterField.CAST]: ElasticsearchField.meemoo_description_cast,
+	[IeObjectsSearchFilterField.CAPTION]: ElasticsearchField.schema_caption,
+	[IeObjectsSearchFilterField.TRANSCRIPT]: ElasticsearchField.schema_transcript,
+	[IeObjectsSearchFilterField.CATEGORIE]: ElasticsearchField.meemoo_description_categorie,
+	[IeObjectsSearchFilterField.DURATION]: ElasticsearchField.schema_duration,
+	[IeObjectsSearchFilterField.LANGUAGE]: ElasticsearchField.schema_in_language,
+	[IeObjectsSearchFilterField.MEDIUM]: ElasticsearchField.dcterms_medium,
+	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
+	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
+	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
@@ -230,7 +307,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	// [IeObjectsSearchFilterField.LICENSES]: 'keyword',
 };
 
-export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: string } = {
+export const NEEDS_AGG_SUFFIX: { [prop in IeObjectsSearchFilterField]?: 'keyword' } = {
 	[IeObjectsSearchFilterField.GENRE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 };
@@ -246,3 +323,22 @@ export const FLATTENED_FIELDS: IeObjectsSearchFilterField[] = [
 	If the search term is a string starting with a digit, and we don't do this, jsep will throw an error saying a variable cannot start with a digit.
 */
 export const JSEP_DIGIT_PREFIX = '_ç_ç_ç_ç_ç_';
+
+/**
+ * Used to identify return types that are single or arrays of elasticsearch sub queries
+ * eg:
+ * {
+ *     bool: {
+ *         should: [
+ *     	       { term: { 'schema_name.keyword': 'test' } },
+ *     	   ],
+ *     }
+ * }
+ * or
+ * {
+ *     term: {
+ *         'schema_name.keyword': 'test'
+ *     }
+ * }
+ */
+export type ElasticsearchSubQuery = Record<string, any>;
