@@ -1,0 +1,6 @@
+query getIeObjectChildrenIris($ieObjectIri: String!) {
+	graph_intellectual_entity(where: { relation_is_part_of: { _eq: $ieObjectIri } }) {
+		id
+		schema_identifier
+	}
+}
