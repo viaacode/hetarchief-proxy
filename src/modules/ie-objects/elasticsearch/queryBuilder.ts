@@ -352,6 +352,7 @@ export class QueryBuilder {
 		const consultableSearchFilterFields: IeObjectsSearchFilterField[] = [
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 		];
 		if (
 			filters &&
@@ -508,6 +509,10 @@ export class QueryBuilder {
 		const consultableMediaFilter = searchRequestFilters.find(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		);
+		const consultablePublicDomain = searchRequestFilters.find(
+			(filter: SearchFilter) =>
+				filter.field === IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
+		);
 
 		// add consultable filters
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
@@ -569,6 +574,20 @@ export class QueryBuilder {
 							},
 						},
 					]),
+				],
+			});
+		}
+
+		// User can access items with license "PUBLIC_DOMAIN"
+		if (consultablePublicDomain?.value?.toLowerCase() === 'true') {
+			toBeAppliedConsultableFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					{
+						terms: {
+							[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIC_DOMAIN],
+						},
+					},
 				],
 			});
 		}

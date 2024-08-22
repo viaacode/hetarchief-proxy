@@ -34,6 +34,7 @@ export enum IeObjectsSearchFilterField {
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
 	CONSULTABLE_MEDIA = 'isConsultableMedia',
+	CONSULTABLE_PUBLIC_DOMAIN = 'isConsultablePublicDomain',
 	CAST = 'cast',
 	IDENTIFIER = 'identifier',
 	CATEGORIE = 'categorie', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
@@ -174,6 +175,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	// But we include it to get stricter type checks on missing fields
 	[IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CONSULTABLE_MEDIA]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN]: QueryType.TERMS,
 };
 
 // Max number of search results to return to the client
@@ -220,6 +222,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 		IeObjectsSearchFilterField,
 		| IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
 		| IeObjectsSearchFilterField.CONSULTABLE_MEDIA
+		| IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
 	[IeObjectsSearchFilterField.QUERY]: ElasticsearchField.query,
