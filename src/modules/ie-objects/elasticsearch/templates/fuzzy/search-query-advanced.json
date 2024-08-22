@@ -22,6 +22,7 @@
       "boost": 100,
       "fields": [
         "schema_name^20",
+        "schema_is_part_of.newspaper^20",
         "schema_description",
         "schema_abstract",
         "schema_is_part_of.alternatief^20",
@@ -39,7 +40,10 @@
         "schema_spatial_coverage",
         "schema_temporal_coverage",
         "dcterms_medium",
-        "schema_maintainer.schema_name"
+        "schema_maintainer.schema_name",
+        "schema_transcript",
+        "schema_copyrightholder",
+        "schema_mentions"
       ]
     }
   }

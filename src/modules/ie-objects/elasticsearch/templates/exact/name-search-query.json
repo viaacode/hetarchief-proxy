@@ -9,6 +9,11 @@
         },
         {
           "term": {
+            "schema_is_part_of.newspaper": "{{query}}"
+          }
+        },
+        {
+          "term": {
             "schema_is_part_of.alternatief.keyword": "{{query}}"
           }
         },
