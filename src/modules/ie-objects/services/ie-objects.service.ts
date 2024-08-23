@@ -221,7 +221,9 @@ export class IeObjectsService {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
-		return relatedIdentifier.graph__intellectual_entity[0].schema_identifier;
+		return {
+			schemaIdentifierV3: relatedIdentifier.graph__intellectual_entity[0].schema_identifier,
+		};
 	}
 
 	public async getRelated(
