@@ -493,7 +493,7 @@ export class IeObjectsService {
 			inLanguage: gqlIeObject?.schemaInLanguage?.schema_in_language,
 			keywords: gqlIeObject?.schemaKeywords?.schema_keywords,
 			publisher: gqlIeObject?.schemaPublisher?.schema_publisher_array,
-			spatial: gqlIeObject?.schemaSpatial?.schema_spatial,
+			spatial: gqlIeObject?.schemaSpatial?.schema_spatial, // Location of the content
 			temporal: gqlIeObject?.schemaTemporal?.schema_temporal,
 			synopsis: gqlIeObject?.intellectualEntity?.ebucore_synopsis,
 			copyrightHolder: gqlIeObject?.schemaCopyrightHolder
@@ -514,7 +514,7 @@ export class IeObjectsService {
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			isPartOf: gqlIeObject?.isPartOf?.map((part) => {
+			isPartOf: gqlIeObject?.schemaIsPartOf?.map((part) => {
 				return {
 					name: part.collection?.schema_name,
 					collectionType: part.collection?.collection_type as IsPartOfKey,
@@ -527,8 +527,9 @@ export class IeObjectsService {
 				};
 			}),
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
+			pageNumber: gqlIeObject?.schema_position,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
-			collectionName: gqlIeObject?.isPartOf?.[0]?.collection?.schema_name,
+			collectionName: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.schema_name,
 			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
 			fragmentId:
 				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
@@ -537,26 +538,32 @@ export class IeObjectsService {
 			alternativeTitle: gqlIeObject?.intellectualEntity?.schemaAlternateName?.map(
 				(name) => name.schema_alternate_name
 			),
-			preceededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isPreceededBy?.map(
+			preceededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isPreceededBy?.map(
 				(ie) => ie.schema_name
 			),
-			succeededBy: gqlIeObject?.isPartOf?.[0]?.collection?.isSucceededBy?.map(
+			succeededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isSucceededBy?.map(
 				(ie) => ie.schema_name
 			),
 			width: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_width,
 			height: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_height,
+			bibframeProductionMethod:
+				gqlIeObject?.intellectualEntity?.hasCarrier?.bibframe_production_method, // Text type
+			bibframeEdition: gqlIeObject?.intellectualEntity?.bibframe_edition, // Publication type
+			// TODO ARC-2163 digitizing event / date is not available in the database. Add it once it is available
 			locationCreated: compact(
-				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_location_created)
+				gqlIeObject?.schemaIsPartOf?.map(
+					(part) => part?.collection?.schema_location_created
+				)
 			)?.join(', '),
 			startDate: compact(
-				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			endDate: compact(
-				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
 			newspaperPublisher: compact(
-				gqlIeObject?.isPartOf?.map((part) => part?.collection?.schema_publisher)
+				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pageRepresentations,
 		};
@@ -728,6 +735,7 @@ export class IeObjectsService {
 								isMediaFragmentOf: representation.is_media_fragment_of,
 								schemaInLanguage: representation.schema_in_language,
 								schemaStartTime: representation.schema_start_time,
+								schemaEndTime: representation.schema_end_time,
 								schemaTranscript: representation.schema_transcript,
 								schemaTranscriptUrl:
 									representation.schemaTranscriptUrls?.[0]
