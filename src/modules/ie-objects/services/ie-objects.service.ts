@@ -453,12 +453,17 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
-	public adaptFromDB(
-		gqlIeObject: GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0]
-	): IeObject {
+	public adaptFromDB(gqlIeObject: Partial<GqlIeObject>): IeObject {
 		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
 
+		let parent = {};
+		if (gqlIeObject.parentIntellectualEntity?.[0]?.intellectualEntity) {
+			parent = this.adaptFromDB(
+				gqlIeObject.parentIntellectualEntity[0].intellectualEntity as Partial<GqlIeObject>
+			);
+		}
 		return {
+			...parent,
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
@@ -514,8 +519,10 @@ export class IeObjectsService {
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			isPartOf: gqlIeObject?.schemaIsPartOf?.map((part) => {
+			isPartOf: gqlIeObject?.parentCollection?.map((part) => {
 				return {
+					iri: part.collection?.id,
+					schemaIdentifier: part.collection?.schema_identifier,
 					name: part.collection?.schema_name,
 					collectionType: part.collection?.collection_type as IsPartOfKey,
 					isPreceededBy: part.collection?.isPreceededBy,
@@ -529,7 +536,7 @@ export class IeObjectsService {
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			pageNumber: gqlIeObject?.schema_position,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
-			collectionName: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.schema_name,
+			collectionName: gqlIeObject?.parentCollection?.[0]?.collection?.schema_name,
 			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
 			fragmentId:
 				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
@@ -538,10 +545,10 @@ export class IeObjectsService {
 			alternativeTitle: gqlIeObject?.intellectualEntity?.schemaAlternateName?.map(
 				(name) => name.schema_alternate_name
 			),
-			preceededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isPreceededBy?.map(
+			preceededBy: gqlIeObject?.parentCollection?.[0]?.collection?.isPreceededBy?.map(
 				(ie) => ie.schema_name
 			),
-			succeededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isSucceededBy?.map(
+			succeededBy: gqlIeObject?.parentCollection?.[0]?.collection?.isSucceededBy?.map(
 				(ie) => ie.schema_name
 			),
 			width: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_width,
@@ -551,19 +558,19 @@ export class IeObjectsService {
 			bibframeEdition: gqlIeObject?.intellectualEntity?.bibframe_edition, // Publication type
 			// TODO ARC-2163 digitizing event / date is not available in the database. Add it once it is available
 			locationCreated: compact(
-				gqlIeObject?.schemaIsPartOf?.map(
+				gqlIeObject?.parentCollection?.map(
 					(part) => part?.collection?.schema_location_created
 				)
 			)?.join(', '),
 			startDate: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			endDate: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
 			newspaperPublisher: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_publisher)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pageRepresentations,
 		};
@@ -712,7 +719,7 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[][] {
+	public adaptRepresentations(gqlIeObject: Partial<GqlIeObject>): IeObjectRepresentation[][] {
 		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}

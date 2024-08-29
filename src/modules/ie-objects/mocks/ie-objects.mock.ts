@@ -75,10 +75,14 @@ export const mockIeObject1: Readonly<IeObject> = {
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.serie,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.programma,
 			name: 'Programma1',
 		},
@@ -131,10 +135,14 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.serie,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.programma,
 			name: 'Programma1',
 		},
@@ -162,10 +170,14 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 	maintainerOverlay: true,
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'serie' as IsPartOfKey,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'programma' as IsPartOfKey,
 			name: 'Programma1',
 		},
@@ -276,10 +288,14 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	accessThrough: [IeObjectAccessThrough.VISITOR_SPACE_FOLDERS],
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.serie,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: IsPartOfKey.programma,
 			name: 'Programma1',
 		},
@@ -309,10 +325,14 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	maintainerOverlay: true,
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'serie' as IsPartOfKey,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'programma' as IsPartOfKey,
 			name: 'Programma1',
 		},
@@ -362,10 +382,14 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 	maintainerSlug: 'vrt',
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'serie' as IsPartOfKey,
 			name: 'Serie1',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'programma' as IsPartOfKey,
 			name: 'Programma1',
 		},
@@ -435,15 +459,18 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				'VIAA-INTRA_CP-METADATA-ALL',
 			],
 			meemoo_local_id: null,
-			schemaIsPartOf: [
+			parentCollection: [
 				{
 					collection: {
+						id: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+						schema_identifier: '4f1mg9x363',
 						schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
 						isPreceededBy: [],
 						isSucceededBy: [],
 					},
 				},
 			],
+			parentIntellectualEntity: [],
 			schemaInLanguage: {
 				schema_in_language: ['nl'],
 			},
@@ -571,14 +598,20 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 	dctermsFormat: IeObjectType.Video,
 	isPartOf: [
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'reeks' as IsPartOfKey,
 			name: 'WEB',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'archief' as IsPartOfKey,
 			name: 'digitaal archief/videoproducties',
 		},
 		{
+			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+			schemaIdentifier: '4f1mg9x363',
 			collectionType: 'alternatief' as IsPartOfKey,
 			name: 'videoproductie',
 		},
