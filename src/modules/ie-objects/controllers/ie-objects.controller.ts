@@ -4,6 +4,7 @@
 
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	ForbiddenException,
@@ -417,6 +418,22 @@ export class IeObjectsController {
 		}
 
 		return licensedSearchResult;
+	}
+
+	@Get('alto-json')
+	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
+		if (!/https:\/\/assets-[^.]+.hetarchief.be\/hetarchief/g.test(altoJsonUrl)) {
+			throw new BadRequestException({
+				message:
+					"The provided url doesn't seem to be part of the whitelisted asset service urls.",
+				additionalInfo: {
+					altoJsonUrl,
+				},
+			});
+		}
+		const response = await fetch(altoJsonUrl);
+		const text = await response.text();
+		return JSON.parse(text);
 	}
 
 	@Get()
