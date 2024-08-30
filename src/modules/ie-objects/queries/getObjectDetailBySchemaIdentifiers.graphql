@@ -27,8 +27,11 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			ha_org_request_form
 			dcterms_description
 			ha_org_sector
-			ha_org_allows_overlay
 			foaf_homepage
+			slug
+			hasPreference {
+				ha_pref
+			}
 		}
 		schemaInLanguage {
 			schema_in_language

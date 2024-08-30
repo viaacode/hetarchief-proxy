@@ -76,6 +76,7 @@ import {
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
+import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -509,7 +510,9 @@ export class IeObjectsService {
 			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
-			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
+			maintainerOverlay: !!gqlIeObject?.schemaMaintainer?.hasPreference?.find(
+				(preference) => preference.ha_pref === OrganisationPreference.logoEmbedding
+			),
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],

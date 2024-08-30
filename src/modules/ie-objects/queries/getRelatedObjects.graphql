@@ -27,6 +27,7 @@ query getRelatedParentsSiblingsAndChildren($currentObjectIri: String!, $parentOb
 			ha_org_sector
 			skos_pref_label
 			skos_alt_label
+			slug
 		}
 		schemaTranscript {
 			schema_transcript

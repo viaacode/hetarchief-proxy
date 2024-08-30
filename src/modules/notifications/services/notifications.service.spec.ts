@@ -161,12 +161,6 @@ const mockSpace: VisitorSpace = {
 	contactInfo: {
 		email: null,
 		telephone: null,
-		address: {
-			street: 'Pijndersstraat 28',
-			postalCode: '9000',
-			locality: 'Gent',
-			postOfficeBoxNumber: null,
-		},
 	},
 	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,

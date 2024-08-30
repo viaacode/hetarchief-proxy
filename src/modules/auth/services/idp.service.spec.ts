@@ -21,7 +21,6 @@ const meemooAdminOrganizationIds = 'OR-w66976m';
 const mockOrganisation: Organisation = {
 	schemaIdentifier: 'OR-w66976m',
 	contactPoint: null,
-	primarySite: null,
 	description: null,
 	logo: null,
 	sector: null,

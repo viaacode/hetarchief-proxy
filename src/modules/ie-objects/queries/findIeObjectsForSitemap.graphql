@@ -10,6 +10,7 @@ query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) 
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label
+			slug
 		}
 	}
 	graph__intellectual_entity_aggregate(where: { schema_license: { _has_keys_any: $licenses } }) {

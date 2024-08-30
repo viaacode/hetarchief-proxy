@@ -54,6 +54,7 @@ import { CampaignMonitorService } from '~modules/campaign-monitor/services/campa
 import { type MediaFormat } from '~modules/ie-objects/ie-objects.types';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { SortDirection } from '~shared/types';
@@ -65,7 +66,8 @@ export class MaterialRequestsService {
 	constructor(
 		protected dataService: DataService,
 		private campaignMonitorService: CampaignMonitorService,
-		private organisationsService: OrganisationsService
+		private organisationsService: OrganisationsService,
+		private spacesService: SpacesService
 	) {}
 
 	public async findAll(
@@ -189,11 +191,11 @@ export class MaterialRequestsService {
 			FindMaintainersWithMaterialRequestsQueryVariables
 		>(FindMaintainersWithMaterialRequestsDocument, {});
 
-		if (isNil(response) || !response.maintainer_content_partners_with_material_requests[0]) {
+		if (isNil(response) || !response.maintainer_organisations_with_material_requests[0]) {
 			return [];
 		}
 
-		const maintainers = response.maintainer_content_partners_with_material_requests;
+		const maintainers = response.maintainer_organisations_with_material_requests;
 		return maintainers.map((maintainer: GqlMaterialRequestMaintainer) =>
 			this.adaptMaintainers(maintainer)
 		);
@@ -396,15 +398,15 @@ export class MaterialRequestsService {
 			maintainerSlug:
 				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.visitorSpace?.slug ||
 				kebabCase(organisation?.schemaName),
-			maintainerLogo: organisation?.logo?.iri
+			maintainerLogo: organisation?.logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
 				.replace('https://assets-tst.viaa.be/images/', 'https://assets.viaa.be/images/'),
 			organisation: graphQlMaterialRequest.organisation || null, // Requester organisation (free input field)
-			// TODO add contact point when https://meemoo.atlassian.net/browse/ARC-2420 is done
-			// contactMail:
-			// 	(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-			// 		?.intellectualEntity?.schemaMaintainer?.contact_point || null,
+			contactMail: this.spacesService.adaptEmail(
+				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
+					?.intellectualEntity?.schemaMaintainer?.schemaContactPoint
+			),
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
 					?.intellectualEntity?.meemoo_local_id?.[0] || null,
@@ -417,8 +419,8 @@ export class MaterialRequestsService {
 		graphQlMaterialRequestMaintainer: GqlMaterialRequestMaintainer
 	): MaterialRequestMaintainer {
 		return {
-			id: graphQlMaterialRequestMaintainer.schema_identifier,
-			name: graphQlMaterialRequestMaintainer.schema_name,
+			id: graphQlMaterialRequestMaintainer.org_identifier,
+			name: graphQlMaterialRequestMaintainer.skos_pref_label,
 		};
 	}
 }

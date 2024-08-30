@@ -23,9 +23,11 @@ query getUserByIdentityId($identityId: String!) {
 			identity_provider_name
 		}
 		organisation {
-			schema_identifier
-			schema_name
-			sector: haorg_organization_type
+			id
+			org_identifier
+			skos_pref_label
+			ha_org_sector
+			slug
 		}
 		visitor_space {
 			id

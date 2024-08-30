@@ -1,6 +1,8 @@
 query findMaintainersWithMaterialRequests {
-	maintainer_content_partners_with_material_requests {
-		schema_identifier
-		schema_name
+	maintainer_organisations_with_material_requests {
+		id
+		org_identifier
+		skos_pref_label
+		slug
 	}
 }

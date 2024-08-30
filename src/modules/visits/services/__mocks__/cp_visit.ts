@@ -55,29 +55,19 @@ export const mockGqlVisitRequest: GqlVisit = {
 		published_at: null,
 		created_at: '2022-01-19T10:25:51.320763',
 		updated_at: '2022-01-19T10:25:51.320763',
-		content_partner: {
-			schema_name: 'BRUZZ',
-			schema_identifier: 'OR-d79593p',
-			information: {
-				contact_point: [
-					{
-						contact_type: 'ontsluiting',
-						email: null,
-					},
-				],
-				description:
-					'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
-				logo: {
-					iri: 'https://assets.viaa.be/images/OR-d79593p',
+		organisation: {
+			id: 'https://data-int.hetarchief.be/id/organization/OR-d79593p',
+			skos_pref_label: 'BRUZZ',
+			org_identifier: 'OR-d79593p',
+			schemaContactPoint: [
+				{
+					schema_contact_type: 'ontsluiting',
+					schema_email: null,
 				},
-				primary_site: {
-					address: {
-						locality: 'Elsene',
-						postal_code: '1050',
-						street: 'Eugène Flageyplein 18',
-					},
-				},
-			},
+			],
+			dcterms_description:
+				'BRUZZ is het mediamerk van de vzw Vlaams-Brusselse Media. BRUZZ manifesteert zich online, op radio en tv en in print als de referentie voor Brussel.',
+			ha_org_has_logo: 'https://assets.viaa.be/images/OR-d79593p',
 		},
 	},
 	last_updated_by: null,

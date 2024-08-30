@@ -28,6 +28,7 @@ mutation updateMaterialRequest(
 				schemaMaintainer {
 					org_identifier
 					skos_pref_label
+					slug
 					visitorSpace {
 						slug
 					}

@@ -17,7 +17,10 @@ import {
 	type GetVisitorSpaceProfilesQuery,
 	type UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import {
+	type GqlOrganisation,
+	OrganisationContactPointType,
+} from '~modules/organisations/organisations.types';
 import { AccessType } from '~modules/spaces/types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -106,10 +109,10 @@ describe('SpacesService', () => {
 			const adapted = spacesService.adapt(mockGqlSpace);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlSpace.id);
-			expect(adapted.name).toEqual(mockGqlSpace.content_partner.schema_name);
-			expect(adapted.logo).toEqual(mockGqlSpace.content_partner.information.logo.iri);
-			expect(adapted.contactInfo.address.postalCode).toEqual(
-				mockGqlSpace.content_partner.information.primary_site.address.postal_code
+			expect(adapted.name).toEqual(mockGqlSpace.organisation.skos_pref_label);
+			expect(adapted.logo).toEqual(mockGqlSpace.organisation.ha_org_has_logo);
+			expect(adapted.contactInfo.email).toEqual(
+				mockGqlSpace.organisation.schemaContactPoint[0].schema_email
 			);
 		});
 
@@ -126,16 +129,18 @@ describe('SpacesService', () => {
 
 	describe('adaptEmail', () => {
 		it('returns the correct email address', () => {
-			const email = spacesService.adaptEmail({
-				contact_point: [
-					{ contact_type: 'primary', email: 'wrong@mail.be', telephone: '051123456' },
-					{
-						contact_type: 'ontsluiting',
-						email: 'correct@mail.be',
-						telephone: '051123456',
-					},
-				],
-			} as OrganisationInfoV2);
+			const email = spacesService.adaptEmail([
+				{
+					schema_contact_type: OrganisationContactPointType.primary,
+					schema_email: 'wrong@mail.be',
+					schema_telephone: '051123456',
+				},
+				{
+					schema_contact_type: OrganisationContactPointType.ontsluiting,
+					schema_email: 'correct@mail.be',
+					schema_telephone: '051123456',
+				},
+			] as GqlOrganisation['schemaContactPoint']);
 			expect(email).toEqual('correct@mail.be');
 		});
 

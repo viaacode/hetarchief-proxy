@@ -1,3 +1,4 @@
+import { OrganisationContactPointType } from '~modules/organisations/organisations.types';
 import { type GqlSpace } from '~modules/spaces/types';
 import { AudienceType, VisitorSpaceStatus } from '~shared/types/types';
 
@@ -15,30 +16,18 @@ export const mockGqlSpace: GqlSpace = {
 	published_at: null,
 	created_at: '2022-01-19T10:25:51.320763',
 	updated_at: '2022-01-19T10:25:51.320763',
-	content_partner: {
-		schema_name: 'VRT',
-		schema_identifier: 'OR-rf5kf25',
-		information: {
-			contact_point: [
-				{
-					contact_type: 'ontsluiting',
-					email: null,
-				},
-			],
-			description:
-				'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-			logo: {
-				iri: 'https://assets.viaa.be/images/OR-rf5kf25',
+	organisation: {
+		id: 'https://data-int.hetarchief.be/id/organization/OR-rf5kf25',
+		skos_pref_label: 'VRT',
+		org_identifier: 'OR-rf5kf25',
+		schemaContactPoint: [
+			{
+				schema_contact_type: OrganisationContactPointType.ontsluiting,
+				schema_email: 'test@email.be',
 			},
-			primary_site: {
-				address: {
-					locality: 'Brussel',
-					postal_code: '1043',
-					street: 'Auguste Reyerslaan 52',
-					telephone: null,
-					post_office_box_number: null,
-				},
-			},
-		},
+		],
+		dcterms_description:
+			'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
+		ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 	},
 };

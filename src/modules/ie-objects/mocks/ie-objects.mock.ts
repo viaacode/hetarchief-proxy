@@ -13,6 +13,7 @@ import {
 	type FindIeObjectsForSitemapQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 } from '~generated/graphql-db-types-hetarchief';
+import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
@@ -471,7 +472,14 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				ha_org_sector: 'Publieke Omroep',
 				ha_org_request_form: null,
 				foaf_homepage: 'https://www.vrt.be',
-				ha_org_allows_overlay: true,
+				hasPreference: [
+					{
+						ha_pref: OrganisationPreference.logoEmbedding,
+					},
+					{
+						ha_pref: OrganisationPreference.iiifDissemination,
+					},
+				],
 				ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 			},
 			schema_name: 'Durf te vragen R002 A0001',
@@ -607,10 +615,10 @@ export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
 	maintainerSlug: 'vrt',
 };
 
-export const mockIeObjectWithMetadataSetLtdCsv = `meemooOriginalCp;schemaIdentifier;meemooLocalId;maintainerId;maintainerName;name;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium.0;dctermsFormat;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
-;8911p09j1g;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;serie;Serie1;programma;Programma1`;
-export const mockIeObjectWithMetadataSetAllWithEssenceCsv = `meemooOriginalCp;schemaIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium.0;dctermsFormat;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
-;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-rf5kf25;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
+export const mockIeObjectWithMetadataSetLtdCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
+8911p09j1g;;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;serie;Serie1;programma;Programma1`;
+export const mockIeObjectWithMetadataSetAllWithEssenceCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
+8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
 Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".
 Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
 
@@ -632,10 +640,10 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 
 John  Buck (44) & Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
-Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;serie;Serie1;programma;Programma1`;
+Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;serie;Serie1;programma;Programma1`;
 
-export const mockIeObjectWithMetadataSetAllCsv = `meemooOriginalCp;schemaIdentifier;meemooLocalId;meemooMediaObjectId;maintainerId;maintainerName;name;ebucoreObjectType;duration;dateCreated;datePublished;creator.productionCompany.0;publisher;description;abstract;genre.0;spatial;temporal;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;dctermsMedium.0;dctermsFormat;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
-;8911p09j1g;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;OR-zp3w03v;vrt;Durf te vragen R002 A0001;;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
+export const mockIeObjectWithMetadataSetAllCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.collectionType;isPartOf.1.name
+8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-zp3w03v;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
 Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".
 Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
 
@@ -657,10 +665,10 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 
 John  Buck (44) & Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
-Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";program;;;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;16mm;video;serie;Serie1;programma;Programma1`;
+Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.";;;serie;Serie1;programma;Programma1`;
 export const mockIeObjectWithMetadataSetLtdXml = `<object>
-  <meemooOriginalCp/>
   <schemaIdentifier>8911p09j1g</schemaIdentifier>
+  <meemooOriginalCp/>
   <meemooLocalId/>
   <maintainerId>OR-rf5kf25</maintainerId>
   <maintainerName>vrt</maintainerName>
@@ -673,6 +681,8 @@ export const mockIeObjectWithMetadataSetLtdXml = `<object>
     <collectionType>programma</collectionType>
     <name>Programma1</name>
   </isPartOf>
+  <dctermsFormat>video</dctermsFormat>
+  <dctermsMedium>16mm</dctermsMedium>
   <duration>00:39:52</duration>
   <dateCreated>[2020-09-01]</dateCreated>
   <datePublished>2020-09-01</datePublished>
@@ -681,8 +691,6 @@ export const mockIeObjectWithMetadataSetLtdXml = `<object>
   </creator>
   <description>Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.</description>
   <genre>program</genre>
-  <spatial/>
-  <temporal/>
   <keywords>INTERVIEW</keywords>
   <keywords>ZIEKTE</keywords>
   <keywords>GEZONDHEID</keywords>
@@ -695,15 +703,21 @@ export const mockIeObjectWithMetadataSetLtdXml = `<object>
   <keywords>AGRESSIE</keywords>
   <keywords>KARAKTERVORMING</keywords>
   <inLanguage/>
-  <dctermsMedium>16mm</dctermsMedium>
-  <dctermsFormat>video</dctermsFormat>
+  <numberOfPages/>
+  <abrahamInfo/>
+  <spatial/>
+  <temporal/>
+  <copyrightHolder>vrt</copyrightHolder>
 </object>`;
 
 export const mockIeObjectWithMetadataSetAllXml = `<object>
-  <meemooOriginalCp/>
   <schemaIdentifier>8911p09j1g</schemaIdentifier>
+  <meemooOriginalCp/>
   <meemooLocalId/>
   <meemooMediaObjectId>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c</meemooMediaObjectId>
+  <premisIdentifier>
+    <premisid>WP00178829</premisid>
+  </premisIdentifier>
   <maintainerId>OR-zp3w03v</maintainerId>
   <maintainerName>vrt</maintainerName>
   <name>Durf te vragen R002 A0001</name>
@@ -715,15 +729,38 @@ export const mockIeObjectWithMetadataSetAllXml = `<object>
     <collectionType>programma</collectionType>
     <name>Programma1</name>
   </isPartOf>
-  <ebucoreObjectType/>
+  <dctermsFormat>video</dctermsFormat>
+  <dctermsMedium>16mm</dctermsMedium>
   <duration>00:39:52</duration>
   <dateCreated>[2020-09-01]</dateCreated>
   <datePublished>2020-09-01</datePublished>
   <creator>
     <productionCompany>Roses Are Blue</productionCompany>
   </creator>
-  <publisher/>
   <description>Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.</description>
+  <genre>program</genre>
+  <keywords>INTERVIEW</keywords>
+  <keywords>ZIEKTE</keywords>
+  <keywords>GEZONDHEID</keywords>
+  <keywords>ZIEKTE VAN ALZHEIMER</keywords>
+  <keywords>JONGDEMENTIE</keywords>
+  <keywords>THUISVERPLEGING</keywords>
+  <keywords>FIETS</keywords>
+  <keywords>GEHEUGEN</keywords>
+  <keywords>VERGETEN</keywords>
+  <keywords>AGRESSIE</keywords>
+  <keywords>KARAKTERVORMING</keywords>
+  <inLanguage/>
+  <numberOfPages/>
+  <abrahamInfo/>
+  <spatial/>
+  <temporal/>
+  <copyrightHolder>vrt</copyrightHolder>
+  <width/>
+  <height/>
+  <synopsis/>
+  <alternativeTitle/>
+  <publisher/>
   <abstract>In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
 Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: "Kan je genezen?" en "Heb je al aan euthanasie gedacht?".
 Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
@@ -747,30 +784,18 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</abstract>
-  <genre>program</genre>
-  <spatial/>
-  <temporal/>
-  <keywords>INTERVIEW</keywords>
-  <keywords>ZIEKTE</keywords>
-  <keywords>GEZONDHEID</keywords>
-  <keywords>ZIEKTE VAN ALZHEIMER</keywords>
-  <keywords>JONGDEMENTIE</keywords>
-  <keywords>THUISVERPLEGING</keywords>
-  <keywords>FIETS</keywords>
-  <keywords>GEHEUGEN</keywords>
-  <keywords>VERGETEN</keywords>
-  <keywords>AGRESSIE</keywords>
-  <keywords>KARAKTERVORMING</keywords>
-  <inLanguage/>
-  <dctermsMedium>16mm</dctermsMedium>
-  <dctermsFormat>video</dctermsFormat>
+  <ebucoreObjectType/>
+  <meemooDescriptionCast/>
 </object>`;
 
 export const mockIeObjectWithMetadataSetAllWithEssenceXml = `<object>
-  <meemooOriginalCp/>
   <schemaIdentifier>8911p09j1g</schemaIdentifier>
+  <meemooOriginalCp/>
   <meemooLocalId/>
   <meemooMediaObjectId>49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c</meemooMediaObjectId>
+  <premisIdentifier>
+    <premisid>WP00178829</premisid>
+  </premisIdentifier>
   <maintainerId>OR-rf5kf25</maintainerId>
   <maintainerName>vrt</maintainerName>
   <name>Durf te vragen R002 A0001</name>
@@ -782,15 +807,38 @@ export const mockIeObjectWithMetadataSetAllWithEssenceXml = `<object>
     <collectionType>programma</collectionType>
     <name>Programma1</name>
   </isPartOf>
-  <ebucoreObjectType/>
+  <dctermsFormat>video</dctermsFormat>
+  <dctermsMedium>16mm</dctermsMedium>
   <duration>00:39:52</duration>
   <dateCreated>[2020-09-01]</dateCreated>
   <datePublished>2020-09-01</datePublished>
   <creator>
     <productionCompany>Roses Are Blue</productionCompany>
   </creator>
-  <publisher/>
   <description>Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.</description>
+  <genre>program</genre>
+  <keywords>INTERVIEW</keywords>
+  <keywords>ZIEKTE</keywords>
+  <keywords>GEZONDHEID</keywords>
+  <keywords>ZIEKTE VAN ALZHEIMER</keywords>
+  <keywords>JONGDEMENTIE</keywords>
+  <keywords>THUISVERPLEGING</keywords>
+  <keywords>FIETS</keywords>
+  <keywords>GEHEUGEN</keywords>
+  <keywords>VERGETEN</keywords>
+  <keywords>AGRESSIE</keywords>
+  <keywords>KARAKTERVORMING</keywords>
+  <inLanguage/>
+  <numberOfPages/>
+  <abrahamInfo/>
+  <spatial/>
+  <temporal/>
+  <copyrightHolder>vrt</copyrightHolder>
+  <width/>
+  <height/>
+  <synopsis/>
+  <alternativeTitle/>
+  <publisher/>
   <abstract>In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
 Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: "Kan je genezen?" en "Heb je al aan euthanasie gedacht?".
 Marleen noemt het een 'klotenziekte' maar toch blijft ze positief en wil ze nog zoveel mogelijk van het leven genieten. Dat ondervindt Siska in een fietstocht die het Ventiel, een vrijwilligersorganisatie voor mensen met jongdementie, organiseert.
@@ -814,21 +862,6 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</abstract>
-  <genre>program</genre>
-  <spatial/>
-  <temporal/>
-  <keywords>INTERVIEW</keywords>
-  <keywords>ZIEKTE</keywords>
-  <keywords>GEZONDHEID</keywords>
-  <keywords>ZIEKTE VAN ALZHEIMER</keywords>
-  <keywords>JONGDEMENTIE</keywords>
-  <keywords>THUISVERPLEGING</keywords>
-  <keywords>FIETS</keywords>
-  <keywords>GEHEUGEN</keywords>
-  <keywords>VERGETEN</keywords>
-  <keywords>AGRESSIE</keywords>
-  <keywords>KARAKTERVORMING</keywords>
-  <inLanguage/>
-  <dctermsMedium>16mm</dctermsMedium>
-  <dctermsFormat>video</dctermsFormat>
+  <ebucoreObjectType/>
+  <meemooDescriptionCast/>
 </object>`;

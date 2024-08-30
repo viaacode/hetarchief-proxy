@@ -1,4 +1,20 @@
+import {
+	type FindOrganisationsBySchemaIdsQuery,
+	type GetOrganisationBySlugQuery,
+} from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+
+export enum OrganisationPreference {
+	logoEmbedding = 'logo-embedding',
+	iiifDissemination = 'iiif-dissemination',
+	visitorSpacePublication = 'visitor-space-publication',
+}
+
+export enum OrganisationContactPointType {
+	ontsluiting = 'ontsluiting',
+	primary = 'primary',
+	facturatie = 'facturatie',
+}
 
 export interface OrganisationInfoV2 {
 	id: string;
@@ -63,44 +79,16 @@ export interface ParsedOrganisation {
 	};
 }
 
-export interface GqlOrganisation {
-	schema_identifier: string;
-	contact_point: {
-		contact_type: string;
-		email: string;
-	}[];
-	logo: {
-		iri: string;
-	};
-	slug?: string | null;
-	primary_site: {
-		address: {
-			locality: string;
-			postal_code: string;
-			street: string;
-			telephone: string;
-			post_office_box_number: string;
-		};
-	};
-	created_at?: string;
-	updated_at?: string;
-	schema_name?: string | null;
-	description?: string;
-	// Remark here organization is with Z
-	haorg_organization_type?: string | null;
-	form_url?: string | null;
-	homepage_url?: string | null;
-}
+export type GqlOrganisation = GetOrganisationBySlugQuery['graph_organization'][0] &
+	FindOrganisationsBySchemaIdsQuery['graph_organization'][0];
 
 export interface Organisation {
 	schemaIdentifier: string;
 	contactPoint: OrganisationContactPoint[];
 	description: string;
-	logo: {
-		iri: string;
-	};
+	logo: string | null;
 	slug: string | null;
-	primarySite: OrganisationPrimarySite;
+	// primarySite: OrganisationPrimarySite;
 	schemaName: string;
 	createdAt: string;
 	updatedAt: string;

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { addMinutes, isBefore, isFuture, isPast, parseISO } from 'date-fns';
-import { compact, find, isArray, isEmpty, set, uniq } from 'lodash';
+import { compact, isArray, isEmpty, set, uniq } from 'lodash';
 
 import { type CreateVisitDto, type UpdateVisitDto, type VisitsQueryDto } from '../dto/visits.dto';
 import {
@@ -73,7 +73,7 @@ import {
 	type UpdateVisitMutation,
 	type UpdateVisitMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { ORDER_PROP_TO_DB_PROP } from '~modules/visits/consts';
 import { convertToDate } from '~shared/helpers/format-belgian-date';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -100,7 +100,10 @@ export class VisitsService {
 		[VisitStatus.DENIED]: [VisitStatus.DENIED, VisitStatus.APPROVED],
 	};
 
-	constructor(private dataService: DataService) {}
+	constructor(
+		private dataService: DataService,
+		private spacesService: SpacesService
+	) {}
 
 	public statusTransitionAllowed(from: VisitStatus, to: VisitStatus): boolean {
 		return this.statusTransitions[from].includes(to);
@@ -119,28 +122,6 @@ export class VisitsService {
 		return true;
 	}
 
-	/* istanbul ignore next */
-	public adaptSpaceAddress(graphQlAddress: any): string {
-		const locality = graphQlAddress?.locality || '';
-		const postalCode = graphQlAddress?.postal_code || '';
-		const street = graphQlAddress?.street || '';
-
-		if (locality || postalCode || street) {
-			return `${street}, ${postalCode} ${locality}`;
-		}
-		return '';
-	}
-
-	public adaptEmail(graphQlInfo: OrganisationInfoV2): string {
-		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		return contactPoint?.email || null;
-	}
-
-	public adaptTelephone(graphQlInfo: OrganisationInfoV2): string {
-		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		return contactPoint?.telephone || null;
-	}
-
 	public adapt(graphQlVisit: GqlVisit): VisitRequest | null {
 		if (!graphQlVisit) {
 			return null;
@@ -152,23 +133,20 @@ export class VisitsService {
 			id: graphQlVisit?.id,
 			note: this.adaptNotes((graphQlVisit as GqlVisitWithNotes)?.visitor_space_request_notes),
 			reason: graphQlVisit?.user_reason,
-			spaceAddress: this.adaptSpaceAddress(
-				graphQlVisit?.visitor_space?.content_partner?.information?.primary_site?.address
-			),
 			spaceId: graphQlVisit?.cp_space_id,
 			spaceMaintainerId: graphQlVisit?.visitor_space?.schema_maintainer_id,
-			spaceMail: this.adaptEmail(
-				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
+			spaceMail: this.spacesService.adaptEmail(
+				graphQlVisit?.visitor_space?.organisation.schemaContactPoint
 			),
-			spaceTelephone: this.adaptTelephone(
-				graphQlVisit?.visitor_space?.content_partner?.information as OrganisationInfoV2
+			spaceTelephone: this.spacesService.adaptTelephone(
+				graphQlVisit?.visitor_space?.organisation.schemaContactPoint
 			),
-			spaceName: graphQlVisit?.visitor_space?.content_partner?.schema_name,
+			spaceName: graphQlVisit?.visitor_space?.organisation?.skos_pref_label,
 			spaceSlug: graphQlVisit?.visitor_space?.slug,
 			spaceColor: graphQlVisit?.visitor_space?.schema_color,
 			spaceImage: graphQlVisit?.visitor_space?.schema_image,
-			spaceLogo: graphQlVisit?.visitor_space?.content_partner?.information?.logo?.iri,
-			spaceInfo: graphQlVisit?.visitor_space?.content_partner?.information?.description,
+			spaceLogo: graphQlVisit?.visitor_space?.organisation?.ha_org_has_logo,
+			spaceInfo: graphQlVisit?.visitor_space?.organisation?.dcterms_description,
 			spaceDescriptionNl: graphQlVisit?.visitor_space?.schema_description_nl,
 			spaceServiceDescriptionNl: graphQlVisit?.visitor_space?.schema_service_description_nl,
 			spaceDescriptionEn: graphQlVisit?.visitor_space?.schema_description_en,
@@ -388,7 +366,7 @@ export class VisitsService {
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
 			const visitorSpaceFilter: FindVisitsQueryVariables['where'] = {
-				visitor_space: { content_partner: { schema_name: { _ilike: query } } },
+				visitor_space: { organisation: { skos_pref_label: { _ilike: query } } },
 			};
 			const filterBySpaceName = parameters.visitorSpaceSlug ? [] : [visitorSpaceFilter];
 

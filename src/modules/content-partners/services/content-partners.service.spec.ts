@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ContentPartnersService } from './content-partners.service';
 
+import type { FindContentPartnersQuery } from '~generated/graphql-db-types-hetarchief';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -35,13 +36,14 @@ describe('ContentPartnersService', () => {
 	describe('adapt', () => {
 		it('can adapt a hasura response to our tos interface', () => {
 			const adapted = contentPartnersService.adapt({
-				schema_identifier: 'OR-test',
-				schema_name: 'test-org',
+				id: 'https://data-int.hetarchief.be/id/organization/OR-test',
+				org_identifier: 'OR-test',
+				skos_pref_label: 'Test org',
 			});
 			// test some sample keys
 			expect(adapted).toEqual({
 				id: 'OR-test',
-				name: 'test-org',
+				name: 'Test org',
 			});
 		});
 	});
@@ -49,18 +51,18 @@ describe('ContentPartnersService', () => {
 	describe('getContentPartners', () => {
 		it('returns all content partners', async () => {
 			const mockData = {
-				maintainer_content_partner: [
+				graph_organization: [
 					{
-						schema_identifier: 'OR-test',
-						schema_name: 'test-org',
+						org_identifier: 'OR-test',
+						skos_pref_label: 'Test org',
 					},
 				],
-				maintainer_content_partner_aggregate: {
+				graph_organization_aggregate: {
 					aggregate: {
 						count: 1,
 					},
 				},
-			};
+			} as FindContentPartnersQuery;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({});
@@ -71,18 +73,18 @@ describe('ContentPartnersService', () => {
 
 		it('filters on hasSpace', async () => {
 			const mockData = {
-				maintainer_content_partner: [
+				graph_organization: [
 					{
-						schema_identifier: 'OR-test',
-						schema_name: 'test-org',
+						org_identifier: 'OR-test',
+						skos_pref_label: 'Test org',
 					},
 				],
-				maintainer_content_partner_aggregate: {
+				graph_organization_aggregate: {
 					aggregate: {
 						count: 1,
 					},
 				},
-			};
+			} as FindContentPartnersQuery;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
 			const response = await contentPartnersService.getContentPartners({ hasSpace: false });
