@@ -1,0 +1,63 @@
+[
+  {
+    "term": {
+      "premis_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_local_id": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "premis_is_part_of": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "meemoo_original_cp": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_identifier": "{{query}}"
+    }
+  },
+  {
+    "term": {
+      "schema_maintainer.schema_identifier": "{{query}}"
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "boost": 100,
+      "fields": [
+        "schema_name^20",
+        "schema_description",
+        "schema_is_part_of.newspaper^20",
+        "schema_is_part_of.alternatief^20",
+        "schema_is_part_of.archief",
+        "schema_is_part_of.deelarchief",
+        "schema_is_part_of.deelreeks",
+        "schema_is_part_of.programma",
+        "schema_is_part_of.reeks",
+        "schema_is_part_of.seizoen",
+        "schema_is_part_of.serie",
+        "schema_keywords",
+        "schema_genre",
+        "schema_spatial_coverage",
+        "schema_temporal_coverage",
+        "dcterms_medium",
+        "dcterms_format",
+        "schema_creator_text",
+        "schema_maintainer.schema_name",
+        "schema_copyrightholder"
+      ]
+    }
+  }
+]
+
+

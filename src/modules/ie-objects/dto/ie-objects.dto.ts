@@ -156,13 +156,3 @@ export class IeObjectsSimilarQueryDto {
 	})
 	maintainerId?: string;
 }
-
-export class IeObjectsRelatedQueryDto {
-	@IsString()
-	@IsOptional()
-	@ApiPropertyOptional({
-		type: String,
-		description: 'Fetch related object with the same maintainerId',
-	})
-	maintainerId?: string;
-}

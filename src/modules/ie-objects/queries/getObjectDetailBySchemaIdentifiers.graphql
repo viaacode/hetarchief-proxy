@@ -1,6 +1,7 @@
 query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 	graph__intellectual_entity(where: { schema_identifier: { _in: $schemaIdentifiers } }) {
 		schema_identifier
+		id
 		schema_is_part_of
 		schema_duration
 		schema_number_of_pages
@@ -16,6 +17,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		schema_license
 		schema_date_created
 		meemoo_local_id
+		premis_is_part_of
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label
@@ -94,6 +96,9 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			schema_in_language
 			schema_start_time
 			schema_transcript
+			schemaTranscriptUrls {
+				schema_transcript_url
+			}
 			edm_is_next_in_sequence
 			updated_at
 			includes {

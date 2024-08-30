@@ -1,6 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import jsep from 'jsep';
-import { clamp, forEach, isArray, isNil, set } from 'lodash';
+import { clamp, forEach, isArray, isNil } from 'lodash';
 
 import { type IeObjectsQueryDto, type SearchFilter } from '../dto/ie-objects.dto';
 import {
@@ -14,10 +14,15 @@ import { IeObjectLicense } from '../ie-objects.types';
 import {
 	AGGS_PROPERTIES,
 	DEFAULT_QUERY_TYPE,
+	ElasticsearchField,
+	type ElasticsearchSubQuery,
 	FLATTENED_FIELDS,
+	IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL,
+	IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED,
 	IeObjectsSearchFilterField,
 	MAX_COUNT_SEARCH_RESULTS,
 	MAX_NUMBER_SEARCH_RESULTS,
+	MetadataAccessType,
 	MULTI_MATCH_FIELDS,
 	MULTI_MATCH_QUERY_MAPPING,
 	NEEDS_AGG_SUFFIX,
@@ -34,6 +39,7 @@ import {
 	VALUE_OPERATORS,
 } from './elasticsearch.consts';
 
+import { AND, applyFilter, OR } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { GroupId, GroupName } from '~modules/users/types';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { type SortDirection } from '~shared/types';
@@ -54,43 +60,132 @@ export class QueryBuilder {
 	 * @return elastic search query
 	 */
 	public static build(searchRequest: IeObjectsQueryDto, inputInfo: QueryBuilderInputInfo): any {
+		// Check if all filter fields are known
+		(searchRequest?.filters || []).find((searchFilter) => {
+			if (!Object.values(IeObjectsSearchFilterField).includes(searchFilter.field)) {
+				throw new BadRequestException(
+					`Field '${searchFilter.field}' is not a valid search filter field.`
+				);
+			}
+			return false;
+		});
 		try {
+			// Build the elasticsearch query object in 2 parts
+			// * search terms and filters in metadata limited fields
+			// * search terms and filters in metadata all fields
+			//
+			// This is required because a user can only search in the fields that he is allowed to see
+			// https://meemoo.atlassian.net/wiki/spaces/HA2/pages/4210786408/TA+Zoeken+via+de+zoekbalk#backend-Herwerk-elasticsearch-zoek-om-enkel-te-zoeken-op-velden-die-je-mag-zien
+			const filtersMetadataLimited = searchRequest.filters.filter((filter) =>
+				IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED.includes(filter.field)
+			);
+			const filtersMetadataAll = searchRequest.filters.filter((filter) =>
+				IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL.includes(filter.field)
+			);
+			const queryFromMetadataLimitedFilters:
+				| ElasticsearchSubQuery
+				| Record<string, never>
+				| null = this.buildFilterObject(
+				filtersMetadataLimited,
+				inputInfo,
+				MetadataAccessType.LIMITED
+			);
+			const queryFromMetadataAllFilters:
+				| ElasticsearchSubQuery
+				| Record<string, never>
+				| null = this.buildFilterObject(
+				filtersMetadataAll,
+				inputInfo,
+				MetadataAccessType.ALL
+			);
+
+			// Build the license checks for the elastic search query in 6 parts:
+			// 1) Check schema_license contains "PUBLIC-METADATA-LTD"
+			// 2) Check schema_license contains "PUBLIC-METADATA-ALL" or "PUBLIC-CONTENT"
+			// 3) Check if the user has visitor space access (full) and object has BEZOEKERTOOL_METADATA_ALL or BEZOEKERTOOL_CONTENT license
+			// 4) Check if the user has visitor space access (folder) and object has BEZOEKERTOOL_METADATA_ALL or BEZOEKERTOOL_CONTENT license
+			// 5) Check if the user is a KIOSK or CP_ADMIN user
+			// 6) Check if the user is a key user and object has INTRA_CP_METADATA_ALL or INTRA_CP_CONTENT license
+			const licensesFilterPublicLimited: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterPublicLimited();
+			const licensesFilterPublicAll: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterPublicAll();
+			const licensesFilterVisitorSpaceFullAccess: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterVisitorSpaceFullAccess(inputInfo);
+			const licensesFilterVisitorSpaceFolderAccess: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterVisitorSpaceFolderAccess(inputInfo);
+			const licensesFilterIntraCpFullAccess: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterKioskAndCpAdmin(inputInfo);
+			const licensesFilterKeyUsers: ElasticsearchSubQuery[] =
+				this.buildLicensesFilterKeyUsers(inputInfo);
+
 			const { offset, limit } = PaginationHelper.convertPagination(
 				searchRequest.page,
 				searchRequest.size
 			);
-			const queryObject: any = {};
-			delete queryObject.default; // Side effect of importing a json file as a module
+			// delete queryObject.default; // Side effect of importing a json file as a module
 
 			// Avoid huge queries
-			queryObject.size = Math.min(searchRequest.size, MAX_NUMBER_SEARCH_RESULTS);
+			const size = Math.min(searchRequest.size, MAX_NUMBER_SEARCH_RESULTS);
 			const max = Math.max(0, MAX_COUNT_SEARCH_RESULTS - limit);
-			queryObject.from = clamp(offset, 0, max);
-
-			// Add the filters and search terms to the query object
-			set(
-				queryObject,
-				'query.bool.should[0]',
-				this.buildFilterObject(searchRequest.filters, inputInfo)
-			);
-
-			// Add the licenses to the query object
-			set(queryObject, 'query.bool.should[1]', this.buildLicensesFilter(inputInfo));
-
-			// Both the filters the user selected and the access to the object should match, before we return the object as a search result
-			set(queryObject, 'query.bool.minimum_should_match', 2);
+			const from = clamp(offset, 0, max);
 
 			// Specify the aggs objects with optional search terms
-			set(queryObject, 'aggs', this.buildAggsObject(searchRequest));
+			const aggs = this.buildAggsObject(searchRequest);
 
 			// Add sorting
-			set(
-				queryObject,
-				'sort',
-				this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection)
-			);
+			const sort = this.buildSortArray(searchRequest.orderProp, searchRequest.orderDirection);
 
-			return queryObject;
+			/**
+			 * Assemble the complete query object:
+			 * 	* metadata limited
+			 *		* object with VIAA-PUBLIC-METADATA-LTD
+			 *		* AND
+			 * 		* filters in METADATA-LTD fields
+			 * 	* OR
+			 * 	* metadata all
+			 * 		* filters in METADATA-ALL fields
+			 * 		* AND
+			 * 		* one of
+			 * 			* object with VIAA-PUBLIC-METADATA-ALL
+			 * 			* object with VIAA-PUBLIC-CONTENT
+			 * 			* OR
+			 * 			* visitor space full access
+			 * 				* object license
+			 * 				* AND
+			 * 				* user access
+			 * 			* OR
+			 * 			* visitor space folder access
+			 * 					* object license
+			 * 					* AND
+			 * 					* object id in folders
+			 * 			* OR
+			 * 			* key users
+			 * 				* intra cp license
+			 * 				* AND
+			 * 				* organisation with correct sector
+			 */
+			return {
+				query: OR([
+					// metadata limited
+					AND([queryFromMetadataLimitedFilters, ...licensesFilterPublicLimited]),
+					// metadata all
+					AND([
+						queryFromMetadataAllFilters,
+						OR([
+							...licensesFilterPublicAll,
+							...licensesFilterVisitorSpaceFullAccess,
+							...licensesFilterVisitorSpaceFolderAccess,
+							...licensesFilterIntraCpFullAccess,
+							...licensesFilterKeyUsers,
+						]),
+					]),
+				]),
+				size,
+				from,
+				aggs,
+				sort,
+			};
 		} catch (err) {
 			throw new InternalServerErrorException('Failed to build query object', err);
 		}
@@ -139,11 +234,11 @@ export class QueryBuilder {
 		return sortArray;
 	}
 
-	protected static getOccurrenceType(operator: Operator): string {
+	private static getOccurrenceType(operator: Operator): string {
 		return OCCURRENCE_TYPE[operator] || 'filter';
 	}
 
-	protected static buildValue(searchFilter: SearchFilter): any {
+	private static buildValue(searchFilter: SearchFilter): any {
 		if (VALUE_OPERATORS.includes(searchFilter.operator)) {
 			return {
 				[searchFilter.operator]: searchFilter.value,
@@ -152,7 +247,7 @@ export class QueryBuilder {
 		return searchFilter.multiValue || searchFilter.value;
 	}
 
-	protected static getQueryType(searchFilter: SearchFilter, value: any): any {
+	private static getQueryType(searchFilter: SearchFilter, value: any): any {
 		const defaultQueryType = DEFAULT_QUERY_TYPE[searchFilter.field];
 		if (defaultQueryType === QueryType.TERMS && !isArray(value)) {
 			return QueryType.TERM;
@@ -160,7 +255,7 @@ export class QueryBuilder {
 		return defaultQueryType;
 	}
 
-	protected static buildFilter(
+	private static buildFilter(
 		elasticKey: string,
 		searchFilter: SearchFilter
 	): { occurrenceType: string; query: any } {
@@ -175,6 +270,7 @@ export class QueryBuilder {
 					wildcard: {
 						[elasticKey]: {
 							value: `*${searchFilter.value}*`,
+							case_insensitive: true,
 						},
 					},
 				},
@@ -227,47 +323,49 @@ export class QueryBuilder {
 	 * Containing the search terms and the checked filters
 	 * @param filters
 	 * @param inputInfo
+	 * @param metadataAccessType See https://meemoo.atlassian.net/wiki/spaces/HA2/pages/edit-v2/4210786408#backend-Herwerk-elasticsearch-zoek-om-enkel-te-zoeken-op-velden-die-je-mag-zien
 	 */
 	private static buildFilterObject(
 		filters: SearchFilter[] | undefined,
-		inputInfo: QueryBuilderInputInfo
-	) {
-		const filterObject: any = {};
+		inputInfo: QueryBuilderInputInfo,
+		metadataAccessType: MetadataAccessType
+	): ElasticsearchSubQuery | Record<string, never> | null {
 		// Add additional filters to the query object
-		const filterArray: any[] = [];
-		set(filterObject, 'bool.filter', filterArray);
+		const filterArray: ElasticsearchSubQuery[] = [];
+		const filterObject: ElasticsearchSubQuery = {
+			bool: {},
+		};
 
 		// Kiosk users are only allowed to view objects from their maintainer
 		if (inputInfo.user?.getGroupName() === GroupName.KIOSK_VISITOR) {
 			filterArray.push({
 				terms: {
-					'schema_maintainer.schema_identifier': [inputInfo.user?.getOrganisationId()],
+					[ElasticsearchField.schema_maintainer +
+					'.' +
+					ElasticsearchField.schema_identifier]: [inputInfo.user?.getOrganisationId()],
 				},
 			});
 		}
 		// Determine consultable filters are present and strip them from standard filter list to be processed later on
 		// Remark: this needs to happen after the line that checks if filters are empty.
 		// This because if we strip it before it will just return match_all
-		const consultableSearchFilterFields: IeObjectsSearchFilterField[] = [
+		const customSearchFilterFields: IeObjectsSearchFilterField[] = [
 			IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 			IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+			IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
+			IeObjectsSearchFilterField.RELEASE_DATE,
 		];
 		if (
-			filters &&
-			filters.some((filter: SearchFilter) =>
-				consultableSearchFilterFields.includes(filter.field)
-			)
+			filters?.some((filter: SearchFilter) => customSearchFilterFields.includes(filter.field))
 		) {
-			const consultableFilters = this.determineIsConsultableFilters(filters, inputInfo);
+			const customFilters = this.determineCustomFilters(filters, inputInfo);
 
 			// apply determined consultable filters if there are any
-			consultableFilters.forEach((consultableFilter) =>
-				this.applyFilter(filterObject, consultableFilter)
-			);
+			customFilters.forEach((customFilter) => applyFilter(filterObject, customFilter));
 			// Remove CONSULTABLE_ONLY_ON_LOCATION and CONSULTABLE_MEDIA filter entries from the filter list,
 			// since they have been handled above and should not be handled by the standard field filtering logic.
 			filters = filters.filter(
-				(filter: SearchFilter) => !consultableSearchFilterFields.includes(filter.field)
+				(filter: SearchFilter) => !customSearchFilterFields.includes(filter.field)
 			);
 		}
 
@@ -291,24 +389,34 @@ export class QueryBuilder {
 								convertNodeToEsQueryFilterObjects(
 									jsep(encodeSearchterm(searchFilter.value)),
 									{
-										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query,
-										exact: MULTI_MATCH_QUERY_MAPPING.exact.query,
+										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[
+											metadataAccessType
+										],
+										exact: MULTI_MATCH_QUERY_MAPPING.exact.query[
+											metadataAccessType
+										],
 									},
 									searchFilter
 								),
 							];
 						} else {
 							// If no boolean operators were found, do a simple text search using the fuzzy search term template
-							const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy.query;
+							const searchTemplate =
+								MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
+					} else if (searchFilter.field === IeObjectsSearchFilterField.ADVANCED_QUERY) {
+						const searchTemplate =
+							MULTI_MATCH_QUERY_MAPPING.fuzzy.advancedQuery[metadataAccessType];
+						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					} else {
-						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+						const searchTemplate =
+							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
 					textFilters.forEach((filter) =>
-						this.applyFilter(filterObject, {
+						applyFilter(filterObject, {
 							occurrenceType: this.getOccurrenceType(searchFilter.operator),
 							query: filter,
 						})
@@ -317,7 +425,8 @@ export class QueryBuilder {
 				} else {
 					// Exact match
 					// Use a multi field search template to exact search in elasticsearch across multiple fields
-					const searchTemplate = MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field];
+					const searchTemplate =
+						MULTI_MATCH_QUERY_MAPPING.exact[searchFilter.field][metadataAccessType];
 
 					if (!searchTemplate) {
 						throw new BadRequestException(
@@ -327,7 +436,7 @@ export class QueryBuilder {
 
 					const textFilter = buildFreeTextFilter(searchTemplate, searchFilter);
 
-					this.applyFilter(filterObject, {
+					applyFilter(filterObject, {
 						occurrenceType: this.getOccurrenceType(searchFilter.operator),
 						query: textFilter,
 					});
@@ -359,8 +468,19 @@ export class QueryBuilder {
 			}
 
 			const advancedFilter = this.buildFilter(elasticKey, searchFilter);
-			this.applyFilter(filterObject, advancedFilter);
+			applyFilter(filterObject, advancedFilter);
 		});
+
+		if (filterArray.length > 0) {
+			applyFilter(filterObject, {
+				occurrenceType: 'filter',
+				query: filterArray,
+			});
+		}
+
+		if (!filterObject.bool?.must && !filterObject.bool?.filter) {
+			return {};
+		}
 
 		return filterObject;
 	}
@@ -372,11 +492,11 @@ export class QueryBuilder {
 	 * @param inputInfo
 	 * @returns
 	 */
-	public static determineIsConsultableFilters(
+	public static determineCustomFilters(
 		searchRequestFilters: SearchFilter[],
 		inputInfo: QueryBuilderInputInfo
 	): any {
-		const toBeAppliedConsultableFilters: any = [];
+		const toBeAppliedCustomFilters: any = [];
 
 		const consultableOnlyOnLocationFilter = searchRequestFilters.find(
 			(filter: SearchFilter) =>
@@ -385,24 +505,36 @@ export class QueryBuilder {
 		const consultableMediaFilter = searchRequestFilters.find(
 			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_MEDIA
 		);
+		const consultablePublicDomain = searchRequestFilters.find(
+			(filter: SearchFilter) =>
+				filter.field === IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN
+		);
+		const releaseDates = searchRequestFilters.filter(
+			(filter: SearchFilter) => filter.field === IeObjectsSearchFilterField.RELEASE_DATE
+		);
 
 		// add consultable filters
 		// This filter is inverted, so we only run the filter if the value is false. Don't run it if the value is undefined/null
 		if (
 			consultableOnlyOnLocationFilter?.value?.toLowerCase() === 'true' &&
-			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR
+			inputInfo.user.getGroupId() !== GroupId.KIOSK_VISITOR &&
+			inputInfo?.spacesIds?.length
 		) {
-			toBeAppliedConsultableFilters.push({
+			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					{
 						terms: {
-							'schema_maintainer.schema_identifier': inputInfo?.spacesIds,
+							[ElasticsearchField.schema_maintainer +
+							'.' +
+							ElasticsearchField.schema_identifier]: inputInfo?.spacesIds,
 						},
 					},
 					{
 						terms: {
-							schema_license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
+							[ElasticsearchField.schema_license]: [
+								IeObjectLicense.BEZOEKERTOOL_CONTENT,
+							],
 						},
 					},
 				],
@@ -416,198 +548,289 @@ export class QueryBuilder {
 		if (
 			consultableMediaFilter?.value?.toLowerCase() === 'true' &&
 			inputInfo.user.getIsKeyUser() &&
-			!isNil(inputInfo.user.getSector())
+			!isNil(inputInfo.user.getSector()) &&
+			!isNil(inputInfo.user.getOrganisationId())
 		) {
-			toBeAppliedConsultableFilters.push({
+			toBeAppliedCustomFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					OR([
+						{
+							terms: {
+								[ElasticsearchField.schema_maintainer +
+								'.' +
+								ElasticsearchField.organization_type]: getSectorsWithEssenceAccess(
+									inputInfo.user.getSector()
+								),
+							},
+						},
+						{
+							term: {
+								[ElasticsearchField.schema_maintainer +
+								'.' +
+								ElasticsearchField.schema_identifier]:
+									inputInfo.user.getOrganisationId(),
+							},
+						},
+					]),
+				],
+			});
+		}
+
+		// User can access items with license "PUBLIC_DOMAIN"
+		if (consultablePublicDomain?.value?.toLowerCase() === 'true') {
+			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
 				query: [
 					{
-						bool: {
-							should: [
-								{
-									terms: {
-										'schema_maintainer.organization_type':
-											getSectorsWithEssenceAccess(inputInfo.user.getSector()),
-									},
-								},
-								{
-									term: {
-										'schema_maintainer.schema_identifier':
-											inputInfo.user.getOrganisationId(),
-									},
-								},
-							],
-							minimum_should_match: 1,
-						},
-					},
-					{
 						terms: {
-							schema_license: [IeObjectLicense.INTRA_CP_CONTENT],
+							[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIC_DOMAIN],
 						},
 					},
 				],
 			});
 		}
 
+		if (releaseDates.length) {
+			const dateFilters = releaseDates.map(QueryBuilder.buildValue);
+			/**
+			 * Convert array to single object
+			 * ```
+			 * [
+			 *   { gte: '2021-11-25T23:00:00.000Z' },
+			 *   { lte: '2021-11-27T23:00:00.000Z' }
+			 * ]
+			 * ```
+			 * to
+			 * ```
+			 * {
+			 *   gte: '2021-11-25T23:00:00.000Z',
+			 *   lte: '2021-11-27T23:00:00.000Z'
+			 * }
+			 * ```
+			 */
+			const singleObjectDateFilter = Object.fromEntries(
+				dateFilters.flatMap((dateFilter) => Object.entries(dateFilter))
+			);
+			toBeAppliedCustomFilters.push({
+				occurrenceType: 'filter',
+				query: [
+					OR([
+						{
+							range: {
+								[ElasticsearchField.schema_date_created]: singleObjectDateFilter,
+							},
+						},
+						{
+							range: {
+								[ElasticsearchField.schema_date_published]: singleObjectDateFilter,
+							},
+						},
+					]),
+				],
+			});
+		}
+
 		// Return empty object if no consultable filter matches the requirements
-		return toBeAppliedConsultableFilters;
+		return toBeAppliedCustomFilters;
 	}
 
-	protected static buildLicensesFilter(inputInfo: QueryBuilderInputInfo): any {
-		const { user, visitorSpaceInfo } = inputInfo;
-
-		let checkSchemaLicenses: any = [
-			// 1) Check schema_license contains "PUBLIC-METADATA-LTD" or PUBLIC-METADATA-ALL"
+	/**
+	 * 1) Check schema_license contains "PUBLIC-METADATA-LTD"
+	 * @private
+	 */
+	private static buildLicensesFilterPublicLimited(): ElasticsearchSubQuery[] {
+		return [
 			{
 				terms: {
-					schema_license: [
-						IeObjectLicense.PUBLIEK_METADATA_LTD,
-						IeObjectLicense.PUBLIEK_METADATA_ALL,
-					],
-				},
-			},
-			// 4) Check or-id is part of visitorSpaceIds
-			// Remark: ES does not allow maintainer and schema license to be both under 1 terms object
-			{
-				bool: {
-					should: [
-						{
-							terms: {
-								'schema_maintainer.schema_identifier': isNil(
-									visitorSpaceInfo.visitorSpaceIds
-								)
-									? []
-									: visitorSpaceInfo.visitorSpaceIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-					minimum_should_match: 2,
-				},
-			},
-			// 5) Check object id is part of folderObjectIds
-			// Remark: ES does not allow ids and should be added under bool should
-			{
-				bool: {
-					should: [
-						{
-							ids: {
-								values: visitorSpaceInfo.objectIds,
-							},
-						},
-						{
-							terms: {
-								schema_license: [
-									IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-									IeObjectLicense.BEZOEKERTOOL_CONTENT,
-								],
-							},
-						},
-					],
-					minimum_should_match: 2,
+					[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 				},
 			},
 		];
+	}
 
-		// KIOSK users and CP Admins always have access to the visitor space that they are linked to.
+	/**
+	 * 2) Check schema_license contains PUBLIC-METADATA-ALL"
+	 * @private
+	 */
+	private static buildLicensesFilterPublicAll(): ElasticsearchSubQuery[] {
+		return [
+			{
+				terms: {
+					[ElasticsearchField.schema_license]: [
+						IeObjectLicense.PUBLIEK_METADATA_ALL,
+						IeObjectLicense.PUBLIEK_CONTENT, // Does this license contain PUBLIEK_METADATA_ALL?
+					],
+				},
+			},
+		];
+	}
+
+	/**
+	 * 3) Check or-id is part of visitorSpaceIds
+	 * Remark: ES does not allow maintainer and schema license to be both under 1 terms object
+	 * @param inputInfo
+	 * @private
+	 */
+	private static buildLicensesFilterVisitorSpaceFullAccess(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery[] {
+		const { visitorSpaceInfo } = inputInfo;
+
+		if (!visitorSpaceInfo.visitorSpaceIds?.length) {
+			return [];
+		}
+
+		return [
+			AND([
+				{
+					terms: {
+						[ElasticsearchField.schema_maintainer +
+						'.' +
+						ElasticsearchField.schema_identifier]: visitorSpaceInfo.visitorSpaceIds,
+					},
+				},
+				{
+					terms: {
+						[ElasticsearchField.schema_license]: [
+							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+							IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						],
+					},
+				},
+			]),
+		];
+	}
+
+	/**
+	 * 4) Check object id is part of folderObjectIds
+	 * Remark: ES does not allow ids and should be added under bool should
+	 * @param inputInfo
+	 * @private
+	 */
+	private static buildLicensesFilterVisitorSpaceFolderAccess(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery[] {
+		const { visitorSpaceInfo } = inputInfo;
+
+		if (!visitorSpaceInfo.objectIds?.length) {
+			// The user does not have access to any visitor space folders
+			return [];
+		}
+
+		return [
+			AND([
+				{
+					ids: {
+						values: visitorSpaceInfo.objectIds,
+					},
+				},
+				{
+					terms: {
+						[ElasticsearchField.schema_license]: [
+							IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+							IeObjectLicense.BEZOEKERTOOL_CONTENT,
+						],
+					},
+				},
+			]),
+		];
+	}
+
+	/**
+	 * 5) KIOSK users and CP_ADMINs always have access to the visitor space that they are linked to.
+	 * @param inputInfo
+	 * @private
+	 */
+	private static buildLicensesFilterKioskAndCpAdmin(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery[] {
+		const { user } = inputInfo;
+
 		if (
 			[GroupName.CP_ADMIN, GroupName.KIOSK_VISITOR].includes(user?.getGroupName()) &&
 			user?.getOrganisationId()
 		) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				{
-					bool: {
-						should: [
-							{
-								terms: {
-									'schema_maintainer.schema_identifier': isNil(
-										user?.getOrganisationId()
-									)
-										? []
-										: [user?.getOrganisationId()],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-										IeObjectLicense.BEZOEKERTOOL_CONTENT,
-									],
-								},
-							},
-						],
-						minimum_should_match: 2,
+			return [
+				AND([
+					{
+						terms: {
+							[ElasticsearchField.schema_maintainer +
+							'.' +
+							ElasticsearchField.schema_identifier]: isNil(user?.getOrganisationId())
+								? []
+								: [user?.getOrganisationId()],
+						},
 					},
-				},
+					{
+						terms: {
+							[ElasticsearchField.schema_license]: [
+								IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+								IeObjectLicense.BEZOEKERTOOL_CONTENT,
+							],
+						},
+					},
+				]),
 			];
 		}
+		return [];
+	}
+
+	/**
+	 * 6) Check that the user is a key user (intra cp) and what sector he belongs to and
+	 * that the object has the INTRA CP license
+	 * @param inputInfo
+	 * @private
+	 */
+	private static buildLicensesFilterKeyUsers(
+		inputInfo: QueryBuilderInputInfo
+	): ElasticsearchSubQuery[] {
+		const { user } = inputInfo;
 
 		if (user?.getIsKeyUser() && !isNil(user?.getSector())) {
-			checkSchemaLicenses = [
-				...checkSchemaLicenses,
-				// 2) Check or-id is part of sectorOrIds and key user
+			const subQueries: ElasticsearchSubQuery[] = [
+				// 6.1) Check if object is part of organisation with favorable sector
 				{
 					terms: {
-						schema_license: [
+						[ElasticsearchField.schema_license]: [
 							IeObjectLicense.INTRA_CP_METADATA_ALL,
 							IeObjectLicense.INTRA_CP_CONTENT,
 						],
 					},
 				},
-
-				// 3) or-id is its own or-id and key user
-				{
-					bool: {
-						should: [
-							{
-								terms: {
-									'schema_maintainer.schema_identifier': [
-										user?.getOrganisationId(),
-									],
-								},
-							},
-							{
-								terms: {
-									schema_license: [
-										IeObjectLicense.INTRA_CP_METADATA_ALL,
-										IeObjectLicense.INTRA_CP_CONTENT,
-									],
-								},
-							},
-						],
-						minimum_should_match: 2,
-					},
-				},
 			];
+			if (user?.getOrganisationId()) {
+				subQueries.push(
+					// 6.2) Check if object is part of own organisation
+					{
+						bool: {
+							minimum_should_match: 2,
+							should: [
+								{
+									terms: {
+										[ElasticsearchField.schema_maintainer +
+										'.' +
+										ElasticsearchField.schema_identifier]: [
+											user?.getOrganisationId(),
+										],
+									},
+								},
+								{
+									terms: {
+										[ElasticsearchField.schema_license]: [
+											IeObjectLicense.INTRA_CP_METADATA_ALL,
+											IeObjectLicense.INTRA_CP_CONTENT,
+										],
+									},
+								},
+							],
+						},
+					}
+				);
+			}
+			return subQueries;
 		}
-
-		return {
-			bool: {
-				should: checkSchemaLicenses,
-				minimum_should_match: 1,
-			},
-		};
-	}
-
-	protected static applyFilter(filterObject: any, newFilter: any): void {
-		if (!filterObject.bool[newFilter.occurrenceType]) {
-			filterObject.bool[newFilter.occurrenceType] = [];
-		}
-
-		// isConsultable filters have array of items to be processed
-		if (isArray(newFilter.query)) {
-			return filterObject.bool[newFilter.occurrenceType].push(...newFilter.query);
-		}
-
-		filterObject.bool[newFilter.occurrenceType].push(newFilter.query);
+		return [];
 	}
 
 	/**
@@ -675,7 +898,7 @@ export class QueryBuilder {
 	 * },
 	 * @param prop
 	 */
-	private static aggSuffix(prop: IeObjectsSearchFilterField): string {
+	private static aggSuffix(prop: IeObjectsSearchFilterField): `.keyword` | '' {
 		return NEEDS_AGG_SUFFIX[prop] ? `.${NEEDS_AGG_SUFFIX[prop]}` : '';
 	}
 

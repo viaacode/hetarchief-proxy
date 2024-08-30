@@ -38,7 +38,7 @@
       "fields": [
         "schema_name^20",
         "schema_description",
-        "schema_abstract",
+        "schema_is_part_of.newspaper^20",
         "schema_is_part_of.alternatief^20",
         "schema_is_part_of.archief",
         "schema_is_part_of.deelarchief",
@@ -49,19 +49,22 @@
         "schema_is_part_of.serie",
         "schema_keywords",
         "schema_genre",
-        "schema_transcript",
-        "schema_captions",
         "schema_spatial_coverage",
         "schema_temporal_coverage",
         "dcterms_medium",
         "dcterms_format",
+        "schema_creator_text",
+        "schema_maintainer.schema_name",
+        "schema_copyrightholder",
+        "schema_abstract",
+        "schema_transcript",
+        "schema_captions",
         "ebucore_object_type",
         "meemoo_description_programme",
         "meemoo_description_cast",
         "meemoofilm_base",
-        "schema_creator_text",
         "schema_publisher_text",
-        "schema_maintainer.schema_name"
+        "schema_mentions"
       ]
     }
   }

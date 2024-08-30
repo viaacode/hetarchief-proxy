@@ -10,7 +10,7 @@ import { type IPagination } from '@studiohyperdrive/pagination';
 import { type Request, type Response } from 'express';
 import { cloneDeep } from 'lodash';
 
-import { type IeObject, IeObjectLicense } from '../ie-objects.types';
+import { type IeObject, IeObjectLicense, type RelatedIeObject } from '../ie-objects.types';
 import {
 	mockIeObject1,
 	mockIeObjectWithMetadataSetALL,
@@ -53,7 +53,7 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findAll: jest.fn(),
 	findBySchemaIdentifiers: jest.fn(),
 	findMetadataBySchemaIdentifier: jest.fn(),
-	getRelated: jest.fn(),
+	getRelatedIeObjects: jest.fn(),
 	getSimilar: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
 		objectIds: [],
@@ -143,7 +143,7 @@ describe('IeObjectsController', () => {
 		mockVisitsService.hasAccess.mockRestore();
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
-		mockIeObjectsService.getRelated.mockRestore();
+		mockIeObjectsService.getRelatedIeObjects.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -410,39 +410,85 @@ describe('IeObjectsController', () => {
 		});
 	});
 
-	describe('getRelated', () => {
-		it('should get related ieObject items', async () => {
-			const mockResponse = {
-				items: [
-					{
-						...mockIeObjectWithMetadataSetALLWithEssence,
-						schemaIdentifier: '2',
-						maintainerId: 'OR-test',
-						licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
-					},
-					{
-						...mockIeObjectWithMetadataSetALLWithEssence,
-						schemaIdentifier: '3',
-						maintainerId: 'OR-test',
-						licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
-					},
-				] as IeObject[],
-			};
-			mockIeObjectsService.getRelated.mockResolvedValueOnce(mockResponse);
+	describe('getRelatedIeObjects', () => {
+		it('should get related ieObject children items', async () => {
+			const mockResponse = [
+				{
+					...mockIeObjectWithMetadataSetALLWithEssence,
+					schemaIdentifier: '1111111111',
+					iri: 'https://data-int.hetarchief.be/id/entity/1111111111',
+					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/99999999',
+					maintainerId: 'OR-test',
+					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				},
+				{
+					...mockIeObjectWithMetadataSetALLWithEssence,
+					schemaIdentifier: '2222222222',
+					iri: 'https://data-int.hetarchief.be/id/entity/2222222222',
+					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/99999999',
+					maintainerId: 'OR-test',
+					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				},
+			] as RelatedIeObject[];
+			mockIeObjectsService.getRelatedIeObjects.mockResolvedValueOnce(mockResponse);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
 				visitorSpaceIds: ['OR-test'],
 				objectIds: [],
 			});
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 
-			const ieObject = await ieObjectsController.getRelated(
-				'8911p09j1g',
+			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
+				'https://data-int.hetarchief.be/id/entity/99999999',
+				null,
 				'referer',
 				mockRequest,
-				{ maintainerId: '' },
 				mockSessionUser
 			);
-			expect(ieObject.items.length).toEqual(2);
+			expect(relatedIeObjects.parent).toBeNull();
+
+			expect(relatedIeObjects.children).toHaveLength(2);
+			expect(relatedIeObjects.children[0]?.schemaIdentifier).toEqual('1111111111');
+			expect(relatedIeObjects.children[1]?.schemaIdentifier).toEqual('2222222222');
+		});
+
+		it('should get related ieObject parent and sibling', async () => {
+			const mockResponse = [
+				{
+					...mockIeObjectWithMetadataSetALLWithEssence,
+					schemaIdentifier: '9999999999',
+					iri: 'https://data-int.hetarchief.be/id/entity/9999999999',
+					premisIsPartOf: null,
+					maintainerId: 'OR-test',
+					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				},
+				{
+					...mockIeObjectWithMetadataSetALLWithEssence,
+					schemaIdentifier: '2222222222',
+					iri: 'https://data-int.hetarchief.be/id/entity/2222222222',
+					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/9999999999',
+					maintainerId: 'OR-test',
+					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+				},
+			] as RelatedIeObject[];
+			mockIeObjectsService.getRelatedIeObjects.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
+				visitorSpaceIds: ['OR-test'],
+				objectIds: [],
+			});
+			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
+
+			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
+				'https://data-int.hetarchief.be/id/entity/1111111111',
+				'https://data-int.hetarchief.be/id/entity/9999999999',
+				'referer',
+				mockRequest,
+				mockSessionUser
+			);
+			expect(relatedIeObjects.parent).toBeDefined();
+			expect(relatedIeObjects.parent.schemaIdentifier).toEqual('9999999999');
+
+			expect(relatedIeObjects.children).toHaveLength(1);
+			expect(relatedIeObjects.children[0].schemaIdentifier).toEqual('2222222222');
 		});
 	});
 

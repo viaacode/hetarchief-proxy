@@ -1,6 +1,13 @@
 import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
-import { IeObjectsSearchFilterField, Operator, OrderProperty } from './elasticsearch.consts';
+import {
+	ElasticsearchField,
+	type ElasticsearchSubQuery,
+	IeObjectsSearchFilterField,
+	MULTI_MATCH_QUERY_MAPPING,
+	Operator,
+	OrderProperty,
+} from './elasticsearch.consts';
 import { QueryBuilder } from './queryBuilder';
 
 import { mockUser } from '~modules/ie-objects/mocks/ie-objects.mock';
@@ -36,6 +43,18 @@ const mockInputInfo = {
 	},
 };
 
+const QUERY_FIELDS_LIMITED =
+	MULTI_MATCH_QUERY_MAPPING.fuzzy.query.limited.at(-1).multi_match.fields;
+const QUERY_FIELDS_ALL = MULTI_MATCH_QUERY_MAPPING.fuzzy.query.all.at(-1).multi_match.fields;
+
+function getMultiMatchFieldsForQuery(
+	query: ElasticsearchSubQuery,
+	limitedMetadata: boolean
+): string[] {
+	return query?.bool?.should?.[limitedMetadata ? 0 : 1]?.bool?.should?.[0]?.bool?.must?.[0]?.bool
+		?.should[6]?.multi_match?.fields;
+}
+
 describe('QueryBuilder', () => {
 	describe('build', () => {
 		it('should build a valid search query', () => {
@@ -52,65 +71,22 @@ describe('QueryBuilder', () => {
 			);
 			expect(esQuery.query).toEqual({
 				bool: {
+					minimum_should_match: 1,
 					should: [
 						{
-							bool: {
-								filter: [],
+							terms: {
+								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
-							bool: {
-								should: [
-									{
-										terms: {
-											schema_license: [
-												'VIAA-PUBLIEK-METADATA-LTD',
-												'VIAA-PUBLIEK-METADATA-ALL',
-											],
-										},
-									},
-									{
-										bool: {
-											should: [
-												{
-													terms: {
-														'schema_maintainer.schema_identifier': [],
-													},
-												},
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
-									{
-										bool: {
-											should: [
-												{ ids: { values: [] } },
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
+							terms: {
+								schema_license: [
+									'VIAA-PUBLIEK-METADATA-ALL',
+									'VIAA-PUBLIEK-CONTENT',
 								],
-								minimum_should_match: 1,
 							},
 						},
 					],
-					minimum_should_match: 2,
 				},
 			});
 			expect(esQuery.from).toEqual(0);
@@ -134,65 +110,22 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
+					minimum_should_match: 1,
 					should: [
 						{
-							bool: {
-								filter: [],
+							terms: {
+								schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 							},
 						},
 						{
-							bool: {
-								should: [
-									{
-										terms: {
-											schema_license: [
-												'VIAA-PUBLIEK-METADATA-LTD',
-												'VIAA-PUBLIEK-METADATA-ALL',
-											],
-										},
-									},
-									{
-										bool: {
-											should: [
-												{
-													terms: {
-														'schema_maintainer.schema_identifier': [],
-													},
-												},
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
-									{
-										bool: {
-											should: [
-												{ ids: { values: [] } },
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
+							terms: {
+								schema_license: [
+									'VIAA-PUBLIEK-METADATA-ALL',
+									'VIAA-PUBLIEK-CONTENT',
 								],
-								minimum_should_match: 1,
 							},
 						},
 					],
-					minimum_should_match: 2,
 				},
 			});
 		});
@@ -213,9 +146,21 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
+			// Limited metadata needs to be searched for the keyword in the limited metadata fields
 			expect(
-				esQuery.query.bool.should[0].bool.must[0].bool.should.length
-			).toBeGreaterThanOrEqual(2);
+				esQuery?.query?.bool?.should?.[0]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
+					?.length || 0
+			).toEqual(7);
+			// Only search the "limited" metadata fields
+			expect(getMultiMatchFieldsForQuery(esQuery.query, true)).toEqual(QUERY_FIELDS_LIMITED);
+
+			// All metadata needs to be searched for the keyword in the all metadata fields
+			expect(
+				esQuery?.query?.bool?.should?.[1]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
+					?.length || 0
+			).toEqual(7);
+			// Search the "all" metadata fields
+			expect(getMultiMatchFieldsForQuery(esQuery.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
@@ -256,7 +201,13 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo as any
 			);
-			expect(JSON.stringify(esQuery.query)).not.toContain('schema_transcript');
+			const queryJson = JSON.stringify(esQuery.query);
+			expect(queryJson).toContain(ElasticsearchField.schema_name);
+			expect(queryJson).toContain(
+				ElasticsearchField.schema_is_part_of + '.' + ElasticsearchField.newspaper
+			);
+			expect(queryJson).toContain(ElasticsearchField.schema_transcript);
+			expect(queryJson).toContain(ElasticsearchField.schema_mentions);
 		});
 
 		it('should filter on format', () => {
@@ -277,66 +228,58 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
+					minimum_should_match: 1,
 					should: [
 						{
 							bool: {
-								filter: [],
-								must: [{ term: { dcterms_format: 'video' } }],
+								minimum_should_match: 2,
+								should: [
+									{
+										bool: {
+											must: [
+												{
+													term: {
+														dcterms_format: 'video',
+													},
+												},
+											],
+										},
+									},
+									{
+										terms: {
+											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
+										},
+									},
+								],
 							},
 						},
 						{
 							bool: {
+								minimum_should_match: 2,
 								should: [
+									{
+										bool: {
+											must: [
+												{
+													term: {
+														dcterms_format: 'video',
+													},
+												},
+											],
+										},
+									},
 									{
 										terms: {
 											schema_license: [
-												'VIAA-PUBLIEK-METADATA-LTD',
 												'VIAA-PUBLIEK-METADATA-ALL',
+												'VIAA-PUBLIEK-CONTENT',
 											],
-										},
-									},
-									{
-										bool: {
-											should: [
-												{
-													terms: {
-														'schema_maintainer.schema_identifier': [],
-													},
-												},
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
-									{
-										bool: {
-											should: [
-												{ ids: { values: [] } },
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
 										},
 									},
 								],
-								minimum_should_match: 1,
 							},
 						},
 					],
-					minimum_should_match: 2,
 				},
 			});
 		});
@@ -359,13 +302,28 @@ describe('QueryBuilder', () => {
 
 			expect(esQuery.query).toEqual({
 				bool: {
+					minimum_should_match: 1,
 					should: [
 						{
 							bool: {
-								filter: [
+								minimum_should_match: 2,
+								should: [
 									{
-										range: {
-											schema_duration: { gte: '01:00:00' },
+										bool: {
+											filter: [
+												{
+													range: {
+														schema_duration: {
+															gte: '01:00:00',
+														},
+													},
+												},
+											],
+										},
+									},
+									{
+										terms: {
+											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
 										},
 									},
 								],
@@ -373,57 +331,33 @@ describe('QueryBuilder', () => {
 						},
 						{
 							bool: {
+								minimum_should_match: 2,
 								should: [
+									{
+										bool: {
+											filter: [
+												{
+													range: {
+														schema_duration: {
+															gte: '01:00:00',
+														},
+													},
+												},
+											],
+										},
+									},
 									{
 										terms: {
 											schema_license: [
-												'VIAA-PUBLIEK-METADATA-LTD',
 												'VIAA-PUBLIEK-METADATA-ALL',
+												'VIAA-PUBLIEK-CONTENT',
 											],
-										},
-									},
-									{
-										bool: {
-											should: [
-												{
-													terms: {
-														'schema_maintainer.schema_identifier': [],
-													},
-												},
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
-										},
-									},
-									{
-										bool: {
-											should: [
-												{ ids: { values: [] } },
-												{
-													terms: {
-														schema_license: [
-															'BEZOEKERTOOL-METADATA-ALL',
-															'BEZOEKERTOOL-CONTENT',
-														],
-													},
-												},
-											],
-											minimum_should_match: 2,
 										},
 									},
 								],
-								minimum_should_match: 1,
 							},
 						},
 					],
-					minimum_should_match: 2,
 				},
 			});
 		});
@@ -443,7 +377,12 @@ describe('QueryBuilder', () => {
 				},
 				mockInputInfo as any
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
+				QUERY_FIELDS_LIMITED
+			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
+				QUERY_FIELDS_ALL
+			);
 		});
 
 		it('throws an internal server exception when an unknown filter value is passed', () => {
@@ -466,7 +405,9 @@ describe('QueryBuilder', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('Failed to build query object');
+			expect(error.message).toEqual(
+				"Field 'unknown filter' is not a valid search filter field."
+			);
 		});
 
 		it('throws an internal server exception when an unknown aggregate value is passed', () => {
@@ -504,14 +445,61 @@ describe('QueryBuilder', () => {
 				mockInputInfo as any
 			);
 
-			expect(esQuery.query.bool.should[0]).toEqual({
+			// TODO performance: we can check if the bool.should[0] === bool.should[1] while omitting the schema_license array
+			// TODO If they are equal, we can combine them into one object, which should search more efficiently
+			expect(esQuery.query).toEqual({
 				bool: {
-					filter: [],
-					must: [
+					minimum_should_match: 1,
+					should: [
 						{
-							query_string: {
-								default_field: 'schema_genre',
-								query: 'intervi*',
+							bool: {
+								minimum_should_match: 2,
+								should: [
+									{
+										bool: {
+											must: [
+												{
+													query_string: {
+														query: 'intervi*',
+														default_field: 'schema_genre',
+													},
+												},
+											],
+										},
+									},
+									{
+										terms: {
+											schema_license: ['VIAA-PUBLIEK-METADATA-LTD'],
+										},
+									},
+								],
+							},
+						},
+						{
+							bool: {
+								minimum_should_match: 2,
+								should: [
+									{
+										bool: {
+											must: [
+												{
+													query_string: {
+														query: 'intervi*',
+														default_field: 'schema_genre',
+													},
+												},
+											],
+										},
+									},
+									{
+										terms: {
+											schema_license: [
+												'VIAA-PUBLIEK-METADATA-ALL',
+												'VIAA-PUBLIEK-CONTENT',
+											],
+										},
+									},
+								],
 							},
 						},
 					],
@@ -593,7 +581,12 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
+				QUERY_FIELDS_LIMITED
+			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
+				QUERY_FIELDS_ALL
+			);
 			// Disabled matchbox filters for lemma split words
 			// https://meemoo.atlassian.net/browse/ARC-2405
 			// expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(12);
@@ -630,10 +623,15 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.must[0].bool.should).toHaveLength(7);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, true)).toEqual(
+				QUERY_FIELDS_LIMITED
+			);
+			expect(getMultiMatchFieldsForQuery(queryObject?.query, false)).toEqual(
+				QUERY_FIELDS_ALL
+			);
 		});
 
-		it('Should not set a filter when consultable remote is set to true (since the value is inverted from the filter in the UI)', () => {
+		it('Should set a filter when consultable media is set to true', () => {
 			const queryObject = QueryBuilder.build(
 				{
 					page: 1,
@@ -642,9 +640,9 @@ describe('QueryBuilder', () => {
 					orderDirection: SortDirection.asc,
 					filters: [
 						{
-							field: IeObjectsSearchFilterField.QUERY,
-							operator: Operator.CONTAINS,
-							value: 'Wielrennen',
+							field: IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+							operator: Operator.IS,
+							value: 'true',
 						},
 					],
 					requestedAggs: [
@@ -657,14 +655,101 @@ describe('QueryBuilder', () => {
 					],
 				},
 				{
-					user: new SessionUserEntity(mockUser),
+					user: new SessionUserEntity({
+						...mockUser,
+						isKeyUser: true,
+						sector: IeObjectSector.GOVERNMENT,
+						organisationId: 'OR-00000001',
+					}),
 					visitorSpaceInfo: {
 						objectIds: [],
 						visitorSpaceIds: [],
 					},
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(0);
+			expect(JSON.stringify(queryObject)).toContain('schema_maintainer.organization_type');
+		});
+
+		it('Should not set a filter when consultable media is set to false', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+							operator: Operator.IS,
+							value: 'false',
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity({
+						...mockUser,
+						isKeyUser: true,
+						sector: IeObjectSector.GOVERNMENT,
+						organisationId: 'OR-00000001',
+					}),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(JSON.stringify(queryObject)).not.toContain(
+				'schema_maintainer.organization_type'
+			);
+		});
+
+		it('Should not set a filter when consultable media is set to true, but the user does not have an organisation', () => {
+			const queryObject = QueryBuilder.build(
+				{
+					page: 1,
+					size: 39,
+					orderProp: OrderProperty.RELEVANCE,
+					orderDirection: SortDirection.asc,
+					filters: [
+						{
+							field: IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+							operator: Operator.IS,
+							value: 'false',
+						},
+					],
+					requestedAggs: [
+						IeObjectsSearchFilterField.FORMAT,
+						IeObjectsSearchFilterField.GENRE,
+						IeObjectsSearchFilterField.MEDIUM,
+						IeObjectsSearchFilterField.CREATOR,
+						IeObjectsSearchFilterField.LANGUAGE,
+						IeObjectsSearchFilterField.MAINTAINER_ID,
+					],
+				},
+				{
+					user: new SessionUserEntity({
+						...mockUser,
+						isKeyUser: true,
+						sector: IeObjectSector.GOVERNMENT,
+						organisationId: null,
+					}),
+					visitorSpaceInfo: {
+						objectIds: [],
+						visitorSpaceIds: [],
+					},
+				}
+			);
+			expect(JSON.stringify(queryObject)).not.toContain(
+				'schema_maintainer.organization_type'
+			);
 		});
 
 		it('Should set a filter when consultableOnlyOnLocation is set to true', () => {
@@ -691,14 +776,26 @@ describe('QueryBuilder', () => {
 					],
 				},
 				{
-					user: new SessionUserEntity(mockUser),
+					user: new SessionUserEntity({
+						...mockUser,
+						isKeyUser: true,
+						sector: IeObjectSector.GOVERNMENT,
+						organisationId: 'OR-00000001',
+					}),
 					visitorSpaceInfo: {
 						objectIds: [],
 						visitorSpaceIds: [],
 					},
+					spacesIds: ['visitor-space-id'],
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(2);
+			// One part is the filter and the other is the license checks
+			expect(queryObject?.query?.bool?.should).toHaveLength(2);
+
+			// The filter part should also filter on visitor space
+			expect(JSON.stringify(queryObject?.query?.bool?.should?.[0]?.bool, null, 2)).toContain(
+				'visitor-space-id'
+			);
 		});
 
 		it('Should set two filter when consultableOnlyOnLocation and isConsultableMedia are set to true', () => {
@@ -733,15 +830,31 @@ describe('QueryBuilder', () => {
 					user: new SessionUserEntity({
 						...mockUser,
 						isKeyUser: true,
-						sector: IeObjectSector.CULTURE,
+						sector: IeObjectSector.GOVERNMENT,
+						organisationId: 'OR-00000001',
 					}),
 					visitorSpaceInfo: {
 						objectIds: [],
 						visitorSpaceIds: [],
 					},
+					spacesIds: ['visitor-space-id'],
 				}
 			);
-			expect(queryObject.query.bool.should[0].bool.filter).toHaveLength(4);
+			expect(queryObject.query?.bool?.should).toHaveLength(2);
+			const limitedMetadataFilters = JSON.stringify(
+				queryObject.query?.bool?.should?.[0]?.bool,
+				null,
+				2
+			);
+			const allMetadataFilters = JSON.stringify(
+				queryObject.query?.bool?.should?.[1]?.bool,
+				null,
+				2
+			);
+			expect(limitedMetadataFilters).toContain('visitor-space-id');
+			expect(limitedMetadataFilters).toContain('OR-00000001');
+			expect(allMetadataFilters).toContain('visitor-space-id');
+			expect(allMetadataFilters).toContain('OR-00000001');
 		});
 	});
 });
