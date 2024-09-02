@@ -218,7 +218,9 @@ export class IeObjectsService {
 		}));
 	}
 
-	public async convertSchemaIdentifierV2ToV3(schemaIdentifierV2: string): Promise<string | null> {
+	public async convertSchemaIdentifierV2ToV3(
+		schemaIdentifierV2: string
+	): Promise<{ schemaIdentifierV3: string } | null> {
 		const response = await this.dataService.execute<
 			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
@@ -226,7 +228,9 @@ export class IeObjectsService {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
-		return response.graph__intellectual_entity[0]?.schema_identifier || null;
+		return {
+			schemaIdentifierV3: response.graph__intellectual_entity[0].schema_identifier,
+		};
 	}
 
 	public async getRelatedIeObjects(
@@ -514,7 +518,9 @@ export class IeObjectsService {
 			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
-			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
+			maintainerOverlay: !!gqlIeObject?.schemaMaintainer?.hasPreference.find(
+				(pref) => pref.ha_pref === 'logo-embedding'
+			),
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],

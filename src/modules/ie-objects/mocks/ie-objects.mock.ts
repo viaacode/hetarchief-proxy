@@ -498,8 +498,12 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				ha_org_sector: 'Publieke Omroep',
 				ha_org_request_form: null,
 				foaf_homepage: 'https://www.vrt.be',
-				ha_org_allows_overlay: true,
 				ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+				hasPreference: [
+					{
+						ha_pref: 'logo-embedding',
+					},
+				],
 			},
 			schema_name: 'Durf te vragen R002 A0001',
 			schema_description:

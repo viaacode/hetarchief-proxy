@@ -27,8 +27,10 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			ha_org_request_form
 			dcterms_description
 			ha_org_sector
-			ha_org_allows_overlay
 			foaf_homepage
+			hasPreference {
+				ha_pref
+			}
 		}
 		schemaInLanguage {
 			schema_in_language
@@ -124,8 +126,10 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 					ha_org_request_form
 					dcterms_description
 					ha_org_sector
-					ha_org_allows_overlay
 					foaf_homepage
+					hasPreference {
+						ha_pref
+					}
 				}
 				schemaInLanguage {
 					schema_in_language
@@ -209,6 +213,9 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				schema_start_time
 				schema_end_time
 				schema_transcript
+				schemaTranscriptUrls {
+					schema_transcript_url
+				}
 				edm_is_next_in_sequence
 				updated_at
 				includes {
