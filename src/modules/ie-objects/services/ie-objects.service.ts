@@ -702,6 +702,7 @@ export class IeObjectsService {
 			// Not yet available
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
+			children: esObject?.children || 0,
 		};
 	}
 

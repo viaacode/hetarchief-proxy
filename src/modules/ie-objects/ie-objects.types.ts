@@ -195,6 +195,7 @@ export interface IeObject {
 	carrierDate?: string;
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
+	children?: number;
 
 	pageRepresentations?: IeObjectRepresentation[][];
 }
@@ -309,6 +310,7 @@ export interface ElasticsearchObject {
 	meemoo_description_category?: string[];
 	meemoofilm_embedded_caption?: string;
 	meemoofilm_embedded_caption_language?: string;
+	children?: number;
 }
 
 export interface IeObjectsWithAggregations extends IPagination<Partial<IeObject>> {

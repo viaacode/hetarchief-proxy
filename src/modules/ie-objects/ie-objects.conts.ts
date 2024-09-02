@@ -135,6 +135,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'temporal',
 	'newspaperPublisher',
 	'copyrightHolder',
+	'children',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'premisIdentifier',
