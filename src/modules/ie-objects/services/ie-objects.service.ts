@@ -219,7 +219,9 @@ export class IeObjectsService {
 		}));
 	}
 
-	public async convertSchemaIdentifierV2ToV3(schemaIdentifierV2: string): Promise<string | null> {
+	public async convertSchemaIdentifierV2ToV3(
+		schemaIdentifierV2: string
+	): Promise<{ schemaIdentifierV3: string } | null> {
 		const response = await this.dataService.execute<
 			GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 			GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables
@@ -227,7 +229,9 @@ export class IeObjectsService {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
-		return response.graph__intellectual_entity[0]?.schema_identifier || null;
+		return {
+			schemaIdentifierV3: response.graph__intellectual_entity[0].schema_identifier,
+		};
 	}
 
 	public async getRelatedIeObjects(
