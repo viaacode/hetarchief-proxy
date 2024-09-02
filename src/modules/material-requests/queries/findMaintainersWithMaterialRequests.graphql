@@ -3,6 +3,6 @@ query findMaintainersWithMaterialRequests {
 		id
 		org_identifier
 		skos_pref_label
-		slug
+		skos_alt_label
 	}
 }

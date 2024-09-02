@@ -11,6 +11,22 @@ export enum AccessType {
 	NO_ACCESS = 'NO_ACCESS',
 }
 
+export enum VisitorSpaceOrderProps {
+	Id = 'id',
+	Image = 'schema_image',
+	Color = 'schema_color',
+	Audience = 'schema_audience_type',
+	Description = 'schema_description',
+	PublicAccess = 'schema_public_access',
+	ServiceDescription = 'schema_service_description',
+	Status = 'status', // Converted to 'statusInfo.sort_order.sort_order'
+	PublishedAt = 'published_at',
+	CreatedAt = 'created_at',
+	UpdatedAt = 'updated_at',
+	OrganisationName = 'organisation.skos_pref_label',
+	OrganisationOrgId = 'organisation.org_identifier',
+}
+
 export interface VisitorSpace {
 	id: string;
 	slug: string;

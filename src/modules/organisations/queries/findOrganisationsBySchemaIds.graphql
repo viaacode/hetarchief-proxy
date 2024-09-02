@@ -8,7 +8,7 @@ query findOrganisationsBySchemaIds($schemaIdentifiers: [String!]!) {
 		ha_org_has_logo
 		ha_org_request_form
 		ha_org_sector
-		slug
+		skos_alt_label
 		updated_at
 		created_at
 		schemaContactPoint {

@@ -17,7 +17,7 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { type VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';

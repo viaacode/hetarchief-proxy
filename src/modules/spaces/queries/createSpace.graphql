@@ -21,7 +21,7 @@ mutation createSpace($createSpace: maintainer_visitor_space_insert_input!) {
 			foaf_homepage
 			ha_org_has_logo
 			dcterms_description
-			slug
+			skos_alt_label
 			schemaContactPoint {
 				schema_contact_type
 				schema_email

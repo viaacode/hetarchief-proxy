@@ -21,7 +21,7 @@ import {
 	type GqlOrganisation,
 	OrganisationContactPointType,
 } from '~modules/organisations/organisations.types';
-import { AccessType } from '~modules/spaces/types';
+import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
@@ -397,7 +397,12 @@ describe('SpacesService', () => {
 		it('returns a paginated response with all spaces ordered by status', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockFindSpacesResponse);
 			const response = await spacesService.findAll(
-				{ orderProp: 'status', orderDirection: SortDirection.asc, page: 1, size: 10 },
+				{
+					orderProp: VisitorSpaceOrderProps.Status,
+					orderDirection: SortDirection.asc,
+					page: 1,
+					size: 10,
+				},
 				mockUser.id
 			);
 			expect(response.items.length).toBe(1);

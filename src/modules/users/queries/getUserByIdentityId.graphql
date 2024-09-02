@@ -27,7 +27,7 @@ query getUserByIdentityId($identityId: String!) {
 			org_identifier
 			skos_pref_label
 			ha_org_sector
-			slug
+			skos_alt_label
 		}
 		visitor_space {
 			id

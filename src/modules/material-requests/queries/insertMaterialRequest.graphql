@@ -20,7 +20,7 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
-				slug
+				skos_alt_label
 				visitorSpace {
 					slug
 				}

@@ -24,7 +24,7 @@ mutation insertUser($newUser: users_profile_insert_input!) {
 			org_identifier
 			skos_pref_label
 			ha_org_sector
-			slug
+			skos_alt_label
 		}
 		visitor_space {
 			id

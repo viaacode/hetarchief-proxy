@@ -21,7 +21,7 @@ import {
 	NotificationStatus,
 	NotificationType,
 } from '~modules/notifications/types';
-import { type VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';

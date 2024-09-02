@@ -4,7 +4,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { set } from 'lodash';
 
 import { type CreateSpaceDto, type SpacesQueryDto, type UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, type GqlSpace, type VisitorSpace } from '../types';
+import { AccessType, type GqlSpace, type VisitorSpace } from '../spaces.types';
 
 import {
 	CreateSpaceDocument,
@@ -228,13 +228,13 @@ export class SpacesService {
 		const where: FindSpacesQueryVariables['where'] =
 			filterArray.length > 0 ? { _and: filterArray } : {};
 
-		const queryVariables = {
+		const queryVariables: FindSpacesQueryVariables = {
 			where,
 			offset,
 			limit,
 			orderBy: set(
 				{},
-				orderProp === 'status' ? 'status_info.sort_order.sort_order' : orderProp,
+				orderProp === 'status' ? 'statusInfo.sort_order.sort_order' : orderProp,
 				orderDirection
 			),
 		};

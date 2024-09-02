@@ -18,7 +18,7 @@ export const mockGqlOrganisation: GqlOrganisation = {
 		},
 	],
 	ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
-	slug: 'vrt',
+	skos_alt_label: 'vrt',
 	created_at: '2023-04-03T13:28:01.434203+02:00',
 	updated_at: '2023-04-03T13:28:01.434203+02:00',
 	skos_pref_label: 'VRT',

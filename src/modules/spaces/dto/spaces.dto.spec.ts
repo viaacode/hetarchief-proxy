@@ -1,4 +1,5 @@
 import { SpacesQueryDto } from '~modules/spaces/dto/spaces.dto';
+import { VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { VisitorSpaceStatus } from '~shared/types/types';
 
 describe('SpacesQueryDto', () => {
@@ -8,7 +9,7 @@ describe('SpacesQueryDto', () => {
 			expect(spacesQueryDto).toEqual({
 				accessType: undefined,
 				orderDirection: 'asc',
-				orderProp: 'content_partner.schema_name',
+				orderProp: VisitorSpaceOrderProps.OrganisationName,
 				page: 1,
 				query: undefined,
 				size: 10,

@@ -38,7 +38,7 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 			skos_pref_label: 'VRT',
 			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 			schemaContactPoint: [],
-			slug: 'vrt',
+			skos_alt_label: 'vrt',
 			visitorSpace: {
 				slug: 'vrt',
 			},

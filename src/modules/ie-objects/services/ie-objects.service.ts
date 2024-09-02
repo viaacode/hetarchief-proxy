@@ -502,7 +502,7 @@ export class IeObjectsService {
 				?.join(', '),
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
-			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.skos_alt_label,
 			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
@@ -827,6 +827,7 @@ export class IeObjectsService {
 					code: e?.code,
 					stack: e?.stack,
 					body: e?.response?.body,
+					query: esQuery,
 				})
 			);
 			throw e;
@@ -867,10 +868,10 @@ export class IeObjectsService {
 		// KIOSK_VISITOR should always have access to their own visitor space
 		let accessibleVisitorSpaceIds: string[];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			accessibleVisitorSpaceIds = [
+			accessibleVisitorSpaceIds = compact([
 				...visitorSpaceAccessInfo.visitorSpaceIds,
 				user.getOrganisationId(),
-			];
+			]);
 		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const spaces = await this.spacesService.findAll(
 				{
@@ -884,12 +885,12 @@ export class IeObjectsService {
 				},
 				user.getId()
 			);
-			accessibleVisitorSpaceIds = [
+			accessibleVisitorSpaceIds = compact([
 				...spaces.items.map((space) => space.maintainerId),
 				user.getOrganisationId(),
-			];
+			]);
 		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
-			accessibleVisitorSpaceIds = [user.getOrganisationId()];
+			accessibleVisitorSpaceIds = compact([user.getOrganisationId()]);
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}

@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { AccessType } from '~modules/spaces/types';
+import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { commaSeparatedStringToArray } from '~shared/helpers/comma-separated-string-to-array';
 import { SortDirection } from '~shared/types';
 import { VisitorSpaceStatus } from '~shared/types/types';
@@ -62,32 +62,16 @@ export class SpacesQueryDto {
 	})
 	size? = 10;
 
-	@IsString()
 	@Type(() => String)
+	@IsEnum(VisitorSpaceOrderProps)
 	@IsOptional()
 	@ApiPropertyOptional({
 		type: String,
 		description: 'property to sort the results by',
-		default: 'content_partner.schema_name',
-		enum: [
-			'id',
-			'schema_image',
-			'schema_color',
-			'schema_audience_type',
-			'schema_public_access',
-			'schema_description_nl',
-			'schema_service_description_nl',
-			'schema_description_en',
-			'schema_service_description_en',
-			'status',
-			'published_at',
-			'created_at',
-			'updated_at',
-			'content_partner.schema_name',
-			'content_partner.schema_identifier',
-		],
+		default: VisitorSpaceOrderProps.OrganisationName,
+		enum: VisitorSpaceOrderProps,
 	})
-	orderProp? = 'content_partner.schema_name';
+	orderProp?: VisitorSpaceOrderProps = VisitorSpaceOrderProps.OrganisationName;
 
 	@IsString()
 	@Type(() => String)

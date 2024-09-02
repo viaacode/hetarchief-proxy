@@ -1,5 +1,5 @@
 query getOrganisationBySlug($slug: String!) {
-	graph_organization(where: { slug: { _eq: $slug } }) {
+	graph_organization(where: { skos_alt_label: { _eq: $slug } }) {
 		id
 		org_identifier
 		skos_pref_label
@@ -8,7 +8,7 @@ query getOrganisationBySlug($slug: String!) {
 		ha_org_has_logo
 		ha_org_request_form
 		ha_org_sector
-		slug
+		skos_alt_label
 		updated_at
 		created_at
 		schemaContactPoint {

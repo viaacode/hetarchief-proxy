@@ -142,7 +142,7 @@ export class MaterialRequestsService {
 			limit,
 			orderBy: set(
 				{},
-				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP['createdAt'],
+				ORDER_PROP_TO_DB_PROP[orderProp] || ORDER_PROP_TO_DB_PROP.createdAt,
 				orderDirection || SortDirection.desc
 			),
 		});
