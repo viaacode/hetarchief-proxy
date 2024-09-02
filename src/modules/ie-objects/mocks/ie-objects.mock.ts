@@ -435,7 +435,7 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				'VIAA-INTRA_CP-METADATA-ALL',
 			],
 			meemoo_local_id: null,
-			isPartOf: [
+			schemaIsPartOf: [
 				{
 					collection: {
 						schema_name: 'Het annoncenblad van Moll en omliggende dorpen',

@@ -473,10 +473,11 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
+		const ieObjects: IeObject[] | Partial<IeObject>[] = await this.getIeObjectByIds(
 			[id],
 			referer,
-			getIpFromRequest(request)
+			request,
+			user
 		);
 		const ieObject = ieObjects[0];
 
@@ -484,35 +485,6 @@ export class IeObjectsController {
 			throw new NotFoundException(`Object IE with id '${id}' not found`);
 		}
 
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-
-		const limitedObject = limitAccessToObjectDetails(ieObject, {
-			userId: user.getId(),
-			isKeyUser: user.getIsKeyUser(),
-			sector: user.getSector(),
-			groupId: user.getGroupId(),
-			maintainerId: user.getOrganisationId(),
-			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-		});
-
-		if (!limitedObject) {
-			throw new ForbiddenException('You do not have access to this object');
-		}
-
-		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
-		if (
-			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
-			visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
-			intersection(limitedObject?.licenses, [
-				IeObjectLicense.BEZOEKERTOOL_CONTENT,
-				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-			]).length > 0
-		) {
-			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
-		}
-
-		return limitedObject;
+		return ieObject;
 	}
 }

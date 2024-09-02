@@ -5,6 +5,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		schema_is_part_of
 		schema_duration
 		schema_number_of_pages
+		schema_position
 		schema_date_published
 		dcterms_available
 		schema_name
@@ -18,6 +19,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		schema_date_created
 		meemoo_local_id
 		premis_is_part_of
+		bibframe_edition
 		schemaMaintainer {
 			org_identifier
 			skos_pref_label
@@ -37,7 +39,6 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		premisIdentifier {
 			premis_identifier
 		}
-
 		schemaGenre {
 			schema_genre
 		}
@@ -64,6 +65,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				premis_medium
 				schema_width
 				schema_height
+				bibframe_production_method
 				created_at
 			}
 			schema_abstract
@@ -73,7 +75,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			bibframe_edition
 			ebucore_synopsis
 		}
-		isPartOf {
+		schemaIsPartOf {
 			collection {
 				schema_name
 				collection_type
@@ -95,6 +97,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			is_media_fragment_of
 			schema_in_language
 			schema_start_time
+			schema_end_time
 			schema_transcript
 			schemaTranscriptUrls {
 				schema_transcript_url
@@ -121,6 +124,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				is_media_fragment_of
 				schema_in_language
 				schema_start_time
+				schema_end_time
 				schema_transcript
 				edm_is_next_in_sequence
 				updated_at
