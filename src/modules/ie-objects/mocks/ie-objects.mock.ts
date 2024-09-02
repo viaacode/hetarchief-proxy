@@ -470,11 +470,81 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 					},
 				},
 			],
-			parentIntellectualEntity: [],
+			schemaCopyrightHolder: [{ schema_copyright_holder: 'vrt' }],
+			isPartOf: {
+				schema_identifier: '8911p09j1g',
+				id: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
+				premis_is_part_of: 'https://data-int.hetarchief.be/id/entity/9999999999',
+				schema_is_part_of: {
+					newspaper: 'Het annoncenblad van Moll en omliggende dorpen',
+				},
+				schema_number_of_pages: null,
+				schema_date_published: '1911-10-21',
+				dcterms_available: '2020-08-28T11:48:11',
+				schema_license: [
+					'VIAA-PUBLIEK-METADATA-ALL',
+					'VIAA-PUBLIEK-CONTENT',
+					'VIAA-INTRA_CP-CONTENT',
+					'VIAA-INTRA_CP-METADATA-ALL',
+				],
+				meemoo_local_id: null,
+				schemaInLanguage: {
+					schema_in_language: ['nl'],
+				},
+				schemaKeywords: null,
+				intellectualEntity: {
+					schema_issue_number: null,
+					mhFragmentIdentifier: [
+						{
+							mh_fragment_identifier:
+								'f424cc6e69c748ba96e34f2034f6695870032919df9342998a58d7c9ece79a63f8e6e3a24d964ea596b1f0198700ffd7',
+						},
+					],
+					schema_credit_text: null,
+					schema_copyright_notice: null,
+					hasCarrier: null,
+					schema_abstract: null,
+					schemaAlternateName: [],
+					bibframe_edition: 'test parent property',
+				},
+				schemaMaintainer: {
+					org_identifier: 'OR-rf5kf25',
+					skos_pref_label: 'VRT',
+					dcterms_description:
+						'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
+					ha_org_sector: 'Publieke Omroep',
+					ha_org_request_form: null,
+					foaf_homepage: 'https://www.vrt.be',
+					ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+					hasPreference: [
+						{
+							ha_pref: 'logo-embedding',
+						},
+					],
+				},
+				schema_name: 'Durf te vragen R002 A0001',
+				schema_description:
+					"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
+				schema_creator: [
+					{
+						productionCompany: ['Roses Are Blue'],
+					},
+				],
+				dcterms_format: 'video',
+				dcterms_medium: ['16mm'],
+				schema_thumbnail_url:
+					'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+				schema_duration: '00:39:52',
+				schema_date_created: '[2020-09-01,)',
+
+				schemaCopyrightHolder: [{ schema_copyright_holder: 'vrt' }],
+			},
 			schemaInLanguage: {
 				schema_in_language: ['nl'],
 			},
-			schemaKeywords: null,
+			schemaKeywords: {
+				schema_keywords: ['Belgium', 'Silent Movie', 'amateur recording'],
+			},
 			intellectualEntity: {
 				schema_issue_number: null,
 				mhFragmentIdentifier: [
@@ -519,7 +589,6 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
 			schema_duration: '00:39:52',
 			schema_date_created: '[2020-09-01,)',
-			schemaCopyrightHolder: null,
 			isRepresentedBy: [
 				{
 					id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',

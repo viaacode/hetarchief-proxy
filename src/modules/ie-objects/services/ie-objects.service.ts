@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
+import { compact, find, isEmpty, isNil, kebabCase, omitBy, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -373,7 +373,7 @@ export class IeObjectsService {
 		schemaIdentifiers: string[],
 		referer: string,
 		ip: string
-	): Promise<IeObject[]> {
+	): Promise<Partial<IeObject>[]> {
 		const response = await this.dataService.execute<
 			GetObjectDetailBySchemaIdentifiersQuery,
 			GetObjectDetailBySchemaIdentifiersQueryVariables
@@ -457,17 +457,14 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
-	public adaptFromDB(gqlIeObject: Partial<GqlIeObject>): IeObject {
+	public adaptFromDB(gqlIeObject: Partial<GqlIeObject>): Partial<IeObject> {
 		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
 
 		let parent = {};
-		if (gqlIeObject.parentIntellectualEntity?.[0]?.intellectualEntity) {
-			parent = this.adaptFromDB(
-				gqlIeObject.parentIntellectualEntity[0].intellectualEntity as Partial<GqlIeObject>
-			);
+		if (gqlIeObject?.isPartOf) {
+			parent = this.adaptFromDB(gqlIeObject.isPartOf);
 		}
-		return {
-			...parent,
+		const ieObject = {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
@@ -579,6 +576,11 @@ export class IeObjectsService {
 				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pageRepresentations,
+		};
+
+		return {
+			...omitBy(parent, (value) => isNil(value) || value === ''),
+			...omitBy(ieObject, (value) => isNil(value) || value === ''),
 		};
 	}
 
@@ -718,7 +720,7 @@ export class IeObjectsService {
 		};
 	}
 
-	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
+	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
 		// unset thumbnail and representations
 		delete ieObject.pageRepresentations;
 		delete ieObject.thumbnailUrl;
