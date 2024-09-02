@@ -247,7 +247,7 @@ export class IeObjectsController {
 	})
 	public async identifierLookup(
 		@Param('schemaIdentifierV2') schemaIdentifierV2: string
-	): Promise<string> {
+	): Promise<{ schemaIdentifierV3: string }> {
 		return this.ieObjectsService.convertSchemaIdentifierV2ToV3(schemaIdentifierV2);
 	}
 
