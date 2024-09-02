@@ -154,10 +154,14 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	meemooLocalId: 'WP00032225',
 	isPartOf: [
 		{
+			iri: 'http://data.viaa.be/terms/1.0#serie',
+			schemaIdentifier: '8s4jm2514q',
 			collectionType: IsPartOfKey.serie,
 			name: 'Serie1',
 		},
 		{
+			iri: 'http://data.viaa.be/terms/1.0#programma',
+			schemaIdentifier: '8s4jm2514q',
 			collectionType: IsPartOfKey.programma,
 			name: 'Programma1',
 		},

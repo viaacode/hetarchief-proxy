@@ -27,8 +27,10 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			ha_org_request_form
 			dcterms_description
 			ha_org_sector
-			ha_org_allows_overlay
 			foaf_homepage
+			hasPreference {
+				ha_pref
+			}
 		}
 		schemaInLanguage {
 			schema_in_language
@@ -75,8 +77,10 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			bibframe_edition
 			ebucore_synopsis
 		}
-		schemaIsPartOf {
+		parentCollection: schemaIsPartOf {
 			collection {
+				id
+				schema_identifier
 				schema_name
 				collection_type
 				isPreceededBy {
@@ -89,6 +93,85 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				schema_start_date
 				schema_end_date
 				schema_publisher
+			}
+		}
+		isPartOf {
+			schema_identifier
+			id
+			schema_is_part_of
+			schema_duration
+			schema_number_of_pages
+			schema_position
+			schema_date_published
+			dcterms_available
+			schema_name
+			schema_description
+			schema_creator
+			dcterms_format
+			dcterms_medium
+			schema_thumbnail_url
+			schema_duration
+			schema_license
+			schema_date_created
+			meemoo_local_id
+			premis_is_part_of
+			bibframe_edition
+			schemaMaintainer {
+				org_identifier
+				skos_pref_label
+				ha_org_has_logo
+				ha_org_request_form
+				dcterms_description
+				ha_org_sector
+				foaf_homepage
+				hasPreference {
+					ha_pref
+				}
+			}
+			schemaInLanguage {
+				schema_in_language
+			}
+			schemaKeywords {
+				schema_keywords
+			}
+			premisIdentifier {
+				premis_identifier
+			}
+			schemaGenre {
+				schema_genre
+			}
+			schemaSpatial {
+				schema_spatial
+			}
+			schemaPublisher {
+				schema_publisher_array
+			}
+			schemaTemporal {
+				schema_temporal
+			}
+			schemaCopyrightHolder {
+				schema_copyright_holder
+			}
+			intellectualEntity {
+				schema_issue_number
+				mhFragmentIdentifier {
+					mh_fragment_identifier
+				}
+				schema_credit_text
+				schema_copyright_notice
+				hasCarrier {
+					premis_medium
+					schema_width
+					schema_height
+					bibframe_production_method
+					created_at
+				}
+				schema_abstract
+				schemaAlternateName {
+					schema_alternate_name
+				}
+				bibframe_edition
+				ebucore_synopsis
 			}
 		}
 		isRepresentedBy {

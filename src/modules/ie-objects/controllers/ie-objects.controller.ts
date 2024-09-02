@@ -443,7 +443,7 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject[] | Partial<IeObject>[]> {
-		const ieObjects: IeObject[] = await this.ieObjectsService.findBySchemaIdentifiers(
+		const ieObjects: Partial<IeObject>[] = await this.ieObjectsService.findBySchemaIdentifiers(
 			ids,
 			referer,
 			getIpFromRequest(request)

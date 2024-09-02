@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, kebabCase, sortBy } from 'lodash';
+import { compact, find, isEmpty, isNil, kebabCase, omitBy, sortBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -373,7 +373,7 @@ export class IeObjectsService {
 		schemaIdentifiers: string[],
 		referer: string,
 		ip: string
-	): Promise<IeObject[]> {
+	): Promise<Partial<IeObject>[]> {
 		const response = await this.dataService.execute<
 			GetObjectDetailBySchemaIdentifiersQuery,
 			GetObjectDetailBySchemaIdentifiersQueryVariables
@@ -457,12 +457,14 @@ export class IeObjectsService {
 	// Adapt
 	// ------------------------------------------------------------------------
 
-	public adaptFromDB(
-		gqlIeObject: GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0]
-	): IeObject {
+	public adaptFromDB(gqlIeObject: Partial<GqlIeObject>): Partial<IeObject> {
 		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
 
-		return {
+		let parent = {};
+		if (gqlIeObject?.isPartOf) {
+			parent = this.adaptFromDB(gqlIeObject.isPartOf);
+		}
+		const ieObject = {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
@@ -513,13 +515,17 @@ export class IeObjectsService {
 			maintainerDescription: gqlIeObject?.schemaMaintainer?.dcterms_description,
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
-			maintainerOverlay: gqlIeObject?.schemaMaintainer?.ha_org_allows_overlay,
+			maintainerOverlay: !!gqlIeObject?.schemaMaintainer?.hasPreference.find(
+				(pref) => pref.ha_pref === 'logo-embedding'
+			),
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
 			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
 			premisIsPartOf: gqlIeObject?.premis_is_part_of,
-			isPartOf: gqlIeObject?.schemaIsPartOf?.map((part) => {
+			isPartOf: gqlIeObject?.parentCollection?.map((part) => {
 				return {
+					iri: part.collection?.id,
+					schemaIdentifier: part.collection?.schema_identifier,
 					name: part.collection?.schema_name,
 					collectionType: part.collection?.collection_type as IsPartOfKey,
 					isPreceededBy: part.collection?.isPreceededBy,
@@ -533,7 +539,7 @@ export class IeObjectsService {
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			pageNumber: gqlIeObject?.schema_position,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
-			collectionName: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.schema_name,
+			collectionName: gqlIeObject?.parentCollection?.[0]?.collection?.schema_name,
 			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
 			fragmentId:
 				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
@@ -542,10 +548,10 @@ export class IeObjectsService {
 			alternativeTitle: gqlIeObject?.intellectualEntity?.schemaAlternateName?.map(
 				(name) => name.schema_alternate_name
 			),
-			preceededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isPreceededBy?.map(
+			preceededBy: gqlIeObject?.parentCollection?.[0]?.collection?.isPreceededBy?.map(
 				(ie) => ie.schema_name
 			),
-			succeededBy: gqlIeObject?.schemaIsPartOf?.[0]?.collection?.isSucceededBy?.map(
+			succeededBy: gqlIeObject?.parentCollection?.[0]?.collection?.isSucceededBy?.map(
 				(ie) => ie.schema_name
 			),
 			width: gqlIeObject?.intellectualEntity?.hasCarrier?.schema_width,
@@ -555,21 +561,26 @@ export class IeObjectsService {
 			bibframeEdition: gqlIeObject?.intellectualEntity?.bibframe_edition, // Publication type
 			// TODO ARC-2163 digitizing event / date is not available in the database. Add it once it is available
 			locationCreated: compact(
-				gqlIeObject?.schemaIsPartOf?.map(
+				gqlIeObject?.parentCollection?.map(
 					(part) => part?.collection?.schema_location_created
 				)
 			)?.join(', '),
 			startDate: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			endDate: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_start_date)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_start_date)
 			)?.join(', '),
 			carrierDate: gqlIeObject?.intellectualEntity?.hasCarrier?.created_at,
 			newspaperPublisher: compact(
-				gqlIeObject?.schemaIsPartOf?.map((part) => part?.collection?.schema_publisher)
+				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
 			pageRepresentations,
+		};
+
+		return {
+			...omitBy(parent, (value) => isNil(value) || value === ''),
+			...omitBy(ieObject, (value) => isNil(value) || value === ''),
 		};
 	}
 
@@ -709,14 +720,14 @@ export class IeObjectsService {
 		};
 	}
 
-	public adaptMetadata(ieObject: IeObject): Partial<IeObject> {
+	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
 		// unset thumbnail and representations
 		delete ieObject.pageRepresentations;
 		delete ieObject.thumbnailUrl;
 		return ieObject;
 	}
 
-	public adaptRepresentations(gqlIeObject: GqlIeObject): IeObjectRepresentation[][] {
+	public adaptRepresentations(gqlIeObject: Partial<GqlIeObject>): IeObjectRepresentation[][] {
 		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}
@@ -868,10 +879,10 @@ export class IeObjectsService {
 		// KIOSK_VISITOR should always have access to their own visitor space
 		let accessibleVisitorSpaceIds: string[];
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			accessibleVisitorSpaceIds = [
+			accessibleVisitorSpaceIds = compact([
 				...visitorSpaceAccessInfo.visitorSpaceIds,
 				user.getOrganisationId(),
-			];
+			]);
 		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const spaces = await this.spacesService.findAll(
 				{
@@ -885,12 +896,12 @@ export class IeObjectsService {
 				},
 				user.getId()
 			);
-			accessibleVisitorSpaceIds = [
+			accessibleVisitorSpaceIds = compact([
 				...spaces.items.map((space) => space.maintainerId),
 				user.getOrganisationId(),
-			];
+			]);
 		} else if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
-			accessibleVisitorSpaceIds = [user.getOrganisationId()];
+			accessibleVisitorSpaceIds = compact([user.getOrganisationId()]);
 		} else {
 			accessibleVisitorSpaceIds = visitorSpaceAccessInfo.visitorSpaceIds;
 		}

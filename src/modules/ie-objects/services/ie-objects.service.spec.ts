@@ -189,9 +189,14 @@ describe('ieObjectsService', () => {
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
-			// TODO https://meemoo.atlassian.net/issues/ARC-2403 re-enable these tests
-			// expect(ieObject.copyrightHolder).toEqual('vrt');
-			// expect(ieObject.keywords?.length || 0).toBeGreaterThan(10);
+			expect(ieObject.copyrightHolder).toEqual('vrt');
+			expect(ieObject.keywords?.length || 0).toEqual(3);
+
+			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
+			expect(ieObject.bibframeEdition).toEqual(
+				mockIeObject2.graph__intellectual_entity[0].isPartOf.intellectualEntity
+					.bibframe_edition
+			);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
