@@ -114,6 +114,7 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'maintainerSiteUrl',
 	'maintainerFormUrl',
 	'maintainerOverlay',
+	'maintainerIiifAgreement',
 	'isPartOf',
 	'dctermsFormat',
 	'dctermsMedium',

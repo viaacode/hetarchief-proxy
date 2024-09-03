@@ -148,6 +148,7 @@ export interface IeObject {
 	maintainerSlug: string;
 	maintainerLogo: string | null;
 	maintainerOverlay: boolean | null;
+	maintainerIiifAgreement?: boolean | null;
 	name: string;
 	publisher: any;
 	spatial: string[];
