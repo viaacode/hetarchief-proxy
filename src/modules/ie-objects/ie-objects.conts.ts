@@ -1,4 +1,6 @@
 import {
+	AutocompleteEsField,
+	AutocompleteField,
 	type IeObject,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
@@ -220,3 +222,10 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooDescriptionCast',
 	'meemooMediaObjectId',
 ];
+
+export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME = {
+	[AutocompleteField.creator]: AutocompleteEsField.creator,
+	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
+	[AutocompleteField.newspaperSeriesTitle]: AutocompleteEsField.newspaperSeriesTitle,
+	[AutocompleteField.mentionName]: AutocompleteEsField.mentionName,
+};

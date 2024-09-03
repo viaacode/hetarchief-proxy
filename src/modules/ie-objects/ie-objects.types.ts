@@ -196,8 +196,8 @@ export interface IeObject {
 	carrierDate?: string;
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
+	mentions?: string[];
 	children?: number;
-
 	pageRepresentations?: IeObjectRepresentation[][];
 }
 
@@ -311,6 +311,8 @@ export interface ElasticsearchObject {
 	meemoo_description_category?: string[];
 	meemoofilm_embedded_caption?: string;
 	meemoofilm_embedded_caption_language?: string;
+	schema_location_created?: string | null;
+	schema_mentions?: string[] | null;
 	children?: number;
 }
 
@@ -373,4 +375,43 @@ export type RelatedIeObject = Pick<
 export interface RelatedIeObjects {
 	parent: Partial<RelatedIeObject> | null;
 	children: Partial<RelatedIeObject>[];
+}
+
+export enum AutocompleteField {
+	creator = 'creator',
+	locationCreated = 'locationCreated',
+	newspaperSeriesTitle = 'newspaperSeriesTitle',
+	mentionName = 'mentionName',
+}
+
+export enum AutocompleteEsField {
+	creator = 'schema_creator_text',
+	locationCreated = 'schema_location_created',
+	newspaperSeriesTitle = 'schema_is_part_of.newspaper',
+	mentionName = 'schema_mentions',
+}
+
+export interface EsQueryAutocompleteResponse {
+	took: number;
+	timed_out: boolean;
+	_shards: {
+		total: number;
+		successful: number;
+		skipped: number;
+		failed: number;
+	};
+	hits: {
+		total: {
+			value: number;
+			relation: string;
+		};
+		max_score: number;
+		hits: {
+			_index: string;
+			_id: string;
+			_score: number;
+			fields: Record<AutocompleteEsField, string | string[]>;
+			_ignored?: string[];
+		}[];
+	};
 }

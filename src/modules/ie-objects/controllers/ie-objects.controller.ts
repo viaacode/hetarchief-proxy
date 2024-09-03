@@ -34,6 +34,7 @@ import { convertObjectToCsv } from '../helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '../helpers/convert-objects-to-xml';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
+	AutocompleteField,
 	type IeObject,
 	IeObjectAccessThrough,
 	IeObjectLicense,
@@ -434,6 +435,23 @@ export class IeObjectsController {
 		const response = await fetch(altoJsonUrl);
 		const text = await response.text();
 		return JSON.parse(text);
+	}
+
+	@Get('metadata/autocomplete')
+	public async getMetadataAutocomplete(
+		@Query('field') field: AutocompleteField,
+		@Query('query') query: string
+	): Promise<string[]> {
+		if (!Object.values(AutocompleteField).includes(field)) {
+			throw new BadRequestException({
+				message: 'Invalid field',
+				additionalInfo: {
+					field,
+					acceptedFields: Object.values(AutocompleteField),
+				},
+			});
+		}
+		return this.ieObjectsService.getMetadataAutocomplete(field, query);
 	}
 
 	@Get()
