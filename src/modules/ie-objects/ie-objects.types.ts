@@ -107,8 +107,8 @@ export enum IsPartOfKey {
 }
 
 export interface IsPartOfCollection {
-	iri: string;
-	schemaIdentifier: string;
+	iri?: string;
+	schemaIdentifier?: string;
 	name: string;
 	collectionType: IsPartOfKey;
 	isPreceededBy?: any[];
