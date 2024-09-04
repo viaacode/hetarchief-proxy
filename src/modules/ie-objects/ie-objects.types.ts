@@ -391,7 +391,12 @@ export enum AutocompleteEsField {
 	mentionName = 'schema_mentions',
 }
 
-export interface EsQueryAutocompleteResponse {
+export enum AutocompleteQueryType {
+	match_phrase_prefix = 'match_phrase_prefix',
+	suggest = 'suggest',
+}
+
+export interface EsQueryAutocompleteMatchPhraseResponse {
 	took: number;
 	timed_out: boolean;
 	_shards: {
@@ -412,6 +417,41 @@ export interface EsQueryAutocompleteResponse {
 			_score: number;
 			fields: Record<AutocompleteEsField, string | string[]>;
 			_ignored?: string[];
+		}[];
+	};
+}
+
+export interface EsQueryAutocompleteSuggestResponse {
+	took: number;
+	timed_out: boolean;
+	_shards: {
+		total: number;
+		successful: number;
+		skipped: number;
+		failed: number;
+	};
+	hits: {
+		total: {
+			value: number;
+			relation: string;
+		};
+		max_score: any;
+		hits: any[];
+	};
+	suggest: {
+		'keyword-suggest': {
+			text: string;
+			offset: number;
+			length: number;
+			options: {
+				text: string;
+				_index: string;
+				_id: string;
+				_score: number;
+				fields: {
+					schema_location_created: string[];
+				};
+			}[];
 		}[];
 	};
 }
