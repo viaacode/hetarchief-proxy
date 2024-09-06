@@ -380,14 +380,14 @@ export interface RelatedIeObjects {
 export enum AutocompleteField {
 	creator = 'creator',
 	locationCreated = 'locationCreated',
-	newspaperSeriesTitle = 'newspaperSeriesTitle',
+	newspaperSeriesName = 'newspaperSeriesName',
 	mentionName = 'mentionName',
 }
 
 export enum AutocompleteEsField {
 	creator = 'schema_creator_text',
 	locationCreated = 'schema_location_created',
-	newspaperSeriesTitle = 'schema_is_part_of.newspaper',
+	newspaperSeriesName = 'schema_is_part_of.newspaper',
 	mentionName = 'schema_mentions',
 }
 

@@ -31,6 +31,7 @@ export enum IeObjectsSearchFilterField {
 	MEDIUM = 'medium',
 	NAME = 'name',
 	PUBLISHED = 'published',
+	NEWSPAPER_SERIES_NAME = 'newspaperSeriesName',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
@@ -167,6 +168,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.LICENSES]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERMS,
 
 	// Should never be used since these are marked as multi match fields
 	// But we include it to get stricter type checks on missing fields
@@ -243,9 +245,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.DESCRIPTION]: ElasticsearchField.schema_description,
 	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: ElasticsearchField.schema_temporal_coverage,
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: ElasticsearchField.schema_spatial_coverage,
-	[IeObjectsSearchFilterField.MAINTAINER_ID]: (ElasticsearchField.schema_maintainer +
-		'.' +
-		ElasticsearchField.schema_identifier) as `${ElasticsearchField}.${ElasticsearchField}`,
+	[IeObjectsSearchFilterField.MAINTAINER_ID]: `${ElasticsearchField.schema_maintainer}.${ElasticsearchField.schema_identifier}`,
 	[IeObjectsSearchFilterField.CAST]: ElasticsearchField.meemoo_description_cast,
 	[IeObjectsSearchFilterField.CAPTION]: ElasticsearchField.schema_caption,
 	[IeObjectsSearchFilterField.TRANSCRIPT]: ElasticsearchField.schema_transcript,
@@ -256,6 +256,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
 	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
 	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
