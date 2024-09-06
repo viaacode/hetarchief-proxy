@@ -23,6 +23,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { mockOrganisations } from '~modules/organisations/mocks/organisations.mocks';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
@@ -36,6 +37,11 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 
 const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.SpyInstance>> = {
 	findOrganisationsBySchemaIdentifiers: jest.fn(),
+};
+
+const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
+	adaptEmail: jest.fn(() => 'test@email.be'),
+	adaptTelephone: jest.fn(() => '555 55 55 55'),
 };
 
 const getDefaultMaterialRequestsResponse = (): {
@@ -63,11 +69,11 @@ const getDefaultMaterialRequestByIdResponse = (): {
 });
 
 const getDefaultMaintainersWithMaterialRequestsResponse = (): {
-	maintainer_content_partners_with_material_requests: FindMaintainersWithMaterialRequestsQuery[];
-	maintainer_content_partners_with_material_requests_aggregate: { aggregate: { count: number } };
+	maintainer_organisations_with_material_requests: FindMaintainersWithMaterialRequestsQuery[];
+	maintainer_organisations_with_material_requests_aggregate: { aggregate: { count: number } };
 } => ({
-	maintainer_content_partners_with_material_requests: [mockGqlMaintainers as any],
-	maintainer_content_partners_with_material_requests_aggregate: {
+	maintainer_organisations_with_material_requests: [mockGqlMaintainers as any],
+	maintainer_organisations_with_material_requests_aggregate: {
 		aggregate: {
 			count: 100,
 		},
@@ -92,6 +98,10 @@ describe('MaterialRequestsService', () => {
 				{
 					provide: OrganisationsService,
 					useValue: mockOrganisationsService,
+				},
+				{
+					provide: SpacesService,
+					useValue: mockSpacesService,
 				},
 			],
 		})

@@ -17,7 +17,7 @@ import {
 	NotificationType,
 } from '~modules/notifications/types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
-import { type VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -135,12 +135,6 @@ const mockVisitorSpace: VisitorSpace = {
 	contactInfo: {
 		email: null,
 		telephone: null,
-		address: {
-			street: 'Pijndersstraat 28',
-			postalCode: '9000',
-			locality: 'Gent',
-			postOfficeBoxNumber: null,
-		},
 	},
 	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,
@@ -177,6 +171,8 @@ const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> 
 	findBySlug: jest.fn(),
 	findById: jest.fn(),
 	findSpaceByOrganisationId: jest.fn(),
+	adaptEmail: jest.fn(() => 'test@email.be'),
+	adaptTelephone: jest.fn(() => '555 55 55 55'),
 };
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {

@@ -15,7 +15,7 @@ import {
 	type PendingVisitCountForUserBySlugQuery,
 	type UpdateVisitMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import { SpacesService } from '~modules/spaces/services/spaces.service';
 import {
 	AccessStatus,
 	type VisitRequest,
@@ -27,6 +27,11 @@ import { Locale } from '~shared/types/types';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
+};
+
+const mockSpacesService: Partial<Record<keyof SpacesService, jest.SpyInstance>> = {
+	adaptEmail: jest.fn(() => 'test@email.be'),
+	adaptTelephone: jest.fn(() => '555 55 55 55'),
 };
 
 const getDefaultVisitsResponse = (): FindVisitsQuery => ({
@@ -111,6 +116,10 @@ describe('VisitsService', () => {
 					provide: DataService,
 					useValue: mockDataService,
 				},
+				{
+					provide: SpacesService,
+					useValue: mockSpacesService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -146,27 +155,6 @@ describe('VisitsService', () => {
 		it('returns null on invalid input', () => {
 			const adapted = visitsService.adapt(null);
 			expect(adapted).toBeNull();
-		});
-	});
-
-	describe('adaptEmail', () => {
-		it('returns the correct email address', () => {
-			const email = visitsService.adaptEmail({
-				contact_point: [
-					{ contact_type: 'primary', email: 'wrong@mail.be', telephone: '051334455' },
-					{
-						contact_type: 'ontsluiting',
-						email: 'correct@mail.be',
-						telephone: '051334455',
-					},
-				],
-			} as OrganisationInfoV2);
-			expect(email).toEqual('correct@mail.be');
-		});
-
-		it('returns null if no email address was found', () => {
-			const email = visitsService.adaptEmail(undefined);
-			expect(email).toBeNull();
 		});
 	});
 

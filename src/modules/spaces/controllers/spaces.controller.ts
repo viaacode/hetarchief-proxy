@@ -23,7 +23,7 @@ import { uniqBy } from 'lodash';
 
 import { CreateSpaceDto, SpacesQueryDto, UpdateSpaceDto } from '../dto/spaces.dto';
 import { SpacesService } from '../services/spaces.service';
-import { type VisitorSpace } from '../types';
+import { type VisitorSpace } from '../spaces.types';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';

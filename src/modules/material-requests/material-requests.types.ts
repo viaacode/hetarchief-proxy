@@ -78,15 +78,9 @@ export enum MaterialRequestOrderProp {
 	NAME = 'objectSchemaName',
 }
 
-export enum MaterialRequestMaintainerContactType {
-	PRIMARY = 'primary',
-	ONTSLUITING = 'ontsluiting',
-	FACTURATIE = 'facturatie',
-}
-
 export type GqlMaterialRequest =
 	| FindMaterialRequestsQuery['app_material_requests'][0]
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];
 
 export type GqlMaterialRequestMaintainer =
-	FindMaintainersWithMaterialRequestsQuery['maintainer_content_partners_with_material_requests'][0];
+	FindMaintainersWithMaterialRequestsQuery['maintainer_organisations_with_material_requests'][0];

@@ -1,9 +1,10 @@
 query getOrganisationsThatHaveObjects {
 	maintainer_organisations_with_objects {
-		logo
-		schema_name
-		schema_identifier
-		slug
-		homepage_url
+		id
+		ha_org_has_logo
+		skos_pref_label
+		org_identifier
+		foaf_homepage
+		skos_alt_label
 	}
 }

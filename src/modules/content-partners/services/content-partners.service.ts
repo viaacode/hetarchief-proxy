@@ -1,5 +1,5 @@
 import { DataService } from '@meemoo/admin-core-api';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 
 import { type ContentPartnersQueryDto } from '../dto/content-partners.dto';
@@ -13,19 +13,15 @@ import {
 
 @Injectable()
 export class ContentPartnersService {
-	private logger: Logger = new Logger(ContentPartnersService.name, { timestamp: true });
-
 	constructor(protected dataService: DataService) {}
 
 	/**
 	 * Adapt a content partner as returned by a graphQl response to our internal model
 	 */
-	public adapt(
-		graphQlCp: FindContentPartnersQuery['maintainer_content_partner'][0]
-	): ContentPartner {
+	public adapt(graphQlCp: FindContentPartnersQuery['graph_organization'][0]): ContentPartner {
 		return {
-			id: graphQlCp.schema_identifier,
-			name: graphQlCp.schema_name,
+			id: graphQlCp.org_identifier,
+			name: graphQlCp.skos_pref_label,
 		};
 	}
 
@@ -51,10 +47,10 @@ export class ContentPartnersService {
 		});
 
 		return Pagination<ContentPartner>({
-			items: contentPartners.maintainer_content_partner.map((cp) => this.adapt(cp)),
+			items: contentPartners.graph_organization.map((cp) => this.adapt(cp)),
 			page: 1,
-			size: contentPartners.maintainer_content_partner_aggregate.aggregate.count,
-			total: contentPartners.maintainer_content_partner_aggregate.aggregate.count,
+			size: contentPartners.graph_organization_aggregate.aggregate.count,
+			total: contentPartners.graph_organization_aggregate.aggregate.count,
 		});
 	}
 }

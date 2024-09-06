@@ -1,10 +1,10 @@
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
-import { find, set } from 'lodash';
+import { set } from 'lodash';
 
 import { type CreateSpaceDto, type SpacesQueryDto, type UpdateSpaceDto } from '../dto/spaces.dto';
-import { AccessType, type GqlSpace, type VisitorSpace } from '../types';
+import { AccessType, type GqlSpace, type VisitorSpace } from '../spaces.types';
 
 import {
 	CreateSpaceDocument,
@@ -30,7 +30,10 @@ import {
 	type UpdateSpaceMutation,
 	type UpdateSpaceMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
-import { type OrganisationInfoV2 } from '~modules/organisations/organisations.types';
+import {
+	type GqlOrganisation,
+	OrganisationContactPointType,
+} from '~modules/organisations/organisations.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { PaginationHelper } from '~shared/helpers/pagination';
 import { type Locale, type Recipient } from '~shared/types/types';
@@ -47,32 +50,24 @@ export class SpacesService {
 	 */
 	public adapt(graphQlSpace: GqlSpace): VisitorSpace {
 		/* istanbul ignore next */
-		const information = graphQlSpace?.content_partner?.information as OrganisationInfoV2;
-		/* istanbul ignore next */
 		return {
 			id: graphQlSpace?.id,
 			slug: graphQlSpace?.slug,
-			maintainerId: graphQlSpace?.content_partner?.schema_identifier,
-			name: graphQlSpace?.content_partner?.schema_name,
-			info: information?.description,
+			maintainerId: graphQlSpace?.organisation?.org_identifier,
+			name: graphQlSpace?.organisation?.skos_pref_label,
+			info: graphQlSpace?.organisation?.dcterms_description,
 			descriptionNl: graphQlSpace?.schema_description_nl,
 			serviceDescriptionNl: graphQlSpace?.schema_service_description_nl,
 			descriptionEn: graphQlSpace?.schema_description_en,
 			serviceDescriptionEn: graphQlSpace?.schema_service_description_en,
 			image: graphQlSpace?.schema_image,
 			color: graphQlSpace?.schema_color,
-			logo: information?.logo?.iri,
+			logo: graphQlSpace?.organisation?.ha_org_has_logo,
 			audienceType: graphQlSpace?.schema_audience_type,
 			publicAccess: graphQlSpace?.schema_public_access,
 			contactInfo: {
-				email: this.adaptEmail(information),
-				telephone: this.adaptTelephone(information),
-				address: {
-					street: information?.primary_site?.address?.street,
-					postalCode: information?.primary_site?.address?.postal_code,
-					locality: information?.primary_site?.address?.locality,
-					postOfficeBoxNumber: information?.primary_site?.address?.post_office_box_number,
-				},
+				email: this.adaptEmail(graphQlSpace?.organisation?.schemaContactPoint),
+				telephone: this.adaptTelephone(graphQlSpace?.organisation?.schemaContactPoint),
 			},
 			status: graphQlSpace?.status,
 			publishedAt: graphQlSpace?.published_at,
@@ -81,14 +76,22 @@ export class SpacesService {
 		};
 	}
 
-	public adaptEmail(graphQlInfo: OrganisationInfoV2 | undefined): string {
-		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		return contactPoint?.email || null;
+	public adaptEmail(contactPoints: GqlOrganisation['schemaContactPoint'] | undefined): string {
+		const contactPoint = (contactPoints || []).find(
+			(contactPoint) =>
+				contactPoint.schema_contact_type === OrganisationContactPointType.ontsluiting
+		);
+		return contactPoint?.schema_email || null;
 	}
 
-	public adaptTelephone(graphQlInfo: OrganisationInfoV2 | undefined): string {
-		const contactPoint = find(graphQlInfo?.contact_point, { contact_type: 'ontsluiting' });
-		return contactPoint?.telephone || null;
+	public adaptTelephone(
+		contactPoints: GqlOrganisation['schemaContactPoint'] | undefined
+	): string {
+		const contactPoint = (contactPoints || []).find(
+			(contactPoint) =>
+				contactPoint.schema_contact_type === OrganisationContactPointType.ontsluiting
+		);
+		return contactPoint?.schema_telephone || null;
 	}
 
 	protected buildSpaceDatabaseObject(
@@ -172,8 +175,8 @@ export class SpacesService {
 		if (query && query !== '%' && query !== '%%') {
 			filterArray.push({
 				_or: [
-					{ content_partner: { information: { description: { _ilike: query } } } },
-					{ content_partner: { schema_name: { _ilike: query } } },
+					{ organisation: { dcterms_description: { _ilike: query } } },
+					{ organisation: { skos_pref_label: { _ilike: query } } },
 				],
 			});
 		}
@@ -225,13 +228,13 @@ export class SpacesService {
 		const where: FindSpacesQueryVariables['where'] =
 			filterArray.length > 0 ? { _and: filterArray } : {};
 
-		const queryVariables = {
+		const queryVariables: FindSpacesQueryVariables = {
 			where,
 			offset,
 			limit,
 			orderBy: set(
 				{},
-				orderProp === 'status' ? 'status_info.sort_order.sort_order' : orderProp,
+				orderProp === 'status' ? 'statusInfo.sort_order.sort_order' : orderProp,
 				orderDirection
 			),
 		};

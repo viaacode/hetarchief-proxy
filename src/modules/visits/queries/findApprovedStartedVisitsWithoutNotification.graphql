@@ -51,14 +51,18 @@ query findApprovedStartedVisitsWithoutNotification($now: timestamp) {
 			published_at
 			created_at
 			updated_at
-			content_partner {
-				schema_name
-				schema_identifier
-				information {
-					contact_point
-					description
-					logo
-					primary_site
+			organisation {
+				id
+				skos_pref_label
+				org_identifier
+				foaf_homepage
+				ha_org_has_logo
+				dcterms_description
+				skos_alt_label
+				schemaContactPoint {
+					schema_contact_type
+					schema_email
+					schema_telephone
 				}
 			}
 		}

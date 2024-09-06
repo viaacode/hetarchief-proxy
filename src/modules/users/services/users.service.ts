@@ -79,9 +79,9 @@ export class UsersService {
 		if (graphQlUser?.organisation) {
 			adaptedUser = {
 				...adaptedUser,
-				organisationId: graphQlUser?.organisation?.schema_identifier || null,
-				organisationName: graphQlUser?.organisation?.schema_name || null,
-				sector: (graphQlUser?.organisation?.sector || null) as IeObjectSector | null,
+				organisationId: graphQlUser?.organisation?.org_identifier || null,
+				organisationName: graphQlUser?.organisation?.skos_pref_label || null,
+				sector: (graphQlUser?.organisation?.ha_org_sector || null) as IeObjectSector | null,
 			};
 		}
 

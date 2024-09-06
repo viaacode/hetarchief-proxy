@@ -36,7 +36,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { type VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { type VisitRequest } from '~modules/visits/types';
 import { convertToDate, formatAsBelgianDate } from '~shared/helpers/format-belgian-date';

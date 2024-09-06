@@ -21,7 +21,7 @@ import {
 	NotificationStatus,
 	NotificationType,
 } from '~modules/notifications/types';
-import { type VisitorSpace } from '~modules/spaces/types';
+import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
@@ -161,12 +161,6 @@ const mockSpace: VisitorSpace = {
 	contactInfo: {
 		email: null,
 		telephone: null,
-		address: {
-			street: 'Pijndersstraat 28',
-			postalCode: '9000',
-			locality: 'Gent',
-			postOfficeBoxNumber: null,
-		},
 	},
 	status: VisitorSpaceStatus.Requested,
 	publishedAt: null,

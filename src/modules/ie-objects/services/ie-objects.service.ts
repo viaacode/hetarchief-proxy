@@ -85,6 +85,7 @@ import {
 	AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY,
 } from '~modules/ie-objects/ie-objects.conts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
+import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
@@ -516,7 +517,7 @@ export class IeObjectsService {
 				?.join(', '),
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
-			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
+			maintainerSlug: gqlIeObject?.schemaMaintainer?.skos_alt_label,
 			maintainerLogo: gqlIeObject?.schemaMaintainer?.ha_org_has_logo
 				// TODO remove this workaround once the INT organisations assets are available
 				.replace('https://assets-int.viaa.be/images/', 'https://assets.viaa.be/images/')
@@ -525,10 +526,10 @@ export class IeObjectsService {
 			maintainerSiteUrl: gqlIeObject?.schemaMaintainer?.foaf_homepage,
 			maintainerFormUrl: gqlIeObject?.schemaMaintainer?.ha_org_request_form,
 			maintainerOverlay: !!gqlIeObject?.schemaMaintainer?.hasPreference.find(
-				(pref) => pref.ha_pref === 'logo-embedding'
+				(pref) => pref.ha_pref === OrganisationPreference.logoEmbedding
 			),
 			maintainerIiifAgreement: !!gqlIeObject?.schemaMaintainer?.hasPreference.find(
-				(pref) => pref.ha_pref === 'iiif-dissemination'
+				(pref) => pref.ha_pref === OrganisationPreference.iiifDissemination
 			),
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
@@ -854,6 +855,7 @@ export class IeObjectsService {
 					code: e?.code,
 					stack: e?.stack,
 					body: e?.response?.body,
+					query: esQuery,
 				})
 			);
 			throw e;

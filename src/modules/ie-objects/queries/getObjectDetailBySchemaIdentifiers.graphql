@@ -28,6 +28,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			dcterms_description
 			ha_org_sector
 			foaf_homepage
+			skos_alt_label
 			hasPreference {
 				ha_pref
 			}

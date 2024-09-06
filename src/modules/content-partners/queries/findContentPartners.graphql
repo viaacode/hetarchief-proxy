@@ -1,9 +1,11 @@
-query findContentPartners($where: maintainer_content_partner_bool_exp!) {
-	maintainer_content_partner(where: $where) {
-		schema_identifier
-		schema_name
+query findContentPartners($where: graph_organization_bool_exp!) {
+	graph_organization(where: $where) {
+		id
+		org_identifier
+		skos_pref_label
+		skos_alt_label
 	}
-	maintainer_content_partner_aggregate(where: $where) {
+	graph_organization_aggregate(where: $where) {
 		aggregate {
 			count
 		}

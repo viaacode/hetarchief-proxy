@@ -1,16 +1,20 @@
 query getOrganisationBySlug($slug: String!) {
-	maintainer_organisation(where: { slug: { _eq: $slug } }) {
-		form_url
-		sector: haorg_organization_type
-		homepage_url
-		logo
-		primary_site
-		schema_identifier
-		schema_name
-		slug
+	graph_organization(where: { skos_alt_label: { _eq: $slug } }) {
+		id
+		org_identifier
+		skos_pref_label
+		dcterms_description
+		foaf_homepage
+		ha_org_has_logo
+		ha_org_request_form
+		ha_org_sector
+		skos_alt_label
 		updated_at
-		description
 		created_at
-		contact_point
+		schemaContactPoint {
+			schema_contact_type
+			schema_email
+			schema_telephone
+		}
 	}
 }

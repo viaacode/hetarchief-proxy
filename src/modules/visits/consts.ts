@@ -3,7 +3,7 @@ import { type VisitRequest } from '~modules/visits/types';
 export const ORDER_PROP_TO_DB_PROP: Partial<Record<keyof VisitRequest, string>> = {
 	id: 'id',
 	spaceId: 'cp_space_id',
-	spaceName: 'visitor_space.content_partner.schema_name_lower',
+	spaceName: 'visitor_space.organisation.skos_pref_label_lowercase',
 	// spaceAddress: 'NOT-SORTABLE', // visitor_space.content_partner.information is an array and can not be sorted on
 	userProfileId: 'user_profile_id',
 	timeframe: 'user_timeframe',

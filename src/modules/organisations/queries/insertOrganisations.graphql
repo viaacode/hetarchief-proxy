@@ -1,5 +1,0 @@
-mutation insertOrganisations($organizations: [maintainer_organisation_insert_input!]!) {
-	insert_maintainer_organisation(objects: $organizations) {
-		affected_rows
-	}
-}

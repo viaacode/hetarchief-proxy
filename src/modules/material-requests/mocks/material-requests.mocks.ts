@@ -36,6 +36,9 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 		schemaMaintainer: {
 			org_identifier: 'OR-rf5kf25',
 			skos_pref_label: 'VRT',
+			ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
+			schemaContactPoint: [],
+			skos_alt_label: 'vrt',
 			visitorSpace: {
 				slug: 'vrt',
 			},
@@ -161,10 +164,10 @@ export const mockUser: User = {
 	isKeyUser: false,
 };
 
-export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['maintainer_content_partners_with_material_requests'][0] =
+export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['maintainer_organisations_with_material_requests'][0] =
 	{
-		schema_identifier: 'OR-rf5kf25',
-		schema_name: 'VRT',
+		org_identifier: 'OR-rf5kf25',
+		skos_pref_label: 'VRT',
 	};
 
 export const mockMaintainerWithMaterialRequest = [
