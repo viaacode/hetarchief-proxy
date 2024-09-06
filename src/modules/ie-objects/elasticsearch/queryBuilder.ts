@@ -247,7 +247,7 @@ export class QueryBuilder {
 		return searchFilter.multiValue || searchFilter.value;
 	}
 
-	private static getQueryType(searchFilter: SearchFilter, value: any): any {
+	private static getQueryType(searchFilter: SearchFilter, value: any): QueryType {
 		const defaultQueryType = DEFAULT_QUERY_TYPE[searchFilter.field];
 		if (defaultQueryType === QueryType.TERMS && !isArray(value)) {
 			return QueryType.TERM;
@@ -294,10 +294,19 @@ export class QueryBuilder {
 		}
 
 		// Is, IsNot
+
+		// must, must_not, filter
 		const occurrenceType = this.getOccurrenceType(searchFilter.operator);
+
+		// Filter value the user typed in
 		const value = this.buildValue(searchFilter);
-		const queryType = this.getQueryType(searchFilter, value);
+
+		// term, terms, range, match, query_string
+		const queryType: QueryType = this.getQueryType(searchFilter, value);
+
+		// Append .keyword if needed
 		const queryKey = elasticKey + this.filterSuffix(searchFilter.field);
+
 		return {
 			occurrenceType,
 			query: {
