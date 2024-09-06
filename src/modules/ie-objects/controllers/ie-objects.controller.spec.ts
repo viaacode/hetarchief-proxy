@@ -87,11 +87,6 @@ const mockOrganisationsService: Partial<Record<keyof OrganisationsService, jest.
 	findOrganisationsBySchemaIdentifiers: jest.fn(),
 };
 
-const mockResponseObject = {
-	set: jest.fn(),
-	send: jest.fn(),
-} as unknown as Response;
-
 const mockRequest = { path: '/ie-objects/export', headers: {} } as unknown as Request;
 
 describe('IeObjectsController', () => {
@@ -382,6 +377,11 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
+			const mockResponseObject = {
+				set: jest.fn(),
+				send: jest.fn(),
+			} as unknown as Response;
+
 			await ieObjectsController.exportXml(
 				'1',
 				mockRequest,
@@ -399,6 +399,11 @@ describe('IeObjectsController', () => {
 			);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
+
+			const mockResponseObject = {
+				set: jest.fn(),
+				send: jest.fn(),
+			} as unknown as Response;
 
 			await ieObjectsController.exportCsv(
 				'1',
