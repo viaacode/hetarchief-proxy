@@ -20,6 +20,7 @@ export enum IeObjectsSearchFilterField {
 	CREATED = 'created',
 	RELEASE_DATE = 'releaseDate', // Searches in both creation date and publish date
 	CREATOR = 'creator',
+	LOCATION_CREATED = 'locationCreated',
 	DESCRIPTION = 'description',
 	DURATION = 'duration',
 	SPACIAL_COVERAGE = 'spacialCoverage',
@@ -58,6 +59,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.CREATED,
 	IeObjectsSearchFilterField.CREATOR,
 	IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
+	IeObjectsSearchFilterField.LOCATION_CREATED,
 	IeObjectsSearchFilterField.DESCRIPTION,
 	IeObjectsSearchFilterField.DURATION,
 	IeObjectsSearchFilterField.SPACIAL_COVERAGE,
@@ -155,6 +157,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERM,
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.RELEASE_DATE]: QueryType.RANGE,
@@ -222,6 +225,7 @@ export enum ElasticsearchField {
 	schema_mentions = 'schema_mentions',
 	schema_is_part_of = 'schema_is_part_of',
 	newspaper = 'newspaper',
+	schema_location_created = 'schema_location_created',
 }
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
@@ -242,6 +246,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.PUBLISHER]: ElasticsearchField.schema_publisher,
 	[IeObjectsSearchFilterField.CREATOR]: ElasticsearchField.schema_creator,
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: ElasticsearchField.schema_location_created,
 	[IeObjectsSearchFilterField.CREATED]: ElasticsearchField.schema_date_created,
 	[IeObjectsSearchFilterField.PUBLISHED]: ElasticsearchField.schema_date_published,
 	[IeObjectsSearchFilterField.DESCRIPTION]: ElasticsearchField.schema_description,
