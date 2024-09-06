@@ -1,4 +1,7 @@
 import {
+	AutocompleteEsField,
+	AutocompleteField,
+	AutocompleteQueryType,
 	type IeObject,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
@@ -220,3 +223,18 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooDescriptionCast',
 	'meemooMediaObjectId',
 ];
+
+export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, AutocompleteEsField> = {
+	[AutocompleteField.creator]: AutocompleteEsField.creator,
+	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
+	[AutocompleteField.newspaperSeriesTitle]: AutocompleteEsField.newspaperSeriesTitle,
+	[AutocompleteField.mentionName]: AutocompleteEsField.mentionName,
+};
+
+export const AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY: Record<AutocompleteField, AutocompleteQueryType> =
+	{
+		[AutocompleteField.creator]: AutocompleteQueryType.match_phrase_prefix,
+		[AutocompleteField.locationCreated]: AutocompleteQueryType.suggest,
+		[AutocompleteField.newspaperSeriesTitle]: AutocompleteQueryType.suggest,
+		[AutocompleteField.mentionName]: AutocompleteQueryType.match_phrase_prefix,
+	};

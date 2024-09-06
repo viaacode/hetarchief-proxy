@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+	BadRequestException,
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -13,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isEmpty, isNil, kebabCase, omitBy, sortBy } from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, sortBy, uniq } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -24,8 +25,12 @@ import { getSearchEndpoint } from '../helpers/get-search-endpoint';
 import { getVisitorSpaceAccessInfoFromVisits } from '../helpers/get-visitor-space-access-info-from-visits';
 import { limitAccessToObjectDetails } from '../helpers/limit-access-to-object-details';
 import {
+	type AutocompleteField,
+	AutocompleteQueryType,
 	type ElasticsearchObject,
 	type ElasticsearchResponse,
+	type EsQueryAutocompleteMatchPhraseResponse,
+	type EsQueryAutocompleteSuggestResponse,
 	type GqlIeObject,
 	type GqlLimitedIeObject,
 	type IeObject,
@@ -75,6 +80,10 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME,
+	AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY,
+} from '~modules/ie-objects/ie-objects.conts';
 import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
@@ -705,6 +714,8 @@ export class IeObjectsService {
 			// Not yet available
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
+			locationCreated: esObject?.schema_location_created,
+			mentions: esObject?.schema_mentions,
 			children: esObject?.children || 0,
 		};
 	}
@@ -990,5 +1001,94 @@ export class IeObjectsService {
 			ieObjectIri,
 		});
 		return response.graph_intellectual_entity.map((ieObject) => ieObject.id);
+	}
+
+	public async getMetadataAutocomplete(
+		field: AutocompleteField,
+		query: string
+	): Promise<string[]> {
+		const esField = AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME[field];
+		const typeOfQuery = AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY[field];
+		let esQuery: any | null = null;
+
+		// Find the correct elasticsearch query for the field
+		if (typeOfQuery === AutocompleteQueryType.match_phrase_prefix) {
+			esQuery = {
+				_source: false,
+				fields: [esField],
+				query: {
+					multi_match: {
+						query: query,
+						type: 'bool_prefix',
+						fields: [
+							`${esField}.sayt`,
+							`${esField}.sayt._2gram`,
+							`${esField}.sayt._3gram`,
+						],
+					},
+				},
+			};
+		} else if (typeOfQuery === AutocompleteQueryType.suggest) {
+			esQuery = {
+				_source: false,
+				fields: [esField],
+				suggest: {
+					'keyword-suggest': {
+						prefix: query,
+						completion: {
+							field: `${esField}.suggest`,
+							skip_duplicates: true,
+							size: 4,
+						},
+					},
+				},
+			};
+		} else {
+			throw new BadRequestException({
+				message:
+					'Type of query could not be determined. Please check the field you are using.',
+				additionalInfo: {
+					field,
+				},
+			});
+		}
+
+		const response:
+			| EsQueryAutocompleteMatchPhraseResponse
+			| EsQueryAutocompleteSuggestResponse = await this.executeQuery(ALL_INDEXES, esQuery);
+
+		const queryParts = query.toLowerCase().split(' ');
+
+		// Map elasticsearch response to a list of unique strings
+		if (typeOfQuery === AutocompleteQueryType.match_phrase_prefix) {
+			return uniq(
+				(response as EsQueryAutocompleteMatchPhraseResponse).hits?.hits?.flatMap((hit) => {
+					const value = hit.fields[esField];
+					if (isArray(value)) {
+						// List of strings
+						// Filter all values that contain all query words
+						return value
+							.filter((v) =>
+								queryParts.every((queryPart) =>
+									v.toLowerCase().split(':').pop().includes(queryPart)
+								)
+							)
+							.map((v) => v.split(':').pop().trim());
+					} else {
+						// Single string
+						return value;
+					}
+				})
+			);
+		} else {
+			return uniq(
+				(response as EsQueryAutocompleteSuggestResponse).suggest['keyword-suggest'].flatMap(
+					(keywordSuggestItem) =>
+						keywordSuggestItem?.options?.map(
+							(option) => option?.fields?.[esField] || []
+						)
+				)
+			);
+		}
 	}
 }
