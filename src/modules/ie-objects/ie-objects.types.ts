@@ -381,14 +381,14 @@ export enum AutocompleteField {
 	creator = 'creator',
 	locationCreated = 'locationCreated',
 	newspaperSeriesName = 'newspaperSeriesName',
-	mentionName = 'mentionName',
+	mentions = 'mentions',
 }
 
 export enum AutocompleteEsField {
 	creator = 'schema_creator_text',
 	locationCreated = 'schema_location_created',
 	newspaperSeriesName = 'schema_is_part_of.newspaper',
-	mentionName = 'schema_mentions',
+	mentions = 'schema_mentions',
 }
 
 export enum AutocompleteQueryType {
@@ -448,9 +448,7 @@ export interface EsQueryAutocompleteSuggestResponse {
 				_index: string;
 				_id: string;
 				_score: number;
-				fields: {
-					schema_location_created: string[];
-				};
+				fields: Record<Partial<AutocompleteEsField>, string>;
 			}[];
 		}[];
 	};
