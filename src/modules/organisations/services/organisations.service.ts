@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import got from 'got';
-import { uniqBy } from 'lodash';
+import { compact, uniqBy } from 'lodash';
 
 import { Configuration } from '~config';
 
@@ -103,34 +103,116 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			url = this.configService.get('ORGANIZATIONS_API_V2_URL');
 
 			const queryBody = {
-				query: `query organizations {
-  organizations {
-    id
-    label
-    description
-    sector
-    slug
-    form_url
-    homepage
-    overlay
-    logo {
-      iri
-    }
-    contact_point {
-      contact_type
-      telephone
-      email
-    }
-    primary_site {
-      address {
-        locality
-        postal_code
-        street
-        telephone
-        post_office_box_number
-      }
-    }
-  }
+				query: `
+query getAllOrganisations {
+	meemoo: organizations(label: "meemoo") {
+		id
+		label
+		description
+		sector
+		slug
+		form_url
+		homepage
+		overlay
+		logo {
+			iri
+		}
+		contact_point {
+			contact_type
+			telephone
+			email
+		}
+		primary_site {
+			address {
+				locality
+				postal_code
+				street
+				telephone
+				post_office_box_number
+			}
+		}
+	}
+	contentPartners: organizations(type: ContentPartner) {
+		id
+		label
+		description
+		sector
+		slug
+		form_url
+		homepage
+		overlay
+		logo {
+			iri
+		}
+		contact_point {
+			contact_type
+			telephone
+			email
+		}
+		primary_site {
+			address {
+				locality
+				postal_code
+				street
+				telephone
+				post_office_box_number
+			}
+		}
+	}
+	educationalPartners: organizations(type: EducationalPartner) {
+		id
+		label
+		description
+		sector
+		slug
+		form_url
+		homepage
+		overlay
+		logo {
+			iri
+		}
+		contact_point {
+			contact_type
+			telephone
+			email
+		}
+		primary_site {
+			address {
+				locality
+				postal_code
+				street
+				telephone
+				post_office_box_number
+			}
+		}
+	}
+	serviceProviders: organizations(type: ServiceProvider ) {
+		id
+		label
+		description
+		sector
+		slug
+		form_url
+		homepage
+		overlay
+		logo {
+			iri
+		}
+		contact_point {
+			contact_type
+			telephone
+			email
+		}
+		primary_site {
+			address {
+				locality
+				postal_code
+				street
+				telephone
+				post_office_box_number
+			}
+		}
+	}
 }`,
 			};
 			const orgResponse: OrganisationResponse = await got({
@@ -141,9 +223,14 @@ export class OrganisationsService implements OnApplicationBootstrap {
 			}).json<OrganisationResponse>();
 
 			// Handle response
-			if ((orgResponse?.data?.organizations?.length || 0) > 50) {
+			if ((orgResponse?.data?.contentPartners?.length || 0) > 50) {
 				await this.emptyOrganizations();
-				await this.insertOrganizations(orgResponse?.data.organizations);
+				await this.insertOrganizations([
+					...compact(orgResponse?.data.meemoo || []),
+					...compact(orgResponse?.data.contentPartners || []),
+					...compact(orgResponse?.data.educationalPartner || []),
+					...compact(orgResponse?.data.serviceProviders || []),
+				]);
 			} else {
 				/* istanbul ignore next */
 				throw new InternalServerErrorException({
