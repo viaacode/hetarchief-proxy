@@ -257,21 +257,24 @@ query getAllOrganisations {
 	}
 
 	private async insertOrganizations(organizations: OrganisationInfoV2[]): Promise<void> {
-		const parsedOrganizations: ParsedOrganisation[] = organizations.map(
-			(organization: OrganisationInfoV2): ParsedOrganisation => ({
-				schema_identifier: organization?.id,
-				schema_name: organization?.label,
-				description: organization.description,
-				logo: organization?.logo || {}, // Hasura v2.6.0 complains about null jsonb values
-				slug: organization?.slug,
-				overlay: organization?.overlay ?? true,
-				contact_point: organization.contact_point || [], // Hasura v2.6.0 complains about null jsonb values
-				primary_site: organization.primary_site || {}, // Hasura v2.6.0 complains about null jsonb values
-				// Remark here organization is with Z
-				haorg_organization_type: organization?.sector || null,
-				form_url: organization?.form_url || null,
-				homepage_url: organization?.homepage || null,
-			})
+		const parsedOrganizations: ParsedOrganisation[] = uniqBy(
+			compact(organizations).map(
+				(organization: OrganisationInfoV2): ParsedOrganisation => ({
+					schema_identifier: organization?.id,
+					schema_name: organization?.label,
+					description: organization.description,
+					logo: organization?.logo || {}, // Hasura v2.6.0 complains about null jsonb values
+					slug: organization?.slug,
+					overlay: organization?.overlay ?? true,
+					contact_point: organization.contact_point || [], // Hasura v2.6.0 complains about null jsonb values
+					primary_site: organization.primary_site || {}, // Hasura v2.6.0 complains about null jsonb values
+					// Remark here organization is with Z
+					haorg_organization_type: organization?.sector || null,
+					form_url: organization?.form_url || null,
+					homepage_url: organization?.homepage || null,
+				})
+			),
+			(org) => org.schema_identifier
 		);
 
 		const uniqueOrganisations = uniqBy(parsedOrganizations, 'schema_identifier');
