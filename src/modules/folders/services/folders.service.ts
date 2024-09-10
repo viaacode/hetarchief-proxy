@@ -44,6 +44,7 @@ import {
 	UpdateFolderDocument,
 	type UpdateFolderMutation,
 	type UpdateFolderMutationVariables,
+	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { type FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 import {
@@ -217,34 +218,31 @@ export class FoldersService {
 	): Promise<IPagination<Partial<IeObject> & { folderEntryCreatedAt: string }>> {
 		const { query, page, size } = queryDto;
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
-		let where = {};
+		let where: Users_Folder_Ie_Bool_Exp = {};
 		if (query) {
 			where = {
 				_or: [
-					{ ie: { schema_name: { _ilike: query } } },
-					{ ie: { maintainer: { schema_name: { _ilike: query } } } },
-					{ ie: { dcterms_format: { _ilike: query } } },
-					{ ie: { meemoo_identifier: { _ilike: query } } },
-					{ ie: { schema_identifier: { _ilike: query } } },
+					{ intellectualEntity: { schema_name: { _ilike: query } } },
 					{
-						ie: {
-							_schema_is_part_of: {
-								schema_is_part_of: {},
-								_and: {
-									schema_is_part_of: { _eq: 'serie' },
-									value: { _ilike: query },
-								},
+						intellectualEntity: {
+							schemaMaintainer: { skos_pref_label: { _ilike: query } },
+						},
+					},
+					{ intellectualEntity: { dcterms_format: { _ilike: query } } },
+					{ intellectualEntity: { schema_identifier: { _ilike: query } } },
+					{
+						intellectualEntity: {
+							schemaIsPartOf: {
+								type: { _eq: 'serie' },
+								collection: { schema_name: { _ilike: query } },
 							},
 						},
 					},
 					{
-						ie: {
-							_schema_is_part_of: {
-								schema_is_part_of: {},
-								_and: {
-									schema_is_part_of: { _eq: 'programma' },
-									value: { _ilike: query },
-								},
+						intellectualEntity: {
+							schemaIsPartOf: {
+								type: { _eq: 'program' },
+								collection: { schema_name: { _ilike: query } },
 							},
 						},
 					},
