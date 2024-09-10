@@ -1086,7 +1086,7 @@ export class IeObjectsService {
 			return uniq(
 				(response as EsQueryAutocompleteSuggestResponse).suggest['keyword-suggest'].flatMap(
 					(keywordSuggestItem) =>
-						keywordSuggestItem?.options?.map(
+						keywordSuggestItem?.options?.flatMap(
 							(option) => option?.fields?.[esField] || []
 						)
 				)

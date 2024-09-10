@@ -228,7 +228,7 @@ export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, Auto
 	[AutocompleteField.creator]: AutocompleteEsField.creator,
 	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
 	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
-	[AutocompleteField.mentionName]: AutocompleteEsField.mentionName,
+	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
 };
 
 export const AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY: Record<AutocompleteField, AutocompleteQueryType> =
@@ -236,5 +236,5 @@ export const AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY: Record<AutocompleteField, Auto
 		[AutocompleteField.creator]: AutocompleteQueryType.match_phrase_prefix,
 		[AutocompleteField.locationCreated]: AutocompleteQueryType.suggest,
 		[AutocompleteField.newspaperSeriesName]: AutocompleteQueryType.suggest,
-		[AutocompleteField.mentionName]: AutocompleteQueryType.match_phrase_prefix,
+		[AutocompleteField.mentions]: AutocompleteQueryType.match_phrase_prefix,
 	};

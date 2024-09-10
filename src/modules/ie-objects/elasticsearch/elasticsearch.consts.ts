@@ -20,6 +20,8 @@ export enum IeObjectsSearchFilterField {
 	CREATED = 'created',
 	RELEASE_DATE = 'releaseDate', // Searches in both creation date and publish date
 	CREATOR = 'creator',
+	LOCATION_CREATED = 'locationCreated',
+	MENTIONS = 'mentions',
 	DESCRIPTION = 'description',
 	DURATION = 'duration',
 	SPACIAL_COVERAGE = 'spacialCoverage',
@@ -57,6 +59,9 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.ADVANCED_QUERY,
 	IeObjectsSearchFilterField.CREATED,
 	IeObjectsSearchFilterField.CREATOR,
+	IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
+	IeObjectsSearchFilterField.LOCATION_CREATED,
+	IeObjectsSearchFilterField.MENTIONS,
 	IeObjectsSearchFilterField.DESCRIPTION,
 	IeObjectsSearchFilterField.DURATION,
 	IeObjectsSearchFilterField.SPACIAL_COVERAGE,
@@ -153,6 +158,9 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERM,
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.MATCH,
+	[IeObjectsSearchFilterField.MENTIONS]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.PUBLISHED]: QueryType.RANGE,
 	[IeObjectsSearchFilterField.RELEASE_DATE]: QueryType.RANGE,
@@ -168,7 +176,6 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.LANGUAGE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.MEDIUM]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.LICENSES]: QueryType.TERMS,
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERMS,
 
 	// Should never be used since these are marked as multi match fields
 	// But we include it to get stricter type checks on missing fields
@@ -221,6 +228,7 @@ export enum ElasticsearchField {
 	schema_mentions = 'schema_mentions',
 	schema_is_part_of = 'schema_is_part_of',
 	newspaper = 'newspaper',
+	schema_location_created = 'schema_location_created',
 }
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
@@ -240,6 +248,9 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.FORMAT]: ElasticsearchField.dcterms_format,
 	[IeObjectsSearchFilterField.PUBLISHER]: ElasticsearchField.schema_publisher,
 	[IeObjectsSearchFilterField.CREATOR]: ElasticsearchField.schema_creator,
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
+	[IeObjectsSearchFilterField.LOCATION_CREATED]: ElasticsearchField.schema_location_created,
+	[IeObjectsSearchFilterField.MENTIONS]: ElasticsearchField.schema_mentions,
 	[IeObjectsSearchFilterField.CREATED]: ElasticsearchField.schema_date_created,
 	[IeObjectsSearchFilterField.PUBLISHED]: ElasticsearchField.schema_date_published,
 	[IeObjectsSearchFilterField.DESCRIPTION]: ElasticsearchField.schema_description,
@@ -256,7 +267,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: ElasticsearchField.ebucore_object_type,
 	[IeObjectsSearchFilterField.IDENTIFIER]: ElasticsearchField.schema_identifier,
 	[IeObjectsSearchFilterField.LICENSES]: ElasticsearchField.schema_license,
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
 };
 
 export const NUMBER_OF_FILTER_OPTIONS_DEFAULT = 40;
@@ -264,7 +274,6 @@ export const NUMBER_OF_OPTIONS_PER_AGGREGATE = {
 	[IeObjectsSearchFilterField.FORMAT]: NUMBER_OF_FILTER_OPTIONS_DEFAULT, // Only contains a few options: video, audio and in the future maybe newspaper and images
 	[IeObjectsSearchFilterField.GENRE]: NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	[IeObjectsSearchFilterField.MEDIUM]: 500, // Fetch all options at once
-	[IeObjectsSearchFilterField.CREATOR]: NUMBER_OF_FILTER_OPTIONS_DEFAULT,
 	[IeObjectsSearchFilterField.LANGUAGE]: 500, // Fetch all options at once
 	[IeObjectsSearchFilterField.MAINTAINER_ID]: 500, // Fetch all options at once
 };
@@ -305,6 +314,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
+	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
 
 	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
 	// These are already type keyword:
