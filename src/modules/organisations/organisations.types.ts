@@ -18,8 +18,8 @@ export enum OrganisationContactPointType {
 
 export interface OrganisationInfoV2 {
 	id: string;
-	label: string;
-	description: string;
+	label?: string | null;
+	description: string | null;
 	sector: IeObjectSector | null;
 	slug: string | null;
 	form_url: string | null;
@@ -47,7 +47,10 @@ export interface OrganisationInfoV2 {
 
 export interface OrganisationResponse {
 	data: {
-		organizations: OrganisationInfoV2[];
+		meemoo: OrganisationInfoV2[];
+		contentPartners: OrganisationInfoV2[];
+		educationalPartner: OrganisationInfoV2[];
+		serviceProviders: OrganisationInfoV2[];
 	};
 }
 

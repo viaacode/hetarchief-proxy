@@ -102,11 +102,14 @@ export const mockOrganisationInfoV2: OrganisationInfoV2 = {
 export const getMockOrganisationResponse = (amount: number): OrganisationResponse => {
 	const mockData = {
 		data: {
-			organizations: [],
+			meemoo: [],
+			contentPartners: [],
+			educationalPartner: [],
+			serviceProviders: [],
 		},
 	};
 	for (let i = 0; i < amount; i++) {
-		mockData.data.organizations.push(mockOrganisationInfoV2);
+		mockData.data.contentPartners.push(mockOrganisationInfoV2);
 	}
 	return mockData;
 };
