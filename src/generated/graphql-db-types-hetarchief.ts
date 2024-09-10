@@ -17050,203 +17050,6 @@ export type Maintainer_Organisations_With_Objects_Updates = {
   where: Maintainer_Organisations_With_Objects_Bool_Exp;
 };
 
-/** DEPRECATED: use users.profile.organisation_schema_identifier instead */
-export type Maintainer_Users_Profile = {
-  __typename?: 'maintainer_users_profile';
-  id: Scalars['uuid'];
-  /** An object relationship */
-  maintainer?: Maybe<Graph_Organization>;
-  maintainer_identifier: Scalars['String'];
-  /** An object relationship */
-  profile: Users_Profile;
-  users_profile_id: Scalars['uuid'];
-};
-
-/** aggregated selection of "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Aggregate = {
-  __typename?: 'maintainer_users_profile_aggregate';
-  aggregate?: Maybe<Maintainer_Users_Profile_Aggregate_Fields>;
-  nodes: Array<Maintainer_Users_Profile>;
-};
-
-export type Maintainer_Users_Profile_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Maintainer_Users_Profile_Aggregate_Bool_Exp_Count>;
-};
-
-export type Maintainer_Users_Profile_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Aggregate_Fields = {
-  __typename?: 'maintainer_users_profile_aggregate_fields';
-  count: Scalars['Int'];
-  max?: Maybe<Maintainer_Users_Profile_Max_Fields>;
-  min?: Maybe<Maintainer_Users_Profile_Min_Fields>;
-};
-
-
-/** aggregate fields of "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Maintainer_Users_Profile_Max_Order_By>;
-  min?: InputMaybe<Maintainer_Users_Profile_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Arr_Rel_Insert_Input = {
-  data: Array<Maintainer_Users_Profile_Insert_Input>;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
-};
-
-/** Boolean expression to filter rows from the table "maintainer.users_profile". All fields are combined with a logical 'AND'. */
-export type Maintainer_Users_Profile_Bool_Exp = {
-  _and?: InputMaybe<Array<Maintainer_Users_Profile_Bool_Exp>>;
-  _not?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-  _or?: InputMaybe<Array<Maintainer_Users_Profile_Bool_Exp>>;
-  id?: InputMaybe<Uuid_Comparison_Exp>;
-  maintainer?: InputMaybe<Graph_Organization_Bool_Exp>;
-  maintainer_identifier?: InputMaybe<String_Comparison_Exp>;
-  profile?: InputMaybe<Users_Profile_Bool_Exp>;
-  users_profile_id?: InputMaybe<Uuid_Comparison_Exp>;
-};
-
-/** unique or primary key constraints on table "maintainer.users_profile" */
-export enum Maintainer_Users_Profile_Constraint {
-  /** unique or primary key constraint on columns "users_profile_id", "maintainer_identifier" */
-  MaintainerUsersProfileMaintainerIdentifierUsersProfilKey = 'maintainer_users_profile_maintainer_identifier_users_profil_key',
-  /** unique or primary key constraint on columns "id" */
-  MaintainerUsersProfilePkey = 'maintainer_users_profile_pkey'
-}
-
-/** input type for inserting data into table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Insert_Input = {
-  id?: InputMaybe<Scalars['uuid']>;
-  maintainer?: InputMaybe<Graph_Organization_Obj_Rel_Insert_Input>;
-  maintainer_identifier?: InputMaybe<Scalars['String']>;
-  profile?: InputMaybe<Users_Profile_Obj_Rel_Insert_Input>;
-  users_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** aggregate max on columns */
-export type Maintainer_Users_Profile_Max_Fields = {
-  __typename?: 'maintainer_users_profile_max_fields';
-  id?: Maybe<Scalars['uuid']>;
-  maintainer_identifier?: Maybe<Scalars['String']>;
-  users_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by max() on columns of table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Max_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Maintainer_Users_Profile_Min_Fields = {
-  __typename?: 'maintainer_users_profile_min_fields';
-  id?: Maybe<Scalars['uuid']>;
-  maintainer_identifier?: Maybe<Scalars['String']>;
-  users_profile_id?: Maybe<Scalars['uuid']>;
-};
-
-/** order by min() on columns of table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Min_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** response of any mutation on the table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Mutation_Response = {
-  __typename?: 'maintainer_users_profile_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Maintainer_Users_Profile>;
-};
-
-/** on_conflict condition type for table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_On_Conflict = {
-  constraint: Maintainer_Users_Profile_Constraint;
-  update_columns?: Array<Maintainer_Users_Profile_Update_Column>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-/** Ordering options when selecting data from "maintainer.users_profile". */
-export type Maintainer_Users_Profile_Order_By = {
-  id?: InputMaybe<Order_By>;
-  maintainer?: InputMaybe<Graph_Organization_Order_By>;
-  maintainer_identifier?: InputMaybe<Order_By>;
-  profile?: InputMaybe<Users_Profile_Order_By>;
-  users_profile_id?: InputMaybe<Order_By>;
-};
-
-/** primary key columns input for table: maintainer.users_profile */
-export type Maintainer_Users_Profile_Pk_Columns_Input = {
-  id: Scalars['uuid'];
-};
-
-/** select columns of table "maintainer.users_profile" */
-export enum Maintainer_Users_Profile_Select_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MaintainerIdentifier = 'maintainer_identifier',
-  /** column name */
-  UsersProfileId = 'users_profile_id'
-}
-
-/** input type for updating data in table "maintainer.users_profile" */
-export type Maintainer_Users_Profile_Set_Input = {
-  id?: InputMaybe<Scalars['uuid']>;
-  maintainer_identifier?: InputMaybe<Scalars['String']>;
-  users_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** Streaming cursor of the table "maintainer_users_profile" */
-export type Maintainer_Users_Profile_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Maintainer_Users_Profile_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Maintainer_Users_Profile_Stream_Cursor_Value_Input = {
-  id?: InputMaybe<Scalars['uuid']>;
-  maintainer_identifier?: InputMaybe<Scalars['String']>;
-  users_profile_id?: InputMaybe<Scalars['uuid']>;
-};
-
-/** update columns of table "maintainer.users_profile" */
-export enum Maintainer_Users_Profile_Update_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  MaintainerIdentifier = 'maintainer_identifier',
-  /** column name */
-  UsersProfileId = 'users_profile_id'
-}
-
-export type Maintainer_Users_Profile_Updates = {
-  /** sets the columns of the filtered rows to the given values */
-  _set?: InputMaybe<Maintainer_Users_Profile_Set_Input>;
-  /** filter the rows which have to be updated */
-  where: Maintainer_Users_Profile_Bool_Exp;
-};
-
 /** Bezoekersruimte aka leeszaal van een CP */
 export type Maintainer_Visitor_Space = {
   __typename?: 'maintainer_visitor_space';
@@ -18769,10 +18572,6 @@ export type Mutation_Root = {
   delete_lookup_schema_audience_type_by_pk?: Maybe<Lookup_Schema_Audience_Type>;
   /** delete data from the table: "maintainer.organisations_with_objects" */
   delete_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
-  /** delete data from the table: "maintainer.users_profile" */
-  delete_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
-  /** delete single row from the table: "maintainer.users_profile" */
-  delete_maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
   /** delete data from the table: "maintainer.visitor_space" */
   delete_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** delete single row from the table: "maintainer.visitor_space" */
@@ -19029,10 +18828,6 @@ export type Mutation_Root = {
   insert_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
   /** insert a single row into the table: "maintainer.organisations_with_objects" */
   insert_maintainer_organisations_with_objects_one?: Maybe<Maintainer_Organisations_With_Objects>;
-  /** insert data into the table: "maintainer.users_profile" */
-  insert_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
-  /** insert a single row into the table: "maintainer.users_profile" */
-  insert_maintainer_users_profile_one?: Maybe<Maintainer_Users_Profile>;
   /** insert data into the table: "maintainer.visitor_space" */
   insert_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** insert a single row into the table: "maintainer.visitor_space" */
@@ -19391,12 +19186,6 @@ export type Mutation_Root = {
   update_maintainer_organisations_with_objects?: Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>;
   /** update multiples rows of table: "maintainer.organisations_with_objects" */
   update_maintainer_organisations_with_objects_many?: Maybe<Array<Maybe<Maintainer_Organisations_With_Objects_Mutation_Response>>>;
-  /** update data of the table: "maintainer.users_profile" */
-  update_maintainer_users_profile?: Maybe<Maintainer_Users_Profile_Mutation_Response>;
-  /** update single row of the table: "maintainer.users_profile" */
-  update_maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
-  /** update multiples rows of table: "maintainer.users_profile" */
-  update_maintainer_users_profile_many?: Maybe<Array<Maybe<Maintainer_Users_Profile_Mutation_Response>>>;
   /** update data of the table: "maintainer.visitor_space" */
   update_maintainer_visitor_space?: Maybe<Maintainer_Visitor_Space_Mutation_Response>;
   /** update single row of the table: "maintainer.visitor_space" */
@@ -20119,18 +19908,6 @@ export type Mutation_RootDelete_Lookup_Schema_Audience_Type_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootDelete_Maintainer_Organisations_With_ObjectsArgs = {
   where: Maintainer_Organisations_With_Objects_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Maintainer_Users_ProfileArgs = {
-  where: Maintainer_Users_Profile_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootDelete_Maintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
 };
 
 
@@ -21002,20 +20779,6 @@ export type Mutation_RootInsert_Maintainer_Organisations_With_ObjectsArgs = {
 /** mutation root */
 export type Mutation_RootInsert_Maintainer_Organisations_With_Objects_OneArgs = {
   object: Maintainer_Organisations_With_Objects_Insert_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Maintainer_Users_ProfileArgs = {
-  objects: Array<Maintainer_Users_Profile_Insert_Input>;
-  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
-};
-
-
-/** mutation root */
-export type Mutation_RootInsert_Maintainer_Users_Profile_OneArgs = {
-  object: Maintainer_Users_Profile_Insert_Input;
-  on_conflict?: InputMaybe<Maintainer_Users_Profile_On_Conflict>;
 };
 
 
@@ -22297,26 +22060,6 @@ export type Mutation_RootUpdate_Maintainer_Organisations_With_Objects_ManyArgs =
 
 
 /** mutation root */
-export type Mutation_RootUpdate_Maintainer_Users_ProfileArgs = {
-  _set?: InputMaybe<Maintainer_Users_Profile_Set_Input>;
-  where: Maintainer_Users_Profile_Bool_Exp;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Maintainer_Users_Profile_By_PkArgs = {
-  _set?: InputMaybe<Maintainer_Users_Profile_Set_Input>;
-  pk_columns: Maintainer_Users_Profile_Pk_Columns_Input;
-};
-
-
-/** mutation root */
-export type Mutation_RootUpdate_Maintainer_Users_Profile_ManyArgs = {
-  updates: Array<Maintainer_Users_Profile_Updates>;
-};
-
-
-/** mutation root */
 export type Mutation_RootUpdate_Maintainer_Visitor_SpaceArgs = {
   _set?: InputMaybe<Maintainer_Visitor_Space_Set_Input>;
   where: Maintainer_Visitor_Space_Bool_Exp;
@@ -23020,12 +22763,6 @@ export type Query_Root = {
   maintainer_organisations_with_objects: Array<Maintainer_Organisations_With_Objects>;
   /** fetch aggregated fields from the table: "maintainer.organisations_with_objects" */
   maintainer_organisations_with_objects_aggregate: Maintainer_Organisations_With_Objects_Aggregate;
-  /** fetch data from the table: "maintainer.users_profile" */
-  maintainer_users_profile: Array<Maintainer_Users_Profile>;
-  /** fetch aggregated fields from the table: "maintainer.users_profile" */
-  maintainer_users_profile_aggregate: Maintainer_Users_Profile_Aggregate;
-  /** fetch data from the table: "maintainer.users_profile" using primary key columns */
-  maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
   /** fetch data from the table: "maintainer.visitor_space" */
   maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space" */
@@ -24882,29 +24619,6 @@ export type Query_RootMaintainer_Organisations_With_Objects_AggregateArgs = {
 };
 
 
-export type Query_RootMaintainer_Users_ProfileArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Query_RootMaintainer_Users_Profile_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Query_RootMaintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
 export type Query_RootMaintainer_Visitor_SpaceArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -25796,14 +25510,6 @@ export type Subscription_Root = {
   maintainer_organisations_with_objects_aggregate: Maintainer_Organisations_With_Objects_Aggregate;
   /** fetch data from the table in a streaming manner: "maintainer.organisations_with_objects" */
   maintainer_organisations_with_objects_stream: Array<Maintainer_Organisations_With_Objects>;
-  /** fetch data from the table: "maintainer.users_profile" */
-  maintainer_users_profile: Array<Maintainer_Users_Profile>;
-  /** fetch aggregated fields from the table: "maintainer.users_profile" */
-  maintainer_users_profile_aggregate: Maintainer_Users_Profile_Aggregate;
-  /** fetch data from the table: "maintainer.users_profile" using primary key columns */
-  maintainer_users_profile_by_pk?: Maybe<Maintainer_Users_Profile>;
-  /** fetch data from the table in a streaming manner: "maintainer.users_profile" */
-  maintainer_users_profile_stream: Array<Maintainer_Users_Profile>;
   /** fetch data from the table: "maintainer.visitor_space" */
   maintainer_visitor_space: Array<Maintainer_Visitor_Space>;
   /** fetch aggregated fields from the table: "maintainer.visitor_space" */
@@ -28265,36 +27971,6 @@ export type Subscription_RootMaintainer_Organisations_With_Objects_StreamArgs = 
 };
 
 
-export type Subscription_RootMaintainer_Users_ProfileArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Subscription_RootMaintainer_Users_Profile_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-export type Subscription_RootMaintainer_Users_Profile_By_PkArgs = {
-  id: Scalars['uuid'];
-};
-
-
-export type Subscription_RootMaintainer_Users_Profile_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Maintainer_Users_Profile_Stream_Cursor_Input>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
 export type Subscription_RootMaintainer_Visitor_SpaceArgs = {
   distinct_on?: InputMaybe<Array<Maintainer_Visitor_Space_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -30263,10 +29939,6 @@ export type Users_Profile = {
   last_name?: Maybe<Scalars['String']>;
   mail?: Maybe<Scalars['String']>;
   /** An array relationship */
-  maintainer_users_profiles: Array<Maintainer_Users_Profile>;
-  /** An aggregate relationship */
-  maintainer_users_profiles_aggregate: Maintainer_Users_Profile_Aggregate;
-  /** An array relationship */
   notes: Array<Maintainer_Visitor_Space_Request_Note>;
   /** An aggregate relationship */
   notes_aggregate: Maintainer_Visitor_Space_Request_Note_Aggregate;
@@ -30324,26 +29996,6 @@ export type Users_ProfileIdentities_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Users_Identity_Order_By>>;
   where?: InputMaybe<Users_Identity_Bool_Exp>;
-};
-
-
-/** A user his identifying attributes aka profile information */
-export type Users_ProfileMaintainer_Users_ProfilesArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-};
-
-
-/** A user his identifying attributes aka profile information */
-export type Users_ProfileMaintainer_Users_Profiles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Maintainer_Users_Profile_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Maintainer_Users_Profile_Order_By>>;
-  where?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
 };
 
 
@@ -30491,8 +30143,6 @@ export type Users_Profile_Bool_Exp = {
   last_access_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   last_name?: InputMaybe<String_Comparison_Exp>;
   mail?: InputMaybe<String_Comparison_Exp>;
-  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Bool_Exp>;
-  maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Bool_Exp>;
   notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Bool_Exp>;
   notes_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Aggregate_Bool_Exp>;
   notifications?: InputMaybe<App_Notification_Bool_Exp>;
@@ -30526,7 +30176,6 @@ export type Users_Profile_Insert_Input = {
   last_access_at?: InputMaybe<Scalars['timestamptz']>;
   last_name?: InputMaybe<Scalars['String']>;
   mail?: InputMaybe<Scalars['String']>;
-  maintainer_users_profiles?: InputMaybe<Maintainer_Users_Profile_Arr_Rel_Insert_Input>;
   notes?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Arr_Rel_Insert_Input>;
   notifications?: InputMaybe<App_Notification_Arr_Rel_Insert_Input>;
   organisation?: InputMaybe<Graph_Organization_Obj_Rel_Insert_Input>;
@@ -30642,7 +30291,6 @@ export type Users_Profile_Order_By = {
   last_access_at?: InputMaybe<Order_By>;
   last_name?: InputMaybe<Order_By>;
   mail?: InputMaybe<Order_By>;
-  maintainer_users_profiles_aggregate?: InputMaybe<Maintainer_Users_Profile_Aggregate_Order_By>;
   notes_aggregate?: InputMaybe<Maintainer_Visitor_Space_Request_Note_Aggregate_Order_By>;
   notifications_aggregate?: InputMaybe<App_Notification_Aggregate_Order_By>;
   organisation?: InputMaybe<Graph_Organization_Order_By>;
