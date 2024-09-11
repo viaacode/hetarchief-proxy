@@ -36,6 +36,7 @@ import {
 	type IeObject,
 	type IeObjectFile,
 	IeObjectLicense,
+	type IeObjectPageRepresentation,
 	type IeObjectRepresentation,
 	type IeObjectSector,
 	type IeObjectsSitemap,
@@ -43,6 +44,7 @@ import {
 	type IeObjectsWithAggregations,
 	IeObjectType,
 	type IsPartOfKey,
+	type Mention,
 	type NewspaperTitle,
 	type RelatedIeObject,
 } from '../ie-objects.types';
@@ -468,13 +470,14 @@ export class IeObjectsService {
 	// ------------------------------------------------------------------------
 
 	public adaptFromDB(gqlIeObject: Partial<GqlIeObject>): Partial<IeObject> {
-		const pageRepresentations = this.adaptRepresentations(gqlIeObject);
+		const pageRepresentations: IeObjectPageRepresentation[] =
+			this.adaptRepresentations(gqlIeObject);
 
 		let parent = {};
 		if (gqlIeObject?.isPartOf) {
 			parent = this.adaptFromDB(gqlIeObject.isPartOf);
 		}
-		const ieObject = {
+		const ieObject: IeObject = {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
@@ -716,7 +719,6 @@ export class IeObjectsService {
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
 			locationCreated: esObject?.schema_location_created,
-			mentions: esObject?.schema_mentions,
 			children: esObject?.children || 0,
 		};
 	}
@@ -743,53 +745,62 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public adaptRepresentations(gqlIeObject: Partial<GqlIeObject>): IeObjectRepresentation[][] {
+	public adaptRepresentations(gqlIeObject: Partial<GqlIeObject>): IeObjectPageRepresentation[] {
 		if (isEmpty(gqlIeObject.isRepresentedBy) && isEmpty(gqlIeObject.hasPart)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
-		const representationsByPage: IeObjectRepresentation[][] = compact(
-			[gqlIeObject, ...gqlIeObject.hasPart]?.map((part): IeObjectRepresentation[] | null => {
-				const representations: IeObjectRepresentation[] = compact(
-					(part?.isRepresentedBy || []).flatMap(
-						(
-							representation: GqlIeObject['isRepresentedBy'][0]
-						): IeObjectRepresentation => {
-							if (!representation) {
-								return null;
+		const representationsByPages: IeObjectPageRepresentation[] = compact(
+			[gqlIeObject, ...gqlIeObject.hasPart]?.map(
+				(part): IeObjectPageRepresentation | null => {
+					const representations: IeObjectRepresentation[] = compact(
+						(part?.isRepresentedBy || []).flatMap(
+							(
+								representation: GqlIeObject['isRepresentedBy'][0]
+							): IeObjectRepresentation => {
+								if (!representation) {
+									return null;
+								}
+								return {
+									id: representation.id,
+									schemaName: representation.schema_name,
+									isMediaFragmentOf: representation.is_media_fragment_of,
+									schemaInLanguage: representation.schema_in_language,
+									schemaStartTime: representation.schema_start_time,
+									schemaEndTime: representation.schema_end_time,
+									schemaTranscript: representation.schema_transcript,
+									schemaTranscriptUrl:
+										representation.schemaTranscriptUrls?.[0]
+											?.schema_transcript_url || null,
+									edmIsNextInSequence: representation.edm_is_next_in_sequence,
+									updatedAt: representation.updated_at,
+									files: this.adaptFiles(representation.includes),
+								};
 							}
-							return {
-								id: representation.id,
-								schemaName: representation.schema_name,
-								isMediaFragmentOf: representation.is_media_fragment_of,
-								schemaInLanguage: representation.schema_in_language,
-								schemaStartTime: representation.schema_start_time,
-								schemaEndTime: representation.schema_end_time,
-								schemaTranscript: representation.schema_transcript,
-								schemaTranscriptUrl:
-									representation.schemaTranscriptUrls?.[0]
-										?.schema_transcript_url || null,
-								edmIsNextInSequence: representation.edm_is_next_in_sequence,
-								updatedAt: representation.updated_at,
-								files: this.adaptFiles(representation.includes),
-							};
-						}
-					)
-				);
-				// Avoid returning empty array representations
-				if (representations.length) {
-					return representations;
+						)
+					);
+					// Avoid returning empty array representations
+					if (representations.length) {
+						return {
+							representations,
+							mentions: this.adaptMentions(
+								(
+									part as GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0]['hasPart'][0]
+								).schemaMentions || []
+							),
+						};
+					}
+					return null;
 				}
-				return null;
-			})
+			)
 		);
 
 		// Sort by image filename to have pages in order
-		return sortBy(representationsByPage, (representations) => {
+		return sortBy(representationsByPages, (representationsByPage) => {
 			let fileName: string | null = null;
-			representations.find((representation) => {
+			representationsByPage.representations.find((representation) => {
 				const imageFile = representation.files.find(
 					(file) => file.mimeType === 'image/jpeg'
 				);
@@ -1092,5 +1103,30 @@ export class IeObjectsService {
 				)
 			);
 		}
+	}
+
+	private adaptMentions(
+		schemaMentions: GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0]['hasPart'][0]['schemaMentions']
+	): Mention[] {
+		return compact(
+			schemaMentions?.map((mention): Mention => {
+				if (!mention.thing) {
+					return null;
+				}
+				return {
+					iri: mention?.thing?.id,
+					name: mention?.thing?.schema_name,
+					x: mention?.x,
+					y: mention?.y,
+					width: mention?.width,
+					height: mention?.height,
+					confidence: mention?.confidence,
+					birthDate: mention?.thing?.schema_birth_date,
+					birthPlace: mention?.thing?.schema_birth_place,
+					deathDate: mention?.thing?.schema_death_date,
+					deathPlace: mention?.thing?.schema_death_place,
+				};
+			})
+		);
 	}
 }
