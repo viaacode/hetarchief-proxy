@@ -135,7 +135,8 @@ export class NewspapersController {
 			}
 		});
 
-		const filename = `${'newspaper-' + id}.zip`;
+		const pageSuffix = exportSinglePage ? '-page-' + (pageIndex + 1) : '';
+		const filename = `${'newspaper-' + id}${pageSuffix}.zip`;
 		res.set({
 			'Content-Disposition': `attachment; filename=${filename}`,
 		});
