@@ -42,6 +42,7 @@
         "schema_copyrightholder",
         "schema_abstract",
         "schema_transcript",
+        "schema_captions",
         "schema_mentions"
       ]
     }
