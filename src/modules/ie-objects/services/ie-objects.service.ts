@@ -43,7 +43,6 @@ import {
 	type IeObjectsWithAggregations,
 	IeObjectType,
 	type IsPartOfKey,
-	type NewspaperTitle,
 	type RelatedIeObject,
 } from '../ie-objects.types';
 
@@ -60,7 +59,6 @@ import {
 	GetIeObjectIdsDocument,
 	type GetIeObjectIdsQuery,
 	type GetIeObjectIdsQueryVariables,
-	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
@@ -218,14 +216,6 @@ export class IeObjectsService {
 			aggregations: adaptedESResponse.aggregations,
 			searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
 		};
-	}
-
-	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
-
-		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
-			title: newspaperTitle.schema_name,
-		}));
 	}
 
 	public async convertSchemaIdentifierV2ToV3(

@@ -40,7 +40,6 @@ import {
 	IeObjectLicense,
 	type IeObjectSeo,
 	type IeObjectsWithAggregations,
-	type NewspaperTitle,
 	RelatedIeObject,
 	RelatedIeObjects,
 } from '../ie-objects.types';
@@ -95,11 +94,6 @@ export class IeObjectsController {
 			referer,
 			getIpFromRequest(request)
 		);
-	}
-
-	@Get('newspaper-titles')
-	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		return this.ieObjectsService.getNewspaperTitles();
 	}
 
 	@Get('seo/:id')

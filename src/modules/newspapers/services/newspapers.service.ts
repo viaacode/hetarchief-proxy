@@ -4,10 +4,26 @@ import { ConfigService } from '@nestjs/config';
 
 import { type Configuration } from '~config';
 
+import {
+	GetNewspaperTitlesDocument,
+	type GetNewspaperTitlesQuery,
+} from '~generated/graphql-db-types-hetarchief';
+import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
+
 @Injectable()
 export class NewspapersService {
 	constructor(
 		private configService: ConfigService<Configuration>,
 		protected dataService: DataService
 	) {}
+
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		const response = await this.dataService.execute<GetNewspaperTitlesQuery>(
+			GetNewspaperTitlesDocument
+		);
+
+		return response.graph__newspaper_public_content.map((newspaperTitle) => ({
+			title: newspaperTitle.schema_name,
+		}));
+	}
 }
