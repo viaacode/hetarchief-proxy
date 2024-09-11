@@ -11,6 +11,7 @@ import { type Configuration } from '~config';
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { type ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
 import {
+	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
 	mockGqlIeObjectFindByFolderIdResult,
 	mockGqlSitemapObject,
@@ -18,6 +19,7 @@ import {
 	mockIeObject2,
 	mockIeObjectDefaultLimitedMetadata,
 	mockIeObjectLimitedInFolder,
+	mockParentIeObject,
 	mockSitemapObject,
 	mockUser,
 } from '../mocks/ie-objects.mock';
@@ -310,27 +312,33 @@ describe('ieObjectsService', () => {
 		});
 	});
 
-	describe('getRelatedIeObjects', () => {
-		it('should return the sibling for a given ieObject', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const response = await ieObjectsService.getRelatedIeObjects(
+	describe('getParentIeObject', () => {
+		it('should return the parent ieObject for a given ieObject', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockParentIeObject);
+			const response = await ieObjectsService.getParentIeObject(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
-				'https://data-int.hetarchief.be/id/entity/9999999999',
 				'referer',
 				''
 			);
-			expect(response.length).toEqual(1);
+			expect(response.schemaIdentifier).toEqual(
+				mockParentIeObject.graph_intellectual_entity[0].isPartOf.schema_identifier
+			);
 		});
 
-		it('should return the parent for a given ieObject', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const response = await ieObjectsService.getRelatedIeObjects(
+		it('should return the children for a given ieObject', async () => {
+			mockDataService.execute.mockResolvedValueOnce(mockChildrenIeObjects);
+			const response = await ieObjectsService.getChildIeObjects(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
-				'https://data-int.hetarchief.be/id/entity/8911p09j1g',
 				'referer',
 				''
 			);
-			expect(response.length).toEqual(1);
+			expect(response.length).toEqual(2);
+			expect(response[0].schemaIdentifier).toEqual(
+				mockChildrenIeObjects.graph_intellectual_entity[0].hasPart[0].schema_identifier
+			);
+			expect(response[1].schemaIdentifier).toEqual(
+				mockChildrenIeObjects.graph_intellectual_entity[0].hasPart[1].schema_identifier
+			);
 		});
 	});
 

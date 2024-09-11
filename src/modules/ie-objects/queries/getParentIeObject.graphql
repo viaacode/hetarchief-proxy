@@ -1,0 +1,37 @@
+query getParentIeObject($currentObjectIri: String!) {
+	graph_intellectual_entity(
+		where: {
+			id: { _eq: $currentObjectIri }
+			dctermsFormat: { dcterms_format: { _in: ["videofragment", "audiofragment"] } }
+		}
+	) {
+		isPartOf {
+			id
+			schema_identifier
+			schema_name
+			dcterms_available
+			schema_date_created
+			schema_date_published
+			schema_description
+			dctermsFormat {
+				dcterms_format
+			}
+			schemaDuration {
+				schema_duration
+			}
+			schemaLicense {
+				schema_license
+			}
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
+			schemaMaintainer {
+				id
+				org_identifier
+				ha_org_sector
+				skos_pref_label
+				skos_alt_label
+			}
+		}
+	}
+}

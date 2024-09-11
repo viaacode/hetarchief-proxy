@@ -259,7 +259,6 @@ export class IeObjectsController {
 	})
 	public async getRelatedIeObjects(
 		@Query('ieObjectIri') ieObjectIri: string,
-		@Query('parentIeObjectIri') parentIeObjectIri: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
@@ -267,18 +266,34 @@ export class IeObjectsController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		// We use the esIndex as the maintainerId -- no need to lowercase
-		const relatedIeObjects: RelatedIeObject[] = await this.ieObjectsService.getRelatedIeObjects(
-			ieObjectIri,
-			parentIeObjectIri,
-			referer,
-			getIpFromRequest(request)
-		);
+		const [parentIeObject, childIeObjects] = await Promise.all([
+			this.ieObjectsService.getParentIeObject(
+				ieObjectIri,
+				referer,
+				getIpFromRequest(request)
+			),
+			this.ieObjectsService.getChildIeObjects(
+				ieObjectIri,
+				referer,
+				getIpFromRequest(request)
+			),
+		]);
 
 		// Limit the amount of props returned for an ie object based on licenses and sector
-		const censoredRelatedIeObjects = compact(
-			relatedIeObjects.map((item) =>
-				limitAccessToObjectDetails(item, {
+		const censoredParentIeObject: Partial<RelatedIeObject> | null = parentIeObject
+			? limitAccessToObjectDetails(parentIeObject, {
+					userId: user.getId(),
+					isKeyUser: user.getIsKeyUser(),
+					sector: user.getSector(),
+					groupId: user.getGroupId(),
+					maintainerId: user.getOrganisationId(),
+					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+			  })
+			: null;
+		const censoredChildIeObjects: Partial<RelatedIeObject>[] = childIeObjects.map(
+			(childIeObject) =>
+				limitAccessToObjectDetails(childIeObject, {
 					userId: user.getId(),
 					isKeyUser: user.getIsKeyUser(),
 					sector: user.getSector(),
@@ -287,12 +302,11 @@ export class IeObjectsController {
 					accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 					accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
 				})
-			)
 		);
 
 		return {
-			parent: censoredRelatedIeObjects.find((obj) => !obj.premisIsPartOf) || null,
-			children: censoredRelatedIeObjects.filter((obj) => !!obj.premisIsPartOf),
+			parent: censoredParentIeObject,
+			children: censoredChildIeObjects,
 		};
 	}
 
