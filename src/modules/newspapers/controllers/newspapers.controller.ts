@@ -74,9 +74,9 @@ export class NewspapersController {
 			: limitedObjectMetadata.pageRepresentations;
 
 		// Pages correspond to pages of the newspaper
-		pagesToExport.forEach((representations, pageRepresentationIndex) => {
+		pagesToExport.forEach((pageRepresentation, pageRepresentationIndex) => {
 			// Each page has multiple representations, e.g. browse copy image, alto xml, image api url, etc.
-			return representations.forEach((representation) => {
+			return pageRepresentation.representations.forEach((representation) => {
 				// Each representation can have multiple files, but usually it's just one
 				return representation.files.forEach((file) => {
 					const currentPageIndex = exportSinglePage ? pageIndex : pageRepresentationIndex;
@@ -198,7 +198,7 @@ export class NewspapersController {
 
 		const pageRepresentation = limitedObjectMetadata.pageRepresentations[pageIndex];
 		let pageImageApi: string | null = null;
-		pageRepresentation.find((representation) => {
+		pageRepresentation.representations.find((representation) => {
 			return representation.files.find((file) => {
 				if (file.mimeType === NEWSPAPER_MIME_TYPE_IMAGE_API) {
 					pageImageApi = file.storedAt;

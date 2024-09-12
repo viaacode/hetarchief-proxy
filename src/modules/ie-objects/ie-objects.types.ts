@@ -74,6 +74,11 @@ export interface IeObjectFile {
 	createdAt: string;
 }
 
+export interface IeObjectPageRepresentation {
+	representations: IeObjectRepresentation[];
+	mentions: Mention[];
+}
+
 export interface IeObjectRepresentation {
 	id: string;
 	schemaName: string;
@@ -196,9 +201,9 @@ export interface IeObject {
 	carrierDate?: string;
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
-	mentions?: string[];
+	mentions?: Mention[];
 	children?: number;
-	pageRepresentations?: IeObjectRepresentation[][];
+	pageRepresentations?: IeObjectPageRepresentation[];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -451,4 +456,18 @@ export interface EsQueryAutocompleteSuggestResponse {
 			}[];
 		}[];
 	};
+}
+
+export interface Mention {
+	iri: string;
+	name: string;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	confidence: number;
+	birthDate: number;
+	birthPlace: string;
+	deathDate: number;
+	deathPlace: string;
 }

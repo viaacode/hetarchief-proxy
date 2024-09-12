@@ -202,6 +202,21 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 			}
 		}
 		hasPart {
+			schemaMentions {
+				confidence
+				x
+				y
+				width
+				height
+				thing {
+					id
+					schema_name
+					schema_birth_date
+					schema_birth_place
+					schema_death_date
+					schema_death_place
+				}
+			}
 			isRepresentedBy {
 				id
 				schema_name
