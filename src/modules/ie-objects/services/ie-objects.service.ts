@@ -45,7 +45,6 @@ import {
 	IeObjectType,
 	type IsPartOfKey,
 	type Mention,
-	type NewspaperTitle,
 	type RelatedIeObject,
 } from '../ie-objects.types';
 
@@ -65,7 +64,6 @@ import {
 	GetIeObjectIdsDocument,
 	type GetIeObjectIdsQuery,
 	type GetIeObjectIdsQueryVariables,
-	GetNewspaperTitlesDocument,
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
@@ -225,14 +223,6 @@ export class IeObjectsService {
 		};
 	}
 
-	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
-		const newspaperTitles = await this.dataService.execute<any>(GetNewspaperTitlesDocument);
-
-		return newspaperTitles.graph__newspapers_public.map((newspaperTitle) => ({
-			title: newspaperTitle.schema_name,
-		}));
-	}
-
 	public async convertSchemaIdentifierV2ToV3(
 		schemaIdentifierV2: string
 	): Promise<{ schemaIdentifierV3: string } | null> {
@@ -287,7 +277,7 @@ export class IeObjectsService {
 		});
 
 		return Promise.all(
-			mediaObjects.graph_intellectual_entity[0]?.hasPart.map(
+			(mediaObjects.graph_intellectual_entity[0]?.hasPart || []).map(
 				async (
 					object: GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
 				): Promise<RelatedIeObject> => {
@@ -302,7 +292,7 @@ export class IeObjectsService {
 					}
 					return adapted;
 				}
-			) || []
+			)
 		);
 	}
 

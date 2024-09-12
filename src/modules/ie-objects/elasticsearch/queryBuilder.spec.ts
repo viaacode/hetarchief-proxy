@@ -43,9 +43,12 @@ const mockInputInfo = {
 	},
 };
 
-const QUERY_FIELDS_LIMITED =
-	MULTI_MATCH_QUERY_MAPPING.fuzzy.query.limited.at(-1).multi_match.fields;
-const QUERY_FIELDS_ALL = MULTI_MATCH_QUERY_MAPPING.fuzzy.query.all.at(-1).multi_match.fields;
+const QUERY_FIELDS_LIMITED = MULTI_MATCH_QUERY_MAPPING.fuzzy.query.limited.find(
+	(field) => !!field.multi_match
+).multi_match.fields;
+const QUERY_FIELDS_ALL = MULTI_MATCH_QUERY_MAPPING.fuzzy.query.all.find(
+	(field) => !!field.multi_match
+).multi_match.fields;
 
 function getMultiMatchFieldsForQuery(
 	query: ElasticsearchSubQuery,
@@ -150,7 +153,7 @@ describe('QueryBuilder', () => {
 			expect(
 				esQuery?.query?.bool?.should?.[0]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
 					?.length || 0
-			).toEqual(7);
+			).toEqual(11);
 			// Only search the "limited" metadata fields
 			expect(getMultiMatchFieldsForQuery(esQuery.query, true)).toEqual(QUERY_FIELDS_LIMITED);
 
@@ -158,7 +161,7 @@ describe('QueryBuilder', () => {
 			expect(
 				esQuery?.query?.bool?.should?.[1]?.bool?.should?.[0]?.bool?.must?.[0]?.bool?.should
 					?.length || 0
-			).toEqual(7);
+			).toEqual(11);
 			// Search the "all" metadata fields
 			expect(getMultiMatchFieldsForQuery(esQuery.query, false)).toEqual(QUERY_FIELDS_ALL);
 		});

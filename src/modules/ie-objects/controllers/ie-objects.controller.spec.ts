@@ -53,7 +53,8 @@ const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInsta
 	findAll: jest.fn(),
 	findBySchemaIdentifiers: jest.fn(),
 	findMetadataBySchemaIdentifier: jest.fn(),
-	getRelatedIeObjects: jest.fn(),
+	getParentIeObject: jest.fn(),
+	getChildIeObjects: jest.fn(),
 	getSimilar: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(() => ({
 		objectIds: [],
@@ -138,7 +139,8 @@ describe('IeObjectsController', () => {
 		mockVisitsService.hasAccess.mockRestore();
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
-		mockIeObjectsService.getRelatedIeObjects.mockRestore();
+		mockIeObjectsService.getParentIeObject.mockRestore();
+		mockIeObjectsService.getChildIeObjects.mockRestore();
 	});
 
 	it('should be defined', () => {
@@ -416,13 +418,12 @@ describe('IeObjectsController', () => {
 	});
 
 	describe('getRelatedIeObjects', () => {
-		it('should get related ieObject children items', async () => {
+		it('should get ieObject children', async () => {
 			const mockResponse = [
 				{
 					...mockIeObjectWithMetadataSetALLWithEssence,
 					schemaIdentifier: '1111111111',
 					iri: 'https://data-int.hetarchief.be/id/entity/1111111111',
-					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/99999999',
 					maintainerId: 'OR-test',
 					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 				},
@@ -435,7 +436,8 @@ describe('IeObjectsController', () => {
 					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 				},
 			] as RelatedIeObject[];
-			mockIeObjectsService.getRelatedIeObjects.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.getParentIeObject.mockResolvedValueOnce(null);
+			mockIeObjectsService.getChildIeObjects.mockResolvedValueOnce(mockResponse);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
 				visitorSpaceIds: ['OR-test'],
 				objectIds: [],
@@ -444,7 +446,6 @@ describe('IeObjectsController', () => {
 
 			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
 				'https://data-int.hetarchief.be/id/entity/99999999',
-				null,
 				'referer',
 				mockRequest,
 				mockSessionUser
@@ -456,26 +457,17 @@ describe('IeObjectsController', () => {
 			expect(relatedIeObjects.children[1]?.schemaIdentifier).toEqual('2222222222');
 		});
 
-		it('should get related ieObject parent and sibling', async () => {
-			const mockResponse = [
-				{
-					...mockIeObjectWithMetadataSetALLWithEssence,
-					schemaIdentifier: '9999999999',
-					iri: 'https://data-int.hetarchief.be/id/entity/9999999999',
-					premisIsPartOf: null,
-					maintainerId: 'OR-test',
-					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
-				},
-				{
-					...mockIeObjectWithMetadataSetALLWithEssence,
-					schemaIdentifier: '2222222222',
-					iri: 'https://data-int.hetarchief.be/id/entity/2222222222',
-					premisIsPartOf: 'https://data-int.hetarchief.be/id/entity/9999999999',
-					maintainerId: 'OR-test',
-					licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
-				},
-			] as RelatedIeObject[];
-			mockIeObjectsService.getRelatedIeObjects.mockResolvedValueOnce(mockResponse);
+		it('should get related ieObject parent', async () => {
+			const mockResponse = {
+				...mockIeObjectWithMetadataSetALLWithEssence,
+				schemaIdentifier: '9999999999',
+				iri: 'https://data-int.hetarchief.be/id/entity/9999999999',
+				premisIsPartOf: null,
+				maintainerId: 'OR-test',
+				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
+			} as RelatedIeObject;
+			mockIeObjectsService.getParentIeObject.mockResolvedValueOnce(mockResponse);
+			mockIeObjectsService.getChildIeObjects.mockResolvedValueOnce([]);
 			mockIeObjectsService.getVisitorSpaceAccessInfoFromUser.mockResolvedValueOnce({
 				visitorSpaceIds: ['OR-test'],
 				objectIds: [],
@@ -484,7 +476,6 @@ describe('IeObjectsController', () => {
 
 			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
 				'https://data-int.hetarchief.be/id/entity/1111111111',
-				'https://data-int.hetarchief.be/id/entity/9999999999',
 				'referer',
 				mockRequest,
 				mockSessionUser
@@ -492,8 +483,7 @@ describe('IeObjectsController', () => {
 			expect(relatedIeObjects.parent).toBeDefined();
 			expect(relatedIeObjects.parent.schemaIdentifier).toEqual('9999999999');
 
-			expect(relatedIeObjects.children).toHaveLength(1);
-			expect(relatedIeObjects.children[0].schemaIdentifier).toEqual('2222222222');
+			expect(relatedIeObjects.children).toHaveLength(0);
 		});
 	});
 

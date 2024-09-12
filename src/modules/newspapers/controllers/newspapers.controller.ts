@@ -20,11 +20,13 @@ import { cloneDeep, isNil } from 'lodash';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
+import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
 	NEWSPAPER_MIME_TYPE_IMAGE_API,
 } from '~modules/newspapers/newspapers.consts';
+import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Permission } from '~modules/users/types';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
@@ -33,7 +35,10 @@ import { SessionUser } from '~shared/decorators/user.decorator';
 @ApiTags('Newspapers')
 @Controller('newspapers')
 export class NewspapersController {
-	constructor(private ieObjectsController: IeObjectsController) {}
+	constructor(
+		private ieObjectsController: IeObjectsController,
+		private newspapersService: NewspapersService
+	) {}
 
 	@Get(':id/export/zip')
 	@Header('Content-Type', 'application/zip')
@@ -227,5 +232,10 @@ export class NewspapersController {
 				urlStream.pipe(res);
 			}
 		);
+	}
+
+	@Get('newspaper-titles')
+	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {
+		return this.newspapersService.getNewspaperTitles();
 	}
 }
