@@ -58,6 +58,64 @@
         "schema_copyrightholder"
       ]
     }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 80,
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_description.lemma_split",
+        "schema_is_part_of.programma.lemma_split",
+        "schema_keywords.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 40,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_name.lemma_split^20",
+        "schema_description.lemma_split",
+        "schema_is_part_of.programma.lemma_split",
+        "schema_keywords.lemma_split"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "phrase",
+      "slop": 5,
+      "boost": 20,
+      "fields": [
+        "schema_name.lemma_split_spell^20",
+        "schema_description.lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
+        "schema_keywords.lemma_split_spell"
+      ]
+    }
+  },
+  {
+    "multi_match": {
+      "query": "{{query}}",
+      "type": "cross_fields",
+      "boost": 5,
+      "operator": "or",
+      "minimum_should_match": "2<80%",
+      "fields": [
+        "schema_name.lemma_split_spell^20",
+        "schema_description.lemma_split_spell",
+        "schema_is_part_of.programma.lemma_split_spell",
+        "schema_keywords.lemma_split_spell"
+      ]
+    }
   }
 ]
 
