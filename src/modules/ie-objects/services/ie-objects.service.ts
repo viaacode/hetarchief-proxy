@@ -56,6 +56,9 @@ import {
 	FindIeObjectsForSitemapDocument,
 	type FindIeObjectsForSitemapQuery,
 	type FindIeObjectsForSitemapQueryVariables,
+	GetChildIeObjectsDocument,
+	type GetChildIeObjectsQuery,
+	type GetChildIeObjectsQueryVariables,
 	GetIeObjectChildrenIrisDocument,
 	type GetIeObjectChildrenIrisQuery,
 	type GetIeObjectChildrenIrisQueryVariables,
@@ -66,9 +69,9 @@ import {
 	GetObjectDetailBySchemaIdentifiersDocument,
 	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetObjectDetailBySchemaIdentifiersQueryVariables,
-	GetRelatedParentsSiblingsAndChildrenDocument,
-	type GetRelatedParentsSiblingsAndChildrenQuery,
-	type GetRelatedParentsSiblingsAndChildrenQueryVariables,
+	GetParentIeObjectDocument,
+	type GetParentIeObjectQuery,
+	type GetParentIeObjectQueryVariables,
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
@@ -245,27 +248,51 @@ export class IeObjectsService {
 		};
 	}
 
-	public async getRelatedIeObjects(
+	public async getParentIeObject(
 		ieObjectIri: string,
-		parentIeObjectIri: string,
+		referer: string,
+		ip: string
+	): Promise<RelatedIeObject> {
+		const mediaObjects = await this.dataService.execute<
+			GetParentIeObjectQuery,
+			GetParentIeObjectQueryVariables
+		>(GetParentIeObjectDocument, {
+			currentObjectIri: ieObjectIri,
+		});
+
+		const adapted = this.adaptRelatedFromDB(
+			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null
+		);
+		// Newspaper thumbnails can be viewed without requiring a player ticket
+		if (adapted.dctermsFormat !== IeObjectType.Newspaper) {
+			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+				adapted.thumbnailUrl,
+				referer,
+				ip
+			);
+		}
+		return adapted;
+	}
+
+	public async getChildIeObjects(
+		ieObjectIri: string,
 		referer: string,
 		ip: string
 	): Promise<RelatedIeObject[]> {
 		const mediaObjects = await this.dataService.execute<
-			GetRelatedParentsSiblingsAndChildrenQuery,
-			GetRelatedParentsSiblingsAndChildrenQueryVariables
-		>(GetRelatedParentsSiblingsAndChildrenDocument, {
+			GetChildIeObjectsQuery,
+			GetChildIeObjectsQueryVariables
+		>(GetChildIeObjectsDocument, {
 			currentObjectIri: ieObjectIri,
-			parentObjectIri: parentIeObjectIri,
 		});
 
 		return Promise.all(
-			mediaObjects.graph__intellectual_entity.map(
+			mediaObjects.graph_intellectual_entity[0]?.hasPart.map(
 				async (
-					object: GetRelatedParentsSiblingsAndChildrenQuery['graph__intellectual_entity'][0]
+					object: GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
 				): Promise<RelatedIeObject> => {
 					const adapted = this.adaptRelatedFromDB(object);
-					// Newspaper thumbnails can be viewed without requireing a player ticket
+					// Newspaper thumbnails can be viewed without requiring a player ticket
 					if (adapted.dctermsFormat !== IeObjectType.Newspaper) {
 						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 							adapted.thumbnailUrl,
@@ -275,7 +302,7 @@ export class IeObjectsService {
 					}
 					return adapted;
 				}
-			)
+			) || []
 		);
 	}
 
@@ -601,25 +628,30 @@ export class IeObjectsService {
 	}
 
 	public adaptRelatedFromDB(
-		gqlIeObject: GetRelatedParentsSiblingsAndChildrenQuery['graph__intellectual_entity'][0]
+		gqlIeObject:
+			| GetParentIeObjectQuery['graph_intellectual_entity'][0]['isPartOf']
+			| GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
+			| null
 	): RelatedIeObject {
+		if (!gqlIeObject) {
+			return null;
+		}
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
-			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
+			dctermsFormat: gqlIeObject?.dctermsFormat[0]?.dcterms_format as IeObjectType,
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,
 			description: gqlIeObject?.schema_description,
-			duration: gqlIeObject?.schema_duration,
-			licenses: gqlIeObject?.schema_license,
+			duration: gqlIeObject?.schemaDuration?.schema_duration || null,
+			licenses: gqlIeObject?.schemaLicense?.schema_license,
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.org_identifier || '', // TODO ARC-2403 get slug from organisation
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0],
-			premisIsPartOf: gqlIeObject?.premis_is_part_of,
+			thumbnailUrl: gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
 		};
 	}
 

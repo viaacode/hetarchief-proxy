@@ -374,7 +374,6 @@ export type RelatedIeObject = Pick<
 	| 'accessThrough'
 	| 'transcript'
 	| 'iri'
-	| 'premisIsPartOf'
 >;
 
 export interface RelatedIeObjects {

@@ -1,8 +1,8 @@
 overwrite: true
 schema:
-  - ${GRAPHQL_URL_HET_ARCHIEF}:
+  - ${GRAPHQL_URL}:
       headers:
-        x-hasura-admin-secret: ${GRAPHQL_SECRET_HET_ARCHIEF}
+        x-hasura-admin-secret: ${GRAPHQL_SECRET}
 
 documents:
   - "./src/**/*.graphql"

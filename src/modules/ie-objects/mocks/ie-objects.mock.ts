@@ -11,7 +11,9 @@ import {
 import {
 	type FindAllIeObjectsByFolderIdQuery,
 	type FindIeObjectsForSitemapQuery,
+	type GetChildIeObjectsQuery,
 	type GetObjectDetailBySchemaIdentifiersQuery,
+	type GetParentIeObjectQuery,
 } from '~generated/graphql-db-types-hetarchief';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
@@ -622,6 +624,69 @@ export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = 
 				},
 			],
 			hasPart: [],
+		},
+	],
+};
+
+const mockRelatedIeObject:
+	| GetParentIeObjectQuery['graph_intellectual_entity'][0]['isPartOf']
+	| GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0] = {
+	id: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
+	schema_identifier: '4f1mg9x363',
+	schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
+	dcterms_available: '2020-08-28T11:48:11',
+	schema_date_created: '1911-10-21',
+	schema_date_published: '1911-10-21',
+	schema_description: 'Het annoncenblad van Moll en omliggende dorpen',
+	dctermsFormat: [
+		{
+			dcterms_format: 'krant',
+		},
+	],
+	schemaDuration: {
+		schema_duration: '00:00:00',
+	},
+	schemaLicense: {
+		schema_license: [
+			'VIAA-PUBLIEK-METADATA-ALL',
+			'VIAA-PUBLIEK-CONTENT',
+			'VIAA-INTRA_CP-CONTENT',
+			'VIAA-INTRA_CP-METADATA-ALL',
+		],
+	},
+	schemaThumbnail: {
+		schema_thumbnail_url: 'https://viaa.be/thumbnail.jpg',
+	},
+	schemaMaintainer: {
+		id: 'https://data-int.hetarchief.be/id/entity/OR-rf5kf25',
+		org_identifier: 'OR-rf5kf25',
+		skos_pref_label: 'VRT',
+		ha_org_sector: 'Publieke Omroep',
+		skos_alt_label: 'vrt',
+	},
+};
+
+export const mockParentIeObject: Readonly<GetParentIeObjectQuery> = {
+	graph_intellectual_entity: [
+		{
+			isPartOf: mockRelatedIeObject,
+		},
+	],
+};
+
+export const mockChildrenIeObjects: Readonly<GetChildIeObjectsQuery> = {
+	graph_intellectual_entity: [
+		{
+			hasPart: [
+				{
+					...mockRelatedIeObject,
+					schema_identifier: mockRelatedIeObject.schema_identifier + '__1',
+				},
+				{
+					...mockRelatedIeObject,
+					schema_identifier: mockRelatedIeObject.schema_identifier + '__2',
+				},
+			],
 		},
 	],
 };
