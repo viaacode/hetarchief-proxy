@@ -250,11 +250,11 @@ export class IeObjectsService {
 			currentObjectIri: ieObjectIri,
 		});
 
-		const adapted = this.adaptRelatedFromDB(
+		const adapted: RelatedIeObject | null = this.adaptRelatedFromDB(
 			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
-		if (adapted.dctermsFormat !== IeObjectType.Newspaper) {
+		if (adapted && adapted.dctermsFormat !== IeObjectType.Newspaper) {
 			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 				adapted.thumbnailUrl,
 				referer,
