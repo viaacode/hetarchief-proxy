@@ -159,7 +159,7 @@ This project has been created by:
 
 Has been worked on by:
 
-- Bart Naessens: bart.naessens@studiohyperdrive.be
+- Robbe Bierebeeck: robbe.bierebeeck@studiohyperdrive.be
 - Ian Emsens: ian.emsens@studiohyperdrive.be
 
 It is currently maintained by:
@@ -167,3 +167,5 @@ It is currently maintained by:
 - Bavo Vanderghote: bavo.vanderghote@studiohyperdrive.be
 - Bert Verhelst: bert.verhelst@studiohyperdrive.be
 - Brecht Tourlousse: brecht.tourlousse@studiohyperdrive.be
+- Bart Naessens: bart.naessens@studiohyperdrive.be
+- 
