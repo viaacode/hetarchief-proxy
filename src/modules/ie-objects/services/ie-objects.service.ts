@@ -124,103 +124,111 @@ export class IeObjectsService {
 		user: SessionUserEntity,
 		visitorSpaceInfo?: IeObjectsVisitorSpaceInfo
 	): Promise<IeObjectsWithAggregations> {
-		if ((inputQuery.page - 1) * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
-			// Limit number of results to MAX_COUNT_SEARCH_RESULTS
-			// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
+		try {
+			if ((inputQuery.page - 1) * inputQuery.size > MAX_COUNT_SEARCH_RESULTS) {
+				// Limit number of results to MAX_COUNT_SEARCH_RESULTS
+				// Since elasticsearch is capped to MAX_COUNT_SEARCH_RESULTS
+				return {
+					...Pagination<IeObject>({
+						items: [],
+						page: inputQuery.page,
+						size: 0,
+						total: MAX_COUNT_SEARCH_RESULTS,
+					}),
+					aggregations: [],
+					searchTerms: [],
+				};
+			}
+
+			const id = randomUUID();
+
+			let spacesIds: string[] = [];
+
+			// All the space ids are only needed when isConsultableOnlyOnLocation is a filter, and it is set to 'true'
+			if (inputQuery.filters && inputQuery.filters.length > 0) {
+				const consultableFilter = inputQuery.filters.find(
+					(filter) =>
+						filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
+				);
+				if (consultableFilter && consultableFilter.value === 'true') {
+					const spaces = await this.spacesService.findAll(
+						{
+							status: [VisitorSpaceStatus.Active],
+							page: 1,
+							size: 1000,
+						},
+						user.getId()
+					);
+
+					spacesIds = spaces.items.map((space) => space.maintainerId);
+				}
+			}
+
+			let esQuery: any;
+			try {
+				esQuery = QueryBuilder.build(inputQuery, {
+					user,
+					visitorSpaceInfo,
+					spacesIds,
+				});
+			} catch (err) {
+				/*
+					If the QueryBuilder throws an error, we try the query with a literal string.
+					If that also throws an error, we return http 500
+					We update the inputQuery because it is later used.
+				*/
+				inputQuery = convertQueryToLiteralString(inputQuery);
+				esQuery = QueryBuilder.build(inputQuery, {
+					user,
+					visitorSpaceInfo,
+					spacesIds,
+				});
+			}
+
+			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+				this.logger.log(
+					`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
+						esQuery
+					)}`
+				);
+			}
+
+			const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+			const objectResponse = await this.cacheManager.wrap(
+				CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
+				() => this.executeQuery(esIndex, esQuery),
+				// cache for 60 minutes
+				3_600_000
+			);
+
+			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+				this.logger.log(
+					`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
+						objectResponse
+					)}`
+				);
+			}
+
+			const adaptedESResponse = await this.adaptESResponse(objectResponse, referer, ip);
+
 			return {
 				...Pagination<IeObject>({
-					items: [],
+					items: adaptedESResponse.hits.hits.map((esHit) =>
+						this.adaptESObjectToObject(esHit._source)
+					),
 					page: inputQuery.page,
-					size: 0,
-					total: MAX_COUNT_SEARCH_RESULTS,
+					size: adaptedESResponse.hits.hits.length,
+					total: adaptedESResponse.hits.total.value,
 				}),
-				aggregations: [],
-				searchTerms: [],
+				aggregations: adaptedESResponse.aggregations,
+				searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
 			};
-		}
-
-		const id = randomUUID();
-
-		let spacesIds: string[] = [];
-
-		// All the space ids are only needed when isConsultableOnlyOnLocation is a filter, and it is set to 'true'
-		if (inputQuery.filters && inputQuery.filters.length > 0) {
-			const consultableFilter = inputQuery.filters.find(
-				(filter) => filter.field === IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION
-			);
-			if (consultableFilter && consultableFilter.value === 'true') {
-				const spaces = await this.spacesService.findAll(
-					{
-						status: [VisitorSpaceStatus.Active],
-						page: 1,
-						size: 1000,
-					},
-					user.getId()
-				);
-
-				spacesIds = spaces.items.map((space) => space.maintainerId);
-			}
-		}
-
-		let esQuery: any;
-		try {
-			esQuery = QueryBuilder.build(inputQuery, {
-				user,
-				visitorSpaceInfo,
-				spacesIds,
-			});
 		} catch (err) {
-			/*
-				If the QueryBuilder throws an error, we try the query with a literal string.
-				If that also throws an error, we return http 500
-				We update the inputQuery because it is later used.
-			*/
-			inputQuery = convertQueryToLiteralString(inputQuery);
-			esQuery = QueryBuilder.build(inputQuery, {
-				user,
-				visitorSpaceInfo,
-				spacesIds,
-			});
-		}
-
-		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
-			this.logger.log(
-				`${id}, Executing elasticsearch query on index ${esIndex}: ${JSON.stringify(
-					esQuery
-				)}`
+			console.error(new InternalServerErrorException('Failed getting ieObjects', err));
+			throw new InternalServerErrorException(
+				'Failed getting ieObjects, see server logs for more details'
 			);
 		}
-
-		const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
-		const objectResponse = await this.cacheManager.wrap(
-			CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
-			() => this.executeQuery(esIndex, esQuery),
-			// cache for 60 minutes
-			3_600_000
-		);
-
-		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
-			this.logger.log(
-				`${id}, Response from elasticsearch query on index ${esIndex}: ${JSON.stringify(
-					objectResponse
-				)}`
-			);
-		}
-
-		const adaptedESResponse = await this.adaptESResponse(objectResponse, referer, ip);
-
-		return {
-			...Pagination<IeObject>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESObjectToObject(esHit._source)
-				),
-				page: inputQuery.page,
-				size: adaptedESResponse.hits.hits.length,
-				total: adaptedESResponse.hits.total.value,
-			}),
-			aggregations: adaptedESResponse.aggregations,
-			searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
-		};
 	}
 
 	public async convertSchemaIdentifierV2ToV3(

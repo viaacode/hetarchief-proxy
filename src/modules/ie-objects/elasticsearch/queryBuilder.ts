@@ -419,8 +419,7 @@ export class QueryBuilder {
 							MULTI_MATCH_QUERY_MAPPING.fuzzy.advancedQuery[metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					} else {
-						const searchTemplate =
-							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
+						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
