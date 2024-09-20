@@ -1,7 +1,6 @@
 import {
 	AutocompleteEsField,
 	AutocompleteField,
-	AutocompleteQueryType,
 	type IeObject,
 	IeObjectExtraUserGroupType,
 	IeObjectLicense,
@@ -224,17 +223,9 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooMediaObjectId',
 ];
 
-export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, AutocompleteEsField> = {
-	[AutocompleteField.creator]: AutocompleteEsField.creator,
-	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
-	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
-	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
+export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, string> = {
+	[AutocompleteField.creator]: AutocompleteEsField.creator + '.sayt',
+	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated + '.sayt',
+	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName + '.sayt',
+	[AutocompleteField.mentions]: AutocompleteEsField.mentions + '.sayt',
 };
-
-export const AUTOCOMPLETE_FIELD_TO_TYPE_OF_QUERY: Record<AutocompleteField, AutocompleteQueryType> =
-	{
-		[AutocompleteField.creator]: AutocompleteQueryType.match_phrase_prefix,
-		[AutocompleteField.locationCreated]: AutocompleteQueryType.suggest,
-		[AutocompleteField.newspaperSeriesName]: AutocompleteQueryType.suggest,
-		[AutocompleteField.mentions]: AutocompleteQueryType.match_phrase_prefix,
-	};
