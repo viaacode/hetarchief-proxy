@@ -246,7 +246,7 @@ export class MaterialRequestsController {
 				message: 'Material request list could not be send.',
 				innerException: err,
 			});
-			console.log(error);
+			console.error(error);
 
 			throw error;
 		}
