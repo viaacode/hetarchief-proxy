@@ -30,7 +30,6 @@ import { MaterialRequestsService } from '../services/material-requests.service';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { type LogEvent, LogEventType } from '~modules/events/types';
-import { OrganisationContactPointType } from '~modules/organisations/organisations.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
@@ -179,9 +178,6 @@ export class MaterialRequestsController {
 
 			materialRequests.items.forEach((materialRequest: MaterialRequest) => {
 				// If the email does not exist, the campaign monitor service will default to process.env.MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK
-				materialRequest.contactMail = materialRequest?.contactMail?.find(
-					(contact) => contact.contact_type === OrganisationContactPointType.ontsluiting
-				)?.email;
 				materialRequest.requesterCapacity = sendRequestListDto.type;
 				materialRequest.organisation = sendRequestListDto?.organisation;
 			});
@@ -245,11 +241,14 @@ export class MaterialRequestsController {
 			);
 
 			return { message: 'success' };
-		} catch (error) {
-			throw new InternalServerErrorException({
+		} catch (err) {
+			const error = new InternalServerErrorException({
 				message: 'Material request list could not be send.',
-				error,
+				innerException: err,
 			});
+			console.log(error);
+
+			throw error;
 		}
 	}
 
