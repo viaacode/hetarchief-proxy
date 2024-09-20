@@ -77,6 +77,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.MAINTAINER_ID,
 	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
 	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 	IeObjectsSearchFilterField.CAST,
 	IeObjectsSearchFilterField.IDENTIFIER,
 	IeObjectsSearchFilterField.LICENSES,
