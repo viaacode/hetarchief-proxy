@@ -301,7 +301,7 @@ export interface ElasticsearchObject {
 	} | null;
 	schema_spatial_coverage: string[];
 	schema_temporal_coverage: string[];
-	schema_thumbnail_url: string[];
+	schema_thumbnail_url: string;
 	// Discrepancy props in QAS & INT
 	schema_number_of_pages?: number; // exists in _mapping but does not exist in values (QAS & INT)
 	meemoo_description_cast?: string; // only exists in QAS (not INT)
