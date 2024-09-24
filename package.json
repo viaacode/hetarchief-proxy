@@ -47,7 +47,7 @@
     "@viaa/avo2-types": "3.0.4",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
-    "aws-sdk": "2.1097.0",
+    "aws-sdk": "2.1687.0",
     "blend-promise-utils": "1.28.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
