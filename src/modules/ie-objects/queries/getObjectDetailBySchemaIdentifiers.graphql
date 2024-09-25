@@ -70,6 +70,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				schema_height
 				bibframe_production_method
 				created_at
+				digitization_date
 			}
 			schema_abstract
 			schemaAlternateName {
@@ -166,6 +167,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 					schema_height
 					bibframe_production_method
 					created_at
+					digitization_date
 				}
 				schema_abstract
 				schemaAlternateName {
