@@ -202,6 +202,7 @@ export interface IeObject {
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
 	mentions?: Mention[];
+	digitizationDate?: string;
 	children?: number;
 	pageRepresentations?: IeObjectPageRepresentation[];
 }
