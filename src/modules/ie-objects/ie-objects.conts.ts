@@ -153,6 +153,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'succeededBy',
 	'width',
 	'height',
+	'digitizationDate',
 	'bibframeProductionMethod',
 	'bibframeEdition',
 	'synopsis',
