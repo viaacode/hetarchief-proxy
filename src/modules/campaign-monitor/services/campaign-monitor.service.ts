@@ -167,7 +167,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 		await this.sendTransactionalMail(
 			{
-				template: EmailTemplate.EMAIL_CONFIRMATION,
+				template: EmailTemplate.NEWSLETTER_CONFIRMATION,
 				data,
 			},
 			language
