@@ -1,5 +1,5 @@
 query getNewspaperTitles {
-	graph__newspaper_public_content {
+	graph__newspaper_public_content(distinct_on: id) {
 		id
 		schema_name
 	}
