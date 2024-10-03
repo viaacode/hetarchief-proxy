@@ -677,7 +677,7 @@ describe('CampaignMonitorService', () => {
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
-					)}/${getTemplateId(EmailTemplate.EMAIL_CONFIRMATION, Locale.Nl)}/send`
+					)}/${getTemplateId(EmailTemplate.NEWSLETTER_CONFIRMATION, Locale.Nl)}/send`
 				)
 				.reply(202, [
 					{
