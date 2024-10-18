@@ -419,11 +419,12 @@ export class QueryBuilder {
 							MULTI_MATCH_QUERY_MAPPING.fuzzy.advancedQuery[metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					} else {
-						const searchTemplate = MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field];
+						const searchTemplate =
+							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
 						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					}
 
-					textFilters.forEach((filter) =>
+					textFilters.forEach((filter: any[]) =>
 						applyFilter(filterObject, {
 							occurrenceType: this.getOccurrenceType(searchFilter.operator),
 							query: filter,

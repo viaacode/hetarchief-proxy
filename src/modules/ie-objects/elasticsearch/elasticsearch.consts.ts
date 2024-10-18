@@ -128,7 +128,10 @@ export enum MetadataAccessType {
 	ALL = 'all',
 }
 
-export const MULTI_MATCH_QUERY_MAPPING = {
+export const MULTI_MATCH_QUERY_MAPPING: Record<
+	'fuzzy' | 'exact',
+	Record<string, Record<'limited' | 'all', any>>
+> = {
 	fuzzy: {
 		query: {
 			limited: searchQueryLimitedFuzzy,
@@ -138,12 +141,24 @@ export const MULTI_MATCH_QUERY_MAPPING = {
 			limited: searchQueryAdvancedLimitedFuzzy,
 			all: searchQueryAdvancedAllFuzzy,
 		},
-		name: nameSearchQueryFuzzy,
-		description: descriptionSearchQueryFuzzy,
+		name: {
+			limited: nameSearchQueryFuzzy,
+			all: nameSearchQueryFuzzy,
+		},
+		description: {
+			limited: descriptionSearchQueryFuzzy,
+			all: descriptionSearchQueryFuzzy,
+		},
 	},
 	exact: {
-		name: nameSearchQueryExact,
-		identifier: identifierSearchQueryExact,
+		name: {
+			limited: nameSearchQueryExact,
+			all: nameSearchQueryExact,
+		},
+		identifier: {
+			limited: identifierSearchQueryExact,
+			all: identifierSearchQueryExact,
+		},
 		query: {
 			limited: searchQueryLimitedExact,
 			all: searchQueryAllExact,
