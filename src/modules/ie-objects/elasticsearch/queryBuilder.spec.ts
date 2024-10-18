@@ -1,7 +1,6 @@
 import { IeObjectSector, MediaFormat } from '../ie-objects.types';
 
 import {
-	ElasticsearchField,
 	type ElasticsearchSubQuery,
 	IeObjectsSearchFilterField,
 	MULTI_MATCH_QUERY_MAPPING,
@@ -187,30 +186,6 @@ describe('QueryBuilder', () => {
 				error = e;
 			}
 			expect(error?.response?.message).toEqual('Failed to build query object');
-		});
-
-		it('should return an advanced search query when an advancedQuery filter is specified', () => {
-			const esQuery = QueryBuilder.build(
-				{
-					filters: [
-						{
-							field: IeObjectsSearchFilterField.ADVANCED_QUERY,
-							value: 'searchme',
-							operator: Operator.CONTAINS,
-						},
-					],
-					size: 10,
-					page: 1,
-				},
-				mockInputInfo as any
-			);
-			const queryJson = JSON.stringify(esQuery.query);
-			expect(queryJson).toContain(ElasticsearchField.schema_name);
-			expect(queryJson).toContain(
-				ElasticsearchField.schema_is_part_of + '.' + ElasticsearchField.newspaper
-			);
-			expect(queryJson).toContain(ElasticsearchField.schema_transcript);
-			expect(queryJson).toContain(ElasticsearchField.schema_mentions);
 		});
 
 		it('should filter on format', () => {

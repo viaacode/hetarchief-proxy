@@ -8,8 +8,6 @@ import descriptionSearchQueryFuzzy from './templates/fuzzy/description-search-qu
 import nameSearchQueryFuzzy from './templates/fuzzy/name-search-query.json';
 import searchQueryAllFuzzy from './templates/fuzzy/search-query--metadata-all.json';
 import searchQueryLimitedFuzzy from './templates/fuzzy/search-query--metadata-limited.json';
-import searchQueryAdvancedAllFuzzy from './templates/fuzzy/search-query-advanced--metadata-all.json';
-import searchQueryAdvancedLimitedFuzzy from './templates/fuzzy/search-query-advanced--metadata-limited.json';
 
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
 
@@ -50,13 +48,11 @@ export enum IeObjectsSearchFilterField {
 	CAPTION = 'caption', // Not available in database: https://docs.google.com/spreadsheets/d/1xAtHfkpDi4keSsBol7pw0cQAvCmg2hWRz8oxM6cP7zo/edit#gid=0
 	OBJECT_TYPE = 'objectType',
 	PUBLISHER = 'publisher',
-	ADVANCED_QUERY = 'advancedQuery',
 }
 
 export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearchFilterField[] = [
 	// LTD
 	IeObjectsSearchFilterField.QUERY,
-	IeObjectsSearchFilterField.ADVANCED_QUERY,
 	IeObjectsSearchFilterField.CREATED,
 	IeObjectsSearchFilterField.CREATOR,
 	IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
@@ -137,10 +133,6 @@ export const MULTI_MATCH_QUERY_MAPPING: Record<
 			limited: searchQueryLimitedFuzzy,
 			all: searchQueryAllFuzzy,
 		},
-		advancedQuery: {
-			limited: searchQueryAdvancedLimitedFuzzy,
-			all: searchQueryAdvancedAllFuzzy,
-		},
 		name: {
 			limited: nameSearchQueryFuzzy,
 			all: nameSearchQueryFuzzy,
@@ -195,7 +187,6 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 
 	// Should never be used since these are marked as multi match fields
 	// But we include it to get stricter type checks on missing fields
-	[IeObjectsSearchFilterField.ADVANCED_QUERY]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.IDENTIFIER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.QUERY]: QueryType.TERMS,
 
@@ -257,7 +248,6 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	>]: ElasticsearchField | `${ElasticsearchField}.${ElasticsearchField}`;
 } = {
 	[IeObjectsSearchFilterField.QUERY]: ElasticsearchField.query,
-	[IeObjectsSearchFilterField.ADVANCED_QUERY]: ElasticsearchField.query,
 	[IeObjectsSearchFilterField.GENRE]: ElasticsearchField.schema_genre,
 	[IeObjectsSearchFilterField.KEYWORD]: ElasticsearchField.schema_keywords,
 	[IeObjectsSearchFilterField.NAME]: ElasticsearchField.schema_name,
@@ -303,7 +293,6 @@ export const ORDER_MAPPINGS: { [prop in OrderProperty]: string } = {
 
 export const MULTI_MATCH_FIELDS: Array<IeObjectsSearchFilterField> = [
 	IeObjectsSearchFilterField.QUERY,
-	IeObjectsSearchFilterField.ADVANCED_QUERY,
 	IeObjectsSearchFilterField.NAME,
 	IeObjectsSearchFilterField.DESCRIPTION,
 	IeObjectsSearchFilterField.IDENTIFIER,
