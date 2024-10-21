@@ -1,5 +1,5 @@
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { MediaFormat } from '../ie-objects.types';
+import { IeObjectType } from '../ie-objects.types';
 
 import { checkAndFixFormatFilter } from './check-and-fix-format-filter';
 
@@ -9,12 +9,16 @@ describe('checkAndFixFormatFilter', () => {
 			filters: [
 				{
 					field: IeObjectsSearchFilterField.FORMAT,
-					value: MediaFormat.VIDEO,
+					value: IeObjectType.VIDEO,
 					operator: Operator.IS,
 				},
 			],
 		});
-		expect(fixedQuery.filters[0].multiValue).toEqual(['video', 'film']);
+		expect(fixedQuery.filters[0].multiValue).toEqual([
+			IeObjectType.VIDEO,
+			IeObjectType.FILM,
+			IeObjectType.VIDEO_FRAGMENT,
+		]);
 	});
 
 	it('should add film to a query on video in a multivalue', () => {
@@ -22,11 +26,15 @@ describe('checkAndFixFormatFilter', () => {
 			filters: [
 				{
 					field: IeObjectsSearchFilterField.FORMAT,
-					multiValue: [MediaFormat.VIDEO],
+					multiValue: [IeObjectType.VIDEO],
 					operator: Operator.IS,
 				},
 			],
 		});
-		expect(fixedQuery.filters[0].multiValue).toEqual(['video', 'film']);
+		expect(fixedQuery.filters[0].multiValue).toEqual([
+			IeObjectType.VIDEO,
+			IeObjectType.FILM,
+			IeObjectType.VIDEO_FRAGMENT,
+		]);
 	});
 });

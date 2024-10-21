@@ -9,7 +9,7 @@ import nock from 'nock';
 import { type Configuration } from '~config';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { type ElasticsearchResponse, IeObjectLicense } from '../ie-objects.types';
+import { type ElasticsearchResponse, IeObjectLicense, IeObjectType } from '../ie-objects.types';
 import {
 	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
@@ -141,8 +141,9 @@ describe('ieObjectsService', () => {
 				aggregations: {
 					dcterms_format: {
 						buckets: [
-							{ key: 'film', doc_count: 1 },
-							{ key: 'video', doc_count: 1 },
+							{ key: IeObjectType.VIDEO, doc_count: 1 },
+							{ key: IeObjectType.FILM, doc_count: 1 },
+							{ key: IeObjectType.VIDEO_FRAGMENT, doc_count: 1 },
 						],
 					},
 				},
@@ -156,13 +157,13 @@ describe('ieObjectsService', () => {
 			const esResponse = {
 				aggregations: {
 					dcterms_format: {
-						buckets: [{ key: 'film', doc_count: 1 }],
+						buckets: [{ key: IeObjectType.FILM, doc_count: 1 }],
 					},
 				},
 			} as ElasticsearchResponse;
 			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
-			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual('video');
+			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual(IeObjectType.VIDEO);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
 		});
 	});
