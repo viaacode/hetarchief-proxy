@@ -667,7 +667,9 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(JSON.stringify(queryObject)).toContain('schema_maintainer.organization_type');
+			expect(JSON.stringify(queryObject)).toContain(
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
+			);
 		});
 
 		it('Should not set a filter when consultable media is set to false', () => {
@@ -706,7 +708,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				'schema_maintainer.organization_type'
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
 			);
 		});
 
@@ -746,7 +748,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				'schema_maintainer.organization_type'
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
 			);
 		});
 
