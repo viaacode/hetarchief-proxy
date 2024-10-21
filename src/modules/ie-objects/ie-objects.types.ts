@@ -14,11 +14,6 @@ export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
-export enum MediaFormat {
-	VIDEO = 'video',
-	AUDIO = 'audio',
-}
-
 export enum IeObjectLicense {
 	// Object Licenses
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
@@ -125,10 +120,12 @@ export interface IsPartOfCollection {
 }
 
 export enum IeObjectType {
-	Video = 'video',
-	Audio = 'audio',
-	Film = 'film',
-	Newspaper = 'newspaper',
+	VIDEO = 'video',
+	FILM = 'film', // This is considered video
+	VIDEO_FRAGMENT = 'videofragment', // This is considered video
+	AUDIO = 'audio',
+	AUDIO_FRAGMENT = 'audiofragment', // This is considered audio
+	NEWSPAPER = 'newspaper',
 }
 
 export interface IeObject {

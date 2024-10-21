@@ -51,7 +51,7 @@ import {
 	type MaterialRequestEmailInfo,
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
-import { type MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
@@ -375,7 +375,7 @@ export class MaterialRequestsService {
 			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity.schema_name,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
-				.dcterms_format as MediaFormat,
+				.dcterms_format as IeObjectType,
 			objectThumbnailUrl:
 				graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url?.[0] || null,
 			profileId: graphQlMaterialRequest.profile_id,

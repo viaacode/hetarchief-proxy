@@ -1,4 +1,4 @@
-import { IeObjectSector, MediaFormat } from '../ie-objects.types';
+import { IeObjectSector, IeObjectType } from '../ie-objects.types';
 
 import {
 	ElasticsearchField,
@@ -219,7 +219,7 @@ describe('QueryBuilder', () => {
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: MediaFormat.VIDEO,
+							value: IeObjectType.VIDEO,
 							operator: Operator.IS,
 						},
 					],
@@ -516,7 +516,7 @@ describe('QueryBuilder', () => {
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: MediaFormat.VIDEO,
+							value: IeObjectType.VIDEO,
 							operator: Operator.CONTAINS,
 						},
 					],

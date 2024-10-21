@@ -256,7 +256,7 @@ export class IeObjectsService {
 			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
-		if (adapted && adapted.dctermsFormat !== IeObjectType.Newspaper) {
+		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
 			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 				adapted.thumbnailUrl,
 				referer,
@@ -285,7 +285,7 @@ export class IeObjectsService {
 				): Promise<RelatedIeObject> => {
 					const adapted = this.adaptRelatedFromDB(object);
 					// Newspaper thumbnails can be viewed without requiring a player ticket
-					if (adapted.dctermsFormat !== IeObjectType.Newspaper) {
+					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
 						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 							adapted.thumbnailUrl,
 							referer,
@@ -657,9 +657,12 @@ export class IeObjectsService {
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
 			esResponse.aggregations.dcterms_format.buckets =
 				esResponse.aggregations.dcterms_format.buckets.filter((bucket) => {
-					if (bucket.key === 'film') {
+					if (
+						bucket.key === IeObjectType.FILM ||
+						bucket.key === IeObjectType.VIDEO_FRAGMENT
+					) {
 						const videoBucket = find(esResponse.aggregations.dcterms_format.buckets, {
-							key: 'video',
+							key: IeObjectType.VIDEO,
 						});
 						if (videoBucket) {
 							// there is also a video bucket: add film counts to this bucket
@@ -667,10 +670,23 @@ export class IeObjectsService {
 							return false; // filter out current film bucket
 						}
 						// there is no video bucket: rename the film bucket to video bucket
-						bucket.key = 'video';
+						bucket.key = IeObjectType.VIDEO;
 						return true; // include newly renamed video bucket in response
 					}
-					return true; // not a film bucket -> include in response
+					if (bucket.key === IeObjectType.AUDIO_FRAGMENT) {
+						const audioBucket = find(esResponse.aggregations.dcterms_format.buckets, {
+							key: IeObjectType.AUDIO,
+						});
+						if (audioBucket) {
+							// there is also an audio bucket: add audio fragment counts to this bucket
+							audioBucket.doc_count += bucket.doc_count;
+							return false; // filter out current audio fragment bucket
+						}
+						// there is no video bucket: rename the audio fragment bucket to video bucket
+						bucket.key = IeObjectType.AUDIO;
+						return true; // include newly renamed audio bucket in response
+					}
+					return true; // not an audio fragment bucket -> include in response
 				});
 		}
 

@@ -5,7 +5,7 @@ import {
 	type Lookup_App_Material_Request_Requester_Capacity_Enum,
 	type Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { type MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { type Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
@@ -13,7 +13,7 @@ export interface MaterialRequest {
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
 	objectMeemooLocalId?: string;
-	objectDctermsFormat: MediaFormat;
+	objectDctermsFormat: IeObjectType;
 	objectThumbnailUrl: string;
 	profileId: string;
 	reason: string;
