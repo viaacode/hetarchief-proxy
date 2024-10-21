@@ -568,9 +568,8 @@ export class QueryBuilder {
 							terms: {
 								[ElasticsearchField.schema_maintainer +
 								'.' +
-								ElasticsearchField.organization_type]: getSectorsWithEssenceAccess(
-									inputInfo.user.getSector()
-								),
+								ElasticsearchField.organization_sector]:
+									getSectorsWithEssenceAccess(inputInfo.user.getSector()),
 							},
 						},
 						{

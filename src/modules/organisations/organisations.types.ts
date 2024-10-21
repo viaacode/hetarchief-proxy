@@ -54,34 +54,6 @@ export interface OrganisationResponse {
 	};
 }
 
-export interface ParsedOrganisation {
-	schema_identifier: string;
-	contact_point: {
-		contact_type?: string;
-		email?: string;
-	}[];
-	schema_name: string;
-	description: string;
-	// Remark here organization is with Z
-	haorg_organization_type: string;
-	form_url: string | null;
-	homepage_url: string | null;
-	slug: string | null;
-	overlay: boolean;
-	logo: {
-		iri?: string;
-	};
-	primary_site: {
-		address?: {
-			locality: string;
-			postal_code: string;
-			street: string;
-			telephone: string;
-			post_office_box_number: string;
-		};
-	};
-}
-
 export type GqlOrganisation = GetOrganisationBySlugQuery['graph_organization'][0] &
 	FindOrganisationsBySchemaIdsQuery['graph_organization'][0];
 
@@ -102,18 +74,6 @@ export interface Organisation {
 export interface OrganisationContactPoint {
 	contactType: string;
 	email: string;
-}
-
-export interface OrganisationPrimarySite {
-	address: OrganisationPrimarySiteAddress;
-}
-
-export interface OrganisationPrimarySiteAddress {
-	locality: string;
-	postal_code: string;
-	street: string;
-	telephone: string;
-	post_office_box_number: string;
 }
 
 export interface MaintainerGridOrganisation {

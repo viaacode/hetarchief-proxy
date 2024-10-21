@@ -294,7 +294,7 @@ export interface ElasticsearchObject {
 		schema_name?: string;
 		alt_label?: string | null; // not always available
 		organization_sector?: IeObjectSector | null; // not always available
-		organization_type?: string | null; // not always available
+		// organization_type?: string | null; // should not be used, use organization_sector instead
 	};
 	schema_name: string;
 	schema_publisher: {
