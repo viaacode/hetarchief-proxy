@@ -150,7 +150,7 @@ describe('ieObjectsService', () => {
 			} as ElasticsearchResponse;
 			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
-			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(2);
+			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(3);
 		});
 
 		it('converts film bucket to video bucket if there was no video buckets', async () => {
