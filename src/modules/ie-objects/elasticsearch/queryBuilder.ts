@@ -379,7 +379,7 @@ export class QueryBuilder {
 		}
 
 		forEach(filters, (searchFilter: SearchFilter) => {
-			// First, check for special 'multi match fields'. Fields like query, advancedQuery, name and description
+			// First, check for special 'multi match fields'. Fields like query, name and description
 			// query multiple fields at once
 			if (MULTI_MATCH_FIELDS.includes(searchFilter.field)) {
 				if (!searchFilter.value && !searchFilter.multiValue?.length) {
@@ -414,10 +414,6 @@ export class QueryBuilder {
 								MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
 							textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 						}
-					} else if (searchFilter.field === IeObjectsSearchFilterField.ADVANCED_QUERY) {
-						const searchTemplate =
-							MULTI_MATCH_QUERY_MAPPING.fuzzy.advancedQuery[metadataAccessType];
-						textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
 					} else {
 						const searchTemplate =
 							MULTI_MATCH_QUERY_MAPPING.fuzzy[searchFilter.field][metadataAccessType];
@@ -458,10 +454,7 @@ export class QueryBuilder {
 			 */
 			if (
 				MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
-				[
-					IeObjectsSearchFilterField.ADVANCED_QUERY,
-					IeObjectsSearchFilterField.QUERY,
-				].includes(searchFilter.field)
+				[IeObjectsSearchFilterField.QUERY].includes(searchFilter.field)
 			) {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
@@ -568,9 +561,8 @@ export class QueryBuilder {
 							terms: {
 								[ElasticsearchField.schema_maintainer +
 								'.' +
-								ElasticsearchField.organization_type]: getSectorsWithEssenceAccess(
-									inputInfo.user.getSector()
-								),
+								ElasticsearchField.organization_sector]:
+									getSectorsWithEssenceAccess(inputInfo.user.getSector()),
 							},
 						},
 						{

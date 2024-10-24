@@ -142,7 +142,7 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 	name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 	dctermsAvailable: '2015-09-19T12:08:24',
 	creator: null,
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	numberOfPages: null,
 	thumbnailUrl:
 		'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',

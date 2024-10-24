@@ -1,7 +1,6 @@
-import { IeObjectSector, MediaFormat } from '../ie-objects.types';
+import { IeObjectSector, IeObjectType } from '../ie-objects.types';
 
 import {
-	ElasticsearchField,
 	type ElasticsearchSubQuery,
 	IeObjectsSearchFilterField,
 	MULTI_MATCH_QUERY_MAPPING,
@@ -189,37 +188,13 @@ describe('QueryBuilder', () => {
 			expect(error?.response?.message).toEqual('Failed to build query object');
 		});
 
-		it('should return an advanced search query when an advancedQuery filter is specified', () => {
-			const esQuery = QueryBuilder.build(
-				{
-					filters: [
-						{
-							field: IeObjectsSearchFilterField.ADVANCED_QUERY,
-							value: 'searchme',
-							operator: Operator.CONTAINS,
-						},
-					],
-					size: 10,
-					page: 1,
-				},
-				mockInputInfo as any
-			);
-			const queryJson = JSON.stringify(esQuery.query);
-			expect(queryJson).toContain(ElasticsearchField.schema_name);
-			expect(queryJson).toContain(
-				ElasticsearchField.schema_is_part_of + '.' + ElasticsearchField.newspaper
-			);
-			expect(queryJson).toContain(ElasticsearchField.schema_transcript);
-			expect(queryJson).toContain(ElasticsearchField.schema_mentions);
-		});
-
 		it('should filter on format', () => {
 			const esQuery = QueryBuilder.build(
 				{
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: MediaFormat.VIDEO,
+							value: IeObjectType.VIDEO,
 							operator: Operator.IS,
 						},
 					],
@@ -516,7 +491,7 @@ describe('QueryBuilder', () => {
 					filters: [
 						{
 							field: IeObjectsSearchFilterField.FORMAT,
-							value: MediaFormat.VIDEO,
+							value: IeObjectType.VIDEO,
 							operator: Operator.CONTAINS,
 						},
 					],
@@ -667,7 +642,9 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(JSON.stringify(queryObject)).toContain('schema_maintainer.organization_type');
+			expect(JSON.stringify(queryObject)).toContain(
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
+			);
 		});
 
 		it('Should not set a filter when consultable media is set to false', () => {
@@ -706,7 +683,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				'schema_maintainer.organization_type'
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
 			);
 		});
 
@@ -746,7 +723,7 @@ describe('QueryBuilder', () => {
 				}
 			);
 			expect(JSON.stringify(queryObject)).not.toContain(
-				'schema_maintainer.organization_type'
+				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
 			);
 		});
 

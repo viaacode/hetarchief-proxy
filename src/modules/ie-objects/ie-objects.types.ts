@@ -14,11 +14,6 @@ export type IeObjectSeo = Pick<IeObject, 'name' | 'description' | 'thumbnailUrl'
 
 export type GqlLimitedIeObject = FindAllIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
-export enum MediaFormat {
-	VIDEO = 'video',
-	AUDIO = 'audio',
-}
-
 export enum IeObjectLicense {
 	// Object Licenses
 	PUBLIEK_METADATA_LTD = 'VIAA-PUBLIEK-METADATA-LTD',
@@ -125,10 +120,12 @@ export interface IsPartOfCollection {
 }
 
 export enum IeObjectType {
-	Video = 'video',
-	Audio = 'audio',
-	Film = 'film',
-	Newspaper = 'newspaper',
+	VIDEO = 'video',
+	FILM = 'film', // This is considered video
+	VIDEO_FRAGMENT = 'videofragment', // This is considered video
+	AUDIO = 'audio',
+	AUDIO_FRAGMENT = 'audiofragment', // This is considered audio
+	NEWSPAPER = 'newspaper',
 }
 
 export interface IeObject {
@@ -294,7 +291,7 @@ export interface ElasticsearchObject {
 		schema_name?: string;
 		alt_label?: string | null; // not always available
 		organization_sector?: IeObjectSector | null; // not always available
-		organization_type?: string | null; // not always available
+		// organization_type?: string | null; // should not be used, use organization_sector instead
 	};
 	schema_name: string;
 	schema_publisher: {
