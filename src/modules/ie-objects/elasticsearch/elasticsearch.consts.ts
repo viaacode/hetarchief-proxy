@@ -220,7 +220,7 @@ export enum ElasticsearchField {
 	schema_temporal_coverage = 'schema_temporal_coverage',
 	schema_spatial_coverage = 'schema_spatial_coverage',
 	schema_maintainer = 'schema_maintainer',
-	organization_type = 'organization_type',
+	organization_sector = 'organization_sector',
 	meemoo_description_cast = 'meemoo_description_cast',
 	schema_caption = 'schema_caption',
 	schema_transcript = 'schema_transcript',

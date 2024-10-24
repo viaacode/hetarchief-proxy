@@ -7,7 +7,7 @@ import {
 	Lookup_App_Material_Request_Requester_Capacity_Enum,
 	Lookup_App_Material_Request_Type_Enum,
 } from '~generated/graphql-db-types-hetarchief';
-import { MediaFormat } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
@@ -112,7 +112,7 @@ export const mockMaterialRequest1: MaterialRequest = {
 	maintainerName: 'VRT',
 	maintainerSlug: 'vrt',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
-	objectDctermsFormat: MediaFormat.AUDIO,
+	objectDctermsFormat: IeObjectType.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };
@@ -140,7 +140,7 @@ const mockMaterialRequest2: MaterialRequest = {
 	maintainerLogo: 'https://assets.viaa.be/images/OR-7h1dk9t',
 	maintainerSlug: 'vlaams-parlement',
 	objectSchemaName: 'Onderzoekscommissie PFAS-PFOS 03-12-2021, 08u5§',
-	objectDctermsFormat: MediaFormat.AUDIO,
+	objectDctermsFormat: IeObjectType.AUDIO,
 	objectThumbnailUrl:
 		'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
 };

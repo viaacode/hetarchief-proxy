@@ -61,7 +61,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 		'KARAKTERVORMING',
 	],
 	genre: ['program'],
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	inLanguage: null,
 	thumbnailUrl:
@@ -111,7 +111,7 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -185,7 +185,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -257,7 +257,7 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 	maintainerDescription:
 		'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
 	name: 'Durf te vragen R002 A0001',
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	ebucoreObjectType: null,
 	duration: '00:39:52',
@@ -340,7 +340,7 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	dctermsMedium: ['16mm'],
 	duration: '00:39:52',
 	dateCreated: '[2020-09-01]',
@@ -397,7 +397,7 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 			name: 'Programma1',
 		},
 	],
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	datePublished: '2020-09-01',
 	meemooLocalId: null,
 	premisIdentifier: [
@@ -737,7 +737,7 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = {
 	dateCreated: null,
 	datePublished: null,
-	dctermsFormat: IeObjectType.Video,
+	dctermsFormat: IeObjectType.VIDEO,
 	isPartOf: [
 		{
 			collectionType: 'reeks' as IsPartOfKey,
