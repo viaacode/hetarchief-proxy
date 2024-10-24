@@ -41,7 +41,7 @@
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
     "@nestjs/platform-express": "9.4.3",
-    "@nestjs/schedule": "3.0.1",
+    "@nestjs/schedule": "3.0.4",
     "@nestjs/swagger": "7.4.0",
     "@studiohyperdrive/pagination": "1.0.0",
     "@viaa/avo2-types": "3.0.4",
