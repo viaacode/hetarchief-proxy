@@ -1,6 +1,7 @@
 import { IeObjectSector, IeObjectType } from '../ie-objects.types';
 
 import {
+	ElasticsearchField,
 	type ElasticsearchSubQuery,
 	IeObjectsSearchFilterField,
 	MULTI_MATCH_QUERY_MAPPING,
