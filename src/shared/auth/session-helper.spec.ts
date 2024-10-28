@@ -1,7 +1,8 @@
+import { Idp } from '@viaa/avo2-types';
 import { addDays, setHours, setMilliseconds, setMinutes, setSeconds } from 'date-fns/fp';
 import flow from 'lodash/fp/flow';
 
-import { Idp, LdapApp } from './auth.types';
+import { LdapApp } from './auth.types';
 
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
@@ -156,23 +157,12 @@ describe('SessionHelper', () => {
 			});
 			expect(valid).toEqual(true);
 		});
-
-		it('should return false when the wrong IDP is given', () => {
-			const valid = SessionHelper.isLoggedInWithIdp(Idp.MEEMOO, {
-				idp: Idp.HETARCHIEF,
-				idpUserInfo: {
-					session_not_on_or_after: new Date(new Date().getTime() + 60000).toISOString(), // one minute from now
-				},
-				archiefUserInfo: {},
-			});
-			expect(valid).toEqual(false);
-		});
 	});
 
 	describe('setIdpUserInfo', () => {
 		it('should set the IDP user on the session', () => {
 			const session: Record<string, any> = {};
-			SessionHelper.setIdpUserInfo(session, Idp.MEEMOO, mockLdapUser);
+			SessionHelper.setIdpUserInfo(session, Idp.HETARCHIEF, mockLdapUser);
 			expect(session.idpUserInfo).toBeDefined();
 			expect(session.idp).toBeDefined();
 		});
@@ -180,7 +170,7 @@ describe('SessionHelper', () => {
 		it('should throw an exception when an invalid session was passed', () => {
 			let exception;
 			try {
-				SessionHelper.setIdpUserInfo(null, Idp.MEEMOO, mockLdapUser);
+				SessionHelper.setIdpUserInfo(null, Idp.HETARCHIEF, mockLdapUser);
 			} catch (e) {
 				exception = e.response;
 			}
@@ -287,9 +277,9 @@ describe('SessionHelper', () => {
 
 		it('should return the Idp user info', () => {
 			const result = SessionHelper.getIdp({
-				idp: Idp.MEEMOO,
+				idp: Idp.HETARCHIEF,
 			});
-			expect(result).toEqual(Idp.MEEMOO);
+			expect(result).toEqual(Idp.HETARCHIEF);
 		});
 	});
 

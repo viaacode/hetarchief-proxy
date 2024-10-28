@@ -1,7 +1,6 @@
+import { type Idp } from '@viaa/avo2-types';
 import { type Response } from 'express';
 import queryString from 'query-string';
-
-import { type Idp } from '~shared/auth/auth.types';
 
 /**
  * If a kiosk user or a maintainer admin is not linked to a space in the ACM (Account manager meemoo)

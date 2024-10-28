@@ -1,6 +1,7 @@
 import { type Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Idp } from '@viaa/avo2-types';
 import { get, intersection } from 'lodash';
 import queryString from 'query-string';
 
@@ -11,11 +12,11 @@ import { NO_ORG_LINKED } from '../constants';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { GroupId } from '~modules/users/types';
-import { Idp, LdapApp, type LdapUser } from '~shared/auth/auth.types';
+import { LdapApp, type LdapUser } from '~shared/auth/auth.types';
 
 @Injectable()
 export class IdpService {
-	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF, Idp.MEEMOO];
+	private idpsWithSpecificLogoutPage = [Idp.HETARCHIEF];
 
 	protected meemooAdminOrganizationIds: string[];
 

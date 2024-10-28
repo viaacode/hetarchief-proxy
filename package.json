@@ -36,7 +36,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.1.1",
+    "@meemoo/admin-core-api": "4.1.14",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -44,7 +44,7 @@
     "@nestjs/schedule": "3.0.4",
     "@nestjs/swagger": "7.4.0",
     "@studiohyperdrive/pagination": "1.0.0",
-    "@viaa/avo2-types": "3.0.4",
+    "@viaa/avo2-types": "3.0.7",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
     "aws-sdk": "2.1691.0",

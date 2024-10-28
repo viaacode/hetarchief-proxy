@@ -2,6 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Idp } from '@viaa/avo2-types';
 import { type Request, type Response } from 'express';
 import { noop } from 'lodash';
 
@@ -19,7 +20,6 @@ import { mockOrganisations } from '~modules/organisations/mocks/organisations.mo
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupId } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 

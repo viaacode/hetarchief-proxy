@@ -1,5 +1,6 @@
+import { Idp } from '@viaa/avo2-types';
+
 import { type GqlUser, Permission } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
 export const mockUserResponse: { users_profile: GqlUser[] } = {

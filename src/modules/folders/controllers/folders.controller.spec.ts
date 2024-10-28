@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type IPagination } from '@studiohyperdrive/pagination';
+import { Idp } from '@viaa/avo2-types';
 import { type Request } from 'express';
 
 import { FoldersService } from '../services/folders.service';
@@ -16,7 +17,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
-import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale } from '~shared/types/types';
 

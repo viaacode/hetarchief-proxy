@@ -1,3 +1,5 @@
+import { Idp } from '@viaa/avo2-types';
+
 import { type MaterialRequest, MaterialRequestType } from '../material-requests.types';
 
 import {
@@ -9,7 +11,6 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
 export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
