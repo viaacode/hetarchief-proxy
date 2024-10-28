@@ -1,6 +1,7 @@
 import { DataService, TranslationsService } from '@meemoo/admin-core-api';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Idp } from '@viaa/avo2-types';
 import { cloneDeep } from 'lodash';
 
 import { type CreateSpaceDto } from '../dto/spaces.dto';
@@ -23,7 +24,6 @@ import {
 } from '~modules/organisations/organisations.types';
 import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';

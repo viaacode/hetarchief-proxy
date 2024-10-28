@@ -1,5 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { type Idp } from '@viaa/avo2-types';
 
 import {
 	type CreateUserDto,
@@ -40,7 +41,6 @@ import {
 	type UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
-import { type Idp } from '~shared/auth/auth.types';
 import { type UpdateResponse } from '~shared/types/types';
 
 @Injectable()

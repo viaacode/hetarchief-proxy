@@ -1,5 +1,6 @@
 import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Idp } from '@viaa/avo2-types';
 
 import { UsersService } from './users.service';
 
@@ -12,7 +13,6 @@ import {
 import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {

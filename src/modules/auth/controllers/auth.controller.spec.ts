@@ -2,6 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Idp } from '@viaa/avo2-types';
 import { isFuture } from 'date-fns';
 
 import { type Configuration } from '~config';
@@ -16,7 +17,6 @@ import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { sleep } from '~shared/helpers/sleep';
 import { TestingLogger } from '~shared/logging/test-logger';

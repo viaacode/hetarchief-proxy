@@ -1,5 +1,6 @@
 import { DataService, MaintenanceAlertsService, TranslationsService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Idp } from '@viaa/avo2-types';
 import { addHours, addMonths, subHours } from 'date-fns';
 
 import { NotificationsService } from './notifications.service';
@@ -25,7 +26,6 @@ import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
-import { Idp } from '~shared/auth/auth.types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';

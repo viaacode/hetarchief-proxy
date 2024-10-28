@@ -235,8 +235,12 @@ export class IeObjectsService {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
+		const schemaIdentifierV3 = response.graph__intellectual_entity[0]?.schema_identifier;
+		if (!schemaIdentifierV3) {
+			return null;
+		}
 		return {
-			schemaIdentifierV3: response.graph__intellectual_entity[0].schema_identifier,
+			schemaIdentifierV3,
 		};
 	}
 

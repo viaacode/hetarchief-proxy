@@ -1,8 +1,3 @@
-export enum Idp {
-	HETARCHIEF = 'HETARCHIEF',
-	MEEMOO = 'MEEMOO',
-}
-
 export enum LdapApp {
 	HETARCHIEF = 'hetarchief',
 	HETARCHIEF_BEHEER = 'hetarchief-beheer',

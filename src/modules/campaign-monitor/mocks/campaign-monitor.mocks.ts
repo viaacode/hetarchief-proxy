@@ -1,4 +1,5 @@
 import { Lookup_App_Material_Request_Requester_Capacity_Enum } from '@meemoo/admin-core-api/dist/src/modules/shared/generated/graphql-db-types-hetarchief';
+import { Idp } from '@viaa/avo2-types';
 
 import {
 	CampaignMonitorCustomFieldName,
@@ -17,7 +18,6 @@ import {
 import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
 export const mockUser: User = {

@@ -2,6 +2,7 @@ import { TranslationsService } from '@meemoo/admin-core-api';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type IPagination } from '@studiohyperdrive/pagination';
+import { Idp } from '@viaa/avo2-types';
 
 import { type Configuration } from '~config';
 
@@ -19,7 +20,6 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
-import { Idp } from '~shared/auth/auth.types';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 import nlJson from '~shared/i18n/locales/nl.json';

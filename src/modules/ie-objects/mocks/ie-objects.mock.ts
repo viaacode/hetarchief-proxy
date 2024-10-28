@@ -1,3 +1,5 @@
+import { Idp } from '@viaa/avo2-types';
+
 import {
 	type IeObject,
 	IeObjectAccessThrough,
@@ -17,7 +19,6 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
-import { Idp } from '~shared/auth/auth.types';
 import { Locale } from '~shared/types/types';
 
 export const mockIeObject1: Readonly<IeObject> = {
