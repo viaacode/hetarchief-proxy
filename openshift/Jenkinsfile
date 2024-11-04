@@ -93,12 +93,7 @@ pipeline {
 		}
 		stage('Deploy INT') {
 			when {
-				anyOf {
-					changeRequest target: 'main'
-					changeRequest target: 'master'
-					changeRequest target: 'develop'
-					changeRequest target: 'development'
-				}
+				branch 'develop'
 			}
 			steps {
 				container('oc') {
@@ -116,7 +111,7 @@ pipeline {
 		}
 		stage('Deploy TST') {
 			when {
-				anyOf { branch 'develop'; branch 'development' }
+				branch 'develop'
 			}
 			steps {
 				container('oc') {
