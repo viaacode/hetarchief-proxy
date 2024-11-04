@@ -183,6 +183,7 @@ export interface IeObject {
 	};
 	synopsis: string;
 	collectionName?: string;
+	collectionSeasonNumber?: string;
 	issueNumber?: string;
 	fragmentId?: string;
 	creditText?: string;

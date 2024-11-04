@@ -95,6 +95,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 				schema_start_date
 				schema_end_date
 				schema_publisher
+				schema_season_number
 			}
 		}
 		isPartOf {

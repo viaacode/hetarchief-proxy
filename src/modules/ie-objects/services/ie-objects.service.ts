@@ -575,6 +575,8 @@ export class IeObjectsService {
 					publisher: part.collection?.schema_publisher,
 				};
 			}),
+			collectionSeasonNumber:
+				gqlIeObject?.parentCollection?.[0]?.collection?.schema_season_number,
 			numberOfPages: gqlIeObject?.schema_number_of_pages,
 			pageNumber: gqlIeObject?.schema_position,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
