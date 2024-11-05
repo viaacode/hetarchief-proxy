@@ -31,11 +31,10 @@ To start working, simply run `docker-compose up`, the project will be available 
 
 The available commands for development are:
 
-| command    | runs                                      |
-|------------|-------------------------------------------|
-| start      | Run the develompent server.               |
-| start:dev  | Run the development server in watch mode. |
-| start:prod | Run the server in production mode.        |
+| command | runs                               |
+|---------|------------------------------------|
+| dev     | Run the development server         |
+| start   | Run the server in production mode. |
 
 <br>
 
