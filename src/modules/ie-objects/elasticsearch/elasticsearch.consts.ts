@@ -31,7 +31,7 @@ export enum IeObjectsSearchFilterField {
 	MEDIUM = 'medium',
 	NAME = 'name',
 	PUBLISHED = 'published',
-	NEWSPAPER_SERIES_NAME = 'newspaperSeriesName',
+	SERIES_TITLE = 'seriesTitle',
 	// TODO future: rename maintainer to maintainerId and maintainers to maintainerName and also change this in the client
 	MAINTAINER_ID = 'maintainer', // Contains the OR-id of the maintainer
 	CONSULTABLE_ONLY_ON_LOCATION = 'isConsultableOnlyOnLocation',
@@ -55,7 +55,7 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.QUERY,
 	IeObjectsSearchFilterField.CREATED,
 	IeObjectsSearchFilterField.CREATOR,
-	IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME,
+	IeObjectsSearchFilterField.SERIES_TITLE,
 	IeObjectsSearchFilterField.LOCATION_CREATED,
 	IeObjectsSearchFilterField.MENTIONS,
 	IeObjectsSearchFilterField.DESCRIPTION,
@@ -166,7 +166,7 @@ export const DEFAULT_QUERY_TYPE: { [prop in IeObjectsSearchFilterField]: QueryTy
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.PUBLISHER]: QueryType.TERMS,
 	[IeObjectsSearchFilterField.CREATOR]: QueryType.TERMS,
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: QueryType.TERM,
+	[IeObjectsSearchFilterField.SERIES_TITLE]: QueryType.TERM,
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.MENTIONS]: QueryType.MATCH,
 	[IeObjectsSearchFilterField.CREATED]: QueryType.RANGE,
@@ -234,8 +234,8 @@ export enum ElasticsearchField {
 	schema_license = 'schema_license',
 	schema_mentions = 'schema_mentions',
 	schema_is_part_of = 'schema_is_part_of',
-	newspaper = 'newspaper',
 	schema_location_created = 'schema_location_created',
+	series = 'series',
 }
 
 export const READABLE_TO_ELASTIC_FILTER_NAMES: {
@@ -254,7 +254,7 @@ export const READABLE_TO_ELASTIC_FILTER_NAMES: {
 	[IeObjectsSearchFilterField.FORMAT]: ElasticsearchField.dcterms_format,
 	[IeObjectsSearchFilterField.PUBLISHER]: ElasticsearchField.schema_publisher,
 	[IeObjectsSearchFilterField.CREATOR]: ElasticsearchField.schema_creator,
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.newspaper}`,
+	[IeObjectsSearchFilterField.SERIES_TITLE]: `${ElasticsearchField.schema_is_part_of}.${ElasticsearchField.series}`,
 	[IeObjectsSearchFilterField.LOCATION_CREATED]: ElasticsearchField.schema_location_created,
 	[IeObjectsSearchFilterField.MENTIONS]: ElasticsearchField.schema_mentions,
 	[IeObjectsSearchFilterField.CREATED]: ElasticsearchField.schema_date_created,
@@ -319,7 +319,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.TEMPORAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
-	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
+	[IeObjectsSearchFilterField.SERIES_TITLE]: 'keyword',
 
 	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
 	// These are already type keyword:

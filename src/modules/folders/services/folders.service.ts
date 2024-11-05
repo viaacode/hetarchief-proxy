@@ -51,6 +51,7 @@ import {
 	type IeObject,
 	type IeObjectSector,
 	type IeObjectType,
+	IsPartOfKey,
 } from '~modules/ie-objects/ie-objects.types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
@@ -233,7 +234,7 @@ export class FoldersService {
 					{
 						intellectualEntity: {
 							schemaIsPartOf: {
-								type: { _eq: 'serie' },
+								type: { _eq: IsPartOfKey.serie },
 								collection: { schema_name: { _ilike: query } },
 							},
 						},
@@ -241,7 +242,7 @@ export class FoldersService {
 					{
 						intellectualEntity: {
 							schemaIsPartOf: {
-								type: { _eq: 'program' },
+								type: { _eq: IsPartOfKey.programma },
 								collection: { schema_name: { _ilike: query } },
 							},
 						},

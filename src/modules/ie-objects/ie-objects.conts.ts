@@ -227,6 +227,6 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, string> = {
 	[AutocompleteField.creator]: AutocompleteEsField.creator + '.sayt',
 	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated + '.sayt',
-	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName + '.sayt',
+	[AutocompleteField.seriesTitle]: AutocompleteEsField.seriesTitle + '.sayt',
 	[AutocompleteField.mentions]: AutocompleteEsField.mentions + '.sayt',
 };
