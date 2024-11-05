@@ -458,7 +458,7 @@ describe('FoldersController', () => {
 		it('Should return status ALREADY OWNED', async () => {
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 
-			const sharedFolder = await foldersController.shareFolder(
+			const sharedFolder = await foldersController.acceptSharedFolder(
 				'referer',
 				mockRequest,
 				mockFoldersResponse.items[0].id,
@@ -483,7 +483,7 @@ describe('FoldersController', () => {
 				mockFolderObjectsResponse.items[0]
 			);
 
-			const sharedFolder = await foldersController.shareFolder(
+			const sharedFolder = await foldersController.acceptSharedFolder(
 				'referer',
 				mockRequest,
 				mockFoldersResponse.items[0].id,
