@@ -336,11 +336,6 @@ export class FoldersController {
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		const shareUrl = {
-			nl: `${process.env.FRONTEND_URL}/account/map-delen/${folderId}`,
-			en: `${process.env.FRONTEND_URL}/account/map-share/${folderId}`,
-		};
-
 		const folder = await this.foldersService.findFolderById(
 			folderId,
 			request.headers.referer,
@@ -352,6 +347,10 @@ export class FoldersController {
 
 		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
 
+		const shareUrl = {
+			nl: `${process.env.CLIENT_HOST}/account/map-delen/${folderId}`,
+			en: `${process.env.CLIENT_HOST}/account/map-share/${folderId}`,
+		};
 		await this.campaignMonitorService.sendTransactionalMail(
 			{
 				template: EmailTemplate.SHARE_FOLDER,
@@ -362,7 +361,7 @@ export class FoldersController {
 						sharer_email: user.getMail(),
 						sharer_name: user.getFullName(),
 						folder_name: folder.name,
-						folder_sharelink: `${process.env.CLIENT_HOST}/${shareUrl[preferredLang]}/${folderId}`,
+						folder_sharelink: shareUrl[preferredLang],
 						user_hasaccount: !!toUser,
 						user_firstname: '',
 					},
@@ -377,7 +376,7 @@ export class FoldersController {
 	@Post('/share/:folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
-	public async shareFolder(
+	public async acceptSharedFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@Param('folderId') folderId: string,
