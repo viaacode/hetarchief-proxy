@@ -22,7 +22,7 @@ import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
-import { getSiteTranslations } from '~shared/helpers/get-site-translations';
+import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -267,7 +267,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(null);
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getVisits(
 					null,
@@ -361,9 +361,9 @@ describe('VisitsController', () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
 			const status = mockVisitorSpace.status;
 			mockVisitorSpace.status = VisitorSpaceStatus.Inactive;
-			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -373,7 +373,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests'
 				].replace('{{name}}', 'space-1')
 			);
@@ -386,9 +386,9 @@ describe('VisitsController', () => {
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
-			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -398,7 +398,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name'
 				].replace('{{name}}', 'space-1')
 			);
@@ -408,9 +408,9 @@ describe('VisitsController', () => {
 		it('should throw NotFound exception if an active visit was not found and the space does not exist', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
-			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -420,7 +420,7 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___space-with-slug-name-was-not-found'
 				].replace('{{name}}', 'space-1')
 			);
@@ -481,7 +481,7 @@ describe('VisitsController', () => {
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
-			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
 			let error: any;
 			try {
@@ -499,7 +499,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
 				]
 			);
@@ -523,7 +523,7 @@ describe('VisitsController', () => {
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
-			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
 			const TEST_SLUG = 'space-slug-1';
 			let error: any;
@@ -542,7 +542,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found'
 				].replace('{{name}}', TEST_SLUG)
 			);
@@ -582,8 +582,8 @@ describe('VisitsController', () => {
 
 		it('should throw an exception when a visitor tries to update another ones visit', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
-			const SITE_TRANSLATIONS = await getSiteTranslations();
-			let error;
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
+			let error: any;
 			try {
 				await visitsController.update(
 					mockRequest,
@@ -601,7 +601,7 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.message).toEqual(
-				SITE_TRANSLATIONS.nl[
+				SITE_TRANSLATIONS[
 					'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
 				]
 			);

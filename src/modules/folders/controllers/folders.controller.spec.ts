@@ -307,7 +307,7 @@ describe('FoldersController', () => {
 				mockFoldersResponse.items[0],
 			]);
 
-			let error;
+			let error: any;
 			try {
 				await foldersController.addObjectToFolder(
 					mockRequest,
@@ -359,7 +359,7 @@ describe('FoldersController', () => {
 				userProfileId: 'other-profile-id',
 			});
 
-			let error;
+			let error: any;
 			try {
 				await foldersController.removeObjectFromFolder(
 					'referer',
@@ -408,7 +408,7 @@ describe('FoldersController', () => {
 				.mockResolvedValue(mockFoldersResponse.items[0]);
 			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
 
-			let error;
+			let error: any;
 			try {
 				await foldersController.moveObjectToAnotherFolder(
 					'referer',
@@ -437,7 +437,7 @@ describe('FoldersController', () => {
 				});
 			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
 
-			let error;
+			let error: any;
 			try {
 				await foldersController.moveObjectToAnotherFolder(
 					'referer',

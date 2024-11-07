@@ -342,7 +342,7 @@ describe('FoldersService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			let error;
+			let error: any;
 			try {
 				await foldersService.findObjectsByFolderId(
 					'unknown-id',
@@ -485,7 +485,7 @@ describe('FoldersService', () => {
 				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
 				.mockResolvedValueOnce(mockFolderObject);
 
-			let error;
+			let error: any;
 			try {
 				await foldersService.addObjectToFolder(
 					mockGqlFolder1.id,
@@ -512,7 +512,7 @@ describe('FoldersService', () => {
 				.spyOn(foldersService, 'findObjectBySchemaIdentifier')
 				.mockResolvedValueOnce(null);
 
-			let error;
+			let error: any;
 			try {
 				await foldersService.addObjectToFolder(
 					mockGqlFolder1.id,

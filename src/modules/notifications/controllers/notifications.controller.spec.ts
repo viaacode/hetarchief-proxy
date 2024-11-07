@@ -199,7 +199,7 @@ describe('NotificationsController', () => {
 		});
 
 		it('should throw an error if the user is not logged in', async () => {
-			let error;
+			let error: any;
 			try {
 				await notificationsController.getNotifications(
 					{ page: 1, size: 20 },

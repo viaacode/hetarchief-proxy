@@ -167,7 +167,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('should return an empty query when empty query filter is specified', () => {
-			let error;
+			let error: any;
 			try {
 				QueryBuilder.build(
 					{
@@ -365,7 +365,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('throws an internal server exception when an unknown filter value is passed', () => {
-			let error;
+			let error: any;
 			try {
 				QueryBuilder.build(
 					{
@@ -390,7 +390,7 @@ describe('QueryBuilder', () => {
 		});
 
 		it('throws an internal server exception when an unknown aggregate value is passed', () => {
-			let error;
+			let error: any;
 			try {
 				QueryBuilder.build(
 					{

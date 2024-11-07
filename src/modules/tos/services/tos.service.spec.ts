@@ -63,7 +63,7 @@ describe('TosService', () => {
 				app_config_by_pk: null,
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			let error;
+			let error: any;
 			try {
 				await tosService.getTosLastUpdatedAt();
 			} catch (e) {
