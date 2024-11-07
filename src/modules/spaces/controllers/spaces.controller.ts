@@ -109,7 +109,12 @@ export class SpacesController {
 			space.status === VisitorSpaceStatus.Inactive &&
 			!user.has(Permission.UPDATE_ALL_SPACES)
 		) {
-			throw new GoneException(`Space with slug "${slug}" is inactive`);
+			throw new GoneException(
+				this.translationsService.tText(
+					'modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive',
+					{ slug }
+				)
+			);
 		}
 		return space;
 	}

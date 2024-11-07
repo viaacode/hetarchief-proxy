@@ -8,6 +8,7 @@ import { SpacesController } from './spaces.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { getSiteTranslations } from '~shared/helpers/get-site-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -165,6 +166,7 @@ describe('SpacesController', () => {
 
 		it("should throw a not found exception for space that doesn't exist", async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			const SITE_TRANSLATIONS = await getSiteTranslations();
 
 			let error;
 			try {
@@ -177,24 +179,27 @@ describe('SpacesController', () => {
 			}
 			expect(error?.response).toEqual({
 				statusCode: 404,
-				message: 'Space with slug "huis-van-alijn" not found',
+				message: SITE_TRANSLATIONS.nl[
+					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found'
+				].replace('{{slug}}', 'huis-van-alijn'),
 				error: 'Not Found',
 			});
 		});
 
 		it('should throw a gone exception for space that is inactive', async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[2]);
+			const SITE_TRANSLATIONS = await getSiteTranslations();
+			const TEST_SLUG = 'huis-van-alijn';
 
 			try {
-				await spacesController.getSpaceBySlug(
-					'huis-van-alijn',
-					new SessionUserEntity(mockUser)
-				);
+				await spacesController.getSpaceBySlug(TEST_SLUG, new SessionUserEntity(mockUser));
 				fail('getSpaceBySlug should throw an error when the space is inactive');
 			} catch (err) {
 				expect(err?.response).toEqual({
 					statusCode: 410,
-					message: 'Space with slug "huis-van-alijn" is inactive',
+					message: SITE_TRANSLATIONS.nl[
+						'modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive'
+					].replace('{{slug}}', TEST_SLUG),
 					error: 'Gone',
 				});
 			}

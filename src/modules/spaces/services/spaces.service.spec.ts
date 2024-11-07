@@ -25,6 +25,7 @@ import {
 import { AccessType, VisitorSpaceOrderProps } from '~modules/spaces/spaces.types';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { DuplicateKeyException } from '~shared/exceptions/duplicate-key.exception';
+import { getSiteTranslations } from '~shared/helpers/get-site-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SortDirection } from '~shared/types';
@@ -264,6 +265,7 @@ describe('SpacesService', () => {
 			mockDataService.execute.mockImplementationOnce(() => {
 				throw new DuplicateKeyException(errorData);
 			});
+			const SITE_TRANSLATIONS = await getSiteTranslations();
 
 			let error;
 			try {
@@ -271,7 +273,11 @@ describe('SpacesService', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.message).toEqual('A space already exists with slug "test-slug"');
+			expect(error.message).toEqual(
+				SITE_TRANSLATIONS.nl[
+					'modules/spaces/services/spaces___a-space-already-exists-with-slug-slug'
+				].replace('{{slug}}', mockCreateSpace.slug)
+			);
 		});
 
 		it('throws a general Internal server exception when another error occurred', async () => {

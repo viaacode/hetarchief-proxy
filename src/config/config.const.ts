@@ -49,6 +49,6 @@ export const configValidationSchema = Joi.object({
 });
 
 export const DEFAULT_CONFIG = {
-	port: 3000,
+	port: 3100,
 	environment: 'local',
 };
