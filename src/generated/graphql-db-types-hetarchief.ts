@@ -4764,6 +4764,102 @@ export type Graph__Intellectual_Entity_Order_By = {
   updated_at?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "graph._intellectual_entity_prev_and_next" */
+export type Graph__Intellectual_Entity_Prev_And_Next = {
+  __typename?: 'graph__intellectual_entity_prev_and_next';
+  collection_id?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  next_id?: Maybe<Scalars['String']['output']>;
+  previous_id?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregated selection of "graph._intellectual_entity_prev_and_next" */
+export type Graph__Intellectual_Entity_Prev_And_Next_Aggregate = {
+  __typename?: 'graph__intellectual_entity_prev_and_next_aggregate';
+  aggregate?: Maybe<Graph__Intellectual_Entity_Prev_And_Next_Aggregate_Fields>;
+  nodes: Array<Graph__Intellectual_Entity_Prev_And_Next>;
+};
+
+/** aggregate fields of "graph._intellectual_entity_prev_and_next" */
+export type Graph__Intellectual_Entity_Prev_And_Next_Aggregate_Fields = {
+  __typename?: 'graph__intellectual_entity_prev_and_next_aggregate_fields';
+  count: Scalars['Int']['output'];
+  max?: Maybe<Graph__Intellectual_Entity_Prev_And_Next_Max_Fields>;
+  min?: Maybe<Graph__Intellectual_Entity_Prev_And_Next_Min_Fields>;
+};
+
+
+/** aggregate fields of "graph._intellectual_entity_prev_and_next" */
+export type Graph__Intellectual_Entity_Prev_And_Next_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Boolean expression to filter rows from the table "graph._intellectual_entity_prev_and_next". All fields are combined with a logical 'AND'. */
+export type Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>>;
+  _not?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>>;
+  collection_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  next_id?: InputMaybe<String_Comparison_Exp>;
+  previous_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Graph__Intellectual_Entity_Prev_And_Next_Max_Fields = {
+  __typename?: 'graph__intellectual_entity_prev_and_next_max_fields';
+  collection_id?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  next_id?: Maybe<Scalars['String']['output']>;
+  previous_id?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Graph__Intellectual_Entity_Prev_And_Next_Min_Fields = {
+  __typename?: 'graph__intellectual_entity_prev_and_next_min_fields';
+  collection_id?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  next_id?: Maybe<Scalars['String']['output']>;
+  previous_id?: Maybe<Scalars['String']['output']>;
+};
+
+/** Ordering options when selecting data from "graph._intellectual_entity_prev_and_next". */
+export type Graph__Intellectual_Entity_Prev_And_Next_Order_By = {
+  collection_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  next_id?: InputMaybe<Order_By>;
+  previous_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "graph._intellectual_entity_prev_and_next" */
+export enum Graph__Intellectual_Entity_Prev_And_Next_Select_Column {
+  /** column name */
+  CollectionId = 'collection_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  NextId = 'next_id',
+  /** column name */
+  PreviousId = 'previous_id'
+}
+
+/** Streaming cursor of the table "graph__intellectual_entity_prev_and_next" */
+export type Graph__Intellectual_Entity_Prev_And_Next_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Graph__Intellectual_Entity_Prev_And_Next_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Graph__Intellectual_Entity_Prev_And_Next_Stream_Cursor_Value_Input = {
+  collection_id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  next_id?: InputMaybe<Scalars['String']['input']>;
+  previous_id?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** select columns of table "graph._intellectual_entity" */
 export enum Graph__Intellectual_Entity_Select_Column {
   /** column name */
@@ -8848,6 +8944,10 @@ export type Graph_Intellectual_Entity = {
   ebucore_has_cast_member?: Maybe<Scalars['String']['output']>;
   ebucore_has_object_type?: Maybe<Scalars['String']['output']>;
   ebucore_synopsis?: Maybe<Scalars['String']['output']>;
+  ha_des_max_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_max_date_published?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_published?: Maybe<Scalars['date']['output']>;
   ha_des_number_of_pages?: Maybe<Scalars['Int']['output']>;
   /** An object relationship */
   hasCarrier?: Maybe<Graph_Carrier>;
@@ -9326,6 +9426,10 @@ export type Graph_Intellectual_Entity_Bool_Exp = {
   ebucore_has_cast_member?: InputMaybe<String_Comparison_Exp>;
   ebucore_has_object_type?: InputMaybe<String_Comparison_Exp>;
   ebucore_synopsis?: InputMaybe<String_Comparison_Exp>;
+  ha_des_max_date_created?: InputMaybe<Date_Comparison_Exp>;
+  ha_des_max_date_published?: InputMaybe<Date_Comparison_Exp>;
+  ha_des_min_date_created?: InputMaybe<Date_Comparison_Exp>;
+  ha_des_min_date_published?: InputMaybe<Date_Comparison_Exp>;
   ha_des_number_of_pages?: InputMaybe<Int_Comparison_Exp>;
   hasCarrier?: InputMaybe<Graph_Carrier_Bool_Exp>;
   hasPart?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
@@ -9401,6 +9505,10 @@ export type Graph_Intellectual_Entity_Insert_Input = {
   ebucore_has_cast_member?: InputMaybe<Scalars['String']['input']>;
   ebucore_has_object_type?: InputMaybe<Scalars['String']['input']>;
   ebucore_synopsis?: InputMaybe<Scalars['String']['input']>;
+  ha_des_max_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_max_date_published?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_published?: InputMaybe<Scalars['date']['input']>;
   ha_des_number_of_pages?: InputMaybe<Scalars['Int']['input']>;
   hasCarrier?: InputMaybe<Graph_Carrier_Obj_Rel_Insert_Input>;
   hasPart?: InputMaybe<Graph_Intellectual_Entity_Arr_Rel_Insert_Input>;
@@ -9450,6 +9558,10 @@ export type Graph_Intellectual_Entity_Max_Fields = {
   ebucore_has_cast_member?: Maybe<Scalars['String']['output']>;
   ebucore_has_object_type?: Maybe<Scalars['String']['output']>;
   ebucore_synopsis?: Maybe<Scalars['String']['output']>;
+  ha_des_max_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_max_date_published?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_published?: Maybe<Scalars['date']['output']>;
   ha_des_number_of_pages?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   relation_is_part_of?: Maybe<Scalars['String']['output']>;
@@ -9477,6 +9589,10 @@ export type Graph_Intellectual_Entity_Max_Order_By = {
   ebucore_has_cast_member?: InputMaybe<Order_By>;
   ebucore_has_object_type?: InputMaybe<Order_By>;
   ebucore_synopsis?: InputMaybe<Order_By>;
+  ha_des_max_date_created?: InputMaybe<Order_By>;
+  ha_des_max_date_published?: InputMaybe<Order_By>;
+  ha_des_min_date_created?: InputMaybe<Order_By>;
+  ha_des_min_date_published?: InputMaybe<Order_By>;
   ha_des_number_of_pages?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   relation_is_part_of?: InputMaybe<Order_By>;
@@ -9505,6 +9621,10 @@ export type Graph_Intellectual_Entity_Min_Fields = {
   ebucore_has_cast_member?: Maybe<Scalars['String']['output']>;
   ebucore_has_object_type?: Maybe<Scalars['String']['output']>;
   ebucore_synopsis?: Maybe<Scalars['String']['output']>;
+  ha_des_max_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_max_date_published?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_created?: Maybe<Scalars['date']['output']>;
+  ha_des_min_date_published?: Maybe<Scalars['date']['output']>;
   ha_des_number_of_pages?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   relation_is_part_of?: Maybe<Scalars['String']['output']>;
@@ -9532,6 +9652,10 @@ export type Graph_Intellectual_Entity_Min_Order_By = {
   ebucore_has_cast_member?: InputMaybe<Order_By>;
   ebucore_has_object_type?: InputMaybe<Order_By>;
   ebucore_synopsis?: InputMaybe<Order_By>;
+  ha_des_max_date_created?: InputMaybe<Order_By>;
+  ha_des_max_date_published?: InputMaybe<Order_By>;
+  ha_des_min_date_created?: InputMaybe<Order_By>;
+  ha_des_min_date_published?: InputMaybe<Order_By>;
   ha_des_number_of_pages?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   relation_is_part_of?: InputMaybe<Order_By>;
@@ -9583,6 +9707,10 @@ export type Graph_Intellectual_Entity_Order_By = {
   ebucore_has_cast_member?: InputMaybe<Order_By>;
   ebucore_has_object_type?: InputMaybe<Order_By>;
   ebucore_synopsis?: InputMaybe<Order_By>;
+  ha_des_max_date_created?: InputMaybe<Order_By>;
+  ha_des_max_date_published?: InputMaybe<Order_By>;
+  ha_des_min_date_created?: InputMaybe<Order_By>;
+  ha_des_min_date_published?: InputMaybe<Order_By>;
   ha_des_number_of_pages?: InputMaybe<Order_By>;
   hasCarrier?: InputMaybe<Graph_Carrier_Order_By>;
   hasPart_aggregate?: InputMaybe<Graph_Intellectual_Entity_Aggregate_Order_By>;
@@ -9644,6 +9772,14 @@ export enum Graph_Intellectual_Entity_Select_Column {
   /** column name */
   EbucoreSynopsis = 'ebucore_synopsis',
   /** column name */
+  HaDesMaxDateCreated = 'ha_des_max_date_created',
+  /** column name */
+  HaDesMaxDatePublished = 'ha_des_max_date_published',
+  /** column name */
+  HaDesMinDateCreated = 'ha_des_min_date_created',
+  /** column name */
+  HaDesMinDatePublished = 'ha_des_min_date_published',
+  /** column name */
   HaDesNumberOfPages = 'ha_des_number_of_pages',
   /** column name */
   Id = 'id',
@@ -9686,6 +9822,10 @@ export type Graph_Intellectual_Entity_Set_Input = {
   ebucore_has_cast_member?: InputMaybe<Scalars['String']['input']>;
   ebucore_has_object_type?: InputMaybe<Scalars['String']['input']>;
   ebucore_synopsis?: InputMaybe<Scalars['String']['input']>;
+  ha_des_max_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_max_date_published?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_published?: InputMaybe<Scalars['date']['input']>;
   ha_des_number_of_pages?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   relation_is_part_of?: InputMaybe<Scalars['String']['input']>;
@@ -9760,6 +9900,10 @@ export type Graph_Intellectual_Entity_Stream_Cursor_Value_Input = {
   ebucore_has_cast_member?: InputMaybe<Scalars['String']['input']>;
   ebucore_has_object_type?: InputMaybe<Scalars['String']['input']>;
   ebucore_synopsis?: InputMaybe<Scalars['String']['input']>;
+  ha_des_max_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_max_date_published?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_created?: InputMaybe<Scalars['date']['input']>;
+  ha_des_min_date_published?: InputMaybe<Scalars['date']['input']>;
   ha_des_number_of_pages?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   relation_is_part_of?: InputMaybe<Scalars['String']['input']>;
@@ -9807,6 +9951,14 @@ export enum Graph_Intellectual_Entity_Update_Column {
   EbucoreHasObjectType = 'ebucore_has_object_type',
   /** column name */
   EbucoreSynopsis = 'ebucore_synopsis',
+  /** column name */
+  HaDesMaxDateCreated = 'ha_des_max_date_created',
+  /** column name */
+  HaDesMaxDatePublished = 'ha_des_max_date_published',
+  /** column name */
+  HaDesMinDateCreated = 'ha_des_min_date_created',
+  /** column name */
+  HaDesMinDatePublished = 'ha_des_min_date_published',
   /** column name */
   HaDesNumberOfPages = 'ha_des_number_of_pages',
   /** column name */
@@ -9896,6 +10048,7 @@ export type Graph_Mh_Fragment_Identifier = {
   /** An object relationship */
   intellectual_entity: Graph_Intellectual_Entity;
   intellectual_entity_id: Scalars['String']['output'];
+  is_deleted: Scalars['Boolean']['output'];
   mh_fragment_identifier: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
@@ -9908,7 +10061,23 @@ export type Graph_Mh_Fragment_Identifier_Aggregate = {
 };
 
 export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or>;
   count?: InputMaybe<Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Count>;
+};
+
+export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Graph_Mh_Fragment_Identifier_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
 };
 
 export type Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Count = {
@@ -9955,6 +10124,7 @@ export type Graph_Mh_Fragment_Identifier_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   intellectual_entity?: InputMaybe<Graph_Intellectual_Entity_Bool_Exp>;
   intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
+  is_deleted?: InputMaybe<Boolean_Comparison_Exp>;
   mh_fragment_identifier?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
@@ -9970,6 +10140,7 @@ export type Graph_Mh_Fragment_Identifier_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   intellectual_entity?: InputMaybe<Graph_Intellectual_Entity_Obj_Rel_Insert_Input>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']['input']>;
   mh_fragment_identifier?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -10029,6 +10200,7 @@ export type Graph_Mh_Fragment_Identifier_Order_By = {
   created_at?: InputMaybe<Order_By>;
   intellectual_entity?: InputMaybe<Graph_Intellectual_Entity_Order_By>;
   intellectual_entity_id?: InputMaybe<Order_By>;
+  is_deleted?: InputMaybe<Order_By>;
   mh_fragment_identifier?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
@@ -10046,15 +10218,30 @@ export enum Graph_Mh_Fragment_Identifier_Select_Column {
   /** column name */
   IntellectualEntityId = 'intellectual_entity_id',
   /** column name */
+  IsDeleted = 'is_deleted',
+  /** column name */
   MhFragmentIdentifier = 'mh_fragment_identifier',
   /** column name */
   UpdatedAt = 'updated_at'
+}
+
+/** select "graph_mh_fragment_identifier_aggregate_bool_exp_bool_and_arguments_columns" columns of table "graph.mh_fragment_identifier" */
+export enum Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  IsDeleted = 'is_deleted'
+}
+
+/** select "graph_mh_fragment_identifier_aggregate_bool_exp_bool_or_arguments_columns" columns of table "graph.mh_fragment_identifier" */
+export enum Graph_Mh_Fragment_Identifier_Select_Column_Graph_Mh_Fragment_Identifier_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  IsDeleted = 'is_deleted'
 }
 
 /** input type for updating data in table "graph.mh_fragment_identifier" */
 export type Graph_Mh_Fragment_Identifier_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']['input']>;
   mh_fragment_identifier?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -10071,6 +10258,7 @@ export type Graph_Mh_Fragment_Identifier_Stream_Cursor_Input = {
 export type Graph_Mh_Fragment_Identifier_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']['input']>;
   mh_fragment_identifier?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -10081,6 +10269,8 @@ export enum Graph_Mh_Fragment_Identifier_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   IntellectualEntityId = 'intellectual_entity_id',
+  /** column name */
+  IsDeleted = 'is_deleted',
   /** column name */
   MhFragmentIdentifier = 'mh_fragment_identifier',
   /** column name */
@@ -22601,6 +22791,10 @@ export type Query_Root = {
   graph__intellectual_entity_children: Array<Graph__Intellectual_Entity_Children>;
   /** fetch aggregated fields from the table: "graph._intellectual_entity_children" */
   graph__intellectual_entity_children_aggregate: Graph__Intellectual_Entity_Children_Aggregate;
+  /** fetch data from the table: "graph._intellectual_entity_prev_and_next" */
+  graph__intellectual_entity_prev_and_next: Array<Graph__Intellectual_Entity_Prev_And_Next>;
+  /** fetch aggregated fields from the table: "graph._intellectual_entity_prev_and_next" */
+  graph__intellectual_entity_prev_and_next_aggregate: Graph__Intellectual_Entity_Prev_And_Next_Aggregate;
   /** fetch data from the table: "graph._mh_fragment_identifier" */
   graph__mh_fragment_identifier: Array<Graph__Mh_Fragment_Identifier>;
   /** fetch aggregated fields from the table: "graph._mh_fragment_identifier" */
@@ -23409,6 +23603,24 @@ export type Query_RootGraph__Intellectual_Entity_Children_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Graph__Intellectual_Entity_Children_Order_By>>;
   where?: InputMaybe<Graph__Intellectual_Entity_Children_Bool_Exp>;
+};
+
+
+export type Query_RootGraph__Intellectual_Entity_Prev_And_NextArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Order_By>>;
+  where?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
+};
+
+
+export type Query_RootGraph__Intellectual_Entity_Prev_And_Next_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Order_By>>;
+  where?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
 };
 
 
@@ -25216,6 +25428,12 @@ export type Subscription_Root = {
   graph__intellectual_entity_children_aggregate: Graph__Intellectual_Entity_Children_Aggregate;
   /** fetch data from the table in a streaming manner: "graph._intellectual_entity_children" */
   graph__intellectual_entity_children_stream: Array<Graph__Intellectual_Entity_Children>;
+  /** fetch data from the table: "graph._intellectual_entity_prev_and_next" */
+  graph__intellectual_entity_prev_and_next: Array<Graph__Intellectual_Entity_Prev_And_Next>;
+  /** fetch aggregated fields from the table: "graph._intellectual_entity_prev_and_next" */
+  graph__intellectual_entity_prev_and_next_aggregate: Graph__Intellectual_Entity_Prev_And_Next_Aggregate;
+  /** fetch data from the table in a streaming manner: "graph._intellectual_entity_prev_and_next" */
+  graph__intellectual_entity_prev_and_next_stream: Array<Graph__Intellectual_Entity_Prev_And_Next>;
   /** fetch data from the table in a streaming manner: "graph._intellectual_entity" */
   graph__intellectual_entity_stream: Array<Graph__Intellectual_Entity>;
   /** fetch data from the table: "graph._mh_fragment_identifier" */
@@ -26304,6 +26522,31 @@ export type Subscription_RootGraph__Intellectual_Entity_Children_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Graph__Intellectual_Entity_Children_Stream_Cursor_Input>>;
   where?: InputMaybe<Graph__Intellectual_Entity_Children_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__Intellectual_Entity_Prev_And_NextArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Order_By>>;
+  where?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__Intellectual_Entity_Prev_And_Next_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph__Intellectual_Entity_Prev_And_Next_Order_By>>;
+  where?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph__Intellectual_Entity_Prev_And_Next_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Stream_Cursor_Input>>;
+  where?: InputMaybe<Graph__Intellectual_Entity_Prev_And_Next_Bool_Exp>;
 };
 
 
@@ -30752,6 +30995,14 @@ export type GetParentIeObjectQueryVariables = Exact<{
 
 export type GetParentIeObjectQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', isPartOf?: { __typename?: 'graph_intellectual_entity', id: string, schema_identifier?: string | null, schema_name?: string | null, dcterms_available?: string | null, schema_date_created?: string | null, schema_date_published?: string | null, schema_description?: string | null, dctermsFormat: Array<{ __typename?: 'graph_dcterms_format', dcterms_format: string }>, schemaDuration?: { __typename?: 'graph__schema_duration', schema_duration?: any | null } | null, schemaLicense?: { __typename?: 'graph__schema_license', schema_license?: any | null } | null, schemaThumbnail?: { __typename?: 'graph__schema_thumbnail_url', schema_thumbnail_url?: any | null } | null, schemaMaintainer?: { __typename?: 'graph_organization', id: string, org_identifier: string, ha_org_sector?: string | null, skos_pref_label?: string | null, skos_alt_label?: string | null } | null } | null }> };
 
+export type GetPreviousNextIeObjectIdsQueryVariables = Exact<{
+  collectionId: Scalars['String']['input'];
+  ieObjectId: Scalars['String']['input'];
+}>;
+
+
+export type GetPreviousNextIeObjectIdsQuery = { __typename?: 'query_root', graph__intellectual_entity_prev_and_next: Array<{ __typename?: 'graph__intellectual_entity_prev_and_next', next_id?: string | null, previous_id?: string | null }> };
+
 export type GetVisitRequestForAccessQueryVariables = Exact<{
   userProfileId: Scalars['uuid']['input'];
   maintainerOrId: Scalars['String']['input'];
@@ -31123,6 +31374,7 @@ export const GetIeObjectChildrenIrisDocument = {"kind":"Document","definitions":
 export const GetIeObjectIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObjectIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifier"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetIeObjectIdsQuery, GetIeObjectIdsQueryVariables>;
 export const GetObjectDetailBySchemaIdentifiersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getObjectDetailBySchemaIdentifiers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_identifier"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schemaIdentifiers"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_position"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ha_pref"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaInLanguage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaKeywords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}}]}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaGenre"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaSpatial"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_spatial"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaPublisher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_publisher_array"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaTemporal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_temporal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaCopyrightHolder"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_issue_number"}},{"kind":"Field","name":{"kind":"Name","value":"mhFragmentIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mh_fragment_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_credit_text"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"hasCarrier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_width"}},{"kind":"Field","name":{"kind":"Name","value":"schema_height"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_production_method"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"digitization_date"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schemaAlternateName"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_synopsis"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"parentCollection"},"name":{"kind":"Name","value":"schemaIsPartOf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"collection_type"}},{"kind":"Field","name":{"kind":"Name","value":"isPreceededBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isSucceededBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_location_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_publisher"}},{"kind":"Field","name":{"kind":"Name","value":"schema_season_number"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"isPartOf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_position"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ha_pref"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaInLanguage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaKeywords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}}]}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaGenre"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaSpatial"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_spatial"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaPublisher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_publisher_array"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaTemporal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_temporal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaCopyrightHolder"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_issue_number"}},{"kind":"Field","name":{"kind":"Name","value":"mhFragmentIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mh_fragment_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_credit_text"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"hasCarrier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_width"}},{"kind":"Field","name":{"kind":"Name","value":"schema_height"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_production_method"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"digitization_date"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schemaAlternateName"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_synopsis"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"isRepresentedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasPart"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"confidence"}},{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}},{"kind":"Field","name":{"kind":"Name","value":"width"}},{"kind":"Field","name":{"kind":"Name","value":"height"}},{"kind":"Field","name":{"kind":"Name","value":"thing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_place"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_place"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"isRepresentedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectDetailBySchemaIdentifiersQuery, GetObjectDetailBySchemaIdentifiersQueryVariables>;
 export const GetParentIeObjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getParentIeObject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentObjectIri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currentObjectIri"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"dctermsFormat"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"dcterms_format"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"videofragment","block":false},{"kind":"StringValue","value":"audiofragment","block":false}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isPartOf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"dctermsFormat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaDuration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaLicense"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_license"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaThumbnail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetParentIeObjectQuery, GetParentIeObjectQueryVariables>;
+export const GetPreviousNextIeObjectIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPreviousNextIeObjectIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__intellectual_entity_prev_and_next"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"next_id"}},{"kind":"Field","name":{"kind":"Name","value":"previous_id"}}]}}]}}]} as unknown as DocumentNode<GetPreviousNextIeObjectIdsQuery, GetPreviousNextIeObjectIdsQueryVariables>;
 export const GetVisitRequestForAccessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getVisitRequestForAccess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"now"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"maintainer_visitor_space_request"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user_profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"visitor_space"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_maintainer_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_ilike"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maintainerOrId"}}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"start_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"end_date"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"now"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"APPROVED","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetVisitRequestForAccessQuery, GetVisitRequestForAccessQueryVariables>;
 export const DeleteMaterialRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteMaterialRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete_app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialRequestId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"profile_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userProfileId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"is_pending"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"affected_rows"}}]}}]}}]} as unknown as DocumentNode<DeleteMaterialRequestMutation, DeleteMaterialRequestMutationVariables>;
 export const FindMaterialRequestsByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findMaterialRequestsById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"uuid"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"app_material_requests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object_schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"profile_id"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"is_pending"}},{"kind":"Field","name":{"kind":"Name","value":"requester_capacity"}},{"kind":"Field","name":{"kind":"Name","value":"organisation"}},{"kind":"Field","name":{"kind":"Name","value":"requested_by"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"full_name"}},{"kind":"Field","name":{"kind":"Name","value":"mail"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"visitorSpace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}}]}}]}}]}}]} as unknown as DocumentNode<FindMaterialRequestsByIdQuery, FindMaterialRequestsByIdQueryVariables>;
