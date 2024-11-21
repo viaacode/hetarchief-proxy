@@ -300,7 +300,7 @@ describe('SessionHelper', () => {
 
 		it('should not fail if an empty session was given', () => {
 			const session: Record<string, any> = {};
-			let error;
+			let error: any;
 			try {
 				SessionHelper.logout(session);
 			} catch (e) {

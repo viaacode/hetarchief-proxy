@@ -67,6 +67,9 @@ import {
 	GetParentIeObjectDocument,
 	type GetParentIeObjectQuery,
 	type GetParentIeObjectQueryVariables,
+	GetPreviousNextIeObjectIdsDocument,
+	type GetPreviousNextIeObjectIdsQuery,
+	type GetPreviousNextIeObjectIdsQueryVariables,
 	GetSchemaIdentifierV3BySchemaIdentifierV2Document,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2Query,
 	type GetSchemaIdentifierV3BySchemaIdentifierV2QueryVariables,
@@ -581,6 +584,7 @@ export class IeObjectsService {
 			pageNumber: gqlIeObject?.schema_position,
 			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
 			collectionName: gqlIeObject?.parentCollection?.[0]?.collection?.schema_name,
+			collectionId: gqlIeObject?.parentCollection?.[0]?.collection?.id,
 			issueNumber: gqlIeObject?.intellectualEntity?.schema_issue_number,
 			fragmentId:
 				gqlIeObject?.intellectualEntity?.mhFragmentIdentifier?.[0]?.mh_fragment_identifier,
@@ -1105,6 +1109,20 @@ export class IeObjectsService {
 				}
 			})
 		);
+	}
+
+	public async getPreviousNextIeObject(collectionId: string, ieObjectId: string) {
+		const response = await this.dataService.execute<
+			GetPreviousNextIeObjectIdsQuery,
+			GetPreviousNextIeObjectIdsQueryVariables
+		>(GetPreviousNextIeObjectIdsDocument, {
+			collectionId,
+			ieObjectId,
+		});
+		return {
+			previousIeObjectId: response.graph__intellectual_entity_prev_and_next[0]?.previous_id,
+			nextIeObjectId: response.graph__intellectual_entity_prev_and_next[0]?.next_id,
+		};
 	}
 
 	private adaptMentions(

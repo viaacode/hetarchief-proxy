@@ -323,7 +323,7 @@ describe('VisitsService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			let error;
+			let error: any;
 			try {
 				await visitsService.findById('unknown-id');
 			} catch (e) {
@@ -403,7 +403,7 @@ describe('VisitsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			let error;
+			let error: any;
 			try {
 				await visitsService.update(
 					'1',
@@ -493,7 +493,7 @@ describe('VisitsService', () => {
 			initialVisit.maintainer_visitor_space_request[0].status = VisitStatus.DENIED;
 			mockDataService.execute.mockResolvedValueOnce(initialVisit);
 
-			let error;
+			let error: any;
 			try {
 				await visitsService.update(
 					'1',
@@ -511,7 +511,7 @@ describe('VisitsService', () => {
 		it('throws an error when you update a visit that does not exist', async () => {
 			const findVisitSpy = jest.spyOn(visitsService, 'findById').mockResolvedValueOnce(null);
 
-			let error;
+			let error: any;
 			try {
 				await visitsService.update(
 					'1',
@@ -558,7 +558,7 @@ describe('VisitsService', () => {
 
 	describe('validateDates', () => {
 		it('throws an exception if only startAt is set', async () => {
-			let error;
+			let error: any;
 			try {
 				visitsService.validateDates(new Date().toISOString(), null);
 			} catch (e) {
@@ -570,7 +570,7 @@ describe('VisitsService', () => {
 		});
 
 		it('throws an exception if only endAt is set', async () => {
-			let error;
+			let error: any;
 			try {
 				visitsService.validateDates(null, new Date().toISOString());
 			} catch (e) {
@@ -582,7 +582,7 @@ describe('VisitsService', () => {
 		});
 
 		it('throws an exception if startAt does not precede endAt', async () => {
-			let error;
+			let error: any;
 			try {
 				visitsService.validateDates(
 					addHours(new Date(), 2).toISOString(),

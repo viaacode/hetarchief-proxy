@@ -1,0 +1,8 @@
+query getPreviousNextIeObjectIds($collectionId: String!, $ieObjectId: String!) {
+	graph__intellectual_entity_prev_and_next(
+		where: { collection_id: { _eq: $collectionId }, id: { _eq: $ieObjectId } }
+	) {
+		next_id
+		previous_id
+	}
+}

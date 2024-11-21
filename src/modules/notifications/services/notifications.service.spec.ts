@@ -463,7 +463,7 @@ describe('NotificationsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
-			let error;
+			let error: any;
 			try {
 				await notificationsService.update(
 					id,

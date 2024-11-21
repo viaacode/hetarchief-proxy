@@ -83,7 +83,7 @@ describe('SessionService', () => {
 
 	describe('clearRedis', () => {
 		it('should throw an error when the redis client is not set', async () => {
-			let error;
+			let error: any;
 			try {
 				await sessionService.clearRedis();
 			} catch (err) {

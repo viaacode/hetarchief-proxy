@@ -8,6 +8,7 @@ import { SpacesController } from './spaces.controller';
 
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -123,7 +124,7 @@ describe('SpacesController', () => {
 		});
 
 		it('should throw an exception on illegal querying of INACTIVE spaces', async () => {
-			let error;
+			let error: any;
 			try {
 				await spacesController.getSpaces(
 					{ status: [VisitorSpaceStatus.Inactive] },
@@ -138,7 +139,7 @@ describe('SpacesController', () => {
 		});
 
 		it('should throw an exception on illegal querying of PENDING spaces', async () => {
-			let error;
+			let error: any;
 			try {
 				await spacesController.getSpaces(
 					{ status: [VisitorSpaceStatus.Requested] },
@@ -165,8 +166,9 @@ describe('SpacesController', () => {
 
 		it("should throw a not found exception for space that doesn't exist", async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await spacesController.getSpaceBySlug(
 					'huis-van-alijn',
@@ -177,24 +179,27 @@ describe('SpacesController', () => {
 			}
 			expect(error?.response).toEqual({
 				statusCode: 404,
-				message: 'Space with slug "huis-van-alijn" not found',
+				message: SITE_TRANSLATIONS[
+					'modules/spaces/controllers/spaces___space-with-slug-slug-not-found'
+				].replace('{{slug}}', 'huis-van-alijn'),
 				error: 'Not Found',
 			});
 		});
 
 		it('should throw a gone exception for space that is inactive', async () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockSpacesResponse.items[2]);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
+			const TEST_SLUG = 'huis-van-alijn';
 
 			try {
-				await spacesController.getSpaceBySlug(
-					'huis-van-alijn',
-					new SessionUserEntity(mockUser)
-				);
+				await spacesController.getSpaceBySlug(TEST_SLUG, new SessionUserEntity(mockUser));
 				fail('getSpaceBySlug should throw an error when the space is inactive');
 			} catch (err) {
 				expect(err?.response).toEqual({
 					statusCode: 410,
-					message: 'Space with slug "huis-van-alijn" is inactive',
+					message: SITE_TRANSLATIONS[
+						'modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive'
+					].replace('{{slug}}', TEST_SLUG),
 					error: 'Gone',
 				});
 			}
@@ -253,7 +258,7 @@ describe('SpacesController', () => {
 		it('throws an ForbiddenException when updating another maintainers space', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[1]);
 			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
-			let error;
+			let error: any;
 			try {
 				await spacesController.updateSpace('1', {}, null, new SessionUserEntity(mockUser));
 			} catch (e) {
@@ -270,7 +275,7 @@ describe('SpacesController', () => {
 		it('throws an ForbiddenException when not allowed to update the slug', async () => {
 			mockSpacesService.findById.mockResolvedValueOnce(mockSpacesResponse.items[0]);
 			mockUser.permissions.push(Permission.UPDATE_OWN_SPACE);
-			let error;
+			let error: any;
 			try {
 				await spacesController.updateSpace(
 					'1',
@@ -319,7 +324,7 @@ describe('SpacesController', () => {
 		it('should throw an exception if slug was not  a space', async () => {
 			mockAssetsService.uploadAndTrack.mockResolvedValueOnce('http://image.jpg');
 			mockSpacesService.create.mockResolvedValueOnce({ id: '1' });
-			let error;
+			let error: any;
 			try {
 				await spacesController.createSpace(
 					{

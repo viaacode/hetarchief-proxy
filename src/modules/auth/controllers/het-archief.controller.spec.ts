@@ -341,7 +341,7 @@ describe('HetArchiefController', () => {
 			mockArchiefService.assertSamlResponse.mockImplementation(() => {
 				throw new Error('Test error handling');
 			});
-			let error;
+			let error: any;
 			try {
 				await hetArchiefController.loginCallback(mockRequest, {}, samlResponse, {
 					redirect: noop,

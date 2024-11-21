@@ -22,6 +22,7 @@ import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { SessionHelper } from '~shared/auth/session-helper';
+import { getProxyNlTranslations } from '~shared/helpers/get-proxy-nl-translations';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { AudienceType, Locale, VisitorSpaceStatus } from '~shared/types/types';
@@ -266,7 +267,7 @@ describe('VisitsController', () => {
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(null);
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getVisits(
 					null,
@@ -360,8 +361,9 @@ describe('VisitsController', () => {
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
 			const status = mockVisitorSpace.status;
 			mockVisitorSpace.status = VisitorSpaceStatus.Inactive;
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -371,7 +373,9 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				'The space with slug "space-1" is no longer accepting visit requests.'
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___the-space-with-slug-name-is-no-longer-accepting-visit-requests'
+				].replace('{{name}}', 'space-1')
 			);
 			expect(error.response.statusCode).toEqual(410);
 
@@ -382,8 +386,9 @@ describe('VisitsController', () => {
 		it('should throw Forbidden exception if an active visit was not found but the space exists', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(mockVisitorSpace);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -393,7 +398,9 @@ describe('VisitsController', () => {
 				error = err;
 			}
 			expect(error.response.message).toEqual(
-				'You do not have access to space with slug "space-1".'
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___you-do-not-have-access-to-space-with-slug-name'
+				].replace('{{name}}', 'space-1')
 			);
 			expect(error.response.statusCode).toEqual(403);
 		});
@@ -401,8 +408,9 @@ describe('VisitsController', () => {
 		it('should throw NotFound exception if an active visit was not found and the space does not exist', async () => {
 			mockVisitsService.getActiveVisitForUserAndSpace.mockResolvedValueOnce(null);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
-			let error;
+			let error: any;
 			try {
 				await visitsController.getActiveVisitForUserAndSpace(
 					'space-1',
@@ -411,7 +419,11 @@ describe('VisitsController', () => {
 			} catch (err) {
 				error = err;
 			}
-			expect(error.response.message).toEqual('Space with slug "space-1" was not found.');
+			expect(error.response.message).toEqual(
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___space-with-slug-name-was-not-found'
+				].replace('{{name}}', 'space-1')
+			);
 			expect(error.response.statusCode).toEqual(404);
 		});
 	});
@@ -469,6 +481,7 @@ describe('VisitsController', () => {
 			const sessionHelperSpy = jest
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
 			let error: any;
 			try {
@@ -486,7 +499,9 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				'The Terms of Service of the visitor space need to be accepted to be able to request a visit.'
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___the-terms-of-service-of-the-visitor-space-need-to-be-accepted-to-be-able-to-request-a-visit'
+				]
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.create).toBeCalledTimes(0);
@@ -508,13 +523,15 @@ describe('VisitsController', () => {
 				.spyOn(SessionHelper, 'getArchiefUserInfo')
 				.mockReturnValue(mockUser);
 			mockSpacesService.findBySlug.mockResolvedValueOnce(null);
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
 
+			const TEST_SLUG = 'space-slug-1';
 			let error: any;
 			try {
 				await visitsController.createVisitRequest(
 					mockRequest,
 					{
-						visitorSpaceSlug: 'space-slug-1',
+						visitorSpaceSlug: TEST_SLUG,
 						timeframe: 'asap',
 						acceptedTos: true,
 					},
@@ -525,7 +542,9 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.response.message).toEqual(
-				'The space with slug "space-slug-1" was not found'
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___the-space-with-slug-name-was-not-found'
+				].replace('{{name}}', TEST_SLUG)
 			);
 			expect(mockSpacesService.getMaintainerProfiles).toBeCalledTimes(0);
 			expect(mockNotificationsService.create).toBeCalledTimes(0);
@@ -563,7 +582,8 @@ describe('VisitsController', () => {
 
 		it('should throw an exception when a visitor tries to update another ones visit', async () => {
 			mockVisitsService.findById.mockResolvedValueOnce(mockVisit1);
-			let error;
+			const SITE_TRANSLATIONS = await getProxyNlTranslations();
+			let error: any;
 			try {
 				await visitsController.update(
 					mockRequest,
@@ -581,7 +601,9 @@ describe('VisitsController', () => {
 			}
 
 			expect(error.message).toEqual(
-				'You do not have the right permissions to call this route'
+				SITE_TRANSLATIONS[
+					'modules/visits/controllers/visits___you-do-not-have-the-right-permissions-to-call-this-route'
+				]
 			);
 		});
 
