@@ -157,6 +157,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'bibframeProductionMethod',
 	'bibframeEdition',
 	'synopsis',
+	'iiifManifestUrl',
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',

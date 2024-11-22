@@ -202,6 +202,7 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	mentions?: Mention[];
 	digitizationDate?: string;
+	iiifManifestUrl?: string;
 	children?: number;
 	pageRepresentations?: IeObjectPageRepresentation[];
 }
