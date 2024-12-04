@@ -776,7 +776,6 @@ export class IeObjectsService {
 			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
 			isPartOf: esObject?.schema_is_part_of,
-			// Not yet available
 			transcript: esObject?.schema_transcript,
 			synopsis: null,
 			locationCreated: esObject?.schema_location_created,
