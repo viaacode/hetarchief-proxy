@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
@@ -16,15 +16,20 @@ export class SessionService {
 
 	constructor(private configService: ConfigService<Configuration>) {}
 
+	private getRedisClient(): RedisClient {
+		if (!this.redisClient) {
+			const redisConnectionString = this.configService.get('REDIS_CONNECTION_STRING');
+			this.redisClient = createClient({
+				url: redisConnectionString,
+			});
+		}
+		return this.redisClient;
+	}
+
 	public async clearRedis(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			try {
-				if (!this.redisClient) {
-					throw new InternalServerErrorException(
-						'Failed to clear redis session cache because redisClient was not initialised'
-					);
-				}
-				this.redisClient.flushdb((err: Error | null, response?: 'OK') => {
+				this.getRedisClient().flushdb((err: Error | null, response?: 'OK') => {
 					if (err) {
 						this.logger.error('Failed to clear redis session cache', err.stack);
 						reject(err);
@@ -74,18 +79,15 @@ export class SessionService {
 			// (probably the express server runs on http and https is terminated elsewhere)
 
 			const redisStore = connectRedis(session);
-			this.redisClient = createClient({
-				url: redisConnectionString,
-			});
 
-			this.redisClient.on('error', (err) =>
+			this.getRedisClient().on('error', (err) =>
 				this.logger.error('Redis Client Error', err.stack)
 			);
-			this.redisClient.on('connect', () =>
+			this.getRedisClient().on('connect', () =>
 				this.logger.log('Connected to redis successfully')
 			);
 
-			sessionConfig.store = new redisStore({ client: this.redisClient });
+			sessionConfig.store = new redisStore({ client: this.getRedisClient() });
 
 			this.logger.log('isProduction: Redis Store ready');
 		} else if (process.platform !== 'win32') {
