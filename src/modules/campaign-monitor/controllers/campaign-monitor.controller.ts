@@ -96,6 +96,7 @@ export class CampaignMonitorController {
 						created_date: user?.getCreatedAt(),
 						last_access_date: user?.getLastAccessAt(),
 						organisation: user?.getOrganisationName(),
+						language: user?.getLanguage(),
 					},
 					preferences.preferences
 				);

@@ -368,16 +368,16 @@ export class MaterialRequestsService {
 		const organisation = organisations.find(
 			(org) =>
 				org.schemaIdentifier ===
-				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.org_identifier
+				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.org_identifier
 		);
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
 			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
-			objectSchemaName: graphQlMaterialRequest.intellectualEntity.schema_name,
+			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
 			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
-				.dcterms_format as IeObjectType,
+				?.dcterms_format as IeObjectType,
 			objectThumbnailUrl:
-				graphQlMaterialRequest.intellectualEntity.schema_thumbnail_url?.[0] || null,
+				graphQlMaterialRequest.intellectualEntity?.schema_thumbnail_url?.[0] || null,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -396,7 +396,7 @@ export class MaterialRequestsService {
 			maintainerId: organisation?.schemaIdentifier,
 			maintainerName: organisation?.schemaName,
 			maintainerSlug:
-				graphQlMaterialRequest.intellectualEntity.schemaMaintainer.visitorSpace?.slug ||
+				graphQlMaterialRequest.intellectualEntity?.schemaMaintainer?.visitorSpace?.slug ||
 				kebabCase(organisation?.schemaName),
 			maintainerLogo: organisation?.logo
 				// TODO remove this workaround once the INT organisations assets are available
