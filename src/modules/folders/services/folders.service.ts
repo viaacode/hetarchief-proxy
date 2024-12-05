@@ -157,8 +157,11 @@ export class FoldersService {
 		/* istanbul ignore next */
 		// TODO: add union type
 		const objectIe = this.adaptIeObject(gqlFolderObjectLink?.intellectualEntity as GqlObject);
+		if (!objectIe) {
+			return null;
+		}
 		const resolvedThumbnailUrl: string = await this.playerTicketService.resolveThumbnailUrl(
-			objectIe.thumbnailUrl,
+			objectIe?.thumbnailUrl,
 			referer,
 			ip
 		);
