@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "3.1.11",
+  "version": "3.1.12",
   "description": "",
   "author": "",
   "private": true,
@@ -35,7 +35,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.3.5",
+    "@meemoo/admin-core-api": "4.3.6",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
