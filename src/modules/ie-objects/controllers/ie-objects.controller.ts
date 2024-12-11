@@ -3,6 +3,7 @@
 // But that breaks the endpoint body validation
 
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Body,
@@ -21,7 +22,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request, Response } from 'express';
-import { compact, intersection, isNil, kebabCase } from 'lodash';
+import { compact, intersection, isNil, kebabCase, without } from 'lodash';
 
 import {
 	IeObjectsQueryDto,
@@ -462,6 +463,13 @@ export class IeObjectsController {
 		return this.ieObjectsService.getMetadataAutocomplete(field, query);
 	}
 
+	/**
+	 * Get ie objects by their schema identifiers
+	 * @param ids
+	 * @param referer
+	 * @param request
+	 * @param user
+	 */
 	@Get()
 	public async getIeObjectByIds(
 		@Query('id') ids: string[],
@@ -469,16 +477,30 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject[] | Partial<IeObject>[]> {
-		const ieObjects: Partial<IeObject>[] = await this.ieObjectsService.findBySchemaIdentifiers(
-			ids,
-			referer,
-			getIpFromRequest(request)
-		);
+		const ieObjects: Partial<IeObject | null>[] =
+			await this.ieObjectsService.findBySchemaIdentifiers(
+				ids,
+				referer,
+				getIpFromRequest(request)
+			);
 
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		return ieObjects.map((ieObject) => {
+		const ieObjectsNotNull: Partial<IeObject>[] = compact(ieObjects);
+
+		if (ieObjects.length !== ieObjectsNotNull.length) {
+			throw new NotFoundException(
+				new CustomError('Objects were not found by their schema identifiers', null, {
+					idsNotFound: without(
+						ids,
+						...ieObjectsNotNull.map((ieObject) => ieObject.schemaIdentifier)
+					),
+				})
+			);
+		}
+
+		return ieObjectsNotNull.map((ieObject) => {
 			const limitedObject = limitAccessToObjectDetails(ieObject, {
 				userId: user.getId(),
 				isKeyUser: user.getIsKeyUser(),
