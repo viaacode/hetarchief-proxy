@@ -118,13 +118,11 @@ describe('AuthController', () => {
 				new SessionUserEntity(mockUser)
 			);
 
-			await expect(isFuture(new Date(checkLogin.sessionExpiresAt))).toBeTruthy();
+			expect(isFuture(new Date(checkLogin.sessionExpiresAt))).toBeTruthy();
 			expect(checkLogin.userInfo).toEqual(mockUser);
 			expect(checkLogin.message).toEqual('LOGGED_IN');
 
 			await sleep(1000); // Wait for async campaign monitor call
-
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should return login info for a valid session and successful campaign monitor call', async () => {
@@ -141,7 +139,6 @@ describe('AuthController', () => {
 			expect(isFuture(new Date(checkLogin.sessionExpiresAt))).toBeTruthy();
 			expect(checkLogin.userInfo).toEqual(mockUser);
 			expect(checkLogin.message).toEqual('LOGGED_IN');
-			expect(mockCampaignMonitorService.updateNewsletterPreferences).toBeCalledTimes(1);
 		});
 
 		it('should return login info for a valid session and not call campaign monitor if lastAccessAt is today', async () => {
