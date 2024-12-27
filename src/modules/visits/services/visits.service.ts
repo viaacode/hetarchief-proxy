@@ -66,6 +66,7 @@ import {
 	type InsertVisitFolderAccessMutationVariables,
 	type InsertVisitMutation,
 	type InsertVisitMutationVariables,
+	type Maintainer_Visitor_Space_Request_Bool_Exp,
 	PendingVisitCountForUserBySlugDocument,
 	type PendingVisitCountForUserBySlugQuery,
 	type PendingVisitCountForUserBySlugQueryVariables,
@@ -361,11 +362,11 @@ export class VisitsService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
-		const where: FindVisitsQueryVariables['where'] = {};
+		const where: Maintainer_Visitor_Space_Request_Bool_Exp = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			// If we are searching inside one cpSpace, we should not search the name of the cpSpace
-			const visitorSpaceFilter: FindVisitsQueryVariables['where'] = {
+			const visitorSpaceFilter: Maintainer_Visitor_Space_Request_Bool_Exp = {
 				visitor_space: { organisation: { skos_pref_label: { _ilike: query } } },
 			};
 			const filterBySpaceName = parameters.visitorSpaceSlug ? [] : [visitorSpaceFilter];

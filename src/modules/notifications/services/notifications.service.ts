@@ -18,6 +18,7 @@ import {
 } from '../types';
 
 import {
+	type App_Notification_Bool_Exp,
 	DeleteNotificationsDocument,
 	type DeleteNotificationsMutation,
 	type DeleteNotificationsMutationVariables,
@@ -163,7 +164,7 @@ export class NotificationsService {
 	}
 
 	public async delete(visitId: string, deleteNotificationDto: DeleteNotificationDto) {
-		const where = {
+		const where: App_Notification_Bool_Exp = {
 			visit_id: { _eq: visitId },
 			...(deleteNotificationDto.types ? { type: { _in: deleteNotificationDto.types } } : {}),
 		};

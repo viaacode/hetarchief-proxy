@@ -35,7 +35,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.3.15",
+    "@meemoo/admin-core-api": "4.3.19",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -46,7 +46,6 @@
     "@viaa/avo2-types": "3.0.13",
     "app-root-path": "3.0.0",
     "archiver": "7.0.1",
-    "aws-sdk": "2.1691.0",
     "blend-promise-utils": "1.28.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
@@ -73,7 +72,7 @@
     "rxjs": "7.4.0",
     "saml2-js": "4.0.2",
     "session-file-store": "1.5.0",
-    "sharp": "0.33.5",
+    "sharp": "^0.33.5",
     "swagger-ui-express": "4.6.3",
     "type-fest": "^4.26.0",
     "uuid": "8.3.2",
@@ -81,6 +80,9 @@
     "xml-js": "1.6.11"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.717.0",
+    "@smithy/signature-v4": "4.2.4",
+    "@smithy/protocol-http": "4.1.8",
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
     "@graphql-codegen/cli": "5.0.2",
@@ -138,6 +140,7 @@
     "typescript": "5.2.2"
   },
   "overrides": {
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "sharp": "^0.33.5"
   }
 }

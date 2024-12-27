@@ -25,6 +25,7 @@ import {
 } from '../material-requests.types';
 
 import {
+	type App_Material_Requests_Bool_Exp,
 	type App_Material_Requests_Set_Input,
 	DeleteMaterialRequestDocument,
 	type DeleteMaterialRequestMutation,
@@ -79,7 +80,7 @@ export class MaterialRequestsService {
 		const { offset, limit } = PaginationHelper.convertPagination(page, size);
 
 		/** Dynamically build the where object  */
-		const where: FindMaterialRequestsQueryVariables['where'] = {};
+		const where: App_Material_Requests_Bool_Exp = {};
 
 		if (!isEmpty(query) && query !== '%' && query !== '%%') {
 			where._or = [
