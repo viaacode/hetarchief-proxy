@@ -1120,17 +1120,21 @@ export class IeObjectsService {
 		);
 	}
 
-	public async getPreviousNextIeObject(collectionId: string, ieObjectId: string) {
+	public async getPreviousNextIeObject(collectionId: string, ieObjectIri: string) {
 		const response = await this.dataService.execute<
 			GetPreviousNextIeObjectIdsQuery,
 			GetPreviousNextIeObjectIdsQueryVariables
 		>(GetPreviousNextIeObjectIdsDocument, {
 			collectionId,
-			ieObjectId,
+			ieObjectIri,
 		});
 		return {
-			previousIeObjectId: response.graph__intellectual_entity_prev_and_next[0]?.previous_id,
-			nextIeObjectId: response.graph__intellectual_entity_prev_and_next[0]?.next_id,
+			previousIeObjectId:
+				response.graph__intellectual_entity_prev_and_next[0]?.previousIeObject
+					?.schema_identifier,
+			nextIeObjectId:
+				response.graph__intellectual_entity_prev_and_next[0]?.nextIeObject
+					?.schema_identifier,
 		};
 	}
 

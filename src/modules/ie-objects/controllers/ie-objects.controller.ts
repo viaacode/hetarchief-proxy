@@ -464,6 +464,20 @@ export class IeObjectsController {
 	}
 
 	/**
+	 * Endpoint to fetch next and previous ie-object id in a collection (eg: next newspaper edition in the newspaper series)
+	 **/
+	@Get('previous-next-ids')
+	public async getNextPreviousIeObject(
+		@Query('ieObjectIri') ieObjectIri: string,
+		@Query('collectionId') collectionId: string
+	): Promise<{ nextIeObjectId: string | null; previousIeObjectId: string | null }> {
+		if (!collectionId) {
+			throw new BadRequestException('Query param collectionId is required');
+		}
+		return this.ieObjectsService.getPreviousNextIeObject(collectionId, ieObjectIri);
+	}
+
+	/**
 	 * Get ie objects by their schema identifiers
 	 * @param ids
 	 * @param referer
@@ -551,19 +565,5 @@ export class IeObjectsController {
 		}
 
 		return ieObject;
-	}
-
-	/**
-	 * Endpoint to fetch next and previous ie-object id in a collection (eg: next newspaper edition in the newspaper series)
-	 **/
-	@Get(':ieObjectId/previous-next-ids')
-	public async getNextPreviousIeObject(
-		@Param('ieObjectId') ieObjectId: string,
-		@Query('collectionId') collectionId: string
-	): Promise<{ nextIeObjectId: string | null; previousIeObjectId: string | null }> {
-		if (!collectionId) {
-			throw new BadRequestException('Query param collectionId is required');
-		}
-		return this.ieObjectsService.getPreviousNextIeObject(collectionId, ieObjectId);
 	}
 }
