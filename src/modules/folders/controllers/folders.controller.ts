@@ -1,3 +1,4 @@
+import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	Body,
 	Controller,
@@ -79,8 +80,22 @@ export class FoldersController {
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
-		folders.items.forEach((collection) => {
-			collection.objects = (collection.objects ?? []).map((object) => {
+		folders.items.forEach((folder) => {
+			folder.objects = (folder.objects ?? []).map((object) => {
+				if (!object) {
+					console.error(
+						new CustomError(
+							'Trying to limit metadata on null ie object in folder',
+							null,
+							{
+								object,
+								folderId: folder.id,
+								folderName: folder.name,
+							}
+						)
+					);
+					return {}; // ieObject in folder no longer exists
+				}
 				return this.ieObjectsService.limitObjectInFolder(
 					object,
 					user,

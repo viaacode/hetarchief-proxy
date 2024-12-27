@@ -20,6 +20,10 @@ export const limitAccessToObjectDetails = (
 	ieObject: Partial<IeObject>,
 	userInfo: LimitAccessUserInfo
 ): Partial<IeObject> => {
+	if (!ieObject) {
+		console.error('Trying to limit metadata on null ie object: ' + ieObject);
+		return {};
+	}
 	const licensesByUserGroup = [
 		...(IE_OBJECT_LICENSES_BY_USER_GROUP[
 			userInfo.groupId ?? IeObjectExtraUserGroupType.ANONYMOUS

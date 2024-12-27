@@ -1013,7 +1013,7 @@ export class IeObjectsService {
 			premisIdentifier: ieObject?.premisIdentifier,
 			schemaIdentifier: ieObject?.schemaIdentifier,
 			iri: ieObject?.iri,
-			licenses: ieObject.licenses,
+			licenses: ieObject?.licenses,
 		};
 	}
 
