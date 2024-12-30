@@ -54,8 +54,7 @@ import {
 	Operator,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { GroupName, Permission } from '~modules/users/types';
-import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
+import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
@@ -132,7 +131,6 @@ export class IeObjectsController {
 
 	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
-	@RequireAllPermissions(Permission.EXPORT_OBJECT)
 	public async exportXml(
 		@Param('id') id: string,
 		@Req() request: Request,
@@ -185,7 +183,6 @@ export class IeObjectsController {
 
 	@Get(':id/export/csv')
 	@Header('Content-Type', 'text/csv')
-	@RequireAllPermissions(Permission.EXPORT_OBJECT)
 	public async exportCsv(
 		@Param('id') id: string,
 		@Req() request: Request,
