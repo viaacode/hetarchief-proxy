@@ -20,7 +20,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Pagination } from '@studiohyperdrive/pagination';
 import { type IPagination } from '@studiohyperdrive/pagination/dist/lib/pagination.types';
-import { addYears, isFuture } from 'date-fns';
+import { isFuture } from 'date-fns';
 import { Request } from 'express';
 import { uniqBy } from 'lodash';
 
@@ -34,7 +34,6 @@ import {
 	VisitStatus,
 } from '../types';
 
-import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~generated/graphql-db-types-hetarchief';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { NotificationsService } from '~modules/notifications/services/notifications.service';
@@ -43,6 +42,7 @@ import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type VisitorSpace } from '~modules/spaces/spaces.types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName, Permission } from '~modules/users/types';
+import { getFakeVisitorRequest } from '~modules/visits/controllers/visits.controller.helpers';
 import { RequireAnyPermissions } from '~shared/decorators/require-any-permissions.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -109,16 +109,25 @@ export class VisitsController {
 	@ApiOperation({
 		description: 'Get Visits endpoint for Visitors.',
 	})
-	@RequireAllPermissions(
-		Permission.READ_PERSONAL_APPROVED_VISIT_REQUESTS,
-		Permission.MANAGE_ACCOUNT
-	)
 	public async getPersonalVisits(
 		@Query() queryDto: VisitsQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<VisitRequest>> {
-		if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
-			const spaces = await this.spacesService.findAll(
+		if (user.getGroupName() === GroupName.KIOSK_VISITOR) {
+			const visitorSpace = await this.spacesService.findSpaceByOrganisationId(
+				user.getOrganisationId()
+			);
+			// Kiosk user only has access to the visitor space of the organisation to which they are linked
+			const visitorRequests = [getFakeVisitorRequest(user, visitorSpace)];
+
+			return Pagination<VisitRequest>({
+				items: visitorRequests,
+				page: 1,
+				size: 1,
+				total: 1,
+			});
+		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
+			const visitorSpaces = await this.spacesService.findAll(
 				{
 					status: [
 						VisitorSpaceStatus.Active,
@@ -131,47 +140,19 @@ export class VisitsController {
 				user.getId()
 			);
 
-			const visits = spaces.items.map((space: VisitorSpace) => {
-				return {
-					id: `permanent-id--${randomUUID()}`,
-					status: VisitStatus.APPROVED,
-					endAt: addYears(new Date(), 100).toISOString(),
-					startAt: new Date(2000, 1, 1).toISOString(),
-					visitorFirstName: user.getFirstName(),
-					visitorLastName: user.getLastName(),
-					visitorName: user.getFullName(),
-					visitorLanguage: user.getLanguage(),
-					updatedByName: null,
-					createdAt: new Date().toISOString(),
-					spaceName: space.name,
-					spaceMail: space.contactInfo.email,
-					spaceId: space.id,
-					spaceTelephone: space.contactInfo.telephone,
-					spaceLogo: space.logo,
-					spaceColor: space.color,
-					spaceImage: space.image,
-					reason: null,
-					spaceMaintainerId: space.maintainerId,
-					spaceSlug: space.slug,
-					accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
-					updatedById: null,
-					timeframe: null,
-					userProfileId: user.getId(),
-					visitorId: user.getId(),
-					updatedAt: new Date().toISOString(),
-					visitorMail: user.getMail(),
-				};
+			const visits = visitorSpaces.items.map((visitorSpace: VisitorSpace) => {
+				return getFakeVisitorRequest(user, visitorSpace);
 			});
 
 			return Pagination<VisitRequest>({
 				items: visits,
-				page: spaces.page,
-				size: spaces.size,
-				total: spaces.total,
+				page: visitorSpaces.page,
+				size: visitorSpaces.size,
+				total: visitorSpaces.total,
 			});
 		}
 
-		const visits = await this.visitsService.findAll(queryDto, {
+		const visitRequests = await this.visitsService.findAll(queryDto, {
 			userProfileId: user.getId(),
 			// a visitor can see visit requests that have been approved for visitor spaces with status requested and active
 			// https://meemoo.atlassian.net/browse/ARC-1949
@@ -179,41 +160,16 @@ export class VisitsController {
 		});
 
 		if (user.getGroupName() === GroupName.CP_ADMIN) {
-			visits.items = uniqBy(
-				[
-					...visits.items,
-					{
-						id: `permanent-id--${randomUUID()}`,
-						status: VisitStatus.APPROVED,
-						endAt: addYears(new Date(), 100).toISOString(),
-						startAt: new Date(2000, 1, 1).toISOString(),
-						visitorFirstName: user.getFirstName(),
-						visitorLastName: user.getLastName(),
-						visitorName: user.getFullName(),
-						visitorLanguage: user.getLanguage(),
-						updatedByName: null,
-						createdAt: new Date().toISOString(),
-						spaceName: user.getOrganisationName(),
-						spaceMail: null,
-						spaceId: user.getOrganisationId(),
-						spaceTelephone: null,
-						reason: null,
-						spaceMaintainerId: user.getOrganisationId(),
-						spaceSlug: user.getVisitorSpaceSlug(),
-						accessType: Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum.Full,
-						updatedById: null,
-						timeframe: null,
-						userProfileId: user.getId(),
-						visitorId: user.getId(),
-						updatedAt: new Date().toISOString(),
-						visitorMail: user.getMail(),
-					},
-				],
+			const visitorSpace = await this.spacesService.findSpaceByOrganisationId(
+				user.getOrganisationId()
+			);
+			visitRequests.items = uniqBy(
+				[...visitRequests.items, getFakeVisitorRequest(user, visitorSpace)],
 				(visit) => visit.spaceSlug
 			);
 		}
 
-		return visits;
+		return visitRequests;
 	}
 
 	@Get('space/:slug/access-status')

@@ -727,6 +727,11 @@ export class IeObjectsService {
 							ip
 						),
 					];
+				} else if (
+					hit._source.dcterms_format === IeObjectType.AUDIO ||
+					hit._source.dcterms_format === IeObjectType.AUDIO_FRAGMENT
+				) {
+					hit._source.schema_thumbnail_url = ['/images/waveform.svg'];
 				}
 				return hit;
 			})
