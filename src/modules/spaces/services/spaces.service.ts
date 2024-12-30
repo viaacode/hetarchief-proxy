@@ -25,6 +25,7 @@ import {
 	GetVisitorSpaceProfilesDocument,
 	type GetVisitorSpaceProfilesQuery,
 	type GetVisitorSpaceProfilesQueryVariables,
+	type Maintainer_Visitor_Space_Bool_Exp,
 	type Maintainer_Visitor_Space_Set_Input,
 	UpdateSpaceDocument,
 	type UpdateSpaceMutation,
@@ -225,7 +226,7 @@ export class SpacesService {
 			filterArray.push({ status: { _in: status } });
 		}
 
-		const where: FindSpacesQueryVariables['where'] =
+		const where: Maintainer_Visitor_Space_Bool_Exp =
 			filterArray.length > 0 ? { _and: filterArray } : {};
 
 		const queryVariables: FindSpacesQueryVariables = {

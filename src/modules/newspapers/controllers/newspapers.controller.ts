@@ -28,8 +28,6 @@ import {
 } from '~modules/newspapers/newspapers.consts';
 import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
-import { Permission } from '~modules/users/types';
-import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 
 @ApiTags('Newspapers')
@@ -42,7 +40,6 @@ export class NewspapersController {
 
 	@Get(':id/export/zip')
 	@Header('Content-Type', 'application/zip')
-	@RequireAllPermissions(Permission.DOWNLOAD_OBJECT)
 	public async downloadNewspaperAsZip(
 		@Param('id') id: string,
 		@Query('page') pageIndex: number | undefined,
@@ -169,7 +166,6 @@ export class NewspapersController {
 
 	@Get(':id/export/jpg/selection')
 	@Header('Content-Type', 'application/zip')
-	@RequireAllPermissions(Permission.DOWNLOAD_OBJECT)
 	public async downloadSelectionInPage(
 		@Param('id') id: string,
 		@Query('page') pageIndex: number,

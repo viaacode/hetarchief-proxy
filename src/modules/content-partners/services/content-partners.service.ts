@@ -9,6 +9,7 @@ import {
 	FindContentPartnersDocument,
 	type FindContentPartnersQuery,
 	type FindContentPartnersQueryVariables,
+	type Graph_Organization_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 
 @Injectable()
@@ -28,15 +29,15 @@ export class ContentPartnersService {
 	public async getContentPartners(
 		inputQuery: ContentPartnersQueryDto
 	): Promise<IPagination<ContentPartner>> {
-		const andFilter = [];
+		const andFilter: Graph_Organization_Bool_Exp[] = [];
 		if (inputQuery.hasSpace === true) {
-			andFilter.push({ visitor_space: {} });
+			andFilter.push({ visitorSpace: {} });
 		} else if (inputQuery.hasSpace === false) {
-			andFilter.push({ _not: { visitor_space: {} } });
+			andFilter.push({ _not: { visitorSpace: {} } });
 		}
 
 		if (inputQuery.orIds?.length > 0) {
-			andFilter.push({ schema_identifier: { _in: inputQuery.orIds } });
+			andFilter.push({ org_identifier: { _in: inputQuery.orIds } });
 		}
 
 		const contentPartners = await this.dataService.execute<

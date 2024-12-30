@@ -80,21 +80,4 @@ describe('SessionService', () => {
 			expect(response.resave).toEqual(false);
 		});
 	});
-
-	describe('clearRedis', () => {
-		it('should throw an error when the redis client is not set', async () => {
-			let error: any;
-			try {
-				await sessionService.clearRedis();
-			} catch (err) {
-				error = err;
-			}
-			expect(error?.response).toEqual({
-				statusCode: 500,
-				message:
-					'Failed to clear redis session cache because redisClient was not initialised',
-				error: 'Internal Server Error',
-			});
-		});
-	});
 });

@@ -101,6 +101,7 @@ export const IE_OBJECT_METADATA_SET_BY_OBJECT_AND_USER_SECTOR: Readonly<
 const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'name',
 	'collectionName',
+	'collectionId',
 	'issueNumber',
 	'meemooOriginalCp',
 	'iri',
