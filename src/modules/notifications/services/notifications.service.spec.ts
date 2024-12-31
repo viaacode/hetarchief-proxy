@@ -6,6 +6,7 @@ import { addHours, addMonths, subHours } from 'date-fns';
 import { NotificationsService } from './notifications.service';
 
 import {
+	type App_Notification_Insert_Input,
 	type DeleteNotificationsMutation,
 	type FindNotificationsByUserQuery,
 	type InsertNotificationsMutation,
@@ -16,7 +17,6 @@ import {
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { mockGqlNotification } from '~modules/notifications/services/__mocks__/app_notification';
 import {
-	type GqlCreateOrUpdateNotification,
 	type GqlNotification,
 	type Notification,
 	NotificationStatus,
@@ -266,9 +266,10 @@ describe('NotificationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
+			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
+				mockGqlNotification1;
 			const response = await notificationsService.create([
-				mockNotification as Partial<GqlCreateOrUpdateNotification>,
+				mockNotification as Partial<App_Notification_Insert_Input>,
 			]);
 			expect(response[0].id).toBe(mockGqlNotification1.id);
 		});
@@ -280,15 +281,24 @@ describe('NotificationsService', () => {
 				.spyOn(notificationsService, 'create')
 				.mockResolvedValueOnce([mockNotification, mockNotification]);
 
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, recipient, ...createNotification } =
-				mockGqlNotification1;
+			const {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				id,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				created_at,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				updated_at,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				visitor_space_request,
+				recipient,
+				...createNotification
+			} = mockGqlNotification1;
 			const response = await notificationsService.create([
 				{
-					...(createNotification as Partial<GqlCreateOrUpdateNotification>),
+					...(createNotification as Partial<App_Notification_Insert_Input>),
 					recipient,
 				},
-				{ ...(createNotification as Partial<GqlCreateOrUpdateNotification>), recipient },
+				{ ...(createNotification as Partial<App_Notification_Insert_Input>), recipient },
 			]);
 			expect(response).toHaveLength(2);
 			createNotificationsSpy.mockRestore();
@@ -445,11 +455,12 @@ describe('NotificationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
+			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
+				mockGqlNotification1;
 			const response = await notificationsService.update(
 				id,
 				mockUser.id,
-				mockNotification as Partial<GqlCreateOrUpdateNotification>
+				mockNotification as Partial<App_Notification_Insert_Input>
 			);
 			expect(response.id).toBe(mockGqlNotification1.id);
 		});
@@ -462,13 +473,14 @@ describe('NotificationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
+			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
+				mockGqlNotification1;
 			let error: any;
 			try {
 				await notificationsService.update(
 					id,
 					mockUser.id,
-					mockNotification as Partial<GqlCreateOrUpdateNotification>
+					mockNotification as Partial<App_Notification_Insert_Input>
 				);
 			} catch (err) {
 				error = err;
@@ -490,10 +502,11 @@ describe('NotificationsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { id, created_at, updated_at, ...mockNotification } = mockGqlNotification1;
+			const { id, created_at, updated_at, visitor_space_request, ...mockNotification } =
+				mockGqlNotification1;
 			const affectedRows = await notificationsService.updateAll(
 				mockUser.id,
-				mockNotification as Partial<GqlCreateOrUpdateNotification>
+				mockNotification as Partial<App_Notification_Insert_Input>
 			);
 			expect(affectedRows).toBe(5);
 		});

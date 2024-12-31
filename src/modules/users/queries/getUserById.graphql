@@ -1,5 +1,5 @@
-mutation insertUser($newUser: users_profile_insert_input!) {
-	insert_users_profile_one(object: $newUser) {
+query getUserById($id: uuid!) {
+	users_profile(where: { id: { _eq: $id } }) {
 		id
 		first_name
 		last_name

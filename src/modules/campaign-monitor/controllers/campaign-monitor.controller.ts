@@ -27,6 +27,7 @@ import { CampaignMonitorService } from '../services/campaign-monitor.service';
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
@@ -38,7 +39,8 @@ import { Locale } from '~shared/types/types';
 export class CampaignMonitorController {
 	constructor(
 		private campaignMonitorService: CampaignMonitorService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		private usersService: UsersService
 	) {}
 
 	/**
@@ -86,17 +88,28 @@ export class CampaignMonitorController {
 				await this.campaignMonitorService.sendConfirmationMail(preferences, Locale.Nl);
 			} else {
 				// Logged in user subscribes to the newsletter
+				const updatedUser = await this.usersService.getById(user.getId());
+				if (!updatedUser) {
+					throw new InternalServerErrorException({
+						message:
+							'Failed to update preferences for campaign monitor. User was not found',
+						additionalInfo: {
+							preferences,
+							userId: user.getId(),
+						},
+					});
+				}
 				await this.campaignMonitorService.updateNewsletterPreferences(
 					{
-						firstName: user?.getFirstName(),
-						lastName: user?.getLastName(),
-						email: user?.getMail(),
-						is_key_user: user?.getIsKeyUser(),
-						usergroup: user?.getGroupName(),
-						created_date: user?.getCreatedAt(),
-						last_access_date: user?.getLastAccessAt(),
-						organisation: user?.getOrganisationName(),
-						language: user?.getLanguage(),
+						firstName: updatedUser.firstName,
+						lastName: updatedUser.lastName,
+						email: updatedUser.email,
+						is_key_user: user.getIsKeyUser(),
+						usergroup: user.getGroupName(),
+						created_date: updatedUser.createdAt,
+						last_access_date: updatedUser.lastAccessAt,
+						organisation: user.getOrganisationName(),
+						language: updatedUser?.language, // Get latest language setting
 					},
 					preferences.preferences
 				);

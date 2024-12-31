@@ -39,12 +39,6 @@ const mockConfigService = {
 		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
 			return 'http://campaignmonitor';
 		}
-		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION') {
-			return 'v3.2';
-		}
-		if (key === 'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION') {
-			return 'v3.3';
-		}
 		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT') {
 			return 'transactional/smartemail';
 		}
@@ -384,8 +378,7 @@ describe('CampaignMonitorService', () => {
 		it('should parse preferences to newsletterTemplateData', () => {
 			const result = campaignMonitorService.convertPreferencesToNewsletterTemplateData(
 				mockUserInfo,
-				true,
-				'newsletter'
+				true
 			);
 			expect(result.EmailAddress).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.EmailAddress

@@ -8,7 +8,7 @@ import { CampaignMonitorModule } from '~modules/campaign-monitor';
 
 @Module({
 	controllers: [UsersController],
-	imports: [forwardRef(() => DataModule), CampaignMonitorModule],
+	imports: [forwardRef(() => DataModule), forwardRef(() => CampaignMonitorModule)],
 	providers: [UsersService],
 	exports: [UsersService],
 })
