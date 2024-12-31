@@ -14,13 +14,9 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { addMonths } from 'date-fns';
 
-import {
-	type GqlCreateOrUpdateNotification,
-	type Notification,
-	NotificationStatus,
-	NotificationType,
-} from '../types';
+import { type Notification, NotificationStatus, NotificationType } from '../types';
 
+import { type App_Notification_Insert_Input } from '~generated/graphql-db-types-hetarchief';
 import {
 	CreateFromMaintenanceAlertDto,
 	NotificationsQueryDto,
@@ -144,8 +140,8 @@ export class NotificationsController {
 	private async sendAccessStartNotifications(): Promise<Notification[]> {
 		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndStartedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
-			(visitRequest): GqlCreateOrUpdateNotification => {
+		const notifications: App_Notification_Insert_Input[] = visitRequests.map(
+			(visitRequest): App_Notification_Insert_Input => {
 				const endDate = formatAsBelgianDate(visitRequest.endAt);
 				return {
 					title: this.translationsService.tText(
@@ -180,8 +176,8 @@ export class NotificationsController {
 	private async sendAccessAlmostEndedNotifications(): Promise<Notification[]> {
 		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndAlmostEndedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
-			(visitRequest): GqlCreateOrUpdateNotification => ({
+		const notifications: App_Notification_Insert_Input[] = visitRequests.map(
+			(visitRequest): App_Notification_Insert_Input => ({
 				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-loopt-af-over-minutes-minuten',
 					{
@@ -212,8 +208,8 @@ export class NotificationsController {
 	private async sendAccessEndNotifications(): Promise<Notification[]> {
 		const visitRequests: VisitRequest[] =
 			await this.visitService.getApprovedAndEndedVisitsWithoutNotification();
-		const notifications: GqlCreateOrUpdateNotification[] = visitRequests.map(
-			(visitRequest): GqlCreateOrUpdateNotification => ({
+		const notifications: App_Notification_Insert_Input[] = visitRequests.map(
+			(visitRequest): App_Notification_Insert_Input => ({
 				title: this.translationsService.tText(
 					'modules/notifications/controllers/notifications___je-toegang-tot-de-bezoekersruimte-name-is-afgelopen',
 					{

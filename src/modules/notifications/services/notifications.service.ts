@@ -10,7 +10,6 @@ import { isPast } from 'date-fns';
 
 import { type DeleteNotificationDto } from '../dto/notifications.dto';
 import {
-	type GqlCreateOrUpdateNotification,
 	type GqlNotification,
 	type Notification,
 	NotificationStatus,
@@ -19,6 +18,7 @@ import {
 
 import {
 	type App_Notification_Bool_Exp,
+	type App_Notification_Insert_Input,
 	DeleteNotificationsDocument,
 	type DeleteNotificationsMutation,
 	type DeleteNotificationsMutationVariables,
@@ -106,7 +106,7 @@ export class NotificationsService {
 	}
 
 	public async create(
-		notifications: Partial<GqlCreateOrUpdateNotification>[]
+		notifications: Partial<App_Notification_Insert_Input>[]
 	): Promise<Notification[]> {
 		const response = await this.dataService.execute<
 			InsertNotificationsMutation,
@@ -123,7 +123,7 @@ export class NotificationsService {
 	public async update(
 		notificationId: string,
 		userProfileId: string,
-		notification: Partial<GqlCreateOrUpdateNotification>
+		notification: Partial<App_Notification_Insert_Input>
 	): Promise<Notification> {
 		const response = await this.dataService.execute<
 			UpdateNotificationMutation,
@@ -147,7 +147,7 @@ export class NotificationsService {
 
 	public async updateAll(
 		userProfileId: string,
-		notification: Partial<GqlCreateOrUpdateNotification>
+		notification: Partial<App_Notification_Insert_Input>
 	): Promise<number> {
 		const response = await this.dataService.execute<
 			UpdateAllNotificationsForUserMutation,
@@ -346,7 +346,7 @@ export class NotificationsService {
 	): Promise<Notification[]> {
 		const name = user.getFullName();
 		return this.create(
-			recipients.map((recipient) => {
+			recipients.map((recipient): App_Notification_Insert_Input => {
 				const title = this.translationsService.tText(
 					'modules/notifications/services/notifications___een-aanvraag-om-je-bezoekersruimte-te-bezoeken-is-geannuleerd',
 					null,
@@ -366,7 +366,7 @@ export class NotificationsService {
 					visit_id: visitRequest.id,
 					type: NotificationType.VISIT_REQUEST_CANCELLED,
 					status: NotificationStatus.UNREAD,
-					recipientId: recipient.id,
+					recipient: recipient.id,
 				};
 			})
 		);
