@@ -129,11 +129,9 @@ export class VisitsController {
 		} else if (user.getGroupName() === GroupName.MEEMOO_ADMIN) {
 			const visitorSpaces = await this.spacesService.findAll(
 				{
-					status: [
-						VisitorSpaceStatus.Active,
-						VisitorSpaceStatus.Inactive,
-						VisitorSpaceStatus.Requested,
-					],
+					// Do not include inactive visitor spaces otherwise they show up in the visitor spaces dropdown and cause errors:
+					// https://meemoo.atlassian.net/browse/ARC-2576?focusedCommentId=53662
+					status: [VisitorSpaceStatus.Active, VisitorSpaceStatus.Requested],
 					page: 1,
 					size: 100,
 				},
