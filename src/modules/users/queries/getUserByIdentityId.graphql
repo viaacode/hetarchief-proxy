@@ -8,6 +8,7 @@ query getUserByIdentityId($identityId: String!) {
 		language
 		is_key_user
 		accepted_tos_at
+		language
 		group_id
 		last_access_at
 		created_at

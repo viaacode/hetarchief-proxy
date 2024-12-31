@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as promiseUtils from 'blend-promise-utils';
-import got, { type Got } from 'got';
-import { compact, groupBy, head, isArray, isEmpty, isNil, toPairs, uniq } from 'lodash';
+import { groupBy, head, isArray, isEmpty, isNil, toPairs } from 'lodash';
 import * as queryString from 'query-string';
+import { stringifyUrl } from 'query-string';
 
 import { type Configuration } from '~config';
 
@@ -19,6 +19,7 @@ import {
 	CampaignMonitorCustomFieldName,
 	type CampaignMonitorNewsletterPreferences,
 	type CampaignMonitorUserInfo,
+	type CmSubscriberResponse,
 	EmailTemplate,
 	type MaterialRequestEmailInfo,
 	type VisitEmailInfo,
@@ -40,6 +41,7 @@ import {
 	MaterialRequestType,
 } from '~modules/material-requests/material-requests.types';
 import { type VisitRequest } from '~modules/visits/types';
+import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
 import { formatAsBelgianDate } from '~shared/helpers/format-belgian-date';
 import { type Locale } from '~shared/types/types';
@@ -48,10 +50,11 @@ import { type Locale } from '~shared/types/types';
 export class CampaignMonitorService implements OnApplicationBootstrap {
 	private logger: Logger = new Logger(CampaignMonitorService.name, { timestamp: true });
 
-	private gotInstance: Got;
 	private isEnabled: boolean;
 	private clientHost: string;
 	private rerouteEmailsTo: string;
+	private subscriberEndpoint: string;
+	private newsletterListId: string;
 
 	constructor(
 		private configService: ConfigService<Configuration>,
@@ -59,26 +62,73 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 	) {
 		checkRequiredEnvs([
 			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT',
-			'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION',
-			'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION',
 			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT',
+			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF',
+			'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER',
 		]);
-		this.gotInstance = got.extend({
-			prefixUrl: this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT'),
-			resolveBodyOnly: true,
-			username: this.configService.get('CAMPAIGN_MONITOR_API_KEY'),
-			password: '.',
-			responseType: 'json',
-		});
 
 		this.isEnabled = this.configService.get('ENABLE_SEND_EMAIL');
 		this.rerouteEmailsTo = this.configService.get('REROUTE_EMAILS_TO');
+		this.subscriberEndpoint = this.configService.get(
+			'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+		);
+		this.newsletterListId = this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF');
 
 		this.clientHost = this.configService.get('CLIENT_HOST');
 	}
 
 	public async onApplicationBootstrap() {
 		await this.translationsService.refreshBackendTranslations();
+	}
+
+	public async makeCmApiRequest<T>(
+		path: string,
+		method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+		data?: any | undefined,
+		throwErrors = true
+	): Promise<T> {
+		try {
+			if (!path.startsWith('/')) {
+				path = '/' + path;
+			}
+			const url = this.configService.get('CAMPAIGN_MONITOR_API_ENDPOINT') + path;
+			const response = await fetch(url, {
+				method: method,
+				...(data ? { body: JSON.stringify(data) } : undefined),
+				credentials: 'include',
+				headers: {
+					Authorization:
+						'Basic ' +
+						Buffer.from(
+							this.configService.get('CAMPAIGN_MONITOR_API_KEY') + ':.'
+						).toString('base64'),
+				},
+			});
+			if (response.status < 200 || response.status >= 400) {
+				if (!throwErrors) {
+					return null;
+				}
+				throw customError('Failed to make request to campaign monitor api', null, {
+					path,
+					method,
+					data,
+					status: response.status,
+					statusText: response.statusText,
+				});
+			}
+			return (await response.json()) as T;
+		} catch (err) {
+			if (!throwErrors) {
+				return null;
+			}
+			const error = customError('Failed to make request to campaign monitor api', err, {
+				path,
+				method,
+				data,
+			});
+			this.logger.error(error);
+			throw error;
+		}
 	}
 
 	public async sendForVisit(emailInfo: VisitEmailInfo): Promise<void> {
@@ -199,27 +249,15 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 		let url: string | null = null;
 
 		try {
-			url = `${this.configService.get(
-				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-			)}/${this.configService.get(
-				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-			)}/${this.configService.get(
-				'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
-			)}.json/?${queryString.stringify({ email })}`;
-
-			const response: any = await this.gotInstance({
-				url,
-				method: 'get',
-				throwHttpErrors: true,
+			url = stringifyUrl({
+				url: `/${this.subscriberEndpoint}/${this.newsletterListId}.json`,
+				query: { email },
 			});
 
+			const response: CmSubscriberResponse = await this.makeCmApiRequest(url);
+
 			return {
-				newsletter:
-					response?.CustomFields.find(
-						(field) => field.Key === CampaignMonitorCustomFieldName.optin_mail_lists
-					)?.Value?.includes(
-						this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
-					) ?? false,
+				newsletter: response.State === 'Active',
 			};
 		} catch (err) {
 			if (err?.code === 203) {
@@ -248,46 +286,73 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				return null;
 			}
 
-			const url: string | null = `${this.configService.get(
-				'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-			)}/${this.configService.get(
-				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-			)}/${this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF')}/import.json`;
-
-			let optin_mail_lists;
 			if (preferences) {
-				const mappedPreferences = [];
-
-				if (preferences.newsletter) {
-					mappedPreferences.push(
-						this.configService.get('CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER')
-					);
+				const subscribed = preferences.newsletter;
+				if (subscribed) {
+					// Subscribe user to list
+					await this.subscribeToNewsletterList(this.newsletterListId, userInfo);
+				} else {
+					// Unsubscribe user from list
+					await this.unsubscribeFromNewsletterList(this.newsletterListId, userInfo.email);
 				}
+			} else {
+				// Update user info in campaign monitor
+				const subscriberData = this.convertPreferencesToNewsletterTemplateData(
+					userInfo,
+					true
+				);
 
-				optin_mail_lists = uniq(compact(mappedPreferences || [])).join('|');
+				const data = {
+					Subscribers: [subscriberData],
+					Resubscribe: false,
+				};
+				const path = `/${this.subscriberEndpoint}/${this.newsletterListId}/import.json`;
+				await this.makeCmApiRequest(path, 'PUT', data, false); // Ignore errors if user cannot be found
 			}
-
-			const subscriberInfo = this.convertPreferencesToNewsletterTemplateData(
-				userInfo,
-				true,
-				optin_mail_lists
-			);
-
-			await this.gotInstance({
-				url,
-				method: 'post',
-				json: {
-					Subscribers: [subscriberInfo],
-					Resubscribe: true,
-				},
-				throwHttpErrors: true,
-			});
 		} catch (err) {
 			throw new InternalServerErrorException({
 				message: 'Failed to update newsletter preferences',
 				error: err,
 				preferences,
 			});
+		}
+	}
+
+	public async subscribeToNewsletterList(listId: string, cmUserInfo: CampaignMonitorUserInfo) {
+		try {
+			if (!cmUserInfo.email) {
+				return;
+			}
+
+			const subscriberData = this.convertPreferencesToNewsletterTemplateData(
+				cmUserInfo,
+				true
+			);
+
+			const data = {
+				Subscribers: [subscriberData],
+				Resubscribe: true,
+			};
+			const path = `/${this.subscriberEndpoint}/${listId}/import.json`;
+			await this.makeCmApiRequest(path, 'POST', data);
+		} catch (err) {
+			throw customError('Failed to subscribe to newsletter list', err, {
+				listId,
+				cmUserInfo,
+			});
+		}
+	}
+
+	public async unsubscribeFromNewsletterList(listId: string, email: string): Promise<void> {
+		try {
+			if (!email) {
+				return;
+			}
+
+			const path = `/${this.subscriberEndpoint}/${listId}/unsubscribe.json`;
+			await this.makeCmApiRequest(path, 'POST', { EmailAddress: email }, false);
+		} catch (err) {
+			throw customError('Failed to unsubscribe from newsletter list', err, { email });
 		}
 	}
 
@@ -323,9 +388,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				throw error;
 			}
 
-			const url = `${this.configService.get(
-				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
-			)}/${this.configService.get(
+			const url = `/${this.configService.get(
 				'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
 			)}/${cmTemplateId}/send`;
 
@@ -352,12 +415,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			}
 
 			if (this.isEnabled) {
-				await this.gotInstance({
-					url,
-					method: 'post',
-					throwHttpErrors: true,
-					json: data,
-				}).json<void>();
+				await this.makeCmApiRequest(url, 'POST', data);
 			} else {
 				this.logger.log(
 					`Mock email sent. To: '${
@@ -509,8 +567,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 
 	public convertPreferencesToNewsletterTemplateData(
 		userInfo: CampaignMonitorUserInfo,
-		resubscribe: boolean,
-		optin_mail_lists?: string
+		resubscribe: boolean
 	): CampaignMonitorUpdatePreferencesData {
 		const customFields: Record<string, string | boolean> = {
 			[CampaignMonitorCustomFieldName.usergroup]: userInfo.usergroup,
@@ -522,9 +579,6 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 			[CampaignMonitorCustomFieldName.organisation]: userInfo.organisation,
 			[CampaignMonitorCustomFieldName.language]: userInfo.language,
 		};
-		if (!isNil(optin_mail_lists)) {
-			customFields[CampaignMonitorCustomFieldName.optin_mail_lists] = optin_mail_lists;
-		}
 
 		return {
 			EmailAddress: userInfo.email,
@@ -535,7 +589,7 @@ export class CampaignMonitorService implements OnApplicationBootstrap {
 				return {
 					Key: pair[0],
 					Value: pair[1],
-					Clear: pair[0] === 'optin_mail_lists' && !pair[1], // Clear the optin_mail_lists field if it is empty string
+					Clear: isNil(pair[1]) || pair[1] === '',
 				};
 			}),
 		};

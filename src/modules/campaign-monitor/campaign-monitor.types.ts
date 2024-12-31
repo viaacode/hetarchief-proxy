@@ -73,3 +73,16 @@ export enum CampaignMonitorCustomFieldName {
 	organisation = 'organisation',
 	language = 'language',
 }
+
+export interface CmSubscriberResponse {
+	EmailAddress: string;
+	Name: string;
+	Date: string;
+	ListJoinedDate: string;
+	State: string;
+	CustomFields: {
+		Key: string;
+		Value: string;
+	}[];
+	ReadsEmailWith: string;
+}

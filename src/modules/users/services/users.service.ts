@@ -1,6 +1,6 @@
-import { DataService } from '@meemoo/admin-core-api';
+import { convertUserInfoToCommonUser, DataService, UserInfoType } from '@meemoo/admin-core-api';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { type Idp } from '@viaa/avo2-types';
+import { type Avo, type Idp } from '@viaa/avo2-types';
 
 import {
 	type CreateUserDto,
@@ -21,9 +21,12 @@ import {
 	GetUserByEmailDocument,
 	type GetUserByEmailQuery,
 	type GetUserByEmailQueryVariables,
+	GetUserByIdDocument,
 	GetUserByIdentityIdDocument,
 	type GetUserByIdentityIdQuery,
 	type GetUserByIdentityIdQueryVariables,
+	type GetUserByIdQuery,
+	type GetUserByIdQueryVariables,
 	InsertUserDocument,
 	InsertUserIdentityDocument,
 	type InsertUserIdentityMutation,
@@ -41,6 +44,7 @@ import {
 	type UpdateUserProfileMutationVariables,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectSector } from '~modules/ie-objects/ie-objects.types';
+import { customError } from '~shared/helpers/custom-error';
 import { type UpdateResponse } from '~shared/types/types';
 
 @Injectable()
@@ -112,6 +116,31 @@ export class UsersService {
 		}
 
 		return this.adapt(userResponse.users_profile[0]);
+	}
+
+	public async getById(profileId: string): Promise<Avo.User.CommonUser> {
+		try {
+			const response = await this.dataService.execute<
+				GetUserByIdQuery,
+				GetUserByIdQueryVariables
+			>(GetUserByIdDocument, { id: profileId });
+
+			if (!response || !response.users_profile[0]) {
+				throw customError('Could not fetch user', null, {
+					response,
+				});
+			}
+
+			return convertUserInfoToCommonUser(
+				this.adapt(response.users_profile[0]) as Avo.User.HetArchiefUser,
+				UserInfoType.HetArchiefUser
+			);
+		} catch (err: any) {
+			throw customError('Failed to get profiles from the database', err, {
+				variables: { id: profileId },
+				query: 'GetUserById',
+			});
+		}
 	}
 
 	public async getUserByIdentityId(identityId: string): Promise<User | null> {
