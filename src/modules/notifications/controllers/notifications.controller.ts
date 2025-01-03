@@ -263,6 +263,7 @@ export class NotificationsController {
 					notificationTranslationKeys.map((translationKey) => [
 						translationKey,
 						this.translationsService.tText(
+							/* IGNORE_ADMIN_CORE_TRANSLATIONS_EXTRACTION */
 							translationKey,
 							null,
 							language.languageCode as Locale
