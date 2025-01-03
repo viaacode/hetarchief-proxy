@@ -10,7 +10,7 @@ import {
 
 @Injectable()
 export class TosService {
-	constructor(protected dataService: DataService) {}
+	constructor(private dataService: DataService) {}
 
 	/**
 	 * Adapt a tos as returned by a typical graphQl response to our internal tos data model

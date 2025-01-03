@@ -7,7 +7,7 @@ import * as queryString from 'query-string';
 import { type Configuration } from '~config';
 
 import { getTemplateId } from '../campaign-monitor.consts';
-import { CampaignMonitorCustomFieldName, EmailTemplate } from '../campaign-monitor.types';
+import { EmailTemplate } from '../campaign-monitor.types';
 import {
 	mockCampaignMonitorMaterialRequestDataToMaintainer,
 	mockCampaignMonitorMaterialRequestDataToRequester,
@@ -325,8 +325,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
 					)}/${getTemplateId(EmailTemplate.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
@@ -352,8 +350,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
 					)}/${getTemplateId(EmailTemplate.MATERIAL_REQUEST_REQUESTER, Locale.Nl)}/send`
 				)
@@ -411,9 +407,10 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-			expect(result.CustomFields[8]).toEqual(
+			expect(result.CustomFields[7]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
 			);
+			expect(result.CustomFields[8]).toBeUndefined();
 		});
 
 		it('should parse preferences to newsletterTemplateData', () => {
@@ -452,52 +449,39 @@ describe('CampaignMonitorService', () => {
 			expect(result.CustomFields[6]).toEqual(
 				mockNewsletterTemplateDataWithNewsletter.CustomFields[6]
 			);
-
 			expect(result.CustomFields[7]).toEqual(
-				mockNewsletterTemplateDataWithNewsletter.CustomFields[8]
+				mockNewsletterTemplateDataWithNewsletter.CustomFields[7]
 			);
-
 			expect(result.CustomFields[8]).toBeUndefined();
 		});
 	});
 
 	describe('fetchNewsletterPreferences', () => {
-		it('should return newsletter = true when optin_mail_lists contains "newsletter"', async () => {
-			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
-				.get(
-					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
-					)}/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
-					)}.json/?${queryString.stringify({ email: mockUser.email })}`
-				)
-				.reply(201, {
-					CustomFields: [
-						{
-							Key: CampaignMonitorCustomFieldName.optin_mail_lists,
-							Value: 'newsletter',
-						},
-					],
-				});
+		it('should return newsletter = true when user is subscribed to "newsletter"', async () => {
+			const baseUrl = mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string;
+			const path = `/${mockConfigService.get(
+				'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
+			)}/${mockConfigService.get(
+				'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
+			)}.json?${queryString.stringify({ email: mockUser.email })}`;
+			nock(baseUrl).get(path).reply(201, {
+				State: 'Active',
+			});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
 			expect(result).toEqual({ newsletter: true });
 		});
 
-		it('should return newsletter = false when errorcode 203 is returned', async () => {
+		it('should return newsletter = false when user is not subscribed to newsletter', async () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.get(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
-					)}.json/?${queryString.stringify({ email: mockUser.email })}`
+					)}.json?${queryString.stringify({ email: mockUser.email })}`
 				)
 				.reply(203, {
-					CustomFields: [],
+					State: 'Inactive',
 				});
 			const result = await campaignMonitorService.fetchNewsletterPreferences(mockUser.email);
 			expect(result).toEqual({ newsletter: false });
@@ -507,12 +491,10 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.get(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
-					)}.json/?${queryString.stringify({ email: mockUser.email })}`
+					)}.json?${queryString.stringify({ email: mockUser.email })}`
 				)
 				.replyWithError('');
 			try {
@@ -543,8 +525,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
@@ -570,8 +550,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
@@ -592,8 +570,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
@@ -614,8 +590,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'
@@ -667,8 +641,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT'
 					)}/${getTemplateId(EmailTemplate.NEWSLETTER_CONFIRMATION, Locale.Nl)}/send`
 				)
@@ -709,8 +681,6 @@ describe('CampaignMonitorService', () => {
 			nock(mockConfigService.get('CAMPAIGN_MONITOR_API_ENDPOINT') as string)
 				.post(
 					`/${mockConfigService.get(
-						'CAMPAIGN_MONITOR_SUBSCRIBER_API_VERSION'
-					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT'
 					)}/${mockConfigService.get(
 						'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF'

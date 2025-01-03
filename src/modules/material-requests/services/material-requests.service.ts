@@ -65,7 +65,7 @@ export class MaterialRequestsService {
 	private logger: Logger = new Logger(MaterialRequestsService.name, { timestamp: true });
 
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		private campaignMonitorService: CampaignMonitorService,
 		private organisationsService: OrganisationsService,
 		private spacesService: SpacesService

@@ -100,7 +100,7 @@ export class IeObjectsService {
 
 	constructor(
 		private configService: ConfigService<Configuration>,
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService,
 		protected spacesService: SpacesService,

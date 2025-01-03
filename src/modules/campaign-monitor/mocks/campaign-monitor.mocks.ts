@@ -152,24 +152,19 @@ export const mockNewsletterTemplateDataWithNewsletter = {
 			Value: mockUserInfo.lastName,
 		},
 		{
-			Clear: false,
+			Clear: true,
 			Key: CampaignMonitorCustomFieldName.created_date,
 			Value: null,
 		},
 		{
-			Clear: false,
+			Clear: true,
 			Key: CampaignMonitorCustomFieldName.last_access_date,
 			Value: null,
 		},
 		{
-			Clear: false,
+			Clear: true,
 			Key: CampaignMonitorCustomFieldName.organisation,
 			Value: null,
-		},
-		{
-			Clear: false,
-			Key: CampaignMonitorCustomFieldName.optin_mail_lists,
-			Value: 'newsletter',
 		},
 		{
 			Clear: false,

@@ -15,7 +15,7 @@ import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 export class NewspapersService {
 	constructor(
 		private configService: ConfigService<Configuration>,
-		protected dataService: DataService
+		private dataService: DataService
 	) {}
 
 	public async getNewspaperTitles(): Promise<NewspaperTitle[]> {

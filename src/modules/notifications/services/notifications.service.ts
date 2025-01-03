@@ -49,7 +49,7 @@ export class NotificationsService {
 	private logger: Logger = new Logger(NotificationsService.name, { timestamp: true });
 
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected campaignMonitorService: CampaignMonitorService,
 		protected translationsService: TranslationsService,
 		protected maintenanceAlertsService: MaintenanceAlertsService

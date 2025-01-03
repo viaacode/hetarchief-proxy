@@ -14,7 +14,7 @@ import {
 
 @Injectable()
 export class ContentPartnersService {
-	constructor(protected dataService: DataService) {}
+	constructor(private dataService: DataService) {}
 
 	/**
 	 * Adapt a content partner as returned by a graphQl response to our internal model

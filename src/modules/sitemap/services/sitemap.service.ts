@@ -27,7 +27,7 @@ import { Locale, VisitorSpaceStatus } from '~shared/types/types';
 @Injectable()
 export class SitemapService {
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected spacesService: SpacesService,
 		protected contentPagesService: ContentPagesService,
 		protected ieObjectsService: IeObjectsService,

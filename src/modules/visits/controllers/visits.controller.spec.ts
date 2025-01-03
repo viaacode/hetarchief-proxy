@@ -294,6 +294,7 @@ describe('VisitsController', () => {
 
 	describe('getPersonalVisits', () => {
 		it('should return all visits for a user', async () => {
+			mockSpacesService.findSpaceByOrganisationId.mockResolvedValueOnce(mockVisitorSpace);
 			mockVisitsService.findAll.mockResolvedValueOnce(mockVisitsResponse);
 
 			const visits = await visitsController.getPersonalVisits(

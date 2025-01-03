@@ -10,7 +10,6 @@ import {
 	type UpdateUserLastAccessDateMutation,
 	type UpdateUserProfileMutation,
 } from '~generated/graphql-db-types-hetarchief';
-import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { mockUserResponse } from '~modules/users/services/__mock__/user.mock';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
 import { TestingLogger } from '~shared/logging/test-logger';
@@ -40,9 +39,10 @@ const archiefUser: User = {
 
 describe('UsersService', () => {
 	let usersService: UsersService;
+	let module: TestingModule;
 
 	beforeEach(async () => {
-		const module: TestingModule = await Test.createTestingModule({
+		module = await Test.createTestingModule({
 			providers: [
 				UsersService,
 				{
@@ -50,16 +50,11 @@ describe('UsersService', () => {
 					useValue: mockDataService,
 				},
 			],
-			imports: [CampaignMonitorModule],
 		})
 			.setLogger(new TestingLogger())
 			.compile();
 
 		usersService = module.get<UsersService>(UsersService);
-	});
-
-	afterEach(() => {
-		mockDataService.execute.mockRestore();
 	});
 
 	it('services should be defined', () => {
@@ -91,8 +86,7 @@ describe('UsersService', () => {
 
 	describe('getUserByIdentityId', () => {
 		it('should get a user by identity id', async () => {
-			//data.users_profile[0]
-			mockDataService.execute.mockReturnValueOnce(mockUserResponse);
+			mockDataService.execute.mockResolvedValueOnce(mockUserResponse);
 
 			const result = await usersService.getUserByIdentityId('123');
 			expect(result).toEqual(archiefUser);
@@ -138,7 +132,7 @@ describe('UsersService', () => {
 	describe('updateUser', () => {
 		it('should update a user', async () => {
 			// Mock insert user
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				update_users_profile: { returning: [mockUser] },
 			} as UpdateUserProfileMutation);
 
@@ -156,7 +150,7 @@ describe('UsersService', () => {
 
 	describe('updateAcceptedTos', () => {
 		it('should update if a user accepted the terms of service', async () => {
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				update_users_profile: { returning: [mockUser] },
 			} as UpdateUserProfileMutation);
 
@@ -167,7 +161,7 @@ describe('UsersService', () => {
 		});
 
 		it('should throw a not found exception when the id is not of a existing user', async () => {
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				update_users_profile: { returning: [] },
 			});
 
@@ -184,7 +178,7 @@ describe('UsersService', () => {
 
 	describe('updateLastAccessDate', () => {
 		it('should update a users last access date', async () => {
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				update_users_profile: {
 					affected_rows: 1,
 				},
@@ -195,7 +189,7 @@ describe('UsersService', () => {
 		});
 
 		it('should catch and not throw an error', async () => {
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				errors: 'Something went wrong',
 			} as UpdateUserLastAccessDateMutation);
 
