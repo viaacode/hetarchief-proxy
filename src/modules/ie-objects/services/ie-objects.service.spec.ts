@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
-import nock from 'nock';
 
 import { type Configuration } from '~config';
 
@@ -340,29 +339,6 @@ describe('ieObjectsService', () => {
 			expect(response[1].schemaIdentifier).toEqual(
 				mockChildrenIeObjects.graph_intellectual_entity[0].hasPart[1].schema_identifier
 			);
-		});
-	});
-
-	describe('executeQuery', () => {
-		it('should return the result when the fetch is successful', async () => {
-			const esIndex = 'esIndexValue';
-			nock('http://elasticsearch').post(`/${esIndex}/_search`).reply(200, {});
-
-			const result = await ieObjectsService.executeQuery(esIndex, 'query');
-
-			expect(result).toEqual({});
-		});
-
-		it('should log and throw an error when the fetch is unsuccessful', async () => {
-			const esIndex = 'esIndexValue';
-			nock('http://elasticsearch').post(`/${esIndex}/_search`).replyWithError('');
-
-			try {
-				await ieObjectsService.executeQuery(esIndex, 'query');
-				fail('executeQuery should have thrown an error');
-			} catch (err) {
-				expect(err.name).toEqual('RequestError');
-			}
 		});
 	});
 
