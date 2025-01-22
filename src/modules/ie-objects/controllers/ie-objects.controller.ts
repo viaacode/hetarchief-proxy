@@ -3,7 +3,6 @@
 // But that breaks the endpoint body validation
 
 import { PlayerTicketController, PlayerTicketService } from '@meemoo/admin-core-api';
-import { CustomError } from '@meemoo/admin-core-api/dist/src/modules/shared/helpers/error';
 import {
 	BadRequestException,
 	Body,
@@ -81,6 +80,26 @@ export class IeObjectsController {
 			referer,
 			getIpFromRequest(request)
 		);
+	}
+
+	/**
+	 * Get a ticket to be able to see a certain file path
+	 * @param referer
+	 * @param request
+	 * @param filePath eg: image/3/public%252FOR-1c1tf48%252F13%252F13cdb1aa21704313a6ded7da5fabf53f0a9571a68c6540e18725440376c089c2813e3eec887041e1ab908a4c20a46d15.jp2
+	 */
+	@Get('ticket-service')
+	public async getTicketServiceToken(
+		@Headers('referer') referer: string,
+		@Req() request: Request,
+		@Query('filePath') filePath: string
+	): Promise<string> {
+		const token = await this.playerTicketController.getTicketServiceTokenForFilePath(
+			filePath,
+			referer,
+			getIpFromRequest(request)
+		);
+		return token;
 	}
 
 	@Get('thumbnail-ticket')
