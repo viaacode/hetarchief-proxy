@@ -115,7 +115,6 @@ export class NotificationsService {
 			objects: notifications,
 		});
 		const createdNotifications = response.insert_app_notification.returning;
-		this.logger.debug(`${createdNotifications.length} notifications created`);
 
 		return createdNotifications.map(this.adaptNotification);
 	}
