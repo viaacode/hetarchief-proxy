@@ -60,7 +60,7 @@ export class FoldersService {
 	private logger: Logger = new Logger(FoldersService.name, { timestamp: true });
 
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService
 	) {}

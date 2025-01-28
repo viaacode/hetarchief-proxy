@@ -12,6 +12,7 @@ import { LoginMessage, type LoginResponse } from '../types';
 
 import { AuthController } from './auth.controller';
 
+import { CampaignMonitorModule } from '~modules/campaign-monitor';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SpacesModule } from '~modules/spaces';
 import { UsersModule } from '~modules/users';
@@ -77,7 +78,7 @@ describe('AuthController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [AuthController],
-			imports: [ConfigModule, SpacesModule, UsersModule],
+			imports: [ConfigModule, SpacesModule, UsersModule, CampaignMonitorModule],
 			providers: [
 				IdpService,
 				{
@@ -110,7 +111,7 @@ describe('AuthController', () => {
 
 	describe('checkLogin', () => {
 		it('should return login info for a valid session and failed campaign monitor call', async () => {
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReset();
+			mockCampaignMonitorService.updateNewsletterPreferences.mockClear();
 			mockCampaignMonitorService.updateNewsletterPreferences.mockRejectedValueOnce('');
 
 			const checkLogin: LoginResponse = await authController.checkLogin(
@@ -126,7 +127,7 @@ describe('AuthController', () => {
 		});
 
 		it('should return login info for a valid session and successful campaign monitor call', async () => {
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReset();
+			mockCampaignMonitorService.updateNewsletterPreferences.mockClear();
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
 
 			const checkLogin: LoginResponse = await authController.checkLogin(
@@ -142,7 +143,7 @@ describe('AuthController', () => {
 		});
 
 		it('should return login info for a valid session and not call campaign monitor if lastAccessAt is today', async () => {
-			mockCampaignMonitorService.updateNewsletterPreferences.mockReset();
+			mockCampaignMonitorService.updateNewsletterPreferences.mockClear();
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
 
 			const testUser = {

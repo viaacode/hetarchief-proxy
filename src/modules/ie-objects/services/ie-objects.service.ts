@@ -100,7 +100,7 @@ export class IeObjectsService {
 
 	constructor(
 		private configService: ConfigService<Configuration>,
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected playerTicketService: PlayerTicketService,
 		protected visitsService: VisitsService,
 		protected spacesService: SpacesService,
@@ -524,6 +524,7 @@ export class IeObjectsService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			dctermsFormat,
 			dctermsMedium: gqlIeObject?.dcterms_medium,
+			meemooDescriptionCast: gqlIeObject?.ebucore_has_cast_member,
 			creator: gqlIeObject?.schema_creator?.[0],
 			dateCreated: gqlIeObject?.schema_date_created,
 			datePublished: gqlIeObject?.schema_date_published,

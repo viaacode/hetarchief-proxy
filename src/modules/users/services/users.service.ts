@@ -51,7 +51,7 @@ import { type UpdateResponse } from '~shared/types/types';
 export class UsersService {
 	private logger: Logger = new Logger(UsersService.name, { timestamp: true });
 
-	constructor(protected dataService: DataService) {}
+	constructor(private dataService: DataService) {}
 
 	public adapt(graphQlUser: GqlUser): User | null {
 		if (!graphQlUser) {

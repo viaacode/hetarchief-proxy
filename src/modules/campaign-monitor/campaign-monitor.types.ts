@@ -63,7 +63,6 @@ export interface CampaignMonitorUserInfo {
 }
 
 export enum CampaignMonitorCustomFieldName {
-	optin_mail_lists = 'optin_mail_lists',
 	usergroup = 'usergroup',
 	is_key_user = 'is_key_user',
 	firstname = 'firstname',

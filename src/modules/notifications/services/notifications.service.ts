@@ -49,7 +49,7 @@ export class NotificationsService {
 	private logger: Logger = new Logger(NotificationsService.name, { timestamp: true });
 
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected campaignMonitorService: CampaignMonitorService,
 		protected translationsService: TranslationsService,
 		protected maintenanceAlertsService: MaintenanceAlertsService
@@ -115,7 +115,6 @@ export class NotificationsService {
 			objects: notifications,
 		});
 		const createdNotifications = response.insert_app_notification.returning;
-		this.logger.debug(`${createdNotifications.length} notifications created`);
 
 		return createdNotifications.map(this.adaptNotification);
 	}

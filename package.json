@@ -1,6 +1,6 @@
 {
   "name": "hetarchief-proxy",
-  "version": "3.1.16",
+  "version": "3.2.1",
   "description": "",
   "author": "",
   "private": true,
@@ -35,7 +35,7 @@
     "bump": "bump-package-versions --part=patch --strategy=highest ./package.json"
   },
   "dependencies": {
-    "@meemoo/admin-core-api": "4.3.24",
+    "@meemoo/admin-core-api": "4.3.34",
     "@nestjs/common": "9.4.3",
     "@nestjs/config": "3.2.3",
     "@nestjs/core": "9.4.3",
@@ -81,8 +81,6 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "3.717.0",
-    "@smithy/signature-v4": "4.2.4",
-    "@smithy/protocol-http": "4.1.8",
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
     "@graphql-codegen/cli": "5.0.2",
@@ -95,6 +93,8 @@
     "@nestjs/cli": "9.5.0",
     "@nestjs/schematics": "9.2.0",
     "@nestjs/testing": "9.4.3",
+    "@smithy/protocol-http": "4.1.8",
+    "@smithy/signature-v4": "4.2.4",
     "@studiohyperdrive/commitlint-config": "^2.2.0",
     "@types/archiver": "6.0.2",
     "@types/cache-manager": "3.4.3",
@@ -126,8 +126,6 @@
     "husky": "7.0.4",
     "jest": "29.7.0",
     "lint-staged": "12.1.2",
-    "nock": "13.2.2",
-    "node-fetch": "2.7.0",
     "prettier": "3.0.3",
     "redis-mock": "0.56.3",
     "sort-object-keys": "1.1.3",

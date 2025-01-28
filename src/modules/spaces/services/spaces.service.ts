@@ -42,7 +42,7 @@ import { type Locale, type Recipient } from '~shared/types/types';
 @Injectable()
 export class SpacesService {
 	constructor(
-		protected dataService: DataService,
+		private dataService: DataService,
 		protected translationsService: TranslationsService
 	) {}
 

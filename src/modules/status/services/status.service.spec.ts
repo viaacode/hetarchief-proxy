@@ -56,7 +56,7 @@ describe('StatusService', () => {
 
 	describe('getStatusFull', () => {
 		it('should return the name and version of the app and the graphql and elasticsearch connectivity', async () => {
-			mockDataService.execute.mockReturnValueOnce({
+			mockDataService.execute.mockResolvedValueOnce({
 				graph_intellectual_entity: [{ schema_identifier: '1' }],
 			} as GetFirstObjectIdQuery);
 			mockIeObjectsService.executeQuery.mockReturnValueOnce({

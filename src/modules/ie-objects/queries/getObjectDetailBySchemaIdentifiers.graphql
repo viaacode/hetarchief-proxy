@@ -18,6 +18,7 @@ query getObjectDetailBySchemaIdentifiers($schemaIdentifiers: [String!]!) {
 		schema_license
 		schema_date_created
 		meemoo_local_id
+		ebucore_has_cast_member
 		premis_is_part_of
 		bibframe_edition
 		schemaMaintainer {

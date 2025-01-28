@@ -16,6 +16,7 @@ import { CampaignMonitorController } from './campaign-monitor.controller';
 import { EmailTemplate } from '~modules/campaign-monitor/campaign-monitor.types';
 import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
@@ -33,6 +34,10 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
 	insertEvents: jest.fn(),
+};
+
+const mockUsersService: Partial<Record<keyof UsersService, jest.SpyInstance>> = {
+	getById: jest.fn(),
 };
 
 const mockRequest = { path: '/campaign-monitor/preferences', headers: {} } as unknown as Request;
@@ -59,6 +64,10 @@ describe('CampaignMonitorController', () => {
 				{
 					provide: EventsService,
 					useValue: mockEventsService,
+				},
+				{
+					provide: UsersService,
+					useValue: mockUsersService,
 				},
 			],
 		})
@@ -109,6 +118,7 @@ describe('CampaignMonitorController', () => {
 	describe('updatePreferences', () => {
 		it('update user newsletter preferences with logged in user', async () => {
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValueOnce({});
+			mockUsersService.getById.mockResolvedValueOnce(mockUser);
 
 			const sent = await campaignMonitorController.updatePreferences(
 				mockRequest,
@@ -122,13 +132,12 @@ describe('CampaignMonitorController', () => {
 		});
 		it('sent confirmation mail when no user is logged in', async () => {
 			mockCampaignMonitorService.sendConfirmationMail.mockResolvedValueOnce({});
+			mockUsersService.getById.mockResolvedValueOnce(null);
 
 			const sent = await campaignMonitorController.updatePreferences(
 				mockRequest,
 				mockNewsletterUpdatePreferencesQueryDto,
-				new SessionUserEntity({
-					...mockUser,
-				})
+				null
 			);
 
 			expect(sent).toEqual({ message: 'success' });
