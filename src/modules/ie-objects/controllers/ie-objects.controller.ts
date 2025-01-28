@@ -55,6 +55,7 @@ import {
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 
@@ -521,7 +522,7 @@ export class IeObjectsController {
 
 		if (ieObjects.length !== ieObjectsNotNull.length) {
 			throw new NotFoundException(
-				new CustomError('Objects were not found by their schema identifiers', null, {
+				customError('Objects were not found by their schema identifiers', null, {
 					idsNotFound: without(
 						ids,
 						...ieObjectsNotNull.map((ieObject) => ieObject.schemaIdentifier)
