@@ -1,9 +1,0 @@
-query getVisitorSpaceProfiles($spaceId: uuid) {
-	maintainer_visitor_space(where: { id: { _eq: $spaceId } }) {
-		profiles {
-			id
-			mail
-			language
-		}
-	}
-}
