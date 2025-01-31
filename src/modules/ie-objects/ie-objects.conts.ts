@@ -126,7 +126,6 @@ const IE_OBJECT_PROPS_METADATA_SET_LTD: Readonly<(keyof IeObject)[]> = [
 	'datePublished',
 	'creator',
 	'description',
-	'genre',
 	'keywords',
 	'inLanguage',
 	'licenses',
@@ -152,6 +151,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'alternativeTitle',
 	'preceededBy',
 	'succeededBy',
+	'genre', // Categorie
 	'width',
 	'height',
 	'digitizationDate',

@@ -22,9 +22,9 @@ import {
 	FindSpacesDocument,
 	type FindSpacesQuery,
 	type FindSpacesQueryVariables,
-	GetVisitorSpaceProfilesDocument,
-	type GetVisitorSpaceProfilesQuery,
-	type GetVisitorSpaceProfilesQueryVariables,
+	GetVisitorSpaceCpAdminProfilesDocument,
+	type GetVisitorSpaceCpAdminProfilesQuery,
+	type GetVisitorSpaceCpAdminProfilesQueryVariables,
 	type Maintainer_Visitor_Space_Bool_Exp,
 	type Maintainer_Visitor_Space_Set_Input,
 	UpdateSpaceDocument,
@@ -302,19 +302,21 @@ export class SpacesService {
 
 	public async getMaintainerProfiles(spaceId: string): Promise<Recipient[]> {
 		const spaces = await this.dataService.execute<
-			GetVisitorSpaceProfilesQuery,
-			GetVisitorSpaceProfilesQueryVariables
-		>(GetVisitorSpaceProfilesDocument, {
+			GetVisitorSpaceCpAdminProfilesQuery,
+			GetVisitorSpaceCpAdminProfilesQueryVariables
+		>(GetVisitorSpaceCpAdminProfilesDocument, {
 			spaceId,
 		});
 
 		/* istanbul ignore next */
 		return (spaces?.maintainer_visitor_space || []).flatMap((space) => {
-			return (space.profiles || []).map((profile) => ({
-				id: profile.id,
-				email: profile.mail,
-				language: profile.language,
-			}));
+			return (space.profiles || []).map((profile) => {
+				return {
+					id: profile.id,
+					email: profile.mail,
+					language: profile.language,
+				};
+			});
 		});
 	}
 

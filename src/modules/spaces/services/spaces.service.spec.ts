@@ -15,7 +15,7 @@ import {
 	type FindSpaceByOrganisationIdQuery,
 	type FindSpaceBySlugQuery,
 	type FindSpacesQuery,
-	type GetVisitorSpaceProfilesQuery,
+	type GetVisitorSpaceCpAdminProfilesQuery,
 	type UpdateSpaceMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import {
@@ -523,7 +523,7 @@ describe('SpacesService', () => {
 
 	describe('getMaintainerProfiles', () => {
 		it('returns all profile ids for all maintainers of a VisitorSpace', async () => {
-			const mockMaintainerIds: GetVisitorSpaceProfilesQuery = {
+			const mockMaintainerIds: GetVisitorSpaceCpAdminProfilesQuery = {
 				maintainer_visitor_space: [
 					{
 						profiles: [

@@ -1,0 +1,9 @@
+query getVisitorSpaceCpAdminProfiles($spaceId: uuid) {
+	maintainer_visitor_space(where: { id: { _eq: $spaceId } }) {
+		profiles(where: { group: { name: { _eq: "CP_ADMIN" } } }) {
+			id
+			mail
+			language
+		}
+	}
+}
