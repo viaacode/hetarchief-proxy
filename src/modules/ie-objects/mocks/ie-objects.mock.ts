@@ -120,7 +120,6 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 	creator: { productionCompany: ['Roses Are Blue'] },
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-	genre: ['program'],
 	keywords: [
 		'INTERVIEW',
 		'ZIEKTE',
@@ -351,7 +350,6 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 	},
 	description:
 		"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-	genre: ['program'],
 	keywords: [
 		'INTERVIEW',
 		'ZIEKTE',
@@ -776,8 +774,8 @@ export const mockSitemapObject: Readonly<IeObjectsSitemap> = {
 	maintainerSlug: 'vrt',
 };
 
-export const mockIeObjectWithMetadataSetLtdCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
-8911p09j1g;;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;serie;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;programma;Programma1`;
+export const mockIeObjectWithMetadataSetLtdCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
+8911p09j1g;;;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;serie;Serie1;https://data-int.hetarchief.be/id/entity/4f1mg9x363;4f1mg9x363;programma;Programma1`;
 export const mockIeObjectWithMetadataSetAllWithEssenceCsv = `schemaIdentifier;meemooOriginalCp;meemooLocalId;meemooMediaObjectId;premisIdentifier.0.premisid;maintainerId;maintainerName;name;dctermsFormat;dctermsMedium.0;duration;dateCreated;datePublished;creator.productionCompany.0;description;genre.0;keywords.0;keywords.1;keywords.2;keywords.3;keywords.4;keywords.5;keywords.6;keywords.7;keywords.8;keywords.9;keywords.10;inLanguage;numberOfPages;abrahamInfo;spatial;temporal;copyrightHolder;width;height;synopsis;alternativeTitle;publisher;abstract;ebucoreObjectType;meemooDescriptionCast;isPartOf.0.iri;isPartOf.0.schemaIdentifier;isPartOf.0.collectionType;isPartOf.0.name;isPartOf.1.iri;isPartOf.1.schemaIdentifier;isPartOf.1.collectionType;isPartOf.1.name
 8911p09j1g;;;49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c;WP00178829;OR-rf5kf25;vrt;Durf te vragen R002 A0001;video;16mm;00:39:52;[2020-09-01];2020-09-01;Roses Are Blue;Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.;program;INTERVIEW;ZIEKTE;GEZONDHEID;ZIEKTE VAN ALZHEIMER;JONGDEMENTIE;THUISVERPLEGING;FIETS;GEHEUGEN;VERGETEN;AGRESSIE;KARAKTERVORMING;;;;;;vrt;;;;;;"In Vlaanderen leven ongeveer 1800 mensen met de diagnose van jongdementie.
 Dementie is meer dan vergeten alleen. Dat zeggen Christine, Roger, Marleen, John en Paul. Samen met hun mantelzorger antwoorden ze op vragen als: ""Kan je genezen?"" en ""Heb je al aan euthanasie gedacht?"".
@@ -855,7 +853,6 @@ export const mockIeObjectWithMetadataSetLtdXml = `<object>
     <productionCompany>Roses Are Blue</productionCompany>
   </creator>
   <description>Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.</description>
-  <genre>program</genre>
   <keywords>INTERVIEW</keywords>
   <keywords>ZIEKTE</keywords>
   <keywords>GEZONDHEID</keywords>

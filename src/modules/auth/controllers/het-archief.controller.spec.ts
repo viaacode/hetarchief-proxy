@@ -349,7 +349,7 @@ describe('HetArchiefController', () => {
 			} catch (e) {
 				error = e;
 			}
-			expect(error.response.error).toEqual('Test error handling');
+			expect(error.message).toEqual('Failed during hetarchief auth login-callback route');
 		});
 
 		it('should redirect to the login route if the idp response is no longer valid', async () => {

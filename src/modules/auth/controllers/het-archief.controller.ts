@@ -291,11 +291,9 @@ export class HetArchiefController {
 			}
 			this.logger.error('Failed during hetarchief auth login-callback route', err);
 			throw new HttpException(
-				{
-					status: HttpStatus.INTERNAL_SERVER_ERROR,
-					error: err.message,
-				},
-				HttpStatus.FORBIDDEN
+				'Failed during hetarchief auth login-callback route',
+				HttpStatus.FORBIDDEN,
+				err
 			);
 			// TODO redirect user to error page (see AVO - redirectToClientErrorPage)
 		}
