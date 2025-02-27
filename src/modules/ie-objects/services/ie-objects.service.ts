@@ -504,20 +504,6 @@ export class IeObjectsService {
 			parent = this.adaptFromDB(gqlIeObject.isPartOf);
 		}
 		const dctermsFormat = gqlIeObject?.dcterms_format as IeObjectType;
-		const iiifManifestUrl: string | undefined = process.env.IIIF_MANIFEST_LINK?.replace(
-			'{orgId}',
-			gqlIeObject?.schemaMaintainer?.org_identifier
-		)?.replace('{pid}', gqlIeObject?.schema_identifier);
-		const maintainerAllowsIiifManifests = !!gqlIeObject?.schemaMaintainer?.hasPreference.find(
-			(pref) => pref.ha_pref === OrganisationPreference.iiifDissemination
-		);
-		const hasPublicLicense = gqlIeObject?.schema_license?.includes(
-			IeObjectLicense.PUBLIEK_CONTENT
-		);
-		const hasPublicCopyright =
-			gqlIeObject?.schema_license?.includes(IeObjectLicense.PUBLIC_DOMAIN) ||
-			gqlIeObject?.schema_license?.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED);
-		const isNewspaper = dctermsFormat === IeObjectType.NEWSPAPER;
 		const ieObject: IeObject = {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
@@ -637,13 +623,6 @@ export class IeObjectsService {
 			newspaperPublisher: compact(
 				gqlIeObject?.parentCollection?.map((part) => part?.collection?.schema_publisher)
 			)?.join(', '),
-			iiifManifestUrl:
-				isNewspaper &&
-				maintainerAllowsIiifManifests &&
-				hasPublicLicense &&
-				hasPublicCopyright
-					? iiifManifestUrl
-					: null,
 			pageRepresentations,
 		};
 
