@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: hetarchief-elasticsearch
+    restart: always
+    environment:
+      - discovery.type=single-node  # Set discovery type to single-node
+      - cluster.name=docker-cluster  # Set cluster name (can be customized)
+      - node.name=docker-node  # Set node name (can be customized)
+      - ELASTIC_JAVA_OPTS=-Xms2024m -Xmx2024m  # Optional: Set JVM heap size (adjust as needed)
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+
+    ports:
+      - 9200:9200  # Map container port 9200 to host port 9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data  # Optional: Persistent storage for data
+
+volumes:
+  elasticsearch-data:  # Optional: Persistent storage volume

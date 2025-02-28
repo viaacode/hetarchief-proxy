@@ -54,3 +54,5 @@ tmp
 graphql.config.yml
 
 schema.graphql
+
+elasticsearch-local/license.txt
