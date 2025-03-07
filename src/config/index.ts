@@ -49,7 +49,7 @@ const config = (): Configuration => {
 		COOKIE_SECRET: getEnvValue('COOKIE_SECRET', true),
 		COOKIE_MAX_AGE: parseInt(getEnvValue('COOKIE_MAX_AGE', true), 10),
 		REDIS_CONNECTION_STRING: getEnvValue('REDIS_CONNECTION_STRING', false),
-		ELASTIC_SEARCH_URL: getEnvValue('ELASTICSEARCH_URL', true),
+		ELASTICSEARCH_URL: getEnvValue('ELASTICSEARCH_URL', true),
 		SSUM_REGISTRATION_PAGE: getEnvValue('SSUM_REGISTRATION_PAGE', true),
 		SAML_IDP_META_DATA_ENDPOINT: getEnvValue('SAML_IDP_META_DATA_ENDPOINT', true),
 		SAML_SP_ENTITY_ID: getEnvValue('SAML_SP_ENTITY_ID', true),

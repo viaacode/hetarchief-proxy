@@ -9,6 +9,7 @@ import { NewspapersService } from '../services/newspapers.service';
 
 import { NewspapersController } from './newspapers.controller';
 
+import { EventsService } from '~modules/events/services/events.service';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -32,6 +33,10 @@ describe('NewspapersController', () => {
 				},
 				{
 					provide: IeObjectsController,
+					useValue: {},
+				},
+				{
+					provide: EventsService,
 					useValue: {},
 				},
 			],

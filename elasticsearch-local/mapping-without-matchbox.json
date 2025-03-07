@@ -1,0 +1,424 @@
+{
+  "properties": {
+    "audio": {
+      "type": "boolean"
+    },
+    "children": {
+      "type": "integer",
+      "index": false
+    },
+    "dcterms_available": {
+      "type": "date",
+      "format": "year_month_day"
+    },
+    "dcterms_format": {
+      "type": "keyword"
+    },
+    "dcterms_medium": {
+      "type": "keyword"
+    },
+    "dcterms_rights_statement": {
+      "type": "keyword"
+    },
+    "ebucore_object_type": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "iri": {
+      "type": "keyword"
+    },
+    "meemoo_description_cast": {
+      "type": "text",
+      "fields": {
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "meemoo_description_programme": {
+      "type": "text",
+      "fields": {
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "meemoo_identifier": {
+      "type": "keyword"
+    },
+    "meemoo_local_id": {
+      "type": "keyword"
+    },
+    "meemoofilm_color": {
+      "type": "keyword"
+    },
+    "premis_identifier": {
+      "type": "flattened"
+    },
+    "premis_is_part_of": {
+      "type": "keyword"
+    },
+    "schema_abstract": {
+      "type": "text",
+      "fields": {
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_transcript": {
+      "type": "text",
+      "fields": {
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_alternate_name": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_contributor": {
+      "type": "flattened"
+    },
+    "schema_copyrightholder": {
+      "type": "keyword"
+    },
+    "schema_creator": {
+      "type": "flattened"
+    },
+    "schema_creator_text": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3
+        },
+        "suggest": {
+          "type": "completion",
+          "analyzer": "simple",
+          "preserve_separators": true,
+          "preserve_position_increments": true,
+          "max_input_length": 12
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_date_created": {
+      "type": "date",
+      "format": "year_month_day"
+    },
+    "schema_date_published": {
+      "type": "date",
+      "format": "year_month_day"
+    },
+    "schema_description": {
+      "type": "text",
+      "fields": {
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_duration": {
+      "type": "date",
+      "format": "HH:mm:ss.SS"
+    },
+    "schema_genre": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_identifier": {
+      "type": "keyword"
+    },
+    "schema_in_language": {
+      "type": "keyword"
+    },
+    "schema_is_part_of": {
+      "properties": {
+        "archive": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "lowercase"
+            }
+          }
+        },
+        "episode": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "lowercase"
+            }
+          }
+        },
+        "newspaper": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "lowercase"
+            },
+            "sayt": {
+              "type": "search_as_you_type",
+              "doc_values": false,
+              "max_shingle_size": 3
+            },
+            "suggest": {
+              "type": "completion",
+              "preserve_separators": true,
+              "preserve_position_increments": true,
+              "max_input_length": 12
+            }
+          }
+        },
+        "season": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "lowercase"
+            }
+          }
+        },
+        "series": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "lowercase"
+            }
+          }
+        }
+      }
+    },
+    "schema_keywords": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_license": {
+      "type": "keyword"
+    },
+    "schema_location_created": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3
+        },
+        "suggest": {
+          "type": "completion",
+          "preserve_separators": true,
+          "preserve_position_increments": true,
+          "max_input_length": 12
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_maintainer": {
+      "properties": {
+        "alt_label": {
+          "type": "keyword"
+        },
+        "organization_type": {
+          "type": "keyword"
+        },
+        "schema_identifier": {
+          "type": "keyword"
+        },
+        "schema_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "normalizer": "lowercase"
+            }
+          }
+        }
+      }
+    },
+    "schema_mentions": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "sayt": {
+          "type": "search_as_you_type",
+          "doc_values": false,
+          "max_shingle_size": 3
+        },
+        "suggest": {
+          "type": "completion",
+          "analyzer": "simple",
+          "preserve_separators": true,
+          "preserve_position_increments": true,
+          "max_input_length": 12
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_name": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "lemma_split": {
+          "type": "text"
+        },
+        "lemma_split_spell": {
+          "type": "text"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_number_of_pages": {
+      "type": "integer",
+      "index": false
+    },
+    "schema_publisher": {
+      "type": "flattened"
+    },
+    "schema_publisher_text": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_spatial_coverage": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_temporal_coverage": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "white_space": {
+          "type": "text",
+          "analyzer": "whitespace"
+        }
+      }
+    },
+    "schema_thumbnail_url": {
+      "type": "keyword",
+      "index": false
+    }
+  }
+}

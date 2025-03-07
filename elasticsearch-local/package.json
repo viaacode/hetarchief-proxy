@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "init-elasticsearch": "node --experimental-strip-types init-elasticsearch.mts"
+  }
+}

@@ -4,7 +4,7 @@ import {
 	MaintenanceAlertsService,
 	TranslationsService,
 } from '@meemoo/admin-core-api';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { isPast } from 'date-fns';
 
@@ -189,46 +189,50 @@ export class NotificationsService {
 		recipients: Recipient[],
 		user: SessionUserEntity
 	): Promise<Notification[]> {
-		const newVisitRequestEmail = visitRequest.spaceMail || recipients[0]?.email;
+		try {
+			const newVisitRequestEmail = visitRequest.spaceMail || recipients[0]?.email;
 
-		const name = user.getFullName();
-		const userLanguage = user.getLanguage();
-		const [notifications] = await Promise.all([
-			this.create(
-				recipients.map((recipient) => ({
-					title: this.translationsService.tText(
-						'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken',
-						null,
-						userLanguage
-					),
-					description: this.translationsService.tText(
-						'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
+			const name = user.getFullName();
+			const userLanguage = user.getLanguage();
+			const [notifications] = await Promise.all([
+				this.create(
+					recipients.map((recipient) => ({
+						title: this.translationsService.tText(
+							'modules/notifications/services/notifications___er-is-aan-aanvraag-om-je-bezoekersruimte-te-bezoeken',
+							null,
+							userLanguage
+						),
+						description: this.translationsService.tText(
+							'modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken',
+							{
+								name,
+							},
+							userLanguage
+						),
+						visit_id: visitRequest.id,
+						type: NotificationType.NEW_VISIT_REQUEST,
+						status: NotificationStatus.UNREAD,
+						recipient: recipient.id,
+					}))
+				),
+				// important: the mail on new visit request is sent to the general email address, not to all maintainers
+				// See ARC-305
+				this.campaignMonitorService.sendForVisit({
+					to: [
 						{
-							name,
+							id: `space-${visitRequest.spaceId}`,
+							email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
+							language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
 						},
-						userLanguage
-					),
-					visit_id: visitRequest.id,
-					type: NotificationType.NEW_VISIT_REQUEST,
-					status: NotificationStatus.UNREAD,
-					recipient: recipient.id,
-				}))
-			),
-			// important: the mail on new visit request is sent to the general email address, not to all maintainers
-			// See ARC-305
-			this.campaignMonitorService.sendForVisit({
-				to: [
-					{
-						id: `space-${visitRequest.spaceId}`,
-						email: this.campaignMonitorService.getAdminEmail(newVisitRequestEmail),
-						language: Locale.Nl, // Visitor spaces are always contacted in dutch: ARC-2117
-					},
-				],
-				template: EmailTemplate.VISIT_REQUEST_CP,
-				visitRequest: visitRequest,
-			}),
-		]);
-		return notifications;
+					],
+					template: EmailTemplate.VISIT_REQUEST_CP,
+					visitRequest: visitRequest,
+				}),
+			]);
+			return notifications;
+		} catch (err) {
+			throw new HttpException('Failed to send notifications and email', 500, err);
+		}
 	}
 
 	/**

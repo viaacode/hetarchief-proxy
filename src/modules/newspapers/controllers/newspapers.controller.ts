@@ -12,11 +12,14 @@ import {
 	Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Idp } from '@viaa/avo2-types';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
 import { cloneDeep, isNil } from 'lodash';
 
+import { EventsService } from '~modules/events/services/events.service';
+import { LogEventType } from '~modules/events/types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
@@ -29,13 +32,15 @@ import {
 import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { EventsHelper } from '~shared/helpers/events';
 
 @ApiTags('Newspapers')
 @Controller('newspapers')
 export class NewspapersController {
 	constructor(
 		private ieObjectsController: IeObjectsController,
-		private newspapersService: NewspapersService
+		private newspapersService: NewspapersService,
+		private eventsService: EventsService
 	) {}
 
 	@Get(':id/export/zip')
@@ -162,6 +167,26 @@ export class NewspapersController {
 		});
 
 		await archive.finalize();
+
+		// Log event for download zip
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.DOWNLOAD,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+				data: {
+					download_type: 'zip',
+					idp: Idp.HETARCHIEF,
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
+					pid: limitedObjectMetadata.schemaIdentifier,
+					fragment_id: limitedObjectMetadata.fragmentId,
+					or_id: limitedObjectMetadata.maintainerId,
+				},
+			},
+		]);
 	}
 
 	@Get(':id/export/jpg/selection')
@@ -228,6 +253,26 @@ export class NewspapersController {
 				urlStream.pipe(res);
 			}
 		);
+
+		// Log event for download jpg selection
+		this.eventsService.insertEvents([
+			{
+				id: EventsHelper.getEventId(request),
+				type: LogEventType.DOWNLOAD,
+				source: request.path,
+				subject: user.getId(),
+				time: new Date().toISOString(),
+				data: {
+					download_type: 'jpg',
+					idp: Idp.HETARCHIEF,
+					user_group_name: user.getGroupName(),
+					user_group_id: user.getGroupId(),
+					pid: limitedObjectMetadata.schemaIdentifier,
+					fragment_id: limitedObjectMetadata.fragmentId,
+					or_id: limitedObjectMetadata.maintainerId,
+				},
+			},
+		]);
 	}
 
 	@Get('newspaper-titles')

@@ -30,7 +30,7 @@
   "modules/notifications/services/notifications___name-heeft-zelf-de-aanvraag-geannuleerd": "{{name}} heeft zelf de aanvraag geannuleerd.",
   "modules/notifications/services/notifications___name-wil-je-bezoekersruimte-bezoeken": "{{name}} wil je digitaal materiaal raadplegen.",
   "modules/notifications/services/notifications___reden-reason": "Reden: {{reason}}",
-  "modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive": "Space with slug '{{slug}}' is inactive",
+  "modules/spaces/controllers/spaces___space-with-slug-slug-is-inactive": "De ruimte met de slug '{{slug}}' is niet actief",
   "modules/spaces/controllers/spaces___space-with-slug-slug-not-found": "Space with slug '{{slug}}' not found",
   "modules/spaces/controllers/spaces___you-do-not-have-the-right-permissions-to-query-this-data": "You do not have the right permissions to query this data",
   "modules/spaces/services/spaces___a-space-already-exists-with-slug-slug": "A space already exists with slug '{{slug}}'",
