@@ -17,7 +17,7 @@ export interface Configuration {
 	COOKIE_SECRET: string;
 	COOKIE_MAX_AGE: number;
 	REDIS_CONNECTION_STRING: string;
-	ELASTIC_SEARCH_URL: string;
+	ELASTICSEARCH_URL: string;
 	SSUM_REGISTRATION_PAGE: string;
 	SAML_IDP_META_DATA_ENDPOINT: string;
 	SAML_SP_ENTITY_ID: string;

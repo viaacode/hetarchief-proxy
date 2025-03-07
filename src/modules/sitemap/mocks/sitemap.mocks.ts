@@ -36,6 +36,7 @@ export const mockContentPage: DbContentPage = {
 	publishedAt: null,
 	publishAt: null,
 	depublishAt: null,
+	publishedAtDisplay: null,
 	createdAt: '2023-04-18T09:51:27.509',
 	updatedAt: '2023-04-18T09:54:16.675',
 	isProtected: false,
