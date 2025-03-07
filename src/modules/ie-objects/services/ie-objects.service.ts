@@ -84,6 +84,7 @@ import {
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
+import { CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH } from '~modules/ie-objects/services/ie-objects.service.consts';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { type SessionUserEntity } from '~modules/users/classes/session-user';
@@ -189,14 +190,13 @@ export class IeObjectsService {
 				);
 			}
 
-			// const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
-			// const objectResponse = await this.cacheManager.wrap(
-			// 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
-			// 	() => this.executeQuery(esIndex, esQuery),
-			// 	// cache for 60 minutes
-			// 	3_600_000
-			// );
-			const objectResponse = await this.executeQuery(esIndex, esQuery);
+			const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+			const objectResponse = await this.cacheManager.wrap(
+				CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
+				() => this.executeQuery(esIndex, esQuery),
+				// cache for 60 minutes
+				3_600_000
+			);
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 				this.logger.log(
