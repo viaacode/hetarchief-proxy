@@ -441,7 +441,7 @@ export const mockUserInfo: Readonly<{
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockIeObject2: Readonly<IeObjectDetailResponseTypes> = [
+export const mockIeObject2: IeObjectDetailResponseTypes = [
 	{
 		graph_intellectual_entity: [
 			{
@@ -487,7 +487,87 @@ export const mockIeObject2: Readonly<IeObjectDetailResponseTypes> = [
 	{
 		isPartOf: [
 			{
-				isPartOf: null,
+				isPartOf: {
+					schema_identifier: '0000097w0q',
+					id: 'https://data-qas.hetarchief.be/id/entity/0000097w0q',
+					schema_is_part_of: null,
+					schema_duration: null,
+					schema_number_of_pages: 4,
+					schema_position: null,
+					schema_date_published: '1892-09-09',
+					dcterms_available: null,
+					schema_name: 'Gazet van Antwerpen - 1892-09-09',
+					schema_description: null,
+					schema_creator: null,
+					dcterms_format: 'newspaper',
+					dcterms_medium: null,
+					schema_thumbnail_url: null,
+					schema_license: [
+						'BEZOEKERTOOL-CONTENT',
+						'BEZOEKERTOOL-METADATA-ALL',
+						'VIAA-INTRA_CP-CONTENT',
+						'VIAA-PUBLIEK-METADATA-LTD',
+						'VIAA-INTRA_CP-METADATA-ALL',
+					],
+					schema_date_created: '1892-09-09',
+					meemoo_local_id: ['gva_18920909'],
+					premis_is_part_of: null,
+					bibframe_edition: 'test-parent-bibframe_edition',
+					schemaMaintainer: {
+						org_identifier: 'OR-v97zq9j',
+						skos_pref_label: 'Erfgoedbibliotheek Hendrik Conscience',
+						skos_alt_label: 'erfgoedbibliotheek-hendrik-conscience',
+						ha_org_has_logo: 'https://assets-qas.viaa.be/images/OR-v97zq9j',
+						ha_org_request_form: null,
+						dcterms_description:
+							'Erfgoedbibliotheek Hendrik Conscience is de bibliotheek voor Nederlandse taal, cultuur en geschiedenis van Vlaanderen.',
+						ha_org_sector: 'Cultuur',
+						foaf_homepage: 'http://www.consciencebibliotheek.be',
+						hasPreference: [
+							{
+								ha_pref: 'visitor-space-publication',
+							},
+							{
+								ha_pref: 'logo-embedding',
+							},
+						],
+					},
+					schemaInLanguage: null,
+					schemaKeywords: null,
+					premisIdentifier: {
+						premis_identifier: [
+							{
+								'MEEMOO-PID': '0000097w0q',
+							},
+							{
+								primary: 'gva_18920909',
+							},
+						],
+					},
+					schemaGenre: {
+						schema_genre: ['serieel'],
+					},
+					schemaSpatial: null,
+					schemaPublisher: null,
+					schemaTemporal: null,
+					schemaCopyrightHolder: [],
+					intellectualEntity: {
+						schema_issue_number: null,
+						mhFragmentIdentifier: [
+							{
+								mh_fragment_identifier:
+									'71196954be3341e485bc37d5e56470871d138c7ff08d488cb9b55547ca21689203186ba7317b49bd97b6be0fda420f8a',
+							},
+						],
+						schema_credit_text: null,
+						schema_copyright_notice: null,
+						hasCarrier: null,
+						schema_abstract: null,
+						schemaAlternateName: [],
+						bibframe_edition: null,
+						ebucore_synopsis: null,
+					},
+				},
 			},
 		],
 	},

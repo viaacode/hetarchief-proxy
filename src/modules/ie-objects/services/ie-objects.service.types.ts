@@ -52,6 +52,33 @@ export type IeObjectDetailResponseTypes = [
 	GetIsRepresentedByQuery,
 ];
 
+export enum IeObjectDetailResponseIndex {
+	IeObject = 0,
+	DctermsFormat = 1,
+	IsPartOf = 2,
+	HasCarrier = 3,
+	MeemooLocalId = 4,
+	PremisIdentifier = 5,
+	MhFragmentIdentifier = 6,
+	ParentCollection = 7,
+	SchemaAlternateName = 8,
+	SchemaCopyrightHolder = 9,
+	SchemaCreator = 10,
+	SchemaDuration = 11,
+	SchemaGenre = 12,
+	SchemaInLanguage = 13,
+	SchemaIsPartOf = 14,
+	SchemaKeywords = 15,
+	SchemaLicense = 16,
+	SchemaMedium = 17,
+	SchemaPublisher = 18,
+	SchemaSpatial = 19,
+	SchemaTemporal = 20,
+	SchemaThumbnailUrl = 21,
+	HasPart = 22,
+	IsRepresentedBy = 23,
+}
+
 export type DbIeObjectWithRepresentations =
 	| GetIsRepresentedByQuery['graph__intellectual_entity'][0]
 	| GetHasPartQuery['graph__intellectual_entity'][0]['hasPart'][0];

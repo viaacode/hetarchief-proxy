@@ -248,12 +248,11 @@ export class FoldersController {
 		);
 
 		// Log event
-		const ieObjects = await this.ieObjectsService.findByIeObjectId(
+		const ieObject = await this.ieObjectsService.findByIeObjectId(
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
 			getIpFromRequest(request)
 		);
-		const ieObject = ieObjects[0];
 		this.eventsService.insertEvents([
 			{
 				id: EventsHelper.getEventId(request),

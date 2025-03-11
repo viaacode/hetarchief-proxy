@@ -92,6 +92,7 @@ import {
 	type DbIeObjectWithMentions,
 	type DbIeObjectWithRepresentations,
 	type DbRepresentation,
+	IeObjectDetailResponseIndex,
 	type IeObjectDetailResponseTypes,
 } from '~modules/ie-objects/services/ie-objects.service.types';
 import { OrganisationPreference } from '~modules/organisations/organisations.types';
@@ -436,7 +437,17 @@ export class IeObjectsService {
 			})
 		)) as IeObjectDetailResponseTypes;
 
-		return this.adaptFromDB(responses, referer, ip);
+		// Get parent ieObject if it exists
+		const parentIeObjectId = (
+			responses[IeObjectDetailResponseIndex.IsPartOf] as GetIsPartOfQuery
+		)?.isPartOf?.[0]?.isPartOf?.id;
+		let parentIeObject: Partial<IeObject> | null = null;
+		if (parentIeObjectId) {
+			parentIeObject = await this.findByIeObjectId(parentIeObjectId, referer, ip);
+		}
+
+		const ieObject = await this.adaptFromDB(responses, parentIeObject, referer, ip);
+		return ieObject;
 	}
 
 	/**
@@ -447,7 +458,7 @@ export class IeObjectsService {
 		ip: string
 	): Promise<Partial<IeObject>> {
 		const object = await this.findByIeObjectId(ieObjectId, null, ip);
-		return this.adaptMetadata(object[0]);
+		return this.adaptMetadata(object);
 	}
 
 	/**
@@ -504,6 +515,7 @@ export class IeObjectsService {
 
 	public async adaptFromDB(
 		ieObjectResponseList: IeObjectDetailResponseTypes,
+		parentIeObject: Partial<IeObject> | null,
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
@@ -535,10 +547,10 @@ export class IeObjectsService {
 			hasPartResponse,
 			isRepresentedByResponse,
 		] = ieObjectResponseList;
-		const pageRepresentations: IeObjectPageRepresentation[] = this.adaptRepresentations(
-			isRepresentedByResponse,
-			hasPartResponse
-		);
+
+		if (!ieObjectResponse) {
+			return null;
+		}
 
 		const ie = ieObjectResponse.graph_intellectual_entity?.[0];
 
@@ -548,7 +560,6 @@ export class IeObjectsService {
 		}
 
 		const schemaMaintainer = ie?.schemaMaintainer;
-		const parent = this.adaptParentFromDB(isPartOfResponse?.isPartOf?.[0]?.isPartOf?.[0]);
 		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]
 			?.dcterms_format as IeObjectType;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
@@ -556,6 +567,10 @@ export class IeObjectsService {
 			| Record<string, string>
 			| { abraham_id: string; abraham_uri: string; code_number: string }
 		)[];
+		const pageRepresentations: IeObjectPageRepresentation[] = this.adaptRepresentations(
+			isRepresentedByResponse,
+			hasPartResponse
+		);
 
 		const ieObject: IeObject = {
 			schemaIdentifier: ie?.schema_identifier,
@@ -703,33 +718,8 @@ export class IeObjectsService {
 		};
 
 		return {
-			...omitBy(parent, (value) => isNil(value) || value === ''),
+			...omitBy(parentIeObject || {}, (value) => isNil(value) || value === ''),
 			...omitBy(ieObject, (value) => isNil(value) || value === ''),
-		};
-	}
-
-	public adaptParentFromDB(
-		parentIeObject: GetIsPartOfQuery['isPartOf'][0]['isPartOf'] | undefined
-	): Partial<IeObject> {
-		if (!parentIeObject) {
-			return {};
-		}
-		return {
-			schemaIdentifier: parentIeObject?.schema_identifier,
-			iri: parentIeObject?.id,
-			dctermsAvailable: parentIeObject?.dcterms_available,
-			dctermsFormat: parentIeObject?.dcterms_format as IeObjectType,
-			dateCreated: parentIeObject?.schema_date_created,
-			datePublished: parentIeObject?.schema_date_published,
-			description: parentIeObject?.schema_description,
-			duration: parentIeObject?.schema_duration,
-			licenses: parentIeObject?.schema_license,
-			maintainerId: parentIeObject?.schemaMaintainer?.org_identifier,
-			maintainerName: parentIeObject?.schemaMaintainer?.skos_pref_label,
-			maintainerSlug: parentIeObject?.schemaMaintainer?.skos_alt_label,
-			sector: parentIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
-			name: parentIeObject?.schema_name,
-			thumbnailUrl: parentIeObject?.schema_thumbnail_url?.[0],
 		};
 	}
 
@@ -948,11 +938,12 @@ export class IeObjectsService {
 				);
 				// Avoid returning empty array representations
 				if (representations.length) {
+					const mentions = this.adaptMentions(
+						(part as DbIeObjectWithMentions).schemaMentions || []
+					);
 					return {
 						representations,
-						mentions: this.adaptMentions(
-							(part as DbIeObjectWithMentions).schemaMentions || []
-						),
+						mentions: mentions.length ? mentions : undefined,
 					};
 				}
 				return null;

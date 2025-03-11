@@ -195,7 +195,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -212,7 +212,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			try {
 				await ieObjectsController.getIeObjectById(
@@ -257,7 +257,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -277,7 +277,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -294,7 +294,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				license: [],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -315,7 +315,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -335,7 +335,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -355,7 +355,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',

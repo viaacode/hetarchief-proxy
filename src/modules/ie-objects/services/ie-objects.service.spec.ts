@@ -27,7 +27,10 @@ import {
 import { IeObjectsService } from './ie-objects.service';
 
 import { type FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
-import type { IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
+import {
+	IeObjectDetailResponseIndex,
+	type IeObjectDetailResponseTypes,
+} from '~modules/ie-objects/services/ie-objects.service.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -78,8 +81,10 @@ const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 	wrap: jest.fn().mockImplementation((key, cb) => cb()),
 };
 
-const mockObjectSchemaIdentifier = mockIeObject2[0].graph_intellectual_entity[0].schema_identifier;
-const mockObjectId = mockIeObject2[0].graph_intellectual_entity[0].id;
+const mockIeObject2Metadata =
+	mockIeObject2[IeObjectDetailResponseIndex.IeObject].graph_intellectual_entity[0];
+const mockObjectSchemaIdentifier = mockIeObject2Metadata.schema_identifier;
+const mockObjectId = mockIeObject2Metadata.id;
 
 describe('ieObjectsService', () => {
 	let ieObjectsService: IeObjectsService;
@@ -169,9 +174,11 @@ describe('ieObjectsService', () => {
 
 	describe('findMetadataBySchemaIdentifier', () => {
 		it('returns the metadata object details', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
+			const mockFindByIeObjectIdFunc = jest.fn();
+			mockFindByIeObjectIdFunc.mockResolvedValueOnce(mockIeObject1);
+			ieObjectsService.findByIeObjectId = mockFindByIeObjectIdFunc;
 			const response = await ieObjectsService.findMetadataByIeObjectId(mockObjectId, '');
-			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			expect(response.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(response.pageRepresentations).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
 		});
@@ -179,41 +186,94 @@ describe('ieObjectsService', () => {
 
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
-			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
-			const ieObject = ieObjects[0];
+			// Mock the ie object
+			mockIeObject2.forEach((mockObject2Response) => {
+				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
+			});
+
+			// Mock the parent object
+			const mockParentIeObject = cloneDeep(mockIeObject2);
+			mockParentIeObject[
+				IeObjectDetailResponseIndex.IeObject
+			].graph_intellectual_entity[0].bibframe_edition = 'test_bibframe_edition';
+			mockParentIeObject[IeObjectDetailResponseIndex.IsPartOf] = {
+				isPartOf: [],
+			};
+			mockParentIeObject.forEach((mockParentIeObjectResponse) => {
+				mockDataService.execute.mockResolvedValueOnce(mockParentIeObjectResponse);
+			});
+
+			// Fetch the object
+			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+
+			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
-			expect(ieObject.copyrightHolder).toEqual('vrt');
-			expect(ieObject.keywords?.length || 0).toEqual(3);
+			expect(ieObject.maintainerId).toEqual(
+				mockIeObject2Metadata.schemaMaintainer.org_identifier
+			);
+			expect(ieObject.copyrightHolder).toEqual(
+				mockIeObject2[
+					IeObjectDetailResponseIndex.SchemaCopyrightHolder
+				].schemaCopyrightHolder
+					.map((item) => item.schema_copyright_holder)
+					.join(', ') || undefined
+			);
+			expect(ieObject.keywords?.length || 0).toEqual(
+				mockIeObject2[IeObjectDetailResponseIndex.SchemaKeywords].schemaKeywords.length
+			);
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
 			expect(ieObject.bibframeEdition).toEqual(
-				mockIeObject2[2].isPartOf[0].isPartOf.bibframe_edition
+				mockParentIeObject[IeObjectDetailResponseIndex.IeObject]
+					.graph_intellectual_entity[0].bibframe_edition
 			);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock[23].graph__intellectual_entity[0].isRepresentedBy = [];
-			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
-			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			// set representations of object to empty array
+			objectIeMock[
+				IeObjectDetailResponseIndex.IsRepresentedBy
+			].graph__intellectual_entity[0].isRepresentedBy = [];
+			// set representations of child objects to empty array
+			objectIeMock[
+				IeObjectDetailResponseIndex.HasPart
+			].graph__intellectual_entity[0].hasPart[0].isRepresentedBy = [];
 
-			const ieObject = ieObjects[0];
-			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
+			mockDataService.execute.mockReset();
+			objectIeMock.forEach((mockObject2Response) => {
+				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
+			});
+
+			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+
+			expect(ieObject.schemaIdentifier).toEqual(mockIeObject2Metadata.schema_identifier);
 			expect(ieObject.pageRepresentations).toEqual([]);
 		});
 
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock[23].graph__intellectual_entity[0].isRepresentedBy[0].includes = [];
-			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
+			objectIeMock[IeObjectDetailResponseIndex.HasPart].graph__intellectual_entity[0] = {
+				hasPart: [],
+			};
+			objectIeMock[
+				IeObjectDetailResponseIndex.IsRepresentedBy
+			].graph__intellectual_entity[0] = {
+				isRepresentedBy: [
+					{
+						...(objectIeMock[IeObjectDetailResponseIndex.IsRepresentedBy]
+							.graph__intellectual_entity[0]?.isRepresentedBy || {}),
+						includes: [],
+					},
+				],
+			};
+			objectIeMock.forEach((mockObject2Response) => {
+				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
+			});
 
-			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
 
-			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.pageRepresentations[0].representations[0].files).toEqual([]);
 		});
