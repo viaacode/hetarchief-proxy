@@ -123,12 +123,11 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const ieObjects = await this.ieObjectsService.findByIeObjectId(
+		const ieObject = await this.ieObjectsService.findByIeObjectId(
 			convertSchemaIdentifierToId(id),
 			referer,
 			getIpFromRequest(request)
 		);
-		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[
@@ -527,28 +526,28 @@ export class IeObjectsController {
 
 	/**
 	 * Get ie object by their id
-	 * @param id ie object id. eg: https://data.hetarchief.be/id/entity/086348mc8s
+	 * @param schemaIdentifier ie object id. eg: https://data.hetarchief.be/id/entity/086348mc8s
 	 * @param referer
 	 * @param request
 	 * @param user
 	 */
 	@Get(':id')
 	public async getIeObjectById(
-		@Param('id') id: string,
+		@Param('id') schemaIdentifier: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
 		const ieObject: Partial<IeObject> | null = await this.ieObjectsService.findByIeObjectId(
-			id,
+			convertSchemaIdentifierToId(schemaIdentifier),
 			referer,
 			getIpFromRequest(request)
 		);
 
 		if (!ieObject) {
 			throw new NotFoundException(
-				customError('Object not found by their id', null, {
-					id,
+				customError('Object not found by their schemaIdentifier', null, {
+					schemaIdentifier,
 				})
 			);
 		}

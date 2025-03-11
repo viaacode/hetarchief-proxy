@@ -10,5 +10,5 @@
  * @deprecated Avoid using this function. If the ieObjectId is available, use that.
  */
 export function convertSchemaIdentifierToId(schemaIdentifier: string): string {
-	return `https://data.hetarchief.be/id/entity/${schemaIdentifier}`;
+	return `${process.env.IE_OBJECT_ID_PREFIX}/${schemaIdentifier}`;
 }

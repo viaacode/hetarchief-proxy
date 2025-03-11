@@ -101,6 +101,9 @@ import { GroupName } from '~modules/users/types';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
+import { checkRequiredEnvs } from '~shared/helpers/env-check';
+
+checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
 @Injectable()
 export class IeObjectsService {
@@ -427,9 +430,10 @@ export class IeObjectsService {
 			ieObjectId: objectId,
 		};
 		const responses = (await Promise.all(
-			IE_OBJECT_DETAIL_QUERIES.map((document) =>
-				this.dataService.execute(document, variables)
-			)
+			IE_OBJECT_DETAIL_QUERIES.map(async (document) => {
+				const response = await this.dataService.execute(document, variables);
+				return response;
+			})
 		)) as IeObjectDetailResponseTypes;
 
 		return this.adaptFromDB(responses, referer, ip);
@@ -544,10 +548,7 @@ export class IeObjectsService {
 		}
 
 		const schemaMaintainer = ie?.schemaMaintainer;
-		let parent = {};
-		if (isPartOfResponse) {
-			parent = this.adaptParentFromDB(isPartOfResponse?.isPartOf[0].isPartOf[0]);
-		}
+		const parent = this.adaptParentFromDB(isPartOfResponse?.isPartOf?.[0]?.isPartOf?.[0]);
 		const dctermsFormat = dctermsFormatResponse.dctermsFormat[0]
 			?.dcterms_format as IeObjectType;
 		const premisIdentifiers = isPartOfResponse?.isPartOf?.[0]?.isPartOf?.premisIdentifier
@@ -573,13 +574,13 @@ export class IeObjectsService {
 			) as IeObjectLicense[],
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo: {
-				id: premisIdentifiers.find(
+				id: premisIdentifiers?.find(
 					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_id'
 				)?.abraham_id,
-				uri: premisIdentifiers.find(
+				uri: premisIdentifiers?.find(
 					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_uri'
 				)?.abraham_uri,
-				code: premisIdentifiers.find(
+				code: premisIdentifiers?.find(
 					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'code_number'
 				)?.code_number,
 			},
@@ -708,8 +709,11 @@ export class IeObjectsService {
 	}
 
 	public adaptParentFromDB(
-		parentIeObject: GetIsPartOfQuery['isPartOf'][0]['isPartOf']
+		parentIeObject: GetIsPartOfQuery['isPartOf'][0]['isPartOf'] | undefined
 	): Partial<IeObject> {
+		if (!parentIeObject) {
+			return {};
+		}
 		return {
 			schemaIdentifier: parentIeObject?.schema_identifier,
 			iri: parentIeObject?.id,
@@ -904,8 +908,11 @@ export class IeObjectsService {
 		hasPartResponse: GetHasPartQuery
 	): IeObjectPageRepresentation[] {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
-		const ieObjectParts = hasPartResponse?.graph__intellectual_entity[0]?.hasPart;
-		const ieObjects = [ieObjectSelf, ...ieObjectParts] as DbIeObjectWithRepresentations[];
+		const ieObjectParts = hasPartResponse?.graph__intellectual_entity[0]?.hasPart || [];
+		const ieObjects = compact([
+			ieObjectSelf,
+			...ieObjectParts,
+		]) as DbIeObjectWithRepresentations[];
 
 		if (isEmpty(ieObjects)) {
 			return [];

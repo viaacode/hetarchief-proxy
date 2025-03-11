@@ -17,6 +17,7 @@ import {
 	mockIeObject1,
 	mockIeObject2,
 	mockIeObjectDefaultLimitedMetadata,
+	mockIeObjectEmpty,
 	mockIeObjectLimitedInFolder,
 	mockParentIeObject,
 	mockSitemapObject,
@@ -26,6 +27,7 @@ import {
 import { IeObjectsService } from './ie-objects.service';
 
 import { type FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
+import type { IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -76,8 +78,8 @@ const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 	wrap: jest.fn().mockImplementation((key, cb) => cb()),
 };
 
-const mockObjectSchemaIdentifier = mockIeObject2.graph__intellectual_entity[0].schema_identifier;
-const mockObjectId = mockIeObject2.graph__intellectual_entity[0].id;
+const mockObjectSchemaIdentifier = mockIeObject2[0].graph_intellectual_entity[0].schema_identifier;
+const mockObjectId = mockIeObject2[0].graph_intellectual_entity[0].id;
 
 describe('ieObjectsService', () => {
 	let ieObjectsService: IeObjectsService;
@@ -187,14 +189,13 @@ describe('ieObjectsService', () => {
 
 			// Check parent ie and current ie info is merged: https://meemoo.atlassian.net/browse/ARC-2135
 			expect(ieObject.bibframeEdition).toEqual(
-				mockIeObject2.graph__intellectual_entity[0].isPartOf.intellectualEntity
-					.bibframe_edition
+				mockIeObject2[2].isPartOf[0].isPartOf.bibframe_edition
 			);
 		});
 
 		it('returns an empty array if no representations were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock.graph__intellectual_entity[0].isRepresentedBy = [];
+			objectIeMock[23].graph__intellectual_entity[0].isRepresentedBy = [];
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
@@ -207,7 +208,7 @@ describe('ieObjectsService', () => {
 
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock.graph__intellectual_entity[0].isRepresentedBy[0].includes = [];
+			objectIeMock[23].graph__intellectual_entity[0].isRepresentedBy[0].includes = [];
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
 			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
@@ -218,13 +219,11 @@ describe('ieObjectsService', () => {
 		});
 
 		it('throws an error when no objects were found', async () => {
-			const mockData: GetObjectDetailBySchemaIdentifiersQuery = {
-				graph__intellectual_entity: [],
-			};
+			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObjects = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '');
-			expect(ieObjects).toEqual([]);
+			const ieObject = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '');
+			expect(ieObject).toEqual(null);
 		});
 	});
 

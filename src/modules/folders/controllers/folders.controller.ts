@@ -29,6 +29,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
 import { CreateOrUpdateFolderDto, FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
 import { FoldersService } from '~modules/folders/services/folders.service';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObject, IeObjectLicense } from '~modules/ie-objects/ie-objects.types';
 import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
@@ -248,7 +249,7 @@ export class FoldersController {
 
 		// Log event
 		const ieObjects = await this.ieObjectsService.findByIeObjectId(
-			[objectSchemaIdentifier],
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
 			getIpFromRequest(request)
 		);
