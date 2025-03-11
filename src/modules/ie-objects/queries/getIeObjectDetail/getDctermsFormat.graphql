@@ -1,0 +1,5 @@
+query getDctermsFormat($ieObjectId: String!) {
+	dctermsFormat: graph__dcterms_format(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		dcterms_format
+	}
+}

@@ -1,0 +1,34 @@
+query getIeObject($ieObjectId: String!) {
+	graph_intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		schema_identifier
+		id
+		schema_position
+		schema_date_published
+		dcterms_available
+		schema_name
+		schema_description
+		schema_date_created
+		ebucore_has_cast_member
+		schema_issue_number
+		schema_credit_text
+		schema_copyright_notice
+		schema_abstract
+		bibframe_edition
+		ebucore_synopsis
+		schema_number_of_pages: ha_des_number_of_pages
+		premis_is_part_of: relation_is_part_of
+		schemaMaintainer {
+			org_identifier
+			skos_pref_label
+			ha_org_has_logo
+			ha_org_request_form
+			dcterms_description
+			ha_org_sector
+			foaf_homepage
+			skos_alt_label
+			hasPreference {
+				ha_pref
+			}
+		}
+	}
+}

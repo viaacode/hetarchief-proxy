@@ -1,0 +1,5 @@
+query getPremisIdentifier($ieObjectId: String!) {
+	graph__premis_identifier(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		premis_identifier
+	}
+}

@@ -1,0 +1,10 @@
+query getHasCarrier($ieObjectId: String!) {
+	graph_carrier(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		premis_medium
+		schema_width
+		schema_height
+		bibframe_production_method
+		created_at
+		digitization_date
+	}
+}

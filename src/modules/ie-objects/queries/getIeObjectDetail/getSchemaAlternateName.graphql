@@ -1,0 +1,7 @@
+query getSchemaAlternateName($ieObjectId: String!) {
+	ieObject_schemaAlternateName: graph_schema_alternate_name(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_alternate_name
+	}
+}

@@ -115,7 +115,7 @@ const mockRequest = { path: '/folders', headers: {} } as unknown as Request;
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAllIeObjectMetadataByFolderId: jest.fn(),
-	findBySchemaIdentifiers: jest.fn(),
+	findByIeObjectId: jest.fn(),
 	getVisitorSpaceAccessInfoFromUser: jest.fn(),
 	limitObjectInFolder: jest.fn((folderObjectItem: Partial<IeObject>) => folderObjectItem),
 };
@@ -284,7 +284,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(
 				mockFoldersResponse.items[0]
 			);
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValue([mockIeObject1]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
 			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,
 				'referer',
@@ -303,7 +303,7 @@ describe('FoldersController', () => {
 				...mockFoldersResponse.items[0],
 				userProfileId: 'other-profile-id',
 			});
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce([
 				mockFoldersResponse.items[0],
 			]);
 

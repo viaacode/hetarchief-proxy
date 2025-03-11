@@ -1,0 +1,23 @@
+query getParentCollection($ieObjectId: String!) {
+	parentCollection: graph_schema_is_part_of(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		collection {
+			id
+			schema_identifier
+			schema_name
+			collection_type
+			isPreceededBy {
+				schema_name
+			}
+			isSucceededBy {
+				schema_name
+			}
+			schema_location_created
+			schema_start_date
+			schema_end_date
+			schema_publisher
+			schema_season_number
+		}
+	}
+}

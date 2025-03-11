@@ -51,8 +51,8 @@ const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> 
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
-	findBySchemaIdentifiers: jest.fn(),
-	findMetadataBySchemaIdentifier: jest.fn(),
+	findByIeObjectId: jest.fn(),
+	findMetadataByIeObjectId: jest.fn(),
 	getParentIeObject: jest.fn(),
 	getChildIeObjects: jest.fn(),
 	getSimilar: jest.fn(),
@@ -195,7 +195,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				license: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -212,7 +212,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			try {
 				await ieObjectsController.getIeObjectById(
@@ -229,7 +229,7 @@ describe('IeObjectsController', () => {
 		});
 
 		it('should throw a not found exception if the object does not exist', async () => {
-			mockIeObjectsService.findBySchemaIdentifiers.mockRejectedValueOnce(
+			mockIeObjectsService.findByIeObjectId.mockRejectedValueOnce(
 				new NotFoundException(
 					`Object IE with id '${mockIeObject1.schemaIdentifier}' not found`
 				)
@@ -257,7 +257,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -277,7 +277,7 @@ describe('IeObjectsController', () => {
 				license: [IeObjectLicense.BEZOEKERTOOL_METADATA_ALL],
 				representations: [{ name: 'test' }],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -294,7 +294,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				license: [],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const ieObject = await ieObjectsController.getIeObjectById(
 				'1',
@@ -315,7 +315,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_LTD],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -335,7 +335,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.PUBLIEK_METADATA_ALL],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -355,7 +355,7 @@ describe('IeObjectsController', () => {
 				...mockIeObject1,
 				licenses: [IeObjectLicense.BEZOEKERTOOL_CONTENT],
 			};
-			mockIeObjectsService.findBySchemaIdentifiers.mockResolvedValueOnce([mockResponse]);
+			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
@@ -373,9 +373,7 @@ describe('IeObjectsController', () => {
 
 	describe('exportXml', () => {
 		it('should export an ieObject item as xml', async () => {
-			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(
-				mockIeObject1
-			);
+			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
@@ -396,9 +394,7 @@ describe('IeObjectsController', () => {
 
 	describe('exportCsv', () => {
 		it('should export an ieObject item as csv', async () => {
-			mockIeObjectsService.findMetadataBySchemaIdentifier.mockResolvedValueOnce(
-				mockIeObject1
-			);
+			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 

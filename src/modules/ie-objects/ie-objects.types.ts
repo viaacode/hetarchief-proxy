@@ -1,10 +1,6 @@
 import { type IPagination } from '@studiohyperdrive/pagination';
 
-import {
-	type FindAllIeObjectsByFolderIdQuery,
-	type GetObjectDetailBySchemaIdentifiersQuery,
-} from '~generated/graphql-db-types-hetarchief';
-import { type IeObjectsSearchFilterField } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { type FindAllIeObjectsByFolderIdQuery } from '~generated/graphql-db-types-hetarchief';
 
 export type IeObjectSectorLicenseMatrix = Readonly<
 	Record<IeObjectSector, Readonly<IeObjectLicense[]>>
@@ -341,19 +337,6 @@ export interface IeObjectsSitemap {
 export interface NewspaperTitle {
 	title: string;
 }
-
-export type FilterOptions = {
-	[IeObjectsSearchFilterField.OBJECT_TYPE]: string[];
-	[IeObjectsSearchFilterField.LANGUAGE]: string[];
-	[IeObjectsSearchFilterField.MEDIUM]: string[];
-	[IeObjectsSearchFilterField.GENRE]: string[];
-	[IeObjectsSearchFilterField.MAINTAINER_ID]: {
-		id: string;
-		name: string;
-	}[];
-};
-
-export type GqlIeObject = GetObjectDetailBySchemaIdentifiersQuery['graph__intellectual_entity'][0];
 
 export type RelatedIeObject = Pick<
 	IeObject,

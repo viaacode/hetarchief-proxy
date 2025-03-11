@@ -1,0 +1,7 @@
+query getSchemaInLanguage($ieObjectId: String!) {
+	schemaInLanguage: graph_schema_in_language(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_in_language
+	}
+}

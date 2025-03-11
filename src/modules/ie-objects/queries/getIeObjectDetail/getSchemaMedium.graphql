@@ -1,0 +1,5 @@
+query getSchemaMedium($ieObjectId: String!) {
+	schemaMedium: graph__premis_medium(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		premis_medium
+	}
+}
