@@ -1,0 +1,5 @@
+query getMhFragmentIdentifier($ieObjectId: String!) {
+	graph_mh_fragment_identifier(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		mh_fragment_identifier
+	}
+}

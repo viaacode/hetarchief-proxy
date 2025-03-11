@@ -247,7 +247,7 @@ export class FoldersController {
 		);
 
 		// Log event
-		const ieObjects = await this.ieObjectsService.findBySchemaIdentifiers(
+		const ieObjects = await this.ieObjectsService.findByIeObjectId(
 			[objectSchemaIdentifier],
 			referer,
 			getIpFromRequest(request)

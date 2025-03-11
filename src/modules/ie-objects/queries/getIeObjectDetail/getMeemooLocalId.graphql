@@ -1,0 +1,7 @@
+query getMeemooLocalId($ieObjectId: String!) {
+	meemooLocalId: graph_premis_identifier(
+		where: { intellectual_entity_id: { _eq: $ieObjectId }, type: { _eq: "primary" } }
+	) {
+		meemoo_local_id: value
+	}
+}

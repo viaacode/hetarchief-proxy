@@ -25,10 +25,7 @@ import {
 
 import { IeObjectsService } from './ie-objects.service';
 
-import {
-	type FindIeObjectsForSitemapQuery,
-	type GetObjectDetailBySchemaIdentifiersQuery,
-} from '~generated/graphql-db-types-hetarchief';
+import { type FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
 import { SpacesService } from '~modules/spaces/services/spaces.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupId, GroupName } from '~modules/users/types';
@@ -80,6 +77,7 @@ const mockCacheService: Partial<Record<keyof Cache, jest.SpyInstance>> = {
 };
 
 const mockObjectSchemaIdentifier = mockIeObject2.graph__intellectual_entity[0].schema_identifier;
+const mockObjectId = mockIeObject2.graph__intellectual_entity[0].id;
 
 describe('ieObjectsService', () => {
 	let ieObjectsService: IeObjectsService;
@@ -170,10 +168,7 @@ describe('ieObjectsService', () => {
 	describe('findMetadataBySchemaIdentifier', () => {
 		it('returns the metadata object details', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const response = await ieObjectsService.findMetadataBySchemaIdentifier(
-				mockObjectSchemaIdentifier,
-				''
-			);
+			const response = await ieObjectsService.findMetadataByIeObjectId(mockObjectId, '');
 			expect(response.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(response.pageRepresentations).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
@@ -183,11 +178,7 @@ describe('ieObjectsService', () => {
 	describe('findBySchemaIdentifier', () => {
 		it('returns the full object details as retrieved from the DB', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockIeObject2);
-			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				[mockObjectSchemaIdentifier],
-				'referer',
-				''
-			);
+			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.maintainerId).toEqual('OR-rf5kf25');
@@ -207,11 +198,7 @@ describe('ieObjectsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				[mockObjectSchemaIdentifier],
-				'referer',
-				''
-			);
+			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
 
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
@@ -223,11 +210,7 @@ describe('ieObjectsService', () => {
 			objectIeMock.graph__intellectual_entity[0].isRepresentedBy[0].includes = [];
 			mockDataService.execute.mockResolvedValueOnce(objectIeMock);
 
-			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				[mockObjectSchemaIdentifier],
-				'referer',
-				''
-			);
+			const ieObjects = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
 
 			const ieObject = ieObjects[0];
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
@@ -240,11 +223,7 @@ describe('ieObjectsService', () => {
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObjects = await ieObjectsService.findBySchemaIdentifiers(
-				['invalidId'],
-				'referer',
-				''
-			);
+			const ieObjects = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '');
 			expect(ieObjects).toEqual([]);
 		});
 	});
