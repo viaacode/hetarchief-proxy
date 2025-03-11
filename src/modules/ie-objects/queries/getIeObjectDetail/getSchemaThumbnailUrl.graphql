@@ -1,0 +1,7 @@
+query getSchemaThumbnailUrl($ieObjectId: String!) {
+	schemaThumbnailUrl: graph__schema_thumbnail_url(
+		where: { intellectual_entity_id: { _eq: $ieObjectId } }
+	) {
+		schema_thumbnail_url
+	}
+}

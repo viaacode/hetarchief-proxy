@@ -14,10 +14,9 @@ import {
 	type FindAllIeObjectsByFolderIdQuery,
 	type FindIeObjectsForSitemapQuery,
 	type GetChildIeObjectsQuery,
-	type GetObjectDetailBySchemaIdentifiersQuery,
 	type GetParentIeObjectQuery,
 } from '~generated/graphql-db-types-hetarchief';
-import { OrganisationPreference } from '~modules/organisations/organisations.types';
+import { type IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
 import { Locale } from '~shared/types/types';
 
@@ -442,189 +441,433 @@ export const mockUserInfo: Readonly<{
 	accessibleVisitorSpaceIds: ['OR-rf5kf25'],
 };
 
-export const mockIeObject2: Readonly<GetObjectDetailBySchemaIdentifiersQuery> = {
-	graph__intellectual_entity: [
-		{
-			schema_identifier: '8911p09j1g',
-			id: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
-			premis_is_part_of: 'https://data-int.hetarchief.be/id/entity/9999999999',
-			schema_is_part_of: {
-				newspaper: 'Het annoncenblad van Moll en omliggende dorpen',
-			},
-			schema_number_of_pages: null,
-			schema_date_published: '1911-10-21',
-			dcterms_available: '2020-08-28T11:48:11',
-			schema_license: [
-				'VIAA-PUBLIEK-METADATA-ALL',
-				'VIAA-PUBLIEK-CONTENT',
-				'VIAA-INTRA_CP-CONTENT',
-				'VIAA-INTRA_CP-METADATA-ALL',
-			],
-			meemoo_local_id: null,
-			parentCollection: [
-				{
-					collection: {
-						id: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
-						schema_identifier: '4f1mg9x363',
-						schema_name: 'Het annoncenblad van Moll en omliggende dorpen',
-						isPreceededBy: [],
-						isSucceededBy: [],
-					},
-				},
-			],
-			schemaCopyrightHolder: [{ schema_copyright_holder: 'vrt' }],
-			isPartOf: {
-				schema_identifier: '8911p09j1g',
-				id: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',
-				premis_is_part_of: 'https://data-int.hetarchief.be/id/entity/9999999999',
-				schema_is_part_of: {
-					newspaper: 'Het annoncenblad van Moll en omliggende dorpen',
-				},
-				schema_number_of_pages: null,
-				schema_date_published: '1911-10-21',
-				dcterms_available: '2020-08-28T11:48:11',
-				schema_license: [
-					'VIAA-PUBLIEK-METADATA-ALL',
-					'VIAA-PUBLIEK-CONTENT',
-					'VIAA-INTRA_CP-CONTENT',
-					'VIAA-INTRA_CP-METADATA-ALL',
-				],
-				meemoo_local_id: null,
-				schemaInLanguage: {
-					schema_in_language: ['nl'],
-				},
-				schemaKeywords: null,
-				intellectualEntity: {
-					schema_issue_number: null,
-					mhFragmentIdentifier: [
-						{
-							mh_fragment_identifier:
-								'f424cc6e69c748ba96e34f2034f6695870032919df9342998a58d7c9ece79a63f8e6e3a24d964ea596b1f0198700ffd7',
-						},
-					],
-					schema_credit_text: null,
-					schema_copyright_notice: null,
-					hasCarrier: null,
-					schema_abstract: null,
-					schemaAlternateName: [],
-					bibframe_edition: 'test parent property',
-				},
-				schemaMaintainer: {
-					org_identifier: 'OR-rf5kf25',
-					skos_pref_label: 'VRT',
-					dcterms_description:
-						'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-					ha_org_sector: 'Publieke Omroep',
-					ha_org_request_form: null,
-					foaf_homepage: 'https://www.vrt.be',
-					ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
-					hasPreference: [
-						{
-							ha_pref: 'logo-embedding',
-						},
-					],
-				},
-				schema_name: 'Durf te vragen R002 A0001',
-				schema_description:
-					"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-				schema_creator: [
-					{
-						productionCompany: ['Roses Are Blue'],
-					},
-				],
-				dcterms_format: 'video',
-				dcterms_medium: ['16mm'],
-				schema_thumbnail_url:
-					'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-				schema_duration: '00:39:52',
-				schema_date_created: '[2020-09-01,)',
-
-				schemaCopyrightHolder: [{ schema_copyright_holder: 'vrt' }],
-			},
-			schemaInLanguage: {
-				schema_in_language: ['nl'],
-			},
-			schemaKeywords: {
-				schema_keywords: ['Belgium', 'Silent Movie', 'amateur recording'],
-			},
-			intellectualEntity: {
+export const mockIeObject2: IeObjectDetailResponseTypes = [
+	{
+		graph_intellectual_entity: [
+			{
+				schema_identifier: '086350m40w',
+				id: 'https://data-int.hetarchief.be/id/entity/086350m40w',
+				schema_position: null,
+				schema_date_published: null,
+				dcterms_available: null,
+				schema_name: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+				schema_description: null,
+				schema_date_created: 'XXXX-XX-XX',
+				ebucore_has_cast_member: null,
 				schema_issue_number: null,
-				mhFragmentIdentifier: [
-					{
-						mh_fragment_identifier:
-							'f424cc6e69c748ba96e34f2034f6695870032919df9342998a58d7c9ece79a63f8e6e3a24d964ea596b1f0198700ffd7',
-					},
-				],
 				schema_credit_text: null,
-				schema_copyright_notice: null,
-				hasCarrier: null,
+				schema_copyright_notice: '© stadsarchiefieper',
 				schema_abstract: null,
-				schemaAlternateName: [],
 				bibframe_edition: null,
+				ebucore_synopsis: null,
+				schema_number_of_pages: null,
+				premis_is_part_of: null,
+				schemaMaintainer: {
+					org_identifier: 'OR-x05xc02',
+					skos_pref_label: 'Stadsarchief Ieper',
+					ha_org_has_logo: 'https://assets-int.viaa.be/images/OR-x05xc02',
+					ha_org_request_form: null,
+					dcterms_description:
+						'Het stadsarchief Ieper is een regionaal archief dat de documenten van de stad bewaart en ontsluit.',
+					ha_org_sector: 'Cultuur',
+					foaf_homepage: 'https://archief.ieper.be/',
+					skos_alt_label: 'stadsarchief-ieper',
+					hasPreference: [],
+				},
 			},
-			schemaMaintainer: {
-				org_identifier: 'OR-rf5kf25',
-				skos_pref_label: 'VRT',
-				dcterms_description:
-					'De Vlaamse Radio- en Televisieomroeporganisatie, afgekort VRT, is de Nederlandstalige openbare omroep voor radio en televisie in België.',
-				ha_org_sector: 'Publieke Omroep',
-				ha_org_request_form: null,
-				foaf_homepage: 'https://www.vrt.be',
-				hasPreference: [
-					{
-						ha_pref: OrganisationPreference.logoEmbedding,
+		],
+	},
+	{
+		dctermsFormat: [
+			{
+				dcterms_format: 'video',
+			},
+		],
+	},
+	{
+		isPartOf: [
+			{
+				isPartOf: {
+					schema_identifier: '0000097w0q',
+					id: 'https://data-qas.hetarchief.be/id/entity/0000097w0q',
+					schema_is_part_of: null,
+					schema_duration: null,
+					schema_number_of_pages: 4,
+					schema_position: null,
+					schema_date_published: '1892-09-09',
+					dcterms_available: null,
+					schema_name: 'Gazet van Antwerpen - 1892-09-09',
+					schema_description: null,
+					schema_creator: null,
+					dcterms_format: 'newspaper',
+					dcterms_medium: null,
+					schema_thumbnail_url: null,
+					schema_license: [
+						'BEZOEKERTOOL-CONTENT',
+						'BEZOEKERTOOL-METADATA-ALL',
+						'VIAA-INTRA_CP-CONTENT',
+						'VIAA-PUBLIEK-METADATA-LTD',
+						'VIAA-INTRA_CP-METADATA-ALL',
+					],
+					schema_date_created: '1892-09-09',
+					meemoo_local_id: ['gva_18920909'],
+					premis_is_part_of: null,
+					bibframe_edition: 'test-parent-bibframe_edition',
+					schemaMaintainer: {
+						org_identifier: 'OR-v97zq9j',
+						skos_pref_label: 'Erfgoedbibliotheek Hendrik Conscience',
+						skos_alt_label: 'erfgoedbibliotheek-hendrik-conscience',
+						ha_org_has_logo: 'https://assets-qas.viaa.be/images/OR-v97zq9j',
+						ha_org_request_form: null,
+						dcterms_description:
+							'Erfgoedbibliotheek Hendrik Conscience is de bibliotheek voor Nederlandse taal, cultuur en geschiedenis van Vlaanderen.',
+						ha_org_sector: 'Cultuur',
+						foaf_homepage: 'http://www.consciencebibliotheek.be',
+						hasPreference: [
+							{
+								ha_pref: 'visitor-space-publication',
+							},
+							{
+								ha_pref: 'logo-embedding',
+							},
+						],
 					},
+					schemaInLanguage: null,
+					schemaKeywords: null,
+					premisIdentifier: {
+						premis_identifier: [
+							{
+								'MEEMOO-PID': '0000097w0q',
+							},
+							{
+								primary: 'gva_18920909',
+							},
+						],
+					},
+					schemaGenre: {
+						schema_genre: ['serieel'],
+					},
+					schemaSpatial: null,
+					schemaPublisher: null,
+					schemaTemporal: null,
+					schemaCopyrightHolder: [],
+					intellectualEntity: {
+						schema_issue_number: null,
+						mhFragmentIdentifier: [
+							{
+								mh_fragment_identifier:
+									'71196954be3341e485bc37d5e56470871d138c7ff08d488cb9b55547ca21689203186ba7317b49bd97b6be0fda420f8a',
+							},
+						],
+						schema_credit_text: null,
+						schema_copyright_notice: null,
+						hasCarrier: null,
+						schema_abstract: null,
+						schemaAlternateName: [],
+						bibframe_edition: null,
+						ebucore_synopsis: null,
+					},
+				},
+			},
+		],
+	},
+	{
+		graph_carrier: [],
+	},
+	{
+		meemooLocalId: [
+			{
+				meemoo_local_id: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
+			},
+		],
+	},
+	{
+		graph__premis_identifier: [
+			{
+				premis_identifier: [
 					{
-						ha_pref: OrganisationPreference.iiifDissemination,
+						primary: 'In Dienende liefde (prosessie zuster Agnes Boudry)',
 					},
 				],
-				ha_org_has_logo: 'https://assets.viaa.be/images/OR-rf5kf25',
 			},
-			schema_name: 'Durf te vragen R002 A0001',
-			schema_description:
-				"Humaninterestprogramma waarin Siska Schoeters op een openhartige manier gevoelige thema's bespreekbaar maakt. Elke aflevering nodigt zij een groep mensen uit waar we stiekem heel veel vragen over hebben, maar die we niet zelf in hun gezicht durven stellen.",
-			schema_creator: [
-				{
-					productionCompany: ['Roses Are Blue'],
+		],
+	},
+	{
+		graph_mh_fragment_identifier: [
+			{
+				mh_fragment_identifier:
+					'bcc55c97de9549edaee13c91dd85d18bf71433880466446fbb282d33d9fd8908f25b48f8f9dd434b83805e71e9f97f34',
+			},
+			{
+				mh_fragment_identifier:
+					'4d36eff2e9a048eaa34c2fd0b521314aaf5dc6ec0a0c4bf8aaa4922ace27699ee93970627b4a417087518d901e4f5fe7',
+			},
+			{
+				mh_fragment_identifier:
+					'e519816f6a454cabb929b74449a6e2203b46e11a872747dfb1b6c87f34dfa8a40696a10062d34207ac4509ddc463e87f',
+			},
+			{
+				mh_fragment_identifier:
+					'd9c8e0f36a4c4622b0c6c2aae7b8e3b6acf8ddb2fcd041bd8097488bf507225f6706f2b0507c461bb167ef3f73391ec1',
+			},
+		],
+	},
+	{
+		parentCollection: [
+			{
+				collection: {
+					id: 'https://data-int.hetarchief.be/id/entity/5bcddeb07498bd246539e22b3fad5e63',
+					schema_identifier: null,
+					schema_name: 'De Socialistische Gedachte en Aktie',
+					collection_type: 'https://schema.org/CreativeWorkSeries',
+					isPreceededBy: [],
+					isSucceededBy: [],
+					schema_location_created: null,
+					schema_start_date: null,
+					schema_end_date: null,
+					schema_publisher: null,
+					schema_season_number: null,
 				},
-			],
-			dcterms_format: 'video',
-			dcterms_medium: ['16mm'],
-			schema_thumbnail_url:
-				'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-			schema_duration: '00:39:52',
-			schema_date_created: '[2020-09-01,)',
-			isRepresentedBy: [
-				{
-					id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-					schema_name: 'Durf te vragen R002 A0001',
-					is_media_fragment_of: '',
-					schema_in_language: '',
-					schema_start_time: '',
-					schema_transcript: '',
-					edm_is_next_in_sequence: '',
-					updated_at: '',
-					includes: [
-						{
-							file: {
-								id: '49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c7bee152896204294938534fc7f3c6793',
-								schema_name: 'Durf te vragen R002 A0001',
-								ebucore_has_mime_type: 'video/mp4',
-								premis_stored_at:
-									'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/fbdfd287f3774f5d86ca075720c9c97392ff861b60bc478e840a85349baf6661/browse.m4a',
-								schema_thumbnail_url:
-									'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/fbdfd287f3774f5d86ca075720c9c97392ff861b60bc478e840a85349baf6661/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-								schema_duration: 3960,
+			},
+		],
+	},
+	{
+		ieObject_schemaAlternateName: [
+			{
+				schema_alternate_name:
+					'Socialistische Gedachte en Aktie50ste verjaring NVSM Uitzending: 7 mei 1963',
+			},
+		],
+	},
+	{
+		schemaCopyrightHolder: [],
+	},
+	{
+		graph__schema_creator: [],
+	},
+	{
+		graph__schema_duration: [
+			{
+				schema_duration: '00:26:52.32',
+			},
+		],
+	},
+	{
+		schemaGenre: [],
+	},
+	{
+		schemaInLanguage: [
+			{
+				schema_in_language: 'nl',
+			},
+		],
+	},
+	{
+		graph_schema_is_part_of: [
+			{
+				type: 'https://schema.org/CreativeWorkSeries',
+				collection: {
+					schema_name: 'De Socialistische Gedachte en Aktie',
+				},
+			},
+		],
+	},
+	{
+		schemaKeywords: [
+			{
+				schema_keywords: 'television program',
+			},
+			{
+				schema_keywords: 'reportage',
+			},
+			{
+				schema_keywords: 'Belgium',
+			},
+			{
+				schema_keywords: 'NE',
+			},
+		],
+	},
+	{
+		schemaLicense: [
+			{
+				schema_license: 'BEZOEKERTOOL-CONTENT',
+			},
+			{
+				schema_license: 'BEZOEKERTOOL-METADATA-ALL',
+			},
+			{
+				schema_license: 'VIAA-INTRA_CP-CONTENT',
+			},
+			{
+				schema_license: 'VIAA-PUBLIEK-METADATA-LTD',
+			},
+			{
+				schema_license: 'VIAA-INTRA_CP-METADATA-ALL',
+			},
+		],
+	},
+	{
+		schemaMedium: [],
+	},
+	{
+		schemaPublisher: [],
+	},
+	{
+		schemaSpatial: [],
+	},
+	{
+		schemaTemporal: [],
+	},
+	{
+		schemaThumbnailUrl: [
+			{
+				schema_thumbnail_url: [
+					'https://archief-media.viaa.be/viaa/AMSAB/6218b54a8a85408fa4362b1901c27e0f5c2f51ba5ea247bab7b344dcf4137f04/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+					'https://archief-media.viaa.be/viaa/AMSAB/6218b54a8a85408fa4362b1901c27e0f5c2f51ba5ea247bab7b344dcf4137f04/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+					'https://archief-media.viaa.be/viaa/AMSAB/e9d024007f4b45d09b24be87a1363122a6b600f90ddf4465bb824f7e37fc549f/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+				],
+			},
+		],
+	},
+	{
+		graph__intellectual_entity: [
+			{
+				hasPart: [
+					{
+						schemaMentions: [],
+						isRepresentedBy: [
+							{
+								id: 'https://data-int.hetarchief.be/id/entity/e453ce2e9f8f7f92c4c2d6c6b62f49a0',
+								schema_name:
+									"Lageresolutiekopie (mp4): 'In Dienende liefde (prosessie zuster Agnes Boudry)' (043c23ce2f6419dabad1071911e4cc5a)",
+								is_media_fragment_of: null,
+								schema_in_language: null,
+								schema_start_time: null,
+								schema_end_time: null,
+								schema_transcript: null,
+								schemaTranscriptUrls: null,
 								edm_is_next_in_sequence: null,
+								updated_at: '2025-03-10T15:24:56.587054+01:00',
+								includes: [
+									{
+										file: {
+											id: 'https://data-int.hetarchief.be/id/entity/2f9ec894c0297421552dc247b92d9e6f',
+											schema_name: 'browse.mp4',
+											ebucore_has_mime_type: 'video/mp4',
+											premis_stored_at:
+												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/browse.mp4',
+											schema_thumbnail_url:
+												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+											schema_duration: 1058.44,
+											edm_is_next_in_sequence: null,
+											created_at: '2025-03-10T15:24:56.403442+01:00',
+										},
+									},
+									{
+										file: {
+											id: 'https://data-int.hetarchief.be/id/entity/3e5ba72ad36093682031204902677b40',
+											schema_name: 'peak-0.json',
+											ebucore_has_mime_type: 'application/json',
+											premis_stored_at:
+												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/peak-0.json',
+											schema_thumbnail_url: null,
+											schema_duration: null,
+											edm_is_next_in_sequence: null,
+											created_at: '2025-03-10T15:24:56.403442+01:00',
+										},
+									},
+								],
 							},
-						},
-					],
-				},
-			],
-			hasPart: [],
-		},
-	],
-};
+						],
+					},
+				],
+			},
+		],
+	},
+	{
+		graph__intellectual_entity: [
+			{
+				isRepresentedBy: [],
+			},
+		],
+	},
+];
+
+export const mockIeObjectEmpty: Readonly<IeObjectDetailResponseTypes> = [
+	{
+		graph_intellectual_entity: [],
+	},
+	{
+		dctermsFormat: [],
+	},
+	{
+		isPartOf: [],
+	},
+	{
+		graph_carrier: [],
+	},
+	{
+		meemooLocalId: [],
+	},
+	{
+		graph__premis_identifier: [],
+	},
+	{
+		graph_mh_fragment_identifier: [],
+	},
+	{
+		parentCollection: [],
+	},
+	{
+		ieObject_schemaAlternateName: [],
+	},
+	{
+		schemaCopyrightHolder: [],
+	},
+	{
+		graph__schema_creator: [],
+	},
+	{
+		graph__schema_duration: [],
+	},
+	{
+		schemaGenre: [],
+	},
+	{
+		schemaInLanguage: [],
+	},
+	{
+		graph_schema_is_part_of: [],
+	},
+	{
+		schemaKeywords: [],
+	},
+	{
+		schemaLicense: [],
+	},
+	{
+		schemaMedium: [],
+	},
+	{
+		schemaPublisher: [],
+	},
+	{
+		schemaSpatial: [],
+	},
+	{
+		schemaTemporal: [],
+	},
+	{
+		schemaThumbnailUrl: [],
+	},
+	{
+		graph__intellectual_entity: [],
+	},
+	{
+		graph__intellectual_entity: [],
+	},
+];
 
 const mockRelatedIeObject:
 	| GetParentIeObjectQuery['graph_intellectual_entity'][0]['isPartOf']

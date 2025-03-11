@@ -21,7 +21,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { Request, Response } from 'express';
-import { compact, intersection, isNil, kebabCase, without } from 'lodash';
+import { compact, intersection, isNil, kebabCase } from 'lodash';
 
 import {
 	IeObjectsQueryDto,
@@ -52,6 +52,7 @@ import {
 	IeObjectsSearchFilterField,
 	Operator,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { GroupName } from '~modules/users/types';
 import { SessionUser } from '~shared/decorators/user.decorator';
@@ -122,12 +123,11 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@Param('id') id: string
 	): Promise<IeObjectSeo> {
-		const ieObjects = await this.ieObjectsService.findBySchemaIdentifiers(
-			[id],
+		const ieObject = await this.ieObjectsService.findByIeObjectId(
+			convertSchemaIdentifierToId(id),
 			referer,
 			getIpFromRequest(request)
 		);
-		const ieObject = ieObjects[0];
 
 		const hasPublicAccess = ieObject?.licenses.some((license: IeObjectLicense) =>
 			[
@@ -149,6 +149,13 @@ export class IeObjectsController {
 		};
 	}
 
+	/**
+	 * Export metadata to xml
+	 * @param id ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param request
+	 * @param res
+	 * @param user
+	 */
 	@Get(':id/export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
@@ -157,10 +164,14 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(
+		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			id,
 			getIpFromRequest(request)
 		);
+
+		if (!objectMetadata) {
+			throw new NotFoundException('Object not found');
+		}
 
 		// Log event
 		this.eventsService.insertEvents([
@@ -201,6 +212,13 @@ export class IeObjectsController {
 		res.send(xmlContent);
 	}
 
+	/**
+	 * Export metadata to csv
+	 * @param id ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param request
+	 * @param res
+	 * @param user
+	 */
 	@Get(':id/export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
@@ -209,10 +227,14 @@ export class IeObjectsController {
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const objectMetadata = await this.ieObjectsService.findMetadataBySchemaIdentifier(
+		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			id,
 			getIpFromRequest(request)
 		);
+
+		if (!objectMetadata) {
+			throw new NotFoundException('Object not found');
+		}
 
 		// Log event
 		this.eventsService.insertEvents([
@@ -322,14 +344,22 @@ export class IeObjectsController {
 		};
 	}
 
-	@Get(':id/similar')
+	/**
+	 * Get objects that are similar
+	 * @param referer
+	 * @param request
+	 * @param schemaIdentifier schema identifier of the object. eg: 086348mc8s
+	 * @param ieObjectSimilarQueryDto
+	 * @param user
+	 */
+	@Get(':schemaIdentifier/similar')
 	@ApiOperation({
 		description: 'Get objects that are similar based on the maintainerId.',
 	})
 	public async getSimilar(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
-		@Param('id') id: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Query() ieObjectSimilarQueryDto: IeObjectsSimilarQueryDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
@@ -338,7 +368,7 @@ export class IeObjectsController {
 				await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 			const similarIeObjectsResponse = await this.ieObjectsService.getSimilar(
-				id,
+				schemaIdentifier,
 				referer,
 				getIpFromRequest(request),
 				ieObjectSimilarQueryDto,
@@ -495,92 +525,62 @@ export class IeObjectsController {
 	}
 
 	/**
-	 * Get ie objects by their schema identifiers
-	 * @param ids
+	 * Get ie object by their id
+	 * @param schemaIdentifier ie object id. eg: https://data.hetarchief.be/id/entity/086348mc8s
 	 * @param referer
 	 * @param request
 	 * @param user
 	 */
-	@Get()
-	public async getIeObjectByIds(
-		@Query('id') ids: string[],
-		@Headers('referer') referer: string,
-		@Req() request: Request,
-		@SessionUser() user: SessionUserEntity
-	): Promise<IeObject[] | Partial<IeObject>[]> {
-		const ieObjects: Partial<IeObject | null>[] =
-			await this.ieObjectsService.findBySchemaIdentifiers(
-				ids,
-				referer,
-				getIpFromRequest(request)
-			);
-
-		const visitorSpaceAccessInfo =
-			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
-
-		const ieObjectsNotNull: Partial<IeObject>[] = compact(ieObjects);
-
-		if (ieObjects.length !== ieObjectsNotNull.length) {
-			throw new NotFoundException(
-				customError('Objects were not found by their schema identifiers', null, {
-					idsNotFound: without(
-						ids,
-						...ieObjectsNotNull.map((ieObject) => ieObject.schemaIdentifier)
-					),
-				})
-			);
-		}
-
-		return ieObjectsNotNull.map((ieObject) => {
-			const limitedObject = limitAccessToObjectDetails(ieObject, {
-				userId: user.getId(),
-				isKeyUser: user.getIsKeyUser(),
-				sector: user.getSector(),
-				groupId: user.getGroupId(),
-				maintainerId: user.getOrganisationId(),
-				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
-				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			});
-
-			if (!limitedObject) {
-				throw new ForbiddenException('You do not have access to this object');
-			}
-
-			// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
-			if (
-				user.getGroupName() === GroupName.MEEMOO_ADMIN &&
-				visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
-				intersection(limitedObject?.licenses, [
-					IeObjectLicense.BEZOEKERTOOL_CONTENT,
-					IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
-				]).length > 0
-			) {
-				limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
-			}
-
-			return limitedObject;
-		});
-	}
-
 	@Get(':id')
 	public async getIeObjectById(
-		@Param('id') id: string,
+		@Param('id') schemaIdentifier: string,
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IeObject | Partial<IeObject>> {
-		const ieObjects: IeObject[] | Partial<IeObject>[] = await this.getIeObjectByIds(
-			[id],
+		const ieObject: Partial<IeObject> | null = await this.ieObjectsService.findByIeObjectId(
+			convertSchemaIdentifierToId(schemaIdentifier),
 			referer,
-			request,
-			user
+			getIpFromRequest(request)
 		);
-		const ieObject = ieObjects[0];
 
 		if (!ieObject) {
-			throw new NotFoundException(`Object IE with id '${id}' not found`);
+			throw new NotFoundException(
+				customError('Object not found by their schemaIdentifier', null, {
+					schemaIdentifier,
+				})
+			);
 		}
 
-		return ieObject;
+		const visitorSpaceAccessInfo =
+			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
+
+		const limitedObject = limitAccessToObjectDetails(ieObject, {
+			userId: user.getId(),
+			isKeyUser: user.getIsKeyUser(),
+			sector: user.getSector(),
+			groupId: user.getGroupId(),
+			maintainerId: user.getOrganisationId(),
+			accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
+			accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
+		});
+
+		if (!limitedObject) {
+			throw new ForbiddenException('You do not have access to this object');
+		}
+
+		// Meemoo admin user always has VISITOR_SPACE_FULL in accessThrough when object has BEZOEKERTOOL licences
+		if (
+			user.getGroupName() === GroupName.MEEMOO_ADMIN &&
+			visitorSpaceAccessInfo.visitorSpaceIds.includes(limitedObject.maintainerId) &&
+			intersection(limitedObject?.licenses, [
+				IeObjectLicense.BEZOEKERTOOL_CONTENT,
+				IeObjectLicense.BEZOEKERTOOL_METADATA_ALL,
+			]).length > 0
+		) {
+			limitedObject?.accessThrough.push(IeObjectAccessThrough.VISITOR_SPACE_FULL);
+		}
+
+		return limitedObject;
 	}
 }

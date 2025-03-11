@@ -1,5 +1,6 @@
 query getSchemaIdentifierV3BySchemaIdentifierV2($schemaIdentifierV2: String!) {
 	graph__intellectual_entity(where: { meemoo_identifier: { _has_key: $schemaIdentifierV2 } }) {
+		id
 		schema_identifier
 	}
 }

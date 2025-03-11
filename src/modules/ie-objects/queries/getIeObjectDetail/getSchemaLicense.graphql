@@ -1,0 +1,5 @@
+query getSchemaLicense($ieObjectId: String!) {
+	schemaLicense: graph_schema_license(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_license
+	}
+}

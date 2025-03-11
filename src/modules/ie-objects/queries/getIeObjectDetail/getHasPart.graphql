@@ -1,0 +1,47 @@
+query getHasPart($ieObjectId: String!) {
+	graph__intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+		hasPart {
+			schemaMentions {
+				confidence
+				x
+				y
+				width
+				height
+				thing {
+					id
+					schema_name
+					schema_birth_date
+					schema_birth_place
+					schema_death_date
+					schema_death_place
+				}
+			}
+			isRepresentedBy {
+				id
+				schema_name
+				is_media_fragment_of
+				schema_in_language
+				schema_start_time
+				schema_end_time
+				schema_transcript
+				schemaTranscriptUrls {
+					schema_transcript_url
+				}
+				edm_is_next_in_sequence
+				updated_at
+				includes {
+					file {
+						id
+						schema_name
+						ebucore_has_mime_type
+						premis_stored_at
+						schema_thumbnail_url
+						schema_duration
+						edm_is_next_in_sequence
+						created_at
+					}
+				}
+			}
+		}
+	}
+}

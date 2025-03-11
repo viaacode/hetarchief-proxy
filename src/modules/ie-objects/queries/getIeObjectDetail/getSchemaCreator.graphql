@@ -1,0 +1,5 @@
+query getSchemaCreator($ieObjectId: String!) {
+	graph__schema_creator(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_creator_array
+	}
+}

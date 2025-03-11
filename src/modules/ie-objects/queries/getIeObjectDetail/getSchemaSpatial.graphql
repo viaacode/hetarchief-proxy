@@ -1,0 +1,5 @@
+query getSchemaSpatial($ieObjectId: String!) {
+	schemaSpatial: graph_schema_spatial(where: { intellectual_entity_id: { _eq: $ieObjectId } }) {
+		schema_spatial
+	}
+}
