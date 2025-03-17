@@ -58,9 +58,6 @@ import {
 	GetIeObjectChildrenIrisDocument,
 	type GetIeObjectChildrenIrisQuery,
 	type GetIeObjectChildrenIrisQueryVariables,
-	GetIeObjectIdsDocument,
-	type GetIeObjectIdsQuery,
-	type GetIeObjectIdsQueryVariables,
 	type GetIsPartOfQuery,
 	type GetIsRepresentedByQuery,
 	GetParentIeObjectDocument,
@@ -81,6 +78,7 @@ import {
 	MAX_COUNT_SEARCH_RESULTS,
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
@@ -341,12 +339,8 @@ export class IeObjectsService {
 				visitorSpaceInfo: visitorSpaceAccessInfo,
 			}
 		);
-		const ieObjectIds = await this.getIeObjectIds(schemaIdentifier);
-		if (!ieObjectIds?.iri) {
-			throw new NotFoundException("The object was not found or doesn't have an iri");
-		}
-
-		const childrenIris = await this.getIeObjectChildrenIris(ieObjectIds.iri);
+		const ieObjectId = convertSchemaIdentifierToId(schemaIdentifier);
+		const childrenIris = await this.getIeObjectChildrenIris(ieObjectId);
 
 		const esQueryObject = {
 			size: limit,
@@ -1142,21 +1136,6 @@ export class IeObjectsService {
 			return [];
 		}
 		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
-	}
-
-	public async getIeObjectIds(
-		schemaIdentifier: string
-	): Promise<{ schemaIdentifier: string; iri: string }> {
-		const response = await this.dataService.execute<
-			GetIeObjectIdsQuery,
-			GetIeObjectIdsQueryVariables
-		>(GetIeObjectIdsDocument, {
-			schemaIdentifier,
-		});
-		return {
-			schemaIdentifier: response.graph_intellectual_entity[0].schema_identifier,
-			iri: response.graph_intellectual_entity[0].id,
-		};
 	}
 
 	public async getIeObjectChildrenIris(ieObjectIri: string): Promise<string[]> {
