@@ -5,7 +5,6 @@ import {
 	type FindIeObjectBySchemaIdentifierQuery,
 	type FindIeObjectInFolderQuery,
 	type InsertFolderMutation,
-	type InsertIeObjectIntoFolderMutation,
 	type UpdateFolderMutation,
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObject } from '~modules/ie-objects/ie-objects.types';
@@ -43,7 +42,6 @@ export interface GqlUpdateFolder {
 export type FolderObjectLink =
 	| FindIeObjectInFolderQuery['users_folder_ie'][0]
 	| FindFoldersByUserQuery['users_folder'][0]['intellectualEntities'][0]
-	| InsertIeObjectIntoFolderMutation['insert_users_folder_ie']['returning'][0]
 	| FindFolderIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
 export type GqlObject = FindIeObjectBySchemaIdentifierQuery['graph__intellectual_entity'][0];

@@ -404,7 +404,10 @@ export class FoldersService {
 		const createdObject = response.insert_users_folder_ie.returning[0];
 		this.logger.debug(`Folder object ${ieObjectSchemaIdentifier} created`);
 
-		return this.adaptFolderObjectLink(createdObject, referer, ip);
+		return {
+			folderEntryCreatedAt: createdObject.created_at,
+			...objectInfo,
+		};
 	}
 
 	public async removeObjectFromFolder(
