@@ -921,8 +921,8 @@ export class IeObjectsService {
 								schemaEndTime: representation.schema_end_time,
 								schemaTranscript: representation.schema_transcript,
 								schemaTranscriptUrl:
-									representation.schemaTranscriptUrls?.[0]
-										?.schema_transcript_url || null,
+									representation.schemaTranscriptUrls?.schema_transcript_url ||
+									null,
 								edmIsNextInSequence: representation.edm_is_next_in_sequence,
 								updatedAt: representation.updated_at,
 								files: this.adaptFiles(representation.includes),
