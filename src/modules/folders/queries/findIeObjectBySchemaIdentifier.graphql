@@ -1,8 +1,5 @@
-query findIeObjectBySchemaIdentifier($objectSchemaIdentifier: String) {
-	graph__intellectual_entity(
-		where: { schema_identifier: { _eq: $objectSchemaIdentifier } }
-		limit: 1
-	) {
+query findIeObjectBySchemaIdentifier($ieObjectId: String!) {
+	graph__intellectual_entity(where: { id: { _eq: $ieObjectId } }, limit: 1) {
 		schema_identifier
 		meemoo_identifier
 		meemoo_local_id

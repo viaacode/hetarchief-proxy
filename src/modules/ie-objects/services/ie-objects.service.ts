@@ -635,7 +635,7 @@ export class IeObjectsService {
 			sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: ie?.schema_name,
 			thumbnailUrl: await this.playerTicketService.resolveThumbnailUrl(
-				schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url,
+				schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
 				referer,
 				ip
 			),
