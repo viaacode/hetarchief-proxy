@@ -85,7 +85,7 @@ export class AuthController {
 				}
 			}
 
-			return {
+			const response = {
 				userInfo: user.getUser(),
 				commonUserInfo: convertUserInfoToCommonUser(
 					user.getUser() as Avo.User.HetArchiefUser,
@@ -94,6 +94,7 @@ export class AuthController {
 				message: LoginMessage.LOGGED_IN,
 				sessionExpiresAt: SessionHelper.getExpiresAt(new Date()),
 			};
+			return response;
 		}
 
 		return { message: LoginMessage.LOGGED_OUT };

@@ -47,6 +47,7 @@ import {
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { type FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
 	type IeObject,
 	type IeObjectSector,
@@ -160,11 +161,14 @@ export class FoldersService {
 		if (!objectIe) {
 			return null;
 		}
-		const resolvedThumbnailUrl: string = await this.playerTicketService.resolveThumbnailUrl(
-			objectIe?.thumbnailUrl,
-			referer,
-			ip
-		);
+		let resolvedThumbnailUrl: string | null = objectIe?.thumbnailUrl;
+		if (objectIe?.thumbnailUrl) {
+			resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+				objectIe?.thumbnailUrl,
+				referer,
+				ip
+			);
+		}
 		return {
 			folderEntryCreatedAt: gqlFolderObjectLink?.created_at,
 			...objectIe,
@@ -359,7 +363,7 @@ export class FoldersService {
 			FindIeObjectBySchemaIdentifierQuery,
 			FindIeObjectBySchemaIdentifierQueryVariables
 		>(FindIeObjectBySchemaIdentifierDocument, {
-			objectSchemaIdentifier,
+			ieObjectId: convertSchemaIdentifierToId(objectSchemaIdentifier),
 		});
 		const foundObject = response.graph__intellectual_entity[0];
 		this.logger.debug(`Found object ${objectSchemaIdentifier}`);
@@ -404,7 +408,10 @@ export class FoldersService {
 		const createdObject = response.insert_users_folder_ie.returning[0];
 		this.logger.debug(`Folder object ${ieObjectSchemaIdentifier} created`);
 
-		return this.adaptFolderObjectLink(createdObject, referer, ip);
+		return {
+			folderEntryCreatedAt: createdObject.created_at,
+			...objectInfo,
+		};
 	}
 
 	public async removeObjectFromFolder(

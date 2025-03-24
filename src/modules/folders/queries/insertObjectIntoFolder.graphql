@@ -4,17 +4,6 @@ mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectSchemaIdentifier: St
 	) {
 		returning {
 			created_at
-			intellectualEntity {
-				schema_identifier
-				dcterms_format
-				dcterms_available
-				schema_creator
-				schema_description
-				schema_name
-				schema_maintainer
-				schema_number_of_pages
-				schema_duration
-			}
 		}
 	}
 }

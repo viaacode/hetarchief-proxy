@@ -151,21 +151,21 @@ export class IeObjectsController {
 
 	/**
 	 * Export metadata to xml
-	 * @param id ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':id/export/xml')
+	@Get(':schemaIdentifier/export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
-		@Param('id') id: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
-			id,
+			convertSchemaIdentifierToId(schemaIdentifier),
 			getIpFromRequest(request)
 		);
 
@@ -214,21 +214,21 @@ export class IeObjectsController {
 
 	/**
 	 * Export metadata to csv
-	 * @param id ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * @param request
 	 * @param res
 	 * @param user
 	 */
-	@Get(':id/export/csv')
+	@Get(':schemaIdentifier/export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
-		@Param('id') id: string,
+		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
-			id,
+			convertSchemaIdentifierToId(schemaIdentifier),
 			getIpFromRequest(request)
 		);
 
