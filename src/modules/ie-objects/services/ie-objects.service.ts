@@ -540,7 +540,7 @@ export class IeObjectsService {
 			schemaThumbnailUrlResponse,
 			hasPartResponse,
 			isRepresentedByResponse,
-		] = ieObjectResponseList;
+		]: IeObjectDetailResponseTypes = ieObjectResponseList;
 
 		if (!ieObjectResponse) {
 			return null;
@@ -663,7 +663,7 @@ export class IeObjectsService {
 				.join(', '),
 			collectionName:
 				parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_name,
-			collectionId: parentCollectionResponse?.[0]?.collection?.id,
+			collectionId: parentCollectionResponse?.parentCollection?.[0]?.collection?.id,
 			issueNumber: ie?.schema_issue_number,
 			fragmentId: compact(
 				mhFragmentIdentifierResponse?.graph_mh_fragment_identifier?.map(
