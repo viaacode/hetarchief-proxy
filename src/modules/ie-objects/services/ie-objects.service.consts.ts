@@ -26,6 +26,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 
 export const CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH = 'ie-objects-find-all__';
+export const CACHE_KEY_PREFIX_IE_OBJECT_DETAIL = 'ie-objects-find-one__';
 
 export const IE_OBJECT_DETAIL_QUERIES = [
 	GetIeObjectDocument,

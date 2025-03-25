@@ -13,7 +13,18 @@ import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, sortBy, uniq } from 'lodash';
+import {
+	compact,
+	find,
+	isArray,
+	isEmpty,
+	isNil,
+	kebabCase,
+	omitBy,
+	orderBy,
+	sortBy,
+	uniq,
+} from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -82,6 +93,7 @@ import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert
 import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
+	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
 	CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH,
 	IE_OBJECT_DETAIL_QUERIES,
 } from '~modules/ie-objects/services/ie-objects.service.consts';
@@ -101,6 +113,7 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitStatus, VisitTimeframe } from '~modules/visits/types';
 import { customError } from '~shared/helpers/custom-error';
 import { checkRequiredEnvs } from '~shared/helpers/env-check';
+import { getQueryName } from '~shared/helpers/get-query-name';
 
 checkRequiredEnvs(['ELASTICSEARCH_URL', 'IE_OBJECT_ID_PREFIX']);
 
@@ -412,6 +425,41 @@ export class IeObjectsService {
 		};
 	}
 
+	private async getIeObjectByIdFromDb(objectId: string): Promise<IeObjectDetailResponseTypes> {
+		const variables = {
+			ieObjectId: objectId,
+		};
+		const performanceTimes: (string | number)[][] = [];
+		const responses = (await Promise.all(
+			IE_OBJECT_DETAIL_QUERIES.map(async (document) => {
+				const queryName = getQueryName(document);
+				const startTime = new Date().getTime();
+
+				const response = await this.dataService.execute(document, variables);
+
+				const endTime = new Date().getTime();
+				performanceTimes.push([
+					'[PERFORMANCE]',
+					objectId.split('/').pop(),
+					queryName,
+					endTime - startTime,
+					'ms',
+				]);
+				return response;
+			})
+		)) as IeObjectDetailResponseTypes;
+
+		// log performance times of sub queries
+		const tableData = orderBy(
+			performanceTimes,
+			(performanceItem) => performanceItem[3],
+			'desc'
+		);
+		console.table(tableData);
+
+		return responses;
+	}
+
 	/**
 	 * Get one Intellectual Entity object by its object id (eg: https://data.hetarchief.be/id/entity/086348mc8s)
 	 * (not all details are available in ES)
@@ -421,15 +469,13 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject> | null> {
-		const variables = {
-			ieObjectId: objectId,
-		};
-		const responses = (await Promise.all(
-			IE_OBJECT_DETAIL_QUERIES.map(async (document) => {
-				const response = await this.dataService.execute(document, variables);
-				return response;
-			})
-		)) as IeObjectDetailResponseTypes;
+		// Cache the object for 60 minutes since we need it once for server side rendering and once for client side rendering
+		const responses = await this.cacheManager.wrap(
+			CACHE_KEY_PREFIX_IE_OBJECT_DETAIL + objectId,
+			() => this.getIeObjectByIdFromDb(objectId),
+			// cache for 60 minutes
+			3_600_000
+		);
 
 		// Get parent ieObject if it exists
 		const parentIeObjectId = (
