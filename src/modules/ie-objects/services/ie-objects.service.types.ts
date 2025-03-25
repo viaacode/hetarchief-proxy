@@ -81,9 +81,9 @@ export enum IeObjectDetailResponseIndex {
 
 export type DbIeObjectWithRepresentations =
 	| GetIsRepresentedByQuery['graph__intellectual_entity'][0]
-	| GetHasPartQuery['graph__intellectual_entity'][0]['hasPart'][0];
+	| GetHasPartQuery['graph_intellectual_entity'][0];
 
-export type DbIeObjectWithMentions = GetHasPartQuery['graph__intellectual_entity'][0]['hasPart'][0];
+export type DbIeObjectWithMentions = GetHasPartQuery['graph_intellectual_entity'][0];
 
 export type DbRepresentation = DbIeObjectWithRepresentations['isRepresentedBy'][0];
 
