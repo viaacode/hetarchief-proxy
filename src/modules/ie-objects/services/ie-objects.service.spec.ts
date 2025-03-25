@@ -239,7 +239,7 @@ describe('ieObjectsService', () => {
 			// set representations of child objects to empty array
 			objectIeMock[
 				IeObjectDetailResponseIndex.HasPart
-			].graph__intellectual_entity[0].hasPart[0].isRepresentedBy = [];
+			].graph_intellectual_entity[0].isRepresentedBy = [];
 
 			mockDataService.execute.mockReset();
 			objectIeMock.forEach((mockObject2Response) => {
@@ -254,9 +254,7 @@ describe('ieObjectsService', () => {
 
 		it('returns an empty array if no files were found', async () => {
 			const objectIeMock = cloneDeep(mockIeObject2);
-			objectIeMock[IeObjectDetailResponseIndex.HasPart].graph__intellectual_entity[0] = {
-				hasPart: [],
-			};
+			objectIeMock[IeObjectDetailResponseIndex.HasPart].graph_intellectual_entity = [];
 			objectIeMock[
 				IeObjectDetailResponseIndex.IsRepresentedBy
 			].graph__intellectual_entity[0] = {

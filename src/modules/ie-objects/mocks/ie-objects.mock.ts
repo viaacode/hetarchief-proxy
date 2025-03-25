@@ -731,53 +731,49 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 		],
 	},
 	{
-		graph__intellectual_entity: [
+		graph_intellectual_entity: [
 			{
-				hasPart: [
+				schemaMentions: [],
+				isRepresentedBy: [
 					{
-						schemaMentions: [],
-						isRepresentedBy: [
+						id: 'https://data-int.hetarchief.be/id/entity/e453ce2e9f8f7f92c4c2d6c6b62f49a0',
+						schema_name:
+							"Lageresolutiekopie (mp4): 'In Dienende liefde (prosessie zuster Agnes Boudry)' (043c23ce2f6419dabad1071911e4cc5a)",
+						is_media_fragment_of: null,
+						schema_in_language: null,
+						schema_start_time: null,
+						schema_end_time: null,
+						schema_transcript: null,
+						schemaTranscriptUrls: null,
+						edm_is_next_in_sequence: null,
+						updated_at: '2025-03-10T15:24:56.587054+01:00',
+						includes: [
 							{
-								id: 'https://data-int.hetarchief.be/id/entity/e453ce2e9f8f7f92c4c2d6c6b62f49a0',
-								schema_name:
-									"Lageresolutiekopie (mp4): 'In Dienende liefde (prosessie zuster Agnes Boudry)' (043c23ce2f6419dabad1071911e4cc5a)",
-								is_media_fragment_of: null,
-								schema_in_language: null,
-								schema_start_time: null,
-								schema_end_time: null,
-								schema_transcript: null,
-								schemaTranscriptUrls: null,
-								edm_is_next_in_sequence: null,
-								updated_at: '2025-03-10T15:24:56.587054+01:00',
-								includes: [
-									{
-										file: {
-											id: 'https://data-int.hetarchief.be/id/entity/2f9ec894c0297421552dc247b92d9e6f',
-											schema_name: 'browse.mp4',
-											ebucore_has_mime_type: 'video/mp4',
-											premis_stored_at:
-												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/browse.mp4',
-											schema_thumbnail_url:
-												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-											schema_duration: 1058.44,
-											edm_is_next_in_sequence: null,
-											created_at: '2025-03-10T15:24:56.403442+01:00',
-										},
-									},
-									{
-										file: {
-											id: 'https://data-int.hetarchief.be/id/entity/3e5ba72ad36093682031204902677b40',
-											schema_name: 'peak-0.json',
-											ebucore_has_mime_type: 'application/json',
-											premis_stored_at:
-												'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/peak-0.json',
-											schema_thumbnail_url: null,
-											schema_duration: null,
-											edm_is_next_in_sequence: null,
-											created_at: '2025-03-10T15:24:56.403442+01:00',
-										},
-									},
-								],
+								file: {
+									id: 'https://data-int.hetarchief.be/id/entity/2f9ec894c0297421552dc247b92d9e6f',
+									schema_name: 'browse.mp4',
+									ebucore_has_mime_type: 'video/mp4',
+									premis_stored_at:
+										'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/browse.mp4',
+									schema_thumbnail_url:
+										'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+									schema_duration: 1058.44,
+									edm_is_next_in_sequence: null,
+									created_at: '2025-03-10T15:24:56.403442+01:00',
+								},
+							},
+							{
+								file: {
+									id: 'https://data-int.hetarchief.be/id/entity/3e5ba72ad36093682031204902677b40',
+									schema_name: 'peak-0.json',
+									ebucore_has_mime_type: 'application/json',
+									premis_stored_at:
+										'https://archief-media.viaa.be/viaa/STADSARCHIEFIEPER/931f2d199c464f5baeedc81b2447c60281a8e3df56654760aeec70b889bd4d76/peak-0.json',
+									schema_thumbnail_url: null,
+									schema_duration: null,
+									edm_is_next_in_sequence: null,
+									created_at: '2025-03-10T15:24:56.403442+01:00',
+								},
 							},
 						],
 					},
@@ -862,7 +858,7 @@ export const mockIeObjectEmpty: Readonly<IeObjectDetailResponseTypes> = [
 		schemaThumbnailUrl: [],
 	},
 	{
-		graph__intellectual_entity: [],
+		graph_intellectual_entity: [],
 	},
 	{
 		graph__intellectual_entity: [],

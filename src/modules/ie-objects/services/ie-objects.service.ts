@@ -938,7 +938,7 @@ export class IeObjectsService {
 		hasPartResponse: GetHasPartQuery
 	): IeObjectPageRepresentation[] {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
-		const ieObjectParts = hasPartResponse?.graph__intellectual_entity[0]?.hasPart || [];
+		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
 		const ieObjects = compact([
 			ieObjectSelf,
 			...ieObjectParts,
@@ -967,8 +967,8 @@ export class IeObjectsService {
 								schemaEndTime: representation.schema_end_time,
 								schemaTranscript: representation.schema_transcript,
 								schemaTranscriptUrl:
-									representation.schemaTranscriptUrls?.schema_transcript_url ||
-									null,
+									representation.schemaTranscriptUrls?.[0]
+										?.schema_thumbnail_url || null,
 								edmIsNextInSequence: representation.edm_is_next_in_sequence,
 								updatedAt: representation.updated_at,
 								files: this.adaptFiles(representation.includes),
