@@ -968,7 +968,7 @@ export class IeObjectsService {
 								schemaTranscript: representation.schema_transcript,
 								schemaTranscriptUrl:
 									representation.schemaTranscriptUrls?.[0]
-										?.schema_thumbnail_url || null,
+										?.schema_transcript_url || null,
 								edmIsNextInSequence: representation.edm_is_next_in_sequence,
 								updatedAt: representation.updated_at,
 								files: this.adaptFiles(representation.includes),
