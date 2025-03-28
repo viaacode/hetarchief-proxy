@@ -7,6 +7,7 @@ query findIeObjectInFolder($folderId: uuid, $ieObjectId: String) {
 		}
 	) {
 		intellectualEntity {
+			id
 			schema_identifier
 			schema_name
 			schema_description

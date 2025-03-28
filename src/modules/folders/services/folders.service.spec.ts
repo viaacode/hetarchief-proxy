@@ -115,6 +115,8 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 		{
 			created_at: '2022-02-02T10:55:16.542503',
 			intellectualEntity: {
+				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
+				schema_identifier: '8s4jm2514q',
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 				dcterms_available: '2015-09-19T12:08:24',
 				schemaThumbnail: {
@@ -135,7 +137,6 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 					schema_duration: [],
 				},
 				schemaIsPartOf: [],
-				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
@@ -151,6 +152,8 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 		{
 			created_at: '2022-02-02T10:55:16.542503',
 			intellectualEntity: {
+				id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
+				schema_identifier: '8s4jm2514q',
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 				dcterms_available: '2015-09-19T12:08:24',
 				schemaThumbnail: {
@@ -171,7 +174,6 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 					schema_duration: [],
 				},
 				schemaIsPartOf: [],
-				schema_identifier: '8s4jm2514q',
 			},
 		},
 	],
@@ -372,7 +374,7 @@ describe('FoldersService', () => {
 			);
 		});
 
-		it('throws a NotFoundException if the folder was not found', async () => {
+		it('returns an empty list if the folder was empty', async () => {
 			const mockData: FindFolderIeObjectsByFolderIdQuery = {
 				users_folder_ie: [],
 				users_folder_ie_aggregate: {
@@ -382,22 +384,17 @@ describe('FoldersService', () => {
 				},
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			let error: any;
-			try {
-				await foldersService.findObjectsByFolderId(
-					'unknown-id',
-					mockUser.id,
-					{},
-					'referer',
-					''
-				);
-			} catch (e) {
-				error = e;
-			}
-			expect(error.response).toEqual({
-				message: 'Not Found',
-				statusCode: 404,
-			});
+
+			const response = await foldersService.findObjectsByFolderId(
+				'unknown-id',
+				mockUser.id,
+				{},
+				'referer',
+				''
+			);
+
+			expect(response.total).toEqual(0);
+			expect(response.items).toHaveLength(0);
 		});
 	});
 
@@ -564,7 +561,7 @@ describe('FoldersService', () => {
 			expect(error.response).toEqual({
 				error: 'Not Found',
 				statusCode: 404,
-				message: `Object with schema identifier ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
+				message: `Object with id ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
 			});
 			findObjectInFolderSpy.mockRestore();
 			findObjectByIdSpy.mockRestore();

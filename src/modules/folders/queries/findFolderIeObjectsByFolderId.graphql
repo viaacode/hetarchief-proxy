@@ -15,6 +15,7 @@ query findFolderIeObjectsByFolderId(
 	) {
 		created_at
 		intellectualEntity {
+			id
 			schema_identifier
 			schema_name
 			schema_description
