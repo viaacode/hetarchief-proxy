@@ -12,8 +12,8 @@ export const mockGqlFolder: GqlFolderWithIeObjects = {
 		{
 			created_at: '2022-02-19T09:19:09.487977',
 			intellectualEntity: {
-				schema_identifier:
-					'5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534236bf4ccd04741f1a35b5240a69f758b',
+				id: 'https://datahub.io/dataset/8s4jm2514q',
+				schema_identifier: '8s4jm2514q',
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
 			},
 		},
