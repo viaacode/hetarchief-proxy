@@ -69,11 +69,11 @@ const getDefaultMaterialRequestByIdResponse = (): {
 });
 
 const getDefaultMaintainersWithMaterialRequestsResponse = (): {
-	maintainer_organisations_with_material_requests: FindMaintainersWithMaterialRequestsQuery[];
-	maintainer_organisations_with_material_requests_aggregate: { aggregate: { count: number } };
+	graph_organisations_with_material_requests: FindMaintainersWithMaterialRequestsQuery[];
+	graph_organisations_with_material_requests_aggregate: { aggregate: { count: number } };
 } => ({
-	maintainer_organisations_with_material_requests: [mockGqlMaintainers as any],
-	maintainer_organisations_with_material_requests_aggregate: {
+	graph_organisations_with_material_requests: [mockGqlMaintainers as any],
+	graph_organisations_with_material_requests_aggregate: {
 		aggregate: {
 			count: 100,
 		},

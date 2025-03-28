@@ -286,19 +286,18 @@ describe('ieObjectsService', () => {
 	});
 
 	describe('findAllObjectMetadataByFolderId', () => {
-		it('should throw an error when there are no objects found with the folderId', async () => {
+		it('should return an empty list if there are no objects found in the folder', async () => {
 			const mockData = {
 				users_folder_ie: [],
 			};
 
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			try {
-				await ieObjectsService.findAllIeObjectMetadataByFolderId('ids', 'dontMatch');
-				fail('findAllObjectMetadataByFolderId should have thrown an error');
-			} catch (err) {
-				expect(err.name).toEqual('NotFoundException');
-			}
+			const response = await ieObjectsService.findAllIeObjectMetadataByFolderId(
+				'ids',
+				'dontMatch'
+			);
+			expect(response).toHaveLength(0);
 		});
 		it('should successfully return all objects by folderId adapted', async () => {
 			const mockData = {

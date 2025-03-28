@@ -2,13 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-	Inject,
-	Injectable,
-	InternalServerErrorException,
-	Logger,
-	NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { Cache } from 'cache-manager';
@@ -518,10 +512,6 @@ export class IeObjectsService {
 			userProfileId,
 		});
 
-		if (!allObjects[0]) {
-			throw new NotFoundException();
-		}
-
 		return allObjects.map((object) => {
 			return this.adaptLimitedMetadata(object);
 		});
@@ -924,7 +914,19 @@ export class IeObjectsService {
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
 			meemooLocalId: graphQlObject.intellectualEntity?.premisIdentifier?.[0]?.meemoo_local_id,
-			// isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
+			isPartOf: (graphQlObject.intellectualEntity?.schemaIsPartOf || []).map(
+				(
+					parent
+				): {
+					collectionType: IsPartOfKey;
+					name: string;
+				} => {
+					return {
+						collectionType: parent.type as IsPartOfKey,
+						name: parent.collection?.schema_name,
+					};
+				}
+			),
 		};
 	}
 

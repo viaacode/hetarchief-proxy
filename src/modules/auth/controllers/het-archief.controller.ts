@@ -269,7 +269,7 @@ export class HetArchiefController {
 			// http://localhost:3200/nl/nl/nl/account/mijn-mappen/favorieten
 			// =>
 			// http://localhost:3200/nl/account/mijn-mappen/favorieten
-			const returnToUrlCleaned = info.returnToUrl
+			const returnToUrlCleaned = (info.returnToUrl || this.configService.get('CLIENT_HOST'))
 				.replace(/\/nl\/(nl\/)*/, '/nl/')
 				.replace(/\/en\/(en\/)*/, '/en/');
 			response.redirect(returnToUrlCleaned);
