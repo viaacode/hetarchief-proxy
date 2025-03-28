@@ -479,7 +479,10 @@ export class IeObjectsController {
 
 	@Get('alto-json')
 	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
-		if (!/https:\/\/assets-[^.]+.hetarchief.be\/hetarchief/g.test(altoJsonUrl)) {
+		if (
+			!/https:\/\/assets[^.]+.hetarchief.be\/hetarchief/g.test(altoJsonUrl) &&
+			!/https:\/\/archief-media[^.]+.meemoo.be\//g.test(altoJsonUrl)
+		) {
 			throw new BadRequestException({
 				message:
 					"The provided url doesn't seem to be part of the whitelisted asset service urls.",
