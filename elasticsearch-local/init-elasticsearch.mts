@@ -127,5 +127,5 @@ async function initElasticsearch() {
 }
 
 initElasticsearch()
-	.then(() => console.log('Elasticsearch loaded'))
+	.then(() => console.info('Elasticsearch loaded'))
 	.catch((error) => console.error(error));

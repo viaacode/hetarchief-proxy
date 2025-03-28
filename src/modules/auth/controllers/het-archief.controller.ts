@@ -265,7 +265,14 @@ export class HetArchiefController {
 				},
 			]);
 
-			response.redirect(info.returnToUrl);
+			// Replace duplicate language parameters:
+			// http://localhost:3200/nl/nl/nl/account/mijn-mappen/favorieten
+			// =>
+			// http://localhost:3200/nl/account/mijn-mappen/favorieten
+			const returnToUrlCleaned = info.returnToUrl
+				.replace(/\/nl\/(nl\/)*/, '/nl/')
+				.replace(/\/en\/(en\/)*/, '/en/');
+			response.redirect(returnToUrlCleaned);
 		} catch (err) {
 			const proxyHost = this.configService.get('HOST');
 			if (err.message === 'SAML Response is no longer valid') {

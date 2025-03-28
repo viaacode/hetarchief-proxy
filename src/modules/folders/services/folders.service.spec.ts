@@ -56,12 +56,26 @@ const mockGqlFolder2: FindFoldersByUserQuery['users_folder'][0] = {
 };
 
 const mockGqlFolderObject: GqlObject = {
-	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-	schema_creator: null,
-	dcterms_available: '2015-09-19T12:08:24',
-	dcterms_format: 'video',
-	schema_number_of_pages: null,
+	id: 'https://data-qas.hetarchief.be/id/entity/8s4jm2514q',
 	schema_identifier: '8s4jm2514q',
+	schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
+	dcterms_available: '2015-09-19T12:08:24',
+	dctermsFormat: [
+		{
+			dcterms_format: 'video',
+		},
+	],
+	premisIdentifier: [],
+	schemaLicense: {
+		schema_license: [],
+	},
+	schemaThumbnail: {
+		schema_thumbnail_url: [],
+	},
+	schemaDuration: {
+		schema_duration: [],
+	},
+	schemaIsPartOf: [],
 };
 
 const mockGqlFolderObjectLink: FolderObjectLink = {
@@ -102,12 +116,25 @@ const mockGqlFolderObjectsResult: FindFolderIeObjectsByFolderIdQuery = {
 			created_at: '2022-02-02T10:55:16.542503',
 			intellectualEntity: {
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-				schema_creator: null,
 				dcterms_available: '2015-09-19T12:08:24',
-				schema_thumbnail_url:
-					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-				dcterms_format: 'video',
-				schema_number_of_pages: null,
+				schemaThumbnail: {
+					schema_thumbnail_url: [
+						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+					],
+				},
+				dctermsFormat: [
+					{
+						dcterms_format: 'video',
+					},
+				],
+				premisIdentifier: [],
+				schemaLicense: {
+					schema_license: [],
+				},
+				schemaDuration: {
+					schema_duration: [],
+				},
+				schemaIsPartOf: [],
 				schema_identifier: '8s4jm2514q',
 			},
 		},
@@ -125,12 +152,25 @@ const mockGqlFolderObjectResult: FindIeObjectInFolderQuery = {
 			created_at: '2022-02-02T10:55:16.542503',
 			intellectualEntity: {
 				schema_name: 'CGSO. De mannenbeweging - mannenemancipatie - 1982',
-				schema_creator: null,
 				dcterms_available: '2015-09-19T12:08:24',
-				schema_thumbnail_url:
-					'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-				dcterms_format: 'video',
-				schema_number_of_pages: null,
+				schemaThumbnail: {
+					schema_thumbnail_url: [
+						'/viaa/AMSAB/5dc89b7e75e649e191cd86196c255147cd1a0796146d4255acfde239296fa534/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
+					],
+				},
+				dctermsFormat: [
+					{
+						dcterms_format: 'video',
+					},
+				],
+				premisIdentifier: [],
+				schemaLicense: {
+					schema_license: [],
+				},
+				schemaDuration: {
+					schema_duration: [],
+				},
+				schemaIsPartOf: [],
 				schema_identifier: '8s4jm2514q',
 			},
 		},
@@ -364,7 +404,7 @@ describe('FoldersService', () => {
 	describe('findObjectInFolder', () => {
 		it('returns one objects in a folder', async () => {
 			mockDataService.execute.mockResolvedValueOnce(mockGqlFolderObjectResult);
-			const response = await foldersService.findObjectInFolderBySchemaIdentifier(
+			const response = await foldersService.findObjectInFolderById(
 				mockGqlFolder1.id,
 				mockFolderObject.schemaIdentifier,
 				'referer',
@@ -440,12 +480,10 @@ describe('FoldersService', () => {
 	describe('findObjectBySchemaIdentifier', () => {
 		it('can find an object by schema identifier', async () => {
 			const mockData: FindIeObjectBySchemaIdentifierQuery = {
-				graph__intellectual_entity: [mockGqlFolderObject],
+				graph_intellectual_entity: [mockGqlFolderObject],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const object = await foldersService.findObjectBySchemaIdentifier(
-				mockFolderObject.schemaIdentifier
-			);
+			const object = await foldersService.findObjectById(mockFolderObject.iri);
 			expect(object.schemaIdentifier).toEqual(mockFolderObject.schemaIdentifier);
 		});
 	});
@@ -453,10 +491,10 @@ describe('FoldersService', () => {
 	describe('addObjectToFolder', () => {
 		it('can add object to a folder', async () => {
 			const findObjectInFolderSpy = jest
-				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(foldersService, 'findObjectBySchemaIdentifier')
+			const findObjectByIdSpy = jest
+				.spyOn(foldersService, 'findObjectById')
 				.mockResolvedValueOnce(mockFolderObject);
 			const mockData: InsertIeObjectIntoFolderMutation = {
 				insert_users_folder_ie: {
@@ -477,12 +515,12 @@ describe('FoldersService', () => {
 				mockGqlFolderObjectLink.intellectualEntity.schema_identifier
 			);
 			findObjectInFolderSpy.mockRestore();
-			findObjectBySchemaIdentifierSpy.mockRestore();
+			findObjectByIdSpy.mockRestore();
 		});
 
 		it('can not add object to a folder if it already exists', async () => {
 			const findObjectInFolderSpy = jest
-				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(mockFolderObject);
 
 			let error: any;
@@ -506,10 +544,10 @@ describe('FoldersService', () => {
 
 		it('throws a NotFoundException when the objectInfo was not found', async () => {
 			const findObjectInFolderSpy = jest
-				.spyOn(foldersService, 'findObjectInFolderBySchemaIdentifier')
+				.spyOn(foldersService, 'findObjectInFolderById')
 				.mockResolvedValueOnce(null);
-			const findObjectBySchemaIdentifierSpy = jest
-				.spyOn(foldersService, 'findObjectBySchemaIdentifier')
+			const findObjectByIdSpy = jest
+				.spyOn(foldersService, 'findObjectById')
 				.mockResolvedValueOnce(null);
 
 			let error: any;
@@ -529,7 +567,7 @@ describe('FoldersService', () => {
 				message: `Object with schema identifier ${mockGqlFolderObjectLink.intellectualEntity.schema_identifier} was not found`,
 			});
 			findObjectInFolderSpy.mockRestore();
-			findObjectBySchemaIdentifierSpy.mockRestore();
+			findObjectByIdSpy.mockRestore();
 		});
 	});
 

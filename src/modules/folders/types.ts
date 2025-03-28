@@ -44,7 +44,7 @@ export type FolderObjectLink =
 	| FindFoldersByUserQuery['users_folder'][0]['intellectualEntities'][0]
 	| FindFolderIeObjectsByFolderIdQuery['users_folder_ie'][0];
 
-export type GqlObject = FindIeObjectBySchemaIdentifierQuery['graph__intellectual_entity'][0];
+export type GqlObject = FindIeObjectBySchemaIdentifierQuery['graph_intellectual_entity'][0];
 
 export interface FolderShared {
 	status: FolderStatus;

@@ -1,5 +1,5 @@
 query findMaintainersWithMaterialRequests {
-	maintainer_organisations_with_material_requests {
+	graph_organisations_with_material_requests {
 		id
 		org_identifier
 		skos_pref_label

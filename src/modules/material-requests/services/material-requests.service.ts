@@ -192,11 +192,11 @@ export class MaterialRequestsService {
 			FindMaintainersWithMaterialRequestsQueryVariables
 		>(FindMaintainersWithMaterialRequestsDocument, {});
 
-		if (isNil(response) || !response.maintainer_organisations_with_material_requests[0]) {
+		if (isNil(response) || !response.graph_organisations_with_material_requests[0]) {
 			return [];
 		}
 
-		const maintainers = response.maintainer_organisations_with_material_requests;
+		const maintainers = response.graph_organisations_with_material_requests;
 		return maintainers.map((maintainer: GqlMaterialRequestMaintainer) =>
 			this.adaptMaintainers(maintainer)
 		);

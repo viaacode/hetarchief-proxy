@@ -743,7 +743,6 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 						schema_in_language: null,
 						schema_start_time: null,
 						schema_end_time: null,
-						schema_transcript: null,
 						schemaTranscriptUrls: null,
 						edm_is_next_in_sequence: null,
 						updated_at: '2025-03-10T15:24:56.587054+01:00',
@@ -943,31 +942,48 @@ export const mockGqlIeObjectFindByFolderId: FindAllIeObjectsByFolderIdQuery['use
 			dcterms_format: 'video',
 			schema_date_created_lower_bound: '2018-01-01',
 			schema_date_published: null,
-			schema_is_part_of: [
+			dctermsFormat: [
 				{
-					collectionType: 'reeks',
-					name: 'WEB',
-				},
-				{
-					collectionType: 'archief',
-					name: 'digitaal archief/videoproducties',
-				},
-				{
-					collectionType: 'alternatief',
-					name: 'videoproductie',
+					dcterms_format: 'video',
 				},
 			],
-			meemoo_local_id: ['VI-0011-0004'],
-			schema_license: [
-				'CP-WEBSITE',
-				'VIAA-INTRA_CP-CONTENT',
-				'VIAA-INTRA_CP-METADATA-ALL',
-				'VIAA-ONDERWIJS',
-				'VIAA-ONDERZOEK',
-				'VIAA-PUBLIEK-METADATA-LTD',
-				'BEZOEKERTOOL-CONTENT',
-				'BEZOEKERTOOL-METADATA-ALL',
+			schemaIsPartOf: [
+				{
+					type: 'reeks',
+					collection: {
+						schema_name: 'WEB',
+					},
+				},
+				{
+					type: 'archief',
+					collection: {
+						schema_name: 'digitaal archief/videoproducties',
+					},
+				},
+				{
+					type: 'alternatief',
+					collection: {
+						schema_name: 'videoproductie',
+					},
+				},
 			],
+			premisIdentifier: [
+				{
+					meemoo_local_id: 'VI-0011-0004',
+				},
+			],
+			schemaLicense: {
+				schema_license: [
+					'CP-WEBSITE',
+					'VIAA-INTRA_CP-CONTENT',
+					'VIAA-INTRA_CP-METADATA-ALL',
+					'VIAA-ONDERWIJS',
+					'VIAA-ONDERZOEK',
+					'VIAA-PUBLIEK-METADATA-LTD',
+					'BEZOEKERTOOL-CONTENT',
+					'BEZOEKERTOOL-METADATA-ALL',
+				],
+			},
 		},
 	});
 
