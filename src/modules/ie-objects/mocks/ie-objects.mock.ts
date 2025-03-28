@@ -743,7 +743,6 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 						schema_in_language: null,
 						schema_start_time: null,
 						schema_end_time: null,
-						schema_transcript: null,
 						schemaTranscriptUrls: null,
 						edm_is_next_in_sequence: null,
 						updated_at: '2025-03-10T15:24:56.587054+01:00',

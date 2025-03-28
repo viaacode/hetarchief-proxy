@@ -22,8 +22,8 @@ query getHasPart($ieObjectId: String!) {
 			schema_in_language
 			schema_start_time
 			schema_end_time
-			schema_transcript
 			schemaTranscriptUrls {
+				schema_transcript
 				schema_transcript_url
 			}
 			edm_is_next_in_sequence

@@ -967,7 +967,8 @@ export class IeObjectsService {
 								schemaInLanguage: representation.schema_in_language,
 								schemaStartTime: representation.schema_start_time,
 								schemaEndTime: representation.schema_end_time,
-								schemaTranscript: representation.schema_transcript,
+								schemaTranscript:
+									representation.schemaTranscriptUrls?.[0]?.schema_transcript,
 								schemaTranscriptUrl:
 									representation.schemaTranscriptUrls?.[0]
 										?.schema_transcript_url || null,
