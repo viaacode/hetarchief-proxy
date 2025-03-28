@@ -12,7 +12,7 @@ mutation insertVisit($newVisit: maintainer_visitor_space_request_insert_input!) 
 			language
 			folders {
 				intellectualEntities {
-					ie_schema_identifier
+					ie_object_id
 				}
 			}
 		}

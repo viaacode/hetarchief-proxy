@@ -1,24 +1,39 @@
-query findIeObjectInFolder($folderId: uuid, $objectSchemaIdentifier: String) {
+query findIeObjectInFolder($folderId: uuid, $ieObjectId: String) {
 	users_folder_ie(
 		where: {
 			user_collection_id: { _eq: $folderId }
-			ie_schema_identifier: { _eq: $objectSchemaIdentifier }
+			ie_object_id: { _eq: $ieObjectId }
 			collection: { is_deleted: { _eq: false } }
 		}
 	) {
 		intellectualEntity {
 			schema_identifier
 			schema_name
-			schema_creator
 			schema_description
 			dcterms_available
-			schema_thumbnail_url
-			dcterms_format
-			schema_number_of_pages
-			schema_is_part_of
 			schema_date_published
-			schema_duration
-			schema_license
+			schema_date_created
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
+			dctermsFormat {
+				dcterms_format
+			}
+			schemaDuration {
+				schema_duration
+			}
+			schemaLicense {
+				schema_license
+			}
+			premisIdentifier(where: { type: { _eq: "primary" } }) {
+				meemoo_local_id: value
+			}
+			schemaIsPartOf {
+				type
+				collection {
+					schema_name
+				}
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
@@ -27,6 +42,7 @@ query findIeObjectInFolder($folderId: uuid, $objectSchemaIdentifier: String) {
 				visitorSpace {
 					id
 					slug
+					schema_maintainer_id
 				}
 			}
 		}

@@ -165,7 +165,7 @@ export const mockUser: User = {
 	isKeyUser: false,
 };
 
-export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['maintainer_organisations_with_material_requests'][0] =
+export const mockGqlMaintainers: FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0] =
 	{
 		org_identifier: 'OR-rf5kf25',
 		skos_pref_label: 'VRT',

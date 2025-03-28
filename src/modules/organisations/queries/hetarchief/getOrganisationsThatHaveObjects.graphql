@@ -1,5 +1,5 @@
 query getOrganisationsThatHaveObjects {
-	maintainer_organisations_with_objects {
+	graph_organisations_with_objects {
 		id
 		ha_org_has_logo
 		skos_pref_label

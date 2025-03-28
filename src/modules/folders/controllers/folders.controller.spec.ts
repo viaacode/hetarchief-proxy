@@ -89,7 +89,7 @@ const mockUser: User = {
 const mockFoldersService: Partial<Record<keyof FoldersService, jest.SpyInstance>> = {
 	findFoldersByUser: jest.fn(),
 	findFolderById: jest.fn(),
-	findObjectInFolderBySchemaIdentifier: jest.fn(),
+	findObjectInFolderById: jest.fn(),
 	findObjectsByFolderId: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
@@ -281,7 +281,7 @@ describe('FoldersController', () => {
 			);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
 			mockFoldersService.findFolderById.mockResolvedValueOnce(mockFoldersResponse.items[0]);
-			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(
+			mockFoldersService.findObjectInFolderById.mockResolvedValue(
 				mockFoldersResponse.items[0]
 			);
 			mockIeObjectsService.findByIeObjectId.mockResolvedValue([mockIeObject1]);
@@ -382,7 +382,7 @@ describe('FoldersController', () => {
 			);
 			mockFoldersService.removeObjectFromFolder.mockResolvedValueOnce(1);
 			mockFoldersService.findFolderById.mockResolvedValue(mockFoldersResponse.items[0]);
-			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
+			mockFoldersService.findObjectInFolderById.mockResolvedValue(null);
 
 			const folderObject = await foldersController.moveObjectToAnotherFolder(
 				'referer',
@@ -406,7 +406,7 @@ describe('FoldersController', () => {
 					userProfileId: 'not-the-owner-id',
 				})
 				.mockResolvedValue(mockFoldersResponse.items[0]);
-			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
+			mockFoldersService.findObjectInFolderById.mockResolvedValue(null);
 
 			let error: any;
 			try {
@@ -435,7 +435,7 @@ describe('FoldersController', () => {
 					...mockFoldersResponse.items[0],
 					userProfileId: 'not-the-owner-id',
 				});
-			mockFoldersService.findObjectInFolderBySchemaIdentifier.mockResolvedValue(null);
+			mockFoldersService.findObjectInFolderById.mockResolvedValue(null);
 
 			let error: any;
 			try {

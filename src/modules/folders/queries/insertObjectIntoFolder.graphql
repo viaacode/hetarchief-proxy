@@ -1,7 +1,5 @@
-mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectSchemaIdentifier: String) {
-	insert_users_folder_ie(
-		objects: { user_collection_id: $folderId, ie_schema_identifier: $ieObjectSchemaIdentifier }
-	) {
+mutation insertIeObjectIntoFolder($folderId: uuid, $ieObjectId: String) {
+	insert_users_folder_ie(objects: { user_collection_id: $folderId, ie_object_id: $ieObjectId }) {
 		returning {
 			created_at
 		}

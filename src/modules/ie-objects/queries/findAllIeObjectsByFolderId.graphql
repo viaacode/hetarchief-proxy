@@ -7,25 +7,42 @@ query findAllIeObjectsByFolderId($folderId: uuid, $userProfileId: uuid) {
 	) {
 		intellectualEntity {
 			schema_identifier
-			meemoo_identifier
-			meemoo_local_id
 			schema_name
-			schema_creator
 			schema_description
 			dcterms_available
-			schema_date_created
-			schema_thumbnail_url
-			dcterms_format
-			dcterms_medium
-			schema_number_of_pages
-			schema_is_part_of
 			schema_date_published
-			schema_duration
-			schema_license
+			schema_date_created
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
+			dctermsFormat {
+				dcterms_format
+			}
+			schemaDuration {
+				schema_duration
+			}
+			schemaLicense {
+				schema_license
+			}
+			premisIdentifier(where: { type: { _eq: "primary" } }) {
+				meemoo_local_id: value
+			}
+			schemaIsPartOf {
+				type
+				collection {
+					schema_name
+				}
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
+				ha_org_sector
 				skos_alt_label
+				visitorSpace {
+					id
+					slug
+					schema_maintainer_id
+				}
 			}
 		}
 	}

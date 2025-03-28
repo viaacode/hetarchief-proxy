@@ -47,7 +47,6 @@ import {
 	type Users_Folder_Ie_Bool_Exp,
 } from '~generated/graphql-db-types-hetarchief';
 import { type FolderObjectsQueryDto } from '~modules/folders/dto/folders.dto';
-import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import {
 	type IeObject,
 	type IeObjectSector,
@@ -73,24 +72,21 @@ export class FoldersService {
 
 		/* istanbul ignore next */
 		return {
+			iri: gqlIeObject?.id,
+			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
 			maintainerId: gqlIeObject?.schemaMaintainer?.org_identifier,
 			maintainerName: gqlIeObject?.schemaMaintainer?.skos_pref_label,
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.visitorSpace?.slug,
 			sector: (gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector) || null,
-			creator: gqlIeObject?.schema_creator?.[0],
 			description: gqlIeObject?.schema_description,
-			dctermsFormat: gqlIeObject?.dcterms_format as IeObjectType,
+			dctermsFormat: gqlIeObject?.dctermsFormat?.[0]?.dcterms_format as IeObjectType,
 			dctermsAvailable: gqlIeObject?.dcterms_available,
-			schemaIdentifier: gqlIeObject?.schema_identifier, // Unique for each object
-			meemooLocalId: gqlIeObject?.meemoo_local_id?.[0],
+			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
-			numberOfPages: gqlIeObject?.schema_number_of_pages,
-			thumbnailUrl: gqlIeObject?.schema_thumbnail_url?.[0] || null,
-			isPartOf: gqlIeObject?.schema_is_part_of || null,
+			thumbnailUrl: gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0] || null,
 			datePublished: gqlIeObject?.schema_date_published || null,
-			dateCreated: gqlIeObject?.schema_date_created || null,
-			duration: gqlIeObject?.schema_duration || null,
-			licenses: gqlIeObject?.schema_license || null,
+			duration: gqlIeObject?.schemaDuration?.schema_duration || null,
+			licenses: gqlIeObject?.schemaLicense?.schema_license || null,
 		};
 	}
 
@@ -123,7 +119,7 @@ export class FoldersService {
 			);
 			usedForLimitedAccessUntil = this.getLastEndAtDate(visitsWithFolders);
 		} catch (error) {
-			this.logger.debug(`Visits by folder id ${gqlFolder.id} could not be retrieved`);
+			this.logger.error(`Visits by folder id ${gqlFolder.id} could not be retrieved`);
 		}
 
 		/* istanbul ignore next */
@@ -235,7 +231,11 @@ export class FoldersService {
 							schemaMaintainer: { skos_pref_label: { _ilike: query } },
 						},
 					},
-					{ intellectualEntity: { dcterms_format: { _ilike: query } } },
+					{
+						intellectualEntity: {
+							dctermsFormat: { dcterms_format: { _ilike: query } },
+						},
+					},
 					{ intellectualEntity: { schema_identifier: { _ilike: query } } },
 					{
 						intellectualEntity: {
@@ -266,9 +266,6 @@ export class FoldersService {
 			offset,
 			limit,
 		});
-		if (isEmpty(folderObjectsResponse.users_folder_ie)) {
-			throw new NotFoundException();
-		}
 		const total = folderObjectsResponse.users_folder_ie_aggregate.aggregate.count;
 		return {
 			items: await Promise.all(
@@ -295,7 +292,6 @@ export class FoldersService {
 			object: folder,
 		});
 		const createdFolder = response.insert_users_folder.returning[0];
-		this.logger.debug(`Folder ${createdFolder.id} created`);
 
 		return this.adaptFolder(createdFolder, referer, ip);
 	}
@@ -317,7 +313,6 @@ export class FoldersService {
 		});
 
 		const updatedFolder = response.update_users_folder.returning[0];
-		this.logger.debug(`Folder ${updatedFolder.id} updated`);
 
 		return this.adaptFolder(updatedFolder, referer, ip);
 	}
@@ -330,14 +325,13 @@ export class FoldersService {
 			folderId,
 			userProfileId,
 		});
-		this.logger.debug(`Folder ${folderId} deleted`);
 
 		return response.update_users_folder.affected_rows;
 	}
 
-	public async findObjectInFolderBySchemaIdentifier(
+	public async findObjectInFolderById(
 		folderId: string,
-		objectSchemaIdentifier: string,
+		ieObjectId: string,
 		referer: string,
 		ip: string
 	): Promise<(Partial<IeObject> & { folderEntryCreatedAt: string }) | null> {
@@ -346,43 +340,34 @@ export class FoldersService {
 			FindIeObjectInFolderQueryVariables
 		>(FindIeObjectInFolderDocument, {
 			folderId,
-			objectSchemaIdentifier,
+			ieObjectId,
 		});
 
 		/* istanbul ignore next */
 		const foundObject = response?.users_folder_ie?.[0];
-		this.logger.debug(`Found object ${objectSchemaIdentifier} in ${folderId}`);
 
 		return this.adaptFolderObjectLink(foundObject, referer, ip);
 	}
 
-	public async findObjectBySchemaIdentifier(
-		objectSchemaIdentifier: string
-	): Promise<Partial<IeObject> | null> {
+	public async findObjectById(ieObjectId: string): Promise<Partial<IeObject> | null> {
 		const response = await this.dataService.execute<
 			FindIeObjectBySchemaIdentifierQuery,
 			FindIeObjectBySchemaIdentifierQueryVariables
 		>(FindIeObjectBySchemaIdentifierDocument, {
-			ieObjectId: convertSchemaIdentifierToId(objectSchemaIdentifier),
+			ieObjectId,
 		});
-		const foundObject = response.graph__intellectual_entity[0];
-		this.logger.debug(`Found object ${objectSchemaIdentifier}`);
+		const foundObject = response.graph_intellectual_entity[0];
 
 		return this.adaptIeObject(foundObject);
 	}
 
 	public async addObjectToFolder(
 		folderId: string,
-		ieObjectSchemaIdentifier: string,
+		ieObjectId: string,
 		referer: string,
 		ip: string
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
-		const folderObject = await this.findObjectInFolderBySchemaIdentifier(
-			folderId,
-			ieObjectSchemaIdentifier,
-			referer,
-			ip
-		);
+		const folderObject = await this.findObjectInFolderById(folderId, ieObjectId, referer, ip);
 		if (folderObject) {
 			throw new BadRequestException({
 				code: 'OBJECT_ALREADY_EXISTS',
@@ -390,12 +375,10 @@ export class FoldersService {
 			});
 		}
 
-		const objectInfo = await this.findObjectBySchemaIdentifier(ieObjectSchemaIdentifier);
+		const objectInfo = await this.findObjectById(ieObjectId);
 
 		if (!objectInfo) {
-			throw new NotFoundException(
-				`Object with schema identifier ${ieObjectSchemaIdentifier} was not found`
-			);
+			throw new NotFoundException(`Object with id ${ieObjectId} was not found`);
 		}
 
 		const response = await this.dataService.execute<
@@ -403,10 +386,9 @@ export class FoldersService {
 			InsertIeObjectIntoFolderMutationVariables
 		>(InsertIeObjectIntoFolderDocument, {
 			folderId,
-			ieObjectSchemaIdentifier,
+			ieObjectId,
 		});
 		const createdObject = response.insert_users_folder_ie.returning[0];
-		this.logger.debug(`Folder object ${ieObjectSchemaIdentifier} created`);
 
 		return {
 			folderEntryCreatedAt: createdObject.created_at,
@@ -416,7 +398,7 @@ export class FoldersService {
 
 	public async removeObjectFromFolder(
 		folderId: string,
-		objectSchemaIdentifier: string,
+		ieObjectId: string,
 		userProfileId: string
 	) {
 		const response = await this.dataService.execute<
@@ -424,10 +406,9 @@ export class FoldersService {
 			RemoveObjectFromFolderMutationVariables
 		>(RemoveObjectFromFolderDocument, {
 			folderId,
-			objectSchemaIdentifier,
+			ieObjectId,
 			userProfileId,
 		});
-		this.logger.debug(`Folder object ${objectSchemaIdentifier} deleted`);
 
 		return response.delete_users_folder_ie.affected_rows || 0;
 	}

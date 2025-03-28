@@ -62,7 +62,7 @@ export class OrganisationsService {
 	}
 
 	public adaptOrganisation(
-		gqlOrganisation: GetOrganisationsThatHaveObjectsQuery['maintainer_organisations_with_objects'][0]
+		gqlOrganisation: GetOrganisationsThatHaveObjectsQuery['graph_organisations_with_objects'][0]
 	): MaintainerGridOrganisation {
 		return {
 			id: gqlOrganisation.org_identifier,
@@ -93,7 +93,7 @@ export class OrganisationsService {
 					GetOrganisationsThatHaveObjectsDocument
 				);
 
-			return organisationsResponse.maintainer_organisations_with_objects.map(
+			return organisationsResponse.graph_organisations_with_objects.map(
 				this.adaptOrganisation
 			);
 		} catch (err: any) {

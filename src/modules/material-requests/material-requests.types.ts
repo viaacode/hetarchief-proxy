@@ -83,4 +83,4 @@ export type GqlMaterialRequest =
 	| FindMaterialRequestsByIdQuery['app_material_requests'][0];
 
 export type GqlMaterialRequestMaintainer =
-	FindMaintainersWithMaterialRequestsQuery['maintainer_organisations_with_material_requests'][0];
+	FindMaintainersWithMaterialRequestsQuery['graph_organisations_with_material_requests'][0];

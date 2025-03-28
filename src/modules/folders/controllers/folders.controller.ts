@@ -221,14 +221,14 @@ export class FoldersController {
 		}
 	}
 
-	@Post(':folderId/objects/:objectId')
+	@Post(':folderId/objects/:objectSchemaIdentifier')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async addObjectToFolder(
 		@Req() request: Request,
 		@Headers('referer') referer: string,
 		@Param('folderId') folderId: string,
-		@Param('objectId') objectSchemaIdentifier: string,
+		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
 		const collection = await this.foldersService.findFolderById(
@@ -242,7 +242,7 @@ export class FoldersController {
 
 		const folderObject = await this.foldersService.addObjectToFolder(
 			folderId,
-			objectSchemaIdentifier,
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
 			getIpFromRequest(request)
 		);
@@ -275,13 +275,13 @@ export class FoldersController {
 		return folderObject;
 	}
 
-	@Delete(':folderId/objects/:objectId')
+	@Delete(':folderId/objects/:objectSchemaIdentifier')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async removeObjectFromFolder(
 		@Headers('referer') referer: string,
 		@Param('folderId') folderId: string,
-		@Param('objectId') objectId: string,
+		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
@@ -295,7 +295,7 @@ export class FoldersController {
 		}
 		const affectedRows = await this.foldersService.removeObjectFromFolder(
 			folderId,
-			objectId,
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			user.getId()
 		);
 		if (affectedRows > 0) {
@@ -305,14 +305,14 @@ export class FoldersController {
 		}
 	}
 
-	@Patch(':oldFolderId/objects/:objectId/move')
+	@Patch(':oldFolderId/objects/:objectSchemaIdentifier/move')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async moveObjectToAnotherFolder(
 		@Headers('referer') referer: string,
 		@Req() request: Request,
 		@Param('oldFolderId') oldFolderId: string,
-		@Param('objectId') objectSchemaIdentifier: string,
+		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@Query('newFolderId') newFolderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
@@ -330,18 +330,25 @@ export class FoldersController {
 
 		const folderObject = await this.foldersService.addObjectToFolder(
 			newFolderId,
-			objectSchemaIdentifier,
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
 			getIpFromRequest(request)
 		);
 		await this.foldersService.removeObjectFromFolder(
 			oldFolderId,
-			objectSchemaIdentifier,
+			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			user.getId()
 		);
 		return folderObject;
 	}
 
+	/**
+	 * Create an invite to share a folder
+	 * @param request
+	 * @param emailInfo
+	 * @param folderId
+	 * @param user
+	 */
 	@Post('/share/:folderId/create')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
@@ -357,7 +364,7 @@ export class FoldersController {
 			getIpFromRequest(request)
 		);
 
-		//if the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
+		// If the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
 		const toUser = await this.userService.getUserByEmail(emailInfo.to);
 
 		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
@@ -388,6 +395,13 @@ export class FoldersController {
 		return { message: 'success' };
 	}
 
+	/**
+	 * Accept a folder invite and copy the shared folder to the current user
+	 * @param referer
+	 * @param request
+	 * @param folderId
+	 * @param user
+	 */
 	@Post('/share/:folderId')
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)

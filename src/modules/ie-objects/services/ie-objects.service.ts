@@ -262,8 +262,10 @@ export class IeObjectsService {
 			schemaIdentifierV2: schemaIdentifierV2,
 		});
 
-		const schemaIdentifierV3 = response.graph__intellectual_entity[0]?.schema_identifier;
-		const id = response.graph__intellectual_entity[0]?.id;
+		const schemaIdentifierV3 = response.graph_mh_fragment_identifier[0]?.intellectual_entity_id
+			?.split('/')
+			.pop();
+		const id = response.graph_mh_fragment_identifier[0]?.intellectual_entity_id;
 		if (!schemaIdentifierV3) {
 			return null;
 		}
@@ -916,13 +918,13 @@ export class IeObjectsService {
 		return {
 			schemaIdentifier: graphQlObject.intellectualEntity?.schema_identifier,
 			maintainerName: graphQlObject.intellectualEntity?.schemaMaintainer?.skos_pref_label,
-			premisIdentifier: undefined, // graphQlObject.intellectualEntity?.premis_identifier, // TODO see if this needs to be re-enabled
 			name: graphQlObject.intellectualEntity?.schema_name,
-			dctermsFormat: graphQlObject.intellectualEntity?.dcterms_format as IeObjectType,
+			dctermsFormat: graphQlObject.intellectualEntity?.dctermsFormat?.[0]
+				?.dcterms_format as IeObjectType,
 			dateCreated: graphQlObject.intellectualEntity?.schema_date_created || null,
 			datePublished: graphQlObject.intellectualEntity?.schema_date_published || null,
-			meemooLocalId: graphQlObject.intellectualEntity?.meemoo_local_id?.[0],
-			isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
+			meemooLocalId: graphQlObject.intellectualEntity?.premisIdentifier?.[0]?.meemoo_local_id,
+			// isPartOf: graphQlObject.intellectualEntity?.schema_is_part_of || {},
 		};
 	}
 

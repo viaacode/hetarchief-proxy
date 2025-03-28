@@ -24,7 +24,7 @@ export const mockGqlVisitRequest: GqlVisit = {
 			{
 				intellectualEntities: [
 					{
-						ie_schema_identifier: '',
+						ie_object_id: '',
 					},
 				],
 			},

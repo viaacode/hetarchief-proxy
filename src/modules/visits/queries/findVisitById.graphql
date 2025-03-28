@@ -12,7 +12,7 @@ query findVisitById($id: uuid!) {
 			language
 			folders {
 				intellectualEntities {
-					ie_schema_identifier
+					ie_object_id
 				}
 			}
 		}
