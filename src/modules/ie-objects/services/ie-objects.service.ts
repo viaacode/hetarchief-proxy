@@ -445,13 +445,15 @@ export class IeObjectsService {
 			})
 		)) as IeObjectDetailResponseTypes;
 
-		// log performance times of sub queries
-		const tableData = orderBy(
-			performanceTimes,
-			(performanceItem) => performanceItem[3],
-			'desc'
-		);
-		console.table(tableData);
+		if (process.env.NODE_ENV !== 'test') {
+			// log performance times of sub queries
+			const tableData = orderBy(
+				performanceTimes,
+				(performanceItem) => performanceItem[3],
+				'desc'
+			);
+			console.table(tableData);
+		}
 
 		return responses;
 	}
