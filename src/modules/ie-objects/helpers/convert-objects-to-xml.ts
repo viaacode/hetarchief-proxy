@@ -1,19 +1,48 @@
-import _ from 'lodash';
 import convert from 'xml-js';
 
-import { IE_OBJECT_PROPS_METADATA_EXPORT } from '../ie-objects.conts';
+import {
+	IE_OBJECT_PROPERTY_TO_DUBLIN_CORE,
+	IE_OBJECT_PROPS_METADATA_EXPORT,
+	type XmlNode,
+} from '../ie-objects.conts';
 import { type IeObject } from '../ie-objects.types';
 
-export const convertObjectsToXml = (objects: Partial<IeObject>[]): string => {
-	// this structure defines the parent 'objects' tag, which includes
-	// all objects wrapped in a separate 'object' tag
-	const xmlData = objects.map((o) => _.pick(o, IE_OBJECT_PROPS_METADATA_EXPORT));
-	return convert.js2xml({ objects: { object: xmlData } }, { compact: true, spaces: 2 });
-};
-
 export const convertObjectToXml = (object: Partial<IeObject>): string => {
-	return convert.js2xml(
-		{ object: _.pick(object, IE_OBJECT_PROPS_METADATA_EXPORT) },
-		{ compact: true, spaces: 2 }
-	);
+	const dcElements: XmlNode[] = [];
+
+	for (const key of IE_OBJECT_PROPS_METADATA_EXPORT) {
+		const value = object[key as keyof IeObject];
+		if (value) {
+			const dcField = IE_OBJECT_PROPERTY_TO_DUBLIN_CORE[key](value);
+
+			if (dcField) {
+				dcElements.push(...dcField);
+			}
+		}
+	}
+
+	const xmlObj = {
+		declaration: {
+			attributes: {
+				version: '1.0',
+				encoding: 'UTF-8',
+			},
+		},
+		elements: [
+			{
+				type: 'element',
+				name: 'oai_dc:dc',
+				attributes: {
+					'xmlns:oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+					'xmlns:dc': 'http://purl.org/dc/elements/1.1/',
+					'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+					'xsi:schemaLocation':
+						'http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
+				},
+				elements: dcElements,
+			},
+		],
+	};
+
+	return convert.js2xml(xmlObj, { compact: false, spaces: 2 });
 };

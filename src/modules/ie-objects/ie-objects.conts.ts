@@ -1,3 +1,5 @@
+import { isEmpty, uniq } from 'lodash';
+
 import {
 	AutocompleteEsField,
 	AutocompleteField,
@@ -180,6 +182,7 @@ export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>>
 
 export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	// LTD
+	'iri',
 	'schemaIdentifier',
 	'meemooOriginalCp',
 	'meemooLocalId',
@@ -218,12 +221,335 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'publisher',
 	'abstract',
 	'transcript',
-	'spatial',
-	'temporal',
 	'ebucoreObjectType',
 	'meemooDescriptionCast',
-	'meemooMediaObjectId',
 ];
+
+export type XmlNode =
+	| {
+			type: 'element';
+			name: string;
+			elements?: XmlNode[];
+			attributes?: Record<string, string>;
+	  }
+	| {
+			type: 'text';
+			text: string;
+	  };
+
+type XmlNodeFactory = (value: any) => XmlNode[];
+
+function getXmlTextValue(value: any): XmlNode[] {
+	if (isEmpty(value)) {
+		return [];
+	}
+	if (typeof value === 'string') {
+		return [
+			{
+				type: 'text',
+				text: value,
+			},
+		];
+	} else {
+		return [
+			{
+				type: 'text',
+				text: JSON.stringify(value),
+			},
+		];
+	}
+}
+
+function getArrayXmlValue(name: string, values: string[]): XmlNode[] {
+	return uniq(values || []).flatMap((value: string) => {
+		if (Array.isArray(value)) {
+			return getArrayXmlValue(name, value);
+		} else {
+			return [
+				{
+					type: 'element',
+					name,
+					elements: getXmlTextValue(value),
+				},
+			];
+		}
+	});
+}
+
+export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> = {
+	iri: (value: string) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+		},
+	],
+	schemaIdentifier: (value: string) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'PID' },
+		},
+	],
+	meemooOriginalCp: (value) => [
+		{
+			type: 'element',
+			name: 'dc:source',
+			elements: getXmlTextValue(value),
+		},
+	],
+	meemooLocalId: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'meemoo local identifier' },
+		},
+	],
+	meemooMediaObjectId: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'meemoo media object id' },
+		},
+	],
+	premisIdentifier: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'premis identifier' },
+		},
+	],
+	maintainerId: (value) => [
+		{
+			type: 'element',
+			name: 'dc:contributor',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Maintainer ID' },
+		},
+	],
+	maintainerName: (value) => [
+		{
+			type: 'element',
+			name: 'dc:contributor',
+			elements: getXmlTextValue(value),
+		},
+	],
+	name: (value) => [
+		{
+			type: 'element',
+			name: 'dc:title',
+			elements: getXmlTextValue(value),
+		},
+	],
+	isPartOf: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:isPartOf',
+			elements: getXmlTextValue(value?.[0]?.iri),
+		},
+	],
+	collectionName: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:isPartOf',
+			elements: getXmlTextValue(value),
+		},
+	],
+	issueNumber: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Issue number' },
+		},
+	],
+	dctermsFormat: (value) => [
+		{
+			type: 'element',
+			name: 'dc:format',
+			elements: getXmlTextValue(value),
+		},
+	],
+	dctermsMedium: (value) => [
+		{
+			type: 'element',
+			name: 'dc:format',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Medium' },
+		},
+	],
+	duration: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:extent',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Duration' },
+		},
+	],
+	dateCreated: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:created',
+			elements: getXmlTextValue(value),
+		},
+	],
+	datePublished: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:issued',
+			elements: getXmlTextValue(value),
+		},
+	],
+	creator: (value) => [
+		{
+			type: 'element',
+			name: 'dc:creator',
+			elements: getXmlTextValue(value),
+		},
+	],
+	description: (value) => [
+		{
+			type: 'element',
+			name: 'dc:description',
+			elements: getXmlTextValue(value),
+		},
+	],
+	genre: (value) => getArrayXmlValue('dc:type', value),
+	keywords: (value) => getArrayXmlValue('dc:subject', value),
+	inLanguage: (value) => getArrayXmlValue('dc:language', value),
+	carrierDate: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:available',
+			elements: getXmlTextValue(value),
+		},
+	],
+	numberOfPages: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:extent',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Number of pages' },
+		},
+	],
+	abrahamInfo: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value?.abraham_id),
+			attributes: { note: 'Abraham id' },
+		},
+	],
+	spatial: (value) => [
+		{
+			type: 'element',
+			name: 'dc:coverage',
+			elements: getXmlTextValue(value),
+		},
+	],
+	temporal: (value) => [
+		{
+			type: 'element',
+			name: 'dc:coverage',
+			elements: getXmlTextValue(value),
+		},
+	],
+	newspaperPublisher: (value) => [
+		{
+			type: 'element',
+			name: 'dc:publisher',
+			elements: getXmlTextValue(value),
+		},
+	],
+	copyrightHolder: (value) => [
+		{
+			type: 'element',
+			name: 'dc:rights',
+			elements: getXmlTextValue(value),
+		},
+	],
+	width: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:extent',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Width' },
+		},
+	],
+	height: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:extent',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Height' },
+		},
+	],
+	synopsis: (value) => [
+		{
+			type: 'element',
+			name: 'dc:description',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Synopsis' },
+		},
+	],
+	preceededBy: (value) => [
+		{
+			type: 'element',
+			name: 'ex:previousItem',
+			elements: getXmlTextValue(value),
+		},
+	],
+	succeededBy: (value) => [
+		{
+			type: 'element',
+			name: 'ex:nextItem',
+			elements: getXmlTextValue(value),
+		},
+	],
+	alternativeTitle: (value) => [
+		{
+			type: 'element',
+			name: 'dc:title',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Alternative Title' },
+		},
+	],
+	publisher: (value) => getArrayXmlValue('dc:publisher', value),
+	abstract: (value) => [
+		{
+			type: 'element',
+			name: 'dcterms:abstract',
+			elements: getXmlTextValue(value),
+		},
+	],
+	transcript: (value) => [
+		{
+			type: 'element',
+			name: 'dc:description',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Transcript' },
+		},
+	],
+	ebucoreObjectType: (value) => [
+		{
+			type: 'element',
+			name: 'dc:type',
+			elements: getXmlTextValue(value),
+		},
+	],
+	meemooDescriptionCast: (value) => [
+		{
+			type: 'element',
+			name: 'dc:description',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Cast description' },
+		},
+	],
+};
 
 export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, string> = {
 	[AutocompleteField.creator]: AutocompleteEsField.creator + '.sayt',
