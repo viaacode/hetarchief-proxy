@@ -208,13 +208,18 @@ export class IeObjectsService {
 				);
 			}
 
-			const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
-			const objectResponse = await this.cacheManager.wrap(
-				CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
-				() => this.executeQuery(esIndex, esQuery),
-				// cache for 60 minutes
-				3_600_000
-			);
+			let objectResponse: any;
+			if (this.configService.get('ELASTICSEARCH_CACHE_QUERIES')) {
+				const cacheKey = Buffer.from(JSON.stringify(esQuery)).toString('base64');
+				objectResponse = await this.cacheManager.wrap(
+					CACHE_KEY_PREFIX_IE_OBJECTS_SEARCH + cacheKey,
+					() => this.executeQuery(esIndex, esQuery),
+					// cache for 60 minutes
+					3_600_000
+				);
+			} else {
+				objectResponse = await this.executeQuery(esIndex, esQuery);
+			}
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
 				this.logger.log(

@@ -44,6 +44,7 @@ export const configValidationSchema = Joi.object({
 	IGNORE_OBJECT_LICENSES: Joi.boolean().default(false),
 	ORGANIZATIONS_API_V2_URL: Joi.string(),
 	ELASTICSEARCH_LOG_QUERIES: Joi.boolean().default(false),
+	ELASTICSEARCH_CACHE_QUERIES: Joi.boolean().default(true),
 	GRAPHQL_LOG_QUERIES: Joi.boolean().default(false),
 	CLIENT_API_KEY: Joi.string(),
 });
