@@ -76,20 +76,28 @@ export class QueryBuilder {
 			//
 			// This is required because a user can only search in the fields that he is allowed to see
 			// https://meemoo.atlassian.net/wiki/spaces/HA2/pages/4210786408/TA+Zoeken+via+de+zoekbalk#backend-Herwerk-elasticsearch-zoek-om-enkel-te-zoeken-op-velden-die-je-mag-zien
-			const filtersMetadataLimited = searchRequest.filters.filter((filter) =>
+			const filtersMetadataLimited: SearchFilter[] = searchRequest.filters.filter((filter) =>
 				IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED.includes(filter.field)
 			);
-			const filtersMetadataAll = searchRequest.filters.filter((filter) =>
+			const filtersMetadataAll: SearchFilter[] = searchRequest.filters.filter((filter) =>
 				IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL.includes(filter.field)
 			);
-			const queryFromMetadataLimitedFilters:
+
+			let queryFromMetadataLimitedFilters:
 				| ElasticsearchSubQuery
 				| Record<string, never>
-				| null = this.buildFilterObject(
-				filtersMetadataLimited,
-				inputInfo,
-				MetadataAccessType.LIMITED
-			);
+				| null = null;
+
+			if (filtersMetadataLimited.length === filtersMetadataAll.length) {
+				// If there are filters that can only be applied to the full metadata set and not to the limited metadata set
+				// Then we skip searching the limited metadata set, since the result ie objects might not fully comply with all filters
+				queryFromMetadataLimitedFilters = this.buildFilterObject(
+					filtersMetadataLimited,
+					inputInfo,
+					MetadataAccessType.LIMITED
+				);
+			}
+
 			const queryFromMetadataAllFilters:
 				| ElasticsearchSubQuery
 				| Record<string, never>
@@ -480,7 +488,11 @@ export class QueryBuilder {
 			});
 		}
 
-		if (!filterObject.bool?.must && !filterObject.bool?.filter) {
+		if (
+			!filterObject.bool?.must &&
+			!filterObject.bool?.must_not &&
+			!filterObject.bool?.filter
+		) {
 			return {};
 		}
 

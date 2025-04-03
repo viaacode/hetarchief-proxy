@@ -79,6 +79,12 @@ They are provided through the `env_file` property in the `docker-compose.yml` fi
 
 There are a few debug env vars that can be useful:
 
+- Cache responses from the elasticsearch instance: (defaults to true)
+
+  ```
+  ELASTICSEARCH_CACHE_QUERIES=true
+  ```
+
 - Log queries and responses from the elasticsearch instance:
 
   ```

@@ -177,6 +177,7 @@ const config = (): Configuration => {
 		IGNORE_OBJECT_LICENSES: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 		ORGANIZATIONS_API_V2_URL: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
+		ELASTICSEARCH_CACHE_QUERIES: getEnvValue('ELASTICSEARCH_CACHE_QUERIES', true) !== 'false', // If not set, default to true
 		GRAPHQL_LOG_QUERIES: getEnvValue('GRAPHQL_LOG_QUERIES', false) === 'true',
 		CLIENT_API_KEY: getEnvValue('CLIENT_API_KEY', true),
 		ZENDESK_ENDPOINT: getEnvValue('ZENDESK_ENDPOINT', true),

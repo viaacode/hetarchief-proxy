@@ -13,7 +13,7 @@ import { convertObjectToXml } from './convert-objects-to-xml';
 describe('convertObjectToXml', () => {
 	it('returns the xml version of an object', () => {
 		const xml = convertObjectToXml({ meemooOriginalCp: '1' } as unknown as IeObject);
-		expect(xml.startsWith('<object>')).toBeTruthy();
+		expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBeTruthy();
 	});
 
 	it('returns the xml version of an object with metadata set LTD', () => {

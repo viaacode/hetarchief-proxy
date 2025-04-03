@@ -66,6 +66,7 @@ export interface Configuration {
 	IGNORE_OBJECT_LICENSES: boolean;
 	ORGANIZATIONS_API_V2_URL: string;
 	ELASTICSEARCH_LOG_QUERIES: boolean;
+	ELASTICSEARCH_CACHE_QUERIES: boolean;
 	GRAPHQL_LOG_QUERIES: boolean;
 	CLIENT_API_KEY: string;
 	ZENDESK_ENDPOINT: string;
