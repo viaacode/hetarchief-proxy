@@ -894,7 +894,12 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: esObject?.schema_thumbnail_url?.[0],
+			// TODO remove this replace when https://meemoo.atlassian.net/browse/ARC-2816 is fixed
+			thumbnailUrl: esObject?.schema_thumbnail_url?.[0]?.replace(
+				'.viaa.be.play/v2/',
+				'.viaa.be/play/v2/'
+			),
+			// thumbnailUrl: esObject?.schema_thumbnail_url?.[0],
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			durationInSeconds: esObject?.duration_seconds,
