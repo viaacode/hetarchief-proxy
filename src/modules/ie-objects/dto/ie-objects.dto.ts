@@ -121,9 +121,12 @@ export class PlayerTicketsQueryDto {
 	@IsString()
 	@ApiProperty({
 		type: String,
-		description: 'Get the playable url for the file with this schemaIdentifier',
+		description: 'Get the playable url for the file with this browsePath',
+		example:
+			'https://media-qas.viaa.be/play/v2/VLAAMSPARLEMENT/d7d7841f8ad946f8bfa5116b30b9041ccec8fc5521d2404cab08b86c2d41466e/browse.mp4',
+		required: true,
 	})
-	schemaIdentifier: string;
+	browsePath: string;
 }
 
 export class ThumbnailQueryDto {
