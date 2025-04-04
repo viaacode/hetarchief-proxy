@@ -76,9 +76,8 @@ export class IeObjectsController {
 		@Req() request: Request,
 		@Query() playerTicketsQuery: PlayerTicketsQueryDto
 	): Promise<string> {
-		const schemaIdentifier = decodeURIComponent(playerTicketsQuery.schemaIdentifier);
 		return this.playerTicketController.getPlayableUrlFromBrowsePath(
-			schemaIdentifier,
+			playerTicketsQuery.browsePath,
 			referer,
 			getIpFromRequest(request)
 		);
