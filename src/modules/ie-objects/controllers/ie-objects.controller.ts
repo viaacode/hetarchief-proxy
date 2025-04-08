@@ -552,11 +552,17 @@ export class IeObjectsController {
 		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject>[]> {
+		let ids: string[];
+		if (typeof schemaIdentifiers === 'string') {
+			ids = [schemaIdentifiers];
+		} else {
+			ids = schemaIdentifiers;
+		}
 		const visitorSpaceAccessInfo =
 			await this.ieObjectsService.getVisitorSpaceAccessInfoFromUser(user);
 
 		const limitedObjects: Partial<IeObject>[] = await mapLimit(
-			schemaIdentifiers,
+			ids,
 			12,
 			async (schemaIdentifier: string): Promise<Partial<IeObject> | null> => {
 				const ieObject = await this.ieObjectsService.findByIeObjectId(
