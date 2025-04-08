@@ -77,9 +77,6 @@ export class FoldersService {
 		}
 
 		const thumbnailUrl = gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		if (thumbnailUrl?.includes('?token')) {
-			console.log('token already present');
-		}
 		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
 			thumbnailUrl,
 			referer,

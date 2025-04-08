@@ -295,9 +295,6 @@ export class IeObjectsService {
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
 		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
-			if (adapted.thumbnailUrl.includes('?token')) {
-				console.log('token already present');
-			}
 			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 				adapted.thumbnailUrl,
 				referer,
@@ -327,9 +324,6 @@ export class IeObjectsService {
 					const adapted = await this.adaptRelatedFromDB(object, referer, ip);
 					// Newspaper thumbnails can be viewed without requiring a player ticket
 					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
-						if (adapted.thumbnailUrl.includes('?token')) {
-							console.log('token already present');
-						}
 						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 							adapted.thumbnailUrl,
 							referer,
@@ -625,9 +619,6 @@ export class IeObjectsService {
 		);
 		const thumbnailUrl =
 			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0];
-		if (thumbnailUrl?.includes('?token')) {
-			console.log('token already present');
-		}
 		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
 			thumbnailUrl,
 			referer,
@@ -793,9 +784,6 @@ export class IeObjectsService {
 			return null;
 		}
 		const thumbnailUrl = gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		if (thumbnailUrl?.includes('?token')) {
-			console.log('token already present');
-		}
 		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
 			thumbnailUrl || null,
 			referer,
@@ -892,9 +880,6 @@ export class IeObjectsService {
 				'.viaa.be.play/v2/',
 				'.viaa.be/play/v2/'
 			);
-			if (thumbnailUrl?.includes('?token')) {
-				console.log('token already present');
-			}
 			thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
 				thumbnailUrl || null,
 				referer,
@@ -1082,9 +1067,6 @@ export class IeObjectsService {
 					return null;
 				}
 				const thumbnailUrl = file.schema_thumbnail_url;
-				if (thumbnailUrl?.includes('?token')) {
-					console.log('token already present');
-				}
 				const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
 					thumbnailUrl || null,
 					referer,

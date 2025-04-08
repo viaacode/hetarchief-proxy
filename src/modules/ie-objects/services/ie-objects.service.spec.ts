@@ -207,7 +207,11 @@ describe('ieObjectsService', () => {
 			});
 
 			// Fetch the object
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
@@ -249,7 +253,11 @@ describe('ieObjectsService', () => {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
 			});
 
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockIeObject2Metadata.schema_identifier);
 			expect(ieObject.pageRepresentations).toEqual([]);
@@ -273,7 +281,11 @@ describe('ieObjectsService', () => {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
 			});
 
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.pageRepresentations[0].representations[0].files).toEqual([]);
@@ -283,7 +295,11 @@ describe('ieObjectsService', () => {
 			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObject = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				'invalidId',
+				'referer',
+				'127.0.0.1'
+			);
 			expect(ieObject).toEqual(null);
 		});
 	});
@@ -356,7 +372,7 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getParentIeObject(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
 				'referer',
-				''
+				'127.0.0.1'
 			);
 			expect(response.schemaIdentifier).toEqual(
 				mockParentIeObject.graph_intellectual_entity[0].isPartOf.schema_identifier
@@ -368,7 +384,7 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getChildIeObjects(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
 				'referer',
-				''
+				'127.0.0.1'
 			);
 			expect(response.length).toEqual(2);
 			expect(response[0].schemaIdentifier).toEqual(

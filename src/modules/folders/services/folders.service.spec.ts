@@ -254,8 +254,12 @@ describe('FoldersService', () => {
 	});
 
 	describe('adapt', () => {
-		it('returns undefined if no graphQl object was given', () => {
-			const adapted = foldersService.adaptIeObject(undefined, 'referer', '');
+		it('returns undefined if no graphQl object was given', async () => {
+			const adapted: Partial<IeObject> | undefined = await foldersService.adaptIeObject(
+				undefined,
+				'referer',
+				''
+			);
 			expect(adapted).toBeUndefined();
 		});
 
