@@ -491,8 +491,8 @@ export class IeObjectsController {
 	@Get('alto-json')
 	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
 		if (
-			!/https:\/\/assets[^.]+.hetarchief.be\/hetarchief/g.test(altoJsonUrl) &&
-			!/https:\/\/archief-media[^.]+.meemoo.be\//g.test(altoJsonUrl)
+			!/https:\/\/assets[^.]*\.hetarchief.be\/hetarchief(v3)?\//g.test(altoJsonUrl) &&
+			!/https:\/\/archief-media[^.]*\.meemoo.be\//g.test(altoJsonUrl)
 		) {
 			throw new BadRequestException({
 				message:
