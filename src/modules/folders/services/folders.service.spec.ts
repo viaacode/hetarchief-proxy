@@ -255,7 +255,7 @@ describe('FoldersService', () => {
 
 	describe('adapt', () => {
 		it('returns undefined if no graphQl object was given', () => {
-			const adapted = foldersService.adaptIeObject(undefined);
+			const adapted = foldersService.adaptIeObject(undefined, 'referer', '');
 			expect(adapted).toBeUndefined();
 		});
 
@@ -480,7 +480,11 @@ describe('FoldersService', () => {
 				graph_intellectual_entity: [mockGqlFolderObject],
 			};
 			mockDataService.execute.mockResolvedValueOnce(mockData);
-			const object = await foldersService.findObjectById(mockFolderObject.iri);
+			const object = await foldersService.findObjectById(
+				mockFolderObject.iri,
+				'referer',
+				'127.0.0.1'
+			);
 			expect(object.schemaIdentifier).toEqual(mockFolderObject.schemaIdentifier);
 		});
 	});

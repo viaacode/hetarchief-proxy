@@ -5,7 +5,6 @@ import {
 	ForbiddenException,
 	Get,
 	Header,
-	Headers,
 	Param,
 	Query,
 	Req,
@@ -31,6 +30,8 @@ import {
 } from '~modules/newspapers/newspapers.consts';
 import { NewspapersService } from '~modules/newspapers/services/newspapers.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
+import { Ip } from '~shared/decorators/ip.decorator';
+import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { EventsHelper } from '~shared/helpers/events';
 
@@ -48,17 +49,19 @@ export class NewspapersController {
 	public async downloadNewspaperAsZip(
 		@Param('id') id: string,
 		@Query('page') pageIndex: number | undefined,
-		@Headers('referer') referer: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const limitedObjectMetadata = await this.ieObjectsController.getIeObjectById(
-			id,
+		const limitedObjectMetadatas = await this.ieObjectsController.getIeObjectsByIds(
+			[id],
 			referer,
-			request,
+			ip,
 			user
 		);
+		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
 		if (!limitedObjectMetadata) {
 			throw new ForbiddenException(
@@ -198,17 +201,19 @@ export class NewspapersController {
 		@Query('startY') startY: number,
 		@Query('width') width: number,
 		@Query('height') height: number,
-		@Headers('referer') referer: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
 	): Promise<void> {
-		const limitedObjectMetadata = await this.ieObjectsController.getIeObjectById(
-			id,
+		const limitedObjectMetadatas = await this.ieObjectsController.getIeObjectsByIds(
+			[id],
 			referer,
-			request,
+			ip,
 			user
 		);
+		const limitedObjectMetadata = limitedObjectMetadatas[0];
 
 		if (!limitedObjectMetadata) {
 			throw new ForbiddenException(

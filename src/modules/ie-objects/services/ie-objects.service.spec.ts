@@ -63,7 +63,6 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getPlayableUrl: jest.fn(),
 	getEmbedUrl: jest.fn(),
 	resolveThumbnailUrl: jest.fn(),
-	getThumbnailToken: jest.fn(),
 	getThumbnailUrl: jest.fn(),
 	getThumbnailPath: jest.fn(),
 };
@@ -136,7 +135,7 @@ describe('ieObjectsService', () => {
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { hits: [], total: { value: 0 } } } as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result).toEqual(esResponse);
 		});
 
@@ -152,7 +151,7 @@ describe('ieObjectsService', () => {
 					},
 				},
 			} as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(3);
 		});
@@ -165,7 +164,7 @@ describe('ieObjectsService', () => {
 					},
 				},
 			} as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual(IeObjectType.VIDEO);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
@@ -177,7 +176,11 @@ describe('ieObjectsService', () => {
 			const mockFindByIeObjectIdFunc = jest.fn();
 			mockFindByIeObjectIdFunc.mockResolvedValueOnce(mockIeObject1);
 			ieObjectsService.findByIeObjectId = mockFindByIeObjectIdFunc;
-			const response = await ieObjectsService.findMetadataByIeObjectId(mockObjectId, '');
+			const response = await ieObjectsService.findMetadataByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 			expect(response.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(response.pageRepresentations).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();

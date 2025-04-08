@@ -5,6 +5,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
+import { mapLimit } from 'blend-promise-utils';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
 import {
@@ -229,12 +230,13 @@ export class IeObjectsService {
 				);
 			}
 
-			const adaptedESResponse = await this.adaptESResponse(objectResponse, referer, ip);
+			const adaptedESResponse = await this.adaptESResponse(objectResponse);
 
 			return {
 				...Pagination<IeObject>({
-					items: adaptedESResponse.hits.hits.map((esHit) =>
-						this.adaptESObjectToObject(esHit._source)
+					// 24 in parallel, since one search page contains 24 items usually
+					items: await mapLimit(adaptedESResponse.hits.hits, 24, async (esHit) =>
+						this.adaptESObjectToObject(esHit._source, referer, ip)
 					),
 					page: inputQuery.page,
 					size: adaptedESResponse.hits.hits.length,
@@ -286,11 +288,16 @@ export class IeObjectsService {
 			currentObjectIri: ieObjectIri,
 		});
 
-		const adapted: RelatedIeObject | null = this.adaptRelatedFromDB(
-			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null
+		const adapted: RelatedIeObject | null = await this.adaptRelatedFromDB(
+			mediaObjects.graph_intellectual_entity?.[0]?.isPartOf || null,
+			referer,
+			ip
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
 		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
+			if (adapted.thumbnailUrl.includes('?token')) {
+				console.log('token already present');
+			}
 			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 				adapted.thumbnailUrl,
 				referer,
@@ -317,9 +324,12 @@ export class IeObjectsService {
 				async (
 					object: GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
 				): Promise<RelatedIeObject> => {
-					const adapted = this.adaptRelatedFromDB(object);
+					const adapted = await this.adaptRelatedFromDB(object, referer, ip);
 					// Newspaper thumbnails can be viewed without requiring a player ticket
 					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
+						if (adapted.thumbnailUrl.includes('?token')) {
+							console.log('token already present');
+						}
 						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
 							adapted.thumbnailUrl,
 							referer,
@@ -412,12 +422,12 @@ export class IeObjectsService {
 
 		// if esIndex is passed, we only want to return objects that are inside a visitor space
 		const mediaResponse = await this.executeQuery(esIndex || ALL_INDEXES, esQueryObject);
-		const adaptedESResponse = await this.adaptESResponse(mediaResponse, referer, ip);
+		const adaptedESResponse = await this.adaptESResponse(mediaResponse);
 
 		return {
 			...Pagination<IeObject>({
-				items: adaptedESResponse.hits.hits.map((esHit) =>
-					this.adaptESObjectToObject(esHit._source)
+				items: await mapLimit(adaptedESResponse.hits.hits, 20, async (esHit) =>
+					this.adaptESObjectToObject(esHit._source, referer, ip)
 				),
 				page: 1,
 				size: adaptedESResponse.hits.hits.length,
@@ -498,9 +508,10 @@ export class IeObjectsService {
 	 */
 	public async findMetadataByIeObjectId(
 		ieObjectId: string,
+		referer: string,
 		ip: string
 	): Promise<Partial<IeObject>> {
-		const object = await this.findByIeObjectId(ieObjectId, null, ip);
+		const object = await this.findByIeObjectId(ieObjectId, referer, ip);
 		return this.adaptMetadata(object);
 	}
 
@@ -606,9 +617,21 @@ export class IeObjectsService {
 			| Record<string, string>
 			| { abraham_id: string; abraham_uri: string; code_number: string }
 		)[];
-		const pageRepresentations: IeObjectPageRepresentation[] = this.adaptRepresentations(
+		const pageRepresentations: IeObjectPageRepresentation[] = await this.adaptRepresentations(
 			isRepresentedByResponse,
-			hasPartResponse
+			hasPartResponse,
+			referer,
+			ip
+		);
+		const thumbnailUrl =
+			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0];
+		if (thumbnailUrl?.includes('?token')) {
+			console.log('token already present');
+		}
+		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
+			thumbnailUrl,
+			referer,
+			ip
 		);
 
 		const ieObject: IeObject = {
@@ -679,11 +702,7 @@ export class IeObjectsService {
 			),
 			sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: ie?.schema_name,
-			thumbnailUrl: await this.playerTicketService.resolveThumbnailUrl(
-				schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
-				referer,
-				ip
-			),
+			thumbnailUrl: thumbnailWithToken,
 			premisIsPartOf: ie?.premis_is_part_of,
 			isPartOf: parentCollectionResponse?.parentCollection?.map((part) => {
 				return {
@@ -762,15 +781,26 @@ export class IeObjectsService {
 		};
 	}
 
-	public adaptRelatedFromDB(
+	public async adaptRelatedFromDB(
 		gqlIeObject:
 			| GetParentIeObjectQuery['graph_intellectual_entity'][0]['isPartOf']
 			| GetChildIeObjectsQuery['graph_intellectual_entity'][0]['hasPart'][0]
-			| null
-	): RelatedIeObject {
+			| null,
+		referer: string,
+		ip: string
+	): Promise<RelatedIeObject> {
 		if (!gqlIeObject) {
 			return null;
 		}
+		const thumbnailUrl = gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
+		if (thumbnailUrl?.includes('?token')) {
+			console.log('token already present');
+		}
+		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
+			thumbnailUrl || null,
+			referer,
+			ip
+		);
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
 			iri: gqlIeObject?.id,
@@ -786,14 +816,18 @@ export class IeObjectsService {
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.skos_alt_label,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
+			thumbnailUrl: thumbnailWithToken,
 		};
 	}
 
+	/**
+	 * Collapses
+	 * - video, videoFragment  and film type objects under video
+	 * - and audio and audioFragment under audio
+	 * @param esResponse
+	 */
 	public async adaptESResponse(
-		esResponse: ElasticsearchResponse,
-		referer: string,
-		ip: string
+		esResponse: ElasticsearchResponse
 	): Promise<ElasticsearchResponse> {
 		// merge 'film' aggregations with 'video' if need be
 		if (esResponse.aggregations?.dcterms_format?.buckets) {
@@ -838,31 +872,36 @@ export class IeObjectsService {
 			return esResponse;
 		}
 
-		// there are hits - resolve thumbnail urls
-		esResponse.hits.hits = await Promise.all(
-			esResponse.hits.hits.map(async (hit) => {
-				if (hit._source.schema_thumbnail_url) {
-					hit._source.schema_thumbnail_url = [
-						await this.playerTicketService.resolveThumbnailUrl(
-							hit._source.schema_thumbnail_url[0],
-							referer,
-							ip
-						),
-					];
-				} else if (
-					hit._source.dcterms_format === IeObjectType.AUDIO ||
-					hit._source.dcterms_format === IeObjectType.AUDIO_FRAGMENT
-				) {
-					hit._source.schema_thumbnail_url = ['/images/waveform.svg'];
-				}
-				return hit;
-			})
-		);
-
 		return esResponse;
 	}
 
-	public adaptESObjectToObject(esObject: ElasticsearchObject): IeObject {
+	public async adaptESObjectToObject(
+		esObject: ElasticsearchObject,
+		referer: string,
+		ip: string
+	): Promise<IeObject> {
+		let thumbnailWithToken: string | null = null;
+		if (
+			esObject.dcterms_format === IeObjectType.AUDIO ||
+			esObject.dcterms_format === IeObjectType.AUDIO_FRAGMENT
+		) {
+			thumbnailWithToken = '/images/waveform.svg';
+		} else {
+			// TODO remove this replace when https://meemoo.atlassian.net/browse/ARC-2816 is fixed
+			const thumbnailUrl = esObject?.schema_thumbnail_url?.[0]?.replace(
+				'.viaa.be.play/v2/',
+				'.viaa.be/play/v2/'
+			);
+			if (thumbnailUrl?.includes('?token')) {
+				console.log('token already present');
+			}
+			thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
+				thumbnailUrl || null,
+				referer,
+				ip
+			);
+		}
+
 		return {
 			dctermsAvailable: esObject?.dcterms_available,
 			dctermsFormat: esObject?.dcterms_format as IeObjectType,
@@ -894,12 +933,7 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			// TODO remove this replace when https://meemoo.atlassian.net/browse/ARC-2816 is fixed
-			thumbnailUrl: esObject?.schema_thumbnail_url?.[0]?.replace(
-				'.viaa.be.play/v2/',
-				'.viaa.be/play/v2/'
-			),
-			// thumbnailUrl: esObject?.schema_thumbnail_url?.[0],
+			thumbnailUrl: thumbnailWithToken,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			durationInSeconds: esObject?.duration_seconds,
@@ -949,10 +983,12 @@ export class IeObjectsService {
 		return ieObject;
 	}
 
-	public adaptRepresentations(
+	public async adaptRepresentations(
 		isRepresentedByResponse: GetIsRepresentedByQuery,
-		hasPartResponse: GetHasPartQuery
-	): IeObjectPageRepresentation[] {
+		hasPartResponse: GetHasPartQuery,
+		referer: string,
+		ip: string
+	): Promise<IeObjectPageRepresentation[]> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
 		const ieObjects = compact([
@@ -967,44 +1003,56 @@ export class IeObjectsService {
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
 		const representationsByPages: IeObjectPageRepresentation[] = compact(
-			ieObjects?.map((part): IeObjectPageRepresentation | null => {
-				const representations: IeObjectRepresentation[] = compact(
-					(part?.isRepresentedBy || []).flatMap(
-						(representation: DbRepresentation): IeObjectRepresentation => {
-							if (!representation) {
-								return null;
+			await mapLimit(
+				ieObjects || [],
+				20,
+				async (part): Promise<IeObjectPageRepresentation | null> => {
+					const representations: IeObjectRepresentation[] = compact(
+						await mapLimit(
+							part?.isRepresentedBy || [],
+							20,
+							async (
+								representation: DbRepresentation
+							): Promise<IeObjectRepresentation> => {
+								if (!representation) {
+									return null;
+								}
+								return {
+									id: representation.id,
+									schemaName: representation.schema_name,
+									isMediaFragmentOf: representation.is_media_fragment_of,
+									schemaInLanguage: representation.schema_in_language,
+									schemaStartTime: representation.schema_start_time,
+									schemaEndTime: representation.schema_end_time,
+									schemaTranscript:
+										representation.schemaTranscriptUrls?.[0]?.schema_transcript,
+									schemaTranscriptUrl:
+										representation.schemaTranscriptUrls?.[0]
+											?.schema_transcript_url || null,
+									edmIsNextInSequence: representation.edm_is_next_in_sequence,
+									updatedAt: representation.updated_at,
+									files: await this.adaptFiles(
+										representation.includes,
+										referer,
+										ip
+									),
+								};
 							}
-							return {
-								id: representation.id,
-								schemaName: representation.schema_name,
-								isMediaFragmentOf: representation.is_media_fragment_of,
-								schemaInLanguage: representation.schema_in_language,
-								schemaStartTime: representation.schema_start_time,
-								schemaEndTime: representation.schema_end_time,
-								schemaTranscript:
-									representation.schemaTranscriptUrls?.[0]?.schema_transcript,
-								schemaTranscriptUrl:
-									representation.schemaTranscriptUrls?.[0]
-										?.schema_transcript_url || null,
-								edmIsNextInSequence: representation.edm_is_next_in_sequence,
-								updatedAt: representation.updated_at,
-								files: this.adaptFiles(representation.includes),
-							};
-						}
-					)
-				);
-				// Avoid returning empty array representations
-				if (representations.length) {
-					const mentions = this.adaptMentions(
-						(part as DbIeObjectWithMentions).schemaMentions || []
-					);
-					return {
-						representations,
-						mentions: mentions.length ? mentions : undefined,
-					};
+						)
+					).flat();
+					// Avoid returning empty array representations
+					if (representations.length) {
+						const mentions = this.adaptMentions(
+							(part as DbIeObjectWithMentions).schemaMentions || []
+						);
+						return {
+							representations,
+							mentions: mentions.length ? mentions : undefined,
+						};
+					}
+					return null;
 				}
-				return null;
-			})
+			)
 		);
 
 		// Sort by image filename to have pages in order
@@ -1021,24 +1069,33 @@ export class IeObjectsService {
 		});
 	}
 
-	public adaptFiles(dbFiles: DbFile): IeObjectFile[] {
+	public async adaptFiles(dbFiles: DbFile, referer: string, ip: string): Promise<IeObjectFile[]> {
 		if (isEmpty(dbFiles)) {
 			return [];
 		}
 
 		/* istanbul ignore next */
 		return compact(
-			dbFiles.map((includeFile): IeObjectFile => {
+			await mapLimit(dbFiles, 20, async (includeFile): Promise<IeObjectFile> => {
 				const file = includeFile.file;
 				if (!file) {
 					return null;
 				}
+				const thumbnailUrl = file.schema_thumbnail_url;
+				if (thumbnailUrl?.includes('?token')) {
+					console.log('token already present');
+				}
+				const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
+					thumbnailUrl || null,
+					referer,
+					ip
+				);
 				return {
 					id: file.id,
 					name: file.schema_name,
 					mimeType: file.ebucore_has_mime_type,
 					storedAt: file.premis_stored_at,
-					thumbnailUrl: file.schema_thumbnail_url,
+					thumbnailUrl: thumbnailWithToken,
 					duration: file.schema_duration,
 					edmIsNextInSequence: file.edm_is_next_in_sequence,
 					createdAt: file.created_at,
