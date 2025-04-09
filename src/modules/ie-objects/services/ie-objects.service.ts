@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import fs from 'fs/promises';
 
 import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -199,6 +200,10 @@ export class IeObjectsService {
 					visitorSpaceInfo,
 					spacesIds,
 				});
+			}
+
+			if (inputQuery.size > 0 && process.env.NODE_ENV === 'local') {
+				fs.writeFile('query.json', JSON.stringify(esQuery, null, 2));
 			}
 
 			if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
