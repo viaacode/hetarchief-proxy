@@ -170,7 +170,6 @@ export class IeObjectsController {
 	@Get(':schemaIdentifier/export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
-		@Referer() referer: string,
 		@Ip() ip: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Req() request: Request,
@@ -179,7 +178,7 @@ export class IeObjectsController {
 	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			convertSchemaIdentifierToId(schemaIdentifier),
-			referer,
+			null,
 			ip
 		);
 
@@ -238,7 +237,6 @@ export class IeObjectsController {
 	@Get(':schemaIdentifier/export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
-		@Referer() referer: string,
 		@Ip() ip: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
 		@Req() request: Request,
@@ -247,7 +245,7 @@ export class IeObjectsController {
 	): Promise<void> {
 		const objectMetadata = await this.ieObjectsService.findMetadataByIeObjectId(
 			convertSchemaIdentifierToId(schemaIdentifier),
-			referer,
+			null,
 			ip
 		);
 
@@ -548,7 +546,7 @@ export class IeObjectsController {
 	@Get()
 	public async getIeObjectsByIds(
 		@Query('ids') schemaIdentifiers: string[],
-		@Referer() referer: string,
+		@Referer() referer: string | null,
 		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject>[]> {

@@ -58,7 +58,7 @@ export class NewspapersController {
 	): Promise<void> {
 		const limitedObjectMetadatas = await this.ieObjectsController.getIeObjectsByIds(
 			[id],
-			referer,
+			null, // No need to add player tickets to the thumbnail urls
 			ip,
 			user
 		);

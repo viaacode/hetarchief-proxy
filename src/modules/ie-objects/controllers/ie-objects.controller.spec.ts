@@ -383,7 +383,6 @@ describe('IeObjectsController', () => {
 			} as unknown as Response;
 
 			await ieObjectsController.exportXml(
-				'referer',
 				'127.0.0.1',
 				'1',
 				mockRequest,
@@ -406,7 +405,6 @@ describe('IeObjectsController', () => {
 			} as unknown as Response;
 
 			await ieObjectsController.exportCsv(
-				'referer',
 				'127.0.0.1',
 				'1',
 				mockRequest,
