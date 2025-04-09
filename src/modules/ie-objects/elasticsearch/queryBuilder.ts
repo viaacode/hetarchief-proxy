@@ -566,24 +566,35 @@ export class QueryBuilder {
 		) {
 			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
-				query: OR([
+				query: AND([
 					{
-						terms: {
-							[ElasticsearchField.schema_license]: [IeObjectLicense.PUBLIEK_CONTENT],
+						exists: {
+							field: 'schema_thumbnail_url',
 						},
 					},
-					{
-						terms: {
-							[ElasticsearchField.schema_license]: [
-								IeObjectLicense.BEZOEKERTOOL_CONTENT,
-							],
+					OR([
+						{
+							terms: {
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.PUBLIEK_CONTENT,
+								],
+							},
 						},
-					},
-					{
-						terms: {
-							[ElasticsearchField.schema_license]: [IeObjectLicense.INTRA_CP_CONTENT],
+						{
+							terms: {
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
 						},
-					},
+						{
+							terms: {
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.INTRA_CP_CONTENT,
+								],
+							},
+						},
+					]),
 				]),
 			});
 		}
