@@ -1,5 +1,4 @@
-import https from 'https';
-
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import {
 	Controller,
 	ForbiddenException,
@@ -33,6 +32,7 @@ import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { Ip } from '~shared/decorators/ip.decorator';
 import { Referer } from '~shared/decorators/referer.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
+import { customError } from '~shared/helpers/custom-error';
 import { EventsHelper } from '~shared/helpers/events';
 
 @ApiTags('Newspapers')
@@ -41,7 +41,8 @@ export class NewspapersController {
 	constructor(
 		private ieObjectsController: IeObjectsController,
 		private newspapersService: NewspapersService,
-		private eventsService: EventsService
+		private eventsService: EventsService,
+		protected playerTicketService: PlayerTicketService
 	) {}
 
 	@Get(':id/export/zip')
@@ -75,7 +76,11 @@ export class NewspapersController {
 			);
 		}
 
-		const zipEntries: { filename: string; type: 'url' | 'string'; value: string }[] = [];
+		const zipEntries: {
+			filename: string;
+			type: 'iiif-image' | 'alto-xml' | 'string';
+			value: string;
+		}[] = [];
 
 		// Extract images and alto xml urls from the object
 		const exportSinglePage = !isNil(pageIndex) && !isNaN(pageIndex);
@@ -94,13 +99,13 @@ export class NewspapersController {
 					if (file.mimeType === NEWSPAPER_MIME_TYPE_BROWSE_COPY) {
 						zipEntries.push({
 							filename: `page-${pageNumber}.jpg`,
-							type: 'url',
+							type: 'iiif-image',
 							value: file.storedAt,
 						});
 					} else if (file.mimeType === NEWSPAPER_MIME_TYPE_ALTO) {
 						zipEntries.push({
 							filename: `page-${pageNumber}--ocr-alto.xml`,
-							type: 'url',
+							type: 'alto-xml',
 							value: file.storedAt,
 						});
 					}
@@ -156,17 +161,34 @@ export class NewspapersController {
 
 		// Append all zipEntries to the zip archive
 		await mapLimit(zipEntries, 5, async (entry) => {
-			return new Promise<void>((resolve) => {
-				if (entry.type === 'url') {
-					https.get(entry.value, (urlStream) => {
-						archive.append(urlStream, { name: entry.filename });
-						resolve();
-					});
+			try {
+				if (entry.type === 'iiif-image' || entry.type === 'alto-xml') {
+					// Newspaper iiif images or Alto xml => pass ticket as query param
+					const urlWithTicket = await this.playerTicketService.getPlayableUrl(
+						entry.value,
+						referer,
+						ip
+					);
+					const parsedUrl = new URL(urlWithTicket);
+					const options = {
+						hostname: parsedUrl.hostname,
+						path: parsedUrl.pathname + parsedUrl.search,
+						headers: {
+							Referer: referer,
+						},
+					};
+					const urlStream = await this.newspapersService.httpsGetAsync(options);
+					archive.append(urlStream, { name: entry.filename });
 				} else {
+					// Csv and xml metadata
+					// No ticket needed
 					archive.append(entry.value, { name: entry.filename });
-					resolve();
 				}
-			});
+			} catch (err) {
+				console.error(
+					customError('Failed to add file to zip', err, { entry, referer, ip })
+				);
+			}
 		});
 
 		await archive.finalize();
@@ -250,16 +272,24 @@ export class NewspapersController {
 		});
 		res.attachment(filename);
 
-		https.get(
-			`${pageImageApi}/${Math.floor(startX)},${Math.floor(startY)},${Math.ceil(
-				width
-			)},${Math.ceil(height)}/full/0/default.jpg`,
-			(urlStream) => {
-				urlStream.pipe(res);
-			}
-		);
+		const selectionUrl = `${pageImageApi}/${Math.floor(startX)},${Math.floor(
+			startY
+		)},${Math.ceil(width)},${Math.ceil(height)}/full/0/default.jpg`;
+		const token = await this.playerTicketService.getPlayerToken(selectionUrl, referer, ip);
+		const parsedUrl = new URL(selectionUrl);
+		const options = {
+			hostname: parsedUrl.hostname,
+			path: parsedUrl.pathname + parsedUrl.search,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Referer: referer,
+			},
+		};
+		const urlStream = await this.newspapersService.httpsGetAsync(options);
+		urlStream.pipe(res);
 
 		// Log event for download jpg selection
+		// No await since we don't want to fail the request if the event insertion fails
 		this.eventsService.insertEvents([
 			{
 				id: EventsHelper.getEventId(request),

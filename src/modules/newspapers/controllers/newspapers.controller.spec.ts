@@ -2,6 +2,7 @@
 // Disable consistent imports since they try to import IeObjectsQueryDto as a type
 // But that breaks the endpoint body validation
 
+import { PlayerTicketService } from '@meemoo/admin-core-api';
 import { type ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -37,6 +38,10 @@ describe('NewspapersController', () => {
 				},
 				{
 					provide: EventsService,
+					useValue: {},
+				},
+				{
+					provide: PlayerTicketService,
 					useValue: {},
 				},
 			],
