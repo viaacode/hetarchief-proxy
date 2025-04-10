@@ -443,6 +443,12 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			elements: getXmlTextValue(value?.abraham_id),
 			attributes: { note: 'Abraham id' },
 		},
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value?.abraham_uri),
+			attributes: { note: 'Abraham uri' },
+		},
 	],
 	spatial: (value) => [
 		{
@@ -547,6 +553,23 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			name: 'dc:description',
 			elements: getXmlTextValue(value),
 			attributes: { note: 'Cast description' },
+		},
+	],
+
+	// Computed variables
+	permalink: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Permalink' },
+		},
+	],
+	rightsStatus: (value) => [
+		{
+			type: 'element',
+			name: 'dc:rights',
+			elements: getXmlTextValue(value),
 		},
 	],
 };
