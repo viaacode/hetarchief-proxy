@@ -9,11 +9,14 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
 import { cloneDeep, isNil } from 'lodash';
+
+import type { Configuration } from '~config';
 
 import { EventsService } from '~modules/events/services/events.service';
 import { LogEventType } from '~modules/events/types';
@@ -41,7 +44,8 @@ export class NewspapersController {
 		private ieObjectsController: IeObjectsController,
 		private newspapersService: NewspapersService,
 		private eventsService: EventsService,
-		protected playerTicketService: PlayerTicketService
+		private playerTicketService: PlayerTicketService,
+		private configService: ConfigService<Configuration>
 	) {}
 
 	@Get(':id/export/zip')
@@ -121,7 +125,7 @@ export class NewspapersController {
 		zipEntries.push({
 			filename: 'metadata.xml',
 			type: 'string',
-			value: convertObjectToXml(metadataInfo),
+			value: convertObjectToXml(metadataInfo, this.configService.get('CLIENT_HOST')),
 		});
 		zipEntries.push({
 			filename: 'metadata.csv',

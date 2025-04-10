@@ -35,6 +35,7 @@ const getEnvValue = (name: string, required = true): string => {
 const config = (): Configuration => {
 	const env = getEnvValue('NODE_ENV', false) || DEFAULT_CONFIG.environment;
 	return {
+		NODE_ENV: env,
 		ENVIRONMENT: env,
 		HOST: getEnvValue('HOST', true),
 		CLIENT_HOST: getEnvValue('CLIENT_HOST', true),
@@ -174,7 +175,6 @@ const config = (): Configuration => {
 			'MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK',
 			false
 		),
-		IGNORE_OBJECT_LICENSES: getEnvValue('IGNORE_OBJECT_LICENSES', false) === 'true',
 		ORGANIZATIONS_API_V2_URL: getEnvValue('ORGANIZATIONS_API_V2_URL', true),
 		ELASTICSEARCH_LOG_QUERIES: getEnvValue('ELASTICSEARCH_LOG_QUERIES', false) === 'true',
 		ELASTICSEARCH_CACHE_QUERIES: getEnvValue('ELASTICSEARCH_CACHE_QUERIES', true) !== 'false', // If not set, default to true

@@ -1,8 +1,6 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
-
-import { type Configuration } from '~config';
 
 import { EmailTemplate } from '../campaign-monitor.types';
 import {
@@ -23,45 +21,8 @@ import { Lookup_Maintainer_Visitor_Space_Request_Access_Type_Enum } from '~gener
 import { type VisitRequest, VisitStatus } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
-
-const mockConfigService = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'CLIENT_HOST') {
-			return 'http://hetarchief.be';
-		}
-		if (key === 'HOST') {
-			return 'http://fakeclienthost';
-		}
-		if (key === 'CAMPAIGN_MONITOR_API_ENDPOINT') {
-			return 'http://campaignmonitor';
-		}
-		if (key === 'CAMPAIGN_MONITOR_TRANSACTIONAL_SEND_MAIL_API_ENDPOINT') {
-			return 'transactional/smartemail';
-		}
-		if (key === 'CAMPAIGN_MONITOR_SUBSCRIBER_API_ENDPOINT') {
-			return 'subscribers';
-		}
-		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF') {
-			return 'fakeListId';
-		}
-		if (key === 'CAMPAIGN_MONITOR_OPTIN_LIST_HETARCHIEF_NEWSLETTER') {
-			return 'newsletter';
-		}
-		if (key.startsWith('CAMPAIGN_MONITOR_TEMPLATE_')) {
-			return 'fakeTemplateId';
-		}
-		if (key === 'REROUTE_EMAILS_TO') {
-			return '';
-		}
-
-		if (key === 'ENABLE_SEND_EMAIL') {
-			return true;
-		}
-
-		return key;
-	}),
-};
 
 const getMockVisitRequest = (): VisitRequest => ({
 	id: '1',
@@ -111,6 +72,7 @@ describe('CampaignMonitorService', () => {
 		process.env.CAMPAIGN_MONITOR_TEMPLATE_MATERIAL_REQUEST_REQUESTER__NL = 'fakeTemplateId';
 
 		const module: TestingModule = await Test.createTestingModule({
+			imports: [ConfigModule],
 			providers: [
 				CampaignMonitorService,
 				{
@@ -192,7 +154,7 @@ describe('CampaignMonitorService', () => {
 							contentpartner_email: 'cp-VRT@studiohyperdrive.be',
 							request_reason: 'fake news investigation',
 							request_time: 'july 2022',
-							request_url: 'http://hetarchief.be/beheer/aanvragen',
+							request_url: `${mockConfigService.get('CLIENT_HOST')}/beheer/aanvragen`,
 							request_remark: 'Visit is limited to max. 2h',
 							start_date: '1 juli 2022',
 							start_time: '12:00',

@@ -2,28 +2,9 @@ import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Configuration } from '~config';
-
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'ENVIRONMENT') {
-			return 'production';
-		}
-		if (key === 'COOKIE_SECRET') {
-			return 'thecookiesecret';
-		}
-		if (key === 'COOKIE_MAX_AGE') {
-			return '86400';
-		}
-		if (key === 'REDIS_CONNECTION_STRING') {
-			return 'redis connection string';
-		}
-		return key;
-	}),
-};
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockSchedulerRegistry: Partial<Record<keyof SchedulerRegistry, jest.SpyInstance>> = {
 	addCronJob: jest.fn(),

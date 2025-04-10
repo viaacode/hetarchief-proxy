@@ -643,9 +643,8 @@ describe('QueryBuilder', () => {
 					},
 				}
 			);
-			expect(JSON.stringify(queryObject)).toContain(
-				ElasticsearchField.schema_maintainer + '.' + ElasticsearchField.organization_sector
-			);
+			expect(JSON.stringify(queryObject)).toContain('VIAA-INTRA_CP-CONTENT');
+			expect(JSON.stringify(queryObject)).toContain('schema_thumbnail_url');
 		});
 
 		it('Should not set a filter when consultable media is set to false', () => {
@@ -826,9 +825,9 @@ describe('QueryBuilder', () => {
 				2
 			);
 			expect(limitedMetadataFilters).toContain('visitor-space-id');
-			expect(limitedMetadataFilters).toContain('OR-00000001');
+			expect(limitedMetadataFilters).toContain('VIAA-INTRA_CP-CONTENT');
 			expect(allMetadataFilters).toContain('visitor-space-id');
-			expect(allMetadataFilters).toContain('OR-00000001');
+			expect(allMetadataFilters).toContain('VIAA-INTRA_CP-CONTENT');
 		});
 	});
 });

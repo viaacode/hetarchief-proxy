@@ -1,12 +1,10 @@
 import { TranslationsService } from '@meemoo/admin-core-api';
 import { HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
 import { type Request, type Response } from 'express';
 import { noop } from 'lodash';
-
-import { type Configuration } from '~config';
 
 import { HetArchiefService } from '../services/het-archief.service';
 import { IdpService } from '../services/idp.service';
@@ -22,10 +20,10 @@ import { UsersService } from '~modules/users/services/users.service';
 import { GroupId } from '~modules/users/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { MOCK_SSUM_REGISTRATION_PAGE, mockConfigService } from '~shared/test/mock-config-service';
 
 const hetArchiefLoginUrl = 'http://localhost:3200';
 const hetArchiefLogoutUrl = 'http://localhost:3200';
-const hetArchiefRegisterUrl = 'http://meemoo.be/dummy-ssum-registration-page';
 
 const ldapUser = {
 	attributes: {
@@ -89,23 +87,6 @@ const mockIdpService: Partial<Record<keyof IdpService, jest.SpyInstance>> = {
 	userGroupRequiresMaintainerLink: jest.fn(),
 };
 
-const mockConfigGetFunction = jest.fn((key: keyof Configuration): string | boolean => {
-	if (key === 'CLIENT_HOST') {
-		return hetArchiefLoginUrl;
-	}
-	if (key === 'HOST') {
-		return 'http://localhost:3100';
-	}
-	if (key === 'SSUM_REGISTRATION_PAGE') {
-		return hetArchiefRegisterUrl;
-	}
-	return key;
-});
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: mockConfigGetFunction,
-};
-
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
 	insertEvents: jest.fn(),
 };
@@ -135,6 +116,7 @@ describe('HetArchiefController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [HetArchiefController],
+			imports: [ConfigModule],
 			providers: [
 				{
 					provide: HetArchiefService,
@@ -188,7 +170,6 @@ describe('HetArchiefController', () => {
 		mockArchiefService.assertSamlResponse.mockRestore();
 		mockIdpService.userGroupRequiresMaintainerLink.mockRestore();
 		mockArchiefService.createLoginRequestUrl.mockRestore();
-		mockConfigService.get = mockConfigGetFunction;
 	});
 
 	it('should be defined', () => {
@@ -199,21 +180,8 @@ describe('HetArchiefController', () => {
 		it('should redirect to the register url', async () => {
 			const result = await hetArchiefController.registerRoute({}, hetArchiefLoginUrl);
 			expect(result.statusCode).toEqual(HttpStatus.TEMPORARY_REDIRECT);
-			expect(result.url.split('?')[0]).toEqual(hetArchiefRegisterUrl);
+			expect(result.url.split('?')[0]).toEqual(MOCK_SSUM_REGISTRATION_PAGE);
 		});
-
-		// This test somehow causes a maximum callstack exceeded error down the line
-		// it('should catch an exception when generating the register url', async () => {
-		// 	const clientHost = hetArchiefLoginUrl;
-		// 	mockConfigService.get.mockImplementation(() => {
-		// 		throw new Error('Test error handling');
-		// 	});
-		// 	const result = await hetArchiefController.registerRoute({}, clientHost);
-		// 	expect(result).toBeUndefined();
-		//
-		// 	mockConfigService.get.mockRestore();
-		// 	mockConfigService.get.mockImplementation(mockConfigGetFunction);
-		// });
 	});
 
 	describe('login', () => {
@@ -282,7 +250,6 @@ describe('HetArchiefController', () => {
 			mockUsersService.createUserWithIdp.mockResolvedValue(archiefUser);
 			mockUsersService.updateUser.mockResolvedValue(archiefUser);
 			mockIdpService.determineUserGroup.mockReturnValue(GroupId.CP_ADMIN);
-			mockConfigService.get = mockConfigGetFunction;
 			mockCampaignMonitorService.updateNewsletterPreferences.mockResolvedValue(undefined);
 
 			const result = await hetArchiefController.loginCallback(
@@ -372,7 +339,9 @@ describe('HetArchiefController', () => {
 				{ redirect: noop } as Response
 			);
 			expect(response).toEqual({
-				url: `http://localhost:3100/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
+				url: `${mockConfigService.get(
+					'HOST'
+				)}/auth/hetarchief/login&returnToUrl=${hetArchiefLoginUrl}`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});

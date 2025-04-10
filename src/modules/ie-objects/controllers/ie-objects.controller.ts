@@ -17,11 +17,14 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
+
+import { Configuration } from '~config';
 
 import {
 	IeObjectsQueryDto,
@@ -68,7 +71,8 @@ export class IeObjectsController {
 		private ieObjectsService: IeObjectsService,
 		private eventsService: EventsService,
 		private playerTicketService: PlayerTicketService,
-		private playerTicketController: PlayerTicketController
+		private playerTicketController: PlayerTicketController,
+		private configService: ConfigService<Configuration>
 	) {}
 
 	@Get('player-ticket')
@@ -215,7 +219,8 @@ export class IeObjectsController {
 				maintainerId: user.getOrganisationId(),
 				accessibleObjectIdsThroughFolders: visitorSpaceAccessInfo.objectIds,
 				accessibleVisitorSpaceIds: visitorSpaceAccessInfo.visitorSpaceIds,
-			})
+			}),
+			this.configService.get('CLIENT_HOST')
 		);
 		res.set({
 			'Content-Disposition': `attachment; filename=${

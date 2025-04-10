@@ -3,6 +3,7 @@ import { type MulterOptions } from '@nestjs/platform-express/multer/interfaces/m
 import type { DatabaseType } from '@viaa/avo2-types';
 
 export interface Configuration {
+	NODE_ENV: string;
 	ENVIRONMENT: string;
 	HOST: string;
 	CLIENT_HOST: string;
@@ -63,7 +64,6 @@ export interface Configuration {
 	MEEMOO_ADMIN_ORGANIZATION_IDS: string;
 	REROUTE_EMAILS_TO: string;
 	MEEMOO_MAINTAINER_MISSING_EMAIL_FALLBACK: string;
-	IGNORE_OBJECT_LICENSES: boolean;
 	ORGANIZATIONS_API_V2_URL: string;
 	ELASTICSEARCH_LOG_QUERIES: boolean;
 	ELASTICSEARCH_CACHE_QUERIES: boolean;

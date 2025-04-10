@@ -5,8 +5,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 
-import { type Configuration } from '~config';
-
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { type ElasticsearchResponse, IeObjectLicense, IeObjectType } from '../ie-objects.types';
 import {
@@ -38,21 +36,7 @@ import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'ELASTICSEARCH_URL') {
-			return 'http://elasticsearch'; // should be a syntactically valid url
-		}
-		if (key === 'TICKET_SERVICE_URL') {
-			return 'http://ticketservice';
-		}
-		if (key === 'MEDIA_SERVICE_URL') {
-			return 'http://mediaservice';
-		}
-		return key;
-	}),
-};
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),

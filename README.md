@@ -97,12 +97,6 @@ There are a few debug env vars that can be useful:
   GRAPHQL_LOG_QUERIES=true
   ```
 
-- Ignore object licenses in the database:
-
-  ```
-  IGNORE_OBJECT_LICENSES=true
-  ```
-
 - Enable sending email and redirect CP emails to a different email address:
 
   ```

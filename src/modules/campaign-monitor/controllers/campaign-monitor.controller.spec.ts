@@ -1,8 +1,6 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type Request } from 'express';
-
-import { type Configuration } from '~config';
 
 import {
 	mockNewsletterUpdatePreferencesQueryDto,
@@ -18,6 +16,7 @@ import { EventsService } from '~modules/events/services/events.service';
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
 	{
@@ -27,10 +26,6 @@ const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, j
 		sendConfirmationMail: jest.fn(),
 		confirmEmail: jest.fn(),
 	};
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => key),
-};
 
 const mockEventsService: Partial<Record<keyof EventsService, jest.SpyInstance>> = {
 	insertEvents: jest.fn(),
@@ -51,7 +46,7 @@ describe('CampaignMonitorController', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [CampaignMonitorController],
-			imports: [],
+			imports: [ConfigModule],
 			providers: [
 				{
 					provide: CampaignMonitorService,

@@ -4,8 +4,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { Idp } from '@viaa/avo2-types';
 
-import { type Configuration } from '~config';
-
 import { NotificationsService } from '../services/notifications.service';
 
 import { NotificationsController } from './notifications.controller';
@@ -24,6 +22,7 @@ import { SessionHelper } from '~shared/auth/session-helper';
 import { getTranslationFallback } from '~shared/helpers/translation-fallback';
 import nlJson from '~shared/i18n/locales/nl.json';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { MOCK_API_KEY, mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
 const mockNotification1: Notification = {
@@ -120,17 +119,6 @@ const mockTranslationsService: Partial<Record<keyof TranslationsService, jest.Sp
 	tText: jest.fn((translationKey: string) => nlJson[translationKey]),
 	refreshBackendTranslations: jest.fn(),
 	onApplicationBootstrap: jest.fn(),
-};
-
-const mockApiKey = 'MySecretApiKey';
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'PROXY_API_KEY') {
-			return mockApiKey;
-		}
-		return key;
-	}),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
@@ -268,7 +256,7 @@ describe('NotificationsController', () => {
 				.mockResolvedValueOnce([mockVisit])
 				.mockResolvedValueOnce([mockVisit, mockVisit, mockVisit]);
 
-			const response = await notificationsController.checkNewNotifications(mockApiKey);
+			const response = await notificationsController.checkNewNotifications(MOCK_API_KEY);
 
 			expect(response.status).toEqual(
 				getTranslationFallback(
@@ -302,7 +290,7 @@ describe('NotificationsController', () => {
 				.mockResolvedValueOnce([])
 				.mockResolvedValueOnce([]);
 
-			const response = await notificationsController.checkNewNotifications(mockApiKey);
+			const response = await notificationsController.checkNewNotifications(MOCK_API_KEY);
 
 			expect(response.status).toEqual(
 				getTranslationFallback(

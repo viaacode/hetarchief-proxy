@@ -4,7 +4,7 @@ import {
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
-import { type ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { type Request, type Response } from 'express';
@@ -32,6 +32,7 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { type VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
 const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
@@ -44,10 +45,6 @@ const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
 	});
 
 const mockSessionUser: SessionUserEntity = new SessionUserEntity(mockUser);
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn(),
-};
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
@@ -96,7 +93,6 @@ describe('IeObjectsController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [IeObjectsController],
-			imports: [],
 			providers: [
 				{
 					provide: IeObjectsService,
@@ -126,6 +122,10 @@ describe('IeObjectsController', () => {
 					provide: OrganisationsService,
 					useValue: mockOrganisationsService,
 				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -135,7 +135,6 @@ describe('IeObjectsController', () => {
 	});
 
 	afterEach(() => {
-		mockConfigService.get.mockRestore();
 		mockVisitsService.hasAccess.mockRestore();
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
@@ -375,7 +374,6 @@ describe('IeObjectsController', () => {
 		it('should export an ieObject item as xml', async () => {
 			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const mockResponseObject = {
 				set: jest.fn(),
@@ -397,7 +395,6 @@ describe('IeObjectsController', () => {
 		it('should export an ieObject item as csv', async () => {
 			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const mockResponseObject = {
 				set: jest.fn(),
