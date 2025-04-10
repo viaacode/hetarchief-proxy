@@ -23,6 +23,7 @@ import { type IPagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
+import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
 
@@ -498,7 +499,11 @@ export class IeObjectsController {
 	}
 
 	@Get('alto-json')
-	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
+	public async getAltoJson(
+		@Query('altoJsonUrl') altoJsonUrl: string,
+		@Referer() referer: string,
+		@Ip() ip: string
+	): Promise<any> {
 		if (
 			!/https:\/\/assets[^.]*\.hetarchief.be\/hetarchief(v3)?\//g.test(altoJsonUrl) &&
 			!/https:\/\/archief-media[^.]*\.meemoo.be\//g.test(altoJsonUrl)
@@ -511,7 +516,14 @@ export class IeObjectsController {
 				},
 			});
 		}
-		const response = await fetch(altoJsonUrl);
+		const token = await this.playerTicketService.getPlayerToken(altoJsonUrl, referer, ip);
+		const altoJsonUrlWithToken = stringifyUrl({
+			url: altoJsonUrl,
+			query: {
+				token,
+			},
+		});
+		const response = await fetch(altoJsonUrlWithToken);
 		const text = await response.text();
 		return JSON.parse(text);
 	}
