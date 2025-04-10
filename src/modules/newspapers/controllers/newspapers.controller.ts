@@ -53,6 +53,7 @@ export class NewspapersController {
 	public async downloadNewspaperAsZip(
 		@Param('id') id: string,
 		@Query('page') pageIndex: number | undefined,
+		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
 		@Req() request: Request,
@@ -201,7 +202,7 @@ export class NewspapersController {
 			{
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.DOWNLOAD,
-				source: request.path,
+				source: currentPageUrl || referer || request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {
@@ -226,6 +227,7 @@ export class NewspapersController {
 		@Query('startY') startY: number,
 		@Query('width') width: number,
 		@Query('height') height: number,
+		@Query('currentPageUrl') currentPageUrl: string,
 		@Referer() referer: string,
 		@Ip() ip: string,
 		@Req() request: Request,
@@ -297,7 +299,7 @@ export class NewspapersController {
 			{
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.DOWNLOAD,
-				source: request.path,
+				source: currentPageUrl || referer || request.path,
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {

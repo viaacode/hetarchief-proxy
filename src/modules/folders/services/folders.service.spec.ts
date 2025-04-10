@@ -1,4 +1,4 @@
-import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService } from '@meemoo/admin-core-api';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { format } from 'date-fns';
 
@@ -18,6 +18,7 @@ import {
 import { mockGqlFolder } from '~modules/folders/services/__mocks__/users_folder';
 import { type FolderObjectLink, type GqlObject } from '~modules/folders/types';
 import { type IeObject, IeObjectType, IsPartOfKey } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { TestingLogger } from '~shared/logging/test-logger';
 
@@ -25,8 +26,8 @@ const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
 };
 
-const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.SpyInstance>> = {
-	resolveThumbnailUrl: jest.fn(),
+const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
+	getThumbnailUrlWithToken: jest.fn(),
 };
 
 const mockVisitsService: Partial<Record<keyof VisitsService, jest.SpyInstance>> = {
@@ -230,8 +231,8 @@ describe('FoldersService', () => {
 					useValue: mockDataService,
 				},
 				{
-					provide: PlayerTicketService,
-					useValue: mockPlayerTicketService,
+					provide: IeObjectsService,
+					useValue: mockIeObjectsService,
 				},
 				{
 					provide: VisitsService,

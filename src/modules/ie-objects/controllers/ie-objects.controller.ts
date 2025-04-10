@@ -164,9 +164,10 @@ export class IeObjectsController {
 
 	/**
 	 * Export metadata to xml
-	 * @param referer
 	 * @param ip
 	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param currentPageUrl The current page that is open on the client's browser (for event logging purposes)
+	 * @param referer
 	 * @param request
 	 * @param res
 	 * @param user
@@ -174,8 +175,10 @@ export class IeObjectsController {
 	@Get(':schemaIdentifier/export/xml')
 	@Header('Content-Type', 'text/xml')
 	public async exportXml(
-		@Ip() ip: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('currentPageUrl') currentPageUrl: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
@@ -195,8 +198,8 @@ export class IeObjectsController {
 			{
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.METADATA_EXPORT,
-				source: request.path,
-				subject: user.getId(),
+				source: currentPageUrl || referer || request.path,
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					user_group_name: user.getGroupName(),
@@ -235,6 +238,7 @@ export class IeObjectsController {
 	 * @param referer
 	 * @param ip
 	 * @param schemaIdentifier ieObjectId (eg: https://data.hetarchief.be/id/entity/086348mc8s)
+	 * @param currentPageUrl
 	 * @param request
 	 * @param res
 	 * @param user
@@ -242,8 +246,10 @@ export class IeObjectsController {
 	@Get(':schemaIdentifier/export/csv')
 	@Header('Content-Type', 'text/csv')
 	public async exportCsv(
-		@Ip() ip: string,
 		@Param('schemaIdentifier') schemaIdentifier: string,
+		@Query('currentPageUrl') currentPageUrl: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Req() request: Request,
 		@Res() res: Response,
 		@SessionUser() user: SessionUserEntity
@@ -263,8 +269,8 @@ export class IeObjectsController {
 			{
 				id: EventsHelper.getEventId(request),
 				type: LogEventType.METADATA_EXPORT,
-				source: request.path,
-				subject: user.getId(),
+				source: currentPageUrl || referer || request.path,
+				subject: user?.getId(),
 				time: new Date().toISOString(),
 				data: {
 					user_group_name: user.getGroupName(),

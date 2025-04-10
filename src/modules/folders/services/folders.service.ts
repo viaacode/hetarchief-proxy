@@ -1,4 +1,4 @@
-import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
@@ -52,6 +52,7 @@ import {
 	type IeObjectSector,
 	type IeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -61,8 +62,8 @@ export class FoldersService {
 
 	constructor(
 		private dataService: DataService,
-		protected playerTicketService: PlayerTicketService,
-		protected visitsService: VisitsService
+		private visitsService: VisitsService,
+		private ieObjectsService: IeObjectsService
 	) {}
 
 	// TODO make resolving of thumbnails of items in folder optional
@@ -76,12 +77,12 @@ export class FoldersService {
 			return undefined;
 		}
 
-		const thumbnailUrl = gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
-			thumbnailUrl,
-			referer,
-			ip
-		);
+		const thumbnailUrl: string | undefined =
+			await this.ieObjectsService.getThumbnailUrlWithToken(
+				gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
+				referer,
+				ip
+			);
 
 		/* istanbul ignore next */
 		return {
@@ -96,7 +97,7 @@ export class FoldersService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: thumbnailWithToken,
+			thumbnailUrl,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			duration: gqlIeObject?.schemaDuration?.schema_duration || null,
 			licenses: gqlIeObject?.schemaLicense?.schema_license || null,

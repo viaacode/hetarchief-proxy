@@ -381,8 +381,10 @@ describe('IeObjectsController', () => {
 			} as unknown as Response;
 
 			await ieObjectsController.exportXml(
-				'127.0.0.1',
 				'1',
+				'https://hetarchief.be/zoeken/test-maintainer-id/test-id/test-name',
+				'https://hetarchief.be',
+				'127.0.0.1',
 				mockRequest,
 				mockResponseObject,
 				mockSessionUser
@@ -402,8 +404,10 @@ describe('IeObjectsController', () => {
 			} as unknown as Response;
 
 			await ieObjectsController.exportCsv(
-				'127.0.0.1',
 				'1',
+				'https://hetarchief.be/zoeken/test-maintainer-id/test-id/test-name',
+				'https://hetarchief.be',
+				'127.0.0.1',
 				mockRequest,
 				mockResponseObject,
 				mockSessionUser

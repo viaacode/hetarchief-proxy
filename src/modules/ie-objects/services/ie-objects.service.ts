@@ -299,8 +299,8 @@ export class IeObjectsService {
 			ip
 		);
 		// Newspaper thumbnails can be viewed without requiring a player ticket
-		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
-			adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+		if (adapted && adapted.dctermsFormat !== IeObjectType.NEWSPAPER && referer) {
+			adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(
 				adapted.thumbnailUrl,
 				referer,
 				ip
@@ -328,8 +328,8 @@ export class IeObjectsService {
 				): Promise<RelatedIeObject> => {
 					const adapted = await this.adaptRelatedFromDB(object, referer, ip);
 					// Newspaper thumbnails can be viewed without requiring a player ticket
-					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER) {
-						adapted.thumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
+					if (adapted.dctermsFormat !== IeObjectType.NEWSPAPER && referer) {
+						adapted.thumbnailUrl = await this.getThumbnailUrlWithToken(
 							adapted.thumbnailUrl,
 							referer,
 							ip
@@ -459,7 +459,7 @@ export class IeObjectsService {
 			})
 		)) as IeObjectDetailResponseTypes;
 
-		if (process.env.NODE_ENV !== 'test') {
+		if (this.configService.get('NODE_ENV') !== 'test') {
 			// log performance times of sub queries
 			const tableData = orderBy(
 				performanceTimes,
@@ -622,10 +622,9 @@ export class IeObjectsService {
 			referer,
 			ip
 		);
-		const thumbnailUrl =
-			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0];
-		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
-			thumbnailUrl,
+
+		const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
+			schemaThumbnailUrlResponse?.schemaThumbnailUrl?.[0]?.schema_thumbnail_url?.[0],
 			referer,
 			ip
 		);
@@ -698,7 +697,7 @@ export class IeObjectsService {
 			),
 			sector: schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: ie?.schema_name,
-			thumbnailUrl: thumbnailWithToken,
+			thumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
 			isPartOf: parentCollectionResponse?.parentCollection?.map((part) => {
 				return {
@@ -788,9 +787,8 @@ export class IeObjectsService {
 		if (!gqlIeObject) {
 			return null;
 		}
-		const thumbnailUrl = gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0];
-		const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
-			thumbnailUrl || null,
+		const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
+			gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
 			referer,
 			ip
 		);
@@ -809,7 +807,7 @@ export class IeObjectsService {
 			maintainerSlug: gqlIeObject?.schemaMaintainer?.skos_alt_label,
 			sector: gqlIeObject?.schemaMaintainer?.ha_org_sector as IeObjectSector,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: thumbnailWithToken,
+			thumbnailUrl,
 		};
 	}
 
@@ -873,23 +871,19 @@ export class IeObjectsService {
 		referer: string,
 		ip: string
 	): Promise<IeObject> {
-		let thumbnailWithToken: string | null = null;
+		let thumbnailUrl: string | null;
 		if (
 			esObject.dcterms_format === IeObjectType.AUDIO ||
 			esObject.dcterms_format === IeObjectType.AUDIO_FRAGMENT
 		) {
-			thumbnailWithToken = '/images/waveform.svg';
+			thumbnailUrl = '/images/waveform.svg';
 		} else {
 			// TODO remove this replace when https://meemoo.atlassian.net/browse/ARC-2816 is fixed
-			const thumbnailUrl = esObject?.schema_thumbnail_url?.[0]?.replace(
+			const thumb = esObject?.schema_thumbnail_url?.[0]?.replace(
 				'.viaa.be.play/v2/',
 				'.viaa.be/play/v2/'
 			);
-			thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
-				thumbnailUrl || null,
-				referer,
-				ip
-			);
+			thumbnailUrl = await this.getThumbnailUrlWithToken(thumb, referer, ip);
 		}
 
 		return {
@@ -923,7 +917,7 @@ export class IeObjectsService {
 			publisher: esObject?.schema_publisher,
 			spatial: esObject?.schema_spatial_coverage,
 			temporal: esObject?.schema_temporal_coverage,
-			thumbnailUrl: thumbnailWithToken,
+			thumbnailUrl,
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			durationInSeconds: esObject?.duration_seconds,
@@ -1071,18 +1065,18 @@ export class IeObjectsService {
 				if (!file) {
 					return null;
 				}
-				const thumbnailUrl = file.schema_thumbnail_url;
-				const thumbnailWithToken = await this.playerTicketService.resolveThumbnailUrl(
-					thumbnailUrl || null,
+				const thumbnailUrl: string | undefined = await this.getThumbnailUrlWithToken(
+					file.schema_thumbnail_url,
 					referer,
 					ip
 				);
+
 				return {
 					id: file.id,
 					name: file.schema_name,
 					mimeType: file.ebucore_has_mime_type,
 					storedAt: file.premis_stored_at,
-					thumbnailUrl: thumbnailWithToken,
+					thumbnailUrl,
 					duration: file.schema_duration,
 					edmIsNextInSequence: file.edm_is_next_in_sequence,
 					createdAt: file.created_at,
@@ -1315,6 +1309,23 @@ export class IeObjectsService {
 				response.graph__intellectual_entity_prev_and_next[0]?.nextIeObject
 					?.schema_identifier,
 		};
+	}
+
+	/**
+	 * Get a thumbnailUrl with token if thumbnailUrl is defined and referer is defined
+	 * @param thumbnailUrl
+	 * @param referer site on which this thumbnail will be viewed. eg: https://hetarchief.be. Leave null for not resolving the url with a player ticket (faster)
+	 * @param ip
+	 */
+	public async getThumbnailUrlWithToken(
+		thumbnailUrl: string | undefined | null,
+		referer: string | null,
+		ip: string
+	): Promise<string | undefined> {
+		if (thumbnailUrl && referer) {
+			return this.playerTicketService.resolveThumbnailUrl(thumbnailUrl, referer, ip);
+		}
+		return thumbnailUrl || undefined;
 	}
 
 	private adaptMentions(schemaMentions: DbIeObjectWithMentions['schemaMentions']): Mention[] {
