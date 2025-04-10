@@ -10,7 +10,6 @@ import {
 	Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Idp } from '@viaa/avo2-types';
 import archiver from 'archiver';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
@@ -203,7 +202,7 @@ export class NewspapersController {
 				time: new Date().toISOString(),
 				data: {
 					download_type: 'zip',
-					idp: Idp.HETARCHIEF,
+					type: 'newspaper',
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
@@ -298,8 +297,7 @@ export class NewspapersController {
 				subject: user.getId(),
 				time: new Date().toISOString(),
 				data: {
-					download_type: 'jpg',
-					idp: Idp.HETARCHIEF,
+					type: 'newspaper',
 					user_group_name: user.getGroupName(),
 					user_group_id: user.getGroupId(),
 					pid: limitedObjectMetadata.schemaIdentifier,
