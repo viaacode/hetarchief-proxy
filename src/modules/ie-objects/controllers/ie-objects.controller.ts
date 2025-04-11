@@ -572,7 +572,7 @@ export class IeObjectsController {
 		@Referer() referer: string | null,
 		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
-	): Promise<Partial<IeObject>[]> {
+	): Promise<(Partial<IeObject> | null)[]> {
 		let ids: string[];
 		if (typeof schemaIdentifiers === 'string') {
 			ids = [schemaIdentifiers];
@@ -591,6 +591,10 @@ export class IeObjectsController {
 					referer,
 					ip
 				);
+
+				if (!ieObject) {
+					return null;
+				}
 
 				// Censor the object based on the licenses and sector
 				// Only leave the properties that the current user can see of this object
