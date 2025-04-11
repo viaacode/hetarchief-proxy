@@ -187,6 +187,7 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'meemooOriginalCp',
 	'meemooLocalId',
 	'meemooMediaObjectId',
+	'fragmentId',
 	'premisIdentifier',
 	'maintainerId',
 	'maintainerName',
@@ -211,6 +212,7 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'temporal',
 	'newspaperPublisher',
 	'copyrightHolder',
+	'pageNumber',
 	// ALL
 	'width',
 	'height',
@@ -313,6 +315,14 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			name: 'dc:identifier',
 			elements: getXmlTextValue(value),
 			attributes: { note: 'meemoo media object id' },
+		},
+	],
+	fragmentId: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Fragment ID' },
 		},
 	],
 	premisIdentifier: (value) => [
@@ -443,6 +453,12 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			elements: getXmlTextValue(value?.abraham_id),
 			attributes: { note: 'Abraham id' },
 		},
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value?.abraham_uri),
+			attributes: { note: 'Abraham uri' },
+		},
 	],
 	spatial: (value) => [
 		{
@@ -547,6 +563,31 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 			name: 'dc:description',
 			elements: getXmlTextValue(value),
 			attributes: { note: 'Cast description' },
+		},
+	],
+	pageNumber: (value) => [
+		{
+			type: 'element',
+			name: 'dc:extend',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Page number' },
+		},
+	],
+
+	// Computed variables
+	permalink: (value) => [
+		{
+			type: 'element',
+			name: 'dc:identifier',
+			elements: getXmlTextValue(value),
+			attributes: { note: 'Permalink' },
+		},
+	],
+	rightsStatus: (value) => [
+		{
+			type: 'element',
+			name: 'dc:rights',
+			elements: getXmlTextValue(value),
 		},
 	],
 };

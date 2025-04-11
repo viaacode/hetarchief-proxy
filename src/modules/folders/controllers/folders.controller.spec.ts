@@ -177,7 +177,7 @@ describe('FoldersController', () => {
 			mockFoldersService.findFoldersByUser.mockResolvedValueOnce(mockFoldersResponse);
 			const folders = await foldersController.getFolders(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				new SessionUserEntity(mockUser)
 			);
 			expect(folders.items.length).toEqual(2);
@@ -195,9 +195,9 @@ describe('FoldersController', () => {
 			});
 			const folderObjects = await foldersController.getFolderObjects(
 				'referer',
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				{},
-				mockRequest,
 				new SessionUserEntity(mockUser)
 			);
 			expect(folderObjects.items[0]?.name).toEqual(mockFolderObjectsResponse.items[0]?.name);
@@ -225,7 +225,7 @@ describe('FoldersController', () => {
 			const folder = await foldersController.createFolder(
 				'referer',
 
-				mockRequest,
+				'127.0.0.1',
 				{
 					name: 'test folder',
 				},
@@ -241,7 +241,7 @@ describe('FoldersController', () => {
 			const folder = await foldersController.updateFolder(
 				'referer',
 
-				mockRequest,
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				{
 					name: 'test folder',
@@ -288,6 +288,7 @@ describe('FoldersController', () => {
 			const folderObject = await foldersController.addObjectToFolder(
 				mockRequest,
 				'referer',
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				new SessionUserEntity(mockUser)
@@ -311,6 +312,7 @@ describe('FoldersController', () => {
 			try {
 				await foldersController.addObjectToFolder(
 					mockRequest,
+					'127.0.0.1',
 					'referer',
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
@@ -331,7 +333,7 @@ describe('FoldersController', () => {
 				'referer',
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
-				mockRequest,
+				'127.0.0.1',
 				new SessionUserEntity(mockUser)
 			);
 			expect(folderObject).toEqual({ status: 'the object has been deleted' });
@@ -344,7 +346,7 @@ describe('FoldersController', () => {
 				'referer',
 				mockFoldersResponse.items[0].id,
 				'non-existing-object-id',
-				mockRequest,
+				'127.0.0.1',
 				new SessionUserEntity(mockUser)
 			);
 			expect(folderObject).toEqual({
@@ -365,7 +367,7 @@ describe('FoldersController', () => {
 					'referer',
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
-					mockRequest,
+					'127.0.0.1',
 					new SessionUserEntity(mockUser)
 				);
 			} catch (e) {
@@ -386,7 +388,7 @@ describe('FoldersController', () => {
 
 			const folderObject = await foldersController.moveObjectToAnotherFolder(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				mockSchemaIdentifier,
 				mockFoldersResponse.items[1].id,
@@ -412,7 +414,7 @@ describe('FoldersController', () => {
 			try {
 				await foldersController.moveObjectToAnotherFolder(
 					'referer',
-					mockRequest,
+					'127.0.0.1',
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockFoldersResponse.items[1].id,
@@ -441,7 +443,7 @@ describe('FoldersController', () => {
 			try {
 				await foldersController.moveObjectToAnotherFolder(
 					'referer',
-					mockRequest,
+					'127.0.0.1',
 					mockFoldersResponse.items[0].id,
 					mockSchemaIdentifier,
 					mockFoldersResponse.items[1].id,
@@ -460,7 +462,7 @@ describe('FoldersController', () => {
 
 			const sharedFolder = await foldersController.acceptSharedFolder(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				new SessionUserEntity({
 					...mockUser,
@@ -485,7 +487,7 @@ describe('FoldersController', () => {
 
 			const sharedFolder = await foldersController.acceptSharedFolder(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockFoldersResponse.items[0].id,
 				new SessionUserEntity(mockUser)
 			);

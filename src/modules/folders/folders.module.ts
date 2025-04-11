@@ -1,4 +1,4 @@
-import { AdminTranslationsModule, DataModule, PlayerTicketModule } from '@meemoo/admin-core-api';
+import { AdminTranslationsModule, DataModule } from '@meemoo/admin-core-api';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -15,7 +15,6 @@ import { VisitsModule } from '~modules/visits';
 	controllers: [FoldersController],
 	imports: [
 		forwardRef(() => DataModule),
-		PlayerTicketModule,
 		IeObjectsModule,
 		EventsModule,
 		VisitsModule,

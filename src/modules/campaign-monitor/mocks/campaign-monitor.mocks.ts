@@ -18,6 +18,7 @@ import {
 import { type SendRequestListDto } from '~modules/material-requests/dto/material-requests.dto';
 import { mockMaterialRequest1 } from '~modules/material-requests/mocks/material-requests.mocks';
 import { GroupId, GroupName, Permission, type User } from '~modules/users/types';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
 export const mockUser: User = {
@@ -66,8 +67,9 @@ export const mockSendMailQueryDto: CampaignMonitorConfirmMailQueryDto = {
 
 export const mockConfirmationData: CampaignMonitorConfirmationData = {
 	firstname: 'mockFirstName',
-	activation_url:
-		'http://fakeclienthost/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName',
+	activation_url: `${mockConfigService.get(
+		'HOST'
+	)}/campaign-monitor/confirm-email?token=MjMyMjAwMGJkNmNiYjhiNTc0NmUwZDhmYjBhYWQxNmZmZTAwMWZkNWNhZWNjOWMyNmJhYzc1ODhkYWE2Mzk2Yw==&mail=test%40example.com&firstName=mockFirstName&lastName=mockLastName`,
 };
 
 export const mockSendRequestListDto: SendRequestListDto = {
@@ -89,7 +91,9 @@ export const mockRequestListItemToMaintainer: RequestListItem = {
 	title: mockMaterialRequest1.objectSchemaName,
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	pid: mockMaterialRequest1.objectSchemaIdentifier,
-	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `${mockConfigService.get('CLIENT_HOST')}/zoeken/${
+		mockMaterialRequest1.maintainerSlug
+	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };
@@ -99,7 +103,9 @@ export const mockRequestListItemToRequester: RequestListItem = {
 	local_cp_id: mockMaterialRequest1.objectMeemooLocalId,
 	cp_name: mockMaterialRequest1.maintainerName,
 	pid: mockMaterialRequest1.objectSchemaIdentifier,
-	page_url: `http://hetarchief.be/zoeken/${mockMaterialRequest1.maintainerSlug}/${mockMaterialRequest1.objectSchemaIdentifier}`,
+	page_url: `${mockConfigService.get('CLIENT_HOST')}/zoeken/${
+		mockMaterialRequest1.maintainerSlug
+	}/${mockMaterialRequest1.objectSchemaIdentifier}`,
 	request_type: 'Ik wil dit object hergebruiken',
 	request_description: mockMaterialRequest1.reason,
 };

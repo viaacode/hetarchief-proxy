@@ -4,7 +4,7 @@ import {
 	TranslationsService,
 } from '@meemoo/admin-core-api';
 import { NotFoundException } from '@nestjs/common';
-import { type ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type IPagination } from '@studiohyperdrive/pagination';
 import { type Request, type Response } from 'express';
@@ -32,6 +32,7 @@ import { VisitsService } from '~modules/visits/services/visits.service';
 import { type VisitRequest } from '~modules/visits/types';
 import { mockTranslationsService } from '~shared/helpers/mockTranslationsService';
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 // Use function to return object to avoid cross contaminating the tests. Always a fresh object
 const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
@@ -44,10 +45,6 @@ const getMockMediaResponse = (): IPagination<Partial<IeObject>> =>
 	});
 
 const mockSessionUser: SessionUserEntity = new SessionUserEntity(mockUser);
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn(),
-};
 
 const mockIeObjectsService: Partial<Record<keyof IeObjectsService, jest.SpyInstance>> = {
 	findAll: jest.fn(),
@@ -96,7 +93,6 @@ describe('IeObjectsController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [IeObjectsController],
-			imports: [],
 			providers: [
 				{
 					provide: IeObjectsService,
@@ -126,6 +122,10 @@ describe('IeObjectsController', () => {
 					provide: OrganisationsService,
 					useValue: mockOrganisationsService,
 				},
+				{
+					provide: ConfigService,
+					useValue: mockConfigService,
+				},
 			],
 		})
 			.setLogger(new TestingLogger())
@@ -135,7 +135,6 @@ describe('IeObjectsController', () => {
 	});
 
 	afterEach(() => {
-		mockConfigService.get.mockRestore();
 		mockVisitsService.hasAccess.mockRestore();
 		mockIeObjectsService.findAll.mockRestore();
 		mockIeObjectsService.getSimilar.mockRestore();
@@ -159,9 +158,9 @@ describe('IeObjectsController', () => {
 			mockIeObjectsService.findAll.mockResolvedValueOnce(getMockMediaResponse());
 			const ieObjects = await ieObjectsController.getIeObjects(
 				'referer',
+				'127.0.0.1',
 				null,
-				mockSessionUser,
-				mockRequest
+				mockSessionUser
 			);
 			expect(ieObjects.items.length).toEqual(3);
 		});
@@ -172,8 +171,8 @@ describe('IeObjectsController', () => {
 			mockPlayerTicketController.getPlayableUrlFromBrowsePath.mockResolvedValueOnce(
 				'http://playme'
 			);
-			const url = await ieObjectsController.getPlayableUrl('referer', mockRequest, {
-				schemaIdentifier: '1',
+			const url = await ieObjectsController.getPlayableUrl('referer', '127.0.0.1', {
+				browsePath: '/path/to/file',
 			});
 			expect(url).toEqual('http://playme');
 		});
@@ -182,7 +181,7 @@ describe('IeObjectsController', () => {
 	describe('getThumbnailUrl', () => {
 		it('should return a thumbnail url', async () => {
 			mockPlayerTicketService.getThumbnailUrl.mockResolvedValueOnce('http://playme');
-			const url = await ieObjectsController.getThumbnailUrl('referer', mockRequest, {
+			const url = await ieObjectsController.getThumbnailUrl('referer', '127.0.0.1', {
 				id: '1',
 			});
 			expect(url).toEqual('http://playme');
@@ -197,14 +196,14 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const ieObject = await ieObjectsController.getIeObjectById(
-				'1',
+			const ieObjects = await ieObjectsController.getIeObjectsByIds(
+				['1'],
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 
-			expect(ieObject).toBeDefined();
+			expect(ieObjects[0]).toBeDefined();
 		});
 
 		it('should throw a no access exception if the object has no valid license', async () => {
@@ -215,10 +214,10 @@ describe('IeObjectsController', () => {
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
 			try {
-				await ieObjectsController.getIeObjectById(
-					'1',
+				await ieObjectsController.getIeObjectsByIds(
+					['1'],
 					'referer',
-					mockRequest,
+					'127.0.0.1',
 					mockSessionUser
 				);
 				fail('Expected an error to be thrown if the object does not exist');
@@ -236,10 +235,10 @@ describe('IeObjectsController', () => {
 			);
 
 			try {
-				await ieObjectsController.getIeObjectById(
-					'1',
+				await ieObjectsController.getIeObjectsByIds(
+					['1'],
 					'referer',
-					mockRequest,
+					'127.0.0.1',
 					mockSessionUser
 				);
 				fail('Expected an error to be thrown if the object does not exist');
@@ -259,16 +258,16 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const ieObject = await ieObjectsController.getIeObjectById(
-				'1',
+			const ieObjects = await ieObjectsController.getIeObjectsByIds(
+				['1'],
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 
-			expect(ieObject.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
-			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
+			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
+			expect(ieObjects[0].pageRepresentations).toBeUndefined();
 		});
 
 		it('should return full metadata without essence if the object has no content license', async () => {
@@ -279,14 +278,14 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const ieObject = await ieObjectsController.getIeObjectById(
-				'1',
+			const ieObjects = await ieObjectsController.getIeObjectsByIds(
+				['1'],
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 
-			expect(ieObject.pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].pageRepresentations).toBeUndefined();
 		});
 
 		it('should return limited metadata if licenses are ignored but the user does not have access', async () => {
@@ -296,16 +295,16 @@ describe('IeObjectsController', () => {
 			};
 			mockIeObjectsService.findByIeObjectId.mockResolvedValueOnce(mockResponse);
 
-			const ieObject = await ieObjectsController.getIeObjectById(
-				'1',
+			const ieObjects = await ieObjectsController.getIeObjectsByIds(
+				['1'],
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 
-			expect(ieObject.schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
-			expect(ieObject.thumbnailUrl).toBeUndefined();
-			expect(ieObject.pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
+			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
+			expect(ieObjects[0].pageRepresentations).toBeUndefined();
 		});
 	});
 
@@ -319,7 +318,7 @@ describe('IeObjectsController', () => {
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				'1'
 			);
 
@@ -339,7 +338,7 @@ describe('IeObjectsController', () => {
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				'1'
 			);
 
@@ -359,7 +358,7 @@ describe('IeObjectsController', () => {
 
 			const result = await ieObjectsController.getIeObjectSeoById(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				'1'
 			);
 
@@ -375,7 +374,6 @@ describe('IeObjectsController', () => {
 		it('should export an ieObject item as xml', async () => {
 			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const mockResponseObject = {
 				set: jest.fn(),
@@ -384,6 +382,9 @@ describe('IeObjectsController', () => {
 
 			await ieObjectsController.exportXml(
 				'1',
+				'https://hetarchief.be/zoeken/test-maintainer-id/test-id/test-name',
+				'https://hetarchief.be',
+				'127.0.0.1',
 				mockRequest,
 				mockResponseObject,
 				mockSessionUser
@@ -396,7 +397,6 @@ describe('IeObjectsController', () => {
 		it('should export an ieObject item as csv', async () => {
 			mockIeObjectsService.findMetadataByIeObjectId.mockResolvedValueOnce(mockIeObject1);
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
-			mockConfigService.get.mockReturnValueOnce(false); // Do not ignore licenses
 
 			const mockResponseObject = {
 				set: jest.fn(),
@@ -405,6 +405,9 @@ describe('IeObjectsController', () => {
 
 			await ieObjectsController.exportCsv(
 				'1',
+				'https://hetarchief.be/zoeken/test-maintainer-id/test-id/test-name',
+				'https://hetarchief.be',
+				'127.0.0.1',
 				mockRequest,
 				mockResponseObject,
 				mockSessionUser
@@ -443,7 +446,7 @@ describe('IeObjectsController', () => {
 			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
 				'https://data-int.hetarchief.be/id/entity/99999999',
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 			expect(relatedIeObjects.parent).toBeNull();
@@ -473,7 +476,7 @@ describe('IeObjectsController', () => {
 			const relatedIeObjects = await ieObjectsController.getRelatedIeObjects(
 				'https://data-int.hetarchief.be/id/entity/1111111111',
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				mockSessionUser
 			);
 			expect(relatedIeObjects.parent).toBeDefined();
@@ -489,7 +492,7 @@ describe('IeObjectsController', () => {
 			mockVisitsService.hasAccess.mockResolvedValueOnce(true);
 			const ieObject = await ieObjectsController.getSimilar(
 				'referer',
-				mockRequest,
+				'127.0.0.1',
 				'1',
 				{ maintainerId: '' },
 				mockSessionUser

@@ -18,6 +18,7 @@ import {
 } from '~generated/graphql-db-types-hetarchief';
 import { type IeObjectDetailResponseTypes } from '~modules/ie-objects/services/ie-objects.service.types';
 import { GroupId, GroupName, Permission } from '~modules/users/types';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
 export const mockIeObject1: Readonly<IeObject> = {
@@ -1107,6 +1108,9 @@ export const mockIeObjectWithMetadataSetLtdXml = `<?xml version="1.0" encoding="
   <dc:subject>AGRESSIE</dc:subject>
   <dc:subject>KARAKTERVORMING</dc:subject>
   <dc:rights>vrt</dc:rights>
+  <dc:identifier note="Permalink">${mockConfigService.get(
+		'CLIENT_HOST'
+  )}/pid/8911p09j1g</dc:identifier>
 </oai_dc:dc>`;
 
 export const mockIeObjectWithMetadataSetAllXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1162,6 +1166,9 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</dcterms:abstract>
+  <dc:identifier note="Permalink">${mockConfigService.get(
+		'CLIENT_HOST'
+  )}/pid/8911p09j1g</dc:identifier>
 </oai_dc:dc>`;
 
 export const mockIeObjectWithMetadataSetAllWithEssenceXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1217,4 +1224,7 @@ Alleen blijven zonder haar man Jean-Pierre begint moeilijk te worden. Hij schrij
 John  Buck (44) &amp; Cindy De Buck (46)
 John heeft de diagnose van frontotemporale jongdementie gekregen. Hij is niet getrouwd, dus zijn zus Cindy zorgt voor hem. John woont begeleid in een studio omdat alleen wonen geen optie meer is. De begeleiders daar zorgen er ook voor dat hij zijn medicatie neemt. Overdag gaat John naar Ter Motte, een zorginstelling aangepast voor mensen met jongdementie. Ze organiseren er verschillende activiteiten want hoe actiever de mensen zijn, hoe minder snel ze achteruit gaan.
 Cindy gaat John elke vrijdag halen in Ter Motte. Ze doet hard haar best om voor hem te zorgen. Zijn kortetermijngeheugen is al aangetast, maar van zijn jeugd weet hij nog veel. Bij John is vooral zijn karakter veranderd door de ziekte. Hij was agressief en durfde ook seksueel getinte opmerkingen te maken naar vrouwen toe. Zijn remmingen vallen weg door de ziekte. Door de medicatie is dit intussen verbeterd.</dcterms:abstract>
+  <dc:identifier note="Permalink">${mockConfigService.get(
+		'CLIENT_HOST'
+  )}/pid/8911p09j1g</dc:identifier>
 </oai_dc:dc>`;

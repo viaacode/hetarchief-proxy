@@ -5,9 +5,9 @@ import {
 	IE_OBJECT_PROPS_METADATA_EXPORT,
 	type XmlNode,
 } from '../ie-objects.conts';
-import { type IeObject } from '../ie-objects.types';
+import { type IeObject, IeObjectLicense } from '../ie-objects.types';
 
-export const convertObjectToXml = (object: Partial<IeObject>): string => {
+export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string): string => {
 	const dcElements: XmlNode[] = [];
 
 	for (const key of IE_OBJECT_PROPS_METADATA_EXPORT) {
@@ -19,6 +19,26 @@ export const convertObjectToXml = (object: Partial<IeObject>): string => {
 				dcElements.push(...dcField);
 			}
 		}
+	}
+
+	// Permalink
+	dcElements.push(
+		...IE_OBJECT_PROPERTY_TO_DUBLIN_CORE.permalink(
+			`${clientHost}/pid/${object.schemaIdentifier}`
+		)
+	);
+
+	// Rights
+	let rights: string | null;
+	if (object.licenses?.includes(IeObjectLicense.PUBLIC_DOMAIN)) {
+		rights = 'public domain';
+	} else if (object.licenses?.includes(IeObjectLicense.COPYRIGHT_UNDETERMINED)) {
+		rights = 'copyright undetermined';
+	} else {
+		rights = null;
+	}
+	if (rights) {
+		dcElements.push(...IE_OBJECT_PROPERTY_TO_DUBLIN_CORE.rightsStatus(rights));
 	}
 
 	const xmlObj = {

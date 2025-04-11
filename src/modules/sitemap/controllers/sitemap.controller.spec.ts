@@ -2,28 +2,17 @@ import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AssetType } from '@viaa/avo2-types';
 
-import { type Configuration } from '~config';
-
 import { mockSitemapConfig } from '../mocks/sitemap.mocks';
 import { SitemapService } from '../services/sitemap.service';
 
 import { SitemapController } from './sitemap.controller';
 
 import { TestingLogger } from '~shared/logging/test-logger';
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockSitemapService = {
 	generateSitemap: jest.fn(),
 	getSitemapConfig: jest.fn(),
-};
-
-const mockConfigService = {
-	get: jest.fn((key: keyof Configuration): string => {
-		if (key === 'PROXY_API_KEY') {
-			return 'test api key for the proxy';
-		}
-
-		return key;
-	}),
 };
 
 describe('SitemapController', () => {
@@ -70,7 +59,7 @@ describe('SitemapController', () => {
 			mockSitemapService.generateSitemap.mockResolvedValueOnce('');
 
 			const result = await sitemapController.generateSitemap(
-				mockConfigService.get('PROXY_API_KEY')
+				mockConfigService.get('PROXY_API_KEY') as string
 			);
 
 			expect(result).toEqual(

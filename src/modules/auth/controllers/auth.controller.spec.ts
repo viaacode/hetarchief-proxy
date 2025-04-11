@@ -5,8 +5,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { Idp } from '@viaa/avo2-types';
 import { isFuture } from 'date-fns';
 
-import { type Configuration } from '~config';
-
 import { IdpService } from '../services/idp.service';
 import { LoginMessage, type LoginResponse } from '../types';
 
@@ -22,6 +20,7 @@ import { mockTranslationsService } from '~shared/helpers/mockTranslationsService
 import { sleep } from '~shared/helpers/sleep';
 import { TestingLogger } from '~shared/logging/test-logger';
 import { SessionService } from '~shared/services/session.service';
+import { mockConfigService } from '~shared/test/mock-config-service';
 import { Locale } from '~shared/types/types';
 
 const mockUser: User = {
@@ -53,18 +52,6 @@ const getNewMockSession = () => ({
 const mockSessionService: Partial<Record<keyof SessionService, jest.SpyInstance>> = {
 	clearRedis: jest.fn(),
 	getSessionConfig: jest.fn(),
-};
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'MEEMOO_ADMIN_ORGANIZATION_IDS') {
-			return '1,2';
-		}
-		if (key === 'HOST') {
-			return 'http://bezoek.test';
-		}
-		return key;
-	}),
 };
 
 const mockCampaignMonitorService: Partial<Record<keyof CampaignMonitorService, jest.SpyInstance>> =
@@ -103,6 +90,10 @@ describe('AuthController', () => {
 			.compile();
 
 		authController = module.get<AuthController>(AuthController);
+	});
+
+	afterEach(() => {
+		mockCampaignMonitorService.updateNewsletterPreferences.mockClear();
 	});
 
 	it('should be defined', () => {
@@ -177,7 +168,9 @@ describe('AuthController', () => {
 				'http://hetarchief.be/start'
 			);
 			expect(result).toEqual({
-				url: 'http://bezoek.test/auth/hetarchief/logout?returnToUrl=http%3A%2F%2Fhetarchief.be%2Fstart',
+				url: `${mockConfigService.get(
+					'HOST'
+				)}/auth/hetarchief/logout?returnToUrl=http%3A%2F%2Fhetarchief.be%2Fstart`,
 				statusCode: HttpStatus.TEMPORARY_REDIRECT,
 			});
 		});

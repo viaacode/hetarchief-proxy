@@ -5,8 +5,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 
-import { type Configuration } from '~config';
-
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
 import { type ElasticsearchResponse, IeObjectLicense, IeObjectType } from '../ie-objects.types';
 import {
@@ -38,21 +36,7 @@ import { mockVisitApproved } from '~modules/visits/services/__mocks__/cp_visit';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { VisitAccessType } from '~modules/visits/types';
 import { TestingLogger } from '~shared/logging/test-logger';
-
-const mockConfigService: Partial<Record<keyof ConfigService, jest.SpyInstance>> = {
-	get: jest.fn((key: keyof Configuration): string | boolean => {
-		if (key === 'ELASTICSEARCH_URL') {
-			return 'http://elasticsearch'; // should be a syntactically valid url
-		}
-		if (key === 'TICKET_SERVICE_URL') {
-			return 'http://ticketservice';
-		}
-		if (key === 'MEDIA_SERVICE_URL') {
-			return 'http://mediaservice';
-		}
-		return key;
-	}),
-};
+import { mockConfigService } from '~shared/test/mock-config-service';
 
 const mockDataService: Partial<Record<keyof DataService, jest.SpyInstance>> = {
 	execute: jest.fn(),
@@ -63,7 +47,6 @@ const mockPlayerTicketService: Partial<Record<keyof PlayerTicketService, jest.Sp
 	getPlayableUrl: jest.fn(),
 	getEmbedUrl: jest.fn(),
 	resolveThumbnailUrl: jest.fn(),
-	getThumbnailToken: jest.fn(),
 	getThumbnailUrl: jest.fn(),
 	getThumbnailPath: jest.fn(),
 };
@@ -136,7 +119,7 @@ describe('ieObjectsService', () => {
 	describe('adaptESResponse', () => {
 		it('returns the input if no hits were found', async () => {
 			const esResponse = { hits: { hits: [], total: { value: 0 } } } as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result).toEqual(esResponse);
 		});
 
@@ -152,7 +135,7 @@ describe('ieObjectsService', () => {
 					},
 				},
 			} as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(3);
 		});
@@ -165,7 +148,7 @@ describe('ieObjectsService', () => {
 					},
 				},
 			} as ElasticsearchResponse;
-			const result = await ieObjectsService.adaptESResponse(esResponse, 'referer', '');
+			const result = await ieObjectsService.adaptESResponse(esResponse);
 			expect(result.aggregations.dcterms_format.buckets.length).toEqual(1);
 			expect(result.aggregations.dcterms_format.buckets[0].key).toEqual(IeObjectType.VIDEO);
 			expect(result.aggregations.dcterms_format.buckets[0].doc_count).toEqual(1);
@@ -177,7 +160,11 @@ describe('ieObjectsService', () => {
 			const mockFindByIeObjectIdFunc = jest.fn();
 			mockFindByIeObjectIdFunc.mockResolvedValueOnce(mockIeObject1);
 			ieObjectsService.findByIeObjectId = mockFindByIeObjectIdFunc;
-			const response = await ieObjectsService.findMetadataByIeObjectId(mockObjectId, '');
+			const response = await ieObjectsService.findMetadataByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 			expect(response.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(response.pageRepresentations).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
@@ -204,7 +191,11 @@ describe('ieObjectsService', () => {
 			});
 
 			// Fetch the object
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			// Validate the object
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
@@ -246,7 +237,11 @@ describe('ieObjectsService', () => {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
 			});
 
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockIeObject2Metadata.schema_identifier);
 			expect(ieObject.pageRepresentations).toEqual([]);
@@ -270,7 +265,11 @@ describe('ieObjectsService', () => {
 				mockDataService.execute.mockResolvedValueOnce(mockObject2Response);
 			});
 
-			const ieObject = await ieObjectsService.findByIeObjectId(mockObjectId, 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				mockObjectId,
+				'referer',
+				'127.0.0.1'
+			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
 			expect(ieObject.pageRepresentations[0].representations[0].files).toEqual([]);
@@ -280,7 +279,11 @@ describe('ieObjectsService', () => {
 			const mockData: Readonly<IeObjectDetailResponseTypes> = mockIeObjectEmpty;
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 
-			const ieObject = await ieObjectsService.findByIeObjectId('invalidId', 'referer', '');
+			const ieObject = await ieObjectsService.findByIeObjectId(
+				'invalidId',
+				'referer',
+				'127.0.0.1'
+			);
 			expect(ieObject).toEqual(null);
 		});
 	});
@@ -353,7 +356,7 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getParentIeObject(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
 				'referer',
-				''
+				'127.0.0.1'
 			);
 			expect(response.schemaIdentifier).toEqual(
 				mockParentIeObject.graph_intellectual_entity[0].isPartOf.schema_identifier
@@ -365,7 +368,7 @@ describe('ieObjectsService', () => {
 			const response = await ieObjectsService.getChildIeObjects(
 				'https://data-int.hetarchief.be/id/entity/2222222222',
 				'referer',
-				''
+				'127.0.0.1'
 			);
 			expect(response.length).toEqual(2);
 			expect(response[0].schemaIdentifier).toEqual(

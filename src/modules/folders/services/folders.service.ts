@@ -1,4 +1,4 @@
-import { DataService, PlayerTicketService } from '@meemoo/admin-core-api';
+import { DataService } from '@meemoo/admin-core-api';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { format } from 'date-fns';
@@ -52,6 +52,7 @@ import {
 	type IeObjectSector,
 	type IeObjectType,
 } from '~modules/ie-objects/ie-objects.types';
+import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.service';
 import { VisitsService } from '~modules/visits/services/visits.service';
 import { PaginationHelper } from '~shared/helpers/pagination';
 
@@ -61,14 +62,27 @@ export class FoldersService {
 
 	constructor(
 		private dataService: DataService,
-		protected playerTicketService: PlayerTicketService,
-		protected visitsService: VisitsService
+		private visitsService: VisitsService,
+		private ieObjectsService: IeObjectsService
 	) {}
 
-	public adaptIeObject(gqlIeObject: GqlObject | undefined): Partial<IeObject> | undefined {
+	// TODO make resolving of thumbnails of items in folder optional
+	// To increase the speed of the search page
+	public async adaptIeObject(
+		gqlIeObject: GqlObject | undefined,
+		referer: string,
+		ip: string
+	): Promise<Partial<IeObject> | undefined> {
 		if (!gqlIeObject) {
 			return undefined;
 		}
+
+		const thumbnailUrl: string | undefined =
+			await this.ieObjectsService.getThumbnailUrlWithToken(
+				gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0],
+				referer,
+				ip
+			);
 
 		/* istanbul ignore next */
 		return {
@@ -83,7 +97,7 @@ export class FoldersService {
 			dctermsAvailable: gqlIeObject?.dcterms_available,
 			meemooLocalId: gqlIeObject?.premisIdentifier?.[0]?.meemoo_local_id,
 			name: gqlIeObject?.schema_name,
-			thumbnailUrl: gqlIeObject?.schemaThumbnail?.schema_thumbnail_url?.[0] || null,
+			thumbnailUrl,
 			datePublished: gqlIeObject?.schema_date_published || null,
 			duration: gqlIeObject?.schemaDuration?.schema_duration || null,
 			licenses: gqlIeObject?.schemaLicense?.schema_license || null,
@@ -153,22 +167,17 @@ export class FoldersService {
 
 		/* istanbul ignore next */
 		// TODO: add union type
-		const objectIe = this.adaptIeObject(gqlFolderObjectLink?.intellectualEntity as GqlObject);
+		const objectIe = await this.adaptIeObject(
+			gqlFolderObjectLink?.intellectualEntity as GqlObject,
+			referer,
+			ip
+		);
 		if (!objectIe) {
 			return null;
-		}
-		let resolvedThumbnailUrl: string | null = objectIe?.thumbnailUrl;
-		if (objectIe?.thumbnailUrl) {
-			resolvedThumbnailUrl = await this.playerTicketService.resolveThumbnailUrl(
-				objectIe?.thumbnailUrl,
-				referer,
-				ip
-			);
 		}
 		return {
 			folderEntryCreatedAt: gqlFolderObjectLink?.created_at,
 			...objectIe,
-			thumbnailUrl: resolvedThumbnailUrl,
 		};
 	}
 
@@ -349,7 +358,11 @@ export class FoldersService {
 		return this.adaptFolderObjectLink(foundObject, referer, ip);
 	}
 
-	public async findObjectById(ieObjectId: string): Promise<Partial<IeObject> | null> {
+	public async findObjectById(
+		ieObjectId: string,
+		referer: string,
+		ip: string
+	): Promise<Partial<IeObject> | null> {
 		const response = await this.dataService.execute<
 			FindIeObjectBySchemaIdentifierQuery,
 			FindIeObjectBySchemaIdentifierQueryVariables
@@ -358,7 +371,7 @@ export class FoldersService {
 		});
 		const foundObject = response.graph_intellectual_entity[0];
 
-		return this.adaptIeObject(foundObject);
+		return this.adaptIeObject(foundObject, referer, ip);
 	}
 
 	public async addObjectToFolder(
@@ -375,7 +388,7 @@ export class FoldersService {
 			});
 		}
 
-		const objectInfo = await this.findObjectById(ieObjectId);
+		const objectInfo = await this.findObjectById(ieObjectId, referer, ip);
 
 		if (!objectInfo) {
 			throw new NotFoundException(`Object with id ${ieObjectId} was not found`);

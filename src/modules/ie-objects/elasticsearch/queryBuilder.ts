@@ -8,7 +8,6 @@ import {
 	convertNodeToEsQueryFilterObjects,
 } from '../helpers/convert-node-to-es-query-filter-objects';
 import { encodeSearchterm } from '../helpers/encode-search-term';
-import { getSectorsWithEssenceAccess } from '../helpers/get-sectors-with-essence-access';
 import { IeObjectLicense } from '../ie-objects.types';
 
 import {
@@ -567,26 +566,36 @@ export class QueryBuilder {
 		) {
 			toBeAppliedCustomFilters.push({
 				occurrenceType: 'filter',
-				query: [
+				query: AND([
+					{
+						exists: {
+							field: 'schema_thumbnail_url',
+						},
+					},
 					OR([
 						{
 							terms: {
-								[ElasticsearchField.schema_maintainer +
-								'.' +
-								ElasticsearchField.organization_sector]:
-									getSectorsWithEssenceAccess(inputInfo.user.getSector()),
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.PUBLIEK_CONTENT,
+								],
 							},
 						},
 						{
-							term: {
-								[ElasticsearchField.schema_maintainer +
-								'.' +
-								ElasticsearchField.schema_identifier]:
-									inputInfo.user.getOrganisationId(),
+							terms: {
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.BEZOEKERTOOL_CONTENT,
+								],
+							},
+						},
+						{
+							terms: {
+								[ElasticsearchField.schema_license]: [
+									IeObjectLicense.INTRA_CP_CONTENT,
+								],
 							},
 						},
 					]),
-				],
+				]),
 			});
 		}
 

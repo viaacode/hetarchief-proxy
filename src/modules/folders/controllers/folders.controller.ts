@@ -5,7 +5,6 @@ import {
 	Delete,
 	ForbiddenException,
 	Get,
-	Headers,
 	InternalServerErrorException,
 	Param,
 	ParseUUIDPipe,
@@ -35,11 +34,12 @@ import { IeObjectsService } from '~modules/ie-objects/services/ie-objects.servic
 import { SessionUserEntity } from '~modules/users/classes/session-user';
 import { UsersService } from '~modules/users/services/users.service';
 import { Permission } from '~modules/users/types';
+import { Ip } from '~shared/decorators/ip.decorator';
+import { Referer } from '~shared/decorators/referer.decorator';
 import { RequireAllPermissions } from '~shared/decorators/require-permissions.decorator';
 import { SessionUser } from '~shared/decorators/user.decorator';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
 import { EventsHelper } from '~shared/helpers/events';
-import { getIpFromRequest } from '~shared/helpers/get-ip-from-request';
 import { Locale } from '~shared/types/types';
 
 @ApiTags('Folders')
@@ -55,8 +55,8 @@ export class FoldersController {
 
 	@Get()
 	public async getFolders(
-		@Headers('referer') referer: string,
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Folder>> {
 		// For Anonymous users, it should return an empty array
@@ -72,7 +72,7 @@ export class FoldersController {
 		const folders = await this.foldersService.findFoldersByUser(
 			user.getId(),
 			referer,
-			getIpFromRequest(request),
+			ip,
 			1,
 			1000
 		);
@@ -112,10 +112,10 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async getFolderObjects(
-		@Headers('referer') referer: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId', ParseUUIDPipe) folderId: string,
 		@Query() queryDto: FolderObjectsQueryDto,
-		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<IPagination<Partial<IeObject>>> {
 		const folderObjects: IPagination<Partial<IeObject>> =
@@ -124,7 +124,7 @@ export class FoldersController {
 				user.getId(),
 				queryDto,
 				referer,
-				getIpFromRequest(request)
+				ip
 			);
 
 		const visitorSpaceAccessInfo =
@@ -170,8 +170,8 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async createFolder(
-		@Headers('referer') referer: string,
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Body() createFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Folder> {
@@ -183,7 +183,7 @@ export class FoldersController {
 				is_default: false,
 			},
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 	}
 
@@ -191,8 +191,8 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async updateFolder(
-		@Headers('referer') referer: string,
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@Body() updateFolderDto: CreateOrUpdateFolderDto,
 		@SessionUser() user: SessionUserEntity
@@ -202,7 +202,7 @@ export class FoldersController {
 			user.getId(),
 			updateFolderDto,
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 	}
 
@@ -226,16 +226,13 @@ export class FoldersController {
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async addObjectToFolder(
 		@Req() request: Request,
-		@Headers('referer') referer: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
-		const collection = await this.foldersService.findFolderById(
-			folderId,
-			referer,
-			getIpFromRequest(request)
-		);
+		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
 		if (collection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only add objects to your own folders');
 		}
@@ -244,14 +241,14 @@ export class FoldersController {
 			folderId,
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 
 		// Log event
 		const ieObject = await this.ieObjectsService.findByIeObjectId(
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 		this.eventsService.insertEvents([
 			{
@@ -279,17 +276,13 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async removeObjectFromFolder(
-		@Headers('referer') referer: string,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
-		@Req() request: Request,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ status: string }> {
-		const collection = await this.foldersService.findFolderById(
-			folderId,
-			referer,
-			getIpFromRequest(request)
-		);
+		const collection = await this.foldersService.findFolderById(folderId, referer, ip);
 		if (collection.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only delete objects from your own folders');
 		}
@@ -309,8 +302,8 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async moveObjectToAnotherFolder(
-		@Headers('referer') referer: string,
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('oldFolderId') oldFolderId: string,
 		@Param('objectSchemaIdentifier') objectSchemaIdentifier: string,
 		@Query('newFolderId') newFolderId: string,
@@ -318,8 +311,8 @@ export class FoldersController {
 	): Promise<Partial<IeObject> & { folderEntryCreatedAt: string }> {
 		// Check user is owner of both folders
 		const [oldFolder, newFolder] = await Promise.all([
-			this.foldersService.findFolderById(oldFolderId, referer, getIpFromRequest(request)),
-			this.foldersService.findFolderById(newFolderId, referer, getIpFromRequest(request)),
+			this.foldersService.findFolderById(oldFolderId, referer, ip),
+			this.foldersService.findFolderById(newFolderId, referer, ip),
 		]);
 		if (oldFolder.userProfileId !== user.getId()) {
 			throw new ForbiddenException('You can only move objects from your own folders');
@@ -332,7 +325,7 @@ export class FoldersController {
 			newFolderId,
 			convertSchemaIdentifierToId(objectSchemaIdentifier),
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 		await this.foldersService.removeObjectFromFolder(
 			oldFolderId,
@@ -344,6 +337,8 @@ export class FoldersController {
 
 	/**
 	 * Create an invite to share a folder
+	 * @param referer
+	 * @param ip
 	 * @param request
 	 * @param emailInfo
 	 * @param folderId
@@ -353,16 +348,13 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async createSharedFolder(
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Body() emailInfo: { to: string },
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<{ message: 'success' }> {
-		const folder = await this.foldersService.findFolderById(
-			folderId,
-			request.headers.referer,
-			getIpFromRequest(request)
-		);
+		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
 
 		// If the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
 		const toUser = await this.userService.getUserByEmail(emailInfo.to);
@@ -406,16 +398,12 @@ export class FoldersController {
 	@UseGuards(LoggedInGuard)
 	@RequireAllPermissions(Permission.MANAGE_FOLDERS)
 	public async acceptSharedFolder(
-		@Headers('referer') referer: string,
-		@Req() request: Request,
+		@Referer() referer: string,
+		@Ip() ip: string,
 		@Param('folderId') folderId: string,
 		@SessionUser() user: SessionUserEntity
 	): Promise<FolderShared> {
-		const folder = await this.foldersService.findFolderById(
-			folderId,
-			referer,
-			getIpFromRequest(request)
-		);
+		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
 
 		if (folder?.userProfileId === user.getId()) {
 			return {
@@ -432,7 +420,7 @@ export class FoldersController {
 				is_default: false,
 			},
 			referer,
-			getIpFromRequest(request)
+			ip
 		);
 
 		// Get all the objects from the original collection and add them to the new collection
@@ -443,7 +431,7 @@ export class FoldersController {
 				folder?.userProfileId,
 				{ size: 1000 },
 				referer,
-				getIpFromRequest(request)
+				ip
 			);
 			// TODO: make it possible to insert all objects to the new collection at once
 			await promiseUtils.mapLimit(folderObjects?.items, 20, async (item) => {
@@ -451,7 +439,7 @@ export class FoldersController {
 					createdFolder.id,
 					item?.schemaIdentifier,
 					referer,
-					getIpFromRequest(request)
+					ip
 				);
 			});
 		} catch (err) {
