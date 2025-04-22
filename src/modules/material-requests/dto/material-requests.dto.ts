@@ -106,9 +106,9 @@ export class CreateMaterialRequestDto {
 	@ApiProperty({
 		type: String,
 		description: 'The object schema identifier',
-		example: '9f2479c1-4489-4bd0-86b3-881b9449a8c0',
+		example: '0000003g0k',
 	})
-	objectId: string;
+	objectSchemaIdentifier: string;
 
 	@IsString()
 	@IsEnum(MaterialRequestType)
