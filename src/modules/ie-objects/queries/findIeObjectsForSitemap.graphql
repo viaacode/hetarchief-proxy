@@ -1,6 +1,6 @@
-query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) {
-	graph__intellectual_entity(
-		where: { schema_license: { _has_keys_any: $licenses } }
+query findIeObjectsForSitemap($licenses: [String!]!, $offset: Int!, $limit: Int) {
+	graph_intellectual_entity(
+		where: { schemaLicenses: { schema_license: { _in: $licenses } } }
 		offset: $offset
 		limit: $limit
 	) {
@@ -13,7 +13,9 @@ query findIeObjectsForSitemap($licenses: [String!], $offset: Int!, $limit: Int) 
 			skos_alt_label
 		}
 	}
-	graph__intellectual_entity_aggregate(where: { schema_license: { _has_keys_any: $licenses } }) {
+	graph_intellectual_entity_aggregate(
+		where: { schemaLicenses: { schema_license: { _in: $licenses } } }
+	) {
 		aggregate {
 			count
 		}

@@ -373,12 +373,14 @@ export class MaterialRequestsService {
 		);
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
-			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
+			objectId: graphQlMaterialRequest.ie_object_id,
+			objectSchemaIdentifier: graphQlMaterialRequest.intellectualEntity?.schema_identifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
-			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
+			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
 				?.dcterms_format as IeObjectType,
 			objectThumbnailUrl:
-				graphQlMaterialRequest.intellectualEntity?.schema_thumbnail_url?.[0] || null,
+				graphQlMaterialRequest.intellectualEntity?.schemaThumbnail
+					?.schema_thumbnail_url?.[0] || null,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -410,7 +412,7 @@ export class MaterialRequestsService {
 			),
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					?.intellectualEntity?.meemoo_local_id?.[0] || null,
+					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 		};
 
 		return transformedMaterialRequest;

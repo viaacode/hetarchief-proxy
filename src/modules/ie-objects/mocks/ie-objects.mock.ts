@@ -1012,7 +1012,7 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 	schemaIdentifier: '4f1mg9x363',
 };
 
-export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0] =
+export const mockGqlSitemapObject: FindIeObjectsForSitemapQuery['graph_intellectual_entity'][0] =
 	Object.freeze({
 		schema_identifier: '4f1mg9x363',
 		schema_name: 'Durf te vragen R002 A0001',

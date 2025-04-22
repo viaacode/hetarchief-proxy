@@ -10,6 +10,7 @@ import { type Locale } from '~shared/types/types';
 
 export interface MaterialRequest {
 	id: string;
+	objectId: string;
 	objectSchemaIdentifier: string;
 	objectSchemaName: string;
 	objectMeemooLocalId?: string;

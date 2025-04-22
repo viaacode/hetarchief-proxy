@@ -541,8 +541,8 @@ export class IeObjectsService {
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
 			const {
-				graph__intellectual_entity: ieObjects,
-				graph__intellectual_entity_aggregate: ieObjectAggregate,
+				graph_intellectual_entity: ieObjects,
+				graph_intellectual_entity_aggregate: ieObjectAggregate,
 			} = await this.dataService.execute<
 				FindIeObjectsForSitemapQuery,
 				FindIeObjectsForSitemapQueryVariables
@@ -1086,7 +1086,7 @@ export class IeObjectsService {
 	}
 
 	private adaptForSitemap(
-		gqlIeObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0]
+		gqlIeObject: FindIeObjectsForSitemapQuery['graph_intellectual_entity'][0]
 	): IeObjectsSitemap {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,

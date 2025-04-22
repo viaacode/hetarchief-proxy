@@ -9,7 +9,7 @@ mutation updateMaterialRequest(
 	) {
 		returning {
 			id
-			object_schema_identifier
+			ie_object_id
 			profile_id
 			reason
 			type
@@ -25,18 +25,24 @@ mutation updateMaterialRequest(
 				language
 			}
 			intellectualEntity {
+				schema_identifier
+				schema_name
+				id
+				dctermsFormat(limit: 1) {
+					dcterms_format
+				}
+				schemaThumbnail {
+					schema_thumbnail_url
+				}
 				schemaMaintainer {
 					org_identifier
 					skos_pref_label
+					ha_org_has_logo
 					skos_alt_label
 					visitorSpace {
 						slug
 					}
 				}
-				schema_identifier
-				schema_name
-				dcterms_format
-				schema_thumbnail_url
 			}
 		}
 	}
