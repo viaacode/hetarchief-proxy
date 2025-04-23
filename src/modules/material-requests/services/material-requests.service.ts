@@ -52,6 +52,7 @@ import {
 	type MaterialRequestEmailInfo,
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -210,7 +211,9 @@ export class MaterialRequestsService {
 	): Promise<MaterialRequest> {
 		const variables: InsertMaterialRequestMutationVariables = {
 			newMaterialRequest: {
-				ie_object_id: createMaterialRequestDto.objectSchemaIdentifier,
+				ie_object_id: convertSchemaIdentifierToId(
+					createMaterialRequestDto.objectSchemaIdentifier
+				),
 				profile_id: parameters.userProfileId,
 				reason: createMaterialRequestDto.reason,
 				type: createMaterialRequestDto.type,
