@@ -208,27 +208,27 @@ export class MaterialRequestsService {
 			userProfileId: string;
 		}
 	): Promise<MaterialRequest> {
-		const newMaterialRequest = {
-			object_schema_identifier: createMaterialRequestDto.objectSchemaIdentifier,
-			profile_id: parameters.userProfileId,
-			reason: createMaterialRequestDto.reason,
-			type: createMaterialRequestDto.type,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString(),
-			is_pending: true,
-			organisation: createMaterialRequestDto?.organisation,
-			requester_capacity:
-				createMaterialRequestDto?.requesterCapacity ||
-				Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
+		const variables: InsertMaterialRequestMutationVariables = {
+			newMaterialRequest: {
+				ie_object_id: createMaterialRequestDto.objectSchemaIdentifier,
+				profile_id: parameters.userProfileId,
+				reason: createMaterialRequestDto.reason,
+				type: createMaterialRequestDto.type,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+				is_pending: true,
+				organisation: createMaterialRequestDto?.organisation,
+				requester_capacity:
+					createMaterialRequestDto?.requesterCapacity ||
+					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
+			},
 		};
 
 		const { insert_app_material_requests_one: createdMaterialRequest } =
 			await this.dataService.execute<
 				InsertMaterialRequestMutation,
 				InsertMaterialRequestMutationVariables
-			>(InsertMaterialRequestDocument, {
-				newMaterialRequest,
-			});
+			>(InsertMaterialRequestDocument, variables);
 
 		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
 
