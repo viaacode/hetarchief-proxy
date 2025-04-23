@@ -620,7 +620,7 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 					id: 'https://data-int.hetarchief.be/id/entity/5bcddeb07498bd246539e22b3fad5e63',
 					schema_identifier: null,
 					schema_name: 'De Socialistische Gedachte en Aktie',
-					collection_type: 'https://schema.org/CreativeWorkSeries',
+					collection_type: 'serie',
 					isPreceededBy: [],
 					isSucceededBy: [],
 					schema_location_created: null,
@@ -666,7 +666,7 @@ export const mockIeObject2: IeObjectDetailResponseTypes = [
 	{
 		graph_schema_is_part_of: [
 			{
-				type: 'https://schema.org/CreativeWorkSeries',
+				type: 'serie',
 				collection: {
 					schema_name: 'De Socialistische Gedachte en Aktie',
 				},
