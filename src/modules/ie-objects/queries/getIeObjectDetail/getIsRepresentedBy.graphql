@@ -1,5 +1,8 @@
 query getIsRepresentedBy($ieObjectId: String!) {
-	graph__intellectual_entity(where: { id: { _eq: $ieObjectId } }) {
+	graph__intellectual_entity(
+		where: { id: { _eq: $ieObjectId } }
+		order_by: { schema_position: asc }
+	) {
 		isRepresentedBy {
 			id
 			schema_name
