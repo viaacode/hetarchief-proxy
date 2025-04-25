@@ -9722,6 +9722,411 @@ export type Graph_Ha_Des_Coloring_Type_Updates = {
   where: Graph_Ha_Des_Coloring_Type_Bool_Exp;
 };
 
+/** columns and relationships of "graph.highlight" */
+export type Graph_Highlight = {
+  __typename?: 'graph_highlight';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height: Scalars['Int']['output'];
+  schema_mentions_id: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width: Scalars['Int']['output'];
+  x: Scalars['Int']['output'];
+  y: Scalars['Int']['output'];
+};
+
+/** aggregated selection of "graph.highlight" */
+export type Graph_Highlight_Aggregate = {
+  __typename?: 'graph_highlight_aggregate';
+  aggregate?: Maybe<Graph_Highlight_Aggregate_Fields>;
+  nodes: Array<Graph_Highlight>;
+};
+
+export type Graph_Highlight_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Graph_Highlight_Aggregate_Bool_Exp_Count>;
+};
+
+export type Graph_Highlight_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Graph_Highlight_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "graph.highlight" */
+export type Graph_Highlight_Aggregate_Fields = {
+  __typename?: 'graph_highlight_aggregate_fields';
+  avg?: Maybe<Graph_Highlight_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Graph_Highlight_Max_Fields>;
+  min?: Maybe<Graph_Highlight_Min_Fields>;
+  stddev?: Maybe<Graph_Highlight_Stddev_Fields>;
+  stddev_pop?: Maybe<Graph_Highlight_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Graph_Highlight_Stddev_Samp_Fields>;
+  sum?: Maybe<Graph_Highlight_Sum_Fields>;
+  var_pop?: Maybe<Graph_Highlight_Var_Pop_Fields>;
+  var_samp?: Maybe<Graph_Highlight_Var_Samp_Fields>;
+  variance?: Maybe<Graph_Highlight_Variance_Fields>;
+};
+
+
+/** aggregate fields of "graph.highlight" */
+export type Graph_Highlight_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "graph.highlight" */
+export type Graph_Highlight_Aggregate_Order_By = {
+  avg?: InputMaybe<Graph_Highlight_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Graph_Highlight_Max_Order_By>;
+  min?: InputMaybe<Graph_Highlight_Min_Order_By>;
+  stddev?: InputMaybe<Graph_Highlight_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Graph_Highlight_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Graph_Highlight_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Graph_Highlight_Sum_Order_By>;
+  var_pop?: InputMaybe<Graph_Highlight_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Graph_Highlight_Var_Samp_Order_By>;
+  variance?: InputMaybe<Graph_Highlight_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "graph.highlight" */
+export type Graph_Highlight_Arr_Rel_Insert_Input = {
+  data: Array<Graph_Highlight_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Graph_Highlight_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Graph_Highlight_Avg_Fields = {
+  __typename?: 'graph_highlight_avg_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "graph.highlight" */
+export type Graph_Highlight_Avg_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "graph.highlight". All fields are combined with a logical 'AND'. */
+export type Graph_Highlight_Bool_Exp = {
+  _and?: InputMaybe<Array<Graph_Highlight_Bool_Exp>>;
+  _not?: InputMaybe<Graph_Highlight_Bool_Exp>;
+  _or?: InputMaybe<Array<Graph_Highlight_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  height?: InputMaybe<Int_Comparison_Exp>;
+  schema_mentions_id?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  width?: InputMaybe<Int_Comparison_Exp>;
+  x?: InputMaybe<Int_Comparison_Exp>;
+  y?: InputMaybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "graph.highlight" */
+export enum Graph_Highlight_Constraint {
+  /** unique or primary key constraint on columns "x", "y", "schema_mentions_id" */
+  HighlightPkey = 'highlight_pkey'
+}
+
+/** input type for incrementing numeric columns in table "graph.highlight" */
+export type Graph_Highlight_Inc_Input = {
+  height?: InputMaybe<Scalars['Int']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** input type for inserting data into table "graph.highlight" */
+export type Graph_Highlight_Insert_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate max on columns */
+export type Graph_Highlight_Max_Fields = {
+  __typename?: 'graph_highlight_max_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by max() on columns of table "graph.highlight" */
+export type Graph_Highlight_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Graph_Highlight_Min_Fields = {
+  __typename?: 'graph_highlight_min_fields';
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
+  schema_mentions_id?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by min() on columns of table "graph.highlight" */
+export type Graph_Highlight_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "graph.highlight" */
+export type Graph_Highlight_Mutation_Response = {
+  __typename?: 'graph_highlight_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int']['output'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Graph_Highlight>;
+};
+
+/** on_conflict condition type for table "graph.highlight" */
+export type Graph_Highlight_On_Conflict = {
+  constraint: Graph_Highlight_Constraint;
+  update_columns?: Array<Graph_Highlight_Update_Column>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "graph.highlight". */
+export type Graph_Highlight_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  height?: InputMaybe<Order_By>;
+  schema_mentions_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: graph.highlight */
+export type Graph_Highlight_Pk_Columns_Input = {
+  schema_mentions_id: Scalars['String']['input'];
+  x: Scalars['Int']['input'];
+  y: Scalars['Int']['input'];
+};
+
+/** select columns of table "graph.highlight" */
+export enum Graph_Highlight_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Height = 'height',
+  /** column name */
+  SchemaMentionsId = 'schema_mentions_id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Width = 'width',
+  /** column name */
+  X = 'x',
+  /** column name */
+  Y = 'y'
+}
+
+/** input type for updating data in table "graph.highlight" */
+export type Graph_Highlight_Set_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate stddev on columns */
+export type Graph_Highlight_Stddev_Fields = {
+  __typename?: 'graph_highlight_stddev_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "graph.highlight" */
+export type Graph_Highlight_Stddev_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Graph_Highlight_Stddev_Pop_Fields = {
+  __typename?: 'graph_highlight_stddev_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "graph.highlight" */
+export type Graph_Highlight_Stddev_Pop_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Graph_Highlight_Stddev_Samp_Fields = {
+  __typename?: 'graph_highlight_stddev_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "graph.highlight" */
+export type Graph_Highlight_Stddev_Samp_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "graph_highlight" */
+export type Graph_Highlight_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Graph_Highlight_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Graph_Highlight_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  schema_mentions_id?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+  x?: InputMaybe<Scalars['Int']['input']>;
+  y?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Graph_Highlight_Sum_Fields = {
+  __typename?: 'graph_highlight_sum_fields';
+  height?: Maybe<Scalars['Int']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
+  x?: Maybe<Scalars['Int']['output']>;
+  y?: Maybe<Scalars['Int']['output']>;
+};
+
+/** order by sum() on columns of table "graph.highlight" */
+export type Graph_Highlight_Sum_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "graph.highlight" */
+export enum Graph_Highlight_Update_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Height = 'height',
+  /** column name */
+  SchemaMentionsId = 'schema_mentions_id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Width = 'width',
+  /** column name */
+  X = 'x',
+  /** column name */
+  Y = 'y'
+}
+
+export type Graph_Highlight_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Graph_Highlight_Inc_Input>;
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Graph_Highlight_Set_Input>;
+  /** filter the rows which have to be updated */
+  where: Graph_Highlight_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Graph_Highlight_Var_Pop_Fields = {
+  __typename?: 'graph_highlight_var_pop_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "graph.highlight" */
+export type Graph_Highlight_Var_Pop_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Graph_Highlight_Var_Samp_Fields = {
+  __typename?: 'graph_highlight_var_samp_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "graph.highlight" */
+export type Graph_Highlight_Var_Samp_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Graph_Highlight_Variance_Fields = {
+  __typename?: 'graph_highlight_variance_fields';
+  height?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Float']['output']>;
+  x?: Maybe<Scalars['Float']['output']>;
+  y?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "graph.highlight" */
+export type Graph_Highlight_Variance_Order_By = {
+  height?: InputMaybe<Order_By>;
+  width?: InputMaybe<Order_By>;
+  x?: InputMaybe<Order_By>;
+  y?: InputMaybe<Order_By>;
+};
+
 /** Koppeltabel voor representation en file (includes) */
 export type Graph_Includes = {
   __typename?: 'graph_includes';
@@ -15045,15 +15450,36 @@ export type Graph_Schema_Mentions = {
   __typename?: 'graph_schema_mentions';
   confidence?: Maybe<Scalars['numeric']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
-  height?: Maybe<Scalars['Int']['output']>;
+  /** An array relationship */
+  highlights: Array<Graph_Highlight>;
+  /** An aggregate relationship */
+  highlights_aggregate: Graph_Highlight_Aggregate;
+  id: Scalars['String']['output'];
   intellectual_entity_id: Scalars['String']['output'];
   /** An object relationship */
   thing: Graph_Thing;
   thing_id: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
-  width?: Maybe<Scalars['Int']['output']>;
-  x: Scalars['Int']['output'];
-  y: Scalars['Int']['output'];
+};
+
+
+/** columns and relationships of "graph.schema_mentions" */
+export type Graph_Schema_MentionsHighlightsArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
+/** columns and relationships of "graph.schema_mentions" */
+export type Graph_Schema_MentionsHighlights_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
 };
 
 /** aggregated selection of "graph.schema_mentions" */
@@ -15123,19 +15549,11 @@ export type Graph_Schema_Mentions_Arr_Rel_Insert_Input = {
 export type Graph_Schema_Mentions_Avg_Fields = {
   __typename?: 'graph_schema_mentions_avg_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by avg() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Avg_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "graph.schema_mentions". All fields are combined with a logical 'AND'. */
@@ -15145,43 +15563,36 @@ export type Graph_Schema_Mentions_Bool_Exp = {
   _or?: InputMaybe<Array<Graph_Schema_Mentions_Bool_Exp>>;
   confidence?: InputMaybe<Numeric_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  height?: InputMaybe<Int_Comparison_Exp>;
+  highlights?: InputMaybe<Graph_Highlight_Bool_Exp>;
+  highlights_aggregate?: InputMaybe<Graph_Highlight_Aggregate_Bool_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
   intellectual_entity_id?: InputMaybe<String_Comparison_Exp>;
   thing?: InputMaybe<Graph_Thing_Bool_Exp>;
   thing_id?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  width?: InputMaybe<Int_Comparison_Exp>;
-  x?: InputMaybe<Int_Comparison_Exp>;
-  y?: InputMaybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "graph.schema_mentions" */
 export enum Graph_Schema_Mentions_Constraint {
-  /** unique or primary key constraint on columns "x", "y", "thing_id", "intellectual_entity_id" */
+  /** unique or primary key constraint on columns "id" */
   SchemaMentionsPkey = 'schema_mentions_pkey'
 }
 
 /** input type for incrementing numeric columns in table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Inc_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
-  height?: InputMaybe<Scalars['Int']['input']>;
-  width?: InputMaybe<Scalars['Int']['input']>;
-  x?: InputMaybe<Scalars['Int']['input']>;
-  y?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** input type for inserting data into table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Insert_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  height?: InputMaybe<Scalars['Int']['input']>;
+  highlights?: InputMaybe<Graph_Highlight_Arr_Rel_Insert_Input>;
+  id?: InputMaybe<Scalars['String']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
   thing?: InputMaybe<Graph_Thing_Obj_Rel_Insert_Input>;
   thing_id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  width?: InputMaybe<Scalars['Int']['input']>;
-  x?: InputMaybe<Scalars['Int']['input']>;
-  y?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate max on columns */
@@ -15189,26 +15600,20 @@ export type Graph_Schema_Mentions_Max_Fields = {
   __typename?: 'graph_schema_mentions_max_fields';
   confidence?: Maybe<Scalars['numeric']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
-  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
   intellectual_entity_id?: Maybe<Scalars['String']['output']>;
   thing_id?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
-  width?: Maybe<Scalars['Int']['output']>;
-  x?: Maybe<Scalars['Int']['output']>;
-  y?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by max() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Max_Order_By = {
   confidence?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
   intellectual_entity_id?: InputMaybe<Order_By>;
   thing_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -15216,26 +15621,20 @@ export type Graph_Schema_Mentions_Min_Fields = {
   __typename?: 'graph_schema_mentions_min_fields';
   confidence?: Maybe<Scalars['numeric']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
-  height?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
   intellectual_entity_id?: Maybe<Scalars['String']['output']>;
   thing_id?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
-  width?: Maybe<Scalars['Int']['output']>;
-  x?: Maybe<Scalars['Int']['output']>;
-  y?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by min() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Min_Order_By = {
   confidence?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
   intellectual_entity_id?: InputMaybe<Order_By>;
   thing_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "graph.schema_mentions" */
@@ -15258,22 +15657,17 @@ export type Graph_Schema_Mentions_On_Conflict = {
 export type Graph_Schema_Mentions_Order_By = {
   confidence?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
+  highlights_aggregate?: InputMaybe<Graph_Highlight_Aggregate_Order_By>;
+  id?: InputMaybe<Order_By>;
   intellectual_entity_id?: InputMaybe<Order_By>;
   thing?: InputMaybe<Graph_Thing_Order_By>;
   thing_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: graph.schema_mentions */
 export type Graph_Schema_Mentions_Pk_Columns_Input = {
-  intellectual_entity_id: Scalars['String']['input'];
-  thing_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 /** select columns of table "graph.schema_mentions" */
@@ -15283,89 +15677,56 @@ export enum Graph_Schema_Mentions_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  Height = 'height',
+  Id = 'id',
   /** column name */
   IntellectualEntityId = 'intellectual_entity_id',
   /** column name */
   ThingId = 'thing_id',
   /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Width = 'width',
-  /** column name */
-  X = 'x',
-  /** column name */
-  Y = 'y'
+  UpdatedAt = 'updated_at'
 }
 
 /** input type for updating data in table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Set_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
   thing_id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  width?: InputMaybe<Scalars['Int']['input']>;
-  x?: InputMaybe<Scalars['Int']['input']>;
-  y?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate stddev on columns */
 export type Graph_Schema_Mentions_Stddev_Fields = {
   __typename?: 'graph_schema_mentions_stddev_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Stddev_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Graph_Schema_Mentions_Stddev_Pop_Fields = {
   __typename?: 'graph_schema_mentions_stddev_pop_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_pop() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Stddev_Pop_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Graph_Schema_Mentions_Stddev_Samp_Fields = {
   __typename?: 'graph_schema_mentions_stddev_samp_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_samp() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Stddev_Samp_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "graph_schema_mentions" */
@@ -15380,32 +15741,21 @@ export type Graph_Schema_Mentions_Stream_Cursor_Input = {
 export type Graph_Schema_Mentions_Stream_Cursor_Value_Input = {
   confidence?: InputMaybe<Scalars['numeric']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  height?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   intellectual_entity_id?: InputMaybe<Scalars['String']['input']>;
   thing_id?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  width?: InputMaybe<Scalars['Int']['input']>;
-  x?: InputMaybe<Scalars['Int']['input']>;
-  y?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate sum on columns */
 export type Graph_Schema_Mentions_Sum_Fields = {
   __typename?: 'graph_schema_mentions_sum_fields';
   confidence?: Maybe<Scalars['numeric']['output']>;
-  height?: Maybe<Scalars['Int']['output']>;
-  width?: Maybe<Scalars['Int']['output']>;
-  x?: Maybe<Scalars['Int']['output']>;
-  y?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by sum() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Sum_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** update columns of table "graph.schema_mentions" */
@@ -15415,19 +15765,13 @@ export enum Graph_Schema_Mentions_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  Height = 'height',
+  Id = 'id',
   /** column name */
   IntellectualEntityId = 'intellectual_entity_id',
   /** column name */
   ThingId = 'thing_id',
   /** column name */
-  UpdatedAt = 'updated_at',
-  /** column name */
-  Width = 'width',
-  /** column name */
-  X = 'x',
-  /** column name */
-  Y = 'y'
+  UpdatedAt = 'updated_at'
 }
 
 export type Graph_Schema_Mentions_Updates = {
@@ -15443,57 +15787,33 @@ export type Graph_Schema_Mentions_Updates = {
 export type Graph_Schema_Mentions_Var_Pop_Fields = {
   __typename?: 'graph_schema_mentions_var_pop_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_pop() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Var_Pop_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Graph_Schema_Mentions_Var_Samp_Fields = {
   __typename?: 'graph_schema_mentions_var_samp_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_samp() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Var_Samp_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Graph_Schema_Mentions_Variance_Fields = {
   __typename?: 'graph_schema_mentions_variance_fields';
   confidence?: Maybe<Scalars['Float']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
-  x?: Maybe<Scalars['Float']['output']>;
-  y?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by variance() on columns of table "graph.schema_mentions" */
 export type Graph_Schema_Mentions_Variance_Order_By = {
   confidence?: InputMaybe<Order_By>;
-  height?: InputMaybe<Order_By>;
-  width?: InputMaybe<Order_By>;
-  x?: InputMaybe<Order_By>;
-  y?: InputMaybe<Order_By>;
 };
 
 /** Alle personen en organisaties met een rol bij een IE */
@@ -20029,6 +20349,10 @@ export type Mutation_Root = {
   delete_graph_ha_des_coloring_type?: Maybe<Graph_Ha_Des_Coloring_Type_Mutation_Response>;
   /** delete single row from the table: "graph.ha_des_coloring_type" */
   delete_graph_ha_des_coloring_type_by_pk?: Maybe<Graph_Ha_Des_Coloring_Type>;
+  /** delete data from the table: "graph.highlight" */
+  delete_graph_highlight?: Maybe<Graph_Highlight_Mutation_Response>;
+  /** delete single row from the table: "graph.highlight" */
+  delete_graph_highlight_by_pk?: Maybe<Graph_Highlight>;
   /** delete data from the table: "graph.includes" */
   delete_graph_includes?: Maybe<Graph_Includes_Mutation_Response>;
   /** delete single row from the table: "graph.includes" */
@@ -20287,6 +20611,10 @@ export type Mutation_Root = {
   insert_graph_ha_des_coloring_type?: Maybe<Graph_Ha_Des_Coloring_Type_Mutation_Response>;
   /** insert a single row into the table: "graph.ha_des_coloring_type" */
   insert_graph_ha_des_coloring_type_one?: Maybe<Graph_Ha_Des_Coloring_Type>;
+  /** insert data into the table: "graph.highlight" */
+  insert_graph_highlight?: Maybe<Graph_Highlight_Mutation_Response>;
+  /** insert a single row into the table: "graph.highlight" */
+  insert_graph_highlight_one?: Maybe<Graph_Highlight>;
   /** insert data into the table: "graph.includes" */
   insert_graph_includes?: Maybe<Graph_Includes_Mutation_Response>;
   /** insert a single row into the table: "graph.includes" */
@@ -20579,6 +20907,12 @@ export type Mutation_Root = {
   update_graph_ha_des_coloring_type_by_pk?: Maybe<Graph_Ha_Des_Coloring_Type>;
   /** update multiples rows of table: "graph.ha_des_coloring_type" */
   update_graph_ha_des_coloring_type_many?: Maybe<Array<Maybe<Graph_Ha_Des_Coloring_Type_Mutation_Response>>>;
+  /** update data of the table: "graph.highlight" */
+  update_graph_highlight?: Maybe<Graph_Highlight_Mutation_Response>;
+  /** update single row of the table: "graph.highlight" */
+  update_graph_highlight_by_pk?: Maybe<Graph_Highlight>;
+  /** update multiples rows of table: "graph.highlight" */
+  update_graph_highlight_many?: Maybe<Array<Maybe<Graph_Highlight_Mutation_Response>>>;
   /** update data of the table: "graph.includes" */
   update_graph_includes?: Maybe<Graph_Includes_Mutation_Response>;
   /** update single row of the table: "graph.includes" */
@@ -21072,6 +21406,20 @@ export type Mutation_RootDelete_Graph_Ha_Des_Coloring_Type_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootDelete_Graph_HighlightArgs = {
+  where: Graph_Highlight_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Graph_Highlight_By_PkArgs = {
+  schema_mentions_id: Scalars['String']['input'];
+  x: Scalars['Int']['input'];
+  y: Scalars['Int']['input'];
+};
+
+
+/** mutation root */
 export type Mutation_RootDelete_Graph_IncludesArgs = {
   where: Graph_Includes_Bool_Exp;
 };
@@ -21317,10 +21665,7 @@ export type Mutation_RootDelete_Graph_Schema_MentionsArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Graph_Schema_Mentions_By_PkArgs = {
-  intellectual_entity_id: Scalars['String']['input'];
-  thing_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -21901,6 +22246,20 @@ export type Mutation_RootInsert_Graph_Ha_Des_Coloring_TypeArgs = {
 export type Mutation_RootInsert_Graph_Ha_Des_Coloring_Type_OneArgs = {
   object: Graph_Ha_Des_Coloring_Type_Insert_Input;
   on_conflict?: InputMaybe<Graph_Ha_Des_Coloring_Type_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_HighlightArgs = {
+  objects: Array<Graph_Highlight_Insert_Input>;
+  on_conflict?: InputMaybe<Graph_Highlight_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Graph_Highlight_OneArgs = {
+  object: Graph_Highlight_Insert_Input;
+  on_conflict?: InputMaybe<Graph_Highlight_On_Conflict>;
 };
 
 
@@ -22971,6 +23330,28 @@ export type Mutation_RootUpdate_Graph_Ha_Des_Coloring_Type_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Graph_Ha_Des_Coloring_Type_ManyArgs = {
   updates: Array<Graph_Ha_Des_Coloring_Type_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_HighlightArgs = {
+  _inc?: InputMaybe<Graph_Highlight_Inc_Input>;
+  _set?: InputMaybe<Graph_Highlight_Set_Input>;
+  where: Graph_Highlight_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Highlight_By_PkArgs = {
+  _inc?: InputMaybe<Graph_Highlight_Inc_Input>;
+  _set?: InputMaybe<Graph_Highlight_Set_Input>;
+  pk_columns: Graph_Highlight_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Graph_Highlight_ManyArgs = {
+  updates: Array<Graph_Highlight_Updates>;
 };
 
 
@@ -24223,6 +24604,12 @@ export type Query_Root = {
   graph_ha_des_coloring_type_aggregate: Graph_Ha_Des_Coloring_Type_Aggregate;
   /** fetch data from the table: "graph.ha_des_coloring_type" using primary key columns */
   graph_ha_des_coloring_type_by_pk?: Maybe<Graph_Ha_Des_Coloring_Type>;
+  /** fetch data from the table: "graph.highlight" */
+  graph_highlight: Array<Graph_Highlight>;
+  /** fetch aggregated fields from the table: "graph.highlight" */
+  graph_highlight_aggregate: Graph_Highlight_Aggregate;
+  /** fetch data from the table: "graph.highlight" using primary key columns */
+  graph_highlight_by_pk?: Maybe<Graph_Highlight>;
   /** fetch data from the table: "graph.includes" */
   graph_includes: Array<Graph_Includes>;
   /** fetch aggregated fields from the table: "graph.includes" */
@@ -25525,6 +25912,31 @@ export type Query_RootGraph_Ha_Des_Coloring_Type_By_PkArgs = {
 };
 
 
+export type Query_RootGraph_HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
+export type Query_RootGraph_Highlight_By_PkArgs = {
+  schema_mentions_id: Scalars['String']['input'];
+  x: Scalars['Int']['input'];
+  y: Scalars['Int']['input'];
+};
+
+
 export type Query_RootGraph_IncludesArgs = {
   distinct_on?: InputMaybe<Array<Graph_Includes_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -26010,10 +26422,7 @@ export type Query_RootGraph_Schema_Mentions_AggregateArgs = {
 
 
 export type Query_RootGraph_Schema_Mentions_By_PkArgs = {
-  intellectual_entity_id: Scalars['String']['input'];
-  thing_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -27044,6 +27453,14 @@ export type Subscription_Root = {
   graph_ha_des_coloring_type_by_pk?: Maybe<Graph_Ha_Des_Coloring_Type>;
   /** fetch data from the table in a streaming manner: "graph.ha_des_coloring_type" */
   graph_ha_des_coloring_type_stream: Array<Graph_Ha_Des_Coloring_Type>;
+  /** fetch data from the table: "graph.highlight" */
+  graph_highlight: Array<Graph_Highlight>;
+  /** fetch aggregated fields from the table: "graph.highlight" */
+  graph_highlight_aggregate: Graph_Highlight_Aggregate;
+  /** fetch data from the table: "graph.highlight" using primary key columns */
+  graph_highlight_by_pk?: Maybe<Graph_Highlight>;
+  /** fetch data from the table in a streaming manner: "graph.highlight" */
+  graph_highlight_stream: Array<Graph_Highlight>;
   /** fetch data from the table: "graph.includes" */
   graph_includes: Array<Graph_Includes>;
   /** fetch aggregated fields from the table: "graph.includes" */
@@ -28803,6 +29220,38 @@ export type Subscription_RootGraph_Ha_Des_Coloring_Type_StreamArgs = {
 };
 
 
+export type Subscription_RootGraph_HighlightArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Highlight_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Graph_Highlight_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Graph_Highlight_Order_By>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
+export type Subscription_RootGraph_Highlight_By_PkArgs = {
+  schema_mentions_id: Scalars['String']['input'];
+  x: Scalars['Int']['input'];
+  y: Scalars['Int']['input'];
+};
+
+
+export type Subscription_RootGraph_Highlight_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Graph_Highlight_Stream_Cursor_Input>>;
+  where?: InputMaybe<Graph_Highlight_Bool_Exp>;
+};
+
+
 export type Subscription_RootGraph_IncludesArgs = {
   distinct_on?: InputMaybe<Array<Graph_Includes_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -29428,10 +29877,7 @@ export type Subscription_RootGraph_Schema_Mentions_AggregateArgs = {
 
 
 export type Subscription_RootGraph_Schema_Mentions_By_PkArgs = {
-  intellectual_entity_id: Scalars['String']['input'];
-  thing_id: Scalars['String']['input'];
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 };
 
 
@@ -32568,7 +33014,7 @@ export type GetHasPartQueryVariables = Exact<{
 }>;
 
 
-export type GetHasPartQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', schemaMentions: Array<{ __typename?: 'graph_schema_mentions', confidence?: any | null, x: number, y: number, width?: number | null, height?: number | null, thing: { __typename?: 'graph_thing', id: string, schema_name?: string | null, schema_birth_date?: any | null, schema_birth_place?: string | null, schema_death_date?: any | null, schema_death_place?: string | null } }>, isRepresentedBy: Array<{ __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> }> }> };
+export type GetHasPartQuery = { __typename?: 'query_root', graph_intellectual_entity: Array<{ __typename?: 'graph_intellectual_entity', schemaMentions: Array<{ __typename?: 'graph_schema_mentions', confidence?: any | null, highlights: Array<{ __typename?: 'graph_highlight', x: number, y: number, width: number, height: number }>, thing: { __typename?: 'graph_thing', id: string, schema_name?: string | null, schema_birth_date?: any | null, schema_birth_place?: string | null, schema_death_date?: any | null, schema_death_place?: string | null } }>, isRepresentedBy: Array<{ __typename?: 'graph_representation', id: string, schema_name?: string | null, is_media_fragment_of?: string | null, schema_in_language?: string | null, schema_start_time?: any | null, schema_end_time?: any | null, edm_is_next_in_sequence?: string | null, updated_at?: any | null, schemaTranscriptUrls: Array<{ __typename?: 'graph_schema_transcript_url', schema_transcript: string, schema_transcript_url: string }>, includes: Array<{ __typename?: 'graph_includes', file: { __typename?: 'graph_file', id: string, schema_name?: string | null, ebucore_has_mime_type?: string | null, premis_stored_at?: string | null, schema_thumbnail_url?: string | null, schema_duration?: any | null, edm_is_next_in_sequence?: string | null, created_at?: any | null } }> }> }> };
 
 export type GetIeObjectQueryVariables = Exact<{
   ieObjectId: Scalars['String']['input'];
@@ -33116,7 +33562,7 @@ export const GetChildIeObjectsDocument = {"kind":"Document","definitions":[{"kin
 export const GetIeObjectChildrenIrisDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObjectChildrenIris"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectIri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"relation_is_part_of"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectIri"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}}]}}]}}]} as unknown as DocumentNode<GetIeObjectChildrenIrisQuery, GetIeObjectChildrenIrisQueryVariables>;
 export const GetDctermsFormatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getDctermsFormat"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"dctermsFormat"},"name":{"kind":"Name","value":"graph__dcterms_format"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}}]}}]}}]} as unknown as DocumentNode<GetDctermsFormatQuery, GetDctermsFormatQueryVariables>;
 export const GetHasCarrierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getHasCarrier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_carrier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"intellectual_entity_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_width"}},{"kind":"Field","name":{"kind":"Name","value":"schema_height"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_production_method"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"digitization_date"}}]}}]}}]} as unknown as DocumentNode<GetHasCarrierQuery, GetHasCarrierQueryVariables>;
-export const GetHasPartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getHasPart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"relation_is_part_of"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"confidence"}},{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}},{"kind":"Field","name":{"kind":"Name","value":"width"}},{"kind":"Field","name":{"kind":"Name","value":"height"}},{"kind":"Field","name":{"kind":"Name","value":"thing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_place"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_place"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"isRepresentedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetHasPartQuery, GetHasPartQueryVariables>;
+export const GetHasPartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getHasPart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"relation_is_part_of"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaMentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"confidence"}},{"kind":"Field","name":{"kind":"Name","value":"highlights"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}},{"kind":"Field","name":{"kind":"Name","value":"width"}},{"kind":"Field","name":{"kind":"Name","value":"height"}}]}},{"kind":"Field","name":{"kind":"Name","value":"thing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_birth_place"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_date"}},{"kind":"Field","name":{"kind":"Name","value":"schema_death_place"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"isRepresentedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetHasPartQuery, GetHasPartQueryVariables>;
 export const GetIeObjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIeObject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph_intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_position"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_cast_member"}},{"kind":"Field","name":{"kind":"Name","value":"schema_issue_number"}},{"kind":"Field","name":{"kind":"Name","value":"schema_credit_text"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_synopsis"}},{"kind":"Field","alias":{"kind":"Name","value":"schema_number_of_pages"},"name":{"kind":"Name","value":"ha_des_number_of_pages"}},{"kind":"Field","alias":{"kind":"Name","value":"premis_is_part_of"},"name":{"kind":"Name","value":"relation_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ha_pref"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetIeObjectQuery, GetIeObjectQueryVariables>;
 export const GetIsPartOfDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIsPartOf"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"isPartOf"},"name":{"kind":"Name","value":"graph__intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isPartOf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_number_of_pages"}},{"kind":"Field","name":{"kind":"Name","value":"schema_position"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_published"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_available"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"schema_description"}},{"kind":"Field","name":{"kind":"Name","value":"schema_creator"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_format"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"schema_license"}},{"kind":"Field","name":{"kind":"Name","value":"schema_date_created"}},{"kind":"Field","name":{"kind":"Name","value":"meemoo_local_id"}},{"kind":"Field","name":{"kind":"Name","value":"premis_is_part_of"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"schemaMaintainer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"org_identifier"}},{"kind":"Field","name":{"kind":"Name","value":"skos_pref_label"}},{"kind":"Field","name":{"kind":"Name","value":"skos_alt_label"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_has_logo"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_request_form"}},{"kind":"Field","name":{"kind":"Name","value":"dcterms_description"}},{"kind":"Field","name":{"kind":"Name","value":"ha_org_sector"}},{"kind":"Field","name":{"kind":"Name","value":"foaf_homepage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ha_pref"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaInLanguage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaKeywords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_keywords"}}]}},{"kind":"Field","name":{"kind":"Name","value":"premisIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaGenre"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_genre"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaSpatial"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_spatial"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaPublisher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_publisher_array"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaTemporal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_temporal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schemaCopyrightHolder"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_holder"}}]}},{"kind":"Field","name":{"kind":"Name","value":"intellectualEntity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_issue_number"}},{"kind":"Field","name":{"kind":"Name","value":"mhFragmentIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mh_fragment_identifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_credit_text"}},{"kind":"Field","name":{"kind":"Name","value":"schema_copyright_notice"}},{"kind":"Field","name":{"kind":"Name","value":"hasCarrier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"premis_medium"}},{"kind":"Field","name":{"kind":"Name","value":"schema_width"}},{"kind":"Field","name":{"kind":"Name","value":"schema_height"}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_production_method"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"digitization_date"}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema_abstract"}},{"kind":"Field","name":{"kind":"Name","value":"schemaAlternateName"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_alternate_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bibframe_edition"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_synopsis"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetIsPartOfQuery, GetIsPartOfQueryVariables>;
 export const GetIsRepresentedByDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getIsRepresentedBy"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graph__intellectual_entity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ieObjectId"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"schema_position"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isRepresentedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"is_media_fragment_of"}},{"kind":"Field","name":{"kind":"Name","value":"schema_in_language"}},{"kind":"Field","name":{"kind":"Name","value":"schema_start_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_end_time"}},{"kind":"Field","name":{"kind":"Name","value":"schema_transcript"}},{"kind":"Field","name":{"kind":"Name","value":"schemaTranscriptUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schema_transcript_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"updated_at"}},{"kind":"Field","name":{"kind":"Name","value":"includes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"file"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schema_name"}},{"kind":"Field","name":{"kind":"Name","value":"ebucore_has_mime_type"}},{"kind":"Field","name":{"kind":"Name","value":"premis_stored_at"}},{"kind":"Field","name":{"kind":"Name","value":"schema_thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"schema_duration"}},{"kind":"Field","name":{"kind":"Name","value":"edm_is_next_in_sequence"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetIsRepresentedByQuery, GetIsRepresentedByQueryVariables>;

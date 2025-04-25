@@ -1335,17 +1335,21 @@ export class IeObjectsService {
 					return null;
 				}
 				return {
+					confidence: mention?.confidence,
 					iri: mention?.thing?.id,
 					name: mention?.thing?.schema_name,
-					x: mention?.x,
-					y: mention?.y,
-					width: mention?.width,
-					height: mention?.height,
-					confidence: mention?.confidence,
 					birthDate: mention?.thing?.schema_birth_date,
 					birthPlace: mention?.thing?.schema_birth_place,
 					deathDate: mention?.thing?.schema_death_date,
 					deathPlace: mention?.thing?.schema_death_place,
+					highlights: mention.highlights.map((highlight) => {
+						return {
+							x: highlight.x,
+							y: highlight.y,
+							width: highlight.width,
+							height: highlight.height,
+						};
+					}),
 				};
 			})
 		);

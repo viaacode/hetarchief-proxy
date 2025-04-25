@@ -406,13 +406,15 @@ export interface EsQueryAutocompleteMatchPhraseResponse {
 export interface Mention {
 	iri: string;
 	name: string;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
 	confidence: number;
 	birthDate: number;
 	birthPlace: string;
 	deathDate: number;
 	deathPlace: string;
+	highlights: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}[];
 }

@@ -5,10 +5,12 @@ query getHasPart($ieObjectId: String!) {
 	) {
 		schemaMentions {
 			confidence
-			x
-			y
-			width
-			height
+			highlights {
+				x
+				y
+				width
+				height
+			}
 			thing {
 				id
 				schema_name
