@@ -75,7 +75,7 @@ export const mockIeObject1: Readonly<IeObject> = {
 	meemooLocalId: null,
 	ebucoreObjectType: null,
 	meemooDescriptionCast: null,
-	pageRepresentations: [],
+	pages: [],
 	accessThrough: [IeObjectAccessThrough.PUBLIC_INFO],
 	isPartOf: [
 		{
@@ -242,7 +242,7 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObject>> = {
 	thumbnailUrl:
 		'/viaa/VRT/49b1bf8894004fd49aeaba36cfc5a958d5c32a4566244999a862e80b498a2c7c/keyframes-thumb/keyframes_1_1/keyframe1.jpg',
-	pageRepresentations: [],
+	pages: [],
 	meemooOriginalCp: null,
 	schemaIdentifier: '8911p09j1g',
 	iri: 'https://data-int.hetarchief.be/id/entity/8911p09j1g',

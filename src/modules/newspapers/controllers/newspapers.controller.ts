@@ -23,7 +23,7 @@ import { LogEventType } from '~modules/events/types';
 import { IeObjectsController } from '~modules/ie-objects/controllers/ie-objects.controller';
 import { convertObjectToCsv } from '~modules/ie-objects/helpers/convert-objects-to-csv';
 import { convertObjectToXml } from '~modules/ie-objects/helpers/convert-objects-to-xml';
-import type { NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
+import type { IeObjectPage, NewspaperTitle } from '~modules/ie-objects/ie-objects.types';
 import {
 	NEWSPAPER_MIME_TYPE_ALTO,
 	NEWSPAPER_MIME_TYPE_BROWSE_COPY,
@@ -88,18 +88,17 @@ export class NewspapersController {
 
 		// Extract images and alto xml urls from the object
 		const exportSinglePage = !isNil(pageIndex) && !isNaN(pageIndex);
-		const pagesToExport = exportSinglePage
-			? limitedObjectMetadata.pageRepresentations.slice(pageIndex, pageIndex + 1)
-			: limitedObjectMetadata.pageRepresentations;
+		const pagesToExport: IeObjectPage[] = exportSinglePage
+			? limitedObjectMetadata.pages.slice(pageIndex, pageIndex + 1)
+			: limitedObjectMetadata.pages;
 
 		// Pages correspond to pages of the newspaper
-		pagesToExport.forEach((pageRepresentation, pageRepresentationIndex) => {
+		pagesToExport.forEach((page) => {
 			// Each page has multiple representations, e.g. browse copy image, alto xml, image api url, etc.
-			return pageRepresentation.representations.forEach((representation) => {
+			return page.representations.forEach((representation) => {
 				// Each representation can have multiple files, but usually it's just one
 				return representation.files.forEach((file) => {
-					const currentPageIndex = exportSinglePage ? pageIndex : pageRepresentationIndex;
-					const pageNumber = String(currentPageIndex + 1).padStart(3, '0');
+					const pageNumber = String(page.pageNumber).padStart(3, '0');
 					if (file.mimeType === NEWSPAPER_MIME_TYPE_BROWSE_COPY) {
 						zipEntries.push({
 							filename: `page-${pageNumber}.jpg`,
@@ -121,7 +120,8 @@ export class NewspapersController {
 
 		// Add metadata in different formats to zipEntries array
 		const metadataInfo = cloneDeep(limitedObjectMetadata);
-		delete metadataInfo.pageRepresentations;
+		delete metadataInfo.pages;
+		delete metadataInfo.mentions;
 		delete metadataInfo.accessThrough;
 		zipEntries.push({
 			filename: 'metadata.xml',
@@ -254,9 +254,9 @@ export class NewspapersController {
 			);
 		}
 
-		const pageRepresentation = limitedObjectMetadata.pageRepresentations[pageIndex];
+		const page: IeObjectPage = limitedObjectMetadata.pages[pageIndex];
 		let pageImageApi: string | null = null;
-		pageRepresentation.representations.find((representation) => {
+		page.representations.find((representation) => {
 			return representation.files.find((file) => {
 				if (file.mimeType === NEWSPAPER_MIME_TYPE_IMAGE_API) {
 					pageImageApi = file.storedAt;

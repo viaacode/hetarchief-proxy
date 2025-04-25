@@ -163,7 +163,8 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 ];
 const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',
-	'pageRepresentations',
+	'pages',
+	'mentions',
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {

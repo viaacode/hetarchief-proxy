@@ -3,6 +3,7 @@ query getIsRepresentedBy($ieObjectId: String!) {
 		where: { id: { _eq: $ieObjectId } }
 		order_by: { schema_position: asc }
 	) {
+		schema_position
 		isRepresentedBy {
 			id
 			schema_name

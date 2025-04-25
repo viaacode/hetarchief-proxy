@@ -3,6 +3,7 @@ query getHasPart($ieObjectId: String!) {
 		where: { relation_is_part_of: { _eq: $ieObjectId } }
 		order_by: { schema_position: asc }
 	) {
+		schema_position
 		schemaMentions {
 			confidence
 			highlights {
