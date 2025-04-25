@@ -272,7 +272,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.pages[0][0].files).toEqual([]);
+			expect(ieObject.pages[0]?.representations[0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {
