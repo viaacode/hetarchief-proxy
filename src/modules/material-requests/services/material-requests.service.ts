@@ -52,6 +52,7 @@ import {
 	type MaterialRequestEmailInfo,
 } from '~modules/campaign-monitor/campaign-monitor.types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
+import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
 import { type IeObjectType } from '~modules/ie-objects/ie-objects.types';
 import { type Organisation } from '~modules/organisations/organisations.types';
 import { OrganisationsService } from '~modules/organisations/services/organisations.service';
@@ -208,27 +209,29 @@ export class MaterialRequestsService {
 			userProfileId: string;
 		}
 	): Promise<MaterialRequest> {
-		const newMaterialRequest = {
-			object_schema_identifier: createMaterialRequestDto.objectId,
-			profile_id: parameters.userProfileId,
-			reason: createMaterialRequestDto.reason,
-			type: createMaterialRequestDto.type,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString(),
-			is_pending: true,
-			organisation: createMaterialRequestDto?.organisation,
-			requester_capacity:
-				createMaterialRequestDto?.requesterCapacity ||
-				Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
+		const variables: InsertMaterialRequestMutationVariables = {
+			newMaterialRequest: {
+				ie_object_id: convertSchemaIdentifierToId(
+					createMaterialRequestDto.objectSchemaIdentifier
+				),
+				profile_id: parameters.userProfileId,
+				reason: createMaterialRequestDto.reason,
+				type: createMaterialRequestDto.type,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+				is_pending: true,
+				organisation: createMaterialRequestDto?.organisation,
+				requester_capacity:
+					createMaterialRequestDto?.requesterCapacity ||
+					Lookup_App_Material_Request_Requester_Capacity_Enum.Other,
+			},
 		};
 
 		const { insert_app_material_requests_one: createdMaterialRequest } =
 			await this.dataService.execute<
 				InsertMaterialRequestMutation,
 				InsertMaterialRequestMutationVariables
-			>(InsertMaterialRequestDocument, {
-				newMaterialRequest,
-			});
+			>(InsertMaterialRequestDocument, variables);
 
 		this.logger.debug(`Material request ${createdMaterialRequest.id} created.`);
 
@@ -373,12 +376,14 @@ export class MaterialRequestsService {
 		);
 		const transformedMaterialRequest: MaterialRequest = {
 			id: graphQlMaterialRequest.id,
-			objectSchemaIdentifier: graphQlMaterialRequest.object_schema_identifier,
+			objectId: graphQlMaterialRequest.ie_object_id,
+			objectSchemaIdentifier: graphQlMaterialRequest.intellectualEntity?.schema_identifier,
 			objectSchemaName: graphQlMaterialRequest.intellectualEntity?.schema_name,
-			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity
+			objectDctermsFormat: graphQlMaterialRequest.intellectualEntity?.dctermsFormat?.[0]
 				?.dcterms_format as IeObjectType,
 			objectThumbnailUrl:
-				graphQlMaterialRequest.intellectualEntity?.schema_thumbnail_url?.[0] || null,
+				graphQlMaterialRequest.intellectualEntity?.schemaThumbnail
+					?.schema_thumbnail_url?.[0] || null,
 			profileId: graphQlMaterialRequest.profile_id,
 			reason: graphQlMaterialRequest.reason,
 			createdAt: graphQlMaterialRequest.created_at,
@@ -410,7 +415,7 @@ export class MaterialRequestsService {
 			),
 			objectMeemooLocalId:
 				(graphQlMaterialRequest as FindMaterialRequestsQuery['app_material_requests'][0])
-					?.intellectualEntity?.meemoo_local_id?.[0] || null,
+					?.intellectualEntity?.premisIdentifier?.[0]?.value || null,
 		};
 
 		return transformedMaterialRequest;

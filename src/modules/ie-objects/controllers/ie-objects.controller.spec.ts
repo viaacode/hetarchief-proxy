@@ -267,7 +267,8 @@ describe('IeObjectsController', () => {
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
 			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
-			expect(ieObjects[0].pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].pages).toBeUndefined();
+			expect(ieObjects[0].mentions).toBeUndefined();
 		});
 
 		it('should return full metadata without essence if the object has no content license', async () => {
@@ -285,7 +286,9 @@ describe('IeObjectsController', () => {
 				mockSessionUser
 			);
 
-			expect(ieObjects[0].pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
+			expect(ieObjects[0].pages).toBeUndefined();
+			expect(ieObjects[0].mentions).toBeUndefined();
 		});
 
 		it('should return limited metadata if licenses are ignored but the user does not have access', async () => {
@@ -304,7 +307,7 @@ describe('IeObjectsController', () => {
 
 			expect(ieObjects[0].schemaIdentifier).toEqual(mockResponse.schemaIdentifier);
 			expect(ieObjects[0].thumbnailUrl).toBeUndefined();
-			expect(ieObjects[0].pageRepresentations).toBeUndefined();
+			expect(ieObjects[0].pages).toBeUndefined();
 		});
 	});
 

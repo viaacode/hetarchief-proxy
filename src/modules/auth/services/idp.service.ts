@@ -2,7 +2,7 @@ import { type Locale, TranslationsService } from '@meemoo/admin-core-api';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Idp } from '@viaa/avo2-types';
-import { get, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import queryString from 'query-string';
 
 import { type Configuration } from '~config';
@@ -59,9 +59,9 @@ export class IdpService {
 		organisation: Organisation | undefined | null,
 		locale: Locale
 	): Promise<GroupId> {
-		const organizationalStatus = get(ldapUser, 'attributes.organizationalStatus', []);
+		const organizationalStatus = ldapUser?.attributes?.organizationalStatus || [];
 		// permissions check
-		const apps = get(ldapUser, 'attributes.apps', []);
+		const apps = ldapUser?.attributes?.apps || [];
 
 		// 1. organizationalStatus = kiosk + apps = hetarchief-beheer → error (account misconfiguration)
 		// 2. organizationalStatus = kiosk + apps = cataloguspro → error (account misconfiguration)
@@ -80,7 +80,7 @@ export class IdpService {
 
 		if (apps.includes(LdapApp.HETARCHIEF_BEHEER)) {
 			// bottom section of the flowchart
-			const maintainerId = get(ldapUser, 'attributes.o[0]');
+			const maintainerId = ldapUser?.attributes?.o?.[0];
 			if (!maintainerId) {
 				throw new Error(
 					this.translationsService.tText(
@@ -108,7 +108,7 @@ export class IdpService {
 		// check for kiosk permissions -- otherwise it's a regular user
 		if (organizationalStatus.includes('kiosk')) {
 			// organization needs to have a space to be a kiosk user
-			const maintainerId = get(ldapUser, 'attributes.o[0]');
+			const maintainerId = ldapUser?.attributes?.o?.[0];
 			// 3. organizationalStatus = kiosk + cp has no visitor space → error (account misconfiguration)
 			if (!maintainerId) {
 				throw new Error(

@@ -123,7 +123,7 @@ describe('MaterialRequestsController', () => {
 			);
 			const createdMaterialRequest = await materialRequestsController.createMaterialRequest(
 				{
-					objectId: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
+					objectSchemaIdentifier: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
 					reason: 'voor mijn onderzoek en studie',
 					type: MaterialRequestType.VIEW,
 					requesterCapacity:

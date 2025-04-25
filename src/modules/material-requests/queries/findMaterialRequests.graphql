@@ -6,7 +6,7 @@ query findMaterialRequests(
 ) {
 	app_material_requests(where: $where, offset: $offset, limit: $limit, order_by: [$orderBy]) {
 		id
-		object_schema_identifier
+		ie_object_id
 		profile_id
 		reason
 		created_at
@@ -28,6 +28,18 @@ query findMaterialRequests(
 			}
 		}
 		intellectualEntity {
+			schema_identifier
+			schema_name
+			id
+			premisIdentifier(limit: 1) {
+				value
+			}
+			dctermsFormat(limit: 1) {
+				dcterms_format
+			}
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
@@ -42,11 +54,6 @@ query findMaterialRequests(
 					slug
 				}
 			}
-			schema_identifier
-			meemoo_local_id
-			schema_name
-			dcterms_format
-			schema_thumbnail_url
 		}
 	}
 	app_material_requests_aggregate(where: $where) {

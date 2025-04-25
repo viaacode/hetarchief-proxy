@@ -17,8 +17,7 @@ export const mockUserProfileId = 'eccf3357-bc87-42e4-a91c-5a0ba8cb550a';
 
 export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_requests'][0] = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	object_schema_identifier:
-		'8d4850ac51b74516aa50dc2cbed0bd20fc05e3b9ac9b471494cc93e0308156cf09ec8a302aed4adba7373d04be42d285',
+	ie_object_id: 'https://data-qas.hetarchief.be/id/entity/0000003g0k',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',
@@ -45,18 +44,24 @@ export const mockGqlMaterialRequest1: FindMaterialRequestsQuery['app_material_re
 			},
 		},
 		schema_identifier: '0000003g0k',
+		id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 		schema_name: '',
-		dcterms_format: '',
-		schema_thumbnail_url: [
-			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+		premisIdentifier: [],
+		dctermsFormat: [
+			{
+				dcterms_format: 'video',
+			},
 		],
+		schemaThumbnail: {
+			schema_thumbnail_url:
+				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+		},
 	},
 };
 
 export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_material_requests'][0] = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	object_schema_identifier:
-		'8d4850ac51b74516aa50dc2cbed0bd20fc05e3b9ac9b471494cc93e0308156cf09ec8a302aed4adba7373d04be42d285',
+	ie_object_id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 	profile_id: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	created_at: '2022-03-18T08:32:57.256264',
@@ -87,17 +92,25 @@ export const mockGqlMaterialRequest2: FindMaterialRequestsByIdQuery['app_materia
 			},
 		},
 		schema_identifier: '0000003g0k',
+		id: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
 		schema_name: 'STIHL: SV DUBLIN ZOO/STIHL zoo na',
-		dcterms_format: 'audio',
-		schema_thumbnail_url: [
-			'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+		dctermsFormat: [
+			{
+				dcterms_format: 'audio',
+			},
 		],
+		schemaThumbnail: {
+			schema_thumbnail_url: [
+				'VRT/b1f60efadf5243d78c7c91512adaa6cefe52723ff35848268894c7861d852b79/keyframes/keyframes_1_1/keyframe1.jpg',
+			],
+		},
 	},
 };
 
 export const mockMaterialRequest1: MaterialRequest = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	objectSchemaIdentifier: 'identifier',
+	objectId: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
+	objectSchemaIdentifier: '0000003g0k',
 	profileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-03-18T08:32:57.256264',
@@ -120,7 +133,8 @@ export const mockMaterialRequest1: MaterialRequest = {
 
 const mockMaterialRequest2: MaterialRequest = {
 	id: '9471f49f-5ac0-43f5-a74a-09c4c56463a4',
-	objectSchemaIdentifier: 'identifier',
+	objectId: 'https://data-int.hetarchief.be/id/entity/0000003g0k',
+	objectSchemaIdentifier: '0000003g0k',
 	profileId: 'e1d792cc-4624-48cb-aab3-80ef90521b54',
 	reason: 'voor mijn onderzoek en studie',
 	createdAt: '2022-02-18T08:32:57.256264',

@@ -48,18 +48,27 @@ export const convertObjectToXml = (object: Partial<IeObject>, clientHost: string
 				encoding: 'UTF-8',
 			},
 		},
+		doctype:
+			'rdf:RDF PUBLIC "-//DUBLIN CORE//DCMES DTD 2002 01 24//EN" "http://dublincore.org/specifications/dublin-core/dcmes-xml/2002-01-24/dcmes-xml-dtd.dtd"',
 		elements: [
 			{
 				type: 'element',
-				name: 'oai_dc:dc',
+				name: 'rdf:RDF',
 				attributes: {
-					'xmlns:oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+					'xmlns:rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 					'xmlns:dc': 'http://purl.org/dc/elements/1.1/',
-					'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-					'xsi:schemaLocation':
-						'http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
+					'xmlns:dcterms': 'http://purl.org/dc/terms/',
 				},
-				elements: dcElements,
+				elements: [
+					{
+						type: 'element',
+						name: 'rdf:Description',
+						attributes: {
+							'rdf:about': 'http://dublincore.org/',
+						},
+						elements: dcElements,
+					},
+				],
 			},
 		],
 	};

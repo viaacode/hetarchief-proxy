@@ -65,9 +65,14 @@ export interface IeObjectFile {
 	createdAt: string;
 }
 
-export interface IeObjectPageRepresentation {
-	representations: IeObjectRepresentation[];
+export interface IeObjectPages {
+	pages: IeObjectPage[];
 	mentions: Mention[];
+}
+
+export interface IeObjectPage {
+	pageNumber: number;
+	representations: IeObjectRepresentation[];
 }
 
 export interface IeObjectRepresentation {
@@ -130,6 +135,7 @@ export interface IeObject {
 	dctermsMedium: string[];
 	premisIdentifier: Record<string, string>[];
 	abstract: string;
+	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	creator: any;
 	dateCreated: string | null;
 	datePublished: string;
@@ -148,6 +154,7 @@ export interface IeObject {
 	maintainerOverlay: boolean | null;
 	maintainerIiifAgreement?: boolean | null;
 	name: string;
+	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
@@ -156,6 +163,7 @@ export interface IeObject {
 	accessThrough?: IeObjectAccessThrough[];
 	ebucoreObjectType?: string | null;
 	meemoofilmContainsEmbeddedCaption?: boolean;
+	// biome-ignore lint/suspicious/noExplicitAny: we don't know the exact format of this field, since each organisation can enter it differently
 	contributor?: any;
 	copyrightHolder?: string;
 	premisIsPartOf?: string | null;
@@ -196,10 +204,10 @@ export interface IeObject {
 	carrierDate?: string;
 	newspaperPublisher?: string;
 	alternativeTitle?: string[];
-	mentions?: Mention[];
 	digitizationDate?: string;
 	children?: number;
-	pageRepresentations?: IeObjectPageRepresentation[];
+	pages?: IeObjectPage[];
+	mentions?: Mention[];
 }
 
 export interface MediaSearchAggregation<T> {
@@ -404,15 +412,21 @@ export interface EsQueryAutocompleteMatchPhraseResponse {
 }
 
 export interface Mention {
+	pageNumber: number;
+	pageIndex: number;
 	iri: string;
 	name: string;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
 	confidence: number;
 	birthDate: number;
 	birthPlace: string;
 	deathDate: number;
 	deathPlace: string;
+	highlights: MentionHighlight[];
+}
+
+export interface MentionHighlight {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
 }

@@ -1,7 +1,7 @@
 mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert_input!) {
 	insert_app_material_requests_one(object: $newMaterialRequest) {
 		id
-		object_schema_identifier
+		ie_object_id
 		profile_id
 		reason
 		type
@@ -17,18 +17,24 @@ mutation insertMaterialRequest($newMaterialRequest: app_material_requests_insert
 			language
 		}
 		intellectualEntity {
+			schema_identifier
+			schema_name
+			id
+			dctermsFormat(limit: 1) {
+				dcterms_format
+			}
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
+				ha_org_has_logo
 				skos_alt_label
 				visitorSpace {
 					slug
 				}
 			}
-			schema_name
-			schema_identifier
-			dcterms_format
-			schema_thumbnail_url
 		}
 	}
 }

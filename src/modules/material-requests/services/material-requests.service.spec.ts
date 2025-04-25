@@ -127,9 +127,7 @@ describe('MaterialRequestsService', () => {
 			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest1.id);
-			expect(adapted.objectSchemaIdentifier).toEqual(
-				mockGqlMaterialRequest1.object_schema_identifier
-			);
+			expect(adapted.objectId).toEqual(mockGqlMaterialRequest1.ie_object_id);
 			expect(adapted.profileId).toEqual(mockGqlMaterialRequest1.profile_id);
 			expect(adapted.reason).toEqual(mockGqlMaterialRequest1.reason);
 			// requestedBy
@@ -157,9 +155,7 @@ describe('MaterialRequestsService', () => {
 			);
 			// test some sample keys
 			expect(adapted.id).toEqual(mockGqlMaterialRequest2.id);
-			expect(adapted.objectSchemaIdentifier).toEqual(
-				mockGqlMaterialRequest2.object_schema_identifier
-			);
+			expect(adapted.objectId).toEqual(mockGqlMaterialRequest2.ie_object_id);
 			expect(adapted.profileId).toEqual(mockGqlMaterialRequest2.profile_id);
 			expect(adapted.reason).toEqual(mockGqlMaterialRequest2.reason);
 			// requestedBy
@@ -199,10 +195,10 @@ describe('MaterialRequestsService', () => {
 				mockGqlMaterialRequest2.intellectualEntity.schema_name
 			);
 			expect(adapted.objectDctermsFormat).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.dcterms_format
+				mockGqlMaterialRequest2.intellectualEntity.dctermsFormat[0].dcterms_format
 			);
 			expect(adapted.objectThumbnailUrl).toEqual(
-				mockGqlMaterialRequest2.intellectualEntity.schema_thumbnail_url[0]
+				mockGqlMaterialRequest2.intellectualEntity.schemaThumbnail.schema_thumbnail_url[0]
 			);
 		});
 
@@ -370,7 +366,7 @@ describe('MaterialRequestsService', () => {
 			mockDataService.execute.mockResolvedValueOnce(mockData);
 			const response = await materialRequestsService.createMaterialRequest(
 				{
-					objectId: mockGqlMaterialRequest1.object_schema_identifier,
+					objectSchemaIdentifier: mockGqlMaterialRequest1.ie_object_id,
 					reason: mockGqlMaterialRequest1.reason,
 					type: mockGqlMaterialRequest1.type,
 					requesterCapacity: mockGqlMaterialRequest1.requester_capacity,

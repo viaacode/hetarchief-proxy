@@ -506,7 +506,8 @@ export class IeObjectsController {
 	): Promise<any> {
 		if (
 			!/https:\/\/assets[^.]*\.hetarchief.be\/hetarchief(v3)?\//g.test(altoJsonUrl) &&
-			!/https:\/\/archief-media[^.]*\.meemoo.be\//g.test(altoJsonUrl)
+			!/https:\/\/archief-media[^.]*\.meemoo.be\//g.test(altoJsonUrl) &&
+			!/https:\/\/s3[^.]*\.do\.viaa\.be\//g.test(altoJsonUrl)
 		) {
 			throw new BadRequestException({
 				message:

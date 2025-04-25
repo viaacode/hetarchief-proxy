@@ -320,6 +320,7 @@ export const NEEDS_FILTER_SUFFIX: { [prop in IeObjectsSearchFilterField]?: strin
 	[IeObjectsSearchFilterField.SPACIAL_COVERAGE]: 'keyword',
 	[IeObjectsSearchFilterField.OBJECT_TYPE]: 'keyword',
 	[IeObjectsSearchFilterField.NEWSPAPER_SERIES_NAME]: 'keyword',
+	[IeObjectsSearchFilterField.MENTIONS]: 'keyword',
 
 	// http://es-qas-hetarchief.private.cloud.meemoo.be/_mapping
 	// These are already type keyword:

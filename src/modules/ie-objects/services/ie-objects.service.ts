@@ -9,18 +9,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import {
-	compact,
-	find,
-	isArray,
-	isEmpty,
-	isNil,
-	kebabCase,
-	omitBy,
-	orderBy,
-	sortBy,
-	uniq,
-} from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -39,7 +28,8 @@ import {
 	type IeObject,
 	type IeObjectFile,
 	IeObjectLicense,
-	type IeObjectPageRepresentation,
+	type IeObjectPage,
+	type IeObjectPages,
 	type IeObjectRepresentation,
 	type IeObjectSector,
 	type IeObjectsSitemap,
@@ -541,8 +531,8 @@ export class IeObjectsService {
 	): Promise<IPagination<IeObjectsSitemap>> {
 		try {
 			const {
-				graph__intellectual_entity: ieObjects,
-				graph__intellectual_entity_aggregate: ieObjectAggregate,
+				graph_intellectual_entity: ieObjects,
+				graph_intellectual_entity_aggregate: ieObjectAggregate,
 			} = await this.dataService.execute<
 				FindIeObjectsForSitemapQuery,
 				FindIeObjectsForSitemapQueryVariables
@@ -616,7 +606,7 @@ export class IeObjectsService {
 			| Record<string, string>
 			| { abraham_id: string; abraham_uri: string; code_number: string }
 		)[];
-		const pageRepresentations: IeObjectPageRepresentation[] = await this.adaptRepresentations(
+		const ieObjectByPages: IeObjectPages = await this.adaptRepresentations(
 			isRepresentedByResponse,
 			hasPartResponse,
 			referer,
@@ -767,7 +757,8 @@ export class IeObjectsService {
 					(part) => part?.collection?.schema_publisher
 				)
 			)?.join(', '),
-			pageRepresentations,
+			pages: ieObjectByPages.pages,
+			mentions: ieObjectByPages.mentions,
 		};
 
 		return {
@@ -921,7 +912,8 @@ export class IeObjectsService {
 			numberOfPages: esObject?.schema_number_of_pages,
 			meemooLocalId: esObject?.meemoo_local_id?.[0],
 			durationInSeconds: esObject?.duration_seconds,
-			pageRepresentations: [],
+			pages: [],
+			mentions: [],
 			// Extra
 			sector: esObject?.schema_maintainer?.organization_sector,
 			// Other
@@ -962,7 +954,7 @@ export class IeObjectsService {
 
 	public adaptMetadata(ieObject: Partial<IeObject>): Partial<IeObject> {
 		// unset thumbnail and representations
-		delete ieObject.pageRepresentations;
+		delete ieObject.pages;
 		delete ieObject.thumbnailUrl;
 		return ieObject;
 	}
@@ -972,7 +964,7 @@ export class IeObjectsService {
 		hasPartResponse: GetHasPartQuery,
 		referer: string,
 		ip: string
-	): Promise<IeObjectPageRepresentation[]> {
+	): Promise<IeObjectPages | null> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
 		const ieObjects = compact([
@@ -981,19 +973,24 @@ export class IeObjectsService {
 		]) as DbIeObjectWithRepresentations[];
 
 		if (isEmpty(ieObjects)) {
-			return [];
+			return null;
 		}
+
+		const allMentions: Mention[] = [];
 
 		/* istanbul ignore next */
 		// Standardize the isRepresentedBy and the hasPart.isRepresentedBy parts of the query to a list of pages with each their file representations
-		const representationsByPages: IeObjectPageRepresentation[] = compact(
+		const pages: IeObjectPage[] = compact(
 			await mapLimit(
 				ieObjects || [],
 				20,
-				async (part): Promise<IeObjectPageRepresentation | null> => {
+				async (
+					page: DbIeObjectWithRepresentations,
+					pageIndex: number
+				): Promise<IeObjectPage | null> => {
 					const representations: IeObjectRepresentation[] = compact(
 						await mapLimit(
-							part?.isRepresentedBy || [],
+							page?.isRepresentedBy || [],
 							20,
 							async (
 								representation: DbRepresentation
@@ -1027,11 +1024,14 @@ export class IeObjectsService {
 					// Avoid returning empty array representations
 					if (representations.length) {
 						const mentions = this.adaptMentions(
-							(part as DbIeObjectWithMentions).schemaMentions || []
+							(page as DbIeObjectWithMentions).schemaMentions || [],
+							page.schema_position,
+							pageIndex
 						);
+						allMentions.push(...mentions);
 						return {
+							pageNumber: page.schema_position,
 							representations,
-							mentions: mentions.length ? mentions : undefined,
 						};
 					}
 					return null;
@@ -1039,18 +1039,10 @@ export class IeObjectsService {
 			)
 		);
 
-		// Sort by image filename to have pages in order
-		return sortBy(representationsByPages, (representationsByPage) => {
-			let fileName: string | null = null;
-			representationsByPage.representations.find((representation) => {
-				const imageFile = representation.files.find(
-					(file) => file.mimeType === 'image/jpeg'
-				);
-				fileName = imageFile?.name;
-				return imageFile;
-			});
-			return fileName;
-		});
+		return {
+			pages,
+			mentions: allMentions,
+		};
 	}
 
 	public async adaptFiles(dbFiles: DbFile, referer: string, ip: string): Promise<IeObjectFile[]> {
@@ -1086,7 +1078,7 @@ export class IeObjectsService {
 	}
 
 	private adaptForSitemap(
-		gqlIeObject: FindIeObjectsForSitemapQuery['graph__intellectual_entity'][0]
+		gqlIeObject: FindIeObjectsForSitemapQuery['graph_intellectual_entity'][0]
 	): IeObjectsSitemap {
 		return {
 			schemaIdentifier: gqlIeObject?.schema_identifier,
@@ -1328,24 +1320,41 @@ export class IeObjectsService {
 		return thumbnailUrl || undefined;
 	}
 
-	private adaptMentions(schemaMentions: DbIeObjectWithMentions['schemaMentions']): Mention[] {
+	/**
+	 * Adapt mentions from the DB to the API format
+	 * @param schemaMentions
+	 * @param pageNumber number that is printed on the page if available
+	 * @param pageIndex index of the page in the list of pages (0 based). In the best case, this matches with the pageNumber by adding 1, but is not guaranteed
+	 * @private
+	 */
+	private adaptMentions(
+		schemaMentions: DbIeObjectWithMentions['schemaMentions'],
+		pageNumber: number,
+		pageIndex: number
+	): Mention[] {
 		return compact(
 			schemaMentions?.map((mention): Mention => {
 				if (!mention.thing) {
 					return null;
 				}
 				return {
+					pageNumber,
+					pageIndex,
+					confidence: mention?.confidence,
 					iri: mention?.thing?.id,
 					name: mention?.thing?.schema_name,
-					x: mention?.x,
-					y: mention?.y,
-					width: mention?.width,
-					height: mention?.height,
-					confidence: mention?.confidence,
 					birthDate: mention?.thing?.schema_birth_date,
 					birthPlace: mention?.thing?.schema_birth_place,
 					deathDate: mention?.thing?.schema_death_date,
 					deathPlace: mention?.thing?.schema_death_place,
+					highlights: mention.highlights.map((highlight) => {
+						return {
+							x: highlight.x,
+							y: highlight.y,
+							width: highlight.width,
+							height: highlight.height,
+						};
+					}),
 				};
 			})
 		);

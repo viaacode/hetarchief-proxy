@@ -1,11 +1,17 @@
 query getHasPart($ieObjectId: String!) {
-	graph_intellectual_entity(where: { relation_is_part_of: { _eq: $ieObjectId } }) {
+	graph_intellectual_entity(
+		where: { relation_is_part_of: { _eq: $ieObjectId } }
+		order_by: { schema_position: asc }
+	) {
+		schema_position
 		schemaMentions {
 			confidence
-			x
-			y
-			width
-			height
+			highlights {
+				x
+				y
+				width
+				height
+			}
 			thing {
 				id
 				schema_name

@@ -1,7 +1,7 @@
 query findMaterialRequestsById($id: uuid!) {
 	app_material_requests(where: { id: { _eq: $id } }) {
 		id
-		object_schema_identifier
+		ie_object_id
 		profile_id
 		reason
 		created_at
@@ -23,6 +23,15 @@ query findMaterialRequestsById($id: uuid!) {
 			}
 		}
 		intellectualEntity {
+			schema_identifier
+			schema_name
+			id
+			dctermsFormat(limit: 1) {
+				dcterms_format
+			}
+			schemaThumbnail {
+				schema_thumbnail_url
+			}
 			schemaMaintainer {
 				org_identifier
 				skos_pref_label
@@ -32,10 +41,6 @@ query findMaterialRequestsById($id: uuid!) {
 					slug
 				}
 			}
-			schema_identifier
-			schema_name
-			dcterms_format
-			schema_thumbnail_url
 		}
 	}
 }

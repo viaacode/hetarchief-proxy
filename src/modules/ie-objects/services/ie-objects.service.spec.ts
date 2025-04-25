@@ -166,7 +166,7 @@ describe('ieObjectsService', () => {
 				'127.0.0.1'
 			);
 			expect(response.schemaIdentifier).toEqual(mockIeObject1.schemaIdentifier);
-			expect(response.pageRepresentations).toBeUndefined();
+			expect(response.pages).toBeUndefined();
 			expect(response.thumbnailUrl).toBeUndefined();
 		});
 	});
@@ -244,7 +244,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockIeObject2Metadata.schema_identifier);
-			expect(ieObject.pageRepresentations).toEqual([]);
+			expect(ieObject.pages).toEqual([]);
 		});
 
 		it('returns an empty array if no files were found', async () => {
@@ -272,7 +272,7 @@ describe('ieObjectsService', () => {
 			);
 
 			expect(ieObject.schemaIdentifier).toEqual(mockObjectSchemaIdentifier);
-			expect(ieObject.pageRepresentations[0].representations[0].files).toEqual([]);
+			expect(ieObject.pages[0]?.representations[0].files).toEqual([]);
 		});
 
 		it('throws an error when no objects were found', async () => {
@@ -331,8 +331,8 @@ describe('ieObjectsService', () => {
 
 		it('should successfully return all objects adapted for sitemap', async () => {
 			const mockData: FindIeObjectsForSitemapQuery = {
-				graph__intellectual_entity: [mockGqlSitemapObject],
-				graph__intellectual_entity_aggregate: {
+				graph_intellectual_entity: [mockGqlSitemapObject],
+				graph_intellectual_entity_aggregate: {
 					aggregate: {
 						count: 1,
 					},
