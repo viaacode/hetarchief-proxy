@@ -606,7 +606,7 @@ export class IeObjectsService {
 			| Record<string, string>
 			| { abraham_id: string; abraham_uri: string; code_number: string }
 		)[];
-		const ieObjectByPages: IeObjectPages = await this.adaptRepresentations(
+		const ieObjectByPages: IeObjectPages | null = await this.adaptRepresentations(
 			isRepresentedByResponse,
 			hasPartResponse,
 			referer,
@@ -757,8 +757,8 @@ export class IeObjectsService {
 					(part) => part?.collection?.schema_publisher
 				)
 			)?.join(', '),
-			pages: ieObjectByPages.pages,
-			mentions: ieObjectByPages.mentions,
+			pages: ieObjectByPages?.pages || [],
+			mentions: ieObjectByPages?.mentions || [],
 		};
 
 		return {
