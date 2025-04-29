@@ -967,10 +967,9 @@ export class IeObjectsService {
 	): Promise<IeObjectPages | null> {
 		const ieObjectSelf = isRepresentedByResponse?.graph__intellectual_entity[0];
 		const ieObjectParts = hasPartResponse?.graph_intellectual_entity || [];
-		const ieObjects = compact([
-			ieObjectSelf,
-			...ieObjectParts,
-		]) as DbIeObjectWithRepresentations[];
+		const ieObjects = (
+			compact([ieObjectSelf, ...ieObjectParts]) as DbIeObjectWithRepresentations[]
+		).filter((ieObject) => (ieObject.isRepresentedBy?.length || 0) > 0);
 
 		if (isEmpty(ieObjects)) {
 			return null;
