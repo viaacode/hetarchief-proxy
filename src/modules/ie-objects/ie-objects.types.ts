@@ -158,7 +158,6 @@ export interface IeObject {
 	publisher: any;
 	spatial: string[];
 	temporal: string[];
-	thumbnailUrl: string;
 	sector?: IeObjectSector;
 	accessThrough?: IeObjectAccessThrough[];
 	ebucoreObjectType?: string | null;
@@ -179,7 +178,6 @@ export interface IeObject {
 	durationInSeconds?: number;
 	copyrightNotice?: string;
 	meemooMediaObjectId?: string;
-	transcript?: string;
 	abrahamInfo?: {
 		id: string;
 		uri: string;
@@ -206,6 +204,10 @@ export interface IeObject {
 	alternativeTitle?: string[];
 	digitizationDate?: string;
 	children?: number;
+
+	// ESSENCE
+	thumbnailUrl: string;
+	transcript?: string;
 	pages?: IeObjectPage[];
 	mentions?: Mention[];
 }

@@ -356,7 +356,7 @@ export class FoldersController {
 	): Promise<{ message: 'success' }> {
 		const folder = await this.foldersService.findFolderById(folderId, referer, ip);
 
-		// If the to user already exists we take his preferred language otherwise we take the language of the person wo is sending the email
+		// If the "to" user already exists we take their preferred language otherwise we take the language of the person who is sending the "share folder" email
 		const toUser = await this.userService.getUserByEmail(emailInfo.to);
 
 		const preferredLang = toUser ? toUser.language : user.getLanguage() || Locale.Nl;
