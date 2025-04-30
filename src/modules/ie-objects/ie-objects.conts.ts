@@ -146,7 +146,6 @@ const IE_OBJECT_PROPS_METADATA_SET_ALL: Readonly<(keyof IeObject)[]> = [
 	'premisIdentifier',
 	'ebucoreObjectType',
 	'abstract',
-	'transcript',
 	'meemooDescriptionCast',
 	'meemooMediaObjectId',
 	'publisher',
@@ -165,6 +164,7 @@ const IE_OBJECT_PROPS_METADATA_SET_ESSENCE: Readonly<(keyof IeObject)[]> = [
 	'thumbnailUrl',
 	'pages',
 	'mentions',
+	'transcript',
 ];
 
 export const IE_OBJECT_PROPS_BY_METADATA_SET: Readonly<Record<string, string[]>> = {
@@ -214,6 +214,7 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'newspaperPublisher',
 	'copyrightHolder',
 	'pageNumber',
+
 	// ALL
 	'width',
 	'height',
@@ -223,9 +224,11 @@ export const IE_OBJECT_PROPS_METADATA_EXPORT: Readonly<(keyof IeObject)[]> = [
 	'alternativeTitle',
 	'publisher',
 	'abstract',
-	'transcript',
 	'ebucoreObjectType',
 	'meemooDescriptionCast',
+
+	// ESSENCE
+	'transcript',
 ];
 
 export type XmlNode =
