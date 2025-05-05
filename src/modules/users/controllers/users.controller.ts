@@ -18,6 +18,7 @@ import { type User } from '../types';
 import { CampaignMonitorService } from '~modules/campaign-monitor/services/campaign-monitor.service';
 import { SessionHelper } from '~shared/auth/session-helper';
 import { LoggedInGuard } from '~shared/guards/logged-in.guard';
+import { customError } from '~shared/helpers/custom-error';
 
 @ApiTags('Users')
 @Controller('users')
@@ -40,12 +41,27 @@ export class UsersController {
 			await this.usersService.updateUserLanguage(sessionUser.id, updateUserLangDto);
 			sessionUser.language = updateUserLangDto.language;
 			SessionHelper.setArchiefUserInfo(session, sessionUser);
-			await this.campaignMonitorService.updateNewsletterPreferences({
-				email: sessionUser.email,
-				firstName: sessionUser.firstName,
-				lastName: sessionUser.lastName,
-				language: updateUserLangDto.language,
-			});
+			this.campaignMonitorService
+				.updateNewsletterPreferences({
+					email: sessionUser.email,
+					firstName: sessionUser.firstName,
+					lastName: sessionUser.lastName,
+					language: updateUserLangDto.language,
+				})
+				.then(() => {
+					// do not wait for updates to the language to be applied in campaign monitor
+				})
+				.catch((err) => {
+					console.error(
+						customError('Failed to update the user language in Campaign Monitor', err, {
+							userId: sessionUser.id,
+							email: sessionUser.email,
+							firstName: sessionUser.firstName,
+							lastName: sessionUser.lastName,
+							language: updateUserLangDto.language,
+						})
+					);
+				});
 			return { message: 'Language updated' };
 		} catch (err) {
 			throw new InternalServerErrorException({
