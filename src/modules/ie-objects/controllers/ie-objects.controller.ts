@@ -23,7 +23,6 @@ import { type IPagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { Request, Response } from 'express';
 import { compact, intersection, isNil, kebabCase } from 'lodash';
-import { stringifyUrl } from 'query-string';
 
 import { Configuration } from '~config';
 
@@ -499,34 +498,39 @@ export class IeObjectsController {
 	}
 
 	@Get('alto-json')
-	public async getAltoJson(
-		@Query('altoJsonUrl') altoJsonUrl: string,
-		@Referer() referer: string,
-		@Ip() ip: string
-	): Promise<any> {
-		if (
-			!/https:\/\/assets[^.]*\.hetarchief.be\/hetarchief(v3)?\//g.test(altoJsonUrl) &&
-			!/https:\/\/archief-media[^.]*\.meemoo.be\//g.test(altoJsonUrl) &&
-			!/https:\/\/s3[^.]*\.do\.viaa\.be\//g.test(altoJsonUrl)
-		) {
+	public async getAltoJson(@Query('altoJsonUrl') altoJsonUrl: string): Promise<any> {
+		const WHITELISTED_DOMAINS = (process.env.ALTO_JSON_WHITELISTED_DOMAINS || '')
+			.split(',')
+			.map((domain) => new RegExp(domain.trim()));
+		if (!WHITELISTED_DOMAINS.some((regex) => regex.test(altoJsonUrl))) {
 			throw new BadRequestException({
 				message:
 					"The provided url doesn't seem to be part of the whitelisted asset service urls.",
 				additionalInfo: {
 					altoJsonUrl,
+					WHITELISTED_DOMAINS,
 				},
 			});
 		}
-		const token = await this.playerTicketService.getPlayerToken(altoJsonUrl, referer, ip);
-		const altoJsonUrlWithToken = stringifyUrl({
-			url: altoJsonUrl,
-			query: {
-				token,
-			},
-		});
-		const response = await fetch(altoJsonUrlWithToken);
-		const text = await response.text();
-		return JSON.parse(text);
+
+		let responseText: string | null = null;
+		try {
+			const response = await fetch(altoJsonUrl);
+			responseText = await response.text();
+
+			return JSON.parse(responseText);
+		} catch (err) {
+			console.error(
+				customError('Failed to get alto json', err, {
+					altoJsonUrl,
+					responseText,
+				})
+			);
+			throw customError('Failed to get alto json', null, {
+				altoJsonUrl,
+				responseText,
+			});
+		}
 	}
 
 	@Get('metadata/autocomplete')

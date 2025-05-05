@@ -4,7 +4,7 @@ query getHasPart($ieObjectId: String!) {
 		order_by: { schema_position: asc }
 	) {
 		schema_position
-		schemaMentions {
+		schemaMentions(where: { highlights: {} }) {
 			confidence
 			highlights {
 				x
