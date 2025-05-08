@@ -266,6 +266,18 @@ export class QueryBuilder {
 		elasticKey: string,
 		searchFilter: SearchFilter
 	): { occurrenceType: string; query: any } {
+		if (searchFilter.field === IeObjectsSearchFilterField.CREATOR) {
+			// Creator is always the full name, so we can collapse "contains" under "is" and collapse "contains_not" under "is_not"
+			// https://meemoo.atlassian.net/browse/ARC-1844?focusedCommentId=58372
+			return {
+				occurrenceType: OCCURRENCE_TYPE[searchFilter.operator],
+				query: {
+					term: {
+						'schema_creator_text.keyword': searchFilter.value,
+					},
+				},
+			};
+		}
 		if (
 			FLATTENED_FIELDS.includes(searchFilter.field) &&
 			[Operator.CONTAINS, Operator.CONTAINS_NOT].includes(searchFilter.operator)
@@ -457,12 +469,9 @@ export class QueryBuilder {
 			}
 			/**
 			 * query/advanced query fields are NOT allowed to be queried with the is/isNot operator
-			 * name and description are also multi_match fields, but they are allowed to be queried using is/isNot operator
+			 * name is a multi_match field, but is allowed to be queried using is/isNot operator
 			 */
-			if (
-				MULTI_MATCH_FIELDS.includes(searchFilter.field) &&
-				[IeObjectsSearchFilterField.QUERY].includes(searchFilter.field)
-			) {
+			if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 				throw new BadRequestException(
 					`Field '${searchFilter.field}' cannot be queried with the '${searchFilter.operator}' operator.`
 				);
