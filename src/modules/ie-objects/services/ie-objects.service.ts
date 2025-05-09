@@ -997,6 +997,11 @@ export class IeObjectsService {
 								if (!representation) {
 									return null;
 								}
+								const transcriptInfo = representation.schemaTranscriptUrls?.[0];
+								const schemaTranscript = transcriptInfo?.schema_transcript;
+								const schemaTranscriptUrl =
+									transcriptInfo?.schema_transcript_url || null;
+
 								return {
 									id: representation.id,
 									schemaName: representation.schema_name,
@@ -1004,11 +1009,8 @@ export class IeObjectsService {
 									schemaInLanguage: representation.schema_in_language,
 									schemaStartTime: representation.schema_start_time,
 									schemaEndTime: representation.schema_end_time,
-									schemaTranscript:
-										representation.schemaTranscriptUrls?.[0]?.schema_transcript,
-									schemaTranscriptUrl:
-										representation.schemaTranscriptUrls?.[0]
-											?.schema_transcript_url || null,
+									schemaTranscript,
+									schemaTranscriptUrl,
 									edmIsNextInSequence: representation.edm_is_next_in_sequence,
 									updatedAt: representation.updated_at,
 									files: await this.adaptFiles(
