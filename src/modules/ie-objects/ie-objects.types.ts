@@ -100,7 +100,6 @@ export interface IeObjectRepresentation {
 export enum IsPartOfKey {
 	archive = 'archive',
 	program = 'program',
-	reeks = 'reeks',
 	season = 'season',
 	series = 'series',
 	newspaper = 'newspaper',

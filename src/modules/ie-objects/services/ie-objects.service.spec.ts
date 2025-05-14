@@ -460,7 +460,8 @@ describe('ieObjectsService', () => {
 					value: 'example',
 				},
 			]);
-			expect(result).toEqual(['example']);
+			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.parsedSuccessfully).toEqual(true);
 		});
 
 		it('should only return the value of the filter where the field is "query"', () => {
@@ -476,7 +477,8 @@ describe('ieObjectsService', () => {
 					value: 'example2',
 				},
 			]);
-			expect(result).toEqual(['example']);
+			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.parsedSuccessfully).toEqual(true);
 		});
 		it('should return an empty array when there are no filter objects containing "field" with value "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
@@ -486,7 +488,19 @@ describe('ieObjectsService', () => {
 					value: 'example',
 				},
 			]);
-			expect(result).toEqual([]);
+			expect(result.plainTextSearchTerms).toEqual([]);
+			expect(result.parsedSuccessfully).toEqual(true);
+		});
+		it("should return the value without quotes when it's not a valid boolean expression", () => {
+			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
+				{
+					field: IeObjectsSearchFilterField.QUERY,
+					operator: Operator.CONTAINS,
+					value: '"example\'',
+				},
+			]);
+			expect(result.plainTextSearchTerms).toEqual(['example']);
+			expect(result.parsedSuccessfully).toEqual(false);
 		});
 	});
 });

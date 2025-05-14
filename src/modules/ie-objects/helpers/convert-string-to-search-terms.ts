@@ -25,7 +25,15 @@ export function convertStringToSearchTerms(searchQuery: string): SearchTermParse
 		const plainTextSearchTerms = convertNodeToSearchTerms(node);
 		return { plainTextSearchTerms, parsedSuccessfully: true };
 	} catch (err) {
-		const plainTextSearchTerms = compact(searchQuery.replace(/[^a-zA-Z0-9]+/g, ' ').split(' '));
+		const plainTextSearchTerms = compact(
+			searchQuery
+				.replace(/([^A-Z])AND([^A-Z])/g, '$1 $2')
+				.replace(/([^A-Z])OR([^A-Z])/g, '$1 $2')
+				.replace(/([^A-Z])NOT([^A-Z])/g, '$1 $2')
+				.replace(/[^a-zA-Z0-9]+/g, ' ')
+				.replace(/ +/, ' ')
+				.split(' ')
+		);
 		return { plainTextSearchTerms, parsedSuccessfully: false };
 	}
 }

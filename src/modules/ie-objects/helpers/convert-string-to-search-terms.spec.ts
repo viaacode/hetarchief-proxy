@@ -2,25 +2,39 @@ import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-
 
 describe('convertNodeToSearchStrings', () => {
 	it('should return the correct literals and identifiers as a string array (1)', () => {
-		expect(
-			convertStringToSearchTerms(
-				"genetics AND ('dna sequencing' AND crispr AND (cloning OR genomics) AND NOT dna)"
-			)
-		).toEqual(['genetics', 'dna sequencing', 'crispr', 'cloning', 'genomics', 'dna']);
+		const response = convertStringToSearchTerms(
+			"genetics AND ('dna sequencing' AND crispr AND (cloning OR genomics) AND NOT dna)"
+		);
+		expect(response.plainTextSearchTerms).toEqual([
+			'genetics',
+			'dna sequencing',
+			'crispr',
+			'cloning',
+			'genomics',
+			'dna',
+		]);
+		expect(response.parsedSuccessfully).toEqual(true);
 	});
 
 	it('should return the correct literals and identifiers as a string array (2)', () => {
-		expect(
-			convertStringToSearchTerms("'Ineke van dam' test AND gent AND brussel AND NOT kortrijk")
-		).toEqual(['Ineke van dam', 'test', 'gent', 'brussel', 'kortrijk']);
+		const response = convertStringToSearchTerms(
+			"'Ineke van dam' test AND gent AND brussel AND NOT kortrijk"
+		);
+		expect(response.plainTextSearchTerms).toEqual([
+			'Ineke van dam',
+			'test',
+			'gent',
+			'brussel',
+			'kortrijk',
+		]);
+		expect(response.parsedSuccessfully).toEqual(true);
 	});
 
 	it('should return the correct literals and identifiers as a string array (3)', () => {
-		expect(
-			convertStringToSearchTerms(
-				"genetics test AND ('dna sequencing' test AND crispr AND (cloning OR genomics) AND NOT dna brecht tafel)"
-			)
-		).toEqual([
+		const response = convertStringToSearchTerms(
+			"genetics test AND ('dna sequencing' test AND crispr AND (cloning OR genomics) AND NOT dna brecht tafel)"
+		);
+		expect(response.plainTextSearchTerms).toEqual([
 			'genetics',
 			'test',
 			'dna sequencing',
@@ -32,6 +46,7 @@ describe('convertNodeToSearchStrings', () => {
 			'brecht',
 			'tafel',
 		]);
+		expect(response.parsedSuccessfully).toEqual(true);
 	});
 
 	it('should return the string as a literal string', () => {
@@ -42,11 +57,15 @@ describe('convertNodeToSearchStrings', () => {
 			);
 		} catch (err) {
 			// If it fails the first time, we try again with quotes around the whole string
-			expect(convertStringToSearchTerms('"The big -)( test"')).toEqual(['The big -)( test']);
+			const result = convertStringToSearchTerms('"The big -)( test"');
+			expect(result.plainTextSearchTerms).toEqual(['The big -)( test']);
+			expect(result.parsedSuccessfully).toEqual(true);
 		}
 	});
 
 	it('should return an empty array if input is an empty string', () => {
-		expect(convertStringToSearchTerms('')).toEqual([]);
+		const result = convertStringToSearchTerms('');
+		expect(result.plainTextSearchTerms).toEqual([]);
+		expect(result.parsedSuccessfully).toEqual(true);
 	});
 });
