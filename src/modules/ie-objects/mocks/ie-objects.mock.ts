@@ -81,13 +81,13 @@ export const mockIeObject1: Readonly<IeObject> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -140,13 +140,13 @@ export const mockIeObjectWithMetadataSetLTD: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -175,13 +175,13 @@ export const mockIeObjectWithMetadataSetALL: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -293,13 +293,13 @@ export const mockIeObjectWithMetadataSetALLWithEssence: Readonly<Partial<IeObjec
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -330,13 +330,13 @@ export const mockIeObjectLimitedInFolder: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -386,13 +386,13 @@ export const mockIeObjectDefaultLimitedMetadata: Readonly<Partial<IeObject>> = {
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'serie' as IsPartOfKey,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'https://data-int.hetarchief.be/id/entity/4f1mg9x363',
 			schemaIdentifier: '4f1mg9x363',
-			collectionType: 'programma' as IsPartOfKey,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
@@ -994,16 +994,12 @@ export const mockGqlIeObjectFindByFolderIdResult: Readonly<Partial<IeObject>> = 
 	dctermsFormat: IeObjectType.VIDEO,
 	isPartOf: [
 		{
-			collectionType: 'reeks' as IsPartOfKey,
+			collectionType: IsPartOfKey.reeks,
 			name: 'WEB',
 		},
 		{
-			collectionType: 'archief' as IsPartOfKey,
+			collectionType: IsPartOfKey.archive,
 			name: 'digitaal archief/videoproducties',
-		},
-		{
-			collectionType: 'alternatief' as IsPartOfKey,
-			name: 'videoproductie',
 		},
 	],
 	maintainerName: 'Huis van Alijn',

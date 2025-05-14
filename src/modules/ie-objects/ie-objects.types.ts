@@ -89,22 +89,21 @@ export interface IeObjectRepresentation {
 	files: IeObjectFile[];
 }
 
+/**
+ * This info now lives in another place and no longer resides under is_part_of
+ * alternatief → table: graph.schema_alternate_name, column: schema_alternate_name
+ * serienummer  → table: graph.collection, column: schema_season_number
+ * seizoennummer → table: graph.collection, column: schema_season_number
+ * registratie →  not available for now
+ * stuk → not available for now
+ */
 export enum IsPartOfKey {
-	alternatief = 'alternatief',
-	archief = 'archief',
-	deelarchief = 'deelarchief',
-	deelreeks = 'deelreeks',
-	programma = 'programma',
+	archive = 'archive',
+	program = 'program',
 	reeks = 'reeks',
-	seizoen = 'seizoen',
-	serie = 'serie',
-	stuk = 'stuk',
-	episode = 'episode',
-	aflevering = 'aflevering',
-	bestanddeel = 'bestanddeel',
-	registratie = 'registratie',
-	serienummer = 'serienummer',
-	seizoennummer = 'seizoennummer',
+	season = 'season',
+	series = 'series',
+	newspaper = 'newspaper',
 }
 
 export interface IsPartOfCollection {

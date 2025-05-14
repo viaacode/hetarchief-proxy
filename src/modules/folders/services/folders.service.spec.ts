@@ -199,13 +199,13 @@ const mockFolderObject: Partial<IeObject> & { folderEntryCreatedAt: string } = {
 		{
 			iri: 'http://data.viaa.be/terms/1.0#serie',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.serie,
+			collectionType: IsPartOfKey.series,
 			name: 'Serie1',
 		},
 		{
 			iri: 'http://data.viaa.be/terms/1.0#programma',
 			schemaIdentifier: '8s4jm2514q',
-			collectionType: IsPartOfKey.programma,
+			collectionType: IsPartOfKey.program,
 			name: 'Programma1',
 		},
 	],
