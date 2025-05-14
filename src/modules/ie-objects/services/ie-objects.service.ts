@@ -76,7 +76,10 @@ import {
 } from '~modules/ie-objects/elasticsearch/elasticsearch.consts';
 import { AND } from '~modules/ie-objects/elasticsearch/queryBuilder.helpers';
 import { convertSchemaIdentifierToId } from '~modules/ie-objects/helpers/convert-schema-identifier-to-id';
-import { convertStringToSearchTerms } from '~modules/ie-objects/helpers/convert-string-to-search-terms';
+import {
+	convertStringToSearchTerms,
+	type SearchTermParseResult,
+} from '~modules/ie-objects/helpers/convert-string-to-search-terms';
 import { AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME } from '~modules/ie-objects/ie-objects.conts';
 import {
 	CACHE_KEY_PREFIX_IE_OBJECT_DETAIL,
@@ -144,6 +147,7 @@ export class IeObjectsService {
 					}),
 					aggregations: [],
 					searchTerms: [],
+					searchTermsParsedSuccessfully: true,
 				};
 			}
 
@@ -227,6 +231,9 @@ export class IeObjectsService {
 
 			const adaptedESResponse = await this.adaptESResponse(objectResponse);
 
+			const searchTermParseResult = this.getSimpleSearchTermsFromBooleanExpression(
+				inputQuery.filters
+			);
 			return {
 				...Pagination<IeObject>({
 					// 24 in parallel, since one search page contains 24 items usually
@@ -238,7 +245,8 @@ export class IeObjectsService {
 					total: adaptedESResponse.hits.total.value,
 				}),
 				aggregations: adaptedESResponse.aggregations,
-				searchTerms: this.getSimpleSearchTermsFromBooleanExpression(inputQuery.filters),
+				searchTerms: searchTermParseResult.plainTextSearchTerms,
+				searchTermsParsedSuccessfully: searchTermParseResult.parsedSuccessfully,
 			};
 		} catch (err) {
 			console.error(new InternalServerErrorException('Failed getting ieObjects', err));
@@ -1222,14 +1230,29 @@ export class IeObjectsService {
 
 	public getSimpleSearchTermsFromBooleanExpression(
 		filters: IeObjectsQueryDto['filters']
-	): string[] {
+	): SearchTermParseResult {
 		const searchTerms = filters
 			.filter((searchFilter) => searchFilter.field === IeObjectsSearchFilterField.QUERY)
 			.map((filter) => filter.value);
 		if (!searchTerms || searchTerms.length === 0) {
-			return [];
+			return {
+				plainTextSearchTerms: [],
+				parsedSuccessfully: true,
+			};
 		}
-		return searchTerms.flatMap((searchTerm) => convertStringToSearchTerms(searchTerm));
+		const searchTermParseResults: SearchTermParseResult[] = searchTerms.flatMap((searchTerm) =>
+			convertStringToSearchTerms(searchTerm)
+		);
+		const plainTextSearchTerms = searchTermParseResults.flatMap(
+			(result) => result.plainTextSearchTerms
+		);
+		const parsedSuccessfully = searchTermParseResults.every(
+			(result) => result.parsedSuccessfully
+		);
+		return {
+			plainTextSearchTerms,
+			parsedSuccessfully,
+		};
 	}
 
 	public async getIeObjectChildrenIris(ieObjectIri: string): Promise<string[]> {

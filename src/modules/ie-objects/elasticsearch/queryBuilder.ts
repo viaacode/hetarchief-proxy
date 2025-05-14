@@ -413,20 +413,28 @@ export class QueryBuilder {
 					if (searchFilter.field === IeObjectsSearchFilterField.QUERY) {
 						// We only want to parse a boolean query if it contains some boolean operators or quotes or parentheses
 						if (this.isBooleanSearchTerm(searchFilter.value)) {
-							textFilters = [
-								convertNodeToEsQueryFilterObjects(
-									jsep(encodeSearchterm(searchFilter.value)),
-									{
-										fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[
-											metadataAccessType
-										],
-										exact: MULTI_MATCH_QUERY_MAPPING.exact.query[
-											metadataAccessType
-										],
-									},
-									searchFilter
-								),
-							];
+							try {
+								textFilters = [
+									convertNodeToEsQueryFilterObjects(
+										jsep(encodeSearchterm(searchFilter.value)),
+										{
+											fuzzy: MULTI_MATCH_QUERY_MAPPING.fuzzy.query[
+												metadataAccessType
+											],
+											exact: MULTI_MATCH_QUERY_MAPPING.exact.query[
+												metadataAccessType
+											],
+										},
+										searchFilter
+									),
+								];
+							} catch (err) {
+								// Search term with logical operators could not be parsed
+								// Fall back to regular text search
+								const searchTemplate =
+									MULTI_MATCH_QUERY_MAPPING.fuzzy.query[metadataAccessType];
+								textFilters = [buildFreeTextFilter(searchTemplate, searchFilter)];
+							}
 						} else {
 							// If no boolean operators were found, do a simple text search using the fuzzy search term template
 							const searchTemplate =
