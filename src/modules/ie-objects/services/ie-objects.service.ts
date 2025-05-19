@@ -627,6 +627,23 @@ export class IeObjectsService {
 			ip
 		);
 
+		const isPartOfParentCollections = parentCollectionResponse?.parentCollection?.map(
+			(part) => {
+				return {
+					iri: part.collection?.id,
+					schemaIdentifier: part.collection?.schema_identifier,
+					name: part.collection?.schema_name,
+					collectionType: part.collection?.collection_type as IsPartOfKey,
+					isPreceededBy: part.collection?.isPreceededBy,
+					isSucceededBy: part.collection?.isSucceededBy,
+					locationCreated: part.collection?.schema_location_created,
+					startDate: part.collection?.schema_start_date,
+					endDate: part.collection?.schema_end_date,
+					publisher: part.collection?.schema_publisher,
+				};
+			}
+		);
+
 		const ieObject: IeObject = {
 			schemaIdentifier: ie?.schema_identifier,
 			iri: ieObjectId,
@@ -644,15 +661,8 @@ export class IeObjectsService {
 			) as IeObjectLicense[],
 			premisIdentifier: premisIdentifiers,
 			abrahamInfo: {
-				id: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_id'
-				)?.abraham_id,
-				uri: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'abraham_uri'
-				)?.abraham_uri,
-				code: premisIdentifiers?.find(
-					(premisIdentifier) => Object.keys(premisIdentifier)[0] === 'code_number'
-				)?.code_number,
+				id: isPartOfParentCollections[0]?.schemaIdentifier,
+				uri: isPartOfParentCollections[0]?.iri,
 			},
 			abstract: ie?.schema_abstract,
 			genre: compact(schemaGenreResponse?.schemaGenre?.map((item) => item.schema_genre)),
@@ -697,20 +707,7 @@ export class IeObjectsService {
 			name: ie?.schema_name,
 			thumbnailUrl,
 			premisIsPartOf: ie?.premis_is_part_of,
-			isPartOf: parentCollectionResponse?.parentCollection?.map((part) => {
-				return {
-					iri: part.collection?.id,
-					schemaIdentifier: part.collection?.schema_identifier,
-					name: part.collection?.schema_name,
-					collectionType: part.collection?.collection_type as IsPartOfKey,
-					isPreceededBy: part.collection?.isPreceededBy,
-					isSucceededBy: part.collection?.isSucceededBy,
-					locationCreated: part.collection?.schema_location_created,
-					startDate: part.collection?.schema_start_date,
-					endDate: part.collection?.schema_end_date,
-					publisher: part.collection?.schema_publisher,
-				};
-			}),
+			isPartOf: isPartOfParentCollections,
 			collectionSeasonNumber:
 				parentCollectionResponse?.parentCollection?.[0]?.collection?.schema_season_number,
 			numberOfPages: ie?.schema_number_of_pages,
