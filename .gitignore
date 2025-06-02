@@ -59,3 +59,4 @@ elasticsearch-local/license.txt
 
 # debug file to store last elasticsearch query for easy debugging
 query.json
+query-autocomplete.json

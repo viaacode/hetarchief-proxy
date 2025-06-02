@@ -1277,6 +1277,10 @@ export class IeObjectsService {
 			},
 		};
 
+		if (process.env.NODE_ENV === 'local') {
+			fs.writeFile('query-autocomplete.json', JSON.stringify(esQuery, null, 2));
+		}
+
 		const response: EsQueryAutocompleteMatchPhraseResponse = await this.executeQuery(
 			ALL_INDEXES,
 			esQuery

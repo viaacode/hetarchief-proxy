@@ -72,8 +72,6 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_LIMITED: IeObjectsSearch
 	IeObjectsSearchFilterField.RELEASE_DATE,
 	IeObjectsSearchFilterField.MAINTAINER_ID,
 	IeObjectsSearchFilterField.CONSULTABLE_ONLY_ON_LOCATION,
-	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
-	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 	IeObjectsSearchFilterField.CAST,
 	IeObjectsSearchFilterField.IDENTIFIER,
 	IeObjectsSearchFilterField.LICENSES,
@@ -87,6 +85,8 @@ export const IE_OBJECTS_SEARCH_FILTER_FIELD_IN_METADATA_ALL: IeObjectsSearchFilt
 	IeObjectsSearchFilterField.CAPTION,
 	IeObjectsSearchFilterField.PUBLISHER,
 	IeObjectsSearchFilterField.OBJECT_TYPE,
+	IeObjectsSearchFilterField.CONSULTABLE_MEDIA,
+	IeObjectsSearchFilterField.CONSULTABLE_PUBLIC_DOMAIN,
 ];
 
 export enum Operator {
