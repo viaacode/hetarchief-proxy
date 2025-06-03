@@ -9,7 +9,7 @@ import { type IPagination, Pagination } from '@studiohyperdrive/pagination';
 import { mapLimit } from 'blend-promise-utils';
 import { Cache } from 'cache-manager';
 import got, { type Got } from 'got';
-import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy, uniq } from 'lodash';
+import { compact, find, isArray, isEmpty, isNil, kebabCase, omitBy, orderBy } from 'lodash';
 
 import { type Configuration } from '~config';
 
@@ -1269,11 +1269,14 @@ export class IeObjectsService {
 		const esField = AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME[field];
 		const esQuery: any = {
 			_source: false,
-			fields: [esField],
+			fields: [esField + '.sayt'],
 			query: {
 				match_phrase_prefix: {
-					[esField]: query,
+					[esField + '.sayt']: query,
 				},
+			},
+			collapse: {
+				field: esField + '.keyword', // Collapse on the keyword field to get unique values,
 			},
 		};
 
@@ -1281,33 +1284,53 @@ export class IeObjectsService {
 			fs.writeFile('query-autocomplete.json', JSON.stringify(esQuery, null, 2));
 		}
 
+		const id = randomUUID();
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Executing elasticsearch query on index ${ALL_INDEXES}: ${JSON.stringify(
+					esQuery
+				)}`
+			);
+		}
+
 		const response: EsQueryAutocompleteMatchPhraseResponse = await this.executeQuery(
 			ALL_INDEXES,
 			esQuery
 		);
 
+		if (this.configService.get('ELASTICSEARCH_LOG_QUERIES')) {
+			this.logger.log(
+				`${id}, Response from elasticsearch query on index ${ALL_INDEXES}: ${JSON.stringify(
+					esQuery
+				)}`
+			);
+		}
+
 		const queryParts = query.toLowerCase().split(' ');
 
 		// Map elasticsearch response to a list of unique strings
-		return uniq(
-			(response as EsQueryAutocompleteMatchPhraseResponse).hits?.hits?.flatMap((hit) => {
-				const value = hit.fields[esField];
-				if (isArray(value)) {
-					// List of strings
-					// Filter all values that contain all query words
-					return value
-						.filter((v) =>
-							queryParts.every((queryPart) =>
-								v.toLowerCase().split(':').pop().includes(queryPart)
-							)
-						)
-						.map((v) => v.split(':').pop().trim());
+		return response.hits?.hits?.flatMap((hit) => {
+			const value = hit.fields[esField + '.sayt'];
+			if (isArray(value)) {
+				// List of strings
+				let relevantValues: string[];
+				if (value.length > 1) {
+					// If there are multiple values, filter them based on the query parts
+					relevantValues = value.filter((v) =>
+						queryParts.every((queryPart) => v.toLowerCase().includes(queryPart))
+					);
 				} else {
-					// Single string
-					return value;
+					relevantValues = value;
 				}
-			})
-		);
+
+				return relevantValues.map((v) => {
+					return v.trim();
+				});
+			} else {
+				// Single string
+				return value;
+			}
+		});
 	}
 
 	public async getPreviousNextIeObject(collectionId: string, ieObjectIri: string) {

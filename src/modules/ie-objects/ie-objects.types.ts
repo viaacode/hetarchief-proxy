@@ -405,7 +405,7 @@ export interface EsQueryAutocompleteMatchPhraseResponse {
 			_index: string;
 			_id: string;
 			_score: number;
-			fields: Record<AutocompleteEsField, string | string[]>;
+			fields: Record<AutocompleteEsField & '.sayt', string | string[]>;
 			_ignored?: string[];
 		}[];
 	};

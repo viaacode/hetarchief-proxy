@@ -6,7 +6,12 @@ import { type Cache } from 'cache-manager';
 import { cloneDeep } from 'lodash';
 
 import { IeObjectsSearchFilterField, Operator } from '../elasticsearch/elasticsearch.consts';
-import { type ElasticsearchResponse, IeObjectLicense, IeObjectType } from '../ie-objects.types';
+import {
+	AutocompleteField,
+	type ElasticsearchResponse,
+	IeObjectLicense,
+	IeObjectType,
+} from '../ie-objects.types';
 import {
 	mockChildrenIeObjects,
 	mockGqlIeObjectFindByFolderId,
@@ -25,6 +30,10 @@ import {
 import { IeObjectsService } from './ie-objects.service';
 
 import { type FindIeObjectsForSitemapQuery } from '~generated/graphql-db-types-hetarchief';
+import {
+	mockAutocompleteQueryResponseCreators,
+	mockAutocompleteQueryResponseNewspaperSeries,
+} from '~modules/ie-objects/services/ie-objects.service.mocks';
 import {
 	IeObjectDetailResponseIndex,
 	type IeObjectDetailResponseTypes,
@@ -480,6 +489,7 @@ describe('ieObjectsService', () => {
 			expect(result.plainTextSearchTerms).toEqual(['example']);
 			expect(result.parsedSuccessfully).toEqual(true);
 		});
+
 		it('should return an empty array when there are no filter objects containing "field" with value "query"', () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
@@ -491,6 +501,7 @@ describe('ieObjectsService', () => {
 			expect(result.plainTextSearchTerms).toEqual([]);
 			expect(result.parsedSuccessfully).toEqual(true);
 		});
+
 		it("should return the value without quotes when it's not a valid boolean expression", () => {
 			const result = ieObjectsService.getSimpleSearchTermsFromBooleanExpression([
 				{
@@ -501,6 +512,38 @@ describe('ieObjectsService', () => {
 			]);
 			expect(result.plainTextSearchTerms).toEqual(['example']);
 			expect(result.parsedSuccessfully).toEqual(false);
+		});
+	});
+
+	describe('getMetadataAutocomplete', () => {
+		it('should return a list of autocomplete strings for newspaper series', async () => {
+			ieObjectsService.executeQuery = jest
+				.fn()
+				.mockResolvedValue(mockAutocompleteQueryResponseNewspaperSeries);
+			const result = await ieObjectsService.getMetadataAutocomplete(
+				AutocompleteField.newspaperSeriesName,
+				'volks'
+			);
+			expect(result).toEqual([
+				'De volksbonder: orgaan van den Liberale Volksbond, Antwerpen',
+				'De volksstem: dagblad',
+				'Ons volksonderwijs: orgaan van den Bond van Oud-Leerlingen der Stadsscholen van Gent',
+				'Het katholiek onderwijs: orgaan der katholieke volksscholen van Vlaamsch België',
+			]);
+		});
+
+		it('should return a list of autocomplete strings for creator names', async () => {
+			ieObjectsService.executeQuery = jest
+				.fn()
+				.mockResolvedValue(mockAutocompleteQueryResponseCreators);
+			const result = await ieObjectsService.getMetadataAutocomplete(
+				AutocompleteField.creator,
+				'Dirk'
+			);
+			expect(result).toEqual([
+				'Dirk Van Mechelen',
+				'Kabinet Dirk Van Mechelen, Vlaams minister van Financiën en Begroting en Ruimtelijk Ordening (2001-2009)',
+			]);
 		});
 	});
 });

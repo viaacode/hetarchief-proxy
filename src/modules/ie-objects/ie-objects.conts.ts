@@ -597,8 +597,8 @@ export const IE_OBJECT_PROPERTY_TO_DUBLIN_CORE: Record<string, XmlNodeFactory> =
 };
 
 export const AUTOCOMPLETE_FIELD_TO_ES_FIELD_NAME: Record<AutocompleteField, string> = {
-	[AutocompleteField.creator]: AutocompleteEsField.creator + '.sayt',
-	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated + '.sayt',
-	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName + '.sayt',
-	[AutocompleteField.mentions]: AutocompleteEsField.mentions + '.sayt',
+	[AutocompleteField.creator]: AutocompleteEsField.creator,
+	[AutocompleteField.locationCreated]: AutocompleteEsField.locationCreated,
+	[AutocompleteField.newspaperSeriesName]: AutocompleteEsField.newspaperSeriesName,
+	[AutocompleteField.mentions]: AutocompleteEsField.mentions,
 };
